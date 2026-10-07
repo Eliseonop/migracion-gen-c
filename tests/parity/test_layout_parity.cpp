@@ -6,8 +6,8 @@
 //
 // Ventana de recorte (crop_window), recorte en píxeles (source_crop_px) y rectángulo
 // de destino (dest_rect, dest_rect_even): exactos, bit a bit y con el mismo tipo.
-// Puntos de la fuente en la salida (source_point_to_output): tolerancia relativa de
-// 1e-12, porque pasan por sin() y cos() y su último bit depende de la libm.
+// Puntos de la fuente en la salida (source_point_to_output): exactos sin giro; con giro,
+// tolerancia relativa de 1e-12, porque sin() y cos() dependen de la libm en el último bit.
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -18,6 +18,7 @@
 
 #include "gc/core/clip_layout.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/pose.hpp"
 #include "gc/core/serialize.hpp"
 #include "json_diff.hpp"
 
@@ -80,7 +81,9 @@ std::size_t check_clips(const Json& file, const std::string& fname) {
             const Point q = source_point_to_output(*clip, arg(a, 0), arg(a, 1), arg(a, 2), arg(a, 3), arg(a, 4),
                                                    arg(a, 5), arg(a, 6), arg(a, 7));
             INFO("source_point_to_output: " << p.dump());
-            const auto diff = gc::test::json_diff(p.at("out"), Json::array({q.x, q.y}), true, kTrigTol);
+            // Sin giro no hay sin/cos que dependa de la libm: exacto.
+            const double tol = clip_pose(*clip, arg(a, 7)).rotation != 0.0 ? kTrigTol : 0.0;
+            const auto diff = gc::test::json_diff(p.at("out"), Json::array({q.x, q.y}), true, tol);
             INFO(diff.value_or(""));
             CHECK_FALSE(diff);
             ++samples;

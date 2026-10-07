@@ -269,6 +269,14 @@ struct SetClipBgRemoval {
     bool replace = false;
 };
 
+// --- Compuestos ---
+// Pega los grupos de atributos `groups` (clip_attrs.hpp; null = todos) de un clip en otros.
+struct PasteClipAttributes {
+    std::string source_clip_id;
+    Json target_clip_ids; // lista de ids
+    Json groups;          // lista de grupos o null
+};
+
 } // namespace ops
 
 using Command =
@@ -280,7 +288,7 @@ using Command =
                  ops::SetClipBeats, ops::SetClipMasks, ops::SetClipEffects, ops::SetClipVolume, ops::SetTrackAudio,
                  ops::SetClipAudioFx, ops::ReplaceMedia, ops::ApplyEffect, ops::SetClipAnimation, ops::FreezeFrame,
                  ops::AddSubtitles, ops::AddShape, ops::AddCinemaBars, ops::AddAdjustmentLayer,
-                 ops::SetClipBgRemoval>;
+                 ops::SetClipBgRemoval, ops::PasteClipAttributes>;
 
 // Nombre de la operación ("move_clip"…), el mismo del MCP y de video-yt.
 [[nodiscard]] std::string_view command_name(const Command& command);

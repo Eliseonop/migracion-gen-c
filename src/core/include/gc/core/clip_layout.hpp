@@ -55,7 +55,8 @@ struct DestRect {
                                          double out_h);
 
 // El mismo rectángulo en enteros pares para FFmpeg: tamaños de al menos 2 y posiciones
-// que pueden ser negativas (FFmpeg recorta lo que sale del lienzo). Error si no es finito.
+// que pueden ser negativas (FFmpeg recorta lo que sale del lienzo). Error si algún valor no
+// es finito o pasa de 4·10¹⁸ px (Python daría un entero enorme; aquí no cabe en 64 bits).
 struct DestRectEven {
     std::int64_t dx = 0;
     std::int64_t dy = 0;
@@ -69,7 +70,8 @@ struct DestRectEven {
 // Ventana de recorte sobre la fuente en un instante: centro (cx, cy) y tamaño (wf, hf),
 // todo en 0–1. Sale del reframe (en `src_t`, segundos de la FUENTE), de los keyframes
 // cx/cy/zoom (en `local_t`, segundos desde el inicio del clip) o del recorte libre de un
-// overlay. Los aspectos son ancho/alto.
+// overlay. Los aspectos son ancho/alto y deben ser finitos y mayores que 0 (Python lanza
+// ZeroDivisionError; aquí saldrían inf o NaN).
 struct CropWindow {
     double cx = 0.5;
     double cy = 0.5;

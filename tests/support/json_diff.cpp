@@ -74,7 +74,8 @@ std::optional<std::string> diff(const Json& e, const Json& a, const std::string&
     case value_t::number_float: {
         const double x = e.get<double>();
         const double y = a.get<double>();
-        if (x == y || (std::isnan(x) && std::isnan(y))) {
+        // Bit a bit: 0.0 y -0.0 son distintos (Python los escribe distinto).
+        if ((x == y && std::signbit(x) == std::signbit(y)) || (std::isnan(x) && std::isnan(y))) {
             return std::nullopt;
         }
         if (tol > 0 && std::abs(x - y) <= tol * std::max({1.0, std::abs(x), std::abs(y)})) {

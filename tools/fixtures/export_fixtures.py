@@ -155,6 +155,17 @@ def timeline_delta(before: dict, after: dict) -> dict | None:
     }
 
 
+def _sort_kf_props(timeline: dict) -> None:
+    """paste_clip_attributes reúne parte de las props de los keyframes recorriendo un set: su
+    orden cambia en cada ejecución (PYTHONHASHSEED). Se ordenan para que la fixture sea estable;
+    el test las compara sin orden."""
+    for c in timeline.get("clips", []):
+        kf = c.get("keyframes")
+        for it in (kf.get("items") or []) if isinstance(kf, dict) else []:
+            if isinstance(it, dict) and isinstance(it.get("props"), dict):
+                it["props"] = dict(sorted(it["props"].items()))
+
+
 def run_edit_case(ctx: Ctx, base_id: str, timeline: dict, name: str, op: str, params, compact: bool) -> dict:
     out = {"name": name, "timeline": base_id, "op": op, "params": params}
     try:
@@ -162,6 +173,8 @@ def run_edit_case(ctx: Ctx, base_id: str, timeline: dict, name: str, op: str, pa
     except Exception as e:  # noqa: BLE001
         return _error(out, e, ctx)
     result = _pure(r["timeline"])
+    if op == "paste_clip_attributes":
+        _sort_kf_props(result)
     expected = {"changed": r["changed"], "warnings": r["warnings"]}
     delta = timeline_delta(timeline, result) if compact else None
     if delta is not None:
@@ -242,6 +255,7 @@ def real_edit_fixtures(ctx: Ctx, data: dict) -> dict:
         ]
         ops += extra_real_ops(tl, ctx)
         ops += media_real_ops(tl, proj, ctx)
+        ops += compound_real_ops(tl)
         for name, op, params in ops:
             cases.append(run_edit_case(ctx, pid, tl, f"{pid} · {name}", op, params, compact=True))
     return {"timelines": timelines, "cases": cases}
@@ -309,6 +323,34 @@ def media_real_ops(tl: dict, proj, ctx: Ctx) -> list[tuple[str, str, dict]]:
     ops += [("figura", "add_shape", {"shape": {"type": "arrow"}, "start": 1}),
             ("barras de cine", "add_cinema_bars", {"animate": True}),
             ("capa de ajuste", "add_adjustment_layer", {"start": 0, "duration": 3, "filters": ["noir"]})]
+    return ops
+
+
+def compound_real_ops(tl: dict) -> list[tuple[str, str, dict]]:
+    """4ª tanda de F2 sobre una timeline real: pegar atributos entre tus clips."""
+    ops: list[tuple[str, str, dict]] = []
+    by_kind: dict[str, list[str]] = {}
+    for c in tl["clips"]:
+        by_kind.setdefault(c["kind"], []).append(c["id"])
+    videos, texts = by_kind.get("video", []), by_kind.get("text", [])
+    visuals = videos + by_kind.get("image", []) + texts + by_kind.get("shape", [])
+    animated = [c["id"] for c in tl["clips"] if isinstance(c.get("keyframes"), dict) and c["keyframes"].get("items")]
+    if len(videos) >= 2:
+        ops.append(("pegar todos los atributos entre vídeos", "paste_clip_attributes",
+                    {"source_clip_id": videos[0], "target_clip_ids": videos[1:4]}))
+    for src in animated[:3]:
+        others = [v for v in visuals if v != src][:3]
+        if others:
+            ops.append((f"pegar la animación de {src}", "paste_clip_attributes",
+                        {"source_clip_id": src, "target_clip_ids": others, "groups": ["animation", "crop", "mask"]}))
+    if len(texts) >= 2:
+        ops.append(("pegar el estilo entre textos", "paste_clip_attributes",
+                    {"source_clip_id": texts[0], "target_clip_ids": texts[1:4],
+                     "groups": ["style", "transform", "animation"]}))
+    if videos and len(visuals) >= 2:
+        ops.append(("pegar posición, mezcla y velocidad del primer vídeo", "paste_clip_attributes",
+                    {"source_clip_id": videos[0], "target_clip_ids": visuals[:8],
+                     "groups": ["transform", "blend", "flip", "speed"]}))
     return ops
 
 
@@ -490,7 +532,7 @@ def main() -> None:
     lay = synthetic_layout_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "layout" / "synthetic.json", lay,
           len(lay["clips"]) + len(lay["dest"]) + len(lay["crop_px"]),
-          sum("error" in d["rect"] for d in lay["dest"]))
+          sum("error" in d["rect"] or "error" in d["even"] for d in lay["dest"]))
 
     if args.real:
         data_file = args.video_yt / "backend" / "data" / "projects.json"
@@ -509,7 +551,8 @@ def main() -> None:
         write(REPO / "tests" / "fixtures" / "local" / "keyframes" / "real.json", kf_real, len(kf_real["clips"]), 0)
         lay_real = real_layout_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "layout" / "real.json", lay_real,
-              len(lay_real["clips"]) + len(lay_real["dest"]), sum("error" in d["rect"] for d in lay_real["dest"]))
+              len(lay_real["clips"]) + len(lay_real["dest"]),
+              sum("error" in d["rect"] or "error" in d["even"] for d in lay_real["dest"]))
     print(f"listo en {time.perf_counter() - t0:.1f} s")
 
 

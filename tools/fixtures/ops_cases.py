@@ -516,6 +516,99 @@ CASES += [
 ]
 
 
+# --- 4ª tanda: pegar atributos -------------------------------------------------------------
+
+ATTRS = copy.deepcopy(MEDIA)
+ATTRS["clips"] += [
+    clip("dst", "V2", start=120, out=6, reframe={"master": True, "zoom": 0.5},
+         bg_removal={"auto": {"enabled": True, "base_key": "zz"}},
+         keyframes={"enabled": True, "items": [
+             {"id": "d1", "t": 0, "props": {"y": 0.2, "opacity": 1}},
+             {"id": "d2", "t": 3, "interpolation": "bezier", "bezier": [0.1, 0.5, 0.2, 1], "props": {"y": 0.8}},
+             {"id": "d3", "t": 4.00005, "ease": "ease-in", "props": {"y": 0.5, "x": 0.5}}]}),
+    clip("dst2", "V2", start=130, out=4,
+         keyframes={"enabled": True, "items": [{"id": "e1", "t": 0, "props": {"y": 0.3, "scale": 1}},
+                                               {"id": "e2", "t": 2, "props": {"y": 0.3}}]}),
+    clip("dst3", "V2", start=136, out=2, keyframes={"enabled": False, "items": [{"t": 0, "props": {"x": 0.1}}]}),
+    clip("tx1", "T1", kind="text", start=20, out=4, text="origen",
+         style={"x": 0.4, "y": 0.7, "rot_x": 15, "perspective": 800, "color": "#f00", "opacity": 0.9, "size": 80},
+         keyframes={"enabled": True, "items": [{"id": "s1", "t": 0, "props": {"color": "#f00", "x": 0.1}},
+                                               {"id": "s2", "t": 1, "props": {"color": "#00f", "bg_opacity": ""}},
+                                               {"id": "s3", "t": 2, "props": {"glow_color": "#fff", "x": 0.9}}]}),
+    clip("tx2", "T1", kind="text", start=30, out=4, text="destino",
+         style={"x": 0.1, "rot_y": 20, "color": "#0f0", "scale": 2, "font": "Inter"},
+         keyframes={"enabled": True, "items": [{"id": "u1", "t": 1.00002, "props": {"shadow_color": "#000", "y": 0.2}}]}),
+    clip("sh2", "V2", kind="shape", start=140, out=3,
+         shape={"type": "ellipse", "fill": "#123", "stroke": "#fff", "strokeWidth": 3, "x": 0.2, "opacity": 0.4}),
+    # origen y destino con props constantes en instantes distintos: manda la del destino (ct)
+    clip("kc", "V2", start=170, out=3,
+         keyframes={"enabled": True, "items": [{"id": "c1", "t": 0, "props": {"x": 0.2}},
+                                               {"id": "c2", "t": 1.5, "props": {"x": 0.2}}]}),
+    clip("dm", "V2", start=175, out=3,
+         keyframes={"enabled": True, "items": [{"id": "n1", "t": 0.5, "props": {"mx": 0.2}},
+                                               {"id": "n2", "t": 2.5, "interpolation": "hold", "props": {"mx": 0.2}}]}),
+    clip("bad", "V2", start=150, out=3,
+         keyframes={"enabled": True, "items": [{"t": 0, "props": {"x": 0.1}}, {"t": 1, "props": {"x": "abc"}}]}),
+]
+
+
+def paste(name, params, base=ATTRS):
+    return op(name, base, "paste_clip_attributes", params)
+
+
+CASES += [
+    paste("paste_clip_attributes todos los grupos", {"source_clip_id": "fz", "target_clip_ids": ["dst"]}),
+    paste("paste_clip_attributes animación remuestreada",
+          {"source_clip_id": "fz", "target_clip_ids": ["dst"], "groups": ["animation"]}),
+    paste("paste_clip_attributes animación y encuadre sobre props constantes",
+          {"source_clip_id": "fz", "target_clip_ids": ["dst2"], "groups": ["animation", "crop"]}),
+    paste("paste_clip_attributes encuadre, efectos, vfx, máscara y croma en imagen",
+          {"source_clip_id": "fz", "target_clip_ids": ["img"], "groups": ["crop", "effects", "vfx", "mask", "chroma"]}),
+    paste("paste_clip_attributes a varios destinos, repetidos y el origen, con avisos",
+          {"source_clip_id": "fz", "target_clip_ids": ["dst", "aud", "dst", "fz", "t1", "img"],
+           "groups": ["transform", "audio", "style", "transform"]}),
+    paste("paste_clip_attributes posición de vídeo a texto",
+          {"source_clip_id": "fz", "target_clip_ids": ["tx2"], "groups": ["transform", "flip", "blend"]}),
+    paste("paste_clip_attributes estilo de texto (con keyframes de estilo)",
+          {"source_clip_id": "tx1", "target_clip_ids": ["tx2"], "groups": ["style", "transform"]}),
+    paste("paste_clip_attributes animación de texto conserva su estilo animado",
+          {"source_clip_id": "tx1", "target_clip_ids": ["tx2"], "groups": ["animation"]}),
+    paste("paste_clip_attributes estilo de figura", {"source_clip_id": "shp", "target_clip_ids": ["sh2"],
+                                                    "groups": ["style", "blend", "transitions"]}),
+    paste("paste_clip_attributes velocidad: crece y empuja", {"source_clip_id": "rev", "target_clip_ids": ["v2"],
+                                                             "groups": ["speed"]}),
+    paste("paste_clip_attributes audio de vídeo a audio", {"source_clip_id": "fz", "target_clip_ids": ["aud"],
+                                                          "groups": ["audio", "speed"]}),
+    paste("paste_clip_attributes croma y encuadre desde un clip sin ellos",
+          {"source_clip_id": "v1", "target_clip_ids": ["fz"], "groups": ["chroma", "crop", "vfx", "mask"]}),
+    paste("paste_clip_attributes efectos en capa de ajuste", {"source_clip_id": "fz", "target_clip_ids": ["adj"],
+                                                             "groups": ["effects"]}),
+    paste("paste_clip_attributes con keyframes desactivados en el destino",
+          {"source_clip_id": "v1", "target_clip_ids": ["dst3"], "groups": ["transform", "blend"]}),
+    paste("paste_clip_attributes con keyframes desactivados y origen animado",
+          {"source_clip_id": "fz", "target_clip_ids": ["dst3"], "groups": ["animation", "mask"]}),
+    paste("paste_clip_attributes con props constantes en los dos lados",
+          {"source_clip_id": "kc", "target_clip_ids": ["dm"], "groups": ["animation"]}),
+    paste("paste_clip_attributes ids numéricos", {"source_clip_id": "fz", "target_clip_ids": [5, "dst"],
+                                                 "groups": ["flip"]}, base={**ATTRS, "clips": ATTRS["clips"] + [
+                                                     clip("5", "V2", start=160, out=1)]}),
+    paste("ERROR paste_clip_attributes grupo desconocido", {"source_clip_id": "fz", "target_clip_ids": ["dst"],
+                                                           "groups": ["transform", "foo"]}),
+    paste("ERROR paste_clip_attributes groups vacío", {"source_clip_id": "fz", "target_clip_ids": ["dst"],
+                                                      "groups": []}),
+    paste("ERROR paste_clip_attributes groups como texto", {"source_clip_id": "fz", "target_clip_ids": ["dst"],
+                                                           "groups": "crop"}),
+    paste("ERROR paste_clip_attributes solo el origen", {"source_clip_id": "fz", "target_clip_ids": ["fz", "fz"]}),
+    paste("ERROR paste_clip_attributes destino inexistente", {"source_clip_id": "fz", "target_clip_ids": ["nope"]}),
+    paste("ERROR paste_clip_attributes ningún destino lo admite",
+          {"source_clip_id": "aud", "target_clip_ids": ["t1"], "groups": ["audio"]}),
+    paste("ERROR paste_clip_attributes keyframe no numérico",
+          {"source_clip_id": "bad", "target_clip_ids": ["dst"], "groups": ["animation"]}),
+    paste("ERROR paste_clip_attributes origen inexistente", {"source_clip_id": "nope", "target_clip_ids": ["dst"]}),
+    paste("ERROR paste_clip_attributes sin destinos", {"source_clip_id": "fz"}),
+]
+
+
 def materialize() -> list[dict]:
     """Copia profunda de cada caso (las bases se comparten entre casos)."""
     return [copy.deepcopy(c) for c in CASES]

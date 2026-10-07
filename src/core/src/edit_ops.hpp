@@ -49,6 +49,9 @@ Result<EditResult> run(const Timeline& tl, const ops::AddCinemaBars& op, IdSourc
 Result<EditResult> run(const Timeline& tl, const ops::AddAdjustmentLayer& op, IdSource& ids);
 Result<EditResult> run(const Timeline& tl, const ops::SetClipBgRemoval& op, IdSource& ids);
 
+// edit_ops_compound.cpp
+Result<EditResult> run(const Timeline& tl, const ops::PasteClipAttributes& op, IdSource& ids);
+
 // edit_ops_audio.cpp
 Result<EditResult> run(const Timeline& tl, const ops::SetClipVolume& op, IdSource& ids);
 Result<EditResult> run(const Timeline& tl, const ops::SetTrackAudio& op, IdSource& ids);

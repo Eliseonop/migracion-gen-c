@@ -21,9 +21,10 @@ namespace {
 // min(hi, max(lo, v)) de Python, en ese orden (con NaN gana `lo`).
 double clamp(double v, double lo, double hi) { return std::min(hi, std::max(lo, v)); }
 
-// int(round(x)) de Python: empates al par; NaN e infinito son error.
+// int(round(x)) de Python: empates al par. NaN, infinito y lo desmesurado (que Python
+// sí convertiría en un entero enorme) son error; con el tope, `even_pos` puede doblarlo.
 Result<std::int64_t> round_int(double x) {
-    if (!std::isfinite(x) || std::abs(x) >= 9.0e18) {
+    if (!std::isfinite(x) || std::abs(x) >= 4.0e18) {
         return fail(ErrorCode::InvalidArgument, "el rectángulo de destino no es finito");
     }
     return static_cast<std::int64_t>(std::nearbyint(x));

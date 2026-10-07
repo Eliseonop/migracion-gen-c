@@ -470,3 +470,22 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 - **Exactitud:** recortes y rectángulos coinciden bit a bit. Los puntos usan `sin`/`cos`, así que van con tolerancia de 1e-12: con tolerancia 0 fallan 115, porque la libm de MinGW no es la de CPython.
 - **Mutación:** se detecta quitar el `fit=cover` de los keyframes, cambiar el redondeo al par por `round()`, quitar el volteo, tratar `x: 0` como valor y quitar el NaN → defecto de `interp_items`.
 - **Resultado:** 41 tests y 44 238 aserciones en verde, en Debug y en Release, con 0 warnings.
+
+**Revisión del subagente (APROBADO, solo hallazgos menores), ya aplicada:**
+- `dest_rect_even` ya no puede desbordar `int64`: da error por encima de 4·10¹⁸ px.
+- La precondición de dimensiones mayores que 0 queda documentada, con una tarea en F3.
+- `json_diff` distingue 0.0 de −0.0.
+- Cinco casos nuevos de encuadre: zoom fuera de 0,1–1, `pan_mode` vacío, recorte libre intermedio con keyframes y keyframes sin items. En total, 2908 muestras.
+- Los puntos sin giro se comparan ahora exactos: los 115 que fallaban tienen giro, así que la causa es la libm.
+- Las cifras de error del exportador están unificadas.
+
+**Hecho (2): `clip_attrs` y `paste_clip_attributes`:**
+- Los 14 grupos de «Pegar atributos», trabajando sobre el `model_dump()` y revalidando, como en Python.
+- `merge_keyframes`: restringir a lo que cambia, constantes de un lado y remuestreo con `round(x, 6)`.
+- El orden de uuid de Python: crop, vfx, mask y después los items.
+- El orden aleatorio de `_constant_props` (un `set` de Python): el exportador ordena esas props, para que la fixture sea estable, y el test las compara sin orden.
+
+**Verificación (2):**
+- **Casos:** 26 sintéticos (9 de error), entre ellos los dos lados constantes, el «crece → empuja» por velocidad, croma en todas sus combinaciones y estilo de texto animado. Además, 77 operaciones de pegar sobre tus timelines reales.
+- **Mutación:** se detectan 10 de 13. Las otras 3 son equivalentes: el destino ya pegado no cambia `keyframes`, `keep_pitch` siempre llega como `bool` y una reordenación que no cambia la lógica.
+- **Resultado:** 41 tests y 45 202 aserciones en verde, en Debug y en Release.

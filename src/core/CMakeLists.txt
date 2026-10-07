@@ -13,10 +13,12 @@ add_library(gc_core
     # Motor de edición: reglas, comandos, sin solapes, historial
     src/bg.cpp
     src/captions.cpp
+    src/clip_attrs.cpp
     src/clip_layout.cpp
     src/edit_commands.cpp
     src/edit_ops.cpp
     src/edit_ops_audio.cpp
+    src/edit_ops_compound.cpp
     src/edit_ops_media.cpp
     src/edit_ops_props.cpp
     src/fx_catalog.cpp

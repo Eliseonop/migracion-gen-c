@@ -58,6 +58,20 @@ CLIPS = [
         style={"x": 0.4, "y": 0.8, "scale": 1.2, "rotation": 10})},
     {"name": "figura volteada", "clip": clip(
         "f", kind="shape", asset_kind="shape", filename="", flip_v=True, shape={"x": 0.1, "y": 0.2, "rotation": 45})},
+    {"name": "zoom de keyframes fuera de 0.1–1", "clip": clip(
+        "zk", keyframes=items({"t": 0, "props": {"zoom": 0.05, "cx": -1}}, {"t": 2, "props": {"zoom": 1.5, "cy": 2}}))},
+    {"name": "reframe con zoom mínimo y pan_mode vacío", "clip": clip("zm", reframe={
+        "zoom": 0.1, "pan_mode": "", "keyframes": [{"t": 0, "cx": 0.2}, {"t": 2, "cx": 0.8, "cy": 0}]})},
+    {"name": "overlay con recorte libre intermedio y keyframes de encuadre", "clip": clip(
+        "oc", layout="overlay", transform={"x": 0.6, "scale": 0.8},
+        reframe={"crop_w": 0.5, "crop_h": 0.999, "keyframes": [{"t": 0, "cx": 0.1}]},
+        keyframes=items({"t": 0, "props": {"cx": 0.05, "cy": 0.9, "zoom": 0.5}},
+                        {"t": 3, "interpolation": "cubic-in-out", "props": {"cx": 0.7, "cy": 0.3}}))},
+    {"name": "overlay con recorte libre pequeño", "clip": clip(
+        "os", layout="overlay", reframe={"crop_w": 0.3, "crop_h": 0.06, "keyframes": [{"t": 1, "cx": 0.99, "cy": 0}]})},
+    {"name": "keyframes activos sin items y reframe contain", "clip": clip(
+        "ke", keyframes={"enabled": True, "items": []},
+        reframe={"zoom": 0.4, "keyframes": [{"t": 0, "cx": 0.3, "fit": "contain"}]})},
     {"name": "transform con ceros y textos", "clip": clip(
         "tz", layout="overlay", transform={"x": 0, "y": "0.25", "scale": "1.5", "rotation": "15"})},
 ]
@@ -75,8 +89,10 @@ TRANSFORMS = [None, {}, [], {"x": 0}, {"x": 0.1, "y": 0.9, "scale": 0.33, "rotat
               {"x": "0.3", "scale": "2"}, {"scale": 0}, {"scale": None, "rotation": "45"},
               {"x": True, "y": False}, {"x": -0.4, "y": -0.3, "scale": 0.1}, {"x": 1.4, "scale": 3},
               {"y": ""}, {"extra": 1},
-              # errores
-              {"x": "abc"}, {"scale": "nan"}, {"scale": "inf"}, {"rotation": [1]}, [1, 2], "texto"]
+              # dest_rect da NaN/inf y solo falla dest_rect_even
+              {"scale": "nan"}, {"scale": "inf"},
+              # errores en los dos
+              {"x": "abc"}, {"rotation": [1]}, [1, 2], "texto"]
 # (crop_sw, crop_sh, out_w, out_h): empates de redondeo, tamaños < 2 y medios píxeles
 DEST_SIZES = [(1080, 1920, 1080, 1920), (607.5, 1080, 1080, 1920), (3, 5, 720, 1280), (1, 1, 720, 1280),
               (1000.5, 333.25, 1080, 1920), (2.5, 3.5, 100, 100), (2, 2, 100, 100), (6, 10, 100, 100)]

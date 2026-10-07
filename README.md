@@ -4,8 +4,8 @@ Motor C++ multiplataforma del editor de clips verticales. Es la migración de
 [video-yt](E:/proyectos/video-yt) (FastAPI + React). El plan completo está en
 [docs/PLAN_MIGRACION_CPP.md](docs/PLAN_MIGRACION_CPP.md).
 
-**Estado:** F0 hecha · F1 modelo y formato hechos · F2 motor de edición en marcha (40 comandos,
-animación por keyframes y máscaras, encuadre, subtítulos, figuras, efectos de catálogo, deshacer, grupos). Arquitectura: [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
+**Estado:** F0 hecha · F1 modelo y formato hechos · F2 motor de edición en marcha (41 comandos,
+animación por keyframes y máscaras, encuadre, pegar atributos, subtítulos, figuras, efectos de catálogo, deshacer, grupos). Arquitectura: [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
 Lista de tareas de todas las fases: [docs/TODO.md](docs/TODO.md).
 
 ## Estructura
