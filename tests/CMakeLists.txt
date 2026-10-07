@@ -12,6 +12,7 @@ add_executable(gc_tests
     parity/test_history_parity.cpp
     parity/test_keyframes_parity.cpp
     parity/test_layout_parity.cpp
+    parity/test_library_parity.cpp
     parity/test_model_parity.cpp
     parity/test_settings_parity.cpp
 )

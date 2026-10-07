@@ -645,6 +645,86 @@ def real_settings_fixtures(ctx: Ctx) -> dict:
     return {"steps": _run_settings_steps(steps)}
 
 
+# --- Biblioteca (data/library) ----------------------------------------------------------------
+
+def _run_library_steps(steps: list, projects_data: dict) -> list[dict]:
+    """Ejecuta los pasos con library.py sobre un data/ temporal y estos proyectos."""
+    import shutil
+    from app import config, library, projects
+    tmp = Path(tempfile.mkdtemp(prefix="gc_library_"))
+    saved = (config.DATA_DIR, projects._load)
+    config.DATA_DIR = tmp
+    projects._load = lambda: copy.deepcopy(projects_data)
+    lib_file = tmp / "library" / "library.json"
+    out = []
+    try:
+        for step in steps:
+            kind, args = step[0], step[1:]
+            entry: dict = {"step": list(step)}
+            try:
+                if kind == "write":
+                    lib_file.parent.mkdir(parents=True, exist_ok=True)
+                    content = args[0]
+                    lib_file.write_text(content if isinstance(content, str) else json.dumps(content, ensure_ascii=False),
+                                        encoding="utf-8")
+                    result = None
+                elif kind == "files":
+                    for rel in args[0]:
+                        f = tmp / "library" / rel
+                        f.parent.mkdir(parents=True, exist_ok=True)
+                        f.write_bytes(b"x")
+                    result = None
+                elif kind == "exists":
+                    result = (tmp / "library" / args[0]).exists()
+                elif kind == "load":
+                    result = library._load()
+                elif kind == "list":
+                    result = library.list_library()
+                elif kind == "update":
+                    result = library.update_item(*args)
+                elif kind == "semantic":
+                    result = library.set_semantic(*args)
+                elif kind == "unsave":
+                    result = library.unsave(*args)
+                entry["result"] = result
+            except Exception as e:  # noqa: BLE001
+                entry["error"] = type(e).__name__
+            if lib_file.exists():
+                try:
+                    entry["file"] = json.loads(lib_file.read_text(encoding="utf-8"))
+                except ValueError:
+                    entry["file_text"] = lib_file.read_text(encoding="utf-8")
+            else:
+                entry["file"] = None
+            out.append(entry)
+    finally:
+        config.DATA_DIR, projects._load = saved
+        shutil.rmtree(tmp, ignore_errors=True)
+    return _pure(out)
+
+
+def synthetic_library_fixtures(ctx: Ctx) -> dict:
+    from app import library
+    sys.path.insert(0, str(HERE))
+    import library_cases as lc
+    dto = []
+    for item, scope in lc.DTO:
+        try:
+            dto.append({"item": item, "scope": scope, "result": library.material_dto(item, scope)})
+        except Exception as e:  # noqa: BLE001
+            dto.append({"item": item, "scope": scope, "error": type(e).__name__})
+    return _pure({"projects": lc.PROJECTS, "steps": _run_library_steps(lc.STEPS, lc.PROJECTS), "dto": dto})
+
+
+def real_library_fixtures(ctx: Ctx, data: dict) -> dict:
+    src = ctx.root / "backend" / "data" / "library" / "library.json"
+    if not src.exists():
+        return {"projects": data, "steps": [], "dto": []}
+    lib = json.loads(src.read_text(encoding="utf-8"))
+    return _pure({"projects": data, "steps": _run_library_steps([("write", lib), ("load",), ("list",)], data),
+                  "dto": []})
+
+
 # --- Animación (keyframes y máscaras) ---------------------------------------------------------
 
 def keyframe_case(ctx: Ctx, name: str, raw_clip: dict, times: list[float]) -> dict:
@@ -820,6 +900,9 @@ def main() -> None:
     kf = synthetic_keyframe_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "keyframes" / "synthetic.json", kf,
           len(kf["clips"]) + len(kf["ease"]) + len(kf["masks"]) + len(kf["styles"]), 0)
+    libr = synthetic_library_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "library" / "synthetic.json", libr, len(libr["steps"]) + len(libr["dto"]),
+          sum("error" in s for s in libr["steps"] + libr["dto"]))
     sett = synthetic_settings_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "settings" / "synthetic.json", sett, len(sett["steps"]),
           sum("error" in s for s in sett["steps"]))
@@ -845,6 +928,8 @@ def main() -> None:
               sum("error" in c for c in edit_real["cases"]))
         kf_real = real_keyframe_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "keyframes" / "real.json", kf_real, len(kf_real["clips"]), 0)
+        libr_real = real_library_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "library" / "real.json", libr_real, len(libr_real["steps"]), 0)
         sett_real = real_settings_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "local" / "settings" / "real.json", sett_real, len(sett_real["steps"]), 0)
         hist_real = real_history_fixtures(ctx, data)

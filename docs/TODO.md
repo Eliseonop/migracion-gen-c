@@ -11,7 +11,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | Fase | Contenido | Estado | Hito |
 |---|---|---|---|
 | **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo MSVC y CI en marcha | |
-| **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo y ajustes hechos · falta la biblioteca y las colecciones de `data/` | |
+| **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo, ajustes y biblioteca hechos · faltan las colecciones y la biblioteca de SFX de disco | |
 | **F2** Lógica de edición | ops, sin solapes, keyframes, undo | ✅ hecha: las 42 ops, el historial en disco y el autoguardado | |
 | **F3** Media + export | gc_media, gc_render v1, `genclip render` | ⬜ | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | ⬜ | |
@@ -22,10 +22,10 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 53 tests y 47 552 aserciones en verde (Debug y Release, 0 warnings).
+**Cifras actuales:** 55 tests y 47 728 aserciones en verde (Debug y Release, 0 warnings).
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
-historial (69 pasos sintéticos + el de tus 14 proyectos) y ajustes (59 pasos + los tuyos, con las claves redactadas).
+historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (59 pasos + los tuyos, con las claves redactadas) y biblioteca (32 pasos + 21 materiales + la tuya).
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12.
 
 ---
@@ -65,7 +65,9 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - [x] `tools/fixtures/export_fixtures.py`: 39 casos sintéticos + tus 18 proyectos reales y 2 carpetas
 - [x] Round-trip sin pérdida del 100 % de los proyectos reales
 - [x] `genclip projects` y `genclip normalize [--preserve]`; Python relee lo que escribe C++
-- [ ] Biblioteca y colecciones de `data/` (`library`, `collections`)
+- [x] Biblioteca de `data/library` (`library.hpp`): carga tolerante, tipo, origen y fuente deducidos, `material_dto` (con la URL codificada como `urllib.parse.quote`), lista ordenada por fecha, editar título y descripción, metadata semántica, proyectos que la usan y quitar (borra el archivo). Paridad: 32 pasos sobre un `data/` temporal, 21 materiales sueltos y tu `library.json`; 8/8 mutaciones
+- [ ] «Guardar en la biblioteca» desde un proyecto (`library.save_from_project`): cambia el proyecto (`retarget_timeline_asset`, `remove_material`) y copia archivos, así que llega con el almacén de proyectos de la app (F5)
+- [ ] Colecciones de `data/` (`collections`: carpetas de material bajo `material_root`)
 - [ ] Biblioteca de SFX desde disco (`sfx.load_index`, `_scan`, `_entry` y `resolve`, con la duración de `ffprobe`) → `set_sfx_library`. Sin ella, `subject_pop` avisa siempre de que faltan los sonidos
 - [x] Ajustes y API keys (`settings.hpp`: `settings.py`, `export_settings.py` y `transcribe_settings.py`): carga con defectos, `save` con la fusión de claves y máscaras, varias claves por proveedor y la vista pública sin secretos. Paridad: 59 pasos sintéticos con claves falsas y tus ajustes con las claves redactadas; 10/10 mutaciones
 

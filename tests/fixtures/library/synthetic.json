@@ -1,0 +1,2562 @@
+{
+ "projects": {
+  "projects": [
+   {
+    "id": "p1",
+    "name": "Uno",
+    "created_at": "2026-09-01T00:00:00",
+    "timeline": {
+     "schema_version": 5,
+     "tracks": [
+      {
+       "id": "V1",
+       "kind": "video",
+       "name": "V1"
+      }
+     ],
+     "clips": [
+      {
+       "id": "c1",
+       "track_id": "V1",
+       "kind": "video",
+       "asset_kind": "clips",
+       "asset_id": "lib_clip",
+       "filename": "c1.mp4",
+       "start": 0.0,
+       "in_point": 0.0,
+       "out_point": 5.0,
+       "source_duration": 30.0,
+       "asset_scope": "library"
+      },
+      {
+       "id": "c2",
+       "track_id": "V1",
+       "kind": "video",
+       "asset_kind": "clips",
+       "asset_id": "lib_clip",
+       "filename": "c2.mp4",
+       "start": 6,
+       "in_point": 0.0,
+       "out_point": 5.0,
+       "source_duration": 30.0,
+       "asset_scope": "library"
+      }
+     ]
+    }
+   },
+   {
+    "id": "p2",
+    "name": "Sin timeline",
+    "created_at": "2026-09-02T00:00:00"
+   },
+   {
+    "id": "p3",
+    "name": "Proyecto",
+    "created_at": "2026-09-03T00:00:00",
+    "timeline": {
+     "schema_version": 5,
+     "tracks": [
+      {
+       "id": "V1",
+       "kind": "video",
+       "name": "V1"
+      }
+     ],
+     "clips": [
+      {
+       "id": "c3",
+       "track_id": "V1",
+       "kind": "video",
+       "asset_kind": "clips",
+       "asset_id": "lib_tts",
+       "filename": "c3.mp4",
+       "start": 0.0,
+       "in_point": 0.0,
+       "out_point": 5.0,
+       "source_duration": 30.0
+      }
+     ]
+    }
+   }
+  ],
+  "groups": []
+ },
+ "steps": [
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "version": 1,
+    "items": []
+   },
+   "file": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "clips": [],
+    "audios": [],
+    "images": []
+   },
+   "file": null
+  },
+  {
+   "step": [
+    "write",
+    {
+     "version": 1,
+     "items": [
+      {
+       "id": "lib_clip",
+       "index": 3,
+       "filename": "Entrevista final.mp4",
+       "label": "Entrevista",
+       "saved_at": "2026-09-20T10:00:00+00:00",
+       "source_url": "https://YouTube.com/watch?v=abc"
+      },
+      {
+       "id": "lib_img_w",
+       "width": 1080,
+       "filename": "foto",
+       "saved_at": "2026-09-21T10:00:00+00:00"
+      },
+      {
+       "id": "lib_img_ext",
+       "filename": "Logo Ñandú?.PNG",
+       "saved_at": "2026-09-21T10:00:00+00:00"
+      },
+      {
+       "id": "lib_img_end",
+       "filename": "x.png",
+       "end": 3,
+       "saved_at": "2026-09-19T10:00:00+00:00"
+      },
+      {
+       "id": "lib_tts",
+       "resource_type": "audio",
+       "filename": "voz 1.m4a",
+       "voice": "ef_dora",
+       "saved_at": "2026-09-22T10:00:00+00:00",
+       "text": "hola"
+      },
+      {
+       "id": "lib_yt",
+       "resource_type": "audio",
+       "filename": "musica.m4a",
+       "youtube_url": "https://youtu.be/xyz"
+      },
+      {
+       "id": "lib_ytid",
+       "resource_type": "audio",
+       "filename": "m2.m4a",
+       "youtube_id": "q1",
+       "saved_at": "2026-09-22T10:00:00+00:00"
+      },
+      {
+       "id": "lib_origin",
+       "resource_type": "clip",
+       "filename": "o.mp4",
+       "origin": "stock"
+      },
+      {
+       "id": "lib_origin_yt",
+       "resource_type": "image",
+       "filename": "o.jpg",
+       "origin": "youtube"
+      },
+      {
+       "id": "lib_both",
+       "resource_type": "clip",
+       "filename": "b.mp4",
+       "origin": "foundry",
+       "source": "generated"
+      }
+     ]
+    }
+   ],
+   "result": null,
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "files",
+    [
+     "video/Entrevista final.mp4",
+     "audio/voz 1.m4a",
+     "image/x.png"
+    ]
+   ],
+   "result": null,
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "clips": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc",
+      "resource_type": "clip",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "youtube",
+      "source": "external",
+      "url": "/api/library/media/video/Entrevista%20final.mp4"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock",
+      "scope": "library",
+      "is_saved": true,
+      "source": "generated",
+      "url": "/api/library/media/video/o.mp4"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated",
+      "scope": "library",
+      "is_saved": true,
+      "url": "/api/library/media/video/b.mp4"
+     }
+    ],
+    "audios": [
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "tts",
+      "source": "generated",
+      "url": "/api/library/media/audio/voz%201.m4a"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "youtube",
+      "source": "external",
+      "url": "/api/library/media/audio/m2.m4a"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00",
+      "resource_type": "audio",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "tts",
+      "source": "generated",
+      "url": "/api/library/media/audio/x.png"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "youtube",
+      "source": "external",
+      "url": "/api/library/media/audio/musica.m4a"
+     }
+    ],
+    "images": [
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "resource_type": "image",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "upload",
+      "source": "external",
+      "url": "/api/library/media/image/foto"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "resource_type": "image",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "upload",
+      "source": "external",
+      "url": "/api/library/media/image/Logo%20%C3%91and%C3%BA%3F.PNG"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube",
+      "scope": "library",
+      "is_saved": true,
+      "source": "external",
+      "url": "/api/library/media/image/o.jpg"
+     }
+    ]
+   },
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "update",
+    "lib_tts",
+    {
+     "label": "  Voz nueva  ",
+     "description": 5,
+     "otro": "x"
+    }
+   ],
+   "result": {
+    "id": "lib_tts",
+    "resource_type": "audio",
+    "filename": "voz 1.m4a",
+    "voice": "ef_dora",
+    "saved_at": "2026-09-22T10:00:00+00:00",
+    "text": "hola",
+    "label": "Voz nueva",
+    "description": "5",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "tts",
+    "source": "generated",
+    "url": "/api/library/media/audio/voz%201.m4a"
+   },
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola",
+      "label": "Voz nueva",
+      "description": "5"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "update",
+    "nope",
+    {
+     "label": "x"
+    }
+   ],
+   "error": "LookupError",
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola",
+      "label": "Voz nueva",
+      "description": "5"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "update",
+    "lib_tts",
+    "no es dict"
+   ],
+   "error": "AttributeError",
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola",
+      "label": "Voz nueva",
+      "description": "5"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "semantic",
+    "lib_img_w",
+    {
+     "tema": "logo",
+     "tono": [
+      "serio"
+     ]
+    }
+   ],
+   "result": {
+    "id": "lib_img_w",
+    "width": 1080,
+    "filename": "foto",
+    "saved_at": "2026-09-21T10:00:00+00:00",
+    "semantic": {
+     "tema": "logo",
+     "tono": [
+      "serio"
+     ]
+    },
+    "resource_type": "image",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "upload",
+    "source": "external",
+    "url": "/api/library/media/image/foto"
+   },
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "semantic": {
+       "tema": "logo",
+       "tono": [
+        "serio"
+       ]
+      }
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola",
+      "label": "Voz nueva",
+      "description": "5"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "semantic",
+    "lib_img_w",
+    null
+   ],
+   "result": {
+    "id": "lib_img_w",
+    "width": 1080,
+    "filename": "foto",
+    "saved_at": "2026-09-21T10:00:00+00:00",
+    "semantic": {},
+    "resource_type": "image",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "upload",
+    "source": "external",
+    "url": "/api/library/media/image/foto"
+   },
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "semantic": {}
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola",
+      "label": "Voz nueva",
+      "description": "5"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "unsave",
+    "lib_clip"
+   ],
+   "error": "LibraryInUseError",
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "semantic": {}
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola",
+      "label": "Voz nueva",
+      "description": "5"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "unsave",
+    "lib_tts"
+   ],
+   "result": {
+    "deleted": "lib_tts"
+   },
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "semantic": {}
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "exists",
+    "audio/voz 1.m4a"
+   ],
+   "result": false,
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "semantic": {}
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "unsave",
+    "lib_img_end"
+   ],
+   "result": {
+    "deleted": "lib_img_end"
+   },
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "semantic": {}
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "exists",
+    "image/x.png"
+   ],
+   "result": true,
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "semantic": {}
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "files",
+    [
+     "image/foto"
+    ]
+   ],
+   "result": null,
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "semantic": {}
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "unsave",
+    "lib_img_w"
+   ],
+   "result": {
+    "deleted": "lib_img_w"
+   },
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "exists",
+    "image/foto"
+   ],
+   "result": true,
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "unsave",
+    "nope"
+   ],
+   "error": "LookupError",
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "clips": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc",
+      "resource_type": "clip",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "youtube",
+      "source": "external",
+      "url": "/api/library/media/video/Entrevista%20final.mp4"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock",
+      "scope": "library",
+      "is_saved": true,
+      "source": "generated",
+      "url": "/api/library/media/video/o.mp4"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated",
+      "scope": "library",
+      "is_saved": true,
+      "url": "/api/library/media/video/b.mp4"
+     }
+    ],
+    "audios": [
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "youtube",
+      "source": "external",
+      "url": "/api/library/media/audio/m2.m4a"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "youtube",
+      "source": "external",
+      "url": "/api/library/media/audio/musica.m4a"
+     }
+    ],
+    "images": [
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00",
+      "resource_type": "image",
+      "scope": "library",
+      "is_saved": true,
+      "origin": "upload",
+      "source": "external",
+      "url": "/api/library/media/image/Logo%20%C3%91and%C3%BA%3F.PNG"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube",
+      "scope": "library",
+      "is_saved": true,
+      "source": "external",
+      "url": "/api/library/media/image/o.jpg"
+     }
+    ]
+   },
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "version": 1,
+     "items": [
+      {
+       "id": "lib_clip",
+       "index": 3,
+       "filename": "Entrevista final.mp4",
+       "label": "Entrevista",
+       "saved_at": "2026-09-20T10:00:00+00:00",
+       "source_url": "https://YouTube.com/watch?v=abc"
+      },
+      {
+       "id": "lib_img_w",
+       "width": 1080,
+       "filename": "foto",
+       "saved_at": "2026-09-21T10:00:00+00:00"
+      },
+      {
+       "id": "lib_img_ext",
+       "filename": "Logo Ñandú?.PNG",
+       "saved_at": "2026-09-21T10:00:00+00:00"
+      },
+      {
+       "id": "lib_img_end",
+       "filename": "x.png",
+       "end": 3,
+       "saved_at": "2026-09-19T10:00:00+00:00"
+      },
+      {
+       "id": "lib_tts",
+       "resource_type": "audio",
+       "filename": "voz 1.m4a",
+       "voice": "ef_dora",
+       "saved_at": "2026-09-22T10:00:00+00:00",
+       "text": "hola"
+      },
+      {
+       "id": "lib_yt",
+       "resource_type": "audio",
+       "filename": "musica.m4a",
+       "youtube_url": "https://youtu.be/xyz"
+      },
+      {
+       "id": "lib_ytid",
+       "resource_type": "audio",
+       "filename": "m2.m4a",
+       "youtube_id": "q1",
+       "saved_at": "2026-09-22T10:00:00+00:00"
+      },
+      {
+       "id": "lib_origin",
+       "resource_type": "clip",
+       "filename": "o.mp4",
+       "origin": "stock"
+      },
+      {
+       "id": "lib_origin_yt",
+       "resource_type": "image",
+       "filename": "o.jpg",
+       "origin": "youtube"
+      },
+      {
+       "id": "lib_both",
+       "resource_type": "clip",
+       "filename": "b.mp4",
+       "origin": "foundry",
+       "source": "generated"
+      },
+      {
+       "id": "lib_raro",
+       "resource_type": "video",
+       "filename": 5,
+       "saved_at": ""
+      }
+     ]
+    }
+   ],
+   "result": null,
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     },
+     {
+      "id": "lib_raro",
+      "resource_type": "video",
+      "filename": 5,
+      "saved_at": ""
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "error": "TypeError",
+   "file": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     {
+      "id": "lib_img_w",
+      "width": 1080,
+      "filename": "foto",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_ext",
+      "filename": "Logo Ñandú?.PNG",
+      "saved_at": "2026-09-21T10:00:00+00:00"
+     },
+     {
+      "id": "lib_img_end",
+      "filename": "x.png",
+      "end": 3,
+      "saved_at": "2026-09-19T10:00:00+00:00"
+     },
+     {
+      "id": "lib_tts",
+      "resource_type": "audio",
+      "filename": "voz 1.m4a",
+      "voice": "ef_dora",
+      "saved_at": "2026-09-22T10:00:00+00:00",
+      "text": "hola"
+     },
+     {
+      "id": "lib_yt",
+      "resource_type": "audio",
+      "filename": "musica.m4a",
+      "youtube_url": "https://youtu.be/xyz"
+     },
+     {
+      "id": "lib_ytid",
+      "resource_type": "audio",
+      "filename": "m2.m4a",
+      "youtube_id": "q1",
+      "saved_at": "2026-09-22T10:00:00+00:00"
+     },
+     {
+      "id": "lib_origin",
+      "resource_type": "clip",
+      "filename": "o.mp4",
+      "origin": "stock"
+     },
+     {
+      "id": "lib_origin_yt",
+      "resource_type": "image",
+      "filename": "o.jpg",
+      "origin": "youtube"
+     },
+     {
+      "id": "lib_both",
+      "resource_type": "clip",
+      "filename": "b.mp4",
+      "origin": "foundry",
+      "source": "generated"
+     },
+     {
+      "id": "lib_raro",
+      "resource_type": "video",
+      "filename": 5,
+      "saved_at": ""
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "items": [
+      {
+       "id": "lib_clip",
+       "index": 3,
+       "filename": "Entrevista final.mp4",
+       "label": "Entrevista",
+       "saved_at": "2026-09-20T10:00:00+00:00",
+       "source_url": "https://YouTube.com/watch?v=abc"
+      },
+      "no es un dict"
+     ]
+    }
+   ],
+   "result": null,
+   "file": {
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     "no es un dict"
+    ]
+   }
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "error": "AttributeError",
+   "file": {
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "Entrevista",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     "no es un dict"
+    ]
+   }
+  },
+  {
+   "step": [
+    "update",
+    "lib_clip",
+    {
+     "label": "x"
+    }
+   ],
+   "result": {
+    "id": "lib_clip",
+    "index": 3,
+    "filename": "Entrevista final.mp4",
+    "label": "x",
+    "saved_at": "2026-09-20T10:00:00+00:00",
+    "source_url": "https://YouTube.com/watch?v=abc",
+    "resource_type": "clip",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "youtube",
+    "source": "external",
+    "url": "/api/library/media/video/Entrevista%20final.mp4"
+   },
+   "file": {
+    "items": [
+     {
+      "id": "lib_clip",
+      "index": 3,
+      "filename": "Entrevista final.mp4",
+      "label": "x",
+      "saved_at": "2026-09-20T10:00:00+00:00",
+      "source_url": "https://YouTube.com/watch?v=abc"
+     },
+     "no es un dict"
+    ],
+    "version": 1
+   }
+  },
+  {
+   "step": [
+    "write",
+    "{ roto"
+   ],
+   "result": null,
+   "file_text": "{ roto"
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "version": 1,
+    "items": []
+   },
+   "file_text": "{ roto"
+  },
+  {
+   "step": [
+    "write",
+    [
+     1
+    ]
+   ],
+   "result": null,
+   "file": [
+    1
+   ]
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "version": 1,
+    "items": []
+   },
+   "file": [
+    1
+   ]
+  },
+  {
+   "step": [
+    "write",
+    {
+     "items": null
+    }
+   ],
+   "result": null,
+   "file": {
+    "items": null
+   }
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "error": "TypeError",
+   "file": {
+    "items": null
+   }
+  }
+ ],
+ "dto": [
+  {
+   "item": {
+    "id": "lib_clip",
+    "index": 3,
+    "filename": "Entrevista final.mp4",
+    "label": "Entrevista",
+    "saved_at": "2026-09-20T10:00:00+00:00",
+    "source_url": "https://YouTube.com/watch?v=abc"
+   },
+   "scope": "library",
+   "result": {
+    "id": "lib_clip",
+    "index": 3,
+    "filename": "Entrevista final.mp4",
+    "label": "Entrevista",
+    "saved_at": "2026-09-20T10:00:00+00:00",
+    "source_url": "https://YouTube.com/watch?v=abc",
+    "resource_type": "clip",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "youtube",
+    "source": "external",
+    "url": "/api/library/media/video/Entrevista%20final.mp4"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_clip",
+    "index": 3,
+    "filename": "Entrevista final.mp4",
+    "label": "Entrevista",
+    "saved_at": "2026-09-20T10:00:00+00:00",
+    "source_url": "https://YouTube.com/watch?v=abc"
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_clip",
+    "index": 3,
+    "filename": "Entrevista final.mp4",
+    "label": "Entrevista",
+    "saved_at": "2026-09-20T10:00:00+00:00",
+    "source_url": "https://YouTube.com/watch?v=abc",
+    "resource_type": "clip",
+    "scope": "project",
+    "is_saved": false,
+    "origin": "youtube",
+    "source": "external"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_img_w",
+    "width": 1080,
+    "filename": "foto",
+    "saved_at": "2026-09-21T10:00:00+00:00"
+   },
+   "scope": "library",
+   "result": {
+    "id": "lib_img_w",
+    "width": 1080,
+    "filename": "foto",
+    "saved_at": "2026-09-21T10:00:00+00:00",
+    "resource_type": "image",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "upload",
+    "source": "external",
+    "url": "/api/library/media/image/foto"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_img_w",
+    "width": 1080,
+    "filename": "foto",
+    "saved_at": "2026-09-21T10:00:00+00:00"
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_img_w",
+    "width": 1080,
+    "filename": "foto",
+    "saved_at": "2026-09-21T10:00:00+00:00",
+    "resource_type": "image",
+    "scope": "project",
+    "is_saved": false,
+    "origin": "upload",
+    "source": "external"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_img_ext",
+    "filename": "Logo Ñandú?.PNG",
+    "saved_at": "2026-09-21T10:00:00+00:00"
+   },
+   "scope": "library",
+   "result": {
+    "id": "lib_img_ext",
+    "filename": "Logo Ñandú?.PNG",
+    "saved_at": "2026-09-21T10:00:00+00:00",
+    "resource_type": "image",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "upload",
+    "source": "external",
+    "url": "/api/library/media/image/Logo%20%C3%91and%C3%BA%3F.PNG"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_img_ext",
+    "filename": "Logo Ñandú?.PNG",
+    "saved_at": "2026-09-21T10:00:00+00:00"
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_img_ext",
+    "filename": "Logo Ñandú?.PNG",
+    "saved_at": "2026-09-21T10:00:00+00:00",
+    "resource_type": "image",
+    "scope": "project",
+    "is_saved": false,
+    "origin": "upload",
+    "source": "external"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_img_end",
+    "filename": "x.png",
+    "end": 3,
+    "saved_at": "2026-09-19T10:00:00+00:00"
+   },
+   "scope": "library",
+   "result": {
+    "id": "lib_img_end",
+    "filename": "x.png",
+    "end": 3,
+    "saved_at": "2026-09-19T10:00:00+00:00",
+    "resource_type": "audio",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "tts",
+    "source": "generated",
+    "url": "/api/library/media/audio/x.png"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_img_end",
+    "filename": "x.png",
+    "end": 3,
+    "saved_at": "2026-09-19T10:00:00+00:00"
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_img_end",
+    "filename": "x.png",
+    "end": 3,
+    "saved_at": "2026-09-19T10:00:00+00:00",
+    "resource_type": "audio",
+    "scope": "project",
+    "is_saved": false,
+    "origin": "tts",
+    "source": "generated"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_tts",
+    "resource_type": "audio",
+    "filename": "voz 1.m4a",
+    "voice": "ef_dora",
+    "saved_at": "2026-09-22T10:00:00+00:00",
+    "text": "hola"
+   },
+   "scope": "library",
+   "result": {
+    "id": "lib_tts",
+    "resource_type": "audio",
+    "filename": "voz 1.m4a",
+    "voice": "ef_dora",
+    "saved_at": "2026-09-22T10:00:00+00:00",
+    "text": "hola",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "tts",
+    "source": "generated",
+    "url": "/api/library/media/audio/voz%201.m4a"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_tts",
+    "resource_type": "audio",
+    "filename": "voz 1.m4a",
+    "voice": "ef_dora",
+    "saved_at": "2026-09-22T10:00:00+00:00",
+    "text": "hola"
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_tts",
+    "resource_type": "audio",
+    "filename": "voz 1.m4a",
+    "voice": "ef_dora",
+    "saved_at": "2026-09-22T10:00:00+00:00",
+    "text": "hola",
+    "scope": "project",
+    "is_saved": false,
+    "origin": "tts",
+    "source": "generated"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_yt",
+    "resource_type": "audio",
+    "filename": "musica.m4a",
+    "youtube_url": "https://youtu.be/xyz"
+   },
+   "scope": "library",
+   "result": {
+    "id": "lib_yt",
+    "resource_type": "audio",
+    "filename": "musica.m4a",
+    "youtube_url": "https://youtu.be/xyz",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "youtube",
+    "source": "external",
+    "url": "/api/library/media/audio/musica.m4a"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_yt",
+    "resource_type": "audio",
+    "filename": "musica.m4a",
+    "youtube_url": "https://youtu.be/xyz"
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_yt",
+    "resource_type": "audio",
+    "filename": "musica.m4a",
+    "youtube_url": "https://youtu.be/xyz",
+    "scope": "project",
+    "is_saved": false,
+    "origin": "youtube",
+    "source": "external"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_ytid",
+    "resource_type": "audio",
+    "filename": "m2.m4a",
+    "youtube_id": "q1",
+    "saved_at": "2026-09-22T10:00:00+00:00"
+   },
+   "scope": "library",
+   "result": {
+    "id": "lib_ytid",
+    "resource_type": "audio",
+    "filename": "m2.m4a",
+    "youtube_id": "q1",
+    "saved_at": "2026-09-22T10:00:00+00:00",
+    "scope": "library",
+    "is_saved": true,
+    "origin": "youtube",
+    "source": "external",
+    "url": "/api/library/media/audio/m2.m4a"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_ytid",
+    "resource_type": "audio",
+    "filename": "m2.m4a",
+    "youtube_id": "q1",
+    "saved_at": "2026-09-22T10:00:00+00:00"
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_ytid",
+    "resource_type": "audio",
+    "filename": "m2.m4a",
+    "youtube_id": "q1",
+    "saved_at": "2026-09-22T10:00:00+00:00",
+    "scope": "project",
+    "is_saved": false,
+    "origin": "youtube",
+    "source": "external"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_origin",
+    "resource_type": "clip",
+    "filename": "o.mp4",
+    "origin": "stock"
+   },
+   "scope": "library",
+   "result": {
+    "id": "lib_origin",
+    "resource_type": "clip",
+    "filename": "o.mp4",
+    "origin": "stock",
+    "scope": "library",
+    "is_saved": true,
+    "source": "generated",
+    "url": "/api/library/media/video/o.mp4"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_origin",
+    "resource_type": "clip",
+    "filename": "o.mp4",
+    "origin": "stock"
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_origin",
+    "resource_type": "clip",
+    "filename": "o.mp4",
+    "origin": "stock",
+    "scope": "project",
+    "is_saved": false,
+    "source": "generated"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_origin_yt",
+    "resource_type": "image",
+    "filename": "o.jpg",
+    "origin": "youtube"
+   },
+   "scope": "library",
+   "result": {
+    "id": "lib_origin_yt",
+    "resource_type": "image",
+    "filename": "o.jpg",
+    "origin": "youtube",
+    "scope": "library",
+    "is_saved": true,
+    "source": "external",
+    "url": "/api/library/media/image/o.jpg"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_origin_yt",
+    "resource_type": "image",
+    "filename": "o.jpg",
+    "origin": "youtube"
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_origin_yt",
+    "resource_type": "image",
+    "filename": "o.jpg",
+    "origin": "youtube",
+    "scope": "project",
+    "is_saved": false,
+    "source": "external"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_both",
+    "resource_type": "clip",
+    "filename": "b.mp4",
+    "origin": "foundry",
+    "source": "generated"
+   },
+   "scope": "library",
+   "result": {
+    "id": "lib_both",
+    "resource_type": "clip",
+    "filename": "b.mp4",
+    "origin": "foundry",
+    "source": "generated",
+    "scope": "library",
+    "is_saved": true,
+    "url": "/api/library/media/video/b.mp4"
+   }
+  },
+  {
+   "item": {
+    "id": "lib_both",
+    "resource_type": "clip",
+    "filename": "b.mp4",
+    "origin": "foundry",
+    "source": "generated"
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_both",
+    "resource_type": "clip",
+    "filename": "b.mp4",
+    "origin": "foundry",
+    "source": "generated",
+    "scope": "project",
+    "is_saved": false
+   }
+  },
+  {
+   "item": {
+    "id": "lib_raro",
+    "resource_type": "video",
+    "filename": 5,
+    "saved_at": ""
+   },
+   "scope": "library",
+   "error": "TypeError"
+  },
+  {
+   "item": {
+    "id": "lib_raro",
+    "resource_type": "video",
+    "filename": 5,
+    "saved_at": ""
+   },
+   "scope": "project",
+   "result": {
+    "id": "lib_raro",
+    "resource_type": "audio",
+    "filename": 5,
+    "saved_at": "",
+    "scope": "project",
+    "is_saved": false,
+    "origin": "tts",
+    "source": "generated"
+   }
+  },
+  {
+   "item": "texto",
+   "scope": "library",
+   "error": "AttributeError"
+  }
+ ]
+}

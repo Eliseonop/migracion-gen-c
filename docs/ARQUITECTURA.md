@@ -106,6 +106,7 @@ apply_command(timeline, command, ids):
   | `clip_motion.hpp` | Presets de animación (zoom, giro, deslizar, fundido, pop, pulso, trazo) |
   | `text_metrics.hpp` | Tamaño de letra, interlineado y reparto en líneas; ancho de texto inyectable |
   | `sfx_library.hpp` | Biblioteca de SFX inyectable y emparejamiento por palabras clave |
+  | `library.hpp` | `data/library`: materiales guardados, su DTO y quitarlos |
   | `settings.hpp` | `data/settings.json`: ajustes con defectos, API keys (varias por proveedor) y vista pública sin secretos |
 
 - **Parámetros:** los nombres son los del MCP de video-yt. `parse_command` aplica las reglas de los kwargs de Python: parámetro desconocido = error y obligatorio ausente = error.

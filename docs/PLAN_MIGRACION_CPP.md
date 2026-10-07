@@ -623,3 +623,22 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 - la biblioteca y las colecciones de `data/` y la biblioteca de SFX desde disco, que cierran F1;
 - después, la evaluación de capas de F3, que es lógica pura, mientras falte el Windows SDK.
 
+### 2026-10-07 — F1: biblioteca de `data/library`
+
+**Hecho: `library.hpp`** (espejo de `library.py` y `storage.resolve_library_media`):
+- carga tolerante de `library.json`;
+- tipo, origen y fuente deducidos;
+- `material_dto`, con la URL codificada como `urllib.parse.quote`;
+- lista ordenada por fecha (orden estable al revés);
+- editar título y descripción y la metadata semántica;
+- proyectos que usan un material;
+- quitar un material: borra su archivo con la carpeta del tipo guardado, no del deducido, como Python.
+
+«Guardar en la biblioteca» desde un proyecto cambia el proyecto y copia archivos, así que llega con el almacén de proyectos de F5.
+
+**Verificación:**
+- **Casos:** 32 pasos sobre un `data/` temporal, con `config.DATA_DIR` y `projects._load` apuntando a él en video-yt, y 21 materiales sueltos para `material_dto`. Tras cada paso se comparan el resultado, los errores y `library.json`.
+- **Tus datos:** tu `library.json`.
+- **Mutación:** 8/8. El de «tipo deducido al quitar» necesitó un caso propio.
+- **Resultado:** 55 tests y 47 728 aserciones en verde, en Debug y en Release.
+

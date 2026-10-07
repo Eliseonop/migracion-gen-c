@@ -28,6 +28,7 @@ add_library(gc_core
     src/history_store.cpp
     src/ids.cpp
     src/keyframes.cpp
+    src/library.cpp
     src/masks.cpp
     src/no_overlap.cpp
     src/pose.cpp
