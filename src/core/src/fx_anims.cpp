@@ -261,9 +261,13 @@ std::vector<double> animation_sample_times(const TimelineClip& clip, double clip
     const double step = 1.0 / kAnimSampleFps;
     std::vector<double> times;
     auto add = [&](double a, double b) {
-        // max(1, math.ceil(...)): con un tramo vacío o al revés, un solo intervalo.
+        // max(1, math.ceil(...)): con un tramo vacío o al revés, un solo intervalo. Tope de
+        // kMaxAnimSamples (≈ 92 h a 30 fps) para no convertir a entero un valor que no cabe
+        // (UB) ni reservar memoria sin límite; por encima, Python tampoco termina.
         const double steps = std::ceil((b - a) / step - 1e-9);
-        const std::int64_t n = steps >= 1 ? static_cast<std::int64_t>(steps) : 1;
+        const std::int64_t n = !(steps >= 1) ? 1
+                               : steps < static_cast<double>(kMaxAnimSamples) ? static_cast<std::int64_t>(steps)
+                                                                              : kMaxAnimSamples;
         for (std::int64_t i = 0; i <= n; ++i) {
             times.push_back(detail::py_round(a + (b - a) * static_cast<double>(i) / static_cast<double>(n), 6));
         }

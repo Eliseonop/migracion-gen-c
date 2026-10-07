@@ -9,16 +9,18 @@ Uso, con el Python de video-yt (tiene pydantic y el resto de dependencias):
     E:\\proyectos\\video-yt\\.venv\\Scripts\\python.exe tools\\fixtures\\export_fixtures.py
     E:\\proyectos\\video-yt\\.venv\\Scripts\\python.exe tools\\fixtures\\export_fixtures.py --real
 
-Salida:
-  tests/fixtures/model/synthetic.json   modelo: casos de model_cases.py        (al repo)
-  tests/fixtures/edit/synthetic.json    edición: casos de ops_cases.py         (al repo)
-  tests/fixtures/keyframes/synthetic.json  animación: casos de kf_cases.py     (al repo)
-  tests/fixtures/layout/synthetic.json  encuadre: casos de layout_cases.py     (al repo)
-  tests/fixtures/local/model/real.json  con --real: TUS proyectos de data/projects.json
-  tests/fixtures/local/edit/real.json   con --real: operaciones sobre TUS timelines
-  tests/fixtures/local/{keyframes,layout}/real.json  con --real: TUS clips
-                                        tests/fixtures/local/ son datos personales: está
-                                        en .gitignore y nunca se sube.
+Salida (al repo):
+  tests/fixtures/model/synthetic.json      modelo: casos de model_cases.py
+  tests/fixtures/edit/synthetic.json       edición: casos de ops_cases.py
+  tests/fixtures/keyframes/synthetic.json  animación: casos de kf_cases.py
+  tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
+  tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
+  tests/fixtures/history/synthetic.json    historial: pasos de history_cases.py
+  tests/fixtures/settings/synthetic.json   ajustes: pasos de settings_cases.py
+  tests/fixtures/library/synthetic.json    biblioteca: pasos de library_cases.py
+Con --real, en tests/fixtures/local/<lo mismo>/real.json: TUS proyectos, timelines,
+clips, historiales, ajustes (con las claves redactadas) y biblioteca de video-yt.
+tests/fixtures/local/ son datos personales: está en .gitignore y nunca se sube.
 
 Las operaciones pasan por el `timeline_store.apply_op` REAL de video-yt (con el disco
 sustituido por memoria) y con uuid.uuid4 sustituido por la misma secuencia que
@@ -864,6 +866,17 @@ def real_layout_fixtures(ctx: Ctx, data: dict) -> dict:
 
 # --- Evaluación por clip (fx_anims, clip_fx, clip_blend, clip_adjust) ------------------------
 
+def _nan_safe(value):
+    """NaN e infinito como texto ("nan", "inf", "-inf"): JSON no los admite."""
+    if isinstance(value, float) and value - value != 0:
+        return repr(value)
+    if isinstance(value, dict):
+        return {k: _nan_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_nan_safe(v) for v in value]
+    return value
+
+
 def _matrix(m) -> list | None:
     return None if m is None else [[float(v) for v in row] for row in m]
 
@@ -879,7 +892,7 @@ def eval_case(ctx: Ctx, name: str, raw_clip: dict, times: list[float]) -> dict:
     samples = [{"t": t, "delta": fa.animation_delta(c, t, dur), "pose": clip_anim.render_pose(c, t),
                 "anim_opacity": clip_anim.anim_opacity(c, t), "fx": clip_fx.clip_fx_at(c, t, dur)}
                for t in times]
-    return _pure({
+    return _pure(_nan_safe({
         "name": name, "clip": c.model_dump(), "duration": dur,
         "animations": [{"slot": a["slot"], "id": a["anim"]["id"], "dur": a["dur"]}
                        for a in fa.clip_animations(c, dur)],
@@ -888,16 +901,17 @@ def eval_case(ctx: Ctx, name: str, raw_clip: dict, times: list[float]) -> dict:
         "has_color_adjust": ca.has_color_adjust(c),
         "passes": [{"ghost": g, "clip": p.model_dump()} for p, g in ca.adjust_passes(c)],
         "samples": samples,
-    })
+    }))
 
 
 def synthetic_eval_fixtures(ctx: Ctx) -> dict:
     from app import clip_adjust as ca
+    from app import clip_blend
     from app import clip_fx
     from app import fx_anims as fa
     sys.path.insert(0, str(HERE))
     import eval_cases as ec
-    return _pure({
+    return _pure(_nan_safe({
         "clips": [eval_case(ctx, c["name"], c["clip"], ec.TIMES) for c in ec.CLIPS],
         # x siempre es real en fx_anims (una fracción): con un int, las curvas devolverían int.
         "ease": [{"name": n, "x": float(x), "y": fa.EASES.get(n, fa.EASES["linear"])(float(x))}
@@ -909,7 +923,8 @@ def synthetic_eval_fixtures(ctx: Ctx) -> dict:
                      "values": {k: ca.adjust_value(e if isinstance(e, dict) else {}, k) for k in ca.ADJUST_KEYS},
                      "strip_color": ca.strip_color(e if isinstance(e, dict) else None)}
                     for e in ec.EFFECTS],
-    })
+        "blend": [{"mode": m, "normalized": clip_blend.normalize_blend(m)} for m in ec.BLENDS],
+    }))
 
 
 def real_eval_fixtures(ctx: Ctx, data: dict) -> dict:
@@ -926,7 +941,7 @@ def real_eval_fixtures(ctx: Ctx, data: dict) -> dict:
             dur = ctx.clip_speed.clip_timeline_duration(c)
             times = sorted({0.0, 0.1, 0.2, 0.4, dur / 2, max(0.0, dur - 0.4), max(0.0, dur - 0.1), dur})
             cases.append(eval_case(ctx, f"{proj.id} · {c.id}", c.model_dump(), times))
-    return {"clips": cases, "ease": [], "tracks": [], "fx_windows": [], "effects": []}
+    return {"clips": cases, "ease": [], "tracks": [], "fx_windows": [], "effects": [], "blend": []}
 
 
 def _fits(clip_kind: str, track_kind: str) -> bool:
@@ -987,7 +1002,8 @@ def main() -> None:
           sum("error" in d["rect"] or "error" in d["even"] for d in lay["dest"]))
     ev = synthetic_eval_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "eval" / "synthetic.json", ev,
-          len(ev["clips"]) + len(ev["ease"]) + len(ev["tracks"]) + len(ev["fx_windows"]) + len(ev["effects"]), 0)
+          len(ev["clips"]) + len(ev["ease"]) + len(ev["tracks"]) + len(ev["fx_windows"]) + len(ev["effects"])
+          + len(ev["blend"]), 0)
 
     if args.real:
         data_file = args.video_yt / "backend" / "data" / "projects.json"

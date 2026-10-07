@@ -10,6 +10,7 @@
 // (x, y en fracción del cuadro; scale y opacity multiplican; rotation suma), nunca al
 // recorte (cx/cy/zoom). La edición usa clip_pose; el dibujo, render_pose.
 
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string_view>
@@ -64,6 +65,7 @@ struct PoseDelta {
 [[nodiscard]] double anim_opacity(const TimelineClip& clip, double local_t);
 
 inline constexpr int kAnimSampleFps = 30;
+inline constexpr std::int64_t kMaxAnimSamples = 10'000'000; // intervalos por animación
 
 // Instantes (s locales, redondeados a 6 decimales, ordenados y sin repetir) en los que
 // el export muestrea las animaciones: a 30 fps dentro de la ventana de cada una.

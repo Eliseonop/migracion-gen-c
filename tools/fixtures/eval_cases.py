@@ -23,6 +23,9 @@ CLIPS = [
     {"name": "duraciones raras: texto, negativa, NaN, nula", "clip": clip(
         "d", animations={"in": {"id": "fade_in", "dur": "0.3"}, "out": {"id": "spin_out", "dur": -1},
                          "loop": {"id": "pulse", "dur": "nan"}})},
+    {"name": "duración 0 exacta (vale la del catálogo) y combo con dur propia (vale el clip)", "clip": clip(
+        "d0", animations={"in": {"id": "zoom_in", "dur": 0}, "out": {"id": "fade_out", "dur": 0.0},
+                          "combo": {"id": "drift_left", "dur": 5}})},
     {"name": "duración inf y bool", "clip": clip(
         "di", animations={"in": {"id": "pop_in", "dur": "inf"}, "out": {"id": "shrink_out", "dur": True}})},
     {"name": "id de otra ranura, desconocido o no texto", "clip": clip(
@@ -47,7 +50,8 @@ CLIPS = [
         "ne", animations={"in": "fade_in", "out": None, "loop": [1], "combo": {"id": "ken_burns_out"}})},
     {"name": "animaciones vacías", "clip": clip("v", animations={})},
     {"name": "clip de duración 0", "clip": clip(
-        "z", in_point=1, out_point=1, animations={"in": {"id": "fade_in"}, "combo": {"id": "ken_burns_in"}},
+        "z", in_point=1, out_point=1, animations={"in": {"id": "fade_in"}, "out": {"id": "pop_out"},
+                                                  "loop": {"id": "pulse"}, "combo": {"id": "ken_burns_in"}},
         appear="zoom", exit="fade")},
     {"name": "velocidad 2 al revés", "clip": clip(
         "s", speed=2, reverse=True, transform={"x": 0, "y": -0.0, "scale": 0.5, "rotation": 0},
@@ -86,6 +90,10 @@ CLIPS = [
         "a4", kind="text", asset_kind="text", filename="", text="x", masks=[_ADJ_MASK], effects={"exposure": 1})},
     {"name": "máscara de ajuste sin ajustes de color", "clip": clip("a5", masks=[_ADJ_MASK], effects={"blur": 3})},
     {"name": "máscara de ajuste desactivada", "clip": clip("a6", masks=[_OFF_MASK], effects={"exposure": 1})},
+    {"name": "capa de ajuste con máscara de ajuste: una pasada", "clip": clip(
+        "a9", kind="adjustment", asset_kind="shape", filename="", masks=[_ADJ_MASK], effects={"exposure": 1})},
+    {"name": "motion con máscara de ajuste: una pasada", "clip": clip(
+        "a10", kind="motion", asset_kind="shape", filename="", masks=[_ADJ_MASK], effects={"hue": 20})},
     {"name": "ajustes a cero o falsos", "clip": clip(
         "a7", masks=[_ADJ_MASK], effects={"exposure": 0, "hue": False, "whites": "", "contrast": None})},
     {"name": "ajustes como texto, bool, NaN y fuera de rango", "clip": clip(
@@ -94,7 +102,8 @@ CLIPS = [
 ]
 
 # Instantes locales: antes, dentro y después de las ventanas de 0,4–0,5 s y del clip de 4 s.
-TIMES = [-1, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.37, 0.4, 0.45, 0.5, 0.6, 1, 1.7, 2, 3.5, 3.55, 3.6, 3.75,
+# NaN también: min(1, max(0, NaN)) de Python da 0 (va como texto "nan" en el JSON).
+TIMES = [float("nan"), -1, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.37, 0.4, 0.45, 0.5, 0.6, 1, 1.7, 2, 3.5, 3.55, 3.6, 3.75,
          3.9, 4, 4.5]
 
 EASE_NAMES = ["linear", "inQuad", "outQuad", "inOutQuad", "inCubic", "outCubic", "inOutCubic", "inOutSine",
@@ -113,9 +122,14 @@ TRACKS = [
     [[0, 0], [0.5, 1], [0.5, 3], [1, 4, "outBack"]],
     [[0.3, 1], [0.6, -1, "inOutSine"]],
 ]
-TRACK_U = [-0.5, 0, 0.1, 0.2, 0.25, 0.3, 0.45, 0.5, 0.55, 0.6, 0.8, 0.9, 1, 2]
+TRACK_U = [float("nan"), -0.5, 0, 0.1, 0.2, 0.25, 0.3, 0.45, 0.5, 0.55, 0.6, 0.8, 0.9, 1, 2]
 
-FX_WINDOWS = [-1, 0, 0.1, 0.5, 0.8, 0.81, 1, 5]
+FX_WINDOWS = [float("nan"), float("inf"), -1, 0, 0.1, 0.5, 0.8, 0.81, 1, 5]
+
+# Modos de fusión: los 12 válidos y algunos que no lo son.
+BLENDS = ["normal", "darken", "multiply", "color_burn", "lighten", "screen", "color_dodge", "overlay",
+          "soft_light", "hard_light", "difference", "exclusion", "MULTIPLY", "", "Normal", " screen", "hardlight",
+          "color-dodge"]
 
 EFFECTS = [
     None, {}, [1], {"exposure": 0.5}, {"exposure": -1.5}, {"whites": 0.5}, {"whites": -0.5},

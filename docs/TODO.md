@@ -22,11 +22,11 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 57 tests y 88 824 aserciones en verde (Debug y Release, 0 warnings).
+**Cifras actuales:** 57 tests y 89 321 aserciones en verde (Debug y Release, 0 warnings).
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
-historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (59 pasos + los tuyos, con las claves redactadas) biblioteca (52 pasos + 23 materiales + la tuya) y evaluación por clip (38 clips con 874 muestras + 404 casos sueltos; 914 clips reales con 7122 muestras).
-Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12.
+historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (59 pasos + los tuyos, con las claves redactadas) biblioteca (52 pasos + 23 materiales + la tuya) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras).
+Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12 (4e-15 en la evaluación).
 
 ---
 
@@ -36,7 +36,9 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 
 1. **Con el Windows SDK instalado:** F3, empezando por MSVC + vcpkg (FFmpeg, Skia, ONNX Runtime) y `gc_media`.
 2. **Sin él, en este orden:**
-   - F3, evaluación de la timeline en un instante (2ª parte): `layersAt`/`videosAt` de `frontend/src/lib/clipLayout.js` (fixtures con node: el JS corre en Node 24) y el fotograma ensamblado con lo ya portado (ver las notas de F3);
+   - F3, evaluación de la timeline en un instante (2ª parte), en dos tandas (ver las notas de F3):
+     1. `stack_layers` y `buried_text_track_ids` (`track_stack.py`) y `layers_at`/`videos_at` con `LayerRules` (fixtures con node para el modo preview y con Python para lo enterrado);
+     2. el fotograma ensamblado `evaluate(timeline, t, dimensiones del material)`, con la comprobación de ancho o alto 0;
    - F1, biblioteca de SFX de disco (`sfx.py`) y colecciones (`collections.py`). Las colecciones son de la interfaz y pueden esperar a F5: escanean carpetas y ordenan como `WindowsPath`, con el `lower()` de Unicode;
    - F0, `.clang-tidy` y spdlog.
 3. `recipe_layout.py` se porta con el render de F3: casi todo son cadenas de filtros de FFmpeg que con Skia quizá no hagan falta.
@@ -46,6 +48,7 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 - [ ] Instalar el **Windows SDK**: *Visual Studio Installer → Modificar → «Desarrollo para el escritorio con C++»* y marcar un Windows 11 SDK. Sin esto MSVC no enlaza, y F3 lo necesita.
 - [x] Primer commit hecho: un commit local por tanda verificada, sin push.
 - [ ] Crear el **remoto en GitHub** para que el CI se ejecute.
+- [ ] Confirmar la **semántica de visibilidad y orden de capas** del render C++ (notas de F3): intervalo [inicio, fin) sin el margen de 0,02 s del preview, desempate por `start` dentro de una capa y fin con la duración redondeada de Python. Cambia algún fotograma de borde respecto al export actual. Mientras tanto se implementa así, con el modo del preview disponible.
 - [ ] *(Sugerencia)* Mover GenClipPro fuera de `C:`, porque ese SSD tiene bloques defectuosos.
 
 ---
@@ -160,7 +163,7 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 
 - [ ] Prerrequisito: MSVC + vcpkg con FFmpeg, Skia y ONNX Runtime
 - [ ] **Evaluación:** timeline en el instante *t* → lista de capas (usa keyframes, pose, máscaras y layout)
-  - [x] Por clip: animaciones de catálogo (`fx_anims`: `clip_animations`, `animation_delta`, `render_pose`, `anim_opacity` y `animation_sample_times`), aparición y salida (`clip_fx`: `clip_fx_at`, `fx_windows`), modo de fusión (`blend`) y ajustes de color (`clip_adjust`: matriz 3×3, `has_color_adjust`, `strip_color` y las pasadas base + fantasma de la máscara de ajuste). Paridad: 38 clips sintéticos en 23 instantes, 240 puntos de curva, 140 de pista, 8 ventanas y 16 efectos sueltos, y tus 914 clips en 7122 instantes; 23/24 mutaciones (la otra es equivalente)
+  - [x] Por clip: animaciones de catálogo (`fx_anims`: `clip_animations`, `animation_delta`, `render_pose`, `anim_opacity` y `animation_sample_times`), aparición y salida (`clip_fx`: `clip_fx_at`, `fx_windows`), modo de fusión (`blend`) y ajustes de color (`clip_adjust`: matriz 3×3, `has_color_adjust`, `strip_color` y las pasadas base + fantasma de la máscara de ajuste). Paridad: 41 clips sintéticos en 24 instantes (uno es NaN), 240 puntos de curva, 150 de pista, 10 ventanas, 16 efectos y 18 modos de fusión sueltos, y tus 914 clips en 7122 instantes; 34/35 mutaciones con `tools/dev/mutantes_eval.py` (la otra es equivalente)
   - [ ] De la timeline: `layers_at`/`videos_at` (filtro y pila de capas de `clipLayout.js`, fixtures con node) y el fotograma ensamblado: por capa, tiempo local y de fuente, pose, fx, fusión, volteo, máscaras, recorte y destino con las dimensiones del material
 - [ ] `recipe_layout.py` (corte doble: `split_orientation_for`, `contain_dest`, filtros `vstack`/`hstack`)
 - [ ] Comprobar las dimensiones antes de llamar a `clip_layout`: con ancho o alto 0, Python lanza ZeroDivisionError y C++ daría inf/NaN (p. ej. si falla la sonda de un vídeo)
@@ -180,11 +183,19 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 
 ### Notas de F3
 - **Evaluación, dos referencias:** el preview (`canvas.js` → `drawComposite`) evalúa por fotograma y el export (`compose.py`) arma expresiones de FFmpeg muestreando la pose (`_pose_prop_points`: `pose_sample_times` + `animation_sample_times` a 30 fps). Las piezas por clip son las mismas en los dos (`render_pose`, `clip_fx_at`, `clip_masks_at`, `crop_window`, `dest_rect`), y son las que ya están portadas.
-- **Orden y visibilidad difieren** entre preview y export, y hay que decidirlo en la 2ª parte:
+- **Orden y visibilidad difieren** entre preview y export (la decisión, abajo):
   - preview (`layersAt`): visible si `start − 0,02 ≤ head < fin` (margen por el *seek* de `<video>`); orden por capa de la pila y después por índice en la lista; entran vídeo, imagen, figura, motion, ajuste y texto, salvo los desactivados o en pista oculta o inexistente;
   - export (`build_command`): solo clips de más de 0,02 s con archivo; dentro de una capa, orden por `start` y después por índice (para que la cadena de overlays sea monótona en el tiempo), y cada clip activo con `between(t, start, end)` (cerrado por los dos lados).
+- **Decisión (recomendada por la revisión; falta que Edu la confirme):** una sola semántica, la del export donde decide el resultado, con duraciones de Python:
+  - visible si `start ≤ t < start + clip_timeline_duration` (semiabierto, en el instante del fotograma), sin el margen de −0,02 s (compensaba el *seek* de `<video>`; con decodificación exacta adelantaría el clip entrante hasta 0,6 fotogramas) y sin la guarda de 0,02 s (un intervalo vacío ya no se ve);
+  - orden por (capa de la pila, `max(0, start)`, índice): el clip que entra tapa al que sale aunque la lista esté al revés (`move_clip` no reordena la lista);
+  - `between(t, start, end)` del export es cerrado y, con `eof_action=repeat`, en un corte que cae en la rejilla de 1/fps deja ver el último fotograma del saliente junto al entrante: el C++ no lo reproduce;
+  - implementación: `layers_at(t, timeline, LayerRules{seek_margin, tie_by_start})`. Con `{0.02, false}` es el `layersAt` literal (paridad con node); el render lo llama con `{0, true}`. Las diferencias llevan tests propios (corte, solape de 15 ms y margen);
+  - los PSNR de las fixtures de render deben excluir ±1 fotograma alrededor de los bordes de clip.
+  - **Tus datos (medido por la revisión):** de 979 clips, 665 están pegados (hueco ≤ 20 ms) a otro de su pista, así que el borde es el caso normal; hay 17 solapes dentro de una pista (5 visuales en V1, de 0,2 a 46 ms) y en 2 el orden de la lista es el inverso al de `start`; 35 clips están fuera de orden de `start` en la lista. No hay clips de ≤ 0,02 s ni `start` negativos.
+- **Duraciones del preview ≠ Python:** `clipEnd` de `editorModel.js` usa `clipSpeed` de JS, que trata las **figuras** como velocidad 1 (Python solo exime texto, imagen y ajuste) y **no redondea**; `clip_timeline_duration` de Python redondea la fuente y el resultado a 3 decimales. Fixtures de `layersAt` con node en el borde del clip o con figuras a otra velocidad no coincidirán con el `clip_end` de `gc_core`: elegir una semántica antes de generarlas. El JS se importa bien desde Node 24 (`clipLayout.js` usa rutas con extensión; probado con `pathToFileURL`).
 - **`fx_anims`:** el catálogo no usa `linear`, `inOutQuad`, `inOutCubic` ni `hold`; la rejilla de curvas los cubre. En `eval_track`, la rama de tramo de longitud 0 (`f = 1`) es inalcanzable: el tramo anterior ya cubre ese instante (también con claves desordenadas).
-- **Tolerancia:** con tolerancia 0 fallan 3 de 41 011 comprobaciones (la curva `outBack` de `pop_in`, por `pow()`); con 1e-12 relativa pasan todas. La matriz de color con tono o exposición pasa por `cos`/`sin`/`pow`.
+- **Tolerancia:** con tolerancia 0 fallan 3 muestras, todas de 1 ulp (curvas con `pow()`). La tolerancia es de 4e-15 relativa (unos 18 ulps, margen para otras libm) y solo donde hay `pow`/`sin`/`cos`: las curvas `outCubic`, `inOutQuad`, `inOutCubic`, `outBack`, `outElastic` e `inOutSine`, y la matriz de color con exposición o tono. Con 1e-12, o con tolerancia en cualquier clip animado, sobrevivían mutantes de 1e-14 en las constantes (`kC4`, `0.213`, `0.18`). NaN e infinito viajan como texto (`_nan_safe` en el exportador).
 - **Tus datos** no usan animaciones de catálogo, modos de fusión ni máscaras de ajuste: eso solo lo cubren los casos sintéticos. Sí usan aparición y salida (fade, dissolve, zoom, wipe, slide).
 - **Sin portar a propósito:** las cadenas de FFmpeg (`effects_ffmpeg`, `video_fx_chain`, `colorchannelmixer`, `blend_steps`): el render de Skia las sustituye. El `look` sale como texto; su filtro (`clipFx.js` → `cssFilter`) va con el render.
 

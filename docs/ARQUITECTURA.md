@@ -123,6 +123,14 @@ apply_command(timeline, command, ids):
 - **Paridad:** 236 casos sintéticos (clips, curvas sueltas, `normalize_mask`, estilos) y **733 clips reales** muestreados en sus keyframes y entre medias. Sin tolerancia coinciden bit a bit **25 676 de 25 677** comprobaciones; la otra difiere en el último bit de un `pow()` de libm, así que los números se comparan con tolerancia relativa de 1e-12. Textos, colores y tipos (`700` ≠ `700.0`) van exactos.
 - **Compilación:** sin contracción a FMA (`-ffp-contract=off`), para que x86 y ARM den los mismos bits que Python.
 - **Uso en F3:** es la mitad de `evaluate(snapshot, t)`; el render pinta con estos valores.
+- **Rendimiento** (Release, timeline real de 167 clips, `move_clip` completo con *settle* y validación):
+
+  | Motor | Tiempo por operación |
+  |---|---|
+  | C++ | **≈ 90 µs** |
+  | video-yt | ≈ 49 ms |
+
+  Un arrastre a 60 fps tiene 16 ms por fotograma: sobra margen.
 
 ### Evaluación por clip (F3)
 
@@ -135,15 +143,7 @@ Lo que se dibuja de cada clip en un instante, además de la pose y las máscaras
 | `blend.hpp` | Modos de fusión válidos |
 | `clip_adjust.hpp` | Matriz 3×3 de los ajustes de color y pasadas de la máscara de ajuste (base + fantasma) |
 
-Paridad con `fx_anims.py`, `clip_anim.render_pose`, `clip_fx.py`, `clip_blend.py` y `clip_adjust.py`: 38 clips sintéticos y tus 914 clips; exacta salvo 3 de 41 011 comprobaciones que pasan por `pow()` (tolerancia de 1e-12).
-- **Rendimiento** (Release, timeline real de 167 clips, `move_clip` completo con *settle* y validación):
-
-  | Motor | Tiempo por operación |
-  |---|---|
-  | C++ | **≈ 90 µs** |
-  | video-yt | ≈ 49 ms |
-
-  Un arrastre a 60 fps tiene 16 ms por fotograma: sobra margen.
+Paridad con `fx_anims.py`, `clip_anim.render_pose`, `clip_fx.py`, `clip_blend.py` y `clip_adjust.py`: 41 clips sintéticos y tus 914 clips; exacta salvo 3 muestras de 1 ulp que pasan por `pow()`. Solo las curvas y matrices que usan `pow`/`sin`/`cos` llevan tolerancia (4e-15 relativa, unos 18 ulps).
 
 ## 5. EditSession: el documento vivo
 

@@ -5,13 +5,19 @@
 //   tests/fixtures/eval/synthetic.json   eval_cases.py (en el repo)
 //   tests/fixtures/local/eval/real.json  tus clips (todo menos el audio)
 //
-// Exactas, bit a bit y con el mismo tipo, salvo lo que pasa por pow(), sin() o cos()
-// (curvas elásticas y senoidales, la matriz de color con exposición o tono): tolerancia
-// relativa de 1e-12, porque el último bit depende de la libm de cada plataforma.
+// Exactas, bit a bit y con el mismo tipo, salvo lo que pasa por pow(), sin() o cos(): las
+// curvas outCubic, inOutQuad, inOutCubic, outBack, outElastic e inOutSine y la matriz de
+// color con exposición o tono. Ahí, tolerancia relativa de 4e-15 (unos 18 ulps), porque el último bit
+// depende de la libm de cada plataforma (con tolerancia 0 fallan 3 muestras, de 1 ulp).
+// NaN e infinito van como texto ("nan", "inf", "-inf"), como el repr de Python.
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <algorithm>
+#include <array>
+#include <cmath>
 #include <filesystem>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <string>
@@ -33,7 +39,10 @@ using namespace gc::core;
 
 namespace {
 
-constexpr double kLibmTol = 1e-12;
+constexpr double kLibmTol = 4e-15;
+// Curvas que pasan por pow(), sin() o cos().
+constexpr std::array<std::string_view, 6> kLibmEases{"outCubic", "inOutQuad", "inOutCubic",
+                                                     "outBack",  "outElastic", "inOutSine"};
 const std::filesystem::path kFixtures = path_from_utf8(GC_FIXTURES_DIR);
 
 void load_catalog() {
@@ -42,7 +51,56 @@ void load_catalog() {
     set_fx_catalog(std::make_shared<const FxCatalog>(std::move(*catalog)));
 }
 
-void check_same(std::string_view what, const Json& want, const Json& got, double tol = 0.0) {
+// NaN e infinito como texto, igual que la fixture (_nan_safe del exportador).
+Json nan_safe(const Json& j) {
+    if (j.is_number_float() && !std::isfinite(j.get<double>())) {
+        const double v = j.get<double>();
+        return std::isnan(v) ? "nan" : (v > 0 ? "inf" : "-inf");
+    }
+    if (j.is_structured()) {
+        Json out = j;
+        for (auto& v : out) {
+            v = nan_safe(v);
+        }
+        return out;
+    }
+    return j;
+}
+
+double num(const Json& j) {
+    if (j.is_string()) {
+        const std::string& s = j.get_ref<const std::string&>();
+        return s == "nan" ? std::numeric_limits<double>::quiet_NaN()
+                          : (s == "-inf" ? -1 : 1) * std::numeric_limits<double>::infinity();
+    }
+    return j.get<double>();
+}
+
+bool libm_ease(const Json& keys) {
+    if (!keys.is_array()) {
+        return false;
+    }
+    return std::ranges::any_of(keys, [](const Json& k) {
+        return k.is_array() && k.size() > 2 && k[2].is_string() &&
+               std::ranges::find(kLibmEases, k[2].get_ref<const std::string&>()) != kLibmEases.end();
+    });
+}
+
+// ¿Usa alguna de las animaciones válidas del clip una curva que pase por la libm?
+bool anims_use_libm(const ClipAnimations& anims) {
+    return std::ranges::any_of(anims.items, [](const ClipAnimation& a) {
+        const Json& tracks = a.anim->value("tracks", Json::object());
+        return std::ranges::any_of(tracks.items(), [](const auto& kv) { return libm_ease(kv.value()); });
+    });
+}
+
+// La matriz pasa por pow() con exposición y por cos()/sin() con tono.
+double matrix_tol(const Json& effects) {
+    return adjust_value(effects, "exposure") != 0 || adjust_value(effects, "hue") != 0 ? kLibmTol : 0.0;
+}
+
+void check_same(std::string_view what, const Json& want, const Json& got_raw, double tol = 0.0) {
+    const Json got = nan_safe(got_raw);
     const auto diff = gc::test::json_diff(want, got, true, tol);
     INFO(what << ": " << diff.value_or(""));
     CHECK_FALSE(diff);
@@ -73,12 +131,6 @@ Json matrix_json(const std::optional<ColorMatrix>& m) {
     return out;
 }
 
-// ¿Pasa la animación del clip por pow(), sin() o cos()? (curvas del catálogo y giro)
-bool uses_libm(const Json& clip) {
-    const Json& a = clip.value("animations", Json());
-    return a.is_object() && !a.empty();
-}
-
 std::size_t check_clips(const Json& file, const std::string& fname) {
     std::size_t samples = 0;
     for (const Json& c : file.at("clips")) {
@@ -99,7 +151,8 @@ std::size_t check_clips(const Json& file, const std::string& fname) {
         check_same("animation_sample_times", c.at("sample_times"), Json(animation_sample_times(*clip, dur)));
 
         CHECK(std::string(clip_blend(*clip)) == c.at("blend").get<std::string>());
-        check_same("color_matrix", c.at("color_matrix"), matrix_json(color_matrix(*clip)), kLibmTol);
+        const Json& clip_effects = clip->effects ? *clip->effects : Json::object();
+        check_same("color_matrix", c.at("color_matrix"), matrix_json(color_matrix(*clip)), matrix_tol(clip_effects));
         CHECK(has_color_adjust(*clip) == c.at("has_color_adjust").get<bool>());
         Json got_passes = Json::array();
         for (const ClipPass& p : adjust_passes(clip)) {
@@ -107,9 +160,9 @@ std::size_t check_clips(const Json& file, const std::string& fname) {
         }
         check_same("adjust_passes", c.at("passes"), got_passes);
 
-        const double tol = uses_libm(c.at("clip")) ? kLibmTol : 0.0;
+        const double tol = anims_use_libm(anims) ? kLibmTol : 0.0;
         for (const Json& s : c.at("samples")) {
-            const double t = s.at("t").get<double>();
+            const double t = num(s.at("t"));
             INFO("t = " << t);
             check_same("animation_delta", s.at("delta"), delta_json(animation_delta(*clip, t, dur)), tol);
             check_same("render_pose", s.at("pose"), pose_json(render_pose(*clip, t)), tol);
@@ -136,24 +189,23 @@ TEST_CASE("paridad de la evaluación: casos sintéticos", "[parity][eval]") {
         const std::string name = e.at("name").get<std::string>();
         const double x = e.at("x").get<double>();
         INFO("anim_ease(" << name << ", " << x << ")");
-        // Las elásticas y senoidales pasan por pow()/sin()/cos().
-        const bool libm = name == "outElastic" || name == "inOutSine";
+        const bool libm = std::ranges::find(kLibmEases, name) != kLibmEases.end();
         check_same("anim_ease", e.at("y"), Json(anim_ease(name, x)), libm ? kLibmTol : 0.0);
     }
     for (const Json& k : file->at("tracks")) {
         INFO("eval_anim_track(" << k.at("keys").dump() << ", " << k.at("u").dump() << ")");
-        const auto v = eval_anim_track(k.at("keys"), k.at("u").get<double>());
-        check_same("eval_anim_track", k.at("v"), v ? Json(*v) : Json(), kLibmTol);
+        const auto v = eval_anim_track(k.at("keys"), num(k.at("u")));
+        check_same("eval_anim_track", k.at("v"), v ? Json(*v) : Json(), libm_ease(k.at("keys")) ? kLibmTol : 0.0);
     }
     for (const Json& w : file->at("fx_windows")) {
-        const auto [a, b] = fx_windows(w.at("duration").get<double>());
+        const auto [a, b] = fx_windows(num(w.at("duration")));
         INFO("fx_windows(" << w.at("duration").dump() << ")");
         check_same("fx_windows", w.at("windows"), Json::array({a, b}));
     }
     for (const Json& e : file->at("effects")) {
         const Json& fx = e.at("effects");
         INFO("efectos " << fx.dump());
-        check_same("color_matrix", e.at("color_matrix"), matrix_json(color_matrix(fx)), kLibmTol);
+        check_same("color_matrix", e.at("color_matrix"), matrix_json(color_matrix(fx)), matrix_tol(fx));
         CHECK(has_color_adjust(fx) == e.at("has_color_adjust").get<bool>());
         Json values = Json::object();
         for (const std::string_view k : kAdjustKeys) {
@@ -161,6 +213,10 @@ TEST_CASE("paridad de la evaluación: casos sintéticos", "[parity][eval]") {
         }
         check_same("adjust_value", e.at("values"), values);
         check_same("strip_color", e.at("strip_color"), strip_color(fx));
+    }
+    for (const Json& b : file->at("blend")) {
+        INFO("normalize_blend(" << b.at("mode").dump() << ")");
+        CHECK(std::string(normalize_blend(b.at("mode").get<std::string>())) == b.at("normalized").get<std::string>());
     }
 }
 
