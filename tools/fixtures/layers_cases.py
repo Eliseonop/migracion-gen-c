@@ -2,9 +2,9 @@
 frontend/src/lib/clipLayout.js, y stack_layers/buried_text_track_ids de track_stack.py).
 
 Cada caso es una timeline y unos instantes. El layersAt del preview (margen de 0,02 s,
-orden por capa e índice) lo ejecuta Node sobre el JS real; la pila y las pistas de texto
-enterradas salen del Python. Las duraciones van en milisegundos y las figuras a
-velocidad 1, porque el clipEnd de JS no redondea y trata las figuras como velocidad 1.
+orden por capa e índice) lo ejecuta Node sobre el JS real, con cada clip cambiado por un
+gemelo con la duración de Python (_js_twin en export_fixtures.py); la pila y las pistas
+de texto enterradas salen del Python.
 """
 from __future__ import annotations
 
@@ -69,6 +69,11 @@ CASES = [
     {"name": "sin pistas", "tracks": [], "clips": [clip("a", "V1", start=0, out=1)], "heads": [0]},
     {"name": "solo audio", "tracks": [track("A1", "audio"), track("A2", "audio")],
      "clips": [clip("a", "A1", "audio", start=0, out=1)], "heads": [0]},
+    {"name": "figura a velocidad 2 y duraciones que se redondean", "tracks": [track("V1", "video"),
+                                                                                track("V2", "video")],
+     "clips": [clip("sh", "V1", "shape", start=0, out=2, speed=2),
+               clip("r", "V2", start=0.0004, inp=0.1234, out=1.12345)],
+     "heads": [0, 0.999, 1, 1.5, 1.999, 2, 0.9994, 0.9998, 1.0, 1.0004]},
     {"name": "duración 0 y clip corto", "tracks": [track("V1", "video")],
      "clips": [clip("z", "V1", start=1, inp=2, out=2), clip("c", "V1", start=2, out=0.01)],
      "heads": [0.98, 0.99, 1, 1.98, 1.99, 2, 2.005, 2.01]},

@@ -9,13 +9,17 @@
 // pila de pistas vídeo + texto (stack_layers) y, dentro de una capa, el de la lista.
 //
 // Dos juegos de reglas (ver las notas de F3 en docs/TODO.md):
-//   kRenderLayers   el del render C++ (preview y export): visible si start ≤ t < fin,
-//                   con start = max(0, start) como el export, y dentro de una capa el
-//                   clip que empieza más tarde va delante (como el export), con el
-//                   índice en la lista como desempate.
+//   kRenderLayers   el del render C++ (preview y export), con las reglas del export
+//                   (compose.build_command) donde deciden el resultado: visible si
+//                   start ≤ t < fin con start = max(0, start); solo clips que encajan en
+//                   su pista (clip_fits_track) y de más de 0,02 s; y dentro de una capa
+//                   va delante el clip que empieza después, con el índice en la lista
+//                   como desempate. Los textos se ordenan por la pila como el resto (el
+//                   export los pone en un .ass por orden de la lista: es cosa de libass).
 //   kPreviewLayers  el layersAt literal del preview de video-yt: ya se ve 0,02 s antes
-//                   de su inicio (margen por el seek de <video>) y dentro de una capa
-//                   solo cuenta el índice en la lista.
+//                   de su inicio (margen por el seek de <video>), no mira si el clip
+//                   encaja en su pista (en una de audio va al fondo, capa −1) y dentro
+//                   de una capa solo cuenta el índice en la lista.
 // El fin es siempre start + clip_timeline_duration (redondeada a ms, como las ops y el
 // export); el clipEnd de JS no redondea y trata las figuras como velocidad 1.
 
@@ -28,8 +32,11 @@ namespace gc::core {
 
 struct LayerRules {
     double seek_margin = 0.0; // s antes del inicio en que el clip ya se ve
-    bool by_start = true;     // export: start ≥ 0 y desempate por start dentro de la capa
+    bool export_rules = true; // start ≥ 0, desempate por start, encaje en la pista y > 0,02 s
 };
+
+// El export no dibuja clips de esta duración o menos.
+inline constexpr double kMinExportClipDur = 0.02;
 
 inline constexpr LayerRules kRenderLayers{0.0, true};
 inline constexpr LayerRules kPreviewLayers{0.02, false};

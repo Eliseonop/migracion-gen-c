@@ -146,7 +146,7 @@ Lo que se dibuja de cada clip en un instante, además de la pose y las máscaras
 
 Paridad con `fx_anims.py`, `clip_anim.render_pose`, `clip_fx.py`, `clip_blend.py` y `clip_adjust.py`: 41 clips sintéticos y tus 914 clips; exacta salvo 3 muestras de 1 ulp que pasan por `pow()`. Solo las curvas y matrices que usan `pow`/`sin`/`cos` llevan tolerancia (4e-15 relativa, unos 18 ulps).
 
-Las capas se comparan con el `layersAt` del preview ejecutado con Node (`kPreviewLayers`). El render usa sus propias reglas (`kRenderLayers`): intervalo [inicio, fin) sin el margen de 0,02 s del preview, inicio acotado a ≥ 0 y, dentro de una capa, delante el clip que empieza después, como el export.
+Las capas se comparan con el `layersAt` del preview ejecutado con Node (`kPreviewLayers`). El render usa sus propias reglas (`kRenderLayers`), las del export donde deciden el resultado: intervalo [inicio, fin) sin el margen de 0,02 s del preview, inicio acotado a ≥ 0, solo clips que encajan en su pista y de más de 0,02 s y, dentro de una capa, delante el clip que empieza después.
 
 ## 5. EditSession: el documento vivo
 

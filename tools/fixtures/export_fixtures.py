@@ -32,7 +32,6 @@ from __future__ import annotations
 import argparse
 import copy
 import json
-import math
 import shutil
 import subprocess
 import sys
@@ -962,44 +961,39 @@ def _node_layers(ctx: Ctx, cases: list[dict]) -> list[dict]:
     return json.loads(r.stdout)
 
 
-def _js_clip_end(c: dict) -> float:
-    """clipEnd de editorModel.js: sin redondeo y con las figuras a velocidad 1. Solo sirve para
-    descartar los instantes en que el preview y Python no coinciden (el C++ usa Python)."""
-    sp = 1.0
-    if c.get("kind") not in ("text", "image", "shape", "adjustment"):
-        s = float(c.get("speed") if c.get("speed") is not None else "nan")
-        sp = min(10.0, max(0.1, s)) if math.isfinite(s) and s > 0 else 1.0
-    return c["start"] + max(0.0, (c.get("out_point") or 0) - (c.get("in_point") or 0)) / sp
+def _js_twin(c: dict, ctx: Ctx) -> dict:
+    """El clip con in_point 0, out_point = su duración de Python y velocidad 1: así el clipEnd
+    de editorModel.js (sin redondeo y con las figuras a velocidad 1) da, bit a bit, el
+    start + clip_timeline_duration de Python, que es el que usa el C++. layersAt no mira nada
+    más del clip que dependa de eso."""
+    return {**c, "in_point": 0.0, "out_point": ctx.clip_speed.clip_timeline_duration(c), "speed": 1.0,
+            "reverse": False}
 
 
-def layers_fixtures(ctx: Ctx, cases: list[dict]) -> tuple[list[dict], int]:
+def layers_fixtures(ctx: Ctx, cases: list[dict]) -> list[dict]:
     """cases: [{name, timeline (dict), heads}] → casos con la pila, lo enterrado y las capas del
-    preview en cada instante. Devuelve también cuántos instantes se descartaron."""
+    preview en cada instante."""
     from app import track_stack as ts
-    out, dropped, node_in = [], 0, []
+    out, node_in = [], []
     for case in cases:
         tl = ctx.schemas.Timeline.model_validate(case["timeline"])
         dump = _pure(tl.model_dump())
-        ends = [(c["start"] + ctx.clip_speed.clip_timeline_duration(c), _js_clip_end(c)) for c in dump["clips"]]
-        heads = [h for h in case["heads"] if all((h < py) == (h < js) for py, js in ends)]
-        dropped += len(case["heads"]) - len(heads)
-        out.append({"name": case["name"], "timeline": dump, "heads": heads,
+        out.append({"name": case["name"], "timeline": dump, "heads": case["heads"],
                     "stack_py": [[k, v] for k, v in ts.stack_layers(tl.tracks).items()],
                     "buried": sorted(ts.buried_text_track_ids(tl.tracks))})
-        node_in.append({"tracks": dump["tracks"], "clips": dump["clips"], "heads": heads})
+        node_in.append({"tracks": dump["tracks"], "clips": [_js_twin(c, ctx) for c in dump["clips"]],
+                        "heads": case["heads"]})
     for case, js in zip(out, _node_layers(ctx, node_in)):
         case.update({"stack_js": js["stack"], "layers": js["layers"], "videos": js["videos"]})
-    return out, dropped
+    return out
 
 
 def synthetic_layers_fixtures(ctx: Ctx) -> dict:
     sys.path.insert(0, str(HERE))
     import layers_cases as lc
-    cases, dropped = layers_fixtures(ctx, [{"name": c["name"], "timeline": {"tracks": c["tracks"], "clips": c["clips"]},
-                                            "heads": c["heads"]} for c in lc.CASES])
-    if dropped:
-        sys.exit(f"layers_cases.py: {dropped} instantes con clipEnd de JS ≠ Python; usa duraciones en ms")
-    return {"cases": cases}
+    return {"cases": layers_fixtures(ctx, [{"name": c["name"], "timeline": {"tracks": c["tracks"],
+                                                                         "clips": c["clips"]},
+                                            "heads": c["heads"]} for c in lc.CASES])}
 
 
 def real_layers_fixtures(ctx: Ctx, data: dict) -> dict:
@@ -1015,8 +1009,7 @@ def real_layers_fixtures(ctx: Ctx, data: dict) -> dict:
             heads |= {s - 0.03, s - 0.02, s - 0.01, s, s + 0.01, (s + e) / 2, e - 0.01, e, e + 0.01}
         cases.append({"name": f"{proj.id} · {proj.name}", "timeline": proj.timeline.model_dump(),
                       "heads": sorted(heads)})
-    out, dropped = layers_fixtures(ctx, cases)
-    return {"cases": out, "dropped": dropped}
+    return {"cases": layers_fixtures(ctx, cases)}
 
 
 def _fits(clip_kind: str, track_kind: str) -> bool:
@@ -1111,7 +1104,6 @@ def main() -> None:
         lyr_real = real_layers_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "layers" / "real.json", lyr_real,
               sum(len(c["heads"]) for c in lyr_real["cases"]), 0)
-        print(f"  capas: {lyr_real['dropped']} instantes descartados (clipEnd de JS ≠ Python)")
         ev_real = real_eval_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "eval" / "real.json", ev_real, len(ev_real["clips"]), 0)
     print(f"listo en {time.perf_counter() - t0:.1f} s")

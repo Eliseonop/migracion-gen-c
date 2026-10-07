@@ -702,3 +702,10 @@ Sin el Windows SDK, F3 empieza por la evaluación, que es lógica pura: qué se 
 
 **Siguiente:** el fotograma ensamblado (`evaluate`): por capa, tiempo local y de fuente, pose, fx, fusión, volteo, máscaras, recorte y destino con las dimensiones del material, y la comprobación de ancho o alto 0.
 
+**Revisión del subagente (capas; APROBADO, sin bloqueantes), ya aplicada:**
+- **Sin descartes en las fixtures:** a Node le llega un gemelo de cada clip con `in_point` 0, `out_point` = duración de Python y velocidad 1, así que el `clipEnd` de JS da bit a bit el fin de Python. Antes se descartaban 48 instantes: 14 por clips de audio (que `layersAt` no pinta) y 34 por fines de JS 1–3 ulps por encima. Ahora son 81 instantes sintéticos (un caso nuevo con una figura a velocidad 2 y duraciones que se redondean) y 6675 reales.
+- **`kRenderLayers` sigue al export en dos cosas más:** el clip tiene que encajar en su pista (`clip_fits_track`; el export solo pinta vídeo en pistas de vídeo) y durar más de 0,02 s (el export descarta los demás). El campo pasa a llamarse `export_rules`. Se queda una divergencia, anotada: el export ordena los textos normales por la lista en un único .ass; `layers_at`, por la pila.
+- **Tests de las reglas del render:** 4 más (inicio negativo que cambia el orden, encaje en la pista, ids de pista repetidos de otro tipo y clips de 0,02 s). Mutación: 20/20.
+- Docs: firma de `layers_at` y campo de `LayerRules` en las notas, nota obsoleta de las duraciones, fila de F3, tope sin test de `animation_sample_times` y la decisión del relleno en «Pendiente por tu parte».
+- **Resultado:** 69 tests y 102 988 aserciones en verde, en Debug y en Release.
+

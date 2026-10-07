@@ -95,6 +95,40 @@ TEST_CASE("capas: un inicio negativo cuenta desde 0, como el export", "[layers]"
     CHECK(ids(layers_at(tl, 0.7, kPreviewLayers)).empty()); // [-0.52, 0.5)
 }
 
+TEST_CASE("capas: el inicio acotado a 0 también ordena", "[layers]") {
+    Timeline tl;
+    tl.tracks = {track("V1")};
+    // Los dos empiezan en 0 para el render: desempata la lista, no el inicio sin acotar.
+    tl.clips = {clip("b", "V1", 0, 2), clip("a", "V1", -1, 3)};
+    CHECK(ids(layers_at(tl, 0.5)) == Ids{"b", "a"});
+}
+
+TEST_CASE("capas: el render solo dibuja clips que encajan en su pista", "[layers]") {
+    Timeline tl;
+    tl.tracks = {track("V1"), track("A1", "audio"), track("T1", "text")};
+    tl.clips = {clip("v", "V1", 0, 2), clip("va", "A1", 0, 2), clip("tv", "V1", 0, 2, "text"),
+                clip("t", "T1", 0, 2, "text"), clip("img_t", "T1", 0, 2, "image")};
+    CHECK(ids(layers_at(tl, 1)) == Ids{"v", "t"});
+    // El preview no lo mira: el de la pista de audio va al fondo (capa -1).
+    CHECK(ids(layers_at(tl, 1, kPreviewLayers)) == Ids{"va", "v", "tv", "t", "img_t"});
+}
+
+TEST_CASE("capas: con ids de pista repetidos manda la última, también su tipo", "[layers]") {
+    Timeline tl;
+    tl.tracks = {track("V1"), track("V1", "audio")};
+    tl.clips = {clip("v", "V1", 0, 2)};
+    CHECK(ids(layers_at(tl, 1)).empty()); // la pista «V1» que vale es la de audio
+    CHECK(ids(layers_at(tl, 1, kPreviewLayers)) == Ids{"v"});
+}
+
+TEST_CASE("capas: el render no dibuja clips de 0,02 s o menos, como el export", "[layers]") {
+    Timeline tl;
+    tl.tracks = {track("V1"), track("V2")};
+    tl.clips = {clip("corto", "V1", 1, 0.02), clip("justo", "V2", 1, 0.021)};
+    CHECK(ids(layers_at(tl, 1.01)) == Ids{"justo"});
+    CHECK(ids(layers_at(tl, 1.01, kPreviewLayers)) == Ids{"corto", "justo"});
+}
+
 TEST_CASE("capas: un clip de duración 0 no se ve", "[layers]") {
     Timeline tl;
     tl.tracks = {track("V1")};

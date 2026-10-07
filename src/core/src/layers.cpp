@@ -41,8 +41,15 @@ std::vector<Cow<TimelineClip>> layers_at(const Timeline& timeline, double head, 
         if (tr == track_by_id.end() || tr->second->hidden) {
             continue;
         }
-        const double start = rules.by_start ? std::max(0.0, c->start) : c->start;
-        if (!(head >= start - rules.seek_margin && head < start + clip_timeline_duration(*c))) {
+        const double dur = clip_timeline_duration(*c);
+        if (rules.export_rules) {
+            const auto fits = clip_fits_track(c->kind, tr->second->kind);
+            if (!fits || !*fits || dur <= kMinExportClipDur) {
+                continue;
+            }
+        }
+        const double start = rules.export_rules ? std::max(0.0, c->start) : c->start;
+        if (!(head >= start - rules.seek_margin && head < start + dur)) {
             continue;
         }
         const auto layer = layers.find(c->track_id);
@@ -53,7 +60,7 @@ std::vector<Cow<TimelineClip>> layers_at(const Timeline& timeline, double head, 
         if (a.layer != b.layer) {
             return a.layer < b.layer;
         }
-        if (rules.by_start && a.start != b.start) {
+        if (rules.export_rules && a.start != b.start) {
             return a.start < b.start;
         }
         return a.index < b.index;
