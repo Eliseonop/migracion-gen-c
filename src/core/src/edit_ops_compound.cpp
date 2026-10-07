@@ -1,4 +1,4 @@
-// Operaciones compuestas: pegar atributos y seguir un objeto (espejo de
+// Operaciones compuestas: pegar atributos, seguir un objeto y sonorizar (espejo de
 // backend/app/timeline_ops.py).
 
 #include <algorithm>
@@ -8,19 +8,20 @@
 #include "gc/core/clip_attrs.hpp"
 #include "gc/core/follow.hpp"
 #include "gc/core/keyframes.hpp"
+#include "gc/core/timeline_rules.hpp"
 #include "gc/core/serialize.hpp"
 
 namespace gc::core::detail {
 
 namespace {
 
-// repr() de una lista de grupos (ids sencillos): ['crop', 'speed']
+// repr() de una lista de textos: ['crop', 'speed']
 std::string repr_list(const std::vector<std::string>& items) {
-    std::string out = "[";
-    for (std::size_t i = 0; i < items.size(); ++i) {
-        out += (i == 0 ? "'" : ", '") + items[i] + "'";
+    Json list = Json::array();
+    for (const auto& s : items) {
+        list.push_back(s);
     }
-    return out + "]";
+    return py_repr(list);
 }
 
 // `[str(x) for x in v]`; nullopt si `v` no se puede recorrer.
@@ -35,6 +36,25 @@ std::optional<std::vector<std::string>> str_list(const Json& v) {
     }
     return out;
 }
+
+// _SFX_TRACK_RE = re.compile(r"^sfx\b", re.I): «SFX», «sfx 2», «Sfx-x»; no «SFX_1» ni «sfx1».
+bool sfx_track_name(std::string_view name) {
+    std::size_t i = 0;
+    if (name.starts_with("\xC5\xBF")) { // «ſ»: con re.I también vale por «s»
+        i = 2;
+    } else if (!name.empty() && (name[0] == 's' || name[0] == 'S')) {
+        i = 1;
+    } else {
+        return false;
+    }
+    if (name.size() < i + 2 || (name[i] != 'f' && name[i] != 'F') || (name[i + 1] != 'x' && name[i + 1] != 'X')) {
+        return false;
+    }
+    i += 2;
+    return i == name.size() || !py_word_char(utf8_next(name, i));
+}
+
+constexpr double kAmbienceFade = 0.4;
 
 } // namespace
 
@@ -188,6 +208,107 @@ Result<EditResult> run(const Timeline& tl, const ops::FollowObject& op, IdSource
     }
     out.clips[fi] = std::move(follower);
     return EditResult{std::move(out), {op.follower_clip_id}, {}};
+}
+
+Result<EditResult> run(const Timeline& tl, const ops::AddSoundDesign& op, IdSource& ids) {
+    Timeline out = tl;
+    GC_TRY(si, find_clip(out, op.clip_id));
+    const double s0 = out.clips[si]->start;
+    const double scene_dur = clip_timeline_duration(*out.clips[si]);
+    std::vector<std::string> changed;
+
+    auto overlaps = [&](const std::string& track_id, double start, double dur) {
+        return std::ranges::any_of(out.clips, [&](const Cow<TimelineClip>& c) {
+            return c->track_id == track_id && c->start < start + dur - 1e-6 &&
+                   c->start + clip_span_duration(*c) > start + 1e-6;
+        });
+    };
+    // `x or defecto` antes de float(x)
+    auto num_or = [](const Json& v, double fallback, std::string_view what) {
+        return to_py_float(py_truthy(v) ? v : Json(fallback), what);
+    };
+
+    std::vector<Json> sounds;
+    if (py_truthy(op.sounds)) {
+        auto list = py_iter(op.sounds);
+        if (!list) {
+            return invalid("sounds debe ser una lista");
+        }
+        sounds = std::move(*list);
+    }
+    for (const Json& raw : sounds) {
+        const Json s = py_truthy(raw) ? raw : Json::object();
+        if (!s.is_object()) {
+            return invalid("cada sonido debe ser un objeto");
+        }
+        const Json sfx = py_truthy(field(s, "sfx")) ? s.at("sfx") : Json::object();
+        if (!sfx.is_object()) {
+            return invalid("sfx debe ser un objeto");
+        }
+        if (!py_truthy(field(sfx, "id"))) {
+            continue;
+        }
+        GC_TRY(src, num_or(field(sfx, "duration"), 0.0, "sfx.duration"));
+        GC_TRY(rel, num_or(field(s, "start"), 0.0, "start"));
+        const double start = round3(s0 + std::min(std::max(0.0, rel), std::max(0.0, scene_dur - 0.1)));
+        GC_TRY(asked, num_or(field(s, "duration"), 0.1, "duration"));
+        const double want = std::max(0.1, std::min(asked, s0 + scene_dur - start));
+        const double dur = round3(src > 0 ? std::min(want, src) : want);
+
+        // La primera pista «SFX» libre; si no hay, una nueva al final.
+        std::string track_id;
+        for (const auto& t : out.tracks) {
+            if (t.kind == "audio" && !t.locked && sfx_track_name(t.name) && !overlaps(t.id, start, dur)) {
+                track_id = t.id;
+                break;
+            }
+        }
+        if (track_id.empty()) {
+            const auto n = std::ranges::count_if(out.tracks, [](const TimelineTrack& t) {
+                return t.kind == "audio" && sfx_track_name(t.name);
+            });
+            TimelineTrack track;
+            track.id = make_uid(ids, "K");
+            track.kind = "audio";
+            track.name = n > 0 ? "SFX " + std::to_string(n + 1) : "SFX";
+            track_id = track.id;
+            changed.push_back(track.id);
+            out.tracks.push_back(std::move(track));
+        }
+
+        const std::string what = py_strip(py_str(py_truthy(field(s, "what")) ? s.at("what") : Json("")));
+        const std::string id = py_str(sfx.at("id"));
+        Json clip = Json::object();
+        clip["id"] = make_uid(ids, "c");
+        clip["track_id"] = track_id;
+        clip["kind"] = "audio";
+        clip["asset_kind"] = "sfx";
+        clip["asset_id"] = id;
+        clip["filename"] = id;
+        clip["name"] = py_truthy(field(sfx, "name")) ? sfx.at("name") : Json(py_path_stem(id));
+        clip["start"] = start;
+        clip["in_point"] = 0.0;
+        clip["out_point"] = dur;
+        clip["source_duration"] = round3(src > 0 ? src : dur);
+        GC_TRY(volume, num_or(field(s, "volume"), 0.8, "volume"));
+        clip["volume"] = std::min(1.0, std::max(0.05, volume));
+        clip["note"] = what.empty() ? Json() : Json(what);
+        clip["note_source"] = what.empty() ? Json() : Json("ai");
+        GC_TRY(c, clip_from_json(clip));
+        if (field(s, "kind") == "ambience" && dur > 1) {
+            for (const char* side : {"in", "out"}) {
+                if (auto r = apply_volume_fade(c, dur, side, kAmbienceFade, ids); !r) {
+                    return std::unexpected(r.error());
+                }
+            }
+        }
+        changed.push_back(c.id);
+        out.clips.emplace_back(std::move(c));
+    }
+    if (changed.empty()) {
+        return invalid("no hay sonidos que colocar");
+    }
+    return EditResult{std::move(out), std::move(changed), {}};
 }
 
 } // namespace gc::core::detail

@@ -39,14 +39,23 @@ REPO = HERE.parent.parent
 DEFAULT_VIDEO_YT = Path(r"E:\proyectos\video-yt")
 
 
+_ORIGINAL_CONSTANT_PROPS = None
+
+
 def _constant_props_in_order(items: list[dict]):
-    """clip_attrs._constant_props con las claves en orden de aparición (y no el de un set)."""
+    """clip_attrs._constant_props con las claves en orden de aparición (y no el de un set).
+    Comprueba en cada llamada que da lo mismo que la original (== de dict no mira el orden)."""
+    from app import clip_attrs
     out: dict = {}
     for key in dict.fromkeys(key for k in items for key in k["props"]):
         v0 = items[0]["props"].get(key)
-        if v0 is None or any(k["props"].get(key) is None or abs(k["props"][key] - v0) > 1e-6 for k in items):
-            return None
+        if v0 is None or any(k["props"].get(key) is None or abs(k["props"][key] - v0) > clip_attrs._EPS
+                             for k in items):
+            out = None
+            break
         out[key] = v0
+    expected = _ORIGINAL_CONSTANT_PROPS(items)
+    assert expected == out, f"_constant_props cambió en video-yt: {expected!r} != {out!r}"
     return out
 
 
@@ -63,7 +72,10 @@ class Ctx:
         # _constant_props recorre un `set`: el orden de sus claves cambia en cada ejecución
         # (PYTHONHASHSEED). Se usa la misma función en orden de aparición, como el C++; el
         # resultado es el mismo salvo el orden, y así la fixture es estable y se compara con orden.
-        clip_attrs._constant_props = _constant_props_in_order
+        global _ORIGINAL_CONSTANT_PROPS
+        if clip_attrs._constant_props is not _constant_props_in_order:
+            _ORIGINAL_CONSTANT_PROPS = clip_attrs._constant_props
+            clip_attrs._constant_props = _constant_props_in_order
         self.ValidationError = ValidationError
         self.clip_speed = clip_speed
         self.migrations = migrations
@@ -259,6 +271,7 @@ def real_edit_fixtures(ctx: Ctx, data: dict) -> dict:
         ops += media_real_ops(tl, proj, ctx)
         ops += compound_real_ops(tl)
         ops += follow_real_ops(tl, proj, ctx)
+        ops += sound_real_ops(tl)
         for name, op, params in ops:
             cases.append(run_edit_case(ctx, pid, tl, f"{pid} · {name}", op, params, compact=True))
     return {"timelines": timelines, "cases": cases}
@@ -380,6 +393,22 @@ def follow_real_ops(tl: dict, proj, ctx: Ctx) -> list[tuple[str, str, dict]]:
             ops.append((f"{f['id']} sigue a un objeto de {v['id']} ({mode})", "follow_object",
                         {"follower_clip_id": f["id"], "video_clip_id": v["id"], "track": track, "box_w": 0.15,
                          "anchor_t": anchor, "dims": dims, "mode": mode, "min_gap": 0.2}))
+    return ops
+
+
+def sound_real_ops(tl: dict) -> list[tuple[str, str, dict]]:
+    """add_sound_design sobre una timeline real: sonidos tipo «Sonorizar con IA» en tus escenas."""
+    ops: list[tuple[str, str, dict]] = []
+    for v in [c for c in tl["clips"] if c["kind"] == "video"][:3]:
+        sounds = [
+            {"sfx": {"id": "whoosh/rapido.wav", "name": "Whoosh rápido", "duration": 0.7}, "start": 0,
+             "duration": 1, "volume": 0.7, "kind": "spot", "what": "entrada"},
+            {"sfx": {"id": "ambiente/ciudad.ogg", "duration": 0}, "start": 0, "duration": 600, "volume": 0.25,
+             "kind": "ambience", "what": "ciudad de fondo"},
+            {"sfx": {"id": "impactos/golpe.mp3", "duration": 1.5}, "start": 1.25, "duration": 0.5, "kind": "spot"},
+            {"sfx": {"id": "impactos/golpe.mp3", "duration": 1.5}, "start": 1.3, "duration": 0.5, "kind": "spot"},
+        ]
+        ops.append((f"sonorizar {v['id']}", "add_sound_design", {"clip_id": v["id"], "sounds": sounds}))
     return ops
 
 

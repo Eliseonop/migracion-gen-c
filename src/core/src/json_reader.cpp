@@ -10,6 +10,8 @@
 #include <utility>
 #include <vector>
 
+#include "py.hpp"
+
 namespace gc::core::detail {
 
 namespace {
@@ -300,7 +302,7 @@ std::string py_str(const Json& j) {
     case value_t::number_integer: return std::to_string(j.get<std::int64_t>());
     case value_t::number_unsigned: return std::to_string(j.get<std::uint64_t>());
     case value_t::string: return j.get<std::string>();
-    default: return j.dump(); // reales: misma forma corta que repr() en los casos normales ("3.0")
+    default: return py_repr(j); // reales, listas y dicts: como repr() de Python
     }
 }
 

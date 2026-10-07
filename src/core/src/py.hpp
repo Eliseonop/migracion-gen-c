@@ -55,6 +55,23 @@ namespace gc::core::detail {
 // porque el JSON distingue 0 de 0.0.
 [[nodiscard]] Json py_clamp(const Json& v, const Json& lo, const Json& hi);
 
+// repr(x) de Python para un valor JSON: None, True, 3, 3.0, 'texto' (con las comillas y
+// los escapes de Python), [1, 2] y {'a': 1}. Para saber qué caracteres no ASCII se
+// escapan (\xa0, \u200b…) usa una tabla aproximada de los no imprimibles.
+[[nodiscard]] std::string py_repr(const Json& j);
+
+// Path(texto).stem de Python 3.14 en Windows: sin unidad («C:», «\\servidor\recurso»),
+// último componente (con / o \) y sin su última extensión, salvo que delante solo
+// queden puntos («.hidden», «..»).
+[[nodiscard]] std::string py_path_stem(std::string_view text);
+
+// ¿`c` es un carácter de palabra (\w) para las regex de Python (str.isalnum() o «_»)?
+// Exacto en ASCII y Latin-1; fuera, aproximado por bloques de Unicode.
+[[nodiscard]] bool py_word_char(char32_t c);
+
+// Siguiente carácter de un texto UTF-8 a partir del byte `i` (que avanza).
+[[nodiscard]] char32_t utf8_next(std::string_view utf8, std::size_t& i);
+
 // x % y de Python con reales: el resultado lleva el signo del divisor
 // ((-90.0) % 360 == 270.0), no el del dividendo como fmod.
 [[nodiscard]] double py_mod(double x, double y);

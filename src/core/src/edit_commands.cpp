@@ -25,7 +25,7 @@ using detail::py_number;
 using detail::py_truthy;
 
 // Mismo orden que las alternativas de `Command` (lo comprueba el static_assert).
-constexpr std::array<std::string_view, 42> kNames{
+constexpr std::array<std::string_view, 43> kNames{
     "add_track",        "reorder_track",  "rename_track",      "remove_track",       "link_tracks",
     "unlink_track",     "add_clip",       "move_clip",         "remove_clip",        "split_clip",
     "duplicate_clip",   "set_project_format", "set_markers",   "set_clip_opacity",   "set_clip_speed",
@@ -34,7 +34,7 @@ constexpr std::array<std::string_view, 42> kNames{
     "set_clip_beats",   "set_clip_masks", "set_clip_effects",  "set_clip_volume",    "set_track_audio",
     "set_clip_audio_fx", "replace_media",  "apply_effect",      "set_clip_animation", "freeze_frame",
     "add_subtitles",    "add_shape",      "add_cinema_bars",   "add_adjustment_layer", "set_clip_bg_removal",
-    "paste_clip_attributes", "follow_object",
+    "paste_clip_attributes", "follow_object", "add_sound_design",
 };
 static_assert(kNames.size() == std::variant_size_v<Command>, "kNames debe tener un nombre por comando");
 
@@ -484,6 +484,12 @@ const std::vector<std::pair<std::string_view, Parser>>& parsers() {
              GC_TRY(dims, k.json("dims"));
              return ops::FollowObject{follower, video, track, box_w, anchor_t, dims,
                                       k.json_or("mode", "position_scale"), k.json_or("min_gap", 0.1)};
+         }},
+        {"add_sound_design",
+         [](Kwargs& k) -> Result<Command> {
+             GC_TRY(clip_id, k.str("clip_id"));
+             GC_TRY(sounds, k.json("sounds"));
+             return ops::AddSoundDesign{clip_id, sounds};
          }},
     };
     return table;

@@ -557,6 +557,9 @@ ATTRS["clips"] += [
     clip("fe", "V2", start=190, out=4,
          keyframes={"enabled": True, "items": [{"t": 0, "props": {"x": 0.1, "scale": 1}},
                                                {"t": 3, "interpolation": "cubic-in", "props": {"x": 0.77, "scale": 1.3}}]}),
+    clip("dm2", "V2", start=195, out=3, masks=[{"type": "circle"}],
+         keyframes={"enabled": True, "items": [{"id": "w1", "t": 0.5, "props": {"my": 0.7, "mx": 0.2}},
+                                               {"id": "w2", "t": 2, "props": {"mx": 0.2, "my": 0.7, "x": 0.4}}]}),
     clip("shs", "V2", kind="shape", start=185, out=2,
          shape={"type": "rect", "fill": "#abc", "stroke": "#000", "strokeWidth": 4, "dash": [2, 1],
                 "cornerRadius": 0.2, "x": 0.9}),
@@ -606,6 +609,8 @@ CASES += [
           {"source_clip_id": "fz", "target_clip_ids": ["dr"], "groups": ["animation"]}),
     paste("paste_clip_attributes remuestreo con curva cúbica",
           {"source_clip_id": "fe", "target_clip_ids": ["dr"], "groups": ["animation"]}),
+    paste("paste_clip_attributes destino con dos props constantes",
+          {"source_clip_id": "fz", "target_clip_ids": ["dm2"], "groups": ["animation"]}),
     paste("paste_clip_attributes origen constante sobre destino que cambia",
           {"source_clip_id": "kc", "target_clip_ids": ["dr"], "groups": ["animation"]}),
     paste("paste_clip_attributes estilo de figura con relleno y trazo",
@@ -665,6 +670,8 @@ TRACK_EXTRA = [{"t": 5, "cx": 0.1, "cy": 0.1}, {"t": 20, "cx": 0.9}, {"t": 12, "
                {"t": True, "cx": 0}]
 TRACK_REV = [{"t": 5 + i * 0.5, "cx": 0.2 + 0.05 * i, "cy": 0.4, "rot": 30 * i} for i in range(13)]
 DIMS = {"srcW": 1920, "srcH": 1080, "outW": 720, "outH": 1280}
+# con este giro el ángulo relativo baja de -180: ejercita la rama negativa del % de Python
+TRACK_ROT = [{**p, "rot": 100 + 7 * i} for i, p in enumerate(TRACK)]
 
 
 def follow(name, params, base=FOLLOW):
@@ -679,7 +686,11 @@ _ABSENT = object()
 CASES += [
     follow("follow_object posición y escala", {}),
     follow("follow_object solo posición", {"mode": "position"}),
-    follow("follow_object con giro (pasa de ±180)", {"mode": "position_scale_rotation"}),
+    follow("follow_object con giro (pasa de ±180)", {"mode": "position_scale_rotation", "track": TRACK_ROT}),
+    follow("follow_object punto malo que se salta por min_gap",
+           {"track": TRACK[:10] + [{"t": 11.85, "cx": 0.5}]}),
+    follow("ERROR follow_object punto usado (no el de referencia) sin cy",
+           {"track": TRACK[:10] + [{"t": 12.5, "cx": 0.5}]}),
     follow("follow_object puntos sueltos, repetidos y desordenados",
            {"track": list(reversed(TRACK[:12])) + TRACK_EXTRA + TRACK[5:8], "mode": "position_scale_rotation"}),
     follow("follow_object vídeo al revés y a velocidad 2", {"video_clip_id": "fr", "follower_clip_id": "img",
@@ -709,6 +720,72 @@ CASES += [
     follow("ERROR follow_object keyframe que no es un objeto", {"follower_clip_id": "raro",
                                                                "track": TRACK[25:], "anchor_t": 8}),
     follow("ERROR follow_object sin dims", {"dims": _ABSENT}),
+]
+
+
+# --- 4ª tanda: sonorizar ---------------------------------------------------------------------
+
+SOUND = {
+    "schema_version": 5, "width": 720, "height": 1280,
+    "tracks": [track("V1", "video"), track("A1", "audio", name="Música"), track("A2", "audio", name="SFX"),
+               track("A3", "audio", name="sfx 2", locked=True), track("A4", "audio", name="SFX_1"),
+               track("T1", "text")],
+    "clips": [clip("sc", "V1", start=1, inp=0, out=10),
+              clip("sc2", "V1", start=12, inp=4, out=10, speed=2),
+              clip("ocupa", "A2", kind="audio", start=2, out=2),
+              clip("mus", "A1", kind="audio", start=0, out=20)],
+}
+# «\b» de ^sfx\b: casan «Sfx-x», «SFX—efectos», «ſfx» (re.I) y «SFX» + NBSP; no «sfx1», «SFX_1», «SFXé» ni « SFX»
+ODD_NAMES = ["sfx1", "SFX_1", "SFX" + chr(0xE9), "Sfx-x", "SFX" + chr(0x2014) + "efectos", chr(0x17F) + "fx",
+             "SFX" + chr(0xA0) + "x", " SFX", "SFX" + chr(0xBD)]
+NAMES = {**SOUND, "tracks": [track("V1", "video")] + [track(f"A{i}", "audio", name=n) for i, n in enumerate(ODD_NAMES)],
+         "clips": [c for c in SOUND["clips"] if c["track_id"] == "V1"]}
+LOCKED = {**NAMES, "tracks": [track("V1", "video")] + [track(f"A{i}", "audio", name=n, locked=True)
+                                                      for i, n in enumerate(ODD_NAMES)]}
+
+WHOOSH = {"sfx": {"id": "lib/whoosh_01.wav", "name": "Whoosh", "duration": 0.8}, "start": 0, "duration": 1.2,
+          "volume": 0.6, "kind": "transition", "what": " paso de escena "}
+HIT = {"sfx": {"id": "hit.final.mp3", "duration": 2}, "start": 1.5, "duration": 1, "kind": "impact"}
+AMB = {"sfx": {"id": "C:carpeta" + chr(92) + "lluvia.ogg", "duration": 0}, "start": 0, "duration": 8,
+       "volume": 0.3, "kind": "ambience", "what": "lluvia"}
+
+
+def sound(name, params, base=SOUND):
+    return op(name, base, "add_sound_design", {"clip_id": "sc", **params})
+
+
+CASES += [
+    sound("add_sound_design tres sonidos (uno pisa la pista SFX ocupada)", {"sounds": [WHOOSH, HIT, AMB]}),
+    sound("add_sound_design valores raros y entradas que se saltan", {"sounds": [
+        None, {}, {"sfx": None}, {"sfx": {"id": ""}},
+        {"sfx": {"id": 5, "duration": "2"}, "start": "1.5", "volume": 3, "what": "  golpe  "},
+        {"sfx": {"id": "x."}, "volume": 0, "start": None, "what": "   "},
+        {"sfx": {"id": ".hidden"}, "volume": 0.01, "duration": 0},
+        {"sfx": {"id": {"a": 1, "b": "x'y"}, "name": ""}},
+        {"sfx": {"id": ["l", 1.5, None]}, "kind": "ambience", "duration": 3}]}),
+    sound("add_sound_design se recorta al final de la escena",
+          {"sounds": [{"sfx": {"id": "a.wav", "duration": 30}, "start": 50, "duration": 20, "kind": "ambience"}]}),
+    sound("add_sound_design escena a velocidad 2", {"clip_id": "sc2", "sounds": [AMB, WHOOSH]}),
+    sound("add_sound_design ambiente corto sin fundidos",
+          {"sounds": [{"sfx": {"id": "viento.wav"}, "duration": 0.9, "kind": "ambience"}]}),
+    sound("add_sound_design justo antes y justo después de un clip de la pista SFX", {"sounds": [
+        {"sfx": {"id": "antes.wav", "duration": 0.5}, "start": 0.5, "duration": 0.5},
+        {"sfx": {"id": "despues.wav", "duration": 0.5}, "start": 3, "duration": 0.5},
+        {"sfx": {"id": "uno.wav"}, "start": 5, "duration": 1, "kind": "ambience"}]}),
+    sound("add_sound_design varios en el mismo hueco", {"sounds": [HIT, HIT, {**HIT, "start": 1.6}]}),
+    sound("add_sound_design pistas con nombres raros", {"sounds": [WHOOSH, WHOOSH, WHOOSH, WHOOSH, WHOOSH]},
+          base=NAMES),
+    sound("add_sound_design pistas SFX bloqueadas", {"sounds": [WHOOSH]}, base=LOCKED),
+    sound("ERROR add_sound_design nada que colocar", {"sounds": [{"sfx": {}}, None]}),
+    sound("ERROR add_sound_design sounds null", {"sounds": None}),
+    sound("ERROR add_sound_design escena inexistente", {"clip_id": "nope", "sounds": [WHOOSH]}),
+    sound("ERROR add_sound_design sounds no es una lista", {"sounds": 5}),
+    sound("ERROR add_sound_design sounds es un dict", {"sounds": {"a": 1}}),
+    sound("ERROR add_sound_design sonido de texto", {"sounds": ["x"]}),
+    sound("ERROR add_sound_design sfx de texto", {"sounds": [{"sfx": "abc"}]}),
+    sound("ERROR add_sound_design duración no numérica", {"sounds": [{**HIT, "duration": "abc"}]}),
+    sound("ERROR add_sound_design nombre numérico", {"sounds": [{"sfx": {"id": "a", "name": 5}}]}),
+    sound("ERROR add_sound_design volumen de texto", {"sounds": [{**HIT, "volume": "alto"}]}),
 ]
 
 

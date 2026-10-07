@@ -483,7 +483,7 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 - Los 14 grupos de «Pegar atributos», trabajando sobre el `model_dump()` y revalidando, como en Python.
 - `merge_keyframes`: restringir a lo que cambia, constantes de un lado y remuestreo con `round(x, 6)`.
 - El orden de uuid de Python: crop, vfx, mask y después los items.
-- El orden aleatorio de `_constant_props` (un `set` de Python): el exportador ordena esas props, para que la fixture sea estable, y el test las compara sin orden.
+- El orden aleatorio de `_constant_props` (un `set` de Python). Primero se ordenaban las props en el exportador y el test; tras la revisión, el exportador usa la misma función en orden de aparición y se compara con orden.
 
 **Verificación (2):**
 - **Casos:** 26 sintéticos (9 de error), entre ellos los dos lados constantes, el «crece → empuja» por velocidad, croma en todas sus combinaciones y estilo de texto animado. Además, 77 operaciones de pegar sobre tus timelines reales.
@@ -505,3 +505,24 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 - **Exactitud:** sale exacto también lo que pasa por `sin`/`cos`/`atan2`/`hypot`, porque se redondea a 3–5 decimales.
 - **Mutación:** se detectan las 10.
 - **Resultado:** 41 tests y 45 526 aserciones en verde, en Debug y en Release.
+
+**Revisión del subagente (APROBADO, solo hallazgos menores), ya aplicada:**
+- El caso «con giro» no bajaba de −180, así que la rama negativa de `py_mod` solo la cubrían tus datos locales. Ahora usa un recorrido que sí baja: cambiar `py_mod` por `fmod` lo detectan los sintéticos.
+- Dos casos perezosos más: un punto malo usado que no es la referencia (error) y uno que se salta por `min_gap` (bien).
+- El `_constant_props` del exportador comprueba en cada llamada que da lo mismo que el original de video-yt y usa su `_EPS`. Además, un caso con dos props constantes.
+
+**Hecho (4): `add_sound_design`:**
+- Coloca los sonidos de «Sonorizar con IA» en la primera pista «SFX» libre y no bloqueada (`^sfx\b` con `re.I`). Si no hay ninguna, crea «SFX n+1» al final. El ambiente de más de 1 s lleva fundidos de 0,4 s.
+- No lee disco ni la biblioteca de SFX: eso es `propose`, que va con F7.
+- `py.hpp` crece con la semántica de Python que necesita:
+  - `py_repr` de cualquier valor JSON (comillas y escapes de Python); `py_str` lo usa para listas, dicts y reales, que antes salían como JSON;
+  - `py_path_stem` (`Path.stem` de Python 3.14 en Windows);
+  - `py_word_char` (la clase de palabra de `re`; aproximada por bloques fuera de Latin-1);
+  - `utf8_next`.
+  - Todo con tests unitarios hechos con valores medidos en Python.
+
+**Verificación (4):**
+- **Casos:** 19 sintéticos (10 de error): nombres de pista raros, pistas bloqueadas, sonidos que tocan un clip justo antes y justo después, ambiente de 1 s exacto, escena a velocidad 2, ids que no son texto y recortes al final de la escena. Además, 47 operaciones sobre tus timelines reales.
+- **Mutación:** se detectan las 13.
+- **Cambio de `py_str`:** no altera ninguna de las 1657 operaciones reales.
+- **Resultado:** 44 tests y 45 792 aserciones en verde, en Debug y en Release.

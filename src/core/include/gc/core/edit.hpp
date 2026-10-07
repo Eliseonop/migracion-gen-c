@@ -288,6 +288,12 @@ struct FollowObject {
     Json mode = "position_scale";
     Json min_gap = 0.1;
 };
+// Coloca los sonidos que propone «Sonorizar con IA» en pistas «SFX» libres (crea las
+// que falten); el ambiente entra y sale con fundido.
+struct AddSoundDesign {
+    std::string clip_id; // la escena: los tiempos de `sounds` son locales a ella
+    Json sounds;         // [{sfx: {id, name?, duration?}, start, duration, volume, kind, what}]
+};
 
 } // namespace ops
 
@@ -301,7 +307,7 @@ using Command =
                  ops::SetClipAudioFx, ops::ReplaceMedia, ops::ApplyEffect, ops::SetClipAnimation, ops::FreezeFrame,
                  ops::AddSubtitles, ops::AddShape, ops::AddCinemaBars, ops::AddAdjustmentLayer,
                  ops::SetClipBgRemoval, ops::PasteClipAttributes,
-                 ops::FollowObject>;
+                 ops::FollowObject, ops::AddSoundDesign>;
 
 // Nombre de la operación ("move_clip"…), el mismo del MCP y de video-yt.
 [[nodiscard]] std::string_view command_name(const Command& command);
