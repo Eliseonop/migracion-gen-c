@@ -34,6 +34,15 @@ PROJECTS = {
         {"id": "p3", "name": "Proyecto", "created_at": "2026-09-03T00:00:00", "timeline": {
             "schema_version": 5, "tracks": [track("V1", "video")],
             "clips": [clip("c3", "V1", asset_id="lib_tts")]}},
+        {"id": "p4", "name": "", "created_at": "2026-09-04T00:00:00", "timeline": {
+            "schema_version": 5, "tracks": [track("V1", "video")],
+            "clips": [clip("c4", "V1", asset_id="lib_dos", asset_scope="library")]}},
+        {"id": "p5", "name": "Cinco", "created_at": "2026-09-05T00:00:00", "timeline": {
+            "schema_version": 5, "tracks": [track("V1", "video")],
+            "clips": [clip("c5", "V1", asset_id="lib_dos", asset_scope="library")]}},
+        {"id": "", "name": "", "created_at": "2026-09-06T00:00:00", "timeline": {
+            "schema_version": 5, "tracks": [track("V1", "video")],
+            "clips": [clip("c6", "V1", asset_id="lib_anonimo", asset_scope="library")]}},
     ],
     "groups": [],
 }
@@ -66,6 +75,26 @@ STEPS = [
     ("write", "{ roto"), ("load",),
     ("write", [1]), ("load",),
     ("write", {"items": None}), ("list",),
+    # saved_at: `or ""` y comparaciones de Python (texto con texto, números con números)
+    ("write", {"items": [{"id": "a", "index": 1, "saved_at": 5}]}), ("list",),
+    ("write", {"items": [{"id": "a", "index": 1, "saved_at": {"x": 1}}]}), ("list",),
+    ("write", {"items": [{"id": "a", "index": 1, "saved_at": 5}, {"id": "b", "index": 1, "saved_at": 7.5},
+                         {"id": "c", "index": 1, "saved_at": True}, {"id": "d", "index": 1, "saved_at": 5.0},
+                         {"id": "e", "filename": "x.png", "saved_at": "z"}]}), ("list",),
+    ("write", {"items": [{"id": "a", "index": 1, "saved_at": 5}, {"id": "b", "index": 1, "saved_at": 0}]}),
+    ("list",),
+    ("write", {"items": [{"id": "a", "index": 1, "saved_at": {"x": 1}}, {"id": "b", "index": 1, "saved_at": "z"}]}),
+    ("list",),
+    ("write", {"items": [{"id": "a", "index": 1, "saved_at": "2026-01-02"}, {"id": "b", "index": 1, "saved_at": False},
+                         {"id": "c", "index": 1, "saved_at": "2026-01-03"}, {"id": "d", "index": 1}]}), ("list",),
+    # En uso: nombre vacío → id; varios proyectos
+    ("write", {"items": [{"id": "lib_dos", "resource_type": "clip", "filename": "dos.mp4"}]}),
+    ("unsave", "lib_dos"), ("unsave", "nope"),
+    ("write", {"items": [{"id": "lib_anonimo", "resource_type": "clip", "filename": "a.mp4"}]}),
+    ("unsave", "lib_anonimo"),                    # proyecto sin nombre ni id: «otro proyecto»
+    # Path.unlink() no borra una carpeta: falla y Python la deja
+    ("write", {"items": [{"id": "lib_dir", "resource_type": "clip", "filename": "sub"}]}),
+    ("dirs", ["video/sub"]), ("unsave", "lib_dir"), ("exists", "video/sub"),
 ]
 
 DTO = [(item, scope) for item in ITEMS for scope in ("library", "project")] + [("texto", "library")]

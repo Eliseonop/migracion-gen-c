@@ -1,7 +1,6 @@
 #include "gc/core/fx_catalog.hpp"
 
 #include <algorithm>
-#include <cctype>
 #include <cmath>
 #include <mutex>
 
@@ -62,7 +61,7 @@ Json param_value(const Json& p, const Json& v) {
     }
     if (type == "color") {
         std::string s = py_str(v);
-        std::ranges::transform(s, s.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+        detail::ascii_lower_inplace(s);
         const bool ok = s.size() == 7 && s[0] == '#' && std::all_of(s.begin() + 1, s.end(), [](char c) {
                             return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f');
                         });

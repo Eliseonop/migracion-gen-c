@@ -1,7 +1,6 @@
 #include "json_reader.hpp"
 
 #include <algorithm>
-#include <cctype>
 #include <cmath>
 #include <limits>
 #include <locale>
@@ -31,7 +30,7 @@ std::string_view trim(std::string_view s) {
 
 std::string lower(std::string_view s) {
     std::string out(s);
-    std::ranges::transform(out, out.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+    ascii_lower_inplace(out);
     return out;
 }
 

@@ -22,10 +22,10 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 55 tests y 47 728 aserciones en verde (Debug y Release, 0 warnings).
+**Cifras actuales:** 55 tests y 47 813 aserciones en verde (Debug y Release, 0 warnings).
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
-historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (59 pasos + los tuyos, con las claves redactadas) y biblioteca (32 pasos + 21 materiales + la tuya).
+historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (59 pasos + los tuyos, con las claves redactadas) y biblioteca (52 pasos + 23 materiales + la tuya).
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12.
 
 ---
@@ -76,7 +76,7 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 - [x] `tools/fixtures/export_fixtures.py`: 39 casos sintéticos + tus 18 proyectos reales y 2 carpetas
 - [x] Round-trip sin pérdida del 100 % de los proyectos reales
 - [x] `genclip projects` y `genclip normalize [--preserve]`; Python relee lo que escribe C++
-- [x] Biblioteca de `data/library` (`library.hpp`): carga tolerante, tipo, origen y fuente deducidos, `material_dto` (con la URL codificada como `urllib.parse.quote`), lista ordenada por fecha, editar título y descripción, metadata semántica, proyectos que la usan y quitar (borra el archivo). Paridad: 32 pasos sobre un `data/` temporal, 21 materiales sueltos y tu `library.json`; 8/8 mutaciones
+- [x] Biblioteca de `data/library` (`library.hpp`): carga tolerante, tipo, origen y fuente deducidos, `material_dto` (con la URL codificada como `urllib.parse.quote`), lista ordenada por fecha, editar título y descripción, metadata semántica, proyectos que la usan y quitar (borra el archivo). Paridad: 52 pasos sobre un `data/` temporal (con los mensajes de error que ve el usuario), 23 materiales sueltos y tu `library.json`; 8/8 mutaciones
 - [ ] «Guardar en la biblioteca» desde un proyecto (`library.save_from_project`): cambia el proyecto (`retarget_timeline_asset`, `remove_material`) y copia archivos, así que llega con el almacén de proyectos de la app (F5)
 - [ ] Colecciones de `data/` (`collections`: carpetas de material bajo `material_root`)
 - [ ] Biblioteca de SFX desde disco (`sfx.load_index`, `_scan`, `_entry` y `resolve`, con la duración de `ffprobe`) → `set_sfx_library`. Sin ella, `subject_pop` avisa siempre de que faltan los sonidos

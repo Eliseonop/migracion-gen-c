@@ -1,7 +1,6 @@
 #include "gc/core/settings.hpp"
 
 #include <algorithm>
-#include <cctype>
 #include <cmath>
 #include <set>
 
@@ -44,7 +43,7 @@ Json defaults() {
 }
 
 std::string ascii_lower(std::string s) {
-    std::ranges::transform(s, s.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+    detail::ascii_lower_inplace(s);
     return s;
 }
 

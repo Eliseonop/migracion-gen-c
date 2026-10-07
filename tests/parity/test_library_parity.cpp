@@ -27,10 +27,21 @@ namespace {
 
 const std::filesystem::path kFixtures = path_from_utf8(GC_FIXTURES_DIR);
 
-void check_result(const Json& s, bool ok, const Json& result) {
+struct Outcome {
+    bool ok = true;
+    Json result;
+    std::string message; // del error
+};
+
+void check_result(const Json& s, const Outcome& r) {
+    const bool ok = r.ok;
+    const Json& result = r.result;
     if (s.contains("error")) {
         INFO("Python falla con " << s.at("error").get<std::string>());
         CHECK_FALSE(ok);
+        if (s.contains("message")) {
+            CHECK(r.message == s.at("message").get<std::string>());
+        }
         return;
     }
     CHECK(ok);
@@ -40,8 +51,8 @@ void check_result(const Json& s, bool ok, const Json& result) {
 }
 
 template <class T>
-std::pair<bool, Json> take(const gc::Result<T>& r) {
-    return {r.has_value(), r ? Json(*r) : Json()};
+Outcome take(const gc::Result<T>& r) {
+    return r ? Outcome{true, Json(*r), {}} : Outcome{false, Json(), r.error().message};
 }
 
 std::size_t run_steps(const Json& fixture, const std::string& fname) {
@@ -56,7 +67,7 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
         const Json& step = s.at("step");
         INFO(fname << " :: paso " << n << ": " << step.dump().substr(0, 160));
         const auto kind = step[0].get<std::string>();
-        std::pair<bool, Json> r{true, Json()};
+        Outcome r;
         if (kind == "write") {
             std::filesystem::create_directories(lib.file().parent_path());
             std::ofstream out(lib.file(), std::ios::binary | std::ios::trunc);
@@ -67,10 +78,14 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
                 std::filesystem::create_directories(f.parent_path());
                 std::ofstream(f, std::ios::binary) << "x";
             }
+        } else if (kind == "dirs") {
+            for (const Json& rel : step[1]) {
+                std::filesystem::create_directories(dir / "library" / path_from_utf8(rel.get<std::string>()));
+            }
         } else if (kind == "exists") {
-            r.second = std::filesystem::exists(dir / "library" / path_from_utf8(step[1].get<std::string>()));
+            r.result = std::filesystem::exists(dir / "library" / path_from_utf8(step[1].get<std::string>()));
         } else if (kind == "load") {
-            r.second = lib.load();
+            r.result = lib.load();
         } else if (kind == "list") {
             r = take(lib.list());
         } else if (kind == "update") {
@@ -80,7 +95,7 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
         } else if (kind == "unsave") {
             r = take(lib.unsave(step[1].get<std::string>(), *projects));
         }
-        check_result(s, r.first, r.second);
+        check_result(s, r);
         if (s.contains("file_text")) {
             std::ifstream in(lib.file(), std::ios::binary);
             std::stringstream text;
@@ -112,8 +127,7 @@ TEST_CASE("paridad de la biblioteca: pasos y materiales sintéticos", "[parity][
     CHECK(run_steps(*file, "synthetic.json") > 20);
     for (const Json& d : file->at("dto")) {
         INFO("material_dto(" << d.at("item").dump() << ", " << d.at("scope").get<std::string>() << ")");
-        const auto r = material_dto(d.at("item"), d.at("scope").get<std::string>());
-        check_result(d, r.has_value(), r ? *r : Json());
+        check_result(d, take(material_dto(d.at("item"), d.at("scope").get<std::string>())));
     }
 }
 

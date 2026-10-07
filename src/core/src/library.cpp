@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <array>
-#include <cctype>
 
 #include "edit_util.hpp"
 #include "gc/core/io.hpp"
@@ -12,6 +11,7 @@ namespace gc::core {
 using detail::field;
 using detail::invalid;
 using detail::py_iter;
+using detail::py_number;
 using detail::py_str;
 using detail::py_strip;
 using detail::py_truthy;
@@ -21,7 +21,7 @@ namespace {
 constexpr std::array<std::string_view, 2> kYtHints{"youtube.com", "youtu.be"};
 
 std::string ascii_lower(std::string s) {
-    std::ranges::transform(s, s.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+    detail::ascii_lower_inplace(s);
     return s;
 }
 
@@ -35,7 +35,7 @@ std::string url_quote(std::string_view text) {
     static constexpr char kHex[] = "0123456789ABCDEF";
     std::string out;
     for (const unsigned char c : text) {
-        if (std::isalnum(c) != 0 || c == '_' || c == '.' || c == '-' || c == '~' || c == '/') {
+        if (detail::ascii_alnum(static_cast<char>(c)) || c == '_' || c == '.' || c == '-' || c == '~' || c == '/') {
             out += static_cast<char>(c);
         } else {
             out += '%';
@@ -152,8 +152,8 @@ Json projects_using(const ProjectsFile& projects, std::string_view item_id) {
             continue;
         }
         for (const auto& c : p.timeline->clips) {
-            const std::string_view scope = c->asset_scope.empty() ? "project" : c->asset_scope;
-            if (scope == "library" && c->asset_id == item_id) {
+            // asset_scope vacío = "project": no cuenta.
+            if (c->asset_scope == "library" && c->asset_id == item_id) {
                 used.push_back(Json{{"id", p.id}, {"name", p.name}});
                 break;
             }
@@ -215,20 +215,38 @@ Result<Json> LibraryFile::list() const {
         const std::string& rt = dto["resource_type"].get_ref<const std::string&>();
         (rt == "clip" ? clips : rt == "image" ? images : audios).push_back(std::move(dto));
     }
-    // Del guardado más reciente al más antiguo (sort estable con reverse=True).
+    // Del guardado más reciente al más antiguo: sort estable con reverse=True y la clave
+    // `saved_at or ""`. Python compara texto con texto y números con números; si con dos
+    // o más materiales hay de las dos familias (o un dict o una lista), falla con TypeError.
+    // (Dos listas sí se podrían comparar en Python: aquí también fallan.)
     for (Json* list : {&clips, &audios, &images}) {
-        for (const Json& x : *list) {
+        static const Json kEmpty = "";
+        auto key = [](const Json& x) -> const Json& {
             const Json& s = field(x, "saved_at");
-            if (py_truthy(s) && !s.is_string()) {
-                return invalid("saved_at debe ser texto");
+            return py_truthy(s) ? s : kEmpty;
+        };
+        bool texts = false;
+        bool numbers = false;
+        for (const Json& x : *list) {
+            const Json& k = key(x);
+            texts = texts || k.is_string();
+            numbers = numbers || k.is_number() || k.is_boolean();
+            if (list->size() > 1 && !k.is_string() && !k.is_number() && !k.is_boolean()) {
+                return invalid("saved_at: no se puede ordenar");
             }
         }
-        auto key = [](const Json& x) {
-            const Json& s = field(x, "saved_at");
-            return py_truthy(s) ? s.get<std::string>() : std::string();
-        };
+        if (list->size() > 1 && texts && numbers) {
+            return invalid("saved_at: no se puede ordenar");
+        }
         std::vector<Json> v(list->begin(), list->end());
-        std::ranges::stable_sort(v, [&](const Json& a, const Json& b) { return key(a) > key(b); });
+        std::ranges::stable_sort(v, [&](const Json& a, const Json& b) {
+            const Json& ka = key(a);
+            const Json& kb = key(b);
+            if (ka.is_string()) {
+                return ka.get_ref<const std::string&>() > kb.get_ref<const std::string&>();
+            }
+            return *py_number(ka) > *py_number(kb);
+        });
         *list = Json(v);
     }
     return Json{{"clips", clips}, {"audios", audios}, {"images", images}};
@@ -275,11 +293,14 @@ Result<Json> LibraryFile::set_semantic(std::string_view item_id, const Json& sem
 Result<Json> LibraryFile::unsave(std::string_view item_id, const ProjectsFile& projects) {
     const Json used = projects_using(projects, item_id);
     if (!used.empty()) {
+        // LibraryInUseError: ", ".join(name or id or "") or "otro proyecto". La API añade
+        // la lista de proyectos (projects_using).
         std::string names;
-        for (const Json& p : used) {
-            names += (names.empty() ? "" : ", ") + p.at("name").get<std::string>();
+        for (std::size_t i = 0; i < used.size(); ++i) {
+            const std::string& name = used[i].at("name").get_ref<const std::string&>();
+            names += (i > 0 ? ", " : "") + (name.empty() ? used[i].at("id").get<std::string>() : name);
         }
-        return fail(ErrorCode::InvalidArgument, "El material se usa en: " + names);
+        return fail(ErrorCode::InUse, "En uso en: " + (names.empty() ? std::string("otro proyecto") : names));
     }
     Json item;
     {
@@ -311,8 +332,11 @@ Result<Json> LibraryFile::unsave(std::string_view item_id, const ProjectsFile& p
         return invalid("filename debe ser texto");
     }
     if (const auto path = resolve_library_media(data_dir_, kind, py_truthy(fn) ? fn.get<std::string>() : "")) {
+        // Path.unlink(): una carpeta no se borra (falla y Python la deja); si no se puede, se deja.
         std::error_code ec;
-        std::filesystem::remove(*path, ec); // como Python: si no se puede, se deja
+        if (!std::filesystem::is_directory(std::filesystem::symlink_status(*path, ec))) {
+            std::filesystem::remove(*path, ec);
+        }
     }
     return Json{{"deleted", item_id}};
 }

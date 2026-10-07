@@ -10,6 +10,7 @@ const char* to_string(ErrorCode code) noexcept {
     case ErrorCode::Validation: return "validation";
     case ErrorCode::Io: return "io";
     case ErrorCode::Unsupported: return "unsupported";
+    case ErrorCode::InUse: return "in_use";
     case ErrorCode::Internal: return "internal";
     }
     return "internal";

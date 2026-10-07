@@ -1,6 +1,6 @@
 # Plan de migración: video-yt → GenClipPro (C++)
 
-> Estado: **en marcha** desde 2026-10-06 · F0 hecha (salvo MSVC) · F1 modelo y formato hechos · F2 motor de edición en curso. Ver §14, [ARQUITECTURA.md](ARQUITECTURA.md) y la lista de tareas [TODO.md](TODO.md).
+> Estado: **en marcha** desde 2026-10-06 · F0 hecha (salvo MSVC y CI) · F1 casi cerrada (faltan colecciones y SFX de disco) · F2 cerrada · F3 en curso (lo que no necesita MSVC). Ver §14, [ARQUITECTURA.md](ARQUITECTURA.md) y la lista de tareas [TODO.md](TODO.md).
 > Origen: `E:\proyectos\video-yt` (FastAPI + React). Destino: `C:\Users\Edu\CLionProjects\GenClipPro`.
 
 ## 0. Resumen
@@ -642,3 +642,11 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 - **Mutación:** 8/8. El de «tipo deducido al quitar» necesitó un caso propio.
 - **Resultado:** 55 tests y 47 728 aserciones en verde, en Debug y en Release.
 
+**Revisión del subagente (biblioteca; APROBADO), ya aplicada:**
+- `list` ordena con la clave `saved_at or ""` y las comparaciones de Python: texto con texto y números (o booleanos) con números. Mezclar las dos familias, o un dict o una lista, falla con dos o más materiales, como el `TypeError` de Python.
+- Quitar un material en uso da el error nuevo `in_use` (el 409 de la API) con el mensaje de `LibraryInUseError`: el nombre o, si está vacío, el id; si no hay ninguno, «otro proyecto». Un clip con `asset_scope` vacío cuenta como «project» y no bloquea.
+- `Path.unlink()` no borra una carpeta: si el archivo resulta ser una carpeta, se deja, como Python.
+- `std::tolower`, `std::toupper` e `std::isalnum` dependen del locale (Qt fija el del sistema en Linux y macOS): se cambian por versiones ASCII (`ascii_lower`, `ascii_upper`, `ascii_alnum`) en todo `gc_core`.
+- El test compara también el mensaje de los errores que ve el usuario.
+- **Casos:** 52 pasos (eran 31) y 23 materiales sueltos.
+- **Resultado:** 55 tests y 47 813 aserciones en verde, en Debug y en Release.

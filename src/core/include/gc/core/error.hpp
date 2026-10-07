@@ -13,6 +13,7 @@ enum class ErrorCode {
     Validation,      // JSON válido que no cumple el modelo (el ValidationError de Pydantic)
     Io,              // lectura/escritura en disco
     Unsupported,     // función no disponible en esta plataforma o build
+    InUse,           // el recurso se está usando (el 409 «in_use» de la API)
     Internal,        // fallo inesperado (bug)
 };
 

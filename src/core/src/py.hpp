@@ -76,4 +76,23 @@ namespace gc::core::detail {
 // ((-90.0) % 360 == 270.0), no el del dividendo como fmod.
 [[nodiscard]] double py_mod(double x, double y);
 
+// Letras y cifras ASCII sin depender del locale. std::isalnum y std::tolower sí dependen:
+// con un locale de un byte (Qt fija el del sistema en Linux y macOS) cambiarían los bytes
+// ≥ 0x80 de un texto UTF-8.
+[[nodiscard]] constexpr bool ascii_alnum(char c) noexcept {
+    return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+[[nodiscard]] constexpr char ascii_lower(char c) noexcept {
+    return c >= 'A' && c <= 'Z' ? static_cast<char>(c - 'A' + 'a') : c;
+}
+[[nodiscard]] constexpr char ascii_upper(char c) noexcept {
+    return c >= 'a' && c <= 'z' ? static_cast<char>(c - 'a' + 'A') : c;
+}
+// Pasa a minúsculas solo las letras ASCII.
+inline void ascii_lower_inplace(std::string& s) noexcept {
+    for (char& c : s) {
+        c = ascii_lower(c);
+    }
+}
+
 } // namespace gc::core::detail

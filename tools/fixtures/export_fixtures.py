@@ -674,6 +674,10 @@ def _run_library_steps(steps: list, projects_data: dict) -> list[dict]:
                         f.parent.mkdir(parents=True, exist_ok=True)
                         f.write_bytes(b"x")
                     result = None
+                elif kind == "dirs":
+                    for rel in args[0]:
+                        (tmp / "library" / rel).mkdir(parents=True, exist_ok=True)
+                    result = None
                 elif kind == "exists":
                     result = (tmp / "library" / args[0]).exists()
                 elif kind == "load":
@@ -689,6 +693,8 @@ def _run_library_steps(steps: list, projects_data: dict) -> list[dict]:
                 entry["result"] = result
             except Exception as e:  # noqa: BLE001
                 entry["error"] = type(e).__name__
+                if type(e) in (library.LibraryInUseError, LookupError):  # los mensajes que ve el usuario
+                    entry["message"] = str(e)
             if lib_file.exists():
                 try:
                     entry["file"] = json.loads(lib_file.read_text(encoding="utf-8"))

@@ -162,7 +162,7 @@ std::string normalize_hex(const Json& raw, const std::string& fallback) {
         if (s.size() != 1 || std::isxdigit(static_cast<unsigned char>(s[0])) == 0) {
             return fallback;
         }
-        body += static_cast<char>(std::toupper(static_cast<unsigned char>(s[0])));
+        body += detail::ascii_upper(s[0]);
     }
     if (body.size() != 6) {
         return fallback;
@@ -193,7 +193,7 @@ std::string recommended_bg_provider(const TimelineClip& clip) {
     }
     std::string name = clip.filename.substr(0, clip.filename.find('?'));
     name = name.substr(0, name.find('#'));
-    std::ranges::transform(name, name.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    detail::ascii_lower_inplace(name);
     return name.ends_with(".gif") ? "u2net" : "birefnet_lite";
 }
 

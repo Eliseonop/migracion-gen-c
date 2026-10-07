@@ -4,7 +4,6 @@
 
 #include <algorithm>
 #include <array>
-#include <cctype>
 #include <cmath>
 #include <optional>
 
@@ -420,7 +419,7 @@ Result<Outcome> subject_pop(Timeline& tl, const std::vector<Json>& clip_ids, con
         std::string list;
         for (const Json& m : missing) {
             std::string what = m.at("what").get<std::string>();
-            std::ranges::transform(what, what.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+            detail::ascii_lower_inplace(what);
             list += (list.empty() ? "" : ", ") + what;
         }
         out.warnings.push_back("no hay en tu biblioteca: " + list);
