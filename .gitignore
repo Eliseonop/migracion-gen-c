@@ -1,0 +1,29 @@
+# Builds
+/build/
+/cmake-build-*/
+/out/
+
+# CLion / IDEs
+/.idea/workspace.xml
+/.idea/tasks.xml
+/.idea/shelf/
+/.idea/usage.statistics.xml
+/.idea/dictionaries/
+/.vs/
+/.vscode/
+
+# Ajustes locales de CMake (rutas de esta máquina)
+/CMakeUserPresets.json
+
+# Fixtures generadas desde TUS proyectos reales: datos personales, nunca al repo
+/tests/fixtures/local/
+
+# Python (scripts de tools/)
+__pycache__/
+*.pyc
+
+# Claude Code: ajustes locales y estado del autopiloto (.claude/autopiloto/autopiloto.py)
+/.claude/settings.local.json
+/.claude/autopiloto/activo
+/.claude/autopiloto/bloqueado.md
+/.claude/autopiloto/estado.json

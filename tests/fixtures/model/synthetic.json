@@ -1,0 +1,3165 @@
+[
+ {
+  "name": "proyecto mínimo",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00"
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": null,
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "unicode en textos",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Pañuelo 🎬 «ñandú» — prueba",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": "E:/vídeos/año"
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Pañuelo 🎬 «ñandú» — prueba",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": "E:/vídeos/año",
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": null,
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "carpeta del inicio (group_id) y carpeta en disco",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "group_id": "g1",
+   "folder": null
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": "g1",
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": null,
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "material sin id toma el index",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "clips": [
+    {
+     "index": 3,
+     "filename": "clip_3.mp4",
+     "url": "/clips/p1/clip_3.mp4",
+     "start": 0,
+     "end": 10
+    },
+    {
+     "index": 4,
+     "filename": "clip_4.mp4",
+     "url": "/clips/p1/clip_4.mp4",
+     "start": 0,
+     "end": 10,
+     "id": ""
+    },
+    {
+     "index": 5,
+     "filename": "clip_5.mp4",
+     "url": "/clips/p1/clip_5.mp4",
+     "start": 0,
+     "end": 10,
+     "id": "propio"
+    },
+    {
+     "index": 6,
+     "filename": "clip_6.mp4",
+     "url": "/clips/p1/clip_6.mp4",
+     "start": 0,
+     "end": 10,
+     "id": null
+    }
+   ]
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [
+    {
+     "index": 3,
+     "filename": "clip_3.mp4",
+     "url": "/clips/p1/clip_3.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "id": "3",
+     "source_url": null,
+     "created_at": null,
+     "label": null,
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": null,
+     "external_id": null,
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    {
+     "index": 4,
+     "filename": "clip_4.mp4",
+     "url": "/clips/p1/clip_4.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "id": "4",
+     "source_url": null,
+     "created_at": null,
+     "label": null,
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": null,
+     "external_id": null,
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    {
+     "index": 5,
+     "filename": "clip_5.mp4",
+     "url": "/clips/p1/clip_5.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "id": "propio",
+     "source_url": null,
+     "created_at": null,
+     "label": null,
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": null,
+     "external_id": null,
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    {
+     "index": 6,
+     "filename": "clip_6.mp4",
+     "url": "/clips/p1/clip_6.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "id": "6",
+     "source_url": null,
+     "created_at": null,
+     "label": null,
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": null,
+     "external_id": null,
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    }
+   ],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": null,
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "clips null equivale a lista vacía",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "clips": null
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": null,
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "timeline vacía {} → timeline por defecto",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {}
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [],
+    "clips": [],
+    "markers": []
+   },
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "timeline null",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": null
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": null,
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "timeline v1: roles de texto, keep_pitch y pila de pistas",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "tracks": [
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "Texto 1"
+     },
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "Vídeo 1"
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "Audio 1"
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "Vídeo 2"
+     },
+     {
+      "id": "T2",
+      "kind": "text",
+      "name": "Texto 2"
+     }
+    ],
+    "clips": [
+     {
+      "id": "t_words",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t_words",
+      "filename": "",
+      "text": "Hola",
+      "words": [
+       {
+        "text": "Hola",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": 0.98
+       },
+       {
+        "text": "mundo",
+        "start": 0.4,
+        "end": 0.9
+       }
+      ]
+     },
+     {
+      "id": "t_origin",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t_origin",
+      "filename": "",
+      "text": "Hola",
+      "origin": {
+       "transcript_id": "tr1",
+       "segment_index": 0
+      }
+     },
+     {
+      "id": "t_libre",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t_libre",
+      "filename": "",
+      "text": "Hola"
+     },
+     {
+      "id": "t_rol_fijado",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t_rol_fijado",
+      "filename": "",
+      "text": "Hola",
+      "text_role": "free",
+      "words": [
+       {
+        "text": "Hola",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": 0.98
+       },
+       {
+        "text": "mundo",
+        "start": 0.4,
+        "end": 0.9
+       }
+      ]
+     },
+     {
+      "id": "t_rol_raro",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t_rol_raro",
+      "filename": "",
+      "text": "Hola",
+      "text_role": "otro"
+     },
+     {
+      "id": "v_pitch",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "keep_pitch": false
+     },
+     {
+      "id": "a_pitch_cero",
+      "track_id": "A1",
+      "kind": "audio",
+      "asset_kind": "audios",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "keep_pitch": 0
+     }
+    ]
+   }
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "Vídeo 1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "Vídeo 2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "Audio 1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "Texto 1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T2",
+      "kind": "text",
+      "name": "Texto 2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "t_words",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t_words",
+      "filename": "",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "Hola",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "Hola",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": 0.98
+       },
+       {
+        "text": "mundo",
+        "start": 0.4,
+        "end": 0.9,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": "caption",
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t_origin",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t_origin",
+      "filename": "",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "Hola",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": {
+       "transcript_id": "tr1",
+       "segment_index": 0
+      },
+      "text_role": "caption",
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t_libre",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t_libre",
+      "filename": "",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "Hola",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": "free",
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t_rol_fijado",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t_rol_fijado",
+      "filename": "",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "Hola",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "Hola",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": 0.98
+       },
+       {
+        "text": "mundo",
+        "start": 0.4,
+        "end": 0.9,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": "free",
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t_rol_raro",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t_rol_raro",
+      "filename": "",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "Hola",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": "free",
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "v_pitch",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "a_pitch_cero",
+      "track_id": "A1",
+      "kind": "audio",
+      "asset_kind": "audios",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": false,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "timeline v4 se migra a v5",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 4,
+    "tracks": [
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "Texto 1"
+     },
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "Vídeo 1"
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "Audio 1"
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "Vídeo 2"
+     },
+     {
+      "id": "T2",
+      "kind": "text",
+      "name": "Texto 2"
+     }
+    ],
+    "clips": [
+     {
+      "id": "v",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "keep_pitch": false
+     }
+    ]
+   }
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "Vídeo 1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "Vídeo 2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "Audio 1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "Texto 1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T2",
+      "kind": "text",
+      "name": "Texto 2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "v",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": false,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "timeline v5 no se toca",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "tracks": [
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "Texto 1"
+     },
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "Vídeo 1"
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "Audio 1"
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "Vídeo 2"
+     },
+     {
+      "id": "T2",
+      "kind": "text",
+      "name": "Texto 2"
+     }
+    ],
+    "clips": [
+     {
+      "id": "v",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "keep_pitch": false
+     }
+    ]
+   }
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "Texto 1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "Vídeo 1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "Audio 1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "Vídeo 2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T2",
+      "kind": "text",
+      "name": "Texto 2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "v",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": false,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "schema_version real (5.0) cuenta como v1",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5.0,
+    "clips": [
+     {
+      "id": "t",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t",
+      "filename": "",
+      "text": "Hola"
+     }
+    ]
+   }
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [],
+    "clips": [
+     {
+      "id": "t",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t",
+      "filename": "",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "Hola",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": "free",
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "coerciones lax de Pydantic",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "fps": 30.0,
+    "width": "720",
+    "height": " 1_280 ",
+    "audio_target_db": -14,
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "start": 5,
+      "in_point": "1.5",
+      "out_point": "1_000.5",
+      "volume": true,
+      "muted": 1,
+      "flip_h": "yes",
+      "flip_v": "OFF",
+      "reverse": 0.0,
+      "speed": "2",
+      "opacity": 1,
+      "ref_segment": "t",
+      "loop": "n"
+     }
+    ]
+   }
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [],
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 5.0,
+      "in_point": 1.5,
+      "out_point": 1000.5,
+      "source_duration": 0.0,
+      "ref_segment": true,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": true,
+      "speed": 2.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": 1.0,
+      "flip_h": true,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": false,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "claves desconocidas se ignoran",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "desconocida": 1,
+   "timeline": {
+    "schema_version": 5,
+    "otra": {
+     "x": 1
+    },
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "extra_clip": true,
+      "reframe": {
+       "zoom": 0.5,
+       "nuevo": "x",
+       "keyframes": [
+        {
+         "t": 0,
+         "cx": 0.5,
+         "rara": [
+          1
+         ]
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [],
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 0.5,
+       "keyframes": [
+        {
+         "t": 0.0,
+         "cx": 0.5,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": null
+        }
+       ],
+       "pan_mode": "smooth",
+       "dual_crop": false,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [],
+       "crop_w": null,
+       "crop_h": null,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "material completo (reframe, transcript, face_track)",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "clips": [
+    {
+     "index": 0,
+     "filename": "clip_0.mp4",
+     "url": "/clips/p1/clip_0.mp4",
+     "start": 0,
+     "end": 10,
+     "id": "m0",
+     "label": "Entrevista",
+     "semantic": {
+      "tema": "física"
+     },
+     "reframe": {
+      "zoom": 0.8,
+      "keyframes": [
+       {
+        "t": 0,
+        "cx": 0.4
+       },
+       {
+        "t": 2,
+        "cx": 0.6,
+        "cy": 0.4,
+        "zoom": 0.9,
+        "fit": "contain"
+       }
+      ],
+      "dual_crop": true,
+      "zoom2": 0.5,
+      "keyframes2": [
+       {
+        "t": 0,
+        "cx": 0.2
+       }
+      ],
+      "crop_w": 0.5,
+      "crop_h": 1,
+      "master": true
+     },
+     "transcript": {
+      "id": "tr",
+      "model": "small",
+      "segments": [
+       {
+        "start": 0,
+        "end": 1,
+        "text": "Hola mundo",
+        "words": [
+         {
+          "text": "Hola",
+          "start": 0.0,
+          "end": 0.4,
+          "prob": 0.98
+         },
+         {
+          "text": "mundo",
+          "start": 0.4,
+          "end": 0.9
+         }
+        ]
+       }
+      ]
+     },
+     "in_point": 12.5,
+     "out_point": 17,
+     "parent_id": "m_padre",
+     "face_track": {
+      "start": 0,
+      "end": 10,
+      "width": 1920,
+      "height": 1080,
+      "samples": 20,
+      "track": [
+       {
+        "t": 0,
+        "cx": 0.5,
+        "w": 0.1,
+        "h": 0.2
+       }
+      ],
+      "keyframes": [
+       {
+        "t": 0,
+        "cx": 0.5
+       }
+      ]
+     }
+    }
+   ],
+   "transcripts": [
+    {
+     "id": "tr2",
+     "model": "large-v3",
+     "language": "es",
+     "duration": 61.5,
+     "segments": [
+      {
+       "start": 0,
+       "end": 2,
+       "text": "Texto"
+      }
+     ]
+    }
+   ],
+   "audios": [
+    {
+     "id": "au1",
+     "filename": "voz.wav",
+     "url": "/a/voz.wav",
+     "engine": "kokoro",
+     "voice": "ef_dora",
+     "speed": 1
+    }
+   ],
+   "images": [
+    {
+     "id": "im1",
+     "filename": "x.png",
+     "url": "/i/x.png",
+     "width": 1080,
+     "height": 1920
+    },
+    {
+     "id": "im2",
+     "filename": "y.gif",
+     "url": "/i/y.gif",
+     "origin": null,
+     "animated": true,
+     "frames": 24,
+     "fps": 12,
+     "duration": 2,
+     "loop": true,
+     "analysis": {
+      "tags": [
+       "gato"
+      ]
+     }
+    }
+   ],
+   "motion_compositions": [
+    {
+     "id": "mc1",
+     "scenes": [
+      {
+       "t": 0
+      }
+     ]
+    }
+   ],
+   "scene_directions": {
+    "tramos": [
+     {
+      "desde": 0,
+      "hasta": 4.5
+     }
+    ]
+   },
+   "visual_blueprint": {
+    "paleta": [
+     "#fff",
+     "#000"
+    ]
+   }
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [
+    {
+     "index": 0,
+     "filename": "clip_0.mp4",
+     "url": "/clips/p1/clip_0.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "id": "m0",
+     "source_url": null,
+     "created_at": null,
+     "label": "Entrevista",
+     "description": null,
+     "description_ai": null,
+     "semantic": {
+      "tema": "física"
+     },
+     "reframe": {
+      "zoom": 0.8,
+      "keyframes": [
+       {
+        "t": 0.0,
+        "cx": 0.4,
+        "cy": 0.5,
+        "zoom": null,
+        "pan_mode": null,
+        "fit": null
+       },
+       {
+        "t": 2.0,
+        "cx": 0.6,
+        "cy": 0.4,
+        "zoom": 0.9,
+        "pan_mode": null,
+        "fit": "contain"
+       }
+      ],
+      "pan_mode": "smooth",
+      "dual_crop": true,
+      "split_orientation": "vertical",
+      "zoom2": 0.5,
+      "keyframes2": [
+       {
+        "t": 0.0,
+        "cx": 0.2,
+        "cy": 0.5,
+        "zoom": null,
+        "pan_mode": null,
+        "fit": null
+       }
+      ],
+      "crop_w": 0.5,
+      "crop_h": 1.0,
+      "master": true,
+      "split_layout": "auto",
+      "face_track_mode": null
+     },
+     "transcript": {
+      "id": "tr",
+      "source_url": null,
+      "title": null,
+      "model": "small",
+      "language": null,
+      "duration": null,
+      "created_at": null,
+      "file": null,
+      "segments": [
+       {
+        "start": 0.0,
+        "end": 1.0,
+        "text": "Hola mundo",
+        "words": [
+         {
+          "text": "Hola",
+          "start": 0.0,
+          "end": 0.4,
+          "prob": 0.98
+         },
+         {
+          "text": "mundo",
+          "start": 0.4,
+          "end": 0.9,
+          "prob": null
+         }
+        ]
+       }
+      ]
+     },
+     "origin": null,
+     "source": null,
+     "provider": null,
+     "external_id": null,
+     "author": null,
+     "license_info": null,
+     "in_point": 12.5,
+     "out_point": 17.0,
+     "parent_id": "m_padre",
+     "face_track": {
+      "start": 0.0,
+      "end": 10.0,
+      "width": 1920,
+      "height": 1080,
+      "fps": 25.0,
+      "samples": 20,
+      "track": [
+       {
+        "t": 0.0,
+        "cx": 0.5,
+        "cy": 0.5,
+        "zoom": null,
+        "pan_mode": null,
+        "fit": null,
+        "w": 0.1,
+        "h": 0.2
+       }
+      ],
+      "keyframes": [
+       {
+        "t": 0.0,
+        "cx": 0.5,
+        "cy": 0.5,
+        "zoom": null,
+        "pan_mode": null,
+        "fit": null
+       }
+      ],
+      "created_at": null
+     }
+    }
+   ],
+   "transcripts": [
+    {
+     "id": "tr2",
+     "source_url": null,
+     "title": null,
+     "model": "large-v3",
+     "language": "es",
+     "duration": 61.5,
+     "created_at": null,
+     "file": null,
+     "segments": [
+      {
+       "start": 0.0,
+       "end": 2.0,
+       "text": "Texto",
+       "words": []
+      }
+     ]
+    }
+   ],
+   "audios": [
+    {
+     "id": "au1",
+     "filename": "voz.wav",
+     "url": "/a/voz.wav",
+     "voice": "ef_dora",
+     "voice2": null,
+     "blend": null,
+     "speed": 1.0,
+     "pause": null,
+     "text": null,
+     "duration": null,
+     "created_at": null,
+     "engine": "kokoro",
+     "label": null,
+     "description": null,
+     "origin": null,
+     "source": null,
+     "youtube_url": null,
+     "youtube_id": null
+    }
+   ],
+   "images": [
+    {
+     "id": "im1",
+     "filename": "x.png",
+     "url": "/i/x.png",
+     "width": 1080,
+     "height": 1920,
+     "created_at": null,
+     "label": null,
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "analysis": null,
+     "origin": "upload",
+     "source": "external",
+     "provider": null,
+     "external_id": null,
+     "source_url": null,
+     "author": null,
+     "license_info": null,
+     "animated": null,
+     "frames": null,
+     "fps": null,
+     "duration": null,
+     "loop": null,
+     "has_alpha": null
+    },
+    {
+     "id": "im2",
+     "filename": "y.gif",
+     "url": "/i/y.gif",
+     "width": null,
+     "height": null,
+     "created_at": null,
+     "label": null,
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "analysis": {
+      "tags": [
+       "gato"
+      ]
+     },
+     "origin": null,
+     "source": "external",
+     "provider": null,
+     "external_id": null,
+     "source_url": null,
+     "author": null,
+     "license_info": null,
+     "animated": true,
+     "frames": 24,
+     "fps": 12.0,
+     "duration": 2.0,
+     "loop": true,
+     "has_alpha": null
+    }
+   ],
+   "timeline": null,
+   "motion_compositions": [
+    {
+     "id": "mc1",
+     "scenes": [
+      {
+       "t": 0
+      }
+     ]
+    }
+   ],
+   "scene_directions": {
+    "tramos": [
+     {
+      "desde": 0,
+      "hasta": 4.5
+     }
+    ]
+   },
+   "visual_blueprint": {
+    "paleta": [
+     "#fff",
+     "#000"
+    ]
+   }
+  }
+ },
+ {
+  "name": "valores sin tipar se copian tal cual (1 ≠ 1.0)",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "markers": [
+     {
+      "id": "m1",
+      "t": 3,
+      "label": "beat"
+     }
+    ],
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "style": {
+       "tema": "x",
+       "tam": 64
+      }
+     }
+    ],
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "style": {
+       "font": "Inter",
+       "size": 64,
+       "scale": 1.0,
+       "nested": {
+        "a": [
+         1,
+         2.5,
+         null,
+         true,
+         "ñ"
+        ]
+       }
+      },
+      "transform": {
+       "x": 0,
+       "y": 0.5,
+       "scale": 1,
+       "rotation": -12.25
+      },
+      "effects": {},
+      "filters": [
+       {
+        "id": "teal",
+        "amount": 0.7
+       }
+      ],
+      "masks": [
+       {
+        "type": "circle",
+        "feather": 0
+       }
+      ],
+      "vfx": [
+       {
+        "uid": "u1",
+        "effect": "glitch",
+        "params": {}
+       }
+      ],
+      "keyframes": {
+       "enabled": true,
+       "items": []
+      },
+      "bg_removal": null,
+      "beats": {
+       "times": [
+        0.5,
+        1
+       ],
+       "bpm": 120
+      }
+     }
+    ]
+   }
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": {
+       "tema": "x",
+       "tam": 64
+      },
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 0.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": {
+       "font": "Inter",
+       "size": 64,
+       "scale": 1.0,
+       "nested": {
+        "a": [
+         1,
+         2.5,
+         null,
+         true,
+         "ñ"
+        ]
+       }
+      },
+      "layout": "fill",
+      "transform": {
+       "x": 0,
+       "y": 0.5,
+       "scale": 1,
+       "rotation": -12.25
+      },
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": {},
+      "filters": [
+       {
+        "id": "teal",
+        "amount": 0.7
+       }
+      ],
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": {
+       "times": [
+        0.5,
+        1
+       ],
+       "bpm": 120
+      },
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [
+       {
+        "type": "circle",
+        "feather": 0
+       }
+      ],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": [
+       {
+        "uid": "u1",
+        "effect": "glitch",
+        "params": {}
+       }
+      ],
+      "animations": null,
+      "keyframes": {
+       "enabled": true,
+       "items": []
+      },
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": [
+     {
+      "id": "m1",
+      "t": 3,
+      "label": "beat"
+     }
+    ]
+   },
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "reales con muchos decimales y notación científica",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "start": 0.30000000000000004,
+      "in_point": 1e-05,
+      "out_point": 123456.789012345,
+      "source_duration": 1e+16,
+      "volume": 0.0025
+     }
+    ]
+   }
+  },
+  "expected": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "folder": null,
+   "group_id": null,
+   "clips": [],
+   "transcripts": [],
+   "audios": [],
+   "images": [],
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [],
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 0.30000000000000004,
+      "in_point": 1e-05,
+      "out_point": 123456.789012345,
+      "source_duration": 1e+16,
+      "ref_segment": null,
+      "volume": 0.0025,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "motion_compositions": [],
+   "scene_directions": {},
+   "visual_blueprint": {}
+  }
+ },
+ {
+  "name": "ERROR cx fuera de rango",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "reframe": {
+       "keyframes": [
+        {
+         "t": 0,
+         "cx": 1.5
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "timeline.clips[0].reframe.keyframes[0].cx"
+  ]
+ },
+ {
+  "name": "ERROR zoom de reframe por debajo de 0.1",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "reframe": {
+       "zoom": 0.05
+      }
+     }
+    ]
+   }
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "timeline.clips[0].reframe.zoom"
+  ]
+ },
+ {
+  "name": "ERROR crop_w por debajo de 0.05",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "clips": [
+    {
+     "index": 0,
+     "filename": "clip_0.mp4",
+     "url": "/clips/p1/clip_0.mp4",
+     "start": 0,
+     "end": 10,
+     "reframe": {
+      "crop_w": 0.01
+     }
+    }
+   ]
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "clips[0].reframe.crop_w"
+  ]
+ },
+ {
+  "name": "ERROR asset_id numérico (str estricto)",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": 3,
+      "filename": "a.mp4"
+     }
+    ]
+   }
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "timeline.clips[0].asset_id"
+  ]
+ },
+ {
+  "name": "ERROR words null",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "words": null
+     }
+    ]
+   }
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "timeline.clips[0].words"
+  ]
+ },
+ {
+  "name": "ERROR falta track_id",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "clips": [
+     {
+      "id": "c",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4"
+     }
+    ]
+   }
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "timeline.clips[0].track_id"
+  ]
+ },
+ {
+  "name": "ERROR fps con decimales",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "fps": 30.5
+   }
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "timeline.fps"
+  ]
+ },
+ {
+  "name": "ERROR muted = 2",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "muted": 2
+     }
+    ]
+   }
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "timeline.clips[0].muted"
+  ]
+ },
+ {
+  "name": "ERROR style es una lista",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "style": [
+       1
+      ]
+     }
+    ]
+   }
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "timeline.clips[0].style"
+  ]
+ },
+ {
+  "name": "ERROR máscara que no es dict",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "timeline": {
+    "schema_version": 5,
+    "clips": [
+     {
+      "id": "c",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "a.mp4",
+      "masks": [
+       {
+        "ok": 1
+       },
+       "no"
+      ]
+     }
+    ]
+   }
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "timeline.clips[0].masks[1]"
+  ]
+ },
+ {
+  "name": "ERROR falta created_at",
+  "kind": "project",
+  "input": {
+   "id": "p",
+   "name": "x"
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "created_at"
+  ]
+ },
+ {
+  "name": "ERROR scene_directions null",
+  "kind": "project",
+  "input": {
+   "id": "p1",
+   "name": "Proyecto",
+   "created_at": "2026-10-06T00:00:00+00:00",
+   "scene_directions": null
+  },
+  "error": "1 validation error for Project",
+  "error_paths": [
+   "scene_directions"
+  ]
+ },
+ {
+  "name": "timeline v4 con marcadores",
+  "kind": "timeline",
+  "input": {
+   "schema_version": 4,
+   "fps": 25,
+   "tracks": [
+    {
+     "id": "T1",
+     "kind": "text",
+     "name": "Texto 1"
+    },
+    {
+     "id": "V1",
+     "kind": "video",
+     "name": "Vídeo 1"
+    },
+    {
+     "id": "A1",
+     "kind": "audio",
+     "name": "Audio 1"
+    }
+   ],
+   "clips": [
+    {
+     "id": "t",
+     "track_id": "T1",
+     "kind": "text",
+     "asset_kind": "text",
+     "asset_id": "t",
+     "filename": "",
+     "text": "Hola",
+     "words": [
+      {
+       "text": "Hola",
+       "start": 0.0,
+       "end": 0.4,
+       "prob": 0.98
+      },
+      {
+       "text": "mundo",
+       "start": 0.4,
+       "end": 0.9
+      }
+     ]
+    }
+   ],
+   "markers": [
+    {
+     "id": "m",
+     "t": 1.5
+    }
+   ]
+  },
+  "expected": {
+   "version": 1,
+   "schema_version": 5,
+   "fps": 25,
+   "width": 720,
+   "height": 1280,
+   "audio_target_db": -14.0,
+   "tracks": [
+    {
+     "id": "V1",
+     "kind": "video",
+     "name": "Vídeo 1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "T1",
+     "kind": "text",
+     "name": "Texto 1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A1",
+     "kind": "audio",
+     "name": "Audio 1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    }
+   ],
+   "clips": [
+    {
+     "id": "t",
+     "track_id": "T1",
+     "kind": "text",
+     "asset_kind": "text",
+     "asset_id": "t",
+     "filename": "",
+     "name": null,
+     "start": 0.0,
+     "in_point": 0.0,
+     "out_point": 0.0,
+     "source_duration": 0.0,
+     "ref_segment": null,
+     "volume": 1.0,
+     "media_version": null,
+     "reframe": null,
+     "text": "Hola",
+     "style": null,
+     "layout": "fill",
+     "transform": null,
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": null,
+     "filters": null,
+     "audio_fx": null,
+     "muted": false,
+     "speed": 1.0,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "opacity": null,
+     "flip_h": false,
+     "flip_v": false,
+     "blend_mode": null,
+     "disabled": false,
+     "beats": null,
+     "loop": null,
+     "words": [
+      {
+       "text": "Hola",
+       "start": 0.0,
+       "end": 0.4,
+       "prob": 0.98
+      },
+      {
+       "text": "mundo",
+       "start": 0.4,
+       "end": 0.9,
+       "prob": null
+      }
+     ],
+     "origin": null,
+     "text_role": null,
+     "shape": null,
+     "masks": [],
+     "bg_removal": null,
+     "anim": null,
+     "vfx": null,
+     "animations": null,
+     "keyframes": null,
+     "asset_scope": "project",
+     "description": null,
+     "note": null,
+     "note_source": null,
+     "dup_of": null,
+     "composition_id": null
+    }
+   ],
+   "markers": [
+    {
+     "id": "m",
+     "t": 1.5
+    }
+   ]
+  }
+ },
+ {
+  "name": "carpeta del inicio",
+  "kind": "group",
+  "input": {
+   "id": "g1",
+   "name": "Shorts",
+   "created_at": "2026-10-06T00:00:00+00:00"
+  },
+  "expected": {
+   "id": "g1",
+   "name": "Shorts",
+   "created_at": "2026-10-06T00:00:00+00:00"
+  }
+ },
+ {
+  "name": "ERROR carpeta sin nombre",
+  "kind": "group",
+  "input": {
+   "id": "g1",
+   "created_at": "2026-10-06T00:00:00+00:00"
+  },
+  "error": "1 validation error for ProjectGroup",
+  "error_paths": [
+   "name"
+  ]
+ },
+ {
+  "name": "migrar v4 → v5 reordena vídeo/texto en sus huecos",
+  "kind": "migrate",
+  "input": {
+   "schema_version": 4,
+   "tracks": [
+    {
+     "id": "T1",
+     "kind": "text",
+     "name": "Texto 1"
+    },
+    {
+     "id": "V1",
+     "kind": "video",
+     "name": "Vídeo 1"
+    },
+    {
+     "id": "A1",
+     "kind": "audio",
+     "name": "Audio 1"
+    },
+    {
+     "id": "V2",
+     "kind": "video",
+     "name": "Vídeo 2"
+    },
+    {
+     "id": "T2",
+     "kind": "text",
+     "name": "Texto 2"
+    },
+    "no-dict"
+   ],
+   "clips": []
+  },
+  "expected": {
+   "schema_version": 5,
+   "tracks": [
+    {
+     "id": "V1",
+     "kind": "video",
+     "name": "Vídeo 1"
+    },
+    {
+     "id": "V2",
+     "kind": "video",
+     "name": "Vídeo 2"
+    },
+    {
+     "id": "A1",
+     "kind": "audio",
+     "name": "Audio 1"
+    },
+    {
+     "id": "T1",
+     "kind": "text",
+     "name": "Texto 1"
+    },
+    {
+     "id": "T2",
+     "kind": "text",
+     "name": "Texto 2"
+    },
+    "no-dict"
+   ],
+   "clips": []
+  }
+ },
+ {
+  "name": "migrar v2 → v5 sin clips añade clips = []",
+  "kind": "migrate",
+  "input": {
+   "schema_version": 2,
+   "fps": 30
+  },
+  "expected": {
+   "schema_version": 5,
+   "fps": 30,
+   "clips": []
+  }
+ },
+ {
+  "name": "migrar v3: keep_pitch false → true, 0 se queda",
+  "kind": "migrate",
+  "input": {
+   "schema_version": 3,
+   "clips": [
+    {
+     "keep_pitch": false
+    },
+    {
+     "keep_pitch": 0
+    },
+    "raro"
+   ]
+  },
+  "expected": {
+   "schema_version": 5,
+   "clips": [
+    {
+     "keep_pitch": true
+    },
+    {
+     "keep_pitch": 0
+    },
+    "raro"
+   ]
+  }
+ },
+ {
+  "name": "migrar: schema_version true cuenta como v1",
+  "kind": "migrate",
+  "input": {
+   "schema_version": true,
+   "clips": [
+    {
+     "kind": "text",
+     "text_role": "caption"
+    }
+   ]
+  },
+  "expected": {
+   "schema_version": 5,
+   "clips": [
+    {
+     "kind": "text",
+     "text_role": "caption"
+    }
+   ]
+  }
+ },
+ {
+  "name": "migrar: schema_version negativa cuenta como v1",
+  "kind": "migrate",
+  "input": {
+   "schema_version": -3,
+   "tracks": "no-lista"
+  },
+  "expected": {
+   "schema_version": 5,
+   "tracks": "no-lista",
+   "clips": []
+  }
+ },
+ {
+  "name": "migrar: objeto vacío no cambia",
+  "kind": "migrate",
+  "input": {},
+  "expected": {}
+ },
+ {
+  "name": "migrar: lo que no es objeto no cambia",
+  "kind": "migrate",
+  "input": [
+   1,
+   2
+  ],
+  "expected": [
+   1,
+   2
+  ]
+ },
+ {
+  "name": "migrar: versión futura no se degrada",
+  "kind": "migrate",
+  "input": {
+   "schema_version": 9,
+   "clips": [
+    {
+     "keep_pitch": false
+    }
+   ]
+  },
+  "expected": {
+   "schema_version": 9,
+   "clips": [
+    {
+     "keep_pitch": false
+    }
+   ]
+  }
+ }
+]

@@ -1,0 +1,57 @@
+#pragma once
+
+// Implementación de cada operación (una sobrecarga de `run` por comando).
+// La API pública es run_command/apply_command en gc/core/edit.hpp.
+
+#include "gc/core/edit.hpp"
+
+namespace gc::core::detail {
+
+Result<EditResult> run(const Timeline& tl, const ops::AddTrack& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::ReorderTrack& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::RenameTrack& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::RemoveTrack& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::LinkTracks& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::UnlinkTrack& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::AddClip& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::MoveClip& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::RemoveClip& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SplitClip& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::DuplicateClip& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetProjectFormat& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetMarkers& op, IdSource& ids);
+
+// edit_ops_props.cpp
+Result<EditResult> run(const Timeline& tl, const ops::SetClipOpacity& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipSpeed& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipTransition& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetTextRole& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipBlend& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipFlip& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipLayout& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipNote& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::UpdateClip& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::ReframeClip& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::CropClip& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipKeyframes& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipBeats& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipMasks& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipEffects& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::ReplaceMedia& op, IdSource& ids);
+
+// edit_ops_media.cpp
+Result<EditResult> run(const Timeline& tl, const ops::ApplyEffect& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipAnimation& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::FreezeFrame& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::AddSubtitles& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::AddShape& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::AddCinemaBars& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::AddAdjustmentLayer& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipBgRemoval& op, IdSource& ids);
+
+// edit_ops_audio.cpp
+Result<EditResult> run(const Timeline& tl, const ops::SetClipVolume& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetTrackAudio& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::SetClipAudioFx& op, IdSource& ids);
+
+} // namespace gc::core::detail

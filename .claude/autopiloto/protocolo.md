@@ -1,0 +1,9 @@
+## Protocolo del autopiloto
+
+1. **Una tanda cada vez.** Toma la siguiente tarea pendiente de la fase en curso, en el orden de las notas del TODO, y termínala entera: código, fixtures de paridad generadas desde el Python REAL de video-yt (`E:/proyectos/video-yt/.venv/Scripts/python.exe tools/fixtures/export_fixtures.py --real`) y tests.
+2. **Verifica antes de dar algo por hecho.** Ejecuta `bash tools/dev/verificar.sh`: Debug y Release, todos los tests en verde y 0 warnings. Si un test falla, arréglalo. No lo desactives ni relajes una tolerancia sin justificarlo en el plan.
+3. **Cierra la tanda.** Marca las tareas en `docs/TODO.md` y actualiza sus cifras. Añade la entrada al §14 de `docs/PLAN_MIGRACION_CPP.md` y, si cambia el estado general, actualiza el README. Después haz un commit local en `main` con un mensaje en español que resuma la tanda. Sin push y sin ninguna línea `Co-Authored-By` ni otra atribución a Claude.
+4. **Revisión.** Cuando el autopiloto lo pida (porque hay tareas nuevas marcadas como hechas), lanza el subagente `revisor-migracion`. Si no aparece como tipo de agente, usa `general-purpose` y pásale las instrucciones de `.claude/agents/revisor-migracion.md`. Corrige lo bloqueante en un commit aparte y sigue con la tarea que proponga.
+5. **Fin de fase.** Actualiza la tabla «Estado de un vistazo» y pasa a la siguiente fase. Si esa fase necesita algo de Edu, adelanta mientras tanto lo que no dependa de él, por ejemplo los pendientes de fases anteriores.
+6. **Bloqueo.** Si ya no queda nada útil que hacer sin Edu (Windows SDK, remoto de GitHub, una decisión, credenciales), escribe en `.claude/autopiloto/bloqueado.md` el motivo y lo que necesitas, y termina el turno.
+7. **Nunca:** hacer push, borrar trabajo de Edu, modificar video-yt (solo se lee) ni subir `tests/fixtures/local/`.

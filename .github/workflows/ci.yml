@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows (MSVC)
+            os: windows-latest
+            cxx: cl
+            # Aún sin compilar en local con MSVC: los warnings no rompen el build
+            # hasta verificarlo (ver docs/PLAN_MIGRACION_CPP.md, F0).
+            werror: "OFF"
+          - name: Linux (GCC)
+            os: ubuntu-latest
+            cxx: g++
+            werror: "ON"
+          - name: macOS (Apple Clang)
+            os: macos-latest
+            cxx: clang++
+            werror: "ON"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: CMake y Ninja
+        uses: lukka/get-cmake@latest
+
+      - name: Entorno de MSVC
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configurar
+        env:
+          CXX: ${{ matrix.cxx }}
+        run: cmake --preset ci -DGC_WARNINGS_AS_ERRORS=${{ matrix.werror }}
+
+      - name: Compilar
+        run: cmake --build --preset ci
+
+      - name: Tests
+        # Las fixtures de tus proyectos reales (tests/fixtures/local) no están en el
+        # repo: ese test se marca como omitido.
+        run: ctest --preset ci

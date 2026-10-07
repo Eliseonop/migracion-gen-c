@@ -1,0 +1,3477 @@
+{
+ "version": 1,
+ "categories": [
+  {
+   "id": "basic",
+   "label": "Básicos",
+   "icon": "auto_awesome"
+  },
+  {
+   "id": "glitch",
+   "label": "Glitch",
+   "icon": "broken_image"
+  },
+  {
+   "id": "retro",
+   "label": "Retro",
+   "icon": "videocam"
+  },
+  {
+   "id": "distort",
+   "label": "Distorsión",
+   "icon": "waves"
+  },
+  {
+   "id": "light",
+   "label": "Luz",
+   "icon": "flare"
+  },
+  {
+   "id": "lens",
+   "label": "Lente",
+   "icon": "camera"
+  },
+  {
+   "id": "motion",
+   "label": "Movimiento",
+   "icon": "vibration"
+  },
+  {
+   "id": "style",
+   "label": "Estilo",
+   "icon": "brush"
+  },
+  {
+   "id": "color",
+   "label": "Color",
+   "icon": "palette"
+  }
+ ],
+ "effects": [
+  {
+   "id": "glitch_rgb",
+   "v": 1,
+   "name": "Glitch RGB",
+   "description": "Canales de color separados a golpes, con cortes horizontales.",
+   "category": "glitch",
+   "engine": "shader",
+   "tags": [
+    "glitch",
+    "rgb",
+    "digital",
+    "error",
+    "aberración"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 1,
+     "min": 0.1,
+     "max": 4,
+     "step": 0.1
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "glitch_blocks",
+   "v": 1,
+   "name": "Bloques",
+   "description": "Bloques de imagen que saltan de sitio, como un vídeo corrupto.",
+   "category": "glitch",
+   "engine": "shader",
+   "tags": [
+    "glitch",
+    "bloques",
+    "datamosh",
+    "corrupto"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 1,
+     "min": 0.1,
+     "max": 4,
+     "step": 0.1
+    },
+    {
+     "id": "size",
+     "type": "range",
+     "label": "Tamaño",
+     "def": 0.06,
+     "min": 0.02,
+     "max": 0.2,
+     "step": 0.01
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "glitch_tear",
+   "v": 1,
+   "name": "Interferencia",
+   "description": "Una franja que recorre la imagen desgarrándola en horizontal.",
+   "category": "glitch",
+   "engine": "shader",
+   "tags": [
+    "glitch",
+    "interferencia",
+    "señal",
+    "tv"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 1,
+     "min": 0.1,
+     "max": 4,
+     "step": 0.1
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "tv_static",
+   "v": 1,
+   "name": "Estática",
+   "description": "Ruido de televisión sin señal, continuo o a ráfagas.",
+   "category": "glitch",
+   "engine": "shader",
+   "tags": [
+    "ruido",
+    "estática",
+    "tv",
+    "nieve"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "bursts",
+     "type": "toggle",
+     "label": "A ráfagas",
+     "def": true
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "pixel_drift",
+   "v": 1,
+   "name": "Arrastre de píxeles",
+   "description": "Las zonas claras se estiran hacia abajo, como un pixel sort.",
+   "category": "glitch",
+   "engine": "shader",
+   "tags": [
+    "pixel sort",
+    "arrastre",
+    "glitch",
+    "derretir"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "threshold",
+     "type": "range",
+     "label": "Umbral",
+     "def": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 1,
+     "min": 0.1,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "vhs",
+   "v": 1,
+   "name": "VHS",
+   "description": "Cinta de vídeo: color corrido, ondulación, franja de tracking y ruido.",
+   "category": "retro",
+   "engine": "shader",
+   "tags": [
+    "vhs",
+    "cinta",
+    "90s",
+    "retro",
+    "analógico"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.7,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "noise",
+     "type": "range",
+     "label": "Ruido",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "film_8mm",
+   "v": 1,
+   "name": "Película 8 mm",
+   "description": "Película casera: tono cálido, grano, parpadeo, rayas y polvo.",
+   "category": "retro",
+   "engine": "shader",
+   "tags": [
+    "película",
+    "super 8",
+    "vintage",
+    "grano",
+    "polvo"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.7,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "grain",
+     "type": "range",
+     "label": "Grano",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "scratches",
+     "type": "range",
+     "label": "Rayas y polvo",
+     "def": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "old_film",
+   "v": 1,
+   "name": "Cine antiguo",
+   "description": "Blanco y negro de cine mudo con parpadeo, rayas y viñeta.",
+   "category": "retro",
+   "engine": "shader",
+   "tags": [
+    "blanco y negro",
+    "cine mudo",
+    "antiguo",
+    "película"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.7,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "crt",
+   "v": 1,
+   "name": "Tele de tubo",
+   "description": "Pantalla CRT: curvatura, líneas, rejilla de color y parpadeo.",
+   "category": "retro",
+   "engine": "shader",
+   "tags": [
+    "crt",
+    "tele",
+    "tubo",
+    "monitor",
+    "arcade"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.7,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "curve",
+     "type": "range",
+     "label": "Curvatura",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "scanlines",
+   "v": 1,
+   "name": "Líneas de barrido",
+   "description": "Líneas horizontales de monitor con un parpadeo suave.",
+   "category": "retro",
+   "engine": "shader",
+   "tags": [
+    "líneas",
+    "scanlines",
+    "monitor",
+    "crt"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "lines",
+     "type": "range",
+     "label": "Número de líneas",
+     "def": 360,
+     "min": 100,
+     "max": 800,
+     "step": 10
+    },
+    {
+     "id": "flicker",
+     "type": "range",
+     "label": "Parpadeo",
+     "def": 0.4,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "wave",
+   "v": 1,
+   "name": "Ondas",
+   "description": "La imagen ondula como una bandera o el agua.",
+   "category": "distort",
+   "engine": "shader",
+   "tags": [
+    "ondas",
+    "agua",
+    "ondular",
+    "bandera"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "freq",
+     "type": "range",
+     "label": "Frecuencia",
+     "def": 3,
+     "min": 0.5,
+     "max": 12,
+     "step": 0.5
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    },
+    {
+     "id": "dir",
+     "type": "select",
+     "label": "Dirección",
+     "def": "h",
+     "options": [
+      {
+       "id": "h",
+       "label": "Horizontal"
+      },
+      {
+       "id": "v",
+       "label": "Vertical"
+      }
+     ]
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "bulge",
+   "v": 1,
+   "name": "Ojo de pez",
+   "description": "Abomba el centro (o lo hunde) con un pulso opcional.",
+   "category": "distort",
+   "engine": "shader",
+   "tags": [
+    "ojo de pez",
+    "fisheye",
+    "lente",
+    "abombar"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Fuerza",
+     "def": 0.5,
+     "min": -1,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "pulse",
+     "type": "range",
+     "label": "Pulso",
+     "def": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "rate",
+     "type": "range",
+     "label": "Ritmo",
+     "def": 1,
+     "min": 0.1,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "swirl",
+   "v": 1,
+   "name": "Remolino",
+   "description": "Retuerce el centro de la imagen en espiral.",
+   "category": "distort",
+   "engine": "shader",
+   "tags": [
+    "remolino",
+    "espiral",
+    "twirl",
+    "hipnótico"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "radius",
+     "type": "range",
+     "label": "Radio",
+     "def": 0.6,
+     "min": 0.1,
+     "max": 1.2,
+     "step": 0.01
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "ripple",
+   "v": 1,
+   "name": "Gota de agua",
+   "description": "Ondas concéntricas que salen del centro.",
+   "category": "distort",
+   "engine": "shader",
+   "tags": [
+    "gota",
+    "agua",
+    "ondas",
+    "ripple"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "freq",
+     "type": "range",
+     "label": "Frecuencia",
+     "def": 8,
+     "min": 1,
+     "max": 20,
+     "step": 0.5
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "mirror",
+   "v": 1,
+   "name": "Espejo",
+   "description": "Refleja una mitad sobre la otra, o en cuatro.",
+   "category": "distort",
+   "engine": "shader",
+   "tags": [
+    "espejo",
+    "simetría",
+    "reflejo"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "mode",
+     "type": "select",
+     "label": "Modo",
+     "def": "lr",
+     "options": [
+      {
+       "id": "lr",
+       "label": "Izquierda ↔ derecha"
+      },
+      {
+       "id": "tb",
+       "label": "Arriba ↔ abajo"
+      },
+      {
+       "id": "quad",
+       "label": "Cuatro"
+      }
+     ]
+    },
+    {
+     "id": "drift",
+     "type": "range",
+     "label": "Desplazamiento",
+     "def": 0,
+     "min": -1,
+     "max": 1,
+     "step": 0.01
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "kaleidoscope",
+   "v": 1,
+   "name": "Caleidoscopio",
+   "description": "Gajos reflejados que giran alrededor del centro.",
+   "category": "distort",
+   "engine": "shader",
+   "tags": [
+    "caleidoscopio",
+    "psicodélico",
+    "simetría"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "segments",
+     "type": "range",
+     "label": "Gajos",
+     "def": 6,
+     "min": 2,
+     "max": 16,
+     "step": 1
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 0.3,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    },
+    {
+     "id": "zoom",
+     "type": "range",
+     "label": "Zoom",
+     "def": 1,
+     "min": 0.3,
+     "max": 2,
+     "step": 0.01
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "split_screen",
+   "v": 1,
+   "name": "Pantalla dividida",
+   "description": "La imagen repetida en 2, 3, 4 o 9 recuadros.",
+   "category": "distort",
+   "engine": "shader",
+   "tags": [
+    "dividir",
+    "split",
+    "repetir",
+    "cuadrícula",
+    "multipantalla"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "count",
+     "type": "select",
+     "label": "Copias",
+     "def": "3",
+     "options": [
+      {
+       "id": "2",
+       "label": "2"
+      },
+      {
+       "id": "3",
+       "label": "3"
+      },
+      {
+       "id": "4",
+       "label": "4"
+      },
+      {
+       "id": "9",
+       "label": "9"
+      }
+     ]
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "flash",
+   "v": 1,
+   "name": "Destello",
+   "description": "Destellos de luz que decaen, uno por golpe de ritmo.",
+   "category": "light",
+   "engine": "shader",
+   "tags": [
+    "flash",
+    "destello",
+    "blanco",
+    "golpe",
+    "beat"
+   ],
+   "pad": 0,
+   "default_dur": 1,
+   "thumb": {
+    "t": 0.06
+   },
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.9,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "rate",
+     "type": "range",
+     "label": "Ritmo (por segundo)",
+     "def": 1,
+     "min": 0.2,
+     "max": 8,
+     "step": 0.1
+    },
+    {
+     "id": "color",
+     "type": "color",
+     "label": "Color",
+     "def": "#ffffff"
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "strobe",
+   "v": 1,
+   "name": "Estroboscopio",
+   "description": "Parpadeo rápido a negro, a blanco o invirtiendo colores.",
+   "category": "light",
+   "engine": "shader",
+   "tags": [
+    "estrobo",
+    "parpadeo",
+    "fiesta",
+    "flash"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": {
+    "t": 0.1,
+    "params": {
+     "mode": "invert"
+    }
+   },
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "rate",
+     "type": "range",
+     "label": "Ritmo (por segundo)",
+     "def": 6,
+     "min": 0.2,
+     "max": 8,
+     "step": 0.1
+    },
+    {
+     "id": "mode",
+     "type": "select",
+     "label": "Modo",
+     "def": "black",
+     "options": [
+      {
+       "id": "black",
+       "label": "Negro"
+      },
+      {
+       "id": "white",
+       "label": "Blanco"
+      },
+      {
+       "id": "invert",
+       "label": "Invertir"
+      }
+     ]
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "light_leak",
+   "v": 1,
+   "name": "Fuga de luz",
+   "description": "Manchas de luz cálida que cruzan la imagen, como en película.",
+   "category": "light",
+   "engine": "shader",
+   "tags": [
+    "fuga de luz",
+    "light leak",
+    "cálido",
+    "película",
+    "sueño"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.7,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 1,
+     "min": 0,
+     "max": 3,
+     "step": 0.1
+    },
+    {
+     "id": "color",
+     "type": "color",
+     "label": "Color",
+     "def": "#ff8a3d"
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "glow_pulse",
+   "v": 1,
+   "name": "Brillo que late",
+   "description": "Las zonas claras irradian un resplandor que late.",
+   "category": "light",
+   "engine": "shader",
+   "tags": [
+    "brillo",
+    "glow",
+    "bloom",
+    "resplandor"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.7,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "rate",
+     "type": "range",
+     "label": "Ritmo (por segundo)",
+     "def": 1,
+     "min": 0.2,
+     "max": 8,
+     "step": 0.1
+    },
+    {
+     "id": "radius",
+     "type": "range",
+     "label": "Radio",
+     "def": 0.8,
+     "min": 0.1,
+     "max": 2,
+     "step": 0.05
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "rainbow",
+   "v": 1,
+   "name": "Arcoíris",
+   "description": "Los colores giran por todo el arcoíris.",
+   "category": "light",
+   "engine": "shader",
+   "tags": [
+    "arcoíris",
+    "color",
+    "psicodélico",
+    "hue"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.7,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "zoom_blur",
+   "v": 1,
+   "name": "Zoom borroso",
+   "description": "Desenfoque radial desde el centro, como un golpe de zoom.",
+   "category": "lens",
+   "engine": "shader",
+   "tags": [
+    "zoom",
+    "desenfoque",
+    "radial",
+    "velocidad",
+    "impacto"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "pulse",
+     "type": "range",
+     "label": "Pulso",
+     "def": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "rate",
+     "type": "range",
+     "label": "Ritmo",
+     "def": 1.5,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "chromatic",
+   "v": 1,
+   "name": "Aberración cromática",
+   "description": "Bordes de color separados que laten desde el centro.",
+   "category": "lens",
+   "engine": "shader",
+   "tags": [
+    "aberración",
+    "cromática",
+    "rgb",
+    "lente"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "rate",
+     "type": "range",
+     "label": "Ritmo",
+     "def": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "vignette_pulse",
+   "v": 1,
+   "name": "Viñeta que late",
+   "description": "Bordes oscurecidos que se abren y se cierran.",
+   "category": "lens",
+   "engine": "shader",
+   "tags": [
+    "viñeta",
+    "bordes",
+    "latido",
+    "tensión"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "rate",
+     "type": "range",
+     "label": "Ritmo",
+     "def": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    },
+    {
+     "id": "color",
+     "type": "color",
+     "label": "Color",
+     "def": "#000000"
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "defocus",
+   "v": 1,
+   "name": "Desenfoque que respira",
+   "description": "La imagen entra y sale de foco suavemente.",
+   "category": "lens",
+   "engine": "shader",
+   "tags": [
+    "desenfoque",
+    "foco",
+    "blur",
+    "sueño"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "rate",
+     "type": "range",
+     "label": "Ritmo",
+     "def": 0.5,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "shake",
+   "v": 1,
+   "name": "Temblor",
+   "description": "Cámara en mano nerviosa: sacudidas suaves con un poco de giro.",
+   "category": "motion",
+   "engine": "shader",
+   "tags": [
+    "temblor",
+    "sacudida",
+    "cámara",
+    "shake",
+    "terremoto"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 1,
+     "min": 0.2,
+     "max": 4,
+     "step": 0.1
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "heartbeat",
+   "v": 1,
+   "name": "Latido",
+   "description": "Golpes de zoom al ritmo de un corazón (o de la música).",
+   "category": "motion",
+   "engine": "shader",
+   "tags": [
+    "latido",
+    "zoom",
+    "pulso",
+    "beat",
+    "corazón"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "bpm",
+     "type": "range",
+     "label": "Pulsaciones (BPM)",
+     "def": 90,
+     "min": 40,
+     "max": 180,
+     "step": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "earthquake",
+   "v": 1,
+   "name": "Terremoto",
+   "description": "Sacudida fuerte con estela, para impactos y explosiones.",
+   "category": "motion",
+   "engine": "shader",
+   "tags": [
+    "terremoto",
+    "impacto",
+    "explosión",
+    "sacudida"
+   ],
+   "pad": 0,
+   "default_dur": 1.2,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.8,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "decay",
+     "type": "range",
+     "label": "Se calma",
+     "def": 0.6,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "drift",
+   "v": 1,
+   "name": "Flotar",
+   "description": "El encuadre deriva despacio, como una cámara flotando.",
+   "category": "motion",
+   "engine": "shader",
+   "tags": [
+    "flotar",
+    "deriva",
+    "suave",
+    "handheld"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.4,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "speed",
+     "type": "range",
+     "label": "Velocidad",
+     "def": 0.3,
+     "min": 0.05,
+     "max": 2,
+     "step": 0.05
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "halftone",
+   "v": 1,
+   "name": "Cómic (semitono)",
+   "description": "Puntos de imprenta de cómic, con giro opcional de la trama.",
+   "category": "style",
+   "engine": "shader",
+   "tags": [
+    "cómic",
+    "semitono",
+    "puntos",
+    "pop art",
+    "halftone"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "size",
+     "type": "range",
+     "label": "Tamaño del punto",
+     "def": 0.014,
+     "min": 0.005,
+     "max": 0.05,
+     "step": 0.001
+    },
+    {
+     "id": "spin",
+     "type": "range",
+     "label": "Giro de la trama",
+     "def": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "neon_edges",
+   "v": 1,
+   "name": "Contornos de neón",
+   "description": "Oscurece la imagen y hace brillar sus contornos como tubos de neón.",
+   "category": "style",
+   "engine": "shader",
+   "tags": [
+    "neón",
+    "contornos",
+    "bordes",
+    "brillo",
+    "cyberpunk"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "color",
+     "type": "color",
+     "label": "Color",
+     "def": "#22d3ee"
+    },
+    {
+     "id": "pulse",
+     "type": "range",
+     "label": "Ritmo",
+     "def": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "cartoon",
+   "v": 1,
+   "name": "Dibujo animado",
+   "description": "Colores planos con contorno negro que tiembla un poco.",
+   "category": "style",
+   "engine": "shader",
+   "tags": [
+    "cartoon",
+    "dibujo",
+    "posterizar",
+    "cel shading"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "levels",
+     "type": "range",
+     "label": "Colores",
+     "def": 5,
+     "min": 2,
+     "max": 12,
+     "step": 1
+    },
+    {
+     "id": "boil",
+     "type": "range",
+     "label": "Temblor del trazo",
+     "def": 0.4,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "pixel_pulse",
+   "v": 1,
+   "name": "Píxeles",
+   "description": "La imagen se pixela y vuelve, a golpes o fija.",
+   "category": "style",
+   "engine": "shader",
+   "tags": [
+    "pixelar",
+    "píxeles",
+    "8 bits",
+    "mosaico"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "rate",
+     "type": "range",
+     "label": "Ritmo (0 = fijo)",
+     "def": 1,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "sketch",
+   "v": 1,
+   "name": "Boceto a lápiz",
+   "description": "Trazos de lápiz sobre papel, con sombreado a rayas.",
+   "category": "style",
+   "engine": "shader",
+   "tags": [
+    "boceto",
+    "lápiz",
+    "dibujo",
+    "sketch"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "boil",
+     "type": "range",
+     "label": "Temblor del trazo",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "sticker",
+   "v": 1,
+   "name": "Pegatina",
+   "description": "Borde grueso alrededor del sujeto recortado, como una pegatina.",
+   "category": "style",
+   "engine": "shader",
+   "tags": [
+    "pegatina",
+    "sticker",
+    "borde",
+    "contorno",
+    "recorte"
+   ],
+   "pad": 0.06,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "width",
+     "type": "range",
+     "label": "Grosor",
+     "def": 0.025,
+     "min": 0.005,
+     "max": 0.06,
+     "step": 0.001
+    },
+    {
+     "id": "color",
+     "type": "color",
+     "label": "Color",
+     "def": "#ffffff"
+    },
+    {
+     "id": "wobble",
+     "type": "range",
+     "label": "Temblor",
+     "def": 0,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "float_shadow",
+   "v": 1,
+   "name": "Sombra flotante",
+   "description": "Sombra suave debajo del sujeto que sube y baja, como si flotara.",
+   "category": "style",
+   "engine": "shader",
+   "tags": [
+    "sombra",
+    "flotar",
+    "profundidad",
+    "recorte"
+   ],
+   "pad": 0.12,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "distance",
+     "type": "range",
+     "label": "Distancia",
+     "def": 0.03,
+     "min": 0,
+     "max": 0.1,
+     "step": 0.002
+    },
+    {
+     "id": "blur",
+     "type": "range",
+     "label": "Difuminado",
+     "def": 0.02,
+     "min": 0,
+     "max": 0.06,
+     "step": 0.002
+    },
+    {
+     "id": "opacity",
+     "type": "range",
+     "label": "Opacidad",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "color",
+     "type": "color",
+     "label": "Color",
+     "def": "#000000"
+    },
+    {
+     "id": "float",
+     "type": "range",
+     "label": "Flotación",
+     "def": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "thermal",
+   "v": 1,
+   "name": "Cámara térmica",
+   "description": "Colores de mapa de calor, del azul frío al amarillo.",
+   "category": "color",
+   "engine": "shader",
+   "tags": [
+    "térmica",
+    "calor",
+    "infrarrojo",
+    "depredador"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "night_vision",
+   "v": 1,
+   "name": "Visión nocturna",
+   "description": "Verde fósforo con ruido, líneas y viñeta de visor.",
+   "category": "color",
+   "engine": "shader",
+   "tags": [
+    "visión nocturna",
+    "verde",
+    "militar",
+    "visor"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "duotone",
+   "v": 1,
+   "name": "Duotono",
+   "description": "Dos colores (sombras y luces) que pueden alternarse con el ritmo.",
+   "category": "color",
+   "engine": "shader",
+   "tags": [
+    "duotono",
+    "dos colores",
+    "póster",
+    "spotify"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "amount",
+     "type": "range",
+     "label": "Intensidad",
+     "def": 1,
+     "min": 0,
+     "max": 1,
+     "step": 0.01
+    },
+    {
+     "id": "dark",
+     "type": "color",
+     "label": "Sombras",
+     "def": "#2b1055"
+    },
+    {
+     "id": "light",
+     "type": "color",
+     "label": "Luces",
+     "def": "#ff5e7e"
+    },
+    {
+     "id": "swap",
+     "type": "range",
+     "label": "Alternar (por segundo)",
+     "def": 0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "color_pop",
+   "v": 1,
+   "name": "Color selectivo",
+   "description": "Todo en blanco y negro salvo un color, que puede ir cambiando.",
+   "category": "color",
+   "engine": "shader",
+   "tags": [
+    "color selectivo",
+    "blanco y negro",
+    "resaltar",
+    "sin city"
+   ],
+   "pad": 0,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "hue",
+     "type": "range",
+     "label": "Tono conservado",
+     "def": 0,
+     "min": 0,
+     "max": 360,
+     "step": 1
+    },
+    {
+     "id": "range",
+     "type": "range",
+     "label": "Margen",
+     "def": 0.08,
+     "min": 0.02,
+     "max": 0.3,
+     "step": 0.01
+    },
+    {
+     "id": "cycle",
+     "type": "range",
+     "label": "Recorrer tonos",
+     "def": 0,
+     "min": 0,
+     "max": 2,
+     "step": 0.05
+    }
+   ],
+   "assets": []
+  },
+  {
+   "id": "paper_cutout",
+   "v": 1,
+   "name": "Papel recortado",
+   "description": "Recorte de papel con borde rasgado, arrugas, sombra y vibración stop-motion; puede abrirse y cerrarse plegándose.",
+   "category": "style",
+   "engine": "canvas",
+   "tags": [
+    "papel",
+    "recorte",
+    "collage",
+    "stop motion",
+    "paper",
+    "manualidad"
+   ],
+   "pad": 0.2,
+   "default_dur": null,
+   "thumb": null,
+   "params": [
+    {
+     "id": "border",
+     "type": "toggle",
+     "label": "Borde rasgado",
+     "def": true
+    },
+    {
+     "id": "width",
+     "type": "range",
+     "label": "Grosor del borde",
+     "def": 25,
+     "min": 0,
+     "max": 80,
+     "step": 1
+    },
+    {
+     "id": "roughness",
+     "type": "range",
+     "label": "Rugosidad",
+     "def": 25,
+     "min": 0,
+     "max": 80,
+     "step": 1
+    },
+    {
+     "id": "detail",
+     "type": "range",
+     "label": "Detalle",
+     "def": 0.02,
+     "min": 0.005,
+     "max": 0.08,
+     "step": 0.001
+    },
+    {
+     "id": "wrinkles",
+     "type": "range",
+     "label": "Arrugas",
+     "def": 75,
+     "min": 0,
+     "max": 100,
+     "step": 1
+    },
+    {
+     "id": "wrinkleSpeed",
+     "type": "range",
+     "label": "Cambio de arrugas (por s)",
+     "def": 4,
+     "min": 0,
+     "max": 12,
+     "step": 0.5
+    },
+    {
+     "id": "blend",
+     "type": "select",
+     "label": "Fusión de arrugas",
+     "def": "multiply",
+     "options": [
+      {
+       "id": "multiply",
+       "label": "Multiplicar"
+      },
+      {
+       "id": "overlay",
+       "label": "Superponer"
+      },
+      {
+       "id": "soft-light",
+       "label": "Luz suave"
+      },
+      {
+       "id": "hard-light",
+       "label": "Luz fuerte"
+      },
+      {
+       "id": "screen",
+       "label": "Trama"
+      },
+      {
+       "id": "normal",
+       "label": "Normal"
+      }
+     ]
+    },
+    {
+     "id": "shadow",
+     "type": "toggle",
+     "label": "Sombra",
+     "def": true
+    },
+    {
+     "id": "shadowX",
+     "type": "range",
+     "label": "Sombra X",
+     "def": 5,
+     "min": -40,
+     "max": 40,
+     "step": 1
+    },
+    {
+     "id": "shadowY",
+     "type": "range",
+     "label": "Sombra Y",
+     "def": -5,
+     "min": -40,
+     "max": 40,
+     "step": 1
+    },
+    {
+     "id": "shadowBlur",
+     "type": "range",
+     "label": "Sombra: difuminado",
+     "def": 5,
+     "min": 0,
+     "max": 40,
+     "step": 1
+    },
+    {
+     "id": "shadowColor",
+     "type": "color",
+     "label": "Sombra: color",
+     "def": "#000000"
+    },
+    {
+     "id": "shadowOpacity",
+     "type": "range",
+     "label": "Sombra: opacidad",
+     "def": 50,
+     "min": 0,
+     "max": 100,
+     "step": 1
+    },
+    {
+     "id": "jitter",
+     "type": "toggle",
+     "label": "Vibración stop-motion",
+     "def": true
+    },
+    {
+     "id": "jitterSpeed",
+     "type": "range",
+     "label": "Vibración: velocidad",
+     "def": 1,
+     "min": 0,
+     "max": 3,
+     "step": 0.05
+    },
+    {
+     "id": "jitterStrength",
+     "type": "range",
+     "label": "Vibración: fuerza",
+     "def": 1,
+     "min": 0,
+     "max": 3,
+     "step": 0.05
+    },
+    {
+     "id": "fold",
+     "type": "select",
+     "label": "Pliegue",
+     "def": "none",
+     "options": [
+      {
+       "id": "none",
+       "label": "Ninguno"
+      },
+      {
+       "id": "open",
+       "label": "Abrir al empezar"
+      },
+      {
+       "id": "close",
+       "label": "Cerrar al acabar"
+      },
+      {
+       "id": "both",
+       "label": "Abrir y cerrar"
+      }
+     ]
+    },
+    {
+     "id": "seed",
+     "type": "seed",
+     "label": "Variación",
+     "def": 1
+    }
+   ],
+   "assets": [
+    "paper-animator/assets/texture/paper_overlay_0.webp",
+    "paper-animator/assets/texture/paper_overlay_1.webp",
+    "paper-animator/assets/texture/paper_overlay_2.webp",
+    "paper-animator/assets/texture/paper_overlay_3.webp",
+    "paper-animator/assets/texture/paper_mask_0.webp",
+    "paper-animator/assets/texture/paper_mask_1.webp",
+    "paper-animator/assets/texture/paper_mask_2.webp",
+    "paper-animator/assets/texture/paper_mask_3.webp",
+    "paper-animator/assets/texture/paper_mask_4.webp",
+    "paper-animator/assets/texture/paper_mask_5.webp",
+    "paper-animator/assets/texture/paper_fold_0.webp",
+    "paper-animator/assets/texture/paper_fold_1.webp",
+    "paper-animator/assets/texture/paper_fold_2.webp",
+    "paper-animator/assets/texture/paper_fold_3.webp",
+    "paper-animator/assets/texture/paper_fold_4.webp",
+    "paper-animator/assets/texture/paper_fold_5.webp"
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "in",
+   "label": "Entrada"
+  },
+  {
+   "id": "out",
+   "label": "Salida"
+  },
+  {
+   "id": "loop",
+   "label": "Bucle"
+  },
+  {
+   "id": "combo",
+   "label": "Combo"
+  }
+ ],
+ "anims": [
+  {
+   "id": "fade_in",
+   "name": "Aparecer",
+   "slot": "in",
+   "dur": 0.5,
+   "tracks": {
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      "outQuad"
+     ]
+    ]
+   },
+   "tags": [
+    "fundido"
+   ]
+  },
+  {
+   "id": "zoom_in",
+   "name": "Acercar",
+   "slot": "in",
+   "dur": 0.5,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      0.6
+     ],
+     [
+      1,
+      1,
+      "outCubic"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.6,
+      1,
+      "outQuad"
+     ]
+    ]
+   },
+   "tags": [
+    "zoom"
+   ]
+  },
+  {
+   "id": "zoom_out_in",
+   "name": "Alejar",
+   "slot": "in",
+   "dur": 0.5,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1.5
+     ],
+     [
+      1,
+      1,
+      "outCubic"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.6,
+      1,
+      "outQuad"
+     ]
+    ]
+   },
+   "tags": [
+    "zoom"
+   ]
+  },
+  {
+   "id": "pop_in",
+   "name": "Pop",
+   "slot": "in",
+   "dur": 0.45,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      "outBack"
+     ]
+    ]
+   },
+   "tags": [
+    "rebote",
+    "pop"
+   ]
+  },
+  {
+   "id": "elastic_in",
+   "name": "Elástico",
+   "slot": "in",
+   "dur": 0.9,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      0.2
+     ],
+     [
+      1,
+      1,
+      "outElastic"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.15,
+      1
+     ]
+    ]
+   },
+   "tags": [
+    "muelle",
+    "rebote"
+   ]
+  },
+  {
+   "id": "bounce_in",
+   "name": "Rebote",
+   "slot": "in",
+   "dur": 0.8,
+   "tracks": {
+    "y": [
+     [
+      0,
+      -0.6
+     ],
+     [
+      1,
+      0,
+      "outBounce"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.1,
+      1
+     ]
+    ]
+   },
+   "tags": [
+    "caer",
+    "rebotar"
+   ]
+  },
+  {
+   "id": "drop_in",
+   "name": "Caer",
+   "slot": "in",
+   "dur": 0.5,
+   "tracks": {
+    "y": [
+     [
+      0,
+      -0.4
+     ],
+     [
+      1,
+      0,
+      "outCubic"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.4,
+      1
+     ]
+    ]
+   },
+   "tags": [
+    "arriba"
+   ]
+  },
+  {
+   "id": "rise_in",
+   "name": "Subir",
+   "slot": "in",
+   "dur": 0.5,
+   "tracks": {
+    "y": [
+     [
+      0,
+      0.4
+     ],
+     [
+      1,
+      0,
+      "outCubic"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.4,
+      1
+     ]
+    ]
+   },
+   "tags": [
+    "abajo"
+   ]
+  },
+  {
+   "id": "slide_left_in",
+   "name": "Entrar por la derecha",
+   "slot": "in",
+   "dur": 0.5,
+   "tracks": {
+    "x": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      0,
+      "outCubic"
+     ]
+    ]
+   },
+   "tags": [
+    "deslizar"
+   ]
+  },
+  {
+   "id": "slide_right_in",
+   "name": "Entrar por la izquierda",
+   "slot": "in",
+   "dur": 0.5,
+   "tracks": {
+    "x": [
+     [
+      0,
+      -1
+     ],
+     [
+      1,
+      0,
+      "outCubic"
+     ]
+    ]
+   },
+   "tags": [
+    "deslizar"
+   ]
+  },
+  {
+   "id": "slide_up_in",
+   "name": "Entrar por abajo",
+   "slot": "in",
+   "dur": 0.5,
+   "tracks": {
+    "y": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      0,
+      "outCubic"
+     ]
+    ]
+   },
+   "tags": [
+    "deslizar"
+   ]
+  },
+  {
+   "id": "slide_down_in",
+   "name": "Entrar por arriba",
+   "slot": "in",
+   "dur": 0.5,
+   "tracks": {
+    "y": [
+     [
+      0,
+      -1
+     ],
+     [
+      1,
+      0,
+      "outCubic"
+     ]
+    ]
+   },
+   "tags": [
+    "deslizar"
+   ]
+  },
+  {
+   "id": "spin_in",
+   "name": "Girar",
+   "slot": "in",
+   "dur": 0.6,
+   "tracks": {
+    "rotation": [
+     [
+      0,
+      -180
+     ],
+     [
+      1,
+      0,
+      "outCubic"
+     ]
+    ],
+    "scale": [
+     [
+      0,
+      0.2
+     ],
+     [
+      1,
+      1,
+      "outCubic"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.3,
+      1
+     ]
+    ]
+   },
+   "tags": [
+    "rotar"
+   ]
+  },
+  {
+   "id": "swing_in",
+   "name": "Balanceo",
+   "slot": "in",
+   "dur": 0.8,
+   "tracks": {
+    "rotation": [
+     [
+      0,
+      -25
+     ],
+     [
+      0.45,
+      12,
+      "outQuad"
+     ],
+     [
+      0.75,
+      -5,
+      "inOutSine"
+     ],
+     [
+      1,
+      0,
+      "inOutSine"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.2,
+      1
+     ]
+    ]
+   },
+   "tags": [
+    "péndulo"
+   ]
+  },
+  {
+   "id": "twist_in",
+   "name": "Torsión",
+   "slot": "in",
+   "dur": 0.6,
+   "tracks": {
+    "rotation": [
+     [
+      0,
+      90
+     ],
+     [
+      1,
+      0,
+      "outBack"
+     ]
+    ],
+    "scale": [
+     [
+      0,
+      0.5
+     ],
+     [
+      1,
+      1,
+      "outBack"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.3,
+      1
+     ]
+    ]
+   },
+   "tags": [
+    "giro"
+   ]
+  },
+  {
+   "id": "stretch_in",
+   "name": "Estirar",
+   "slot": "in",
+   "dur": 0.5,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1.6
+     ],
+     [
+      0.6,
+      0.92,
+      "outQuad"
+     ],
+     [
+      1,
+      1,
+      "inOutSine"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.3,
+      1
+     ]
+    ]
+   },
+   "tags": [
+    "golpe"
+   ]
+  },
+  {
+   "id": "shake_in",
+   "name": "Sacudida",
+   "slot": "in",
+   "dur": 0.6,
+   "tracks": {
+    "x": [
+     [
+      0,
+      0.05
+     ],
+     [
+      0.15,
+      -0.05
+     ],
+     [
+      0.3,
+      0.04
+     ],
+     [
+      0.45,
+      -0.03
+     ],
+     [
+      0.6,
+      0.02
+     ],
+     [
+      0.8,
+      -0.01
+     ],
+     [
+      1,
+      0
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      0
+     ],
+     [
+      0.15,
+      1
+     ]
+    ]
+   },
+   "tags": [
+    "temblor"
+   ]
+  },
+  {
+   "id": "fade_out",
+   "name": "Desvanecer",
+   "slot": "out",
+   "dur": 0.5,
+   "tracks": {
+    "opacity": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      0,
+      "inQuad"
+     ]
+    ]
+   },
+   "tags": [
+    "fundido"
+   ]
+  },
+  {
+   "id": "zoom_out",
+   "name": "Alejar y salir",
+   "slot": "out",
+   "dur": 0.5,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      0.6,
+      "inCubic"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      1
+     ],
+     [
+      0.4,
+      1
+     ],
+     [
+      1,
+      0,
+      "inQuad"
+     ]
+    ]
+   },
+   "tags": [
+    "zoom"
+   ]
+  },
+  {
+   "id": "zoom_in_out",
+   "name": "Acercar y salir",
+   "slot": "out",
+   "dur": 0.5,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1.5,
+      "inCubic"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      1
+     ],
+     [
+      0.4,
+      1
+     ],
+     [
+      1,
+      0,
+      "inQuad"
+     ]
+    ]
+   },
+   "tags": [
+    "zoom"
+   ]
+  },
+  {
+   "id": "pop_out",
+   "name": "Pop (salida)",
+   "slot": "out",
+   "dur": 0.4,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1
+     ],
+     [
+      0.35,
+      1.12,
+      "outQuad"
+     ],
+     [
+      1,
+      0,
+      "inBack"
+     ]
+    ]
+   },
+   "tags": [
+    "pop"
+   ]
+  },
+  {
+   "id": "drop_out",
+   "name": "Caer (salida)",
+   "slot": "out",
+   "dur": 0.6,
+   "tracks": {
+    "y": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      0.8,
+      "inBack"
+     ]
+    ],
+    "rotation": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      12,
+      "inQuad"
+     ]
+    ]
+   },
+   "tags": [
+    "caer"
+   ]
+  },
+  {
+   "id": "fly_up_out",
+   "name": "Salir volando",
+   "slot": "out",
+   "dur": 0.5,
+   "tracks": {
+    "y": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      -1,
+      "inCubic"
+     ]
+    ]
+   },
+   "tags": [
+    "subir"
+   ]
+  },
+  {
+   "id": "slide_left_out",
+   "name": "Salir por la izquierda",
+   "slot": "out",
+   "dur": 0.5,
+   "tracks": {
+    "x": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      -1,
+      "inCubic"
+     ]
+    ]
+   },
+   "tags": [
+    "deslizar"
+   ]
+  },
+  {
+   "id": "slide_right_out",
+   "name": "Salir por la derecha",
+   "slot": "out",
+   "dur": 0.5,
+   "tracks": {
+    "x": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      "inCubic"
+     ]
+    ]
+   },
+   "tags": [
+    "deslizar"
+   ]
+  },
+  {
+   "id": "slide_down_out",
+   "name": "Salir por abajo",
+   "slot": "out",
+   "dur": 0.5,
+   "tracks": {
+    "y": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1,
+      "inCubic"
+     ]
+    ]
+   },
+   "tags": [
+    "deslizar"
+   ]
+  },
+  {
+   "id": "spin_out",
+   "name": "Girar (salida)",
+   "slot": "out",
+   "dur": 0.6,
+   "tracks": {
+    "rotation": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      180,
+      "inCubic"
+     ]
+    ],
+    "scale": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      0.2,
+      "inCubic"
+     ]
+    ],
+    "opacity": [
+     [
+      0,
+      1
+     ],
+     [
+      0.7,
+      1
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   "tags": [
+    "rotar"
+   ]
+  },
+  {
+   "id": "shrink_out",
+   "name": "Encoger",
+   "slot": "out",
+   "dur": 0.4,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      0,
+      "inBack"
+     ]
+    ]
+   },
+   "tags": [
+    "desaparecer"
+   ]
+  },
+  {
+   "id": "pulse",
+   "name": "Pulso",
+   "slot": "loop",
+   "dur": 0.8,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1
+     ],
+     [
+      0.5,
+      1.06,
+      "inOutSine"
+     ],
+     [
+      1,
+      1,
+      "inOutSine"
+     ]
+    ]
+   },
+   "tags": [
+    "latido"
+   ]
+  },
+  {
+   "id": "breathe",
+   "name": "Respirar",
+   "slot": "loop",
+   "dur": 2.4,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1
+     ],
+     [
+      0.5,
+      1.035,
+      "inOutSine"
+     ],
+     [
+      1,
+      1,
+      "inOutSine"
+     ]
+    ]
+   },
+   "tags": [
+    "suave"
+   ]
+  },
+  {
+   "id": "heartbeat_loop",
+   "name": "Latido",
+   "slot": "loop",
+   "dur": 0.9,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1
+     ],
+     [
+      0.1,
+      1.1,
+      "outQuad"
+     ],
+     [
+      0.2,
+      1,
+      "inQuad"
+     ],
+     [
+      0.3,
+      1.07,
+      "outQuad"
+     ],
+     [
+      0.45,
+      1,
+      "inQuad"
+     ],
+     [
+      1,
+      1
+     ]
+    ]
+   },
+   "tags": [
+    "corazón"
+   ]
+  },
+  {
+   "id": "float",
+   "name": "Flotar",
+   "slot": "loop",
+   "dur": 2.6,
+   "tracks": {
+    "y": [
+     [
+      0,
+      0
+     ],
+     [
+      0.5,
+      -0.02,
+      "inOutSine"
+     ],
+     [
+      1,
+      0,
+      "inOutSine"
+     ]
+    ]
+   },
+   "tags": [
+    "levitar"
+   ]
+  },
+  {
+   "id": "sway",
+   "name": "Vaivén",
+   "slot": "loop",
+   "dur": 2,
+   "tracks": {
+    "rotation": [
+     [
+      0,
+      -4
+     ],
+     [
+      0.5,
+      4,
+      "inOutSine"
+     ],
+     [
+      1,
+      -4,
+      "inOutSine"
+     ]
+    ]
+   },
+   "tags": [
+    "balanceo"
+   ]
+  },
+  {
+   "id": "wiggle",
+   "name": "Menearse",
+   "slot": "loop",
+   "dur": 0.5,
+   "tracks": {
+    "rotation": [
+     [
+      0,
+      0
+     ],
+     [
+      0.25,
+      3,
+      "inOutSine"
+     ],
+     [
+      0.75,
+      -3,
+      "inOutSine"
+     ],
+     [
+      1,
+      0,
+      "inOutSine"
+     ]
+    ]
+   },
+   "tags": [
+    "nervioso"
+   ]
+  },
+  {
+   "id": "jelly",
+   "name": "Gelatina",
+   "slot": "loop",
+   "dur": 0.9,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1
+     ],
+     [
+      0.25,
+      1.05,
+      "inOutSine"
+     ],
+     [
+      0.5,
+      0.97,
+      "inOutSine"
+     ],
+     [
+      0.75,
+      1.02,
+      "inOutSine"
+     ],
+     [
+      1,
+      1,
+      "inOutSine"
+     ]
+    ]
+   },
+   "tags": [
+    "blandito"
+   ]
+  },
+  {
+   "id": "shake_loop",
+   "name": "Temblar",
+   "slot": "loop",
+   "dur": 0.3,
+   "tracks": {
+    "x": [
+     [
+      0,
+      0
+     ],
+     [
+      0.25,
+      0.008
+     ],
+     [
+      0.5,
+      -0.008
+     ],
+     [
+      0.75,
+      0.005
+     ],
+     [
+      1,
+      0
+     ]
+    ],
+    "y": [
+     [
+      0,
+      0
+     ],
+     [
+      0.3,
+      -0.005
+     ],
+     [
+      0.6,
+      0.006
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   "tags": [
+    "frío",
+    "miedo"
+   ]
+  },
+  {
+   "id": "spin_loop",
+   "name": "Girar sin parar",
+   "slot": "loop",
+   "dur": 3,
+   "tracks": {
+    "rotation": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      360
+     ]
+    ]
+   },
+   "tags": [
+    "rotar"
+   ]
+  },
+  {
+   "id": "bob",
+   "name": "Saltito",
+   "slot": "loop",
+   "dur": 0.7,
+   "tracks": {
+    "y": [
+     [
+      0,
+      0
+     ],
+     [
+      0.5,
+      -0.025,
+      "outQuad"
+     ],
+     [
+      1,
+      0,
+      "inQuad"
+     ]
+    ],
+    "rotation": [
+     [
+      0,
+      -2
+     ],
+     [
+      0.5,
+      2,
+      "inOutSine"
+     ],
+     [
+      1,
+      -2,
+      "inOutSine"
+     ]
+    ]
+   },
+   "tags": [
+    "saltar"
+   ]
+  },
+  {
+   "id": "ken_burns_in",
+   "name": "Ken Burns (acercar)",
+   "slot": "combo",
+   "dur": 0,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1.15,
+      "inOutSine"
+     ]
+    ]
+   },
+   "tags": [
+    "zoom lento",
+    "documental"
+   ]
+  },
+  {
+   "id": "ken_burns_out",
+   "name": "Ken Burns (alejar)",
+   "slot": "combo",
+   "dur": 0,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      1.15
+     ],
+     [
+      1,
+      1,
+      "inOutSine"
+     ]
+    ]
+   },
+   "tags": [
+    "zoom lento",
+    "documental"
+   ]
+  },
+  {
+   "id": "drift_left",
+   "name": "Deriva a la izquierda",
+   "slot": "combo",
+   "dur": 0,
+   "tracks": {
+    "x": [
+     [
+      0,
+      0.03
+     ],
+     [
+      1,
+      -0.03,
+      "inOutSine"
+     ]
+    ],
+    "scale": [
+     [
+      0,
+      1.06
+     ],
+     [
+      1,
+      1.06
+     ]
+    ]
+   },
+   "tags": [
+    "paneo"
+   ]
+  },
+  {
+   "id": "pop_hold_out",
+   "name": "Pop, quieto y fuera",
+   "slot": "combo",
+   "dur": 0,
+   "tracks": {
+    "scale": [
+     [
+      0,
+      0
+     ],
+     [
+      0.12,
+      1.08,
+      "outBack"
+     ],
+     [
+      0.2,
+      1,
+      "inOutSine"
+     ],
+     [
+      0.85,
+      1
+     ],
+     [
+      1,
+      0,
+      "inBack"
+     ]
+    ]
+   },
+   "tags": [
+    "entrada y salida"
+   ]
+  }
+ ]
+}

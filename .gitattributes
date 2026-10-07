@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Binarios pesados de pruebas (fotogramas dorados, audio, vídeo) por git-lfs
+tests/fixtures/**/*.png filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/**/*.webm filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/**/*.wav filter=lfs diff=lfs merge=lfs -text

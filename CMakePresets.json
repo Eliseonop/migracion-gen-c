@@ -1,0 +1,81 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 28, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": { "CMAKE_EXPORT_COMPILE_COMMANDS": "ON" }
+    },
+    { "name": "debug", "hidden": true, "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" } },
+    { "name": "release", "hidden": true, "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo" } },
+    {
+      "name": "windows",
+      "hidden": true,
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    },
+    {
+      "name": "msvc",
+      "hidden": true,
+      "inherits": "windows",
+      "architecture": { "value": "x64", "strategy": "external" },
+      "toolset": { "value": "host=x64", "strategy": "external" },
+      "cacheVariables": { "CMAKE_CXX_COMPILER": "cl" }
+    },
+    {
+      "name": "vcpkg",
+      "hidden": true,
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": { "VCPKG_MANIFEST_FEATURES": "tests" }
+    },
+
+    { "name": "mingw-debug", "displayName": "MinGW (CLion) · Debug", "inherits": ["base", "debug", "windows"] },
+    { "name": "mingw-release", "displayName": "MinGW (CLion) · Release", "inherits": ["base", "release", "windows"] },
+
+    { "name": "msvc-debug", "displayName": "MSVC · Debug", "inherits": ["base", "debug", "msvc"] },
+    { "name": "msvc-release", "displayName": "MSVC · Release", "inherits": ["base", "release", "msvc"] },
+    { "name": "msvc-vcpkg-debug", "displayName": "MSVC + vcpkg · Debug", "inherits": ["base", "debug", "msvc", "vcpkg"] },
+    { "name": "msvc-vcpkg-release", "displayName": "MSVC + vcpkg · Release", "inherits": ["base", "release", "msvc", "vcpkg"] },
+
+    {
+      "name": "linux-debug",
+      "displayName": "Linux · Debug",
+      "inherits": ["base", "debug"],
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+    },
+    {
+      "name": "macos-debug",
+      "displayName": "macOS · Debug",
+      "inherits": ["base", "debug"],
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" }
+    },
+    {
+      "name": "ci",
+      "displayName": "CI (warnings como errores)",
+      "inherits": ["base", "release"],
+      "cacheVariables": { "GC_WARNINGS_AS_ERRORS": "ON" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "mingw-debug", "configurePreset": "mingw-debug" },
+    { "name": "mingw-release", "configurePreset": "mingw-release" },
+    { "name": "msvc-debug", "configurePreset": "msvc-debug" },
+    { "name": "msvc-release", "configurePreset": "msvc-release" },
+    { "name": "msvc-vcpkg-debug", "configurePreset": "msvc-vcpkg-debug" },
+    { "name": "msvc-vcpkg-release", "configurePreset": "msvc-vcpkg-release" },
+    { "name": "linux-debug", "configurePreset": "linux-debug" },
+    { "name": "macos-debug", "configurePreset": "macos-debug" },
+    { "name": "ci", "configurePreset": "ci" }
+  ],
+  "testPresets": [
+    { "name": "base", "hidden": true, "output": { "outputOnFailure": true } },
+    { "name": "mingw-debug", "inherits": "base", "configurePreset": "mingw-debug" },
+    { "name": "msvc-debug", "inherits": "base", "configurePreset": "msvc-debug" },
+    { "name": "msvc-vcpkg-debug", "inherits": "base", "configurePreset": "msvc-vcpkg-debug" },
+    { "name": "linux-debug", "inherits": "base", "configurePreset": "linux-debug" },
+    { "name": "macos-debug", "inherits": "base", "configurePreset": "macos-debug" },
+    { "name": "ci", "inherits": "base", "configurePreset": "ci" }
+  ]
+}
