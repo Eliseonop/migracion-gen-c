@@ -35,6 +35,7 @@ add_library(gc_core
     src/text_metrics.cpp
     src/py.cpp
     src/session.cpp
+    src/settings.cpp
     src/sfx_library.cpp
     src/timeline_rules.cpp
 )

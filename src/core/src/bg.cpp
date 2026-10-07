@@ -197,6 +197,8 @@ std::string recommended_bg_provider(const TimelineClip& clip) {
     return name.ends_with(".gif") ? "u2net" : "birefnet_lite";
 }
 
+bool is_bg_provider(std::string_view provider) { return std::ranges::find(kProviders, provider) != kProviders.end(); }
+
 std::int64_t bg_provider_mask_height(std::string_view provider) {
     if (provider == "rvm_mobilenetv3" || provider == "rvm_resnet50") {
         return 720;

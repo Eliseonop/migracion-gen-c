@@ -29,66 +29,19 @@ const Json& field(const Json& obj, std::string_view key) {
     return it == obj.end() ? kNull : *it;
 }
 
-// Lo que queda en ASCII de un carácter tras NFKD + encode("ascii", "ignore"). Tabulado
-// para Latin-1, Latin Extended-A, ligaduras, formas de ancho completo, superíndices y
-// espacios; lo demás se pierde (como cualquier carácter sin descomposición ASCII).
+// Lo que queda en ASCII de un carácter no ASCII tras NFKD + encode("ascii", "ignore"):
+// tabla generada desde unicodedata (tools/gen/gen_nfkd_ascii.py); el resto se pierde.
+struct NfkdAscii {
+    char32_t code;
+    std::string_view ascii;
+};
+constexpr NfkdAscii kNfkdAscii[] = {
+#include "nfkd_ascii.inc"
+};
+
 std::string_view ascii_of(char32_t c) {
-    // Latin-1 (U+00A0–U+00FF) y Latin Extended-A (U+0100–U+017F)
-    static constexpr std::string_view kLatin[] = {
-        // A0-AF:   NBSP ¡ ¢ £ ¤ ¥ ¦ § ¨ © ª « ¬ SHY ® ¯
-        " ", "", "", "", "", "", "", "", " ", "", "a", "", "", "", "", " ",
-        // B0-BF:   ° ± ² ³ ´ µ ¶ · ¸ ¹ º » ¼ ½ ¾ ¿
-        "", "", "2", "3", " ", "", "", "", " ", "1", "o", "", "14", "12", "34", "",
-        // C0-CF:   À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï
-        "A", "A", "A", "A", "A", "A", "", "C", "E", "E", "E", "E", "I", "I", "I", "I",
-        // D0-DF:   Ð Ñ Ò Ó Ô Õ Ö × Ø Ù Ú Û Ü Ý Þ ß
-        "", "N", "O", "O", "O", "O", "O", "", "", "U", "U", "U", "U", "Y", "", "",
-        // E0-EF
-        "a", "a", "a", "a", "a", "a", "", "c", "e", "e", "e", "e", "i", "i", "i", "i",
-        // F0-FF
-        "", "n", "o", "o", "o", "o", "o", "", "", "u", "u", "u", "u", "y", "", "y",
-        // 100-10F: Ā ā Ă ă Ą ą Ć ć Ĉ ĉ Ċ ċ Č č Ď ď
-        "A", "a", "A", "a", "A", "a", "C", "c", "C", "c", "C", "c", "C", "c", "D", "d",
-        // 110-11F: Đ đ Ē ē Ĕ ĕ Ė ė Ę ę Ě ě Ĝ ĝ Ğ ğ
-        "", "", "E", "e", "E", "e", "E", "e", "E", "e", "E", "e", "G", "g", "G", "g",
-        // 120-12F: Ġ ġ Ģ ģ Ĥ ĥ Ħ ħ Ĩ ĩ Ī ī Ĭ ĭ Į į
-        "G", "g", "G", "g", "H", "h", "", "", "I", "i", "I", "i", "I", "i", "I", "i",
-        // 130-13F: İ ı Ĳ ĳ Ĵ ĵ Ķ ķ ĸ Ĺ ĺ Ļ ļ Ľ ľ Ŀ
-        "I", "", "IJ", "ij", "J", "j", "K", "k", "", "L", "l", "L", "l", "L", "l", "L",
-        // 140-14F: ŀ Ł ł Ń ń Ņ ņ Ň ň ŉ Ŋ ŋ Ō ō Ŏ ŏ
-        "l", "", "", "N", "n", "N", "n", "N", "n", "n", "", "", "O", "o", "O", "o",
-        // 150-15F: Ő ő Œ œ Ŕ ŕ Ŗ ŗ Ř ř Ś ś Ŝ ŝ Ş ş
-        "O", "o", "", "", "R", "r", "R", "r", "R", "r", "S", "s", "S", "s", "S", "s",
-        // 160-16F: Š š Ţ ţ Ť ť Ŧ ŧ Ũ ũ Ū ū Ŭ ŭ Ů ů
-        "S", "s", "T", "t", "T", "t", "", "", "U", "u", "U", "u", "U", "u", "U", "u",
-        // 170-17F: Ű ű Ų ų Ŵ ŵ Ŷ ŷ Ÿ Ź ź Ż ż Ž ž ſ
-        "U", "u", "U", "u", "W", "w", "Y", "y", "Y", "Z", "z", "Z", "z", "Z", "z", "s"};
-    static constexpr std::string_view kDigits = "0123456789";
-    static constexpr std::string_view kLigatures[] = {"ff", "fi", "fl", "ffi", "ffl", "st", "st"};
-    if (c >= 0xA0 && c <= 0x17F) {
-        return kLatin[c - 0xA0];
-    }
-    if (c >= 0xFF01 && c <= 0xFF5E) { // ancho completo
-        static constexpr std::string_view kAscii =
-            "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-        return kAscii.substr(c - 0xFF01, 1);
-    }
-    if (c >= 0xFB00 && c <= 0xFB06) {
-        return kLigatures[c - 0xFB00];
-    }
-    if (c == 0x2070) {
-        return "0";
-    }
-    if (c >= 0x2074 && c <= 0x2079) {
-        return kDigits.substr(c - 0x2070, 1);
-    }
-    if (c >= 0x2080 && c <= 0x2089) {
-        return kDigits.substr(c - 0x2080, 1);
-    }
-    if ((c >= 0x2000 && c <= 0x200A) || c == 0x202F || c == 0x205F || c == 0x3000) {
-        return " ";
-    }
-    return "";
+    const auto it = std::ranges::lower_bound(kNfkdAscii, c, {}, &NfkdAscii::code);
+    return it != std::end(kNfkdAscii) && it->code == c ? it->ascii : std::string_view();
 }
 
 // Palabras de un texto ya normalizado (separadas por un espacio).

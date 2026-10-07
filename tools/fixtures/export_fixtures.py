@@ -30,6 +30,7 @@ import argparse
 import copy
 import json
 import sys
+import tempfile
 import time
 import uuid
 from pathlib import Path
@@ -557,6 +558,93 @@ def real_history_fixtures(ctx: Ctx, data: dict) -> dict:
     return _pure({"cases": cases})
 
 
+# --- Ajustes (settings.json) -----------------------------------------------------------------
+
+def _run_settings_steps(steps: list) -> list[dict]:
+    """Ejecuta los pasos con settings.py sobre un settings.json temporal."""
+    from app import settings as st
+    tmp_dir = Path(tempfile.mkdtemp(prefix="gc_settings_"))
+    tmp = tmp_dir / "settings.json"
+    saved = st._FILE
+    st._FILE = tmp
+    out = []
+    try:
+        for step in steps:
+            kind, args = step[0], step[1:]
+            entry: dict = {"step": list(step)}
+            try:
+                if kind == "write":
+                    content = args[0]
+                    tmp.write_text(content if isinstance(content, str) else json.dumps(content, ensure_ascii=False),
+                                   encoding="utf-8")
+                    result = None
+                elif kind == "load":
+                    result = st.load()
+                elif kind == "public":
+                    result = st.public()
+                    # api_keys_counts sale de recorrer un set: orden arbitrario. gc_core las ordena.
+                    result["api_keys_counts"] = dict(sorted(result["api_keys_counts"].items()))
+                elif kind == "save":
+                    result = st.save(args[0])
+                else:   # api_key, keys_for, add_key, set_key, remove_key
+                    result = getattr(st, kind)(*args)
+                entry["result"] = result
+            except Exception as e:  # noqa: BLE001
+                entry["error"] = type(e).__name__
+            if tmp.exists():
+                try:
+                    entry["file"] = json.loads(tmp.read_text(encoding="utf-8"))
+                except ValueError:
+                    entry["file_text"] = tmp.read_text(encoding="utf-8")
+            else:
+                entry["file"] = None
+            out.append(entry)
+    finally:
+        st._FILE = saved
+        for f in tmp_dir.iterdir():
+            f.unlink()
+        tmp_dir.rmdir()
+    return _pure(out)
+
+
+def synthetic_settings_fixtures(ctx: Ctx) -> dict:
+    sys.path.insert(0, str(HERE))
+    import settings_cases as sc
+    return {"steps": _run_settings_steps(sc.STEPS)}
+
+
+def _redact_keys(data):
+    """Tus ajustes con cada API key cambiada por «REDACTED-n»: la fixture no lleva secretos."""
+    data = copy.deepcopy(data)
+    n = 0
+
+    def red(v):
+        nonlocal n
+        if isinstance(v, str) and v.strip():
+            n += 1
+            return f"REDACTED-{n}"
+        return v
+    if isinstance(data, dict):
+        if isinstance(data.get("api_keys"), dict):
+            data["api_keys"] = {k: red(v) for k, v in data["api_keys"].items()}
+        if isinstance(data.get("api_keys_extra"), dict):
+            data["api_keys_extra"] = {k: [red(x) for x in v] if isinstance(v, list) else red(v)
+                                      for k, v in data["api_keys_extra"].items()}
+        if "gemini_api_key" in data:
+            data["gemini_api_key"] = red(data["gemini_api_key"])
+    return data
+
+
+def real_settings_fixtures(ctx: Ctx) -> dict:
+    src = ctx.root / "backend" / "data" / "settings.json"
+    if not src.exists():
+        return {"steps": []}
+    data = _redact_keys(json.loads(src.read_text(encoding="utf-8")))
+    providers = sorted(set((data.get("api_keys") or {}) | (data.get("api_keys_extra") or {})))
+    steps = [("write", data), ("load",), ("public",), *[("keys_for", p) for p in providers]]
+    return {"steps": _run_settings_steps(steps)}
+
+
 # --- Animación (keyframes y máscaras) ---------------------------------------------------------
 
 def keyframe_case(ctx: Ctx, name: str, raw_clip: dict, times: list[float]) -> dict:
@@ -732,6 +820,9 @@ def main() -> None:
     kf = synthetic_keyframe_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "keyframes" / "synthetic.json", kf,
           len(kf["clips"]) + len(kf["ease"]) + len(kf["masks"]) + len(kf["styles"]), 0)
+    sett = synthetic_settings_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "settings" / "synthetic.json", sett, len(sett["steps"]),
+          sum("error" in s for s in sett["steps"]))
     hist = synthetic_history_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "history" / "synthetic.json", hist, len(hist["steps"]), 0)
     lay = synthetic_layout_fixtures(ctx)
@@ -754,6 +845,8 @@ def main() -> None:
               sum("error" in c for c in edit_real["cases"]))
         kf_real = real_keyframe_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "keyframes" / "real.json", kf_real, len(kf_real["clips"]), 0)
+        sett_real = real_settings_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "local" / "settings" / "real.json", sett_real, len(sett_real["steps"]), 0)
         hist_real = real_history_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "history" / "real.json", hist_real, len(hist_real["cases"]), 0)
         lay_real = real_layout_fixtures(ctx, data)

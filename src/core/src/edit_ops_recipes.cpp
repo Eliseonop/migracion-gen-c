@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cctype>
 #include <cmath>
 #include <optional>
 
@@ -453,7 +454,11 @@ Result<Json> params_dict(const Json& v) {
 Result<EditResult> run(const Timeline& tl, const ops::ApplyRecipe& op, IdSource& ids) {
     if (!op.recipe.is_string() ||
         std::ranges::find(kRecipeIds, op.recipe.get<std::string>()) == kRecipeIds.end()) {
-        return invalid("receta desconocida: " + py_str(op.recipe));
+        std::string all;
+        for (const auto id : kRecipeIds) {
+            all += (all.empty() ? "'" : ", '") + std::string(id) + "'";
+        }
+        return invalid("receta desconocida: " + py_str(op.recipe) + " (usa [" + all + "])");
     }
     const std::string recipe = op.recipe.get<std::string>();
     std::vector<Json> clip_ids; // list(clip_ids or [])

@@ -13,6 +13,7 @@ add_executable(gc_tests
     parity/test_keyframes_parity.cpp
     parity/test_layout_parity.cpp
     parity/test_model_parity.cpp
+    parity/test_settings_parity.cpp
 )
 # support/: utilidades de los tests. src/core/src: tests de caja blanca de piezas internas (py.hpp).
 target_include_directories(gc_tests PRIVATE support "${PROJECT_SOURCE_DIR}/src/core/src")

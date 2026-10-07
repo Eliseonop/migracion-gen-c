@@ -32,6 +32,8 @@ namespace gc::core {
 // Motor automático que se propone para un clip (recommended_provider): vídeo → RVM
 // (personas, sin parpadeo), GIF → U²-Net, imagen fija → BiRefNet.
 [[nodiscard]] std::string recommended_bg_provider(const TimelineClip& clip);
+// ¿Es uno de los motores de «Eliminar fondo» (BG_PROVIDER_IDS)?
+[[nodiscard]] bool is_bg_provider(std::string_view provider);
 // Alto del matte con el que rinde cada motor (512 si no tiene uno propio).
 [[nodiscard]] std::int64_t bg_provider_mask_height(std::string_view provider);
 

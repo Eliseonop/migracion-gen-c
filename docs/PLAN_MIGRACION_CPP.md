@@ -453,7 +453,7 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 1. `animate_clip` (`clip_motion`), `paste_clip_attributes` (`clip_attrs`), `follow_object` (`object_track.follow_keys`), `add_sound_design` y `apply_recipe` (`recipes`, `recipe_layout`).
 2. Persistir el historial y el autosave.
 
-### 2026-10-07 — F2, 4ª tanda: encuadre y comandos compuestos *(en curso)*
+### 2026-10-07 — F2, 4ª tanda: encuadre y comandos compuestos *(hecha)*
 
 **Autopiloto:** un hook `Stop` (`.claude/autopiloto/`) mantiene el trabajo en marcha entre turnos y pide una revisión al subagente `revisor-migracion` cada vez que se marcan tareas como hechas. Se enciende y se apaga con `.claude/autopiloto/activo`. Cada tanda verificada va en su propio commit local.
 
@@ -598,4 +598,28 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
   - la evaluación de la timeline en un instante (lista de capas), que es lógica pura;
   - `recipe_layout`;
   - lo que queda de F1 (biblioteca, colecciones y ajustes de `data/`).
+
+### 2026-10-07 — F1: ajustes y API keys (y revisión de las recetas)
+
+**Revisión del subagente (recetas; APROBADO), ya aplicada:**
+- «receta desconocida» lleva la lista de recetas, como en Python.
+- `sfx_norm` usa la tabla NFKD → ASCII completa, generada desde `unicodedata` (`tools/gen/gen_nfkd_ascii.py`). Son 2166 caracteres frente a los ~200 tabulados a mano: vietnamita, ™, ①, ㎏…
+- Falta `<cctype>` para MSVC.
+- `Autosave` guarda el historial antes que la timeline, como `timeline_store`: un cierre entre los dos ya no pierde un paso de deshacer.
+
+**Hecho: `settings.hpp`** (`settings.py`, `export_settings.py` y `transcribe_settings.py`):
+- `load` con los defectos, tolerante: si el archivo falta o no se puede leer, los de fábrica;
+- `save`, con la fusión de API keys: una máscara no cambia la clave y un texto vacío la borra; normaliza export, transcripción, «Eliminar fondo» y modelos;
+- varias claves por proveedor (`keys_for`, `add_key`, `set_key` y `remove_key`);
+- `public_view`, sin secretos. Python cuenta las claves recorriendo un `set`: aquí salen ordenadas y el exportador las ordena igual.
+
+**Verificación:**
+- **Casos:** 59 pasos sintéticos sobre un `settings.json` temporal, con claves falsas; tras cada paso se comparan lo que devuelve (o si falla) y el archivo.
+- **Tus ajustes:** se exportan con cada clave cambiada por «REDACTED-n», así que la fixture no lleva secretos.
+- **Mutación:** 10/10.
+- **Resultado:** 53 tests y 47 552 aserciones en verde, en Debug y en Release.
+
+**Siguiente:**
+- la biblioteca y las colecciones de `data/` y la biblioteca de SFX desde disco, que cierran F1;
+- después, la evaluación de capas de F3, que es lógica pura, mientras falte el Windows SDK.
 

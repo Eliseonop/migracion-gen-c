@@ -11,7 +11,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | Fase | Contenido | Estado | Hito |
 |---|---|---|---|
 | **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo MSVC y CI en marcha | |
-| **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo hecho · falta `data/` (biblioteca, ajustes) | |
+| **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo y ajustes hechos · falta la biblioteca y las colecciones de `data/` | |
 | **F2** Lógica de edición | ops, sin solapes, keyframes, undo | ✅ hecha: las 42 ops, el historial en disco y el autoguardado | |
 | **F3** Media + export | gc_media, gc_render v1, `genclip render` | ⬜ | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | ⬜ | |
@@ -22,10 +22,10 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 51 tests y 47 246 aserciones en verde (Debug y Release, 0 warnings).
+**Cifras actuales:** 53 tests y 47 552 aserciones en verde (Debug y Release, 0 warnings).
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
-e historial (69 pasos sintéticos + el de tus 14 proyectos).
+historial (69 pasos sintéticos + el de tus 14 proyectos) y ajustes (59 pasos + los tuyos, con las claves redactadas).
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12.
 
 ---
@@ -66,7 +66,8 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - [x] Round-trip sin pérdida del 100 % de los proyectos reales
 - [x] `genclip projects` y `genclip normalize [--preserve]`; Python relee lo que escribe C++
 - [ ] Biblioteca y colecciones de `data/` (`library`, `collections`)
-- [ ] Ajustes y API keys (`settings.json`)
+- [ ] Biblioteca de SFX desde disco (`sfx.load_index`, `_scan`, `_entry` y `resolve`, con la duración de `ffprobe`) → `set_sfx_library`. Sin ella, `subject_pop` avisa siempre de que faltan los sonidos
+- [x] Ajustes y API keys (`settings.hpp`: `settings.py`, `export_settings.py` y `transcribe_settings.py`): carga con defectos, `save` con la fusión de claves y máscaras, varias claves por proveedor y la vista pública sin secretos. Paridad: 59 pasos sintéticos con claves falsas y tus ajustes con las claves redactadas; 10/10 mutaciones
 
 ## F2 — Lógica de edición *(hecha)*
 
@@ -116,7 +117,7 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
   - `subject_pop` lee la biblioteca de SFX y hace `ffprobe`. También se inyecta: cada caso puede llevar su `sfx_library` ({items, durations}), y el exportador parchea `sfx.search`, `sfx.resolve` y `sound_design.probe_duration`. El test carga la misma biblioteca con `set_sfx_library`.
   - El `_insert_track` de las recetas (justo encima de una pista dada o de la última de su tipo) no es el `insert_track` de la pila de capas.
   - `recipe_layout.py` no es de `apply_recipe`: es geometría del render (corte doble, `vstack`/`hstack`) y va con F3.
-- **`sound_design.norm`** (es de `propose`, que busca en la biblioteca de SFX; va con F7): usa NFKD + quitar lo no ASCII. Basta con una tabla para Latin-1 y Latin Extended-A. `add_sound_design` no lee disco ni la biblioteca: todo llega en `sounds`.
+- **`sound_design.norm`** (hecho en `sfx_library`): NFKD + quitar lo no ASCII, con la tabla generada desde `unicodedata` (`tools/gen/gen_nfkd_ascii.py`, Unicode 16, 2166 caracteres). `add_sound_design` no lee disco ni la biblioteca: todo llega en `sounds`.
 - **`_SFX_TRACK_RE` (`^sfx\b`, sin distinguir mayúsculas, hecho):** «SFX_1», «sfx1», «SFXé» y «SFX½» no casan; «Sfx-x», «SFX—…», «SFX» + NBSP y «ſfx» (la ſ vale por s con `re.I`) sí. Fuera de Latin-1, `py_word_char` aproxima por bloques.
 - **`Path(id).stem` (Python 3.14 en Windows, hecho en `py_path_stem`):** «x.» → «x»; «.hidden» y «..» se quedan igual; «x..y» → «x.»; «C:foo.wav» → «foo»; «a:b:c.wav» → «b:c»; rutas UNC sin archivo → «».
 - **Matemática:** Python redondea con `round()` al par (`_even`, `_even_pos`), su `%` de reales es de suelo (rotación en `follow_keys`) y `degrees = x·(180/π)`.

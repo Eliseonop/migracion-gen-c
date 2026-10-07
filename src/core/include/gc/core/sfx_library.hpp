@@ -26,7 +26,7 @@ void set_sfx_library(std::shared_ptr<const SfxLibrary> library);
 [[nodiscard]] std::shared_ptr<const SfxLibrary> sfx_library(); // nunca nulo
 
 // Minúsculas, sin tildes y solo letras y números separados por un espacio (NFKD + ASCII;
-// la descomposición está tabulada para Latin-1 y Latin Extended-A).
+// la tabla NFKD → ASCII se genera desde unicodedata, Unicode 16).
 [[nodiscard]] std::string sfx_norm(const Json& text);
 
 // Parecido de un sonido con las palabras clave: frase entera en el nombre > palabra

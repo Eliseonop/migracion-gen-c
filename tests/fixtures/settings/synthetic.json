@@ -1,0 +1,3753 @@
+{
+ "steps": [
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   },
+   "file": null
+  },
+  {
+   "step": [
+    "public"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base",
+     "models": [
+      {
+       "id": "tiny",
+       "label": "Tiny",
+       "hint": "Más rápido, menos preciso (~75 MB)"
+      },
+      {
+       "id": "base",
+       "label": "Base",
+       "hint": "Equilibrio velocidad / calidad (~140 MB)"
+      },
+      {
+       "id": "small",
+       "label": "Small",
+       "hint": "Mejor precisión, un poco más lento (~460 MB)"
+      },
+      {
+       "id": "medium",
+       "label": "Medium",
+       "hint": "Alta precisión, más lento (~1.5 GB)"
+      },
+      {
+       "id": "large-v3",
+       "label": "Large v3",
+       "hint": "Máxima precisión, batched pipeline (~3 GB)"
+      }
+     ]
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    },
+    "gemini_api_key_set": false,
+    "api_keys_counts": {}
+   },
+   "file": null
+  },
+  {
+   "step": [
+    "keys_for",
+    "pexels"
+   ],
+   "result": [],
+   "file": null
+  },
+  {
+   "step": [
+    "write",
+    "{ esto no es json"
+   ],
+   "result": null,
+   "file_text": "{ esto no es json"
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   },
+   "file_text": "{ esto no es json"
+  },
+  {
+   "step": [
+    "write",
+    [
+     1,
+     2
+    ]
+   ],
+   "result": null,
+   "file": [
+    1,
+    2
+   ]
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   },
+   "file": [
+    1,
+    2
+   ]
+  },
+  {
+   "step": [
+    "write",
+    {
+     "tts": {
+      "voice": "x"
+     },
+     "favorites": {
+      "sfx": [
+       1,
+       "a"
+      ],
+      "audios": "ab",
+      "textStyles": [
+       "s1",
+       {
+        "k": 1
+       }
+      ]
+     },
+     "api_keys": {
+      " pexels ": " pk-1 ",
+      "giphy": "********",
+      "gemini": true,
+      "": "x",
+      "unsplash": null,
+      "pixabay": "••••",
+      "foundry": " fk-1 "
+     },
+     "gemini_api_key": "gm-legacy",
+     "extra": {
+      "a": 1
+     },
+     "export": {
+      "fps": "60",
+      "quality": "high"
+     }
+    }
+   ],
+   "result": null,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      1,
+      "a"
+     ],
+     "audios": "ab",
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "api_keys": {
+     " pexels ": " pk-1 ",
+     "giphy": "********",
+     "gemini": true,
+     "": "x",
+     "unsplash": null,
+     "pixabay": "••••",
+     "foundry": " fk-1 "
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "export": {
+     "fps": "60",
+     "quality": "high"
+    }
+   }
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-legacy"
+    },
+    "export": {
+     "fps": "60",
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      1,
+      "a"
+     ],
+     "audios": "ab",
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "api_keys": {
+     " pexels ": " pk-1 ",
+     "giphy": "********",
+     "gemini": true,
+     "": "x",
+     "unsplash": null,
+     "pixabay": "••••",
+     "foundry": " fk-1 "
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "export": {
+     "fps": "60",
+     "quality": "high"
+    }
+   }
+  },
+  {
+   "step": [
+    "public"
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": true,
+     "foundry": true,
+     "gemini": true
+    },
+    "export": {
+     "fps": 60,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "base",
+     "models": [
+      {
+       "id": "tiny",
+       "label": "Tiny",
+       "hint": "Más rápido, menos preciso (~75 MB)"
+      },
+      {
+       "id": "base",
+       "label": "Base",
+       "hint": "Equilibrio velocidad / calidad (~140 MB)"
+      },
+      {
+       "id": "small",
+       "label": "Small",
+       "hint": "Mejor precisión, un poco más lento (~460 MB)"
+      },
+      {
+       "id": "medium",
+       "label": "Medium",
+       "hint": "Alta precisión, más lento (~1.5 GB)"
+      },
+      {
+       "id": "large-v3",
+       "label": "Large v3",
+       "hint": "Máxima precisión, batched pipeline (~3 GB)"
+      }
+     ]
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    },
+    "extra": {
+     "a": 1
+    },
+    "gemini_api_key_set": true,
+    "api_keys_counts": {
+     "foundry": 1,
+     "gemini": 1,
+     "pexels": 1
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      1,
+      "a"
+     ],
+     "audios": "ab",
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "api_keys": {
+     " pexels ": " pk-1 ",
+     "giphy": "********",
+     "gemini": true,
+     "": "x",
+     "unsplash": null,
+     "pixabay": "••••",
+     "foundry": " fk-1 "
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "export": {
+     "fps": "60",
+     "quality": "high"
+    }
+   }
+  },
+  {
+   "step": [
+    "api_key",
+    "pexels"
+   ],
+   "result": "pk-1",
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      1,
+      "a"
+     ],
+     "audios": "ab",
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "api_keys": {
+     " pexels ": " pk-1 ",
+     "giphy": "********",
+     "gemini": true,
+     "": "x",
+     "unsplash": null,
+     "pixabay": "••••",
+     "foundry": " fk-1 "
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "export": {
+     "fps": "60",
+     "quality": "high"
+    }
+   }
+  },
+  {
+   "step": [
+    "api_key",
+    " gemini "
+   ],
+   "result": "gm-legacy",
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      1,
+      "a"
+     ],
+     "audios": "ab",
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "api_keys": {
+     " pexels ": " pk-1 ",
+     "giphy": "********",
+     "gemini": true,
+     "": "x",
+     "unsplash": null,
+     "pixabay": "••••",
+     "foundry": " fk-1 "
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "export": {
+     "fps": "60",
+     "quality": "high"
+    }
+   }
+  },
+  {
+   "step": [
+    "api_key",
+    "giphy"
+   ],
+   "result": "",
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      1,
+      "a"
+     ],
+     "audios": "ab",
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "api_keys": {
+     " pexels ": " pk-1 ",
+     "giphy": "********",
+     "gemini": true,
+     "": "x",
+     "unsplash": null,
+     "pixabay": "••••",
+     "foundry": " fk-1 "
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "export": {
+     "fps": "60",
+     "quality": "high"
+    }
+   }
+  },
+  {
+   "step": [
+    "api_key",
+    ""
+   ],
+   "result": "",
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      1,
+      "a"
+     ],
+     "audios": "ab",
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "api_keys": {
+     " pexels ": " pk-1 ",
+     "giphy": "********",
+     "gemini": true,
+     "": "x",
+     "unsplash": null,
+     "pixabay": "••••",
+     "foundry": " fk-1 "
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "export": {
+     "fps": "60",
+     "quality": "high"
+    }
+   }
+  },
+  {
+   "step": [
+    "save",
+    {
+     "api_keys": {
+      "pexels": "********",
+      "giphy": "gk-2",
+      "unsplash": "",
+      "nuevo": 5,
+      "bool": true,
+      " ": "x",
+      "mask": "TRUE"
+     },
+     "gemini_api_key_set": true,
+     "export": {
+      "fps": 23
+     },
+     "transcribe": {
+      "model": "small"
+     },
+     "bg_removal": {
+      "device": "metal",
+      "provider": "rvm_resnet50"
+     },
+     "models": {
+      "idle_minutes": "500"
+     },
+     "otro": [
+      1
+     ]
+    }
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-legacy",
+     "giphy": "gk-2",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-legacy",
+     "giphy": "gk-2",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   }
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-legacy",
+     "giphy": "gk-2",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-legacy",
+     "giphy": "gk-2",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   }
+  },
+  {
+   "step": [
+    "public"
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": true,
+     "foundry": true,
+     "gemini": true,
+     "giphy": true,
+     "nuevo": true
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small",
+     "models": [
+      {
+       "id": "tiny",
+       "label": "Tiny",
+       "hint": "Más rápido, menos preciso (~75 MB)"
+      },
+      {
+       "id": "base",
+       "label": "Base",
+       "hint": "Equilibrio velocidad / calidad (~140 MB)"
+      },
+      {
+       "id": "small",
+       "label": "Small",
+       "hint": "Mejor precisión, un poco más lento (~460 MB)"
+      },
+      {
+       "id": "medium",
+       "label": "Medium",
+       "hint": "Alta precisión, más lento (~1.5 GB)"
+      },
+      {
+       "id": "large-v3",
+       "label": "Large v3",
+       "hint": "Máxima precisión, batched pipeline (~3 GB)"
+      }
+     ]
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "gemini_api_key_set": true,
+    "api_keys_counts": {
+     "foundry": 1,
+     "gemini": 1,
+     "giphy": 1,
+     "nuevo": 1,
+     "pexels": 1
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-legacy",
+     "giphy": "gk-2",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   }
+  },
+  {
+   "step": [
+    "save",
+    {
+     "api_keys": {
+      "giphy": ""
+     }
+    }
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-legacy",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-legacy",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   }
+  },
+  {
+   "step": [
+    "save",
+    {
+     "gemini_api_key": "  ",
+     "models": {
+      "idle_minutes": "x"
+     },
+     "transcribe": null
+    }
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-legacy",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 5.0
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-legacy",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 5.0
+    },
+    "gemini_api_key": "gm-legacy",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   }
+  },
+  {
+   "step": [
+    "save",
+    {
+     "gemini_api_key": "gm-nueva",
+     "models": {
+      "idle_minutes": -3
+     },
+     "bg_removal": {
+      "device": "cuda"
+     }
+    }
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   }
+  },
+  {
+   "step": [
+    "keys_for",
+    "gemini"
+   ],
+   "result": [
+    "gm-nueva"
+   ],
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ]
+   }
+  },
+  {
+   "step": [
+    "add_key",
+    "pexels",
+    "pk-extra"
+   ],
+   "result": 2,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-extra"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "add_key",
+    "pexels",
+    " pk-3 "
+   ],
+   "result": 3,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-extra",
+      "pk-3"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "keys_for",
+    "pexels"
+   ],
+   "result": [
+    "pk-1",
+    "pk-extra",
+    "pk-3"
+   ],
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-extra",
+      "pk-3"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "public"
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": true,
+     "foundry": true,
+     "gemini": true,
+     "nuevo": true
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small",
+     "models": [
+      {
+       "id": "tiny",
+       "label": "Tiny",
+       "hint": "Más rápido, menos preciso (~75 MB)"
+      },
+      {
+       "id": "base",
+       "label": "Base",
+       "hint": "Equilibrio velocidad / calidad (~140 MB)"
+      },
+      {
+       "id": "small",
+       "label": "Small",
+       "hint": "Mejor precisión, un poco más lento (~460 MB)"
+      },
+      {
+       "id": "medium",
+       "label": "Medium",
+       "hint": "Alta precisión, más lento (~1.5 GB)"
+      },
+      {
+       "id": "large-v3",
+       "label": "Large v3",
+       "hint": "Máxima precisión, batched pipeline (~3 GB)"
+      }
+     ]
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "gemini_api_key_set": true,
+    "api_keys_counts": {
+     "foundry": 1,
+     "gemini": 1,
+     "nuevo": 1,
+     "pexels": 3
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-extra",
+      "pk-3"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "set_key",
+    "pexels",
+    1,
+    "pk-2b"
+   ],
+   "result": 3,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-2b",
+      "pk-3"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "set_key",
+    "pexels",
+    9,
+    "pk-9"
+   ],
+   "result": 4,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-2b",
+      "pk-3",
+      "pk-9"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "set_key",
+    "pexels",
+    -1,
+    "pk-neg"
+   ],
+   "result": 5,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-1",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-2b",
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "remove_key",
+    "pexels",
+    0
+   ],
+   "result": 4,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "remove_key",
+    "pexels",
+    99
+   ],
+   "result": 4,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "keys_for",
+    "pexels"
+   ],
+   "result": [
+    "pk-2b",
+    "pk-3",
+    "pk-9",
+    "pk-neg"
+   ],
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "public"
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": true,
+     "foundry": true,
+     "gemini": true,
+     "nuevo": true
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small",
+     "models": [
+      {
+       "id": "tiny",
+       "label": "Tiny",
+       "hint": "Más rápido, menos preciso (~75 MB)"
+      },
+      {
+       "id": "base",
+       "label": "Base",
+       "hint": "Equilibrio velocidad / calidad (~140 MB)"
+      },
+      {
+       "id": "small",
+       "label": "Small",
+       "hint": "Mejor precisión, un poco más lento (~460 MB)"
+      },
+      {
+       "id": "medium",
+       "label": "Medium",
+       "hint": "Alta precisión, más lento (~1.5 GB)"
+      },
+      {
+       "id": "large-v3",
+       "label": "Large v3",
+       "hint": "Máxima precisión, batched pipeline (~3 GB)"
+      }
+     ]
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "gemini_api_key_set": true,
+    "api_keys_counts": {
+     "foundry": 1,
+     "gemini": 1,
+     "nuevo": 1,
+     "pexels": 4
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "add_key",
+    "",
+    "x"
+   ],
+   "error": "ValueError",
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "add_key",
+    "giphy",
+    "  "
+   ],
+   "error": "ValueError",
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "set_key",
+    "giphy",
+    0,
+    ""
+   ],
+   "error": "ValueError",
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "remove_key",
+    "giphy",
+    0
+   ],
+   "result": 0,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "remove_key",
+    "giphy",
+    0
+   ],
+   "result": 0,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "public"
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": true,
+     "foundry": true,
+     "gemini": true,
+     "nuevo": true
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small",
+     "models": [
+      {
+       "id": "tiny",
+       "label": "Tiny",
+       "hint": "Más rápido, menos preciso (~75 MB)"
+      },
+      {
+       "id": "base",
+       "label": "Base",
+       "hint": "Equilibrio velocidad / calidad (~140 MB)"
+      },
+      {
+       "id": "small",
+       "label": "Small",
+       "hint": "Mejor precisión, un poco más lento (~460 MB)"
+      },
+      {
+       "id": "medium",
+       "label": "Medium",
+       "hint": "Alta precisión, más lento (~1.5 GB)"
+      },
+      {
+       "id": "large-v3",
+       "label": "Large v3",
+       "hint": "Máxima precisión, batched pipeline (~3 GB)"
+      }
+     ]
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "gemini_api_key_set": true,
+    "api_keys_counts": {
+     "foundry": 1,
+     "gemini": 1,
+     "nuevo": 1,
+     "pexels": 4
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "add_key",
+    "gemini",
+    "gm-extra"
+   ],
+   "result": 2,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-nueva",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-nueva",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ],
+     "gemini": [
+      "gm-extra"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "remove_key",
+    "gemini",
+    0
+   ],
+   "result": 1,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "gemini": "gm-extra",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "gemini_api_key": "gm-extra",
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "remove_key",
+    "gemini",
+    0
+   ],
+   "result": 0,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "save",
+    null
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "save",
+    {
+     "export": null,
+     "bg_removal": {}
+    }
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [
+      "1",
+      "a"
+     ],
+     "audios": [
+      "a",
+      "b"
+     ],
+     "textStyles": [
+      "s1",
+      {
+       "k": 1
+      }
+     ]
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": "pk-2b",
+     "foundry": "fk-1",
+     "nuevo": "5"
+    },
+    "export": {
+     "fps": 30,
+     "quality": "high"
+    },
+    "transcribe": {
+     "model": "small"
+    },
+    "bg_removal": {
+     "device": "cuda",
+     "provider": "rvm_resnet50"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "extra": {
+     "a": 1
+    },
+    "otro": [
+     1
+    ],
+    "api_keys_extra": {
+     "pexels": [
+      "pk-3",
+      "pk-9",
+      "pk-neg"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "export": [
+      1
+     ],
+     "transcribe": "x",
+     "bg_removal": 3
+    }
+   ],
+   "result": null,
+   "file": {
+    "export": [
+     1
+    ],
+    "transcribe": "x",
+    "bg_removal": 3
+   }
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": [
+     1
+    ],
+    "transcribe": "x",
+    "bg_removal": 3,
+    "models": {
+     "idle_minutes": 5
+    }
+   },
+   "file": {
+    "export": [
+     1
+    ],
+    "transcribe": "x",
+    "bg_removal": 3
+   }
+  },
+  {
+   "step": [
+    "public"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base",
+     "models": [
+      {
+       "id": "tiny",
+       "label": "Tiny",
+       "hint": "Más rápido, menos preciso (~75 MB)"
+      },
+      {
+       "id": "base",
+       "label": "Base",
+       "hint": "Equilibrio velocidad / calidad (~140 MB)"
+      },
+      {
+       "id": "small",
+       "label": "Small",
+       "hint": "Mejor precisión, un poco más lento (~460 MB)"
+      },
+      {
+       "id": "medium",
+       "label": "Medium",
+       "hint": "Alta precisión, más lento (~1.5 GB)"
+      },
+      {
+       "id": "large-v3",
+       "label": "Large v3",
+       "hint": "Máxima precisión, batched pipeline (~3 GB)"
+      }
+     ]
+    },
+    "bg_removal": 3,
+    "models": {
+     "idle_minutes": 5
+    },
+    "gemini_api_key_set": false,
+    "api_keys_counts": {}
+   },
+   "file": {
+    "export": [
+     1
+    ],
+    "transcribe": "x",
+    "bg_removal": 3
+   }
+  },
+  {
+   "step": [
+    "save",
+    {
+     "export": {
+      "fps": 24
+     }
+    }
+   ],
+   "error": "TypeError",
+   "file": {
+    "export": [
+     1
+    ],
+    "transcribe": "x",
+    "bg_removal": 3
+   }
+  },
+  {
+   "step": [
+    "save",
+    {
+     "transcribe": {
+      "model": "large-v3"
+     }
+    }
+   ],
+   "error": "TypeError",
+   "file": {
+    "export": [
+     1
+    ],
+    "transcribe": "x",
+    "bg_removal": 3
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "export": {
+      "fps": 50,
+      "quality": [
+       "x"
+      ]
+     }
+    }
+   ],
+   "result": null,
+   "file": {
+    "export": {
+     "fps": 50,
+     "quality": [
+      "x"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "public"
+   ],
+   "error": "TypeError",
+   "file": {
+    "export": {
+     "fps": 50,
+     "quality": [
+      "x"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "api_keys": [
+      1
+     ],
+     "favorites": {
+      "sfx": 5
+     }
+    }
+   ],
+   "result": null,
+   "file": {
+    "api_keys": [
+     1
+    ],
+    "favorites": {
+     "sfx": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   },
+   "file": {
+    "api_keys": [
+     1
+    ],
+    "favorites": {
+     "sfx": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "keys_for",
+    "pexels"
+   ],
+   "result": [],
+   "file": {
+    "api_keys": [
+     1
+    ],
+    "favorites": {
+     "sfx": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "add_key",
+    "pexels",
+    "x"
+   ],
+   "error": "AttributeError",
+   "file": {
+    "api_keys": [
+     1
+    ],
+    "favorites": {
+     "sfx": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "api_keys": {
+      "pexels": "pk"
+     },
+     "api_keys_extra": {
+      "vacio": [
+       "",
+       "  "
+      ],
+      "pexels": [
+       "pk-2"
+      ]
+     }
+    }
+   ],
+   "result": null,
+   "file": {
+    "api_keys": {
+     "pexels": "pk"
+    },
+    "api_keys_extra": {
+     "vacio": [
+      "",
+      "  "
+     ],
+     "pexels": [
+      "pk-2"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "public"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {
+     "pexels": true
+    },
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base",
+     "models": [
+      {
+       "id": "tiny",
+       "label": "Tiny",
+       "hint": "Más rápido, menos preciso (~75 MB)"
+      },
+      {
+       "id": "base",
+       "label": "Base",
+       "hint": "Equilibrio velocidad / calidad (~140 MB)"
+      },
+      {
+       "id": "small",
+       "label": "Small",
+       "hint": "Mejor precisión, un poco más lento (~460 MB)"
+      },
+      {
+       "id": "medium",
+       "label": "Medium",
+       "hint": "Alta precisión, más lento (~1.5 GB)"
+      },
+      {
+       "id": "large-v3",
+       "label": "Large v3",
+       "hint": "Máxima precisión, batched pipeline (~3 GB)"
+      }
+     ]
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    },
+    "gemini_api_key_set": false,
+    "api_keys_counts": {
+     "pexels": 2
+    }
+   },
+   "file": {
+    "api_keys": {
+     "pexels": "pk"
+    },
+    "api_keys_extra": {
+     "vacio": [
+      "",
+      "  "
+     ],
+     "pexels": [
+      "pk-2"
+     ]
+    }
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "transcribe": null,
+     "model": "tiny"
+    }
+   ],
+   "result": null,
+   "file": {
+    "transcribe": null,
+    "model": "tiny"
+   }
+  },
+  {
+   "step": [
+    "public"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base",
+     "models": [
+      {
+       "id": "tiny",
+       "label": "Tiny",
+       "hint": "Más rápido, menos preciso (~75 MB)"
+      },
+      {
+       "id": "base",
+       "label": "Base",
+       "hint": "Equilibrio velocidad / calidad (~140 MB)"
+      },
+      {
+       "id": "small",
+       "label": "Small",
+       "hint": "Mejor precisión, un poco más lento (~460 MB)"
+      },
+      {
+       "id": "medium",
+       "label": "Medium",
+       "hint": "Alta precisión, más lento (~1.5 GB)"
+      },
+      {
+       "id": "large-v3",
+       "label": "Large v3",
+       "hint": "Máxima precisión, batched pipeline (~3 GB)"
+      }
+     ]
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    },
+    "model": "tiny",
+    "gemini_api_key_set": false,
+    "api_keys_counts": {}
+   },
+   "file": {
+    "transcribe": null,
+    "model": "tiny"
+   }
+  }
+ ]
+}

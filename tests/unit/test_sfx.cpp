@@ -23,6 +23,9 @@ TEST_CASE("sfx_norm quita tildes, pasa a minúsculas y deja solo letras y númer
         {Json(5), "5"},
         {"", ""},
         {"\xC4\xB3 \xC5\xBF", "ij s"},                             // ĳ y ſ
+        // vietnamita, ™, ①, ș, 𝐀 y ㎏: fuera de Latin-1, de la tabla generada
+        {"Ti\xE1\xBA\xBFng Vi\xE1\xBB\x87t \xE2\x84\xA2 \xE2\x91\xA0 \xC8\x99 \xF0\x9D\x90\x80\xE3\x8E\x8F",
+         "tieng viet tm 1 s akg"},
     };
     for (const auto& [in, want] : cases) {
         INFO(in.dump());

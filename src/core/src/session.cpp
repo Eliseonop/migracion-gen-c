@@ -75,10 +75,10 @@ Result<Change> EditSession::apply(const Command& command) {
         history_.record(current_);
     }
     Change change{0, std::string(command_name(command)), std::move(result->changed), std::move(result->warnings)};
-    publish(std::make_shared<const Timeline>(std::move(result->timeline)), change);
     if (recorded) {
-        history_changed();
+        history_changed(); // como timeline_store: el historial se guarda antes que la timeline
     }
+    publish(std::make_shared<const Timeline>(std::move(result->timeline)), change);
     change.revision = revision_;
     return change;
 }
@@ -96,8 +96,8 @@ bool EditSession::undo() {
     if (!restored) {
         return false;
     }
-    publish(std::move(restored), Change{0, "undo", {"undo"}, {}});
     history_changed();
+    publish(std::move(restored), Change{0, "undo", {"undo"}, {}});
     return true;
 }
 
@@ -106,8 +106,8 @@ bool EditSession::redo() {
     if (!restored) {
         return false;
     }
-    publish(std::move(restored), Change{0, "redo", {"redo"}, {}});
     history_changed();
+    publish(std::move(restored), Change{0, "redo", {"redo"}, {}});
     return true;
 }
 
@@ -122,8 +122,8 @@ Result<void> EditSession::restore_checkpoint(std::string_view name) {
         return fail(ErrorCode::NotFound, "Checkpoint inexistente: " + std::string(name));
     }
     history_.record(current_); // restaurar también se puede deshacer
-    publish(std::move(state), Change{0, "restore", {"restore"}, {}});
     history_changed();
+    publish(std::move(state), Change{0, "restore", {"restore"}, {}});
     return {};
 }
 
