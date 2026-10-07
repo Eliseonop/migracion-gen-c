@@ -142,8 +142,11 @@ Lo que se dibuja de cada clip en un instante, además de la pose y las máscaras
 | `clip_fx.hpp` | Aparición y salida (`clip_fx_at`): opacidad, escala, desplazamiento, cortinilla y `look` |
 | `blend.hpp` | Modos de fusión válidos |
 | `clip_adjust.hpp` | Matriz 3×3 de los ajustes de color y pasadas de la máscara de ajuste (base + fantasma) |
+| `layers.hpp` | Qué clips se dibujan en un instante y en qué orden (`layers_at`, `videos_at`), con las reglas del render o las del preview; la pila de pistas (`stack_layers`, `buried_text_track_ids`) está en `timeline_rules.hpp` |
 
 Paridad con `fx_anims.py`, `clip_anim.render_pose`, `clip_fx.py`, `clip_blend.py` y `clip_adjust.py`: 41 clips sintéticos y tus 914 clips; exacta salvo 3 muestras de 1 ulp que pasan por `pow()`. Solo las curvas y matrices que usan `pow`/`sin`/`cos` llevan tolerancia (4e-15 relativa, unos 18 ulps).
+
+Las capas se comparan con el `layersAt` del preview ejecutado con Node (`kPreviewLayers`). El render usa sus propias reglas (`kRenderLayers`): intervalo [inicio, fin) sin el margen de 0,02 s del preview, inicio acotado a ≥ 0 y, dentro de una capa, delante el clip que empieza después, como el export.
 
 ## 5. EditSession: el documento vivo
 

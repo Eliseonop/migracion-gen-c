@@ -15,6 +15,7 @@ Salida (al repo):
   tests/fixtures/keyframes/synthetic.json  animación: casos de kf_cases.py
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
+  tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
   tests/fixtures/history/synthetic.json    historial: pasos de history_cases.py
   tests/fixtures/settings/synthetic.json   ajustes: pasos de settings_cases.py
   tests/fixtures/library/synthetic.json    biblioteca: pasos de library_cases.py
@@ -31,6 +32,9 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import math
+import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -944,6 +948,77 @@ def real_eval_fixtures(ctx: Ctx, data: dict) -> dict:
     return {"clips": cases, "ease": [], "tracks": [], "fx_windows": [], "effects": [], "blend": []}
 
 
+# --- Capas de un instante (layersAt del preview con Node; pila de track_stack.py) ------------
+
+def _node_layers(ctx: Ctx, cases: list[dict]) -> list[dict]:
+    """Ejecuta el layersAt/videosAt/stackLayers REAL de video-yt (tools/fixtures/layers_js.mjs)."""
+    node = shutil.which("node")
+    if node is None:
+        sys.exit("Falta Node (≥ 22) en el PATH: las fixtures de capas ejecutan el JS de video-yt.")
+    r = subprocess.run([node, str(HERE / "layers_js.mjs"), str(ctx.root / "frontend" / "src")],
+                       input=json.dumps(cases), capture_output=True, text=True, encoding="utf-8")
+    if r.returncode != 0:
+        sys.exit(f"layers_js.mjs falló:\n{r.stderr}")
+    return json.loads(r.stdout)
+
+
+def _js_clip_end(c: dict) -> float:
+    """clipEnd de editorModel.js: sin redondeo y con las figuras a velocidad 1. Solo sirve para
+    descartar los instantes en que el preview y Python no coinciden (el C++ usa Python)."""
+    sp = 1.0
+    if c.get("kind") not in ("text", "image", "shape", "adjustment"):
+        s = float(c.get("speed") if c.get("speed") is not None else "nan")
+        sp = min(10.0, max(0.1, s)) if math.isfinite(s) and s > 0 else 1.0
+    return c["start"] + max(0.0, (c.get("out_point") or 0) - (c.get("in_point") or 0)) / sp
+
+
+def layers_fixtures(ctx: Ctx, cases: list[dict]) -> tuple[list[dict], int]:
+    """cases: [{name, timeline (dict), heads}] → casos con la pila, lo enterrado y las capas del
+    preview en cada instante. Devuelve también cuántos instantes se descartaron."""
+    from app import track_stack as ts
+    out, dropped, node_in = [], 0, []
+    for case in cases:
+        tl = ctx.schemas.Timeline.model_validate(case["timeline"])
+        dump = _pure(tl.model_dump())
+        ends = [(c["start"] + ctx.clip_speed.clip_timeline_duration(c), _js_clip_end(c)) for c in dump["clips"]]
+        heads = [h for h in case["heads"] if all((h < py) == (h < js) for py, js in ends)]
+        dropped += len(case["heads"]) - len(heads)
+        out.append({"name": case["name"], "timeline": dump, "heads": heads,
+                    "stack_py": [[k, v] for k, v in ts.stack_layers(tl.tracks).items()],
+                    "buried": sorted(ts.buried_text_track_ids(tl.tracks))})
+        node_in.append({"tracks": dump["tracks"], "clips": dump["clips"], "heads": heads})
+    for case, js in zip(out, _node_layers(ctx, node_in)):
+        case.update({"stack_js": js["stack"], "layers": js["layers"], "videos": js["videos"]})
+    return out, dropped
+
+
+def synthetic_layers_fixtures(ctx: Ctx) -> dict:
+    sys.path.insert(0, str(HERE))
+    import layers_cases as lc
+    cases, dropped = layers_fixtures(ctx, [{"name": c["name"], "timeline": {"tracks": c["tracks"], "clips": c["clips"]},
+                                            "heads": c["heads"]} for c in lc.CASES])
+    if dropped:
+        sys.exit(f"layers_cases.py: {dropped} instantes con clipEnd de JS ≠ Python; usa duraciones en ms")
+    return {"cases": cases}
+
+
+def real_layers_fixtures(ctx: Ctx, data: dict) -> dict:
+    """Tus timelines, en los bordes de cada clip (±0,01–0,03 s), su mitad y su final."""
+    cases = []
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        heads = set()
+        for c in proj.timeline.clips:
+            s, e = c.start, c.start + ctx.clip_speed.clip_timeline_duration(c)
+            heads |= {s - 0.03, s - 0.02, s - 0.01, s, s + 0.01, (s + e) / 2, e - 0.01, e, e + 0.01}
+        cases.append({"name": f"{proj.id} · {proj.name}", "timeline": proj.timeline.model_dump(),
+                      "heads": sorted(heads)})
+    out, dropped = layers_fixtures(ctx, cases)
+    return {"cases": out, "dropped": dropped}
+
+
 def _fits(clip_kind: str, track_kind: str) -> bool:
     family = {"video": "video", "image": "video", "shape": "video", "motion": "video", "adjustment": "video",
               "audio": "audio", "text": "text"}
@@ -1000,6 +1075,9 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "layout" / "synthetic.json", lay,
           len(lay["clips"]) + len(lay["dest"]) + len(lay["crop_px"]),
           sum("error" in d["rect"] or "error" in d["even"] for d in lay["dest"]))
+    lyr = synthetic_layers_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "layers" / "synthetic.json", lyr,
+          sum(len(c["heads"]) for c in lyr["cases"]), 0)
     ev = synthetic_eval_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "eval" / "synthetic.json", ev,
           len(ev["clips"]) + len(ev["ease"]) + len(ev["tracks"]) + len(ev["fx_windows"]) + len(ev["effects"])
@@ -1030,6 +1108,10 @@ def main() -> None:
         write(REPO / "tests" / "fixtures" / "local" / "layout" / "real.json", lay_real,
               len(lay_real["clips"]) + len(lay_real["dest"]),
               sum("error" in d["rect"] or "error" in d["even"] for d in lay_real["dest"]))
+        lyr_real = real_layers_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "layers" / "real.json", lyr_real,
+              sum(len(c["heads"]) for c in lyr_real["cases"]), 0)
+        print(f"  capas: {lyr_real['dropped']} instantes descartados (clipEnd de JS ≠ Python)")
         ev_real = real_eval_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "eval" / "real.json", ev_real, len(ev_real["clips"]), 0)
     print(f"listo en {time.perf_counter() - t0:.1f} s")

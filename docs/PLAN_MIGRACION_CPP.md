@@ -678,8 +678,27 @@ Sin el Windows SDK, F3 empieza por la evaluación, que es lógica pura: qué se 
 - **Tolerancia más estrecha:** 4e-15 relativa en lugar de 1e-12, y solo donde hay `pow`/`sin`/`cos` (6 curvas y la matriz con exposición o tono), no en cualquier clip animado. Con la de antes sobrevivían mutantes de 1e-14 en las constantes (`kC4`, `0.213`, `0.18`); ahora se detectan.
 - **Huecos de las fixtures:** un caso por cada modo de fusión (y variantes no válidas), `dur: 0` exacto, salida y bucle sobre un clip de duración 0, máscara de ajuste en una capa de ajuste y en un motion (una sola pasada), e instantes, pistas y ventanas con NaN e infinito (van como texto en el JSON).
 - **`animation_sample_times`:** tope de 10⁷ intervalos (≈ 92 h a 30 fps): convertir a entero un número que no cabe era UB. Por encima, Python tampoco termina.
-- **Mutación reproducible:** `tools/dev/mutantes_eval.py` aplica y deshace cada mutante. Se detectan 34 de 35; el otro es equivalente.
+- **Mutación reproducible:** `tools/dev/mutantes_eval.py` (hoy `tools/dev/mutantes.py eval`) aplica y deshace cada mutante. Se detectan 34 de 35; el otro es equivalente.
 - Docs: la sección de evaluación de ARQUITECTURA ya no parte el bloque de rendimiento de F2, y el docstring del exportador lista todas las fixtures.
 - **Casos:** 41 clips sintéticos en 24 instantes (984 muestras) y 434 casos sueltos. **Resultado:** 57 tests y 89 321 aserciones en verde, en Debug y en Release.
 - **Decisión para la 2ª parte** (en las notas de F3 del TODO, pendiente de que Edu la confirme): el render C++ usa el intervalo [inicio, fin) sin margen, desempata por `start` dentro de una capa y toma el fin de `clip_timeline_duration`; el modo literal del preview queda disponible con `LayerRules`.
+
+### 2026-10-07 — F3, evaluación (2): las capas de un instante
+
+**Hecho:**
+- **`timeline_rules`:** `stack_layers` (track_id → capa de la pila vídeo + texto) y `buried_text_track_ids` (pistas de texto con vídeo encima), de `track_stack.py`.
+- **`layers.hpp`:** `layers_at`/`videos_at`, qué clips se dibujan en un instante y en qué orden. Con dos reglas:
+  - `kPreviewLayers`: el `layersAt` literal de `clipLayout.js` (margen de 0,02 s antes del inicio y orden por capa e índice en la lista);
+  - `kRenderLayers`: la del render C++, la recomendada por la revisión (pendiente de que Edu la confirme). Intervalo [inicio, fin) sin margen, inicio acotado a ≥ 0 y, dentro de una capa, delante el que empieza después, como el export.
+  - El fin es siempre el de Python (`clip_timeline_duration`, redondeada a ms).
+- **Fixtures con el JS real:** `tools/fixtures/layers_js.mjs` importa `clipLayout.js` y `trackStack.js` de video-yt con Node 24 y devuelve la posición de cada clip en la lista (los ids pueden repetirse). El exportador descarta los instantes en que el `clipEnd` de JS (sin redondeo, figuras a velocidad 1) no coincide con el de Python.
+- **`tools/dev/mutantes.py <grupo>`:** el script de mutación, ahora por grupos (`eval`, `layers`).
+
+**Verificación:**
+- **Casos:** 12 timelines sintéticas en 71 instantes: todos los tipos de clip, pista oculta o inexistente, desactivados, el margen y el fin abierto, solapes, ids de pista y de clip repetidos, clip visual en pista de audio, velocidades fuera de rango, texto enterrado y duración 0. Además, tus 18 timelines en 6627 instantes alrededor de los bordes de cada clip (48 descartados).
+- **Reglas del render:** 6 tests propios (corte, margen, solape de 15 ms con la lista al revés, pila frente a inicio, inicio negativo y duración 0).
+- **Mutación:** se detectan las 16.
+- **Resultado:** 65 tests y 102 861 aserciones en verde, en Debug y en Release, con 0 warnings.
+
+**Siguiente:** el fotograma ensamblado (`evaluate`): por capa, tiempo local y de fuente, pose, fx, fusión, volteo, máscaras, recorte y destino con las dimensiones del material, y la comprobación de ancho o alto 0.
 

@@ -76,6 +76,33 @@ double clip_end(const TimelineClip& clip) { return clip.start + clip_timeline_du
 
 bool is_stack_track(const TimelineTrack& track) { return track.kind == "video" || track.kind == "text"; }
 
+std::unordered_map<std::string, std::size_t> stack_layers(const std::vector<TimelineTrack>& tracks) {
+    std::unordered_map<std::string, std::size_t> out;
+    std::size_t layer = 0;
+    for (const TimelineTrack& t : tracks) {
+        if (is_stack_track(t)) {
+            out[t.id] = layer++;
+        }
+    }
+    return out;
+}
+
+std::set<std::string> buried_text_track_ids(const std::vector<TimelineTrack>& tracks) {
+    std::set<std::string> buried;
+    bool video_above = false;
+    for (auto it = tracks.rbegin(); it != tracks.rend(); ++it) {
+        if (!is_stack_track(*it)) {
+            continue;
+        }
+        if (it->kind == "video") {
+            video_above = true;
+        } else if (video_above) {
+            buried.insert(it->id);
+        }
+    }
+    return buried;
+}
+
 std::vector<std::size_t> display_order(const std::vector<TimelineTrack>& tracks) {
     std::vector<std::size_t> out;
     out.reserve(tracks.size());

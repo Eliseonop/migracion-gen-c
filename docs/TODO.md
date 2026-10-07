@@ -22,10 +22,10 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 57 tests y 89 321 aserciones en verde (Debug y Release, 0 warnings).
+**Cifras actuales:** 65 tests y 102 861 aserciones en verde (Debug y Release, 0 warnings).
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
-historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (59 pasos + los tuyos, con las claves redactadas) biblioteca (52 pasos + 23 materiales + la tuya) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras).
+historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (59 pasos + los tuyos, con las claves redactadas) biblioteca (52 pasos + 23 materiales + la tuya) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) y capas de un instante (71 instantes sintéticos + 6627 de tus timelines, contra el JS real con Node).
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12 (4e-15 en la evaluación).
 
 ---
@@ -36,9 +36,7 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 
 1. **Con el Windows SDK instalado:** F3, empezando por MSVC + vcpkg (FFmpeg, Skia, ONNX Runtime) y `gc_media`.
 2. **Sin él, en este orden:**
-   - F3, evaluación de la timeline en un instante (2ª parte), en dos tandas (ver las notas de F3):
-     1. `stack_layers` y `buried_text_track_ids` (`track_stack.py`) y `layers_at`/`videos_at` con `LayerRules` (fixtures con node para el modo preview y con Python para lo enterrado);
-     2. el fotograma ensamblado `evaluate(timeline, t, dimensiones del material)`, con la comprobación de ancho o alto 0;
+   - F3, el fotograma ensamblado `evaluate(timeline, t, dimensiones del material)`, con la comprobación de ancho o alto 0 (las capas de un instante ya están; ver las notas de F3);
    - F1, biblioteca de SFX de disco (`sfx.py`) y colecciones (`collections.py`). Las colecciones son de la interfaz y pueden esperar a F5: escanean carpetas y ordenan como `WindowsPath`, con el `lower()` de Unicode;
    - F0, `.clang-tidy` y spdlog.
 3. `recipe_layout.py` se porta con el render de F3: casi todo son cadenas de filtros de FFmpeg que con Skia quizá no hagan falta.
@@ -163,8 +161,9 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 
 - [ ] Prerrequisito: MSVC + vcpkg con FFmpeg, Skia y ONNX Runtime
 - [ ] **Evaluación:** timeline en el instante *t* → lista de capas (usa keyframes, pose, máscaras y layout)
-  - [x] Por clip: animaciones de catálogo (`fx_anims`: `clip_animations`, `animation_delta`, `render_pose`, `anim_opacity` y `animation_sample_times`), aparición y salida (`clip_fx`: `clip_fx_at`, `fx_windows`), modo de fusión (`blend`) y ajustes de color (`clip_adjust`: matriz 3×3, `has_color_adjust`, `strip_color` y las pasadas base + fantasma de la máscara de ajuste). Paridad: 41 clips sintéticos en 24 instantes (uno es NaN), 240 puntos de curva, 150 de pista, 10 ventanas, 16 efectos y 18 modos de fusión sueltos, y tus 914 clips en 7122 instantes; 34/35 mutaciones con `tools/dev/mutantes_eval.py` (la otra es equivalente)
-  - [ ] De la timeline: `layers_at`/`videos_at` (filtro y pila de capas de `clipLayout.js`, fixtures con node) y el fotograma ensamblado: por capa, tiempo local y de fuente, pose, fx, fusión, volteo, máscaras, recorte y destino con las dimensiones del material
+  - [x] Por clip: animaciones de catálogo (`fx_anims`: `clip_animations`, `animation_delta`, `render_pose`, `anim_opacity` y `animation_sample_times`), aparición y salida (`clip_fx`: `clip_fx_at`, `fx_windows`), modo de fusión (`blend`) y ajustes de color (`clip_adjust`: matriz 3×3, `has_color_adjust`, `strip_color` y las pasadas base + fantasma de la máscara de ajuste). Paridad: 41 clips sintéticos en 24 instantes (uno es NaN), 240 puntos de curva, 150 de pista, 10 ventanas, 16 efectos y 18 modos de fusión sueltos, y tus 914 clips en 7122 instantes; 34/35 mutaciones con `tools/dev/mutantes.py eval` (la otra es equivalente)
+  - [x] Capas de un instante: `stack_layers` y `buried_text_track_ids` (`timeline_rules`) y `layers_at`/`videos_at` (`layers.hpp`) con dos reglas, `kRenderLayers` (la del render C++) y `kPreviewLayers` (el `layersAt` literal del preview). Paridad contra el JS real ejecutado con Node: 71 instantes en 12 timelines sintéticas y 6627 en tus 18 timelines (48 descartados porque el `clipEnd` de JS no coincide con Python); las reglas del render, con 6 tests propios. 16/16 mutaciones (`tools/dev/mutantes.py layers`)
+  - [ ] Fotograma ensamblado `evaluate(timeline, t, dimensiones del material)`: por capa, tiempo local y de fuente, pose, fx, fusión, volteo, máscaras, recorte y destino
 - [ ] `recipe_layout.py` (corte doble: `split_orientation_for`, `contain_dest`, filtros `vstack`/`hstack`)
 - [ ] Comprobar las dimensiones antes de llamar a `clip_layout`: con ancho o alto 0, Python lanza ZeroDivisionError y C++ daría inf/NaN (p. ej. si falla la sonda de un vídeo)
 - [ ] **gc_media:** demux y decode con hwaccel (D3D11VA/NVDEC), seek exacto
@@ -193,6 +192,9 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
   - implementación: `layers_at(t, timeline, LayerRules{seek_margin, tie_by_start})`. Con `{0.02, false}` es el `layersAt` literal (paridad con node); el render lo llama con `{0, true}`. Las diferencias llevan tests propios (corte, solape de 15 ms y margen);
   - los PSNR de las fixtures de render deben excluir ±1 fotograma alrededor de los bordes de clip.
   - **Tus datos (medido por la revisión):** de 979 clips, 665 están pegados (hueco ≤ 20 ms) a otro de su pista, así que el borde es el caso normal; hay 17 solapes dentro de una pista (5 visuales en V1, de 0,2 a 46 ms) y en 2 el orden de la lista es el inverso al de `start`; 35 clips están fuera de orden de `start` en la lista. No hay clips de ≤ 0,02 s ni `start` negativos.
+- **Capas (hecho):** `export_fixtures.py` pasa cada timeline (normalizada por el modelo de Python) a `tools/fixtures/layers_js.mjs`, que importa `clipLayout.js` y `trackStack.js` de video-yt con Node y devuelve, por instante, la POSICIÓN de cada clip en la lista (los ids pueden repetirse). Los instantes en que el `clipEnd` de JS y el de Python clasifican distinto algún clip se descartan (en los sintéticos no hay ninguno: duraciones en ms y figuras a velocidad 1).
+  - Rarezas del preview que el modo literal conserva: un clip de duración 0 se ve en [inicio − 0,02, inicio); con ids de clip repetidos, el índice de desempate es el del último; con ids de pista repetidos manda la última pista (su `hidden` y su capa); un clip visual en una pista de audio tiene capa −1 y va al fondo.
+  - El render (`kRenderLayers`) toma `max(0, start)` para el intervalo y para el orden, como `compose.build_command` (`start = max(0.0, c.start)`, `end = start + dur`).
 - **Duraciones del preview ≠ Python:** `clipEnd` de `editorModel.js` usa `clipSpeed` de JS, que trata las **figuras** como velocidad 1 (Python solo exime texto, imagen y ajuste) y **no redondea**; `clip_timeline_duration` de Python redondea la fuente y el resultado a 3 decimales. Fixtures de `layersAt` con node en el borde del clip o con figuras a otra velocidad no coincidirán con el `clip_end` de `gc_core`: elegir una semántica antes de generarlas. El JS se importa bien desde Node 24 (`clipLayout.js` usa rutas con extensión; probado con `pathToFileURL`).
 - **`fx_anims`:** el catálogo no usa `linear`, `inOutQuad`, `inOutCubic` ni `hold`; la rejilla de curvas los cubre. En `eval_track`, la rama de tramo de longitud 0 (`f = 1`) es inalcanzable: el tramo anterior ya cubre ese instante (también con claves desordenadas).
 - **Tolerancia:** con tolerancia 0 fallan 3 muestras, todas de 1 ulp (curvas con `pow()`). La tolerancia es de 4e-15 relativa (unos 18 ulps, margen para otras libm) y solo donde hay `pow`/`sin`/`cos`: las curvas `outCubic`, `inOutQuad`, `inOutCubic`, `outBack`, `outElastic` e `inOutSine`, y la matriz de color con exposición o tono. Con 1e-12, o con tolerancia en cualquier clip animado, sobrevivían mutantes de 1e-14 en las constantes (`kC4`, `0.213`, `0.18`). NaN e infinito viajan como texto (`_nan_safe` en el exportador).

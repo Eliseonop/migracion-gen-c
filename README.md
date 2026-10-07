@@ -5,7 +5,7 @@ Motor C++ multiplataforma del editor de clips verticales. Es la migración de
 [docs/PLAN_MIGRACION_CPP.md](docs/PLAN_MIGRACION_CPP.md).
 
 **Estado:** F0 hecha · F1 modelo y formato hechos · F2 hecha: motor de edición (45 comandos: las 42 ops de video-yt,
-animación por keyframes y máscaras, encuadre, pegar atributos, seguir objetos, sonorizar, animaciones de preset, recetas, subtítulos, figuras, efectos de catálogo, deshacer, grupos, historial en disco y autoguardado) · F3 en curso: evaluación por clip (animaciones, aparición y salida, fusión, ajustes de color). Arquitectura: [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
+animación por keyframes y máscaras, encuadre, pegar atributos, seguir objetos, sonorizar, animaciones de preset, recetas, subtítulos, figuras, efectos de catálogo, deshacer, grupos, historial en disco y autoguardado) · F3 en curso: evaluación por clip (animaciones, aparición y salida, fusión, ajustes de color) y capas de un instante. Arquitectura: [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
 Lista de tareas de todas las fases: [docs/TODO.md](docs/TODO.md).
 
 ## Estructura

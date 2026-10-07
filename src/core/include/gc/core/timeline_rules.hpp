@@ -8,8 +8,10 @@
 
 #include <cstddef>
 #include <optional>
+#include <set>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -48,6 +50,12 @@ inline constexpr double kSpeedMax = 10.0;
 // última = delante). En pantalla se ve invertida, con el audio debajo.
 
 [[nodiscard]] bool is_stack_track(const TimelineTrack& track);
+// track_id → capa de la pila (0 = fondo). El audio no aparece. Con ids repetidos gana la
+// última pista (con su capa), como el dict de Python y el Map de JS.
+[[nodiscard]] std::unordered_map<std::string, std::size_t> stack_layers(const std::vector<TimelineTrack>& tracks);
+// Pistas de texto con alguna pista de vídeo por encima en la pila. Sus textos se
+// componen en su capa, detrás de ese vídeo.
+[[nodiscard]] std::set<std::string> buried_text_track_ids(const std::vector<TimelineTrack>& tracks);
 // Índices de `tracks` en el orden de pantalla: la pila invertida y después el audio.
 [[nodiscard]] std::vector<std::size_t> display_order(const std::vector<TimelineTrack>& tracks);
 // Hueco para una pista nueva sin cambiar lo que se ve.

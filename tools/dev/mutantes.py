@@ -1,9 +1,10 @@
-"""Pruebas de mutación de la evaluación por clip (F3): cada mutante debe hacer fallar [eval].
+"""Pruebas de mutación: cada mutante de un grupo debe hacer fallar los tests de su etiqueta.
 
-    python tools/dev/mutantes_eval.py [preset] [filtro]
+    python tools/dev/mutantes.py <grupo> [preset] [filtro]
 
-`preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los mutantes
-cuyo nombre contiene ese texto.
+`grupo`: eval (evaluación por clip, tests [eval]) o layers (capas de un instante, tests
+[layers]). `preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los
+mutantes cuyo nombre contiene ese texto.
 
 Aplica cada cambio a la fuente, recompila gc_tests, pasa los tests [eval] y deshace el
 cambio (también si algo falla). Un mutante «NO DETECTADO» es un hueco de las fixtures,
@@ -24,7 +25,7 @@ ENV["PATH"] = os.pathsep.join([str(CLION / "bin" / "mingw" / "bin"), str(CLION /
                                str(CLION / "bin" / "cmake" / "win" / "x64" / "bin"), ENV["PATH"]])
 
 # (nombre, archivo, texto original, texto mutado)
-MUTANTS = [
+EVAL = [
     ("clip_fx: salida mide desde el inicio", "src/core/src/clip_fx.cpp",
      "clamp01((duration - local_t) / ed)", "clamp01(local_t / ed)"),
     ("clip_fx: disolver no funde", "src/core/src/clip_fx.cpp",
@@ -97,6 +98,38 @@ MUTANTS = [
     ("blend: typo en color_dodge", "src/core/include/gc/core/blend.hpp", '"color_dodge",', '"color-dodge",'),
 ]
 
+LAYERS = [
+    ("paints: sin motion", "src/core/src/layers.cpp", 'k == "motion" || ', ""),
+    ("paints: con audio", "src/core/src/layers.cpp", 'k == "text";', 'k == "text" || k == "audio";'),
+    ("desactivados visibles", "src/core/src/layers.cpp", "if (!paints(*c) || c->disabled) {", "if (!paints(*c)) {"),
+    ("pistas ocultas visibles", "src/core/src/layers.cpp",
+     "if (tr == track_by_id.end() || tr->second->hidden) {", "if (tr == track_by_id.end()) {"),
+    ("margen con >", "src/core/src/layers.cpp",
+     "head >= start - rules.seek_margin", "head > start - rules.seek_margin"),
+    ("fin cerrado", "src/core/src/layers.cpp",
+     "head < start + clip_timeline_duration(*c)", "head <= start + clip_timeline_duration(*c)"),
+    ("fin con la duración de la fuente", "src/core/src/layers.cpp",
+     "head < start + clip_timeline_duration(*c)", "head < start + clip_source_duration(*c)"),
+    ("pista sin capa al frente", "src/core/src/layers.cpp", "? -1L :", "? 1000L :"),
+    ("índice del primer id repetido", "src/core/src/layers.cpp",
+     "index[timeline.clips[i]->id] = i;", "index.try_emplace(timeline.clips[i]->id, i);"),
+    ("pista del primer id repetido", "src/core/src/layers.cpp",
+     "track_by_id[t.id] = &t;", "track_by_id.try_emplace(t.id, &t);"),
+    ("pila: capa del primer id repetido", "src/core/src/timeline_rules.cpp",
+     "out[t.id] = layer++;", "out.try_emplace(t.id, layer++);"),
+    ("enterradas: nunca hay vídeo encima", "src/core/src/timeline_rules.cpp",
+     "video_above = true;", "video_above = false;"),
+    ("render: el que empieza antes delante", "src/core/src/layers.cpp",
+     "return a.start < b.start;", "return a.start > b.start;"),
+    ("render: sin acotar el inicio a 0", "src/core/src/layers.cpp",
+     "rules.by_start ? std::max(0.0, c->start) : c->start", "c->start"),
+    ("preview: desempate por inicio", "src/core/src/layers.cpp",
+     "if (rules.by_start && a.start != b.start) {", "if (a.start != b.start) {"),
+    ("videos_at con textos", "src/core/src/layers.cpp", 'return c->kind == "text"; });', "return false; });"),
+]
+
+GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]")}
+
 
 def run(cmd: list[str]) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, cwd=REPO, env=ENV, capture_output=True, text=True, encoding="utf-8",
@@ -104,9 +137,13 @@ def run(cmd: list[str]) -> subprocess.CompletedProcess:
 
 
 def main() -> int:
-    build = REPO / "build" / (sys.argv[1] if len(sys.argv) > 1 else "mingw-release")
-    only = sys.argv[2] if len(sys.argv) > 2 else ""
-    mutants = [m for m in MUTANTS if only in m[0]]
+    if len(sys.argv) < 2 or sys.argv[1] not in GROUPS:
+        print(f"Uso: mutantes.py <{'|'.join(GROUPS)}> [preset] [filtro]")
+        return 2
+    group, tag = GROUPS[sys.argv[1]]
+    build = REPO / "build" / (sys.argv[2] if len(sys.argv) > 2 else "mingw-release")
+    only = sys.argv[3] if len(sys.argv) > 3 else ""
+    mutants = [m for m in group if only in m[0]]
     cmake = shutil.which("cmake", path=ENV["PATH"])
     tests = build / "tests" / "gc_tests.exe"
     if cmake is None or not tests.exists():
@@ -125,7 +162,7 @@ def main() -> int:
             if b.returncode != 0:
                 print(f"NO COMPILA    {name}\n{b.stdout[-800:]}")
                 continue
-            ok = run([str(tests), "[eval]"]).returncode != 0
+            ok = run([str(tests), tag]).returncode != 0
             caught += ok
             print(("detectado     " if ok else "NO DETECTADO  ") + name)
         finally:
