@@ -12,7 +12,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 |---|---|---|---|
 | **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo MSVC y CI en marcha | |
 | **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo hecho · falta `data/` (biblioteca, ajustes) | |
-| **F2** Lógica de edición | ops, sin solapes, keyframes, undo | 🟡 en curso: 38 de las 42 ops de Python | |
+| **F2** Lógica de edición | ops, sin solapes, keyframes, undo | 🟡 en curso: 39 de las 42 ops de Python | |
 | **F3** Media + export | gc_media, gc_render v1, `genclip render` | ⬜ | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | ⬜ | |
 | **F5** Editor de escritorio | app Qt Quick | ⬜ | **M2** |
@@ -22,8 +22,8 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 41 tests y 45 202 aserciones en verde (Debug y Release, 0 warnings).
-Paridad con video-yt en modelo (18 proyectos), edición (254 casos sintéticos + 1529 ops reales),
+**Cifras actuales:** 41 tests y 45 526 aserciones en verde (Debug y Release, 0 warnings).
+Paridad con video-yt en modelo (18 proyectos), edición (283 casos sintéticos + 1610 ops reales),
 animación (236 casos + 733 clips reales) y encuadre (2908 muestras sintéticas + 5875 de 235 clips reales).
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12.
 
@@ -85,9 +85,10 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - [x] `fx_catalog` (recurso `resources/fx/catalog.json`), `pose` (`clip_pose`, `frame_at`), `shapes`, `bg` y `captions`
 - [x] `clip_layout`: `crop_window`, `source_point_to_output`, `source_crop_px`, `dest_rect[_even]` y volteo, con fixtures de layout (las funciones que solo usa la vista previa de `clipLayout.js` van con F5)
 - [ ] `clip_motion`, para `animate_clip`
+- [x] `follow`: `follow_keys` (del recorrido de un objeto a keyframes de pose del clip que lo acompaña); el seguimiento en sí es de F6
 - [x] `clip_attrs`: grupos de atributos, `paste_attributes` y la fusión de keyframes (`merge_keyframes`: restringir, constantes y remuestreo)
 
-### Comandos: 41 hechos (38 de las 42 ops de Python, más 3 setters propios)
+### Comandos: 42 hechos (39 de las 42 ops de Python, más 3 setters propios)
 - [x] **Pistas:** `add_track`, `reorder_track`, `rename_track`, `remove_track`, `link_tracks` y `unlink_track`
 - [x] **Clips:** `add_clip`, `move_clip`, `remove_clip`, `split_clip` y `duplicate_clip`
 - [x] **Proyecto:** `set_project_format` y `set_markers`
@@ -96,19 +97,19 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - [x] **Animación y efectos:** `set_clip_keyframes`, `set_clip_beats`, `set_clip_masks`, `set_clip_effects`, `apply_effect` y `set_clip_animation`
 - [x] **Audio:** `set_clip_volume`, `set_track_audio` y `set_clip_audio_fx`
 - [x] **Material nuevo:** `replace_media`, `freeze_frame`, `add_subtitles`, `add_shape`, `add_cinema_bars`, `add_adjustment_layer` y `set_clip_bg_removal`
-- [x] **Compuestos:** `paste_clip_attributes`
+- [x] **Compuestos:** `paste_clip_attributes` y `follow_object`
 - [ ] `animate_clip` (zoom, giro, deslizar… generados; `clip_motion.py`)
-- [ ] `follow_object` (`object_track.follow_keys`)
 - [ ] `add_sound_design` (`timeline_ops` + sound design)
 - [ ] `apply_recipe` (`recipes.py`, `recipe_layout.py`)
 
 ### Notas para la 4ª tanda (en curso)
-- **Orden:** ~~`clip_layout`~~ → ~~`clip_attrs`~~ (hechos) → `follow_object` (usa `source_point_to_output`) → `add_sound_design` → `clip_motion` (`animate_clip`) → recetas.
+- **Orden:** ~~`clip_layout`~~ → ~~`clip_attrs`~~ → ~~`follow_object`~~ (hechos) → `add_sound_design` → `clip_motion` (`animate_clip`) → recetas.
 - **`interp_items`:** ya es pública en `keyframes.hpp`, con el `_merge` de Python (un NaN del respaldo vale lo de un clip vacío). `clip_props_over` = `clip_props_at` con otra base (la usa `crop_window`).
-- **`sin`/`cos`:** la libm de MinGW difiere de la de CPython en el último bit. Los puntos de `source_point_to_output` con giro (y lo que los use, como `follow_object`) se comparan con tolerancia de 1e-12; sin giro salen exactos. Si `follow_object` redondea después (`round(x, 4)`), el resultado guardado debería salir exacto salvo en empates.
+- **`sin`/`cos`:** la libm de MinGW difiere de la de CPython en el último bit. Los puntos de `source_point_to_output` con giro (y lo que los use, como `follow_object`) se comparan con tolerancia de 1e-12; sin giro salen exactos. `follow_object` redondea después (t a 4 decimales; x, y y scale a 5; rotation a 3) y sale exacto en todas las fixtures.
 - **Encuadre real:** los 235 clips de vídeo e imagen de tus timelines son `overlay`. El modo relleno solo lo cubren los casos sintéticos.
-- **`clip_attrs._constant_props`** recorre un `set` de Python, así que el orden de esas claves cambia en cada ejecución. El exportador ordena las props de los keyframes en los casos de `paste_clip_attributes` y el test las compara sin orden. El C++ las deja en orden de aparición.
+- **`clip_attrs._constant_props`** recorre un `set` de Python, así que el orden de esas claves cambia en cada ejecución. El exportador sustituye esa función por la misma en orden de aparición (que es lo que hace el C++), así que la fixture es estable y se compara con orden.
 - **Orden de los uuid en `paste_attributes`:** los grupos van en el orden de `ATTR_GROUP_IDS`. Primero crop (un `k…` por keyframe de `keyframes` y de `keyframes2`; el id se descarta al validar, pero el uuid se gasta), luego vfx (`fx` + 10 hex), luego mask (`m…`) y al final un `k…` por item de `merge_keyframes`.
+- **`follow_object`:** `track`, `dims` y `box_w` se validan al empezar (si el recorrido no coincide, Python falla igual), pero `min_gap` y los `cx`/`cy`/`s`/`rot` de cada punto solo cuando se usan, como en Python. Los items del clip que acompaña se quitan en [primera t − 0,06, última t + 0,06], ambos incluidos.
 - **Mutantes equivalentes de `clip_attrs`:** fusionar con el destino ya pegado (ningún grupo toca `keyframes`) y `keep_pitch` con la verdad de Python (Pydantic ya lo deja en `bool`).
 - **Recetas:**
   - `text_reflection` mide texto (`text_ass._rows` → Pillow). Se inyecta como dependencia: el exportador parchea `text_ass.text_width` con la estimación `len·em·0,55 + ls·len`, que el C++ usa por defecto. La medición real llega en F4 (FreeType).
@@ -124,11 +125,12 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 
 ### Verificación
 - [x] Fixtures de edición generadas desde el `apply_op` REAL de video-yt (`uuid4` determinista)
-- [x] 228 casos sintéticos (100 de error) y 1452 operaciones sobre tus 18 timelines reales
+- [x] 283 casos sintéticos (125 de error) y 1610 operaciones sobre tus 18 timelines reales
 - [x] Animación: 236 casos sintéticos y 733 clips reales (bit a bit salvo 1 `pow()` → tolerancia 1e-12)
 - [x] Pruebas de mutación: detectan 1e-9, colores, `1` ↔ `1.0` y el orden de claves
 - [x] Encuadre: 2908 muestras sintéticas (48 de error) y 5875 de 235 clips reales. Exacto; solo los puntos con giro van con tolerancia de 1e-12
-- [x] Pegar atributos: 26 casos sintéticos (9 de error) y 77 operaciones reales; las mutaciones no equivalentes se detectan
+- [x] Pegar atributos: 30 casos sintéticos (9 de error, con remuestreo, constantes de los dos lados y estilo de figura) y 77 operaciones reales; las mutaciones no equivalentes se detectan
+- [x] Seguir un objeto: 25 casos sintéticos (16 de error) y 81 operaciones reales; se detectan las 10 mutaciones
 - [x] `json_diff` distingue 0.0 de −0.0 (como el JSON de Python)
 - [x] Benchmark: ≈ 90 µs por edición en C++ frente a ≈ 49 ms en Python (timeline de 167 clips)
 - [ ] **Salida de F2:** 100 % de paridad con las 42 ops y con las fixtures de layout

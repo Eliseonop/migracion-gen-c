@@ -55,4 +55,8 @@ namespace gc::core::detail {
 // porque el JSON distingue 0 de 0.0.
 [[nodiscard]] Json py_clamp(const Json& v, const Json& lo, const Json& hi);
 
+// x % y de Python con reales: el resultado lleva el signo del divisor
+// ((-90.0) % 360 == 270.0), no el del dividendo como fmod.
+[[nodiscard]] double py_mod(double x, double y);
+
 } // namespace gc::core::detail

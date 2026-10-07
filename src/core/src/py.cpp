@@ -271,4 +271,17 @@ std::optional<double> py_number(const Json& j) {
     }
 }
 
+double py_mod(double x, double y) {
+    // float_rem de CPython
+    double mod = std::fmod(x, y);
+    if (mod != 0.0) {
+        if ((y < 0) != (mod < 0)) {
+            mod += y;
+        }
+    } else {
+        mod = std::copysign(0.0, y);
+    }
+    return mod;
+}
+
 } // namespace gc::core::detail

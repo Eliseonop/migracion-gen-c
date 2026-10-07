@@ -473,8 +473,8 @@ std::vector<std::string> keys_of(const std::vector<Json>& items) {
 }
 
 // Props que valen lo mismo en todos los items; nullopt si alguna cambia o falta.
-// Python recorre un `set` (orden arbitrario): aquí van en orden de aparición, y los
-// tests comparan estas props sin orden.
+// Python recorre un `set` (orden arbitrario); aquí van en orden de aparición. El
+// exportador de fixtures usa en Python la misma función en ese orden.
 std::optional<Json> constant_props(const std::vector<Json>& items) {
     Json out = Json::object();
     for (const auto& key : keys_of(items)) {

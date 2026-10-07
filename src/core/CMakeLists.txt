@@ -21,6 +21,7 @@ add_library(gc_core
     src/edit_ops_compound.cpp
     src/edit_ops_media.cpp
     src/edit_ops_props.cpp
+    src/follow.cpp
     src/fx_catalog.cpp
     src/ids.cpp
     src/keyframes.cpp

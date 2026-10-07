@@ -1,10 +1,13 @@
-// Operaciones compuestas: pegar atributos (espejo de backend/app/timeline_ops.py).
+// Operaciones compuestas: pegar atributos y seguir un objeto (espejo de
+// backend/app/timeline_ops.py).
 
 #include <algorithm>
 
 #include "edit_ops.hpp"
 #include "edit_util.hpp"
 #include "gc/core/clip_attrs.hpp"
+#include "gc/core/follow.hpp"
+#include "gc/core/keyframes.hpp"
 #include "gc/core/serialize.hpp"
 
 namespace gc::core::detail {
@@ -104,6 +107,87 @@ Result<EditResult> run(const Timeline& tl, const ops::PasteClipAttributes& op, I
         return invalid("ningún clip destino admite esos grupos");
     }
     return EditResult{std::move(out), std::move(changed), std::move(warnings)};
+}
+
+Result<EditResult> run(const Timeline& tl, const ops::FollowObject& op, IdSource& ids) {
+    Timeline out = tl;
+    GC_TRY(vi, find_clip(out, op.video_clip_id));
+    GC_TRY(fi, find_clip(out, op.follower_clip_id));
+    const TimelineClip& video = *out.clips[vi];
+    TimelineClip follower = *out.clips[fi];
+    if (video.kind != "video") {
+        return invalid("solo se siguen objetos de un clip de vídeo");
+    }
+    if (follower.id == video.id || follower.kind == "audio") {
+        return invalid("el clip que acompaña debe ser otro clip visual (texto, figura, imagen…)");
+    }
+
+    // Python solo usa estos valores si el recorrido coincide con el vídeo; si no coincide,
+    // la operación falla igual, así que se pueden comprobar ya. min_gap, en cambio, solo
+    // se usa a partir del segundo keyframe.
+    const auto box_w = py_number(op.box_w);
+    const auto anchor_t = py_number(op.anchor_t);
+    if (!box_w || !anchor_t) {
+        return invalid("box_w y anchor_t deben ser números");
+    }
+    if (!op.dims.is_object()) {
+        return invalid("dims debe ser {srcW, srcH, outW, outH}");
+    }
+    FollowDims dims;
+    for (const auto& [key, dst] : {std::pair<const char*, double*>{"srcW", &dims.src_w}, {"srcH", &dims.src_h},
+                                   {"outW", &dims.out_w}, {"outH", &dims.out_h}}) {
+        const auto v = op.dims.contains(key) ? py_number(op.dims.at(key)) : std::nullopt;
+        if (!v) {
+            return invalid(std::string("dims.") + key + " debe ser un número");
+        }
+        *dst = *v;
+    }
+    const std::string mode = op.mode.is_string() ? op.mode.get<std::string>() : std::string();
+    GC_TRY(keys, follow_keys(video, follower, op.track, dims, *box_w, *anchor_t, mode, py_number(op.min_gap)));
+    if (keys.empty()) {
+        return invalid("el objeto seguido no coincide en el tiempo con ese clip");
+    }
+
+    // Fuera los keyframes que había dentro del tramo seguido.
+    const double lo = keys.front().t - kKfSnap;
+    const double hi = keys.back().t + kKfSnap;
+    const Json kf = follower.keyframes && follower.keyframes->is_object() ? *follower.keyframes : Json::object();
+    if (py_truthy(field(kf, "enabled"))) {
+        Json kept = Json::array();
+        const Json& raw = field(kf, "items");
+        if (py_truthy(raw)) {
+            const auto items = py_iter(raw);
+            if (!items) {
+                return invalid("keyframes.items debe ser una lista");
+            }
+            for (const Json& k : *items) {
+                if (!k.is_object()) {
+                    return invalid("keyframes.items: cada keyframe debe ser un objeto");
+                }
+                GC_TRY(t, to_py_float(k.contains("t") ? k.at("t") : Json(0), "keyframes.items[].t"));
+                if (!(lo <= t && t <= hi)) {
+                    kept.push_back(k);
+                }
+            }
+        }
+        Json next = kf;
+        next["items"] = std::move(kept);
+        follower.keyframes = std::move(next);
+    }
+    for (const auto& k : keys) {
+        Json patch = Json::object();
+        patch["x"] = k.x;
+        patch["y"] = k.y;
+        if (k.scale) {
+            patch["scale"] = *k.scale;
+        }
+        if (k.rotation) {
+            patch["rotation"] = *k.rotation;
+        }
+        upsert_keyframe_at(follower, k.t, patch, Interp::Linear, ids);
+    }
+    out.clips[fi] = std::move(follower);
+    return EditResult{std::move(out), {op.follower_clip_id}, {}};
 }
 
 } // namespace gc::core::detail

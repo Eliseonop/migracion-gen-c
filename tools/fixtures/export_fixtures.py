@@ -39,6 +39,17 @@ REPO = HERE.parent.parent
 DEFAULT_VIDEO_YT = Path(r"E:\proyectos\video-yt")
 
 
+def _constant_props_in_order(items: list[dict]):
+    """clip_attrs._constant_props con las claves en orden de aparición (y no el de un set)."""
+    out: dict = {}
+    for key in dict.fromkeys(key for k in items for key in k["props"]):
+        v0 = items[0]["props"].get(key)
+        if v0 is None or any(k["props"].get(key) is None or abs(k["props"][key] - v0) > 1e-6 for k in items):
+            return None
+        out[key] = v0
+    return out
+
+
 class Ctx:
     """Módulos de video-yt que hacen de referencia."""
 
@@ -48,7 +59,11 @@ class Ctx:
             sys.exit(f"No encuentro video-yt en {root} (falta backend/app/schemas.py). Usa --video-yt.")
         sys.path.insert(0, str(backend))
         from pydantic import ValidationError
-        from app import clip_speed, migrations, projects, schemas, timeline_history, timeline_store
+        from app import clip_attrs, clip_speed, migrations, projects, schemas, timeline_history, timeline_store
+        # _constant_props recorre un `set`: el orden de sus claves cambia en cada ejecución
+        # (PYTHONHASHSEED). Se usa la misma función en orden de aparición, como el C++; el
+        # resultado es el mismo salvo el orden, y así la fixture es estable y se compara con orden.
+        clip_attrs._constant_props = _constant_props_in_order
         self.ValidationError = ValidationError
         self.clip_speed = clip_speed
         self.migrations = migrations
@@ -155,17 +170,6 @@ def timeline_delta(before: dict, after: dict) -> dict | None:
     }
 
 
-def _sort_kf_props(timeline: dict) -> None:
-    """paste_clip_attributes reúne parte de las props de los keyframes recorriendo un set: su
-    orden cambia en cada ejecución (PYTHONHASHSEED). Se ordenan para que la fixture sea estable;
-    el test las compara sin orden."""
-    for c in timeline.get("clips", []):
-        kf = c.get("keyframes")
-        for it in (kf.get("items") or []) if isinstance(kf, dict) else []:
-            if isinstance(it, dict) and isinstance(it.get("props"), dict):
-                it["props"] = dict(sorted(it["props"].items()))
-
-
 def run_edit_case(ctx: Ctx, base_id: str, timeline: dict, name: str, op: str, params, compact: bool) -> dict:
     out = {"name": name, "timeline": base_id, "op": op, "params": params}
     try:
@@ -173,8 +177,6 @@ def run_edit_case(ctx: Ctx, base_id: str, timeline: dict, name: str, op: str, pa
     except Exception as e:  # noqa: BLE001
         return _error(out, e, ctx)
     result = _pure(r["timeline"])
-    if op == "paste_clip_attributes":
-        _sort_kf_props(result)
     expected = {"changed": r["changed"], "warnings": r["warnings"]}
     delta = timeline_delta(timeline, result) if compact else None
     if delta is not None:
@@ -256,6 +258,7 @@ def real_edit_fixtures(ctx: Ctx, data: dict) -> dict:
         ops += extra_real_ops(tl, ctx)
         ops += media_real_ops(tl, proj, ctx)
         ops += compound_real_ops(tl)
+        ops += follow_real_ops(tl, proj, ctx)
         for name, op, params in ops:
             cases.append(run_edit_case(ctx, pid, tl, f"{pid} · {name}", op, params, compact=True))
     return {"timelines": timelines, "cases": cases}
@@ -351,6 +354,32 @@ def compound_real_ops(tl: dict) -> list[tuple[str, str, dict]]:
         ops.append(("pegar posición, mezcla y velocidad del primer vídeo", "paste_clip_attributes",
                     {"source_clip_id": videos[0], "target_clip_ids": visuals[:8],
                      "groups": ["transform", "blend", "flip", "speed"]}))
+    return ops
+
+
+def follow_real_ops(tl: dict, proj, ctx: Ctx) -> list[tuple[str, str, dict]]:
+    """follow_object sobre una timeline real: un recorrido sintético sobre cada uno de tus
+    primeros vídeos y, como acompañantes, los clips visuales que coinciden con él en el tiempo."""
+    ops: list[tuple[str, str, dict]] = []
+    sizes = {a.id: (a.width, a.height) for a in (*proj.clips, *proj.images)
+             if getattr(a, "width", None) and getattr(a, "height", None)}
+    dur = ctx.clip_speed.clip_timeline_duration
+    for v in [c for c in tl["clips"] if c["kind"] == "video"][:3]:
+        v0, v1 = v["start"], v["start"] + dur(v)
+        followers = [c for c in tl["clips"] if c["id"] != v["id"] and c["kind"] in ("text", "shape", "image", "video")
+                     and c["start"] < v1 and c["start"] + dur(c) > v0][:2]
+        if not followers or v["out_point"] <= v["in_point"]:
+            continue
+        n = 16
+        track = [{"t": v["in_point"] + (v["out_point"] - v["in_point"]) * i / (n - 1), "cx": 0.3 + 0.025 * i,
+                  "cy": 0.6 - 0.015 * i, "s": 1 + 0.04 * i, "rot": 13 * i} for i in range(n)]
+        src_w, src_h = sizes.get(v["asset_id"], (1920, 1080))
+        dims = {"srcW": src_w, "srcH": src_h, "outW": tl["width"], "outH": tl["height"]}
+        for f, mode in zip(followers, ("position_scale_rotation", "position_scale")):
+            anchor = max(v0, f["start"]) + 0.25
+            ops.append((f"{f['id']} sigue a un objeto de {v['id']} ({mode})", "follow_object",
+                        {"follower_clip_id": f["id"], "video_clip_id": v["id"], "track": track, "box_w": 0.15,
+                         "anchor_t": anchor, "dims": dims, "mode": mode, "min_gap": 0.2}))
     return ops
 
 

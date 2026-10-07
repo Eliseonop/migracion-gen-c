@@ -547,6 +547,19 @@ ATTRS["clips"] += [
     clip("dm", "V2", start=175, out=3,
          keyframes={"enabled": True, "items": [{"id": "n1", "t": 0.5, "props": {"mx": 0.2}},
                                                {"id": "n2", "t": 2.5, "interpolation": "hold", "props": {"mx": 0.2}}]}),
+    # destino con props que no se pegan (máscara) y cambian: obliga a remuestrear
+    clip("dr", "V2", start=180, out=4, masks=[{"type": "circle"}],
+         keyframes={"enabled": True, "items": [
+             {"id": "r1", "t": 0.5, "interpolation": "ease-out", "props": {"mx": 0.2, "y": 0.3}},
+             {"id": "r2", "t": 2.5, "interpolation": "bezier", "bezier": [0.3, 0, 0.6, 1], "props": {"mx": 0.8}},
+             {"id": "r3", "t": "nan", "props": {"mx": 0.1}},
+             {"id": "r4", "t": 4.00002, "props": {"mx": 0.5}}]}),
+    clip("fe", "V2", start=190, out=4,
+         keyframes={"enabled": True, "items": [{"t": 0, "props": {"x": 0.1, "scale": 1}},
+                                               {"t": 3, "interpolation": "cubic-in", "props": {"x": 0.77, "scale": 1.3}}]}),
+    clip("shs", "V2", kind="shape", start=185, out=2,
+         shape={"type": "rect", "fill": "#abc", "stroke": "#000", "strokeWidth": 4, "dash": [2, 1],
+                "cornerRadius": 0.2, "x": 0.9}),
     clip("bad", "V2", start=150, out=3,
          keyframes={"enabled": True, "items": [{"t": 0, "props": {"x": 0.1}}, {"t": 1, "props": {"x": "abc"}}]}),
 ]
@@ -589,6 +602,14 @@ CASES += [
           {"source_clip_id": "fz", "target_clip_ids": ["dst3"], "groups": ["animation", "mask"]}),
     paste("paste_clip_attributes con props constantes en los dos lados",
           {"source_clip_id": "kc", "target_clip_ids": ["dm"], "groups": ["animation"]}),
+    paste("paste_clip_attributes remuestreo (origen y destino animan cosas distintas)",
+          {"source_clip_id": "fz", "target_clip_ids": ["dr"], "groups": ["animation"]}),
+    paste("paste_clip_attributes remuestreo con curva cúbica",
+          {"source_clip_id": "fe", "target_clip_ids": ["dr"], "groups": ["animation"]}),
+    paste("paste_clip_attributes origen constante sobre destino que cambia",
+          {"source_clip_id": "kc", "target_clip_ids": ["dr"], "groups": ["animation"]}),
+    paste("paste_clip_attributes estilo de figura con relleno y trazo",
+          {"source_clip_id": "shs", "target_clip_ids": ["sh2", "shp"], "groups": ["style"]}),
     paste("paste_clip_attributes ids numéricos", {"source_clip_id": "fz", "target_clip_ids": [5, "dst"],
                                                  "groups": ["flip"]}, base={**ATTRS, "clips": ATTRS["clips"] + [
                                                      clip("5", "V2", start=160, out=1)]}),
@@ -606,6 +627,88 @@ CASES += [
           {"source_clip_id": "bad", "target_clip_ids": ["dst"], "groups": ["animation"]}),
     paste("ERROR paste_clip_attributes origen inexistente", {"source_clip_id": "nope", "target_clip_ids": ["dst"]}),
     paste("ERROR paste_clip_attributes sin destinos", {"source_clip_id": "fz"}),
+]
+
+
+# --- 4ª tanda: seguir un objeto --------------------------------------------------------------
+
+FOLLOW = {
+    "schema_version": 5, "width": 720, "height": 1280,
+    "tracks": [track("V1", "video"), track("V2", "video"), track("V3", "video"), track("T1", "text"),
+               track("A1", "audio")],
+    "clips": [
+        clip("fv", "V1", start=2, inp=10, out=16, layout="overlay",
+             transform={"x": 0.5, "y": 0.4, "scale": 0.8, "rotation": 10},
+             reframe={"crop_w": 0.6, "crop_h": 0.8, "keyframes": [{"t": 10, "cx": 0.4, "cy": 0.5}]}),
+        clip("fr", "V3", start=6, inp=5, out=11, reverse=True, speed=2, flip_h=True,
+             keyframes={"enabled": True, "items": [{"t": 0, "props": {"x": 0.3, "rotation": 0}},
+                                                   {"t": 3, "props": {"x": 0.7, "scale": 1.4, "rotation": 40}}]}),
+        clip("txt", "T1", kind="text", start=3, out=4, text="sigue", style={"x": 0.3, "y": 0.2, "scale": 1.5,
+                                                                            "rotation": 5},
+             keyframes={"enabled": True, "items": [{"id": "q0", "t": -0.06, "props": {"y": 0.4}},
+                                                   {"id": "q1", "t": 0.5, "props": {"x": 0.1}},
+                                                   {"id": "q2", "t": 3.9, "props": {"opacity": 0.5}},
+                                                   {"id": "q3", "t": "1.2", "props": {"y": 0.9}}]}),
+        clip("img", "V2", kind="image", start=8, out=5, layout="overlay", transform={"scale": 0.3}),
+        clip("shp", "V2", kind="shape", start=4, out=3, shape={"type": "rect", "x": 0.7},
+             keyframes={"enabled": False, "items": [{"t": 1, "interpolation": "bezier", "bezier": [0.2, 0, 0.3, 1],
+                                                    "props": {"x": 0.2}}]}),
+        clip("raro", "T1", kind="text", start=7.5, out=2, text="raro",
+             keyframes={"enabled": True, "items": [{"t": 0, "props": {"x": 0.2}}, "no-dict"]}),
+        clip("snd", "A1", kind="audio", start=2, out=6),
+    ],
+}
+
+TRACK = [{"t": 10 + i * 0.2, "cx": 0.3 + 0.01 * i, "cy": 0.5 - 0.005 * i, "s": 1 + 0.02 * i, "rot": -7 * i}
+         for i in range(31)]
+TRACK_EXTRA = [{"t": 5, "cx": 0.1, "cy": 0.1}, {"t": 20, "cx": 0.9}, {"t": 12, "cx": 0.5, "cy": 0.5},
+               {"t": True, "cx": 0}]
+TRACK_REV = [{"t": 5 + i * 0.5, "cx": 0.2 + 0.05 * i, "cy": 0.4, "rot": 30 * i} for i in range(13)]
+DIMS = {"srcW": 1920, "srcH": 1080, "outW": 720, "outH": 1280}
+
+
+def follow(name, params, base=FOLLOW):
+    full = {"follower_clip_id": "txt", "video_clip_id": "fv", "track": TRACK, "box_w": 0.2, "anchor_t": 3.5,
+            "dims": DIMS}
+    full.update(params)
+    return op(name, base, "follow_object", {k: v for k, v in full.items() if v is not _ABSENT})
+
+
+_ABSENT = object()
+
+CASES += [
+    follow("follow_object posición y escala", {}),
+    follow("follow_object solo posición", {"mode": "position"}),
+    follow("follow_object con giro (pasa de ±180)", {"mode": "position_scale_rotation"}),
+    follow("follow_object puntos sueltos, repetidos y desordenados",
+           {"track": list(reversed(TRACK[:12])) + TRACK_EXTRA + TRACK[5:8], "mode": "position_scale_rotation"}),
+    follow("follow_object vídeo al revés y a velocidad 2", {"video_clip_id": "fr", "follower_clip_id": "img",
+                                                           "track": TRACK_REV, "anchor_t": 9, "box_w": 0.5,
+                                                           "mode": "position_scale_rotation"}),
+    follow("follow_object separación mínima de 0.5 s", {"min_gap": 0.5, "anchor_t": 0}),
+    follow("follow_object min_gap no numérico con un solo punto", {"track": [TRACK[10]], "min_gap": "x"}),
+    follow("follow_object figura con keyframes desactivados", {"follower_clip_id": "shp", "box_w": True,
+                                                              "dims": {**DIMS, "extra": "x"}}),
+    follow("follow_object punto incompleto que no se usa",
+           {"track": TRACK[:20] + [{"t": 15.9, "s": None}], "anchor_t": 4}),
+    follow("ERROR follow_object min_gap no numérico", {"min_gap": "x"}),
+    follow("ERROR follow_object el vídeo es una imagen", {"video_clip_id": "img"}),
+    follow("ERROR follow_object acompaña un audio", {"follower_clip_id": "snd"}),
+    follow("ERROR follow_object acompaña al propio vídeo", {"follower_clip_id": "fv"}),
+    follow("ERROR follow_object modo raro", {"mode": "todo"}),
+    follow("ERROR follow_object recorrido fuera del vídeo", {"track": TRACK_EXTRA[:2]}),
+    follow("ERROR follow_object recorrido fuera del clip que acompaña", {"follower_clip_id": "raro",
+                                                                        "track": TRACK[:5]}),
+    follow("ERROR follow_object falta dims.outH", {"dims": {"srcW": 1920, "srcH": 1080, "outW": 720}}),
+    follow("ERROR follow_object dims.srcW 0", {"dims": {**DIMS, "srcW": 0}}),
+    follow("ERROR follow_object punto sin t", {"track": TRACK[:3] + [{"cx": 0.5}]}),
+    follow("ERROR follow_object punto con t de texto", {"track": TRACK[:3] + [{"t": "11", "cx": 0.5}]}),
+    follow("ERROR follow_object punto usado sin cy", {"track": [{"t": 12, "cx": 0.5}]}),
+    follow("ERROR follow_object track no es una lista", {"track": 5}),
+    follow("ERROR follow_object box_w de texto", {"box_w": "0.2"}),
+    follow("ERROR follow_object keyframe que no es un objeto", {"follower_clip_id": "raro",
+                                                               "track": TRACK[25:], "anchor_t": 8}),
+    follow("ERROR follow_object sin dims", {"dims": _ABSENT}),
 ]
 
 

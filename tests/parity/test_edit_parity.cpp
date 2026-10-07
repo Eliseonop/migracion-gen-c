@@ -51,35 +51,6 @@ Json rebuild(const Json& base, const Json& delta) {
     return out;
 }
 
-// Pegar atributos: Python reúne parte de las props de los keyframes recorriendo un `set`
-// (orden aleatorio entre ejecuciones), así que esas props se comparan sin orden.
-void sort_keyframe_props(Json& timeline) {
-    const auto clips = timeline.find("clips");
-    if (clips == timeline.end() || !clips->is_array()) {
-        return;
-    }
-    for (Json& c : *clips) {
-        const auto kf = c.find("keyframes");
-        if (kf == c.end() || !kf->is_object() || !kf->contains("items") || !kf->at("items").is_array()) {
-            continue;
-        }
-        for (Json& item : kf->at("items")) {
-            if (!item.is_object() || !item.contains("props") || !item.at("props").is_object()) {
-                continue;
-            }
-            std::map<std::string, Json> sorted;
-            for (const auto& [k, v] : item.at("props").items()) {
-                sorted.emplace(k, v);
-            }
-            Json props = Json::object();
-            for (const auto& [k, v] : sorted) {
-                props[k] = v;
-            }
-            item["props"] = std::move(props);
-        }
-    }
-}
-
 std::vector<std::string> strings(const Json& j) {
     std::vector<std::string> out;
     for (const Json& s : j) {
@@ -145,14 +116,9 @@ Stats check_file(const std::filesystem::path& path, bool check_immutable) {
             continue;
         }
         const Json& expected = c.at("expected");
-        Json want = expected.contains("timeline") ? expected.at("timeline")
-                                                  : rebuild(timeline_json.at(base_id), expected.at("timeline_delta"));
-        Json got_tl = to_json(result->timeline);
-        if (c.at("op") == "paste_clip_attributes") {
-            sort_keyframe_props(want);
-            sort_keyframe_props(got_tl);
-        }
-        const auto diff = gc::test::json_diff(want, got_tl);
+        const Json want = expected.contains("timeline") ? expected.at("timeline")
+                                                        : rebuild(timeline_json.at(base_id), expected.at("timeline_delta"));
+        const auto diff = gc::test::json_diff(want, to_json(result->timeline));
         INFO(diff.value_or(""));
         CHECK_FALSE(diff);
 

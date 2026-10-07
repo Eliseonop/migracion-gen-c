@@ -489,3 +489,19 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 - **Casos:** 26 sintéticos (9 de error), entre ellos los dos lados constantes, el «crece → empuja» por velocidad, croma en todas sus combinaciones y estilo de texto animado. Además, 77 operaciones de pegar sobre tus timelines reales.
 - **Mutación:** se detectan 10 de 13. Las otras 3 son equivalentes: el destino ya pegado no cambia `keyframes`, `keep_pitch` siempre llega como `bool` y una reordenación que no cambia la lógica.
 - **Resultado:** 41 tests y 45 202 aserciones en verde, en Debug y en Release.
+
+**Revisión del subagente (APROBADO, solo hallazgos menores), ya aplicada:**
+- Ninguna fixture del repo pasaba por el remuestreo ni por la rama de constantes del origen: solo lo hacían tus datos locales. Hay casos nuevos, incluido uno con curva cúbica para que importe el `round(x, 6)`.
+- También hay casos para el estilo de figura con relleno y trazo y para un item con t NaN.
+- `_constant_props` en orden de aparición dentro del exportador. Ya no se ordenan las props en el test: se compara con orden.
+
+**Hecho (3): `follow_object`:**
+- `follow.hpp`: `follow_keys`. Lleva el centro del objeto y el extremo de su eje a la salida con `source_point_to_output`. A partir de ahí calcula el desplazamiento, la escala (`hypot`) y el giro (`atan2`, con el `%` de reales de Python, `py_mod`), todo con los redondeos de Python.
+- El comando quita los keyframes del tramo seguido y escribe keyframes lineales con `upsert_keyframe_at`.
+- Errores perezosos como en Python: un `min_gap` no numérico o un punto incompleto solo fallan si se llegan a usar.
+
+**Verificación (3):**
+- **Casos:** 25 sintéticos (16 de error), entre ellos un vídeo al revés a velocidad 2 con pose animada, giro que pasa de ±180, keyframes justo en el borde del tramo y clip con curva propia. Además, 81 operaciones sobre tus timelines reales.
+- **Exactitud:** sale exacto también lo que pasa por `sin`/`cos`/`atan2`/`hypot`, porque se redondea a 3–5 decimales.
+- **Mutación:** se detectan las 10.
+- **Resultado:** 41 tests y 45 526 aserciones en verde, en Debug y en Release.

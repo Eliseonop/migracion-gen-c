@@ -276,6 +276,18 @@ struct PasteClipAttributes {
     Json target_clip_ids; // lista de ids
     Json groups;          // lista de grupos o null
 };
+// El clip `follower_clip_id` acompaña al objeto seguido en el vídeo `video_clip_id`
+// (follow.hpp): keyframes de pose lineales, sustituyendo los que había en el tramo.
+struct FollowObject {
+    std::string follower_clip_id;
+    std::string video_clip_id;
+    Json track;    // [{t, cx, cy, s?, rot?}] (s de la fuente)
+    Json box_w;    // ancho del recuadro inicial, 0–1 de la fuente
+    Json anchor_t; // s de timeline en que se marcó
+    Json dims;     // {srcW, srcH, outW, outH} en px
+    Json mode = "position_scale";
+    Json min_gap = 0.1;
+};
 
 } // namespace ops
 
@@ -288,7 +300,8 @@ using Command =
                  ops::SetClipBeats, ops::SetClipMasks, ops::SetClipEffects, ops::SetClipVolume, ops::SetTrackAudio,
                  ops::SetClipAudioFx, ops::ReplaceMedia, ops::ApplyEffect, ops::SetClipAnimation, ops::FreezeFrame,
                  ops::AddSubtitles, ops::AddShape, ops::AddCinemaBars, ops::AddAdjustmentLayer,
-                 ops::SetClipBgRemoval, ops::PasteClipAttributes>;
+                 ops::SetClipBgRemoval, ops::PasteClipAttributes,
+                 ops::FollowObject>;
 
 // Nombre de la operación ("move_clip"…), el mismo del MCP y de video-yt.
 [[nodiscard]] std::string_view command_name(const Command& command);
