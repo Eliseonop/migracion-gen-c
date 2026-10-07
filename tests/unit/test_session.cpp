@@ -3,9 +3,14 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <filesystem>
 #include <memory>
+#include <fstream>
+#include <random>
 
 #include "gc/core/edit.hpp"
+#include "gc/core/history_store.hpp"
+#include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/session.hpp"
 
@@ -167,3 +172,108 @@ TEST_CASE("historial limitado", "[session]") {
     }
     CHECK(undos == 3);
 }
+
+// --- Historial en disco y autoguardado ----------------------------------------------------
+
+namespace {
+
+// Carpeta temporal propia de cada test; se borra al terminar.
+struct TempDir {
+    std::filesystem::path path;
+    TempDir() {
+        std::random_device rd;
+        path = std::filesystem::temp_directory_path() / ("gc_tests_" + std::to_string(rd()));
+        std::filesystem::create_directories(path);
+    }
+    ~TempDir() {
+        std::error_code ec;
+        std::filesystem::remove_all(path, ec);
+    }
+};
+
+} // namespace
+
+TEST_CASE("autoguardado: historial tras cada paso y timeline tras cada cambio", "[session][history]") {
+    TempDir dir;
+    const auto file = history_path(dir.path, "proyecto");
+    EditSession s = session();
+    std::vector<Json> saved;
+    Autosave autosave(s, file, [&](const Timeline& tl) -> gc::Result<void> {
+        saved.push_back(to_json(tl));
+        return {};
+    });
+
+    REQUIRE(s.apply("move_clip", {{"clip_id", "c"}, {"start", 10}}));
+    CHECK(saved.size() == 1);
+    CHECK(saved.back() == to_json(*s.timeline()));
+    CHECK(load_history(file).undo_stack().size() == 1);
+
+    s.checkpoint("antes");                         // solo cambia el historial
+    CHECK(saved.size() == 1);
+    CHECK(load_history(file).checkpoints() == std::vector<std::string>{"antes"});
+
+    {
+        EditSession::Group g(s);                   // dos ops, un paso de deshacer
+        REQUIRE(s.apply("move_clip", {{"clip_id", "c"}, {"start", 20}}));
+        REQUIRE(s.apply("move_clip", {{"clip_id", "c"}, {"start", 30}}));
+        g.commit();
+    }
+    CHECK(saved.size() == 3);
+    CHECK(load_history(file).undo_stack().size() == 2);
+
+    REQUIRE(s.undo());
+    const History on_disk = load_history(file);
+    CHECK(on_disk.undo_stack().size() == 1);
+    CHECK(on_disk.redo_stack().size() == 1);
+    CHECK(history_to_json(on_disk) == history_to_json(s.history()));
+    CHECK_FALSE(autosave.last_error());
+}
+
+TEST_CASE("autoguardado: un fallo al guardar no para la edición y se recuerda", "[session][history]") {
+    TempDir dir;
+    EditSession s = session();
+    bool fail_next = true;
+    Autosave autosave(s, history_path(dir.path, "p"), [&](const Timeline&) -> gc::Result<void> {
+        if (fail_next) {
+            return gc::fail(gc::ErrorCode::Io, "disco lleno");
+        }
+        return {};
+    });
+    REQUIRE(s.apply("move_clip", {{"clip_id", "c"}, {"start", 10}}));
+    REQUIRE(autosave.last_error());
+    CHECK(autosave.last_error()->message == "disco lleno");
+    fail_next = false;
+    REQUIRE(s.apply("move_clip", {{"clip_id", "c"}, {"start", 11}}));
+    CHECK_FALSE(autosave.last_error());
+}
+
+TEST_CASE("retomar una sesión con su historial guardado", "[session][history]") {
+    TempDir dir;
+    const auto file = history_path(dir.path, "p");
+    Json first;
+    {
+        EditSession s = session();
+        first = to_json(*s.timeline());
+        Autosave autosave(s, file);
+        REQUIRE(s.apply("move_clip", {{"clip_id", "c"}, {"start", 10}}));
+        s.checkpoint("uno");
+    }
+    // Otra sesión, más tarde: la timeline guardada y su historial.
+    EditSession again(sample(), load_history(file), std::make_unique<SequentialIdSource>());
+    CHECK(again.can_undo());
+    CHECK(again.checkpoints() == std::vector<std::string>{"uno"});
+    REQUIRE(again.undo());
+    CHECK(to_json(*again.timeline()) == first);
+}
+
+TEST_CASE("historial ilegible o ausente: vacío, sin error", "[session][history]") {
+    TempDir dir;
+    CHECK_FALSE(load_history(dir.path / "no-existe.json").can_undo());
+    const auto bad = dir.path / "roto.json";
+    {
+        std::ofstream(bad) << "{ esto no es json";
+    }
+    CHECK_FALSE(load_history(bad).can_undo());
+    CHECK(load_history(bad).limit() == History::kDefaultLimit);
+}
+

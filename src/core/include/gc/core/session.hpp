@@ -37,8 +37,14 @@ using TimelineSnapshot = std::shared_ptr<const Timeline>;
 class History {
 public:
     static constexpr std::size_t kDefaultLimit = 50;
+    using Checkpoints = std::vector<std::pair<std::string, TimelineSnapshot>>; // en orden de creación
 
     explicit History(std::size_t limit = kDefaultLimit) : limit_(limit) {}
+    // Un historial ya hecho (p. ej. leído de disco). Como en Python, el límite solo se
+    // aplica al apilar un estado nuevo: lo que venga de más se conserva hasta entonces.
+    History(std::size_t limit, std::deque<TimelineSnapshot> undo, std::vector<TimelineSnapshot> redo,
+            Checkpoints checkpoints)
+        : limit_(limit), undo_(std::move(undo)), redo_(std::move(redo)), checkpoints_(std::move(checkpoints)) {}
 
     // Antes de un cambio: apila el estado actual y descarta el rehacer pendiente.
     void record(TimelineSnapshot current);
@@ -56,11 +62,17 @@ public:
     [[nodiscard]] TimelineSnapshot checkpoint_state(std::string_view name) const;
     [[nodiscard]] std::vector<std::string> checkpoints() const;
 
+    // Las pilas tal cual (la cima es el final), para guardarlas (history_store.hpp).
+    [[nodiscard]] std::size_t limit() const noexcept { return limit_; }
+    [[nodiscard]] const std::deque<TimelineSnapshot>& undo_stack() const noexcept { return undo_; }
+    [[nodiscard]] const std::vector<TimelineSnapshot>& redo_stack() const noexcept { return redo_; }
+    [[nodiscard]] const Checkpoints& checkpoint_states() const noexcept { return checkpoints_; }
+
 private:
     std::size_t limit_;
     std::deque<TimelineSnapshot> undo_;
     std::vector<TimelineSnapshot> redo_;
-    std::vector<std::pair<std::string, TimelineSnapshot>> checkpoints_; // en orden de creación
+    Checkpoints checkpoints_;
 };
 
 // Qué ha pasado en un cambio de la sesión.
@@ -74,9 +86,14 @@ struct Change {
 class EditSession {
 public:
     using Listener = std::function<void(const TimelineSnapshot&, const Change&)>;
+    // Se llama cada vez que cambia el historial (también al guardar un checkpoint o al
+    // cerrar un grupo, que no cambian la timeline).
+    using HistoryListener = std::function<void(const History&)>;
 
     explicit EditSession(Timeline initial, std::unique_ptr<IdSource> ids = std::make_unique<RandomIdSource>(),
                          std::size_t history_limit = History::kDefaultLimit);
+    // Retoma una sesión: la timeline y su historial guardado.
+    EditSession(Timeline initial, History history, std::unique_ptr<IdSource> ids = std::make_unique<RandomIdSource>());
 
     [[nodiscard]] const TimelineSnapshot& timeline() const noexcept { return current_; }
     // Sube con cada cambio: sirve de clave para cachés (render, miniaturas, UI).
@@ -93,6 +110,7 @@ public:
     void checkpoint(std::string name);
     [[nodiscard]] Result<void> restore_checkpoint(std::string_view name);
     [[nodiscard]] std::vector<std::string> checkpoints() const { return history_.checkpoints(); }
+    [[nodiscard]] const History& history() const noexcept { return history_; }
 
     // Varias operaciones = un solo paso de deshacer. Si el grupo se destruye sin
     // commit(), la timeline vuelve a como estaba al empezarlo.
@@ -112,9 +130,12 @@ public:
 
     std::size_t subscribe(Listener listener);
     void unsubscribe(std::size_t id);
+    std::size_t subscribe_history(HistoryListener listener);
+    void unsubscribe_history(std::size_t id);
 
 private:
     void publish(TimelineSnapshot next, Change change);
+    void history_changed();
 
     TimelineSnapshot current_;
     std::unique_ptr<IdSource> ids_;
@@ -122,6 +143,7 @@ private:
     std::uint64_t revision_ = 0;
     int group_depth_ = 0;
     std::vector<std::pair<std::size_t, Listener>> listeners_;
+    std::vector<std::pair<std::size_t, HistoryListener>> history_listeners_;
     std::size_t next_listener_ = 1;
 };
 

@@ -142,13 +142,18 @@ s.apply("move_clip", {{"clip_id", "c1"}, {"start", 4.2}}); // o s.apply(ops::Mov
 }
 s.undo(); s.redo(); s.checkpoint("antes de la IA"); s.restore_checkpoint("antes de la IA");
 auto snap = s.timeline();         // shared_ptr<const Timeline>: se puede pasar a otro hilo
-s.subscribe([](const TimelineSnapshot& tl, const Change& c) { /* UI, render, autosave */ });
+s.subscribe([](const TimelineSnapshot& tl, const Change& c) { /* UI, render… */ });
+
+// En disco (history_store.hpp): retomar y autoguardar.
+EditSession s2(timeline, load_history(history_path(data_dir, pid)));
+Autosave autosave(s2, history_path(data_dir, pid), [&](const Timeline& tl) { return save_project_timeline(tl); });
 ```
 
 - **Historial:** pilas de *snapshots* con un límite de 50, como `timeline_history.py`. Deshacer intercambia punteros: es O(1).
 - **Revisión:** un contador que sube con cada cambio. Sirve de clave para las cachés: si la revisión no cambió, la miniatura o el fotograma cacheado siguen valiendo.
 - **Observadores:** reciben el snapshot nuevo y un `Change` con la causa, los ids afectados y los avisos. La UI solo repinta lo que nombra `changed`.
 - **Hilos:** una `EditSession` vive en el hilo de la UI. Entre hilos solo viajan snapshots inmutables.
+- **En disco:** `data/history/<pid>.json` con el formato de `timeline_history.py`, así que video-yt y GenClipPro leen el historial del otro. `Autosave` escribe la timeline tras cada cambio y el historial cada vez que cambia (`subscribe_history`), de forma atómica; un fallo no para la edición y queda en `last_error()`.
 
 ## 6. Hilos *(F3–F5)*
 

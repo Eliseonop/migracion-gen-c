@@ -12,7 +12,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 |---|---|---|---|
 | **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo MSVC y CI en marcha | |
 | **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo hecho · falta `data/` (biblioteca, ajustes) | |
-| **F2** Lógica de edición | ops, sin solapes, keyframes, undo | 🟡 en curso: las 42 ops de Python hechas; falta guardar el historial | |
+| **F2** Lógica de edición | ops, sin solapes, keyframes, undo | ✅ hecha: las 42 ops, el historial en disco y el autoguardado | |
 | **F3** Media + export | gc_media, gc_render v1, `genclip render` | ⬜ | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | ⬜ | |
 | **F5** Editor de escritorio | app Qt Quick | ⬜ | **M2** |
@@ -22,9 +22,10 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 45 tests y 46 853 aserciones en verde (Debug y Release, 0 warnings).
+**Cifras actuales:** 51 tests y 47 246 aserciones en verde (Debug y Release, 0 warnings).
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
-animación (236 casos + 733 clips reales) y encuadre (2908 muestras sintéticas + 5875 de 235 clips reales).
+animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
+e historial (69 pasos sintéticos + el de tus 14 proyectos).
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12.
 
 ---
@@ -67,7 +68,7 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - [ ] Biblioteca y colecciones de `data/` (`library`, `collections`)
 - [ ] Ajustes y API keys (`settings.json`)
 
-## F2 — Lógica de edición *(en curso)*
+## F2 — Lógica de edición *(hecha)*
 
 ### Arquitectura del motor
 - [x] Documento inmutable con estructura compartida (`Cow<T>`)
@@ -121,8 +122,9 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - **Matemática:** Python redondea con `round()` al par (`_even`, `_even_pos`), su `%` de reales es de suelo (rotación en `follow_keys`) y `degrees = x·(180/π)`.
 
 ### Persistencia
-- [ ] Guardar y cargar el historial (`data/history/<pid>.json`, mismo formato que `timeline_history.py`)
-- [ ] Autoguardado
+- [x] Guardar y cargar el historial (`history_store.hpp`: `data/history/<pid>.json`, el mismo formato que `timeline_history.py`, con escritura atómica). Se lee tolerante: las timelines antiguas se migran y las entradas ilegibles se descartan
+- [x] Autoguardado (`Autosave`): guarda la timeline tras cada cambio y el historial cada vez que cambia (también con un checkpoint o al cerrar un grupo). Escribe en el momento; el aplazamiento (*debounce*) y el hilo de fondo son cosa de F5
+- [x] `EditSession` retoma una sesión con su historial guardado y avisa de los cambios del historial (`subscribe_history`)
 
 ### Verificación
 - [x] Fixtures de edición generadas desde el `apply_op` REAL de video-yt (`uuid4` determinista)
@@ -137,7 +139,8 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - [x] Recetas: 30 casos sintéticos (12 de error) y 74 operaciones reales; se detectan las 16 mutaciones
 - [x] `json_diff` distingue 0.0 de −0.0 (como el JSON de Python)
 - [x] Benchmark: ≈ 90 µs por edición en C++ frente a ≈ 49 ms en Python (timeline de 167 clips)
-- [x] **Salida de F2 (ops):** 100 % de paridad con las 42 ops y con las fixtures de layout. Para cerrar F2 falta la persistencia
+- [x] Historial: los mismos 69 pasos que `timeline_history` (pilas, límite de 50, checkpoints, restaurar), el JSON en disco idéntico al de Python, y el historial de tus 14 proyectos (1497 entradas en v4 se migran). Mutación: 8/8
+- [x] **Salida de F2:** 100 % de paridad con las 42 ops, con las fixtures de layout y con el historial. Compilación limpia: 51 tests y 0 warnings en Debug y Release
 
 ## F3 — Media + export C++ → **M1**
 

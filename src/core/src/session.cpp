@@ -61,16 +61,24 @@ std::vector<std::string> History::checkpoints() const {
 EditSession::EditSession(Timeline initial, std::unique_ptr<IdSource> ids, std::size_t history_limit)
     : current_(std::make_shared<const Timeline>(std::move(initial))), ids_(std::move(ids)), history_(history_limit) {}
 
+EditSession::EditSession(Timeline initial, History history, std::unique_ptr<IdSource> ids)
+    : current_(std::make_shared<const Timeline>(std::move(initial))), ids_(std::move(ids)),
+      history_(std::move(history)) {}
+
 Result<Change> EditSession::apply(const Command& command) {
     auto result = apply_command(*current_, command, *ids_);
     if (!result) {
         return std::unexpected(result.error());
     }
-    if (group_depth_ == 0) {
+    const bool recorded = group_depth_ == 0;
+    if (recorded) {
         history_.record(current_);
     }
     Change change{0, std::string(command_name(command)), std::move(result->changed), std::move(result->warnings)};
     publish(std::make_shared<const Timeline>(std::move(result->timeline)), change);
+    if (recorded) {
+        history_changed();
+    }
     change.revision = revision_;
     return change;
 }
@@ -89,6 +97,7 @@ bool EditSession::undo() {
         return false;
     }
     publish(std::move(restored), Change{0, "undo", {"undo"}, {}});
+    history_changed();
     return true;
 }
 
@@ -98,10 +107,14 @@ bool EditSession::redo() {
         return false;
     }
     publish(std::move(restored), Change{0, "redo", {"redo"}, {}});
+    history_changed();
     return true;
 }
 
-void EditSession::checkpoint(std::string name) { history_.checkpoint(std::move(name), current_); }
+void EditSession::checkpoint(std::string name) {
+    history_.checkpoint(std::move(name), current_);
+    history_changed();
+}
 
 Result<void> EditSession::restore_checkpoint(std::string_view name) {
     TimelineSnapshot state = history_.checkpoint_state(name);
@@ -110,6 +123,7 @@ Result<void> EditSession::restore_checkpoint(std::string_view name) {
     }
     history_.record(current_); // restaurar también se puede deshacer
     publish(std::move(state), Change{0, "restore", {"restore"}, {}});
+    history_changed();
     return {};
 }
 
@@ -121,6 +135,23 @@ std::size_t EditSession::subscribe(Listener listener) {
 
 void EditSession::unsubscribe(std::size_t id) {
     std::erase_if(listeners_, [&](const auto& entry) { return entry.first == id; });
+}
+
+std::size_t EditSession::subscribe_history(HistoryListener listener) {
+    const std::size_t id = next_listener_++;
+    history_listeners_.emplace_back(id, std::move(listener));
+    return id;
+}
+
+void EditSession::unsubscribe_history(std::size_t id) {
+    std::erase_if(history_listeners_, [&](const auto& entry) { return entry.first == id; });
+}
+
+void EditSession::history_changed() {
+    const auto listeners = history_listeners_;
+    for (const auto& [id, listener] : listeners) {
+        listener(history_);
+    }
 }
 
 void EditSession::publish(TimelineSnapshot next, Change change) {
@@ -147,6 +178,7 @@ void EditSession::Group::commit() {
     --session_.group_depth_;
     if (session_.group_depth_ == 0 && session_.current_ != start_) {
         session_.history_.record(start_); // todo el grupo es un solo paso
+        session_.history_changed();
     }
 }
 

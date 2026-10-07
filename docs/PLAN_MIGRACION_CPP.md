@@ -569,3 +569,33 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
   - un texto que solo cabe por la tolerancia del 2 %.
 - **Mutación:** se detectan las 16. Para lograrlo hicieron falta casos más afinados para el ancho de texto, la tolerancia, el tope de franjas y la puntuación.
 - **Resultado:** 45 tests y 46 853 aserciones en verde, en Debug y en Release.
+
+### 2026-10-07 — F2 cerrada: historial en disco y autoguardado
+
+**Hecho:**
+- **`history_store.hpp`:**
+  - `history_to_json` y `history_from_json` con el formato de `timeline_history.py`: `{undo, redo, checkpoints}` con cada timeline como su `model_dump()`;
+  - `load_history`, tolerante: sin archivo o ilegible, un historial vacío; las timelines v4 se migran y las entradas que no son una timeline se descartan;
+  - `save_history`, con escritura atómica.
+- **`Autosave`:** guarda la timeline tras cada cambio (con la función que le pasa la app, porque la timeline vive en el proyecto) y el historial cada vez que cambia. Un fallo no para la edición y queda en `last_error()`.
+- **`EditSession`:** se puede retomar con un historial guardado y avisa de los cambios del historial con `subscribe_history`, también cuando se guarda un checkpoint o se cierra un grupo.
+
+**Verificación:**
+- **Pasos:** 69 sintéticos repetidos con `timeline_history` (pilas tras cada paso, límite de 50, checkpoint con el mismo nombre en su sitio, restaurar y deshacer vacío).
+- **Formato:** el JSON final es idéntico al que escribe Python, y leerlo y volverlo a escribir da lo mismo.
+- **Tus datos:** el historial de tus 14 proyectos, con 1497 entradas en v4 que se migran.
+- **Autoguardado:** 4 tests de autoguardado y de retomar una sesión.
+- **Mutación:** 8/8.
+- **Resultado:** compilación limpia, 51 tests y 47 246 aserciones en verde en Debug y en Release, con 0 warnings.
+
+**F2, completa:**
+- las 42 ops de video-yt (45 comandos con los 3 setters propios) con paridad exacta: 378 casos sintéticos y 1919 operaciones sobre tus timelines;
+- encuadre, animación e historial.
+
+**Siguiente: F3.**
+- Necesita MSVC + vcpkg (FFmpeg, Skia, ONNX Runtime), que a su vez necesita el **Windows SDK** (pendiente por tu parte).
+- Mientras tanto se puede avanzar sin él:
+  - la evaluación de la timeline en un instante (lista de capas), que es lógica pura;
+  - `recipe_layout`;
+  - lo que queda de F1 (biblioteca, colecciones y ajustes de `data/`).
+

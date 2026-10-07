@@ -478,6 +478,85 @@ def animate_real_ops(tl: dict) -> list[tuple[str, str, dict]]:
     return ops
 
 
+# --- Historial (timeline_history) -----------------------------------------------------------
+
+def _valid_timelines(ctx: Ctx, entries) -> list[dict]:
+    """Las entradas que gc_core sabe leer (dicts que son una timeline válida), normalizadas."""
+    out = []
+    for e in entries:
+        if not isinstance(e, dict):
+            continue
+        try:
+            out.append(normalize_timeline(ctx, e))
+        except Exception:  # noqa: BLE001 — una entrada ilegible se descarta
+            pass
+    return out
+
+
+def _normalized_history(ctx: Ctx, hist: dict) -> dict:
+    undo = hist.get("undo") if isinstance(hist.get("undo"), list) else []
+    redo = hist.get("redo") if isinstance(hist.get("redo"), list) else []
+    cps = hist.get("checkpoints") if isinstance(hist.get("checkpoints"), dict) else {}
+    checkpoints = {}
+    for name, tl in cps.items():
+        norm = _valid_timelines(ctx, [tl])
+        if norm:
+            checkpoints[name] = norm[0]
+    return {"undo": _valid_timelines(ctx, undo), "redo": _valid_timelines(ctx, redo), "checkpoints": checkpoints}
+
+
+def synthetic_history_fixtures(ctx: Ctx) -> dict:
+    sys.path.insert(0, str(HERE))
+    import history_cases as hc
+    th = ctx.timeline_history
+    tls = {k: normalize_timeline(ctx, v) for k, v in hc.TIMELINES.items()}
+
+    def name_of(tl):
+        return None if tl is None else next(k for k, v in tls.items() if v == tl)
+
+    hist = th.empty_history()
+    steps = []
+    for step in hc.STEPS:
+        kind, restored = step[0], None
+        if kind == "snapshot":
+            hist = th.snapshot(hist, tls[step[1]])
+        elif kind == "undo":
+            hist, restored = th.undo(hist, tls[step[1]])
+        elif kind == "redo":
+            hist, restored = th.redo(hist, tls[step[1]])
+        elif kind == "checkpoint":
+            hist = th.checkpoint(hist, step[1], tls[step[2]])
+        elif kind == "restore":   # timeline_store.restore_checkpoint
+            restored = th.restore_checkpoint(hist, step[1])
+            if restored is not None:
+                hist = th.snapshot(hist, tls[step[2]])
+        steps.append({"step": list(step), "restored": name_of(restored),
+                      "undo": [name_of(t) for t in hist["undo"]], "redo": [name_of(t) for t in hist["redo"]],
+                      "checkpoints": [[n, name_of(t)] for n, t in hist["checkpoints"].items()]})
+    return _pure({"limit": th.DEFAULT_LIMIT, "timelines": tls, "steps": steps, "final": hist,
+                  "raw": hc.RAW, "raw_expected": _normalized_history(ctx, hc.RAW)})
+
+
+def real_history_fixtures(ctx: Ctx, data: dict) -> dict:
+    """El historial de cada uno de tus proyectos: el archivo tal cual y, para comprobarlo, las
+    primeras y últimas entradas y los checkpoints normalizados."""
+    hist_dir = ctx.root / "backend" / "data" / "history"
+    out_dir = REPO / "tests" / "fixtures" / "local" / "history"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    cases = []
+    for p in data.get("projects", []):
+        pid = p.get("id")
+        src = hist_dir / f"{pid}.json"
+        if not src.exists():
+            continue
+        (out_dir / f"{pid}.json").write_bytes(src.read_bytes())
+        norm = _normalized_history(ctx, json.loads(src.read_text(encoding="utf-8")))
+        sample = {k: [norm[k][0], norm[k][-1]] if len(norm[k]) > 1 else norm[k] for k in ("undo", "redo")}
+        cases.append({"project": pid, "file": f"{pid}.json", "undo_count": len(norm["undo"]),
+                      "redo_count": len(norm["redo"]), "first_last": sample, "checkpoints": norm["checkpoints"]})
+    return _pure({"cases": cases})
+
+
 # --- Animación (keyframes y máscaras) ---------------------------------------------------------
 
 def keyframe_case(ctx: Ctx, name: str, raw_clip: dict, times: list[float]) -> dict:
@@ -653,6 +732,8 @@ def main() -> None:
     kf = synthetic_keyframe_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "keyframes" / "synthetic.json", kf,
           len(kf["clips"]) + len(kf["ease"]) + len(kf["masks"]) + len(kf["styles"]), 0)
+    hist = synthetic_history_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "history" / "synthetic.json", hist, len(hist["steps"]), 0)
     lay = synthetic_layout_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "layout" / "synthetic.json", lay,
           len(lay["clips"]) + len(lay["dest"]) + len(lay["crop_px"]),
@@ -673,6 +754,8 @@ def main() -> None:
               sum("error" in c for c in edit_real["cases"]))
         kf_real = real_keyframe_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "keyframes" / "real.json", kf_real, len(kf_real["clips"]), 0)
+        hist_real = real_history_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "history" / "real.json", hist_real, len(hist_real["cases"]), 0)
         lay_real = real_layout_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "layout" / "real.json", lay_real,
               len(lay_real["clips"]) + len(lay_real["dest"]),

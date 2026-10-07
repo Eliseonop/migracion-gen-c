@@ -25,6 +25,7 @@ add_library(gc_core
     src/edit_ops_recipes.cpp
     src/follow.cpp
     src/fx_catalog.cpp
+    src/history_store.cpp
     src/ids.cpp
     src/keyframes.cpp
     src/masks.cpp
