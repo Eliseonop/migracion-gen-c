@@ -388,8 +388,12 @@ std::string py_path_stem(std::string_view text) {
         const auto server = rest.find('\\', 2);
         const auto share = server == std::string_view::npos ? server : rest.find('\\', server + 1);
         rest = share == std::string_view::npos ? std::string_view() : rest.substr(share);
-    } else if (rest.size() >= 2 && rest[1] == ':') { // unidad: cualquier carácter + «:»
-        rest.remove_prefix(2);
+    } else if (!rest.empty() && rest[0] != '\\') { // unidad: un carácter (no la raíz) + «:»
+        std::size_t first = 0;
+        (void)next_code_point(rest, first);
+        if (first < rest.size() && rest[first] == ':') {
+            rest.remove_prefix(first + 1);
+        }
     }
     std::string_view name;
     std::size_t i = 0;

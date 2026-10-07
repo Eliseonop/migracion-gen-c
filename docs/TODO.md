@@ -12,7 +12,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 |---|---|---|---|
 | **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo MSVC y CI en marcha | |
 | **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo hecho · falta `data/` (biblioteca, ajustes) | |
-| **F2** Lógica de edición | ops, sin solapes, keyframes, undo | 🟡 en curso: 41 de las 42 ops de Python | |
+| **F2** Lógica de edición | ops, sin solapes, keyframes, undo | 🟡 en curso: las 42 ops de Python hechas; falta guardar el historial | |
 | **F3** Media + export | gc_media, gc_render v1, `genclip render` | ⬜ | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | ⬜ | |
 | **F5** Editor de escritorio | app Qt Quick | ⬜ | **M2** |
@@ -22,8 +22,8 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 44 tests y 46 513 aserciones en verde (Debug y Release, 0 warnings).
-Paridad con video-yt en modelo (18 proyectos), edición (348 casos sintéticos + 1845 ops reales),
+**Cifras actuales:** 45 tests y 46 853 aserciones en verde (Debug y Release, 0 warnings).
+Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales) y encuadre (2908 muestras sintéticas + 5875 de 235 clips reales).
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12.
 
@@ -84,11 +84,12 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - [x] `masks`: normalizar y evaluar máscaras animadas
 - [x] `fx_catalog` (recurso `resources/fx/catalog.json`), `pose` (`clip_pose`, `frame_at`), `shapes`, `bg` y `captions`
 - [x] `clip_layout`: `crop_window`, `source_point_to_output`, `source_crop_px`, `dest_rect[_even]` y volteo, con fixtures de layout (las funciones que solo usa la vista previa de `clipLayout.js` van con F5)
+- [x] `text_metrics` (tamaño de letra, interlineado y reparto en líneas como `text_ass._rows`; ancho de texto inyectable, estimado hasta F4), `sfx_library` (biblioteca inyectable, `norm`, `score_sfx` y `match_sounds`) y el motor de «Eliminar fondo» recomendado (`bg`)
 - [x] `clip_motion`: los 13 presets (y sus alias), envolvente de audio (corte tras el pico) y fusión con los keyframes que había
 - [x] `follow`: `follow_keys` (del recorrido de un objeto a keyframes de pose del clip que lo acompaña); el seguimiento en sí es de F6
 - [x] `clip_attrs`: grupos de atributos, `paste_attributes` y la fusión de keyframes (`merge_keyframes`: restringir, constantes y remuestreo)
 
-### Comandos: 44 hechos (41 de las 42 ops de Python, más 3 setters propios)
+### Comandos: 45 hechos (las 42 ops de Python, más 3 setters propios)
 - [x] **Pistas:** `add_track`, `reorder_track`, `rename_track`, `remove_track`, `link_tracks` y `unlink_track`
 - [x] **Clips:** `add_clip`, `move_clip`, `remove_clip`, `split_clip` y `duplicate_clip`
 - [x] **Proyecto:** `set_project_format` y `set_markers`
@@ -97,11 +98,10 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - [x] **Animación y efectos:** `set_clip_keyframes`, `set_clip_beats`, `set_clip_masks`, `set_clip_effects`, `apply_effect` y `set_clip_animation`
 - [x] **Audio:** `set_clip_volume`, `set_track_audio` y `set_clip_audio_fx`
 - [x] **Material nuevo:** `replace_media`, `freeze_frame`, `add_subtitles`, `add_shape`, `add_cinema_bars`, `add_adjustment_layer` y `set_clip_bg_removal`
-- [x] **Compuestos:** `paste_clip_attributes`, `follow_object`, `add_sound_design` y `animate_clip`
-- [ ] `apply_recipe` (`recipes.py`, `recipe_layout.py`)
+- [x] **Compuestos:** `paste_clip_attributes`, `follow_object`, `add_sound_design`, `animate_clip` y `apply_recipe` (las 5 recetas)
 
-### Notas para la 4ª tanda (en curso)
-- **Orden:** ~~`clip_layout`~~ → ~~`clip_attrs`~~ → ~~`follow_object`~~ → ~~`add_sound_design`~~ → ~~`animate_clip`~~ (hechos) → recetas (`apply_recipe`), que cierran las 42 ops.
+### Notas de la 4ª tanda (hecha)
+- **Orden:** ~~`clip_layout`~~ → ~~`clip_attrs`~~ → ~~`follow_object`~~ → ~~`add_sound_design`~~ → ~~`animate_clip`~~ → ~~recetas~~: las 42 ops, hechas. Queda la persistencia del historial.
 - **`interp_items`:** ya es pública en `keyframes.hpp`, con el `_merge` de Python (un NaN del respaldo vale lo de un clip vacío). `clip_props_over` = `clip_props_at` con otra base (la usa `crop_window`).
 - **`sin`/`cos`:** la libm de MinGW difiere de la de CPython en el último bit. Los puntos de `source_point_to_output` con giro (y lo que los use, como `follow_object`) se comparan con tolerancia de 1e-12; sin giro salen exactos. `follow_object` redondea después (t a 4 decimales; x, y y scale a 5; rotation a 3) y sale exacto en todas las fixtures.
 - **Encuadre real:** los 235 clips de vídeo e imagen de tus timelines son `overlay`. El modo relleno solo lo cubren los casos sintéticos.
@@ -110,9 +110,11 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - **`follow_object`:** `track`, `dims`, `box_w` y `anchor_t` se validan al empezar (si el recorrido no coincide, Python falla igual), pero `min_gap` y los `cx`/`cy`/`s`/`rot` de cada punto solo cuando se usan, como en Python. Los items del clip que acompaña se quitan en [primera t − 0,06, última t + 0,06], ambos incluidos.
 - **`clip_motion` sin portar todavía:** `sample_rms_envelope` (lee el audio con ffmpeg: F3), `normalize_amps`, `downsample_envelope`, `overlap_window` y `audio_src_at`. Los usa la herramienta MCP que calcula la envolvente de un sonido (F7); `animate_clip` recibe la envolvente ya hecha.
 - **Mutantes equivalentes de `clip_attrs`:** fusionar con el destino ya pegado (ningún grupo toca `keyframes`) y `keep_pitch` con la verdad de Python (Pydantic ya lo deja en `bool`).
-- **Recetas:**
-  - `text_reflection` mide texto (`text_ass._rows` → Pillow). Se inyecta como dependencia: el exportador parchea `text_ass.text_width` con la estimación `len·em·0,55 + ls·len`, que el C++ usa por defecto. La medición real llega en F4 (FreeType).
-  - `subject_pop` lee la biblioteca de SFX y hace `ffprobe`. También se inyecta: biblioteca falsa y duraciones fijas guardadas en la propia fixture (se parchean `sfx.search`, `sfx.resolve` y `sound_design.probe_duration`).
+- **Recetas (hechas):**
+  - `text_reflection` mide texto (`text_ass._rows` → Pillow). Se inyecta: el exportador parchea `text_ass.text_width` con la estimación `len·em·0,55 + ls·len`, que es la que usa `gc_core` por defecto (`set_text_width`). La medida real llega en F4 (FreeType).
+  - `subject_pop` lee la biblioteca de SFX y hace `ffprobe`. También se inyecta: cada caso puede llevar su `sfx_library` ({items, durations}), y el exportador parchea `sfx.search`, `sfx.resolve` y `sound_design.probe_duration`. El test carga la misma biblioteca con `set_sfx_library`.
+  - El `_insert_track` de las recetas (justo encima de una pista dada o de la última de su tipo) no es el `insert_track` de la pila de capas.
+  - `recipe_layout.py` no es de `apply_recipe`: es geometría del render (corte doble, `vstack`/`hstack`) y va con F3.
 - **`sound_design.norm`** (es de `propose`, que busca en la biblioteca de SFX; va con F7): usa NFKD + quitar lo no ASCII. Basta con una tabla para Latin-1 y Latin Extended-A. `add_sound_design` no lee disco ni la biblioteca: todo llega en `sounds`.
 - **`_SFX_TRACK_RE` (`^sfx\b`, sin distinguir mayúsculas, hecho):** «SFX_1», «sfx1», «SFXé» y «SFX½» no casan; «Sfx-x», «SFX—…», «SFX» + NBSP y «ſfx» (la ſ vale por s con `re.I`) sí. Fuera de Latin-1, `py_word_char` aproxima por bloques.
 - **`Path(id).stem` (Python 3.14 en Windows, hecho en `py_path_stem`):** «x.» → «x»; «.hidden» y «..» se quedan igual; «x..y» → «x.»; «C:foo.wav» → «foo»; «a:b:c.wav» → «b:c»; rutas UNC sin archivo → «».
@@ -124,7 +126,7 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 
 ### Verificación
 - [x] Fixtures de edición generadas desde el `apply_op` REAL de video-yt (`uuid4` determinista)
-- [x] 348 casos sintéticos (144 de error) y 1845 operaciones sobre tus 18 timelines reales
+- [x] 378 casos sintéticos (156 de error) y 1919 operaciones sobre tus 18 timelines reales
 - [x] Animación: 236 casos sintéticos y 733 clips reales (bit a bit salvo 1 `pow()` → tolerancia 1e-12)
 - [x] Pruebas de mutación: detectan 1e-9, colores, `1` ↔ `1.0` y el orden de claves
 - [x] Encuadre: 2908 muestras sintéticas (48 de error) y 5875 de 235 clips reales. Exacto; solo los puntos con giro van con tolerancia de 1e-12
@@ -132,14 +134,16 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 - [x] Seguir un objeto: 27 casos sintéticos (17 de error; el giro baja de −180) y 81 operaciones reales; se detectan las 10 mutaciones
 - [x] Sonorizar: 19 casos sintéticos (10 de error) y 47 operaciones reales; se detectan las 13 mutaciones
 - [x] Animar con un preset: 43 casos sintéticos (8 de error) y 188 operaciones reales; se detectan las 13 mutaciones
+- [x] Recetas: 30 casos sintéticos (12 de error) y 74 operaciones reales; se detectan las 16 mutaciones
 - [x] `json_diff` distingue 0.0 de −0.0 (como el JSON de Python)
 - [x] Benchmark: ≈ 90 µs por edición en C++ frente a ≈ 49 ms en Python (timeline de 167 clips)
-- [ ] **Salida de F2:** 100 % de paridad con las 42 ops y con las fixtures de layout
+- [x] **Salida de F2 (ops):** 100 % de paridad con las 42 ops y con las fixtures de layout. Para cerrar F2 falta la persistencia
 
 ## F3 — Media + export C++ → **M1**
 
 - [ ] Prerrequisito: MSVC + vcpkg con FFmpeg, Skia y ONNX Runtime
 - [ ] **Evaluación:** timeline en el instante *t* → lista de capas (usa keyframes, pose, máscaras y layout)
+- [ ] `recipe_layout.py` (corte doble: `split_orientation_for`, `contain_dest`, filtros `vstack`/`hstack`)
 - [ ] Comprobar las dimensiones antes de llamar a `clip_layout`: con ancho o alto 0, Python lanza ZeroDivisionError y C++ daría inf/NaN (p. ej. si falla la sonda de un vídeo)
 - [ ] **gc_media:** demux y decode con hwaccel (D3D11VA/NVDEC), seek exacto
 - [ ] Caché de frames con presupuesto de RAM, proxies, miniaturas y formas de onda
@@ -157,6 +161,7 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 
 ## F4 — Render completo
 
+- [ ] Medida real del texto (FreeType + HarfBuzz) en `set_text_width`, comparada con la de Pillow de video-yt
 - [ ] Texto completo: temas de subtítulos, karaoke por palabra, contorno, sombras, 3D y máscara en texto (SkParagraph + HarfBuzz)
 - [ ] Revisión visual del texto Skia frente a libass
 - [ ] Appear/exit, transiciones y looks

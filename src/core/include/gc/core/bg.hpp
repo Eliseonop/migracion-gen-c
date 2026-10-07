@@ -11,7 +11,9 @@
 //    chroma:  {enabled, color, similarity, blend, spill, edge, shrink},
 //    outline: {enabled, color, width, soft, opacity}}
 
+#include <cstdint>
 #include <string>
+#include <string_view>
 
 #include "gc/core/json.hpp"
 #include "gc/core/model.hpp"
@@ -26,5 +28,11 @@ namespace gc::core {
 
 // Vídeo e imagen (incluye GIF) admiten quitar el fondo.
 [[nodiscard]] bool bg_capable(const TimelineClip& clip);
+
+// Motor automático que se propone para un clip (recommended_provider): vídeo → RVM
+// (personas, sin parpadeo), GIF → U²-Net, imagen fija → BiRefNet.
+[[nodiscard]] std::string recommended_bg_provider(const TimelineClip& clip);
+// Alto del matte con el que rinde cada motor (512 si no tiene uno propio).
+[[nodiscard]] std::int64_t bg_provider_mask_height(std::string_view provider);
 
 } // namespace gc::core

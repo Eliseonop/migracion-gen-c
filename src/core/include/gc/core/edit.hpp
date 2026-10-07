@@ -304,6 +304,13 @@ struct AnimateClip {
     Json turns = 1.0;     // vueltas del giro, 0,25–4
     Json envelope;        // [{t, amp}] o [[t, amp]]: sigue un sonido
 };
+// Receta en un clic: cinema_grade, text_reflection, pass_through_text, film_strips o
+// subject_pop (ver edit_ops_recipes.cpp). Una sola operación: se deshace de golpe.
+struct ApplyRecipe {
+    Json recipe;
+    Json clip_ids; // los clips seleccionados (según la receta: texto, vídeo o 2–6 vídeos/imágenes)
+    Json params;   // {zoom_time} en pass_through_text, {frames} en subject_pop
+};
 
 } // namespace ops
 
@@ -317,7 +324,8 @@ using Command =
                  ops::SetClipAudioFx, ops::ReplaceMedia, ops::ApplyEffect, ops::SetClipAnimation, ops::FreezeFrame,
                  ops::AddSubtitles, ops::AddShape, ops::AddCinemaBars, ops::AddAdjustmentLayer,
                  ops::SetClipBgRemoval, ops::PasteClipAttributes,
-                 ops::FollowObject, ops::AddSoundDesign, ops::AnimateClip>;
+                 ops::FollowObject, ops::AddSoundDesign, ops::AnimateClip,
+                 ops::ApplyRecipe>;
 
 // Nombre de la operación ("move_clip"…), el mismo del MCP y de video-yt.
 [[nodiscard]] std::string_view command_name(const Command& command);

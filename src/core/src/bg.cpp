@@ -187,4 +187,21 @@ Json normalize_bg(const Json& raw) {
 
 bool bg_capable(const TimelineClip& clip) { return clip.kind == "video" || clip.kind == "image"; }
 
+std::string recommended_bg_provider(const TimelineClip& clip) {
+    if (clip.kind == "video") {
+        return "rvm_mobilenetv3";
+    }
+    std::string name = clip.filename.substr(0, clip.filename.find('?'));
+    name = name.substr(0, name.find('#'));
+    std::ranges::transform(name, name.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    return name.ends_with(".gif") ? "u2net" : "birefnet_lite";
+}
+
+std::int64_t bg_provider_mask_height(std::string_view provider) {
+    if (provider == "rvm_mobilenetv3" || provider == "rvm_resnet50") {
+        return 720;
+    }
+    return provider == "birefnet_lite" ? 1080 : 512;
+}
+
 } // namespace gc::core

@@ -538,3 +538,34 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 - **Casos:** 43 sintéticos (8 de error): todos los presets, alias con mayúsculas y guiones, valores extremos, envolventes con basura, un punto justo en el umbral tras el pico y clips muy cortos. Además, 188 operaciones sobre tus timelines reales.
 - **Mutación:** se detectan las 13.
 - **Resultado:** 44 tests y 46 513 aserciones en verde, en Debug y en Release.
+
+**Revisión del subagente (sonorizar y animate_clip juntos; APROBADO), ya aplicada:**
+- `py_path_stem` ya no toma por unidad una ruta que empieza en la raíz («/:a» → «:a») y mira caracteres, no bytes («é:foo.wav» → «foo»).
+- El error de `motion` desconocido da el valor original y la lista de movimientos, como Python.
+- Se quedan documentadas las aproximaciones de `py_word_char` y `py_printable` fuera de los bloques comunes. Las mide el revisor: 0 diferencias en latín, griego, cirílico, CJK y emoji.
+
+**Hecho (6): `apply_recipe`, que completa las 42 ops de Python:**
+- Las cinco recetas:
+  - `cinema_grade`: capa de ajuste + barras;
+  - `text_reflection`: copia volteada con máscara lineal;
+  - `pass_through_text`: zoom ×60 al final;
+  - `film_strips`: franjas al ritmo de los beats;
+  - `subject_pop`: copia con «Eliminar fondo», destello y sonidos.
+- Módulos nuevos:
+  - `text_metrics.hpp`: `_font_px`, `_line_height` y `_rows`, con el ancho de texto inyectable (`set_text_width`; por defecto, la estimación de 0,55 em);
+  - `sfx_library.hpp`: biblioteca inyectable (`set_sfx_library`) y `norm` con tabla NFKD, `score_sfx` y `match_sounds`;
+  - en `bg.hpp`, el motor recomendado y su alto de matte.
+- Fixtures: el exportador inyecta en video-yt el mismo ancho de texto y, por caso, una biblioteca de SFX con duraciones fijas (`sfx.search`, `sfx.resolve`, `probe_duration`).
+
+**Verificación (6):**
+- **Casos:** 30 sintéticos (12 de error) y 74 operaciones sobre tus timelines reales. Incluyen:
+  - un formato sin sitio para las barras;
+  - un `zoom_time` menor que el imán de keyframes;
+  - beats con un valor raro que `every` se salta;
+  - más de 6 franjas;
+  - un sonido sin archivo;
+  - una biblioteca vacía;
+  - empates por la longitud del nombre;
+  - un texto que solo cabe por la tolerancia del 2 %.
+- **Mutación:** se detectan las 16. Para lograrlo hicieron falta casos más afinados para el ancho de texto, la tolerancia, el tope de franjas y la puntuación.
+- **Resultado:** 45 tests y 46 853 aserciones en verde, en Debug y en Release.

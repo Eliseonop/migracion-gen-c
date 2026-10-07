@@ -858,6 +858,124 @@ CASES += [
 ]
 
 
+# --- 4ª tanda: recetas ------------------------------------------------------------------------
+
+LONG_TEXT = "Esto es un texto bastante largo que ocupa varias líneas\ny un segundo párrafo\n\nfin"
+RECIPE = {
+    "schema_version": 5, "width": 720, "height": 1280, "fps": 30,
+    "tracks": [track("V1", "video"), track("V2", "video"), track("T1", "text"), track("T2", "text"),
+               track("A1", "audio")],
+    "clips": [
+        clip("v0", "V1", start=0, inp=0, out=3),
+        clip("v1", "V1", start=3, inp=5, out=11, name="Entrevista"),
+        clip("vr", "V1", start=11, inp=2, out=8, reverse=True, speed=2),
+        clip("img", "V2", kind="image", start=1, out=4),
+        clip("img2", "V2", kind="image", start=6, out=2),
+        clip("t1", "T1", kind="text", start=0, out=4, text=LONG_TEXT, name="Titular",
+             style={"y": 0.3, "size": 0.06, "w": 0.5, "scale": 1.2, "letter_spacing": 0.1, "line_height": 1.5,
+                    "opacity": 0, "font": "Inter", "bold": False},
+             keyframes={"enabled": True, "items": [{"t": 0, "props": {"y": 0.3, "my": 0.5}},
+                                                   {"t": 2, "props": {"y": "0.4", "x": 0.2}}]}),
+        clip("t2", "T2", kind="text", start=5, out=2, text="corto"),
+        # con w=0.82, «abcdefgh ijklmnop» (17 caracteres) solo cabe gracias a la tolerancia del 2 %
+        clip("t4", "T2", kind="text", start=8, out=1, text="abcdefgh ijklmnop", style={"w": 0.82}),
+        clip("img3", "V2", kind="image", start=9, out=1),
+        clip("img4", "V2", kind="image", start=12, out=1),
+        clip("mus", "A1", kind="audio", start=0, out=20,
+             # "x" en un índice que every=2 se salta: Python no llega a compararlo
+             beats={"times": [0.5, "x", 1, 2.2, 3, 4.4, 5, 6.6, 7, 9], "every": 2, "bpm": 120}),
+    ],
+}
+WIDE = {**RECIPE, "width": 1920, "height": 1080, "clips": []}
+NO_BEATS = {**RECIPE, "clips": [c for c in RECIPE["clips"] if c["id"] != "mus"]}
+BAD_BEATS = {**RECIPE, "clips": [c if c["id"] != "mus" else {**c, "beats": {"times": [1, 2], "every": "x"}}
+                                 for c in RECIPE["clips"]]}
+BAD_STYLE = {**RECIPE, "clips": [c if c["id"] != "t2" else {**c, "style": {"y": "abc"}} for c in RECIPE["clips"]]}
+
+SFX_LIBRARY = {
+    "items": [
+        {"id": "transiciones/riser_long.wav", "name": "Riser Long", "category": "Transiciones", "uso": "subidas"},
+        {"id": "transiciones/whoosh_fast.wav", "name": "Whoosh Fast", "category": "Transiciones"},
+        {"id": "camara/shutter_click.wav", "name": "Shutter Click", "category": "C" + chr(0xE1) + "mara",
+         "folder": "c" + chr(0xE1) + "mara"},
+        {"id": "camara/camera snap.wav", "name": "C" + chr(0xE1) + "mara snap", "category": "Fotograf" + chr(0xED) + "a"},
+        {"id": "otros/clap.wav", "name": "Clap"},
+        {"id": "otros/sin_nombre.wav", "name": None},
+    ],
+    "durations": {"transiciones/riser_long.wav": 2.345, "camara/shutter_click.wav": 0.42},
+}
+SFX_NO_CAMERA = {"items": SFX_LIBRARY["items"][:2], "durations": SFX_LIBRARY["durations"]}
+# «Rise Up Loud» (frase entera: 3) gana a «Swooshes» (subcadena 2 + categoría 0,5 = 2,5)
+SFX_SCORING = {"items": [{"id": "s/rise_up_loud.wav", "name": "Rise Up Loud"},
+                         {"id": "s/swooshes.wav", "name": "Swooshes", "category": "whoosh"}], "durations": {}}
+# empate a 3: gana el nombre más corto aunque vaya después
+SFX_TIE = {"items": [{"id": "w/whoosh_long_b.wav", "name": "Whoosh Long B"}, {"id": "w/whoosh_a.wav", "name": "Whoosh A"}],
+           "durations": {"w/whoosh_a.wav": 1.25}}
+# el whoosh empareja pero no tiene archivo (duración 0)
+SFX_NO_FILE = {"items": [SFX_LIBRARY["items"][1], SFX_LIBRARY["items"][2]], "durations": {}}
+NO_ROOM = {**RECIPE, "width": 2400, "height": 1000}
+SHORT_TEXT = {**RECIPE, "clips": RECIPE["clips"] + [clip("t3", "T2", kind="text", start=9, out=0.2, text="ya")]}
+
+
+def recipe(name, params, base=RECIPE, sfx_library=None):
+    c = op(name, base, "apply_recipe", params)
+    if sfx_library is not None:
+        c["sfx_library"] = sfx_library
+    return c
+
+
+CASES += [
+    recipe("apply_recipe cinema_grade vertical", {"recipe": "cinema_grade", "clip_ids": [["no", "importa"]]}),
+    recipe("apply_recipe cinema_grade apaisado y sin clips", {"recipe": "cinema_grade"}, base=WIDE),
+    recipe("apply_recipe text_reflection de dos textos", {"recipe": "text_reflection", "clip_ids": ["t2", "t1", "v1"]}),
+    recipe("apply_recipe pass_through_text", {"recipe": "pass_through_text", "clip_ids": ["t1", "t2"],
+                                              "params": {"zoom_time": 0.5}}),
+    recipe("apply_recipe pass_through_text con params como pares", {"recipe": "pass_through_text",
+                                                                    "clip_ids": ["t2"], "params": [["zoom_time", 3]]}),
+    recipe("apply_recipe film_strips al ritmo", {"recipe": "film_strips", "clip_ids": ["img2", "v1", "img"]}),
+    recipe("apply_recipe film_strips sin beats y con más de 6 clips",
+           {"recipe": "film_strips", "clip_ids": ["v0", "v1", "vr", "img", "img2", "t1", "nope"]}, base=NO_BEATS),
+    recipe("apply_recipe subject_pop", {"recipe": "subject_pop", "clip_ids": ["v1"]}, sfx_library=SFX_LIBRARY),
+    recipe("apply_recipe subject_pop de un vídeo al revés con 100 fotogramas",
+           {"recipe": "subject_pop", "clip_ids": ["vr"], "params": {"frames": 100}}, sfx_library=SFX_LIBRARY),
+    recipe("apply_recipe subject_pop sin sonidos de cámara", {"recipe": "subject_pop", "clip_ids": ["v1"],
+                                                             "params": {"frames": "2"}}, sfx_library=SFX_NO_CAMERA),
+    recipe("apply_recipe subject_pop sin biblioteca", {"recipe": "subject_pop", "clip_ids": ["v1"]},
+           sfx_library={"items": [], "durations": {}}),
+    recipe("apply_recipe subject_pop: frase entera frente a subcadena", {"recipe": "subject_pop", "clip_ids": ["v1"]},
+           sfx_library=SFX_SCORING),
+    recipe("apply_recipe subject_pop: empate por la longitud del nombre",
+           {"recipe": "subject_pop", "clip_ids": ["v1"]}, sfx_library=SFX_TIE),
+    recipe("apply_recipe text_reflection de un texto que cabe por la tolerancia",
+           {"recipe": "text_reflection", "clip_ids": ["t4"]}),
+    recipe("apply_recipe film_strips con 7 medios (se queda con 6)",
+           {"recipe": "film_strips", "clip_ids": ["img4", "img3", "v0", "v1", "vr", "img", "img2"]}),
+    recipe("apply_recipe subject_pop con un sonido sin archivo", {"recipe": "subject_pop", "clip_ids": ["v1"]},
+           sfx_library=SFX_NO_FILE),
+    recipe("apply_recipe pass_through_text con zoom_time menor que el imán de keyframes",
+           {"recipe": "pass_through_text", "clip_ids": ["t1"], "params": {"zoom_time": 0.03}}),
+    recipe("apply_recipe pass_through_text en un texto de 0,2 s", {"recipe": "pass_through_text", "clip_ids": ["t3"]},
+           base=SHORT_TEXT),
+    recipe("ERROR apply_recipe cinema_grade en un formato que no deja barras", {"recipe": "cinema_grade"},
+           base=NO_ROOM),
+    recipe("ERROR apply_recipe subject_pop de un clip que empieza en 0", {"recipe": "subject_pop", "clip_ids": ["v0"]},
+           sfx_library=SFX_LIBRARY),
+    recipe("ERROR apply_recipe receta desconocida", {"recipe": "magia"}),
+    recipe("ERROR apply_recipe receta numérica", {"recipe": 5}),
+    recipe("ERROR apply_recipe text_reflection sin texto", {"recipe": "text_reflection", "clip_ids": ["v1"]}),
+    recipe("ERROR apply_recipe text_reflection con ids que no se pueden comparar",
+           {"recipe": "text_reflection", "clip_ids": [["t1"]]}),
+    recipe("ERROR apply_recipe text_reflection con ids de texto suelto", {"recipe": "text_reflection", "clip_ids": "t1"}),
+    recipe("ERROR apply_recipe text_reflection con y no numérica", {"recipe": "text_reflection", "clip_ids": ["t2"]},
+           base=BAD_STYLE),
+    recipe("ERROR apply_recipe film_strips con un solo clip", {"recipe": "film_strips", "clip_ids": ["v1"]}),
+    recipe("ERROR apply_recipe film_strips con beats.every no numérico",
+           {"recipe": "film_strips", "clip_ids": ["v1", "img"]}, base=BAD_BEATS),
+    recipe("ERROR apply_recipe params de texto", {"recipe": "pass_through_text", "clip_ids": ["t1"], "params": "x"}),
+    recipe("ERROR apply_recipe sin receta", {"clip_ids": ["t1"]}),
+]
+
+
 def materialize() -> list[dict]:
     """Copia profunda de cada caso (las bases se comparten entre casos)."""
     return [copy.deepcopy(c) for c in CASES]

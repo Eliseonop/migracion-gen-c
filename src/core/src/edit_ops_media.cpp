@@ -51,6 +51,8 @@ Result<Json> dict_or_empty(const Json& v, std::string_view what) {
     return v;
 }
 
+} // namespace
+
 // Pista de vídeo de ARRIBA si está libre en [start, start+dur); si no, una nueva
 // encima de todas (su id va a `created`).
 std::string top_free_video_track(Timeline& out, double start, double dur, std::vector<std::string>& created,
@@ -81,6 +83,8 @@ std::string top_free_video_track(Timeline& out, double start, double dur, std::v
     created.push_back(id);
     return id;
 }
+
+namespace {
 
 TimelineClip new_clip(IdSource& ids, std::string track_id, std::string kind, std::string asset_kind,
                       std::string asset_id, std::string name, double start, double dur) {

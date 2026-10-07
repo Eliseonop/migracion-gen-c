@@ -7,6 +7,11 @@
 
 namespace gc::core::detail {
 
+// La pista de vídeo de ARRIBA si está libre en [start, start+dur); si no, una nueva encima
+// de todas, cuyo id va a `created` (timeline_ops._top_free_video_track).
+std::string top_free_video_track(Timeline& out, double start, double dur, std::vector<std::string>& created,
+                                 IdSource& ids);
+
 Result<EditResult> run(const Timeline& tl, const ops::AddTrack& op, IdSource& ids);
 Result<EditResult> run(const Timeline& tl, const ops::ReorderTrack& op, IdSource& ids);
 Result<EditResult> run(const Timeline& tl, const ops::RenameTrack& op, IdSource& ids);
@@ -54,6 +59,9 @@ Result<EditResult> run(const Timeline& tl, const ops::PasteClipAttributes& op, I
 Result<EditResult> run(const Timeline& tl, const ops::FollowObject& op, IdSource& ids);
 Result<EditResult> run(const Timeline& tl, const ops::AddSoundDesign& op, IdSource& ids);
 Result<EditResult> run(const Timeline& tl, const ops::AnimateClip& op, IdSource& ids);
+
+// edit_ops_recipes.cpp
+Result<EditResult> run(const Timeline& tl, const ops::ApplyRecipe& op, IdSource& ids);
 
 // edit_ops_audio.cpp
 Result<EditResult> run(const Timeline& tl, const ops::SetClipVolume& op, IdSource& ids);

@@ -21,6 +21,7 @@
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/sfx_library.hpp"
 #include "json_diff.hpp"
 
 using gc::Json;
@@ -49,6 +50,20 @@ Json rebuild(const Json& base, const Json& delta) {
         out[k] = k == "clips" ? clips : delta.at("meta").at(k);
     }
     return out;
+}
+
+// Biblioteca de SFX con la que se grabó el caso (las recetas la consultan).
+void use_sfx_library(const Json& lib) {
+    auto library = std::make_shared<SfxLibrary>();
+    if (lib.is_object()) {
+        for (const Json& it : lib.at("items")) {
+            library->items.push_back(it);
+        }
+        for (const auto& [id, dur] : lib.at("durations").items()) {
+            library->durations[id] = dur.get<double>();
+        }
+    }
+    set_sfx_library(std::move(library));
 }
 
 std::vector<std::string> strings(const Json& j) {
@@ -94,6 +109,7 @@ Stats check_file(const std::filesystem::path& path, bool check_immutable) {
         INFO(fname << " :: " << name);
         const Timeline& base = timelines.at(base_id);
 
+        use_sfx_library(c.contains("sfx_library") ? c.at("sfx_library") : file->value("sfx_library", Json()));
         SequentialIdSource ids;
         auto command = parse_command(c.at("op").get<std::string>(), c.at("params"));
         const gc::Result<EditResult> result =

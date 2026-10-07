@@ -197,7 +197,12 @@ Result<std::string> normalize_motion(const Json& motion) {
         }
     }
     if (std::ranges::find(kMotions, key) == kMotions.end()) {
-        return invalid("motion inválido: " + key);
+        std::string all;
+        for (const auto m : kMotions) {
+            all += (all.empty() ? "'" : ", '") + std::string(m) + "'";
+        }
+        return invalid("motion inválido: " + (motion.is_string() ? motion.get<std::string>() : detail::py_str(motion)) +
+                       " (usa [" + all + "])");
     }
     return key;
 }

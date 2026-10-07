@@ -59,6 +59,26 @@ def _constant_props_in_order(items: list[dict]):
     return out
 
 
+# Biblioteca de SFX de la operación en curso (las recetas la leen con sfx.search/resolve).
+_SFX: dict = {"items": [], "durations": {}}
+
+
+def _text_width_estimate(font, bold, em, text, ls) -> float:
+    """Ancho de texto estimado (0,55 em por carácter + espaciado): el que usa gc_core hasta
+    que F4 mida con FreeType. Sustituye a font_metrics.text_width (Pillow)."""
+    return len(text) * em * 0.55 + ls * len(text)
+
+
+def _install_fakes() -> None:
+    """Lo que en video-yt depende del disco o de las fuentes instaladas, inyectado: medida de
+    texto, biblioteca de SFX y duración de cada sonido (ffprobe)."""
+    from app import sfx, sound_design, text_ass
+    text_ass.text_width = _text_width_estimate
+    sfx.search = lambda *a, **k: {"items": copy.deepcopy(_SFX["items"]), "total": len(_SFX["items"])}
+    sfx.resolve = lambda relpath: relpath if relpath in _SFX["durations"] else None
+    sound_design.probe_duration = lambda path: _SFX["durations"][str(path)]
+
+
 class Ctx:
     """Módulos de video-yt que hacen de referencia."""
 
@@ -72,6 +92,7 @@ class Ctx:
         # _constant_props recorre un `set`: el orden de sus claves cambia en cada ejecución
         # (PYTHONHASHSEED). Se usa la misma función en orden de aparición, como el C++; el
         # resultado es el mismo salvo el orden, y así la fixture es estable y se compara con orden.
+        _install_fakes()
         global _ORIGINAL_CONSTANT_PROPS
         if clip_attrs._constant_props is not _constant_props_in_order:
             _ORIGINAL_CONSTANT_PROPS = clip_attrs._constant_props
@@ -182,8 +203,13 @@ def timeline_delta(before: dict, after: dict) -> dict | None:
     }
 
 
-def run_edit_case(ctx: Ctx, base_id: str, timeline: dict, name: str, op: str, params, compact: bool) -> dict:
+def run_edit_case(ctx: Ctx, base_id: str, timeline: dict, name: str, op: str, params, compact: bool,
+                  sfx_library: dict | None = None) -> dict:
     out = {"name": name, "timeline": base_id, "op": op, "params": params}
+    if sfx_library is not None:
+        out["sfx_library"] = sfx_library
+    _SFX.clear()
+    _SFX.update(copy.deepcopy(sfx_library or {"items": [], "durations": {}}))
     try:
         r = apply_op(ctx, timeline, op, params)
     except Exception as e:  # noqa: BLE001
@@ -211,12 +237,15 @@ def synthetic_edit_fixtures(ctx: Ctx) -> dict:
             keys[key] = f"base{len(keys)}"
             bases[keys[key]] = normalize_timeline(ctx, c["base"])
         bid = keys[key]
-        cases.append(run_edit_case(ctx, bid, bases[bid], c["name"], c["op"], c["params"], compact=False))
+        cases.append(run_edit_case(ctx, bid, bases[bid], c["name"], c["op"], c["params"], compact=False,
+                                   sfx_library=c.get("sfx_library")))
     return {"timelines": bases, "cases": cases}
 
 
 def real_edit_fixtures(ctx: Ctx, data: dict) -> dict:
     """Operaciones típicas del editor sobre cada timeline real (muestreo de clips)."""
+    sys.path.insert(0, str(HERE))
+    from ops_cases import SFX_LIBRARY as library
     timelines: dict[str, dict] = {}
     cases = []
     for p in data.get("projects", []):
@@ -273,9 +302,11 @@ def real_edit_fixtures(ctx: Ctx, data: dict) -> dict:
         ops += follow_real_ops(tl, proj, ctx)
         ops += sound_real_ops(tl)
         ops += animate_real_ops(tl)
+        ops += recipe_real_ops(tl)
         for name, op, params in ops:
-            cases.append(run_edit_case(ctx, pid, tl, f"{pid} · {name}", op, params, compact=True))
-    return {"timelines": timelines, "cases": cases}
+            cases.append(run_edit_case(ctx, pid, tl, f"{pid} · {name}", op, params, compact=True,
+                                       sfx_library=library))
+    return {"timelines": timelines, "cases": cases, "sfx_library": library}
 
 
 def extra_real_ops(tl: dict, ctx: Ctx) -> list[tuple[str, str, dict]]:
@@ -410,6 +441,23 @@ def sound_real_ops(tl: dict) -> list[tuple[str, str, dict]]:
             {"sfx": {"id": "impactos/golpe.mp3", "duration": 1.5}, "start": 1.3, "duration": 0.5, "kind": "spot"},
         ]
         ops.append((f"sonorizar {v['id']}", "add_sound_design", {"clip_id": v["id"], "sounds": sounds}))
+    return ops
+
+
+def recipe_real_ops(tl: dict) -> list[tuple[str, str, dict]]:
+    """apply_recipe sobre una timeline real: las cinco recetas con tus clips."""
+    ops: list[tuple[str, str, dict]] = [("receta cinema_grade", "apply_recipe", {"recipe": "cinema_grade"})]
+    texts = [c["id"] for c in tl["clips"] if c["kind"] == "text"]
+    media = [c["id"] for c in tl["clips"] if c["kind"] in ("video", "image")]
+    late = [c["id"] for c in tl["clips"] if c["kind"] == "video" and c["start"] > 0.3]
+    if texts:
+        ops += [("receta text_reflection", "apply_recipe", {"recipe": "text_reflection", "clip_ids": texts[:2]}),
+                ("receta pass_through_text", "apply_recipe",
+                 {"recipe": "pass_through_text", "clip_ids": texts[:2], "params": {"zoom_time": 0.8}})]
+    if len(media) >= 2:
+        ops.append(("receta film_strips", "apply_recipe", {"recipe": "film_strips", "clip_ids": media[:4]}))
+    if late:
+        ops.append(("receta subject_pop", "apply_recipe", {"recipe": "subject_pop", "clip_ids": late[:1]}))
     return ops
 
 

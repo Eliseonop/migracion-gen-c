@@ -89,7 +89,8 @@ TEST_CASE("py_path_stem es Path(x).stem de Python 3.14 en Windows", "[py]") {
         {"dir/", "dir"},       {"whoosh.tar.gz", "whoosh.tar"},                 {"{'a': 1}", "{'a': 1}"},
         {"a/./b.c", "b"},      {"sonido final", "sonido final"},                {R"(C:\x\)", "x"},
         {R"(\\srv\share)", ""}, {"//srv/share/k.wav", "k"}, {"a:b:c.wav", "b:c"}, {"x/..", ".."},
-        {"a.b/", "a"},         {"  .wav", "  "},          {"a. b", "a"}};
+        {"a.b/", "a"},         {"  .wav", "  "},          {"a. b", "a"},        {"/:a", ":a"},
+        {"\xC3\xA9:foo.wav", "foo"}, {"\xE6\x97\xA5:a.b", "a"}};
     for (const auto& [in, want] : cases) {
         INFO(in);
         CHECK(py_path_stem(in) == want);

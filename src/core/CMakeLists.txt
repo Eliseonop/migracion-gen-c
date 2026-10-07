@@ -22,6 +22,7 @@ add_library(gc_core
     src/edit_ops_compound.cpp
     src/edit_ops_media.cpp
     src/edit_ops_props.cpp
+    src/edit_ops_recipes.cpp
     src/follow.cpp
     src/fx_catalog.cpp
     src/ids.cpp
@@ -30,8 +31,10 @@ add_library(gc_core
     src/no_overlap.cpp
     src/pose.cpp
     src/shapes.cpp
+    src/text_metrics.cpp
     src/py.cpp
     src/session.cpp
+    src/sfx_library.cpp
     src/timeline_rules.cpp
 )
 add_library(gc::core ALIAS gc_core)

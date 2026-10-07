@@ -6,6 +6,7 @@ add_executable(gc_tests
     unit/test_model.cpp
     unit/test_py.cpp
     unit/test_session.cpp
+    unit/test_sfx.cpp
     parity/bench_edit.cpp
     parity/test_edit_parity.cpp
     parity/test_keyframes_parity.cpp
