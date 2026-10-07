@@ -862,6 +862,73 @@ def real_layout_fixtures(ctx: Ctx, data: dict) -> dict:
     return _pure({"clips": clips, "dest": dests, "crop_px": []})
 
 
+# --- Evaluación por clip (fx_anims, clip_fx, clip_blend, clip_adjust) ------------------------
+
+def _matrix(m) -> list | None:
+    return None if m is None else [[float(v) for v in row] for row in m]
+
+
+def eval_case(ctx: Ctx, name: str, raw_clip: dict, times: list[float]) -> dict:
+    from app import clip_adjust as ca
+    from app import clip_anim
+    from app import clip_blend
+    from app import clip_fx
+    from app import fx_anims as fa
+    c = ctx.schemas.TimelineClip.model_validate(raw_clip)
+    dur = ctx.clip_speed.clip_timeline_duration(c)
+    samples = [{"t": t, "delta": fa.animation_delta(c, t, dur), "pose": clip_anim.render_pose(c, t),
+                "anim_opacity": clip_anim.anim_opacity(c, t), "fx": clip_fx.clip_fx_at(c, t, dur)}
+               for t in times]
+    return _pure({
+        "name": name, "clip": c.model_dump(), "duration": dur,
+        "animations": [{"slot": a["slot"], "id": a["anim"]["id"], "dur": a["dur"]}
+                       for a in fa.clip_animations(c, dur)],
+        "has_animations": fa.has_animations(c), "sample_times": fa.animation_sample_times(c, dur),
+        "blend": clip_blend.clip_blend(c), "color_matrix": _matrix(ca.color_matrix(c)),
+        "has_color_adjust": ca.has_color_adjust(c),
+        "passes": [{"ghost": g, "clip": p.model_dump()} for p, g in ca.adjust_passes(c)],
+        "samples": samples,
+    })
+
+
+def synthetic_eval_fixtures(ctx: Ctx) -> dict:
+    from app import clip_adjust as ca
+    from app import clip_fx
+    from app import fx_anims as fa
+    sys.path.insert(0, str(HERE))
+    import eval_cases as ec
+    return _pure({
+        "clips": [eval_case(ctx, c["name"], c["clip"], ec.TIMES) for c in ec.CLIPS],
+        # x siempre es real en fx_anims (una fracción): con un int, las curvas devolverían int.
+        "ease": [{"name": n, "x": float(x), "y": fa.EASES.get(n, fa.EASES["linear"])(float(x))}
+                 for n in ec.EASE_NAMES for x in ec.EASE_X],
+        "tracks": [{"keys": k, "u": u, "v": fa.eval_track(k, u)} for k in ec.TRACKS for u in ec.TRACK_U],
+        "fx_windows": [{"duration": d, "windows": list(clip_fx.fx_windows(d))} for d in ec.FX_WINDOWS],
+        "effects": [{"effects": e, "color_matrix": _matrix(ca.color_matrix(e if isinstance(e, dict) else {})),
+                     "has_color_adjust": ca.has_color_adjust(e if isinstance(e, dict) else {}),
+                     "values": {k: ca.adjust_value(e if isinstance(e, dict) else {}, k) for k in ca.ADJUST_KEYS},
+                     "strip_color": ca.strip_color(e if isinstance(e, dict) else None)}
+                    for e in ec.EFFECTS],
+    })
+
+
+def real_eval_fixtures(ctx: Ctx, data: dict) -> dict:
+    """Tus clips que se dibujan (todo menos el audio), en el inicio, las ventanas de
+    aparición y salida, la mitad y el final."""
+    cases = []
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        for c in proj.timeline.clips:
+            if c.kind == "audio":
+                continue
+            dur = ctx.clip_speed.clip_timeline_duration(c)
+            times = sorted({0.0, 0.1, 0.2, 0.4, dur / 2, max(0.0, dur - 0.4), max(0.0, dur - 0.1), dur})
+            cases.append(eval_case(ctx, f"{proj.id} · {c.id}", c.model_dump(), times))
+    return {"clips": cases, "ease": [], "tracks": [], "fx_windows": [], "effects": []}
+
+
 def _fits(clip_kind: str, track_kind: str) -> bool:
     family = {"video": "video", "image": "video", "shape": "video", "motion": "video", "adjustment": "video",
               "audio": "audio", "text": "text"}
@@ -918,6 +985,9 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "layout" / "synthetic.json", lay,
           len(lay["clips"]) + len(lay["dest"]) + len(lay["crop_px"]),
           sum("error" in d["rect"] or "error" in d["even"] for d in lay["dest"]))
+    ev = synthetic_eval_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "eval" / "synthetic.json", ev,
+          len(ev["clips"]) + len(ev["ease"]) + len(ev["tracks"]) + len(ev["fx_windows"]) + len(ev["effects"]), 0)
 
     if args.real:
         data_file = args.video_yt / "backend" / "data" / "projects.json"
@@ -944,6 +1014,8 @@ def main() -> None:
         write(REPO / "tests" / "fixtures" / "local" / "layout" / "real.json", lay_real,
               len(lay_real["clips"]) + len(lay_real["dest"]),
               sum("error" in d["rect"] or "error" in d["even"] for d in lay_real["dest"]))
+        ev_real = real_eval_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "eval" / "real.json", ev_real, len(ev_real["clips"]), 0)
     print(f"listo en {time.perf_counter() - t0:.1f} s")
 
 

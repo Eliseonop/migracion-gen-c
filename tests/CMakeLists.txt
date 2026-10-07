@@ -9,6 +9,7 @@ add_executable(gc_tests
     unit/test_sfx.cpp
     parity/bench_edit.cpp
     parity/test_edit_parity.cpp
+    parity/test_eval_parity.cpp
     parity/test_history_parity.cpp
     parity/test_keyframes_parity.cpp
     parity/test_layout_parity.cpp

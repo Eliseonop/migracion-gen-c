@@ -650,3 +650,27 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 - El test compara también el mensaje de los errores que ve el usuario.
 - **Casos:** 52 pasos (eran 31) y 23 materiales sueltos.
 - **Resultado:** 55 tests y 47 813 aserciones en verde, en Debug y en Release.
+
+### 2026-10-07 — F3, evaluación (1): lo que se dibuja de cada clip
+
+Sin el Windows SDK, F3 empieza por la evaluación, que es lógica pura: qué se dibuja de cada clip en un instante.
+
+**Hecho:**
+- **`fx_anims`** (`fx_anims.py` y `clip_anim.render_pose`):
+  - animaciones de catálogo de entrada, salida, bucle y combo: duraciones efectivas (la del manifiesto si la del clip no vale; entrada y salida repartidas si no caben; combo = el clip; mínimo 0,05 s);
+  - las 13 curvas, `eval_anim_track`, el delta sobre la pose (x/y y giro suman; escala y opacidad multiplican) y `render_pose`;
+  - `animation_sample_times`, los instantes a 30 fps con los que el export muestrea la pose.
+- **`clip_fx`** (`clip_fx.clip_fx_at`): aparición y salida (fundido, disolver, pop, zoom, deslizar, cortinilla) con ventanas de 0,4 s o medio clip, y el `look`.
+- **`blend`**: los 12 modos de fusión y su validación.
+- **`clip_adjust`**: la matriz 3×3 de exposición, blancos, temperatura y tono; `has_color_adjust`, `strip_color` y las pasadas de la máscara de ajuste (la base sin ajustes y el fantasma «<id>__adj», mudo, con todas sus máscaras como máscaras de recorte).
+- Las cadenas de FFmpeg (`effects_ffmpeg`, `video_fx_chain`, `colorchannelmixer`, `blend_steps`) no se portan: el render de Skia las sustituye.
+
+**Verificación:**
+- **Casos:** 38 clips sintéticos en 23 instantes (874 muestras): duraciones como texto, negativas, NaN, inf o bool; ids de otra ranura; entrada y salida que no caben; bucles más allá del clip; combo sobre keyframes; pistas `anim` legadas; clip de duración 0; velocidad 2 al revés; todas las apariciones y salidas; fusión válida y no válida; y máscaras de ajuste en vídeo, imagen, figura y texto. Además, 240 puntos de curva, 140 de pista, 8 ventanas y 16 efectos sueltos.
+- **Tus datos:** tus 914 clips que se dibujan, en 7122 instantes (inicio, ventanas, mitad y final).
+- **Exactitud:** con tolerancia 0 fallan 3 de 41 011 comprobaciones (`outBack` por `pow()`); con 1e-12 relativa pasan todas.
+- **Mutación:** se detectan 23 de 24. La otra es equivalente: con blancos a 0, `k / (1 − 0)` y `k · (1 + 0)` son el mismo valor.
+- **Resultado:** 57 tests y 88 824 aserciones en verde, en Debug y en Release, con 0 warnings.
+
+**Siguiente (evaluación, 2ª parte):** `layers_at`/`videos_at` (filtro y orden de la pila; fixtures con node desde `clipLayout.js`) y el fotograma ensamblado. Antes hay que decidir cómo se resuelven las diferencias de orden y visibilidad entre el preview y el export (notas de F3 en el TODO).
+

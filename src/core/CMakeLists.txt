@@ -10,10 +10,12 @@ add_library(gc_core
     src/json_reader.cpp
     src/migrations.cpp
     src/serialize.cpp
-    # Motor de edición: reglas, comandos, sin solapes, historial
+    # Motor de edición: reglas, comandos, sin solapes, historial; evaluación por instante
     src/bg.cpp
     src/captions.cpp
+    src/clip_adjust.cpp
     src/clip_attrs.cpp
+    src/clip_fx.cpp
     src/clip_layout.cpp
     src/clip_motion.cpp
     src/edit_commands.cpp
@@ -24,6 +26,7 @@ add_library(gc_core
     src/edit_ops_props.cpp
     src/edit_ops_recipes.cpp
     src/follow.cpp
+    src/fx_anims.cpp
     src/fx_catalog.cpp
     src/history_store.cpp
     src/ids.cpp

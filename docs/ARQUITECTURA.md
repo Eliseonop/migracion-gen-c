@@ -123,6 +123,19 @@ apply_command(timeline, command, ids):
 - **Paridad:** 236 casos sintéticos (clips, curvas sueltas, `normalize_mask`, estilos) y **733 clips reales** muestreados en sus keyframes y entre medias. Sin tolerancia coinciden bit a bit **25 676 de 25 677** comprobaciones; la otra difiere en el último bit de un `pow()` de libm, así que los números se comparan con tolerancia relativa de 1e-12. Textos, colores y tipos (`700` ≠ `700.0`) van exactos.
 - **Compilación:** sin contracción a FMA (`-ffp-contract=off`), para que x86 y ARM den los mismos bits que Python.
 - **Uso en F3:** es la mitad de `evaluate(snapshot, t)`; el render pinta con estos valores.
+
+### Evaluación por clip (F3)
+
+Lo que se dibuja de cada clip en un instante, además de la pose y las máscaras:
+
+| Cabecera | Qué contiene |
+|---|---|
+| `fx_anims.hpp` | Animaciones de catálogo (entrada, salida, bucle, combo), su delta sobre la pose, `render_pose` y los instantes de muestreo del export |
+| `clip_fx.hpp` | Aparición y salida (`clip_fx_at`): opacidad, escala, desplazamiento, cortinilla y `look` |
+| `blend.hpp` | Modos de fusión válidos |
+| `clip_adjust.hpp` | Matriz 3×3 de los ajustes de color y pasadas de la máscara de ajuste (base + fantasma) |
+
+Paridad con `fx_anims.py`, `clip_anim.render_pose`, `clip_fx.py`, `clip_blend.py` y `clip_adjust.py`: 38 clips sintéticos y tus 914 clips; exacta salvo 3 de 41 011 comprobaciones que pasan por `pow()` (tolerancia de 1e-12).
 - **Rendimiento** (Release, timeline real de 167 clips, `move_clip` completo con *settle* y validación):
 
   | Motor | Tiempo por operación |
