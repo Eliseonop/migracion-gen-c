@@ -63,6 +63,11 @@ namespace gc::core::detail {
 // Path(texto).stem de Python 3.14 en Windows: sin unidad («C:», «\\servidor\recurso»),
 // último componente (con / o \) y sin su última extensión, salvo que delante solo
 // queden puntos («.hidden», «..»).
+// Path(x).name de Python 3.14 en Windows: el último componente, sin la unidad («C:x» → «x»,
+// cualquier carácter + «:» es unidad) ni el recurso UNC, y sin «.» (que no cuenta).
+[[nodiscard]] std::string py_path_name(std::string_view text);
+// Path(x).suffix de Python 3.14: «x.mp3» → «.mp3», «x.» → «.», «.mp3» y «..» → «».
+[[nodiscard]] std::string py_path_suffix(std::string_view text);
 [[nodiscard]] std::string py_path_stem(std::string_view text);
 
 // ¿`c` es un carácter de palabra (\w) para las regex de Python (str.isalnum() o «_»)?
@@ -71,6 +76,15 @@ namespace gc::core::detail {
 
 // Siguiente carácter de un texto UTF-8 a partir del byte `i` (que avanza).
 [[nodiscard]] char32_t utf8_next(std::string_view utf8, std::size_t& i);
+
+// urllib.parse.quote(s) de Python (safe="/"): los bytes UTF-8 fuera de letras y cifras
+// ASCII, «_.-~» y «/» van como %XX.
+[[nodiscard]] std::string py_quote(std::string_view text);
+
+// str.lower() de Python sobre UTF-8: minúsculas de Unicode completas (también las que
+// cambian de longitud, «İ» → «i̇») y la sigma final («ΟΔΟΣ» → «οδος»). Tablas de
+// tools/gen/gen_py_lower.py; los bytes que no son UTF-8 válido se copian tal cual.
+[[nodiscard]] std::string py_lower(std::string_view utf8);
 
 // x % y de Python con reales: el resultado lleva el signo del divisor
 // ((-90.0) % 360 == 270.0), no el del dividendo como fmod.

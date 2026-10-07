@@ -7,6 +7,7 @@
 #include <memory>
 #include <fstream>
 #include <random>
+#include <sstream>
 
 #include "gc/core/edit.hpp"
 #include "gc/core/history_store.hpp"
@@ -275,5 +276,24 @@ TEST_CASE("historial ilegible o ausente: vacío, sin error", "[session][history]
     }
     CHECK_FALSE(load_history(bad).can_undo());
     CHECK(load_history(bad).limit() == History::kDefaultLimit);
+    // Con BOM de UTF-8, json.loads(read_text("utf-8")) de timeline_store._load_history
+    // falla: historial vacío aunque el resto sea válido.
+    const auto bom = dir.path / "bom.json";
+    const auto good = dir.path / "bueno.json";
+    {
+        auto tl = timeline_from_json(Json{{"tracks", Json::array()}, {"clips", Json::array()}});
+        REQUIRE(tl);
+        History h;
+        h.record(std::make_shared<const Timeline>(*tl));
+        REQUIRE(save_history(good, h));
+    }
+    REQUIRE(load_history(good).can_undo());
+    {
+        std::ifstream in(good, std::ios::binary);
+        std::stringstream text;
+        text << in.rdbuf();
+        std::ofstream(bom, std::ios::binary) << "\xEF\xBB\xBF" << text.str();
+    }
+    CHECK_FALSE(load_history(bom).can_undo());
 }
 

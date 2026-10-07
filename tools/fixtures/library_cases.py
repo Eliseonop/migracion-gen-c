@@ -73,6 +73,8 @@ STEPS = [
     ("list",),
     ("update", "lib_clip", {"label": "x"}),       # se encuentra antes de llegar al que no es dict
     ("write", "{ roto"), ("load",),
+    # BOM de UTF-8: json.loads(read_text("utf-8")) falla → biblioteca vacía
+    ("write", "\ufeff{\"items\": [{\"id\": \"bom\", \"index\": 1}]}"), ("load",), ("list",),
     ("write", [1]), ("load",),
     ("write", {"items": None}), ("list",),
     # saved_at: `or ""` y comparaciones de Python (texto con texto, números con números)

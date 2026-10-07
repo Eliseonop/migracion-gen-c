@@ -5,8 +5,10 @@
 #include <charconv>
 #include <cmath>
 #include <cstdio>
+#include <iterator>
 #include <limits>
 #include <locale>
+#include <span>
 #include <sstream>
 #include <system_error>
 
@@ -380,7 +382,7 @@ std::string py_repr(const Json& j) {
     }
 }
 
-std::string py_path_stem(std::string_view text) {
+std::string py_path_name(std::string_view text) {
     std::string p(text);
     std::ranges::replace(p, '/', '\\');
     std::string_view rest = p;
@@ -405,17 +407,121 @@ std::string py_path_stem(std::string_view text) {
         }
         i = j + 1;
     }
-    const auto dot = name.rfind('.');
-    if (dot != std::string_view::npos) {
-        const auto stem = name.substr(0, dot);
-        if (stem.find_first_not_of('.') != std::string_view::npos) {
-            return std::string(stem);
-        }
-    }
     return std::string(name);
 }
 
+std::string py_path_suffix(std::string_view text) {
+    const std::string name = py_path_name(text);
+    // 3.14: los puntos del principio no cuentan; el sufijo va del último punto al final.
+    const std::string_view rest = std::string_view(name).substr(std::min(name.find_first_not_of('.'), name.size()));
+    const auto dot = rest.rfind('.');
+    return dot == std::string_view::npos ? std::string() : std::string(rest.substr(dot));
+}
+
+std::string py_path_stem(std::string_view text) {
+    const std::string name = py_path_name(text);
+    const std::string suffix = py_path_suffix(text);
+    return suffix.empty() ? name : name.substr(0, name.size() - suffix.size());
+}
+
+std::string py_quote(std::string_view text) {
+    static constexpr char kHex[] = "0123456789ABCDEF";
+    std::string out;
+    for (const unsigned char c : text) {
+        if (ascii_alnum(static_cast<char>(c)) || c == '_' || c == '.' || c == '-' || c == '~' || c == '/') {
+            out += static_cast<char>(c);
+        } else {
+            out += '%';
+            out += kHex[c >> 4];
+            out += kHex[c & 15];
+        }
+    }
+    return out;
+}
+
 char32_t utf8_next(std::string_view utf8, std::size_t& i) { return next_code_point(utf8, i); }
+
+namespace {
+
+struct LowerEntry {
+    char32_t cp;
+    const char* utf8;
+};
+constexpr LowerEntry kLower[] = {
+#define GC_PY_LOWER_MAP
+#include "py_lower.inc"
+#undef GC_PY_LOWER_MAP
+};
+
+struct CpRange {
+    char32_t lo;
+    char32_t hi;
+};
+constexpr CpRange kCased[] = {
+#define GC_PY_LOWER_CASED
+#include "py_lower.inc"
+#undef GC_PY_LOWER_CASED
+};
+constexpr CpRange kCaseIgnorable[] = {
+#define GC_PY_LOWER_IGNORABLE
+#include "py_lower.inc"
+#undef GC_PY_LOWER_IGNORABLE
+};
+
+bool in_ranges(std::span<const CpRange> ranges, char32_t c) {
+    const auto it = std::ranges::upper_bound(ranges, c, {}, &CpRange::lo);
+    return it != ranges.begin() && c <= std::prev(it)->hi;
+}
+
+constexpr char32_t kCapitalSigma = 0x03A3;
+
+} // namespace
+
+std::string py_lower(std::string_view utf8) {
+    struct Cp {
+        char32_t c;
+        std::size_t begin;
+        std::size_t end;
+    };
+    std::vector<Cp> cps;
+    for (std::size_t i = 0; i < utf8.size();) {
+        const std::size_t begin = i;
+        const char32_t c = next_code_point(utf8, i);
+        cps.push_back({c, begin, i});
+    }
+    const auto ignorable = [](char32_t c) { return in_ranges(kCaseIgnorable, c); };
+    const auto cased = [](char32_t c) { return in_ranges(kCased, c); };
+    std::string out;
+    out.reserve(utf8.size());
+    for (std::size_t k = 0; k < cps.size(); ++k) {
+        const char32_t c = cps[k].c;
+        if (c == kCapitalSigma) {
+            // handle_capital_sigma de CPython: con caja antes y sin caja después, saltando
+            // los caracteres que ignoran la caja.
+            std::size_t j = k;
+            while (j > 0 && ignorable(cps[j - 1].c)) {
+                --j;
+            }
+            bool final_sigma = j > 0 && cased(cps[j - 1].c);
+            if (final_sigma) {
+                std::size_t n = k + 1;
+                while (n < cps.size() && ignorable(cps[n].c)) {
+                    ++n;
+                }
+                final_sigma = n == cps.size() || !cased(cps[n].c);
+            }
+            out += final_sigma ? "\xCF\x82" : "\xCF\x83"; // ς o σ
+            continue;
+        }
+        const auto it = std::ranges::lower_bound(kLower, c, {}, &LowerEntry::cp);
+        if (it != std::end(kLower) && it->cp == c) {
+            out += it->utf8;
+        } else {
+            out.append(utf8.substr(cps[k].begin, cps[k].end - cps[k].begin));
+        }
+    }
+    return out;
+}
 
 bool py_word_char(char32_t c) {
     if (c < 0x80) {

@@ -86,7 +86,7 @@ History load_history(const std::filesystem::path& file, std::size_t limit) {
     if (!std::filesystem::exists(file, ec)) {
         return History(limit);
     }
-    auto raw = read_json_file(file);
+    auto raw = read_json_file_py(file);
     return raw ? history_from_json(*raw, limit) : History(limit);
 }
 

@@ -22,7 +22,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 78 tests y 110 605 aserciones en verde (Debug y Release, 0 warnings).
+**Cifras actuales:** 80 tests y 110 740 aserciones en verde (Debug y Release, 0 warnings).
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
 historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (59 pasos + los tuyos, con las claves redactadas) biblioteca (52 pasos + 23 materiales + la tuya) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
@@ -82,6 +82,11 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 - [ ] Colecciones de `data/` (`collections`: carpetas de material bajo `material_root`)
 - [ ] Biblioteca de SFX desde disco (`sfx.load_index`, `_scan`, `_entry` y `resolve`, con la duración de `ffprobe`) → `set_sfx_library`. Sin ella, `subject_pop` avisa siempre de que faltan los sonidos
 - [x] Ajustes y API keys (`settings.hpp`: `settings.py`, `export_settings.py` y `transcribe_settings.py`): carga con defectos, `save` con la fusión de claves y máscaras, varias claves por proveedor y la vista pública sin secretos. Paridad: 59 pasos sintéticos con claves falsas y tus ajustes con las claves redactadas; 10/10 mutaciones
+
+### Notas de F1
+
+- **JSON como Python:** `json.loads(read_text("utf-8"))` falla con un BOM de UTF-8. Ajustes, biblioteca e historial usan `read_json_file_py`, que también falla; `read_json_file` (proyectos y timelines) lo sigue saltando.
+- **Texto de Python en `py.hpp`:** `py_lower` (`str.lower()` de Unicode 16, con la sigma final; tabla generada con `tools/gen/gen_py_lower.py`), `py_path_name`, `py_path_suffix` y `py_path_stem` (Python 3.14 en Windows) y `py_quote`.
 
 ## F2 — Lógica de edición *(hecha)*
 

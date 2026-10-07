@@ -14,6 +14,8 @@ STEPS = [
     ("keys_for", "pexels"),
     ("write", "{ esto no es json"),
     ("load",),
+    ("write", "\ufeff{\"tts\": {\"voice\": \"bom\"}}"),  # BOM de UTF-8: json.loads falla → de fábrica
+    ("load",),
     ("write", [1, 2]),                            # JSON que no es un objeto
     ("load",),
     ("write", {"tts": {"voice": "x"}, "favorites": {"sfx": [1, "a"], "audios": "ab", "textStyles": ["s1", {"k": 1}]},

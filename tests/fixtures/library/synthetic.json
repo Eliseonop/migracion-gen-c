@@ -2163,6 +2163,35 @@
   {
    "step": [
     "write",
+    "﻿{\"items\": [{\"id\": \"bom\", \"index\": 1}]}"
+   ],
+   "result": null,
+   "file_text": "﻿{\"items\": [{\"id\": \"bom\", \"index\": 1}]}"
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "version": 1,
+    "items": []
+   },
+   "file_text": "﻿{\"items\": [{\"id\": \"bom\", \"index\": 1}]}"
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "clips": [],
+    "audios": [],
+    "images": []
+   },
+   "file_text": "﻿{\"items\": [{\"id\": \"bom\", \"index\": 1}]}"
+  },
+  {
+   "step": [
+    "write",
     [
      1
     ]

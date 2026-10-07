@@ -147,6 +147,47 @@
   {
    "step": [
     "write",
+    "﻿{\"tts\": {\"voice\": \"bom\"}}"
+   ],
+   "result": null,
+   "file_text": "﻿{\"tts\": {\"voice\": \"bom\"}}"
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   },
+   "file_text": "﻿{\"tts\": {\"voice\": \"bom\"}}"
+  },
+  {
+   "step": [
+    "write",
     [
      1,
      2

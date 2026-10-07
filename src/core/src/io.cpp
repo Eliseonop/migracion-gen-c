@@ -34,7 +34,9 @@ std::string path_to_utf8(const std::filesystem::path& path) {
     return out;
 }
 
-Result<Json> read_json_file(const std::filesystem::path& path) {
+namespace {
+
+Result<std::string> read_bytes(const std::filesystem::path& path) {
     std::ifstream in(path, std::ios::binary | std::ios::ate);
     if (!in) {
         return fail(ErrorCode::NotFound, "no se puede abrir el archivo", path_to_utf8(path));
@@ -46,15 +48,42 @@ Result<Json> read_json_file(const std::filesystem::path& path) {
     if (size < 0 || !in.read(text.data(), size)) {
         return fail(ErrorCode::Io, "error al leer el archivo", path_to_utf8(path));
     }
-    // BOM de UTF-8 (lo dejan algunos editores de Windows).
-    if (text.starts_with("\xEF\xBB\xBF")) {
-        text.erase(0, 3);
-    }
+    return text;
+}
+
+Result<Json> parse_text(const std::string& text, const std::filesystem::path& path) {
     try {
         return Json::parse(text);
     } catch (const Json::parse_error& e) {
         return fail(ErrorCode::Parse, e.what(), path_to_utf8(path));
     }
+}
+
+constexpr std::string_view kUtf8Bom = "\xEF\xBB\xBF";
+
+} // namespace
+
+Result<Json> read_json_file(const std::filesystem::path& path) {
+    auto text = read_bytes(path);
+    if (!text) {
+        return std::unexpected(text.error());
+    }
+    // BOM de UTF-8 (lo dejan algunos editores de Windows).
+    if (text->starts_with(kUtf8Bom)) {
+        text->erase(0, kUtf8Bom.size());
+    }
+    return parse_text(*text, path);
+}
+
+Result<Json> read_json_file_py(const std::filesystem::path& path) {
+    auto text = read_bytes(path);
+    if (!text) {
+        return std::unexpected(text.error());
+    }
+    if (text->starts_with(kUtf8Bom)) {
+        return fail(ErrorCode::Parse, "Unexpected UTF-8 BOM", path_to_utf8(path));
+    }
+    return parse_text(*text, path);
 }
 
 namespace {

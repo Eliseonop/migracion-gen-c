@@ -257,7 +257,7 @@ Json SettingsFile::read_raw() const {
     if (!std::filesystem::exists(file_, ec)) {
         return Json::object();
     }
-    auto raw = read_json_file(file_);
+    auto raw = read_json_file_py(file_);
     return raw ? *raw : Json::object();
 }
 
@@ -266,7 +266,7 @@ Json SettingsFile::load_unlocked() const {
     if (!std::filesystem::exists(file_, ec)) {
         return defaults();
     }
-    auto raw = read_json_file(file_);
+    auto raw = read_json_file_py(file_);
     if (!raw || !raw->is_object()) {
         return defaults();
     }

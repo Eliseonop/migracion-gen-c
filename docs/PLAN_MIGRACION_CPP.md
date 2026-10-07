@@ -729,3 +729,17 @@ Sin el Windows SDK, F3 empieza por la evaluación, que es lógica pura: qué se 
 
 **Con esto, la evaluación de F3 está completa.** Lo siguiente de F3 es `gc_media` y `gc_render`, que necesitan el Windows SDK (MSVC + vcpkg). Mientras tanto quedan los pendientes de F1 (biblioteca de SFX de disco y colecciones) y de F0 (`.clang-tidy`, spdlog).
 
+
+### 2026-10-07 — F1: el JSON se lee como Python, `lower()` de Unicode y rutas de Python
+
+Preparación de la biblioteca de SFX y de las colecciones, que ordenan y filtran texto como Python.
+
+**Hecho:**
+- **Un BOM de UTF-8 ya no se acepta donde Python lo rechaza.** `json.loads(path.read_text("utf-8"))` falla con un BOM; C++ lo saltaba sin decir nada. `read_json_file_py` falla igual, y la usan los ajustes, la biblioteca y el historial: con BOM, los ajustes de fábrica, la biblioteca vacía y el historial vacío, como en video-yt. `read_json_file` (proyectos y timelines, que Pydantic lee de otra forma) sigue igual.
+- **`py_lower`: `str.lower()` de Python** con toda la tabla de Unicode 16 (incluidas las expansiones, como «İ» → «i̇») y la sigma final («ΟΔΟΣ» → «οδος»). La tabla y los rangos «cased» y «case-ignorable» se generan desde el Python de video-yt (`tools/gen/gen_py_lower.py` → `py_lower.inc`).
+- **`py_path_name`, `py_path_suffix` y `py_path_stem`:** `Path(x).name`, `.suffix` y `.stem` de Python 3.14 en Windows (unidades, UNC, «x.» con sufijo «.»…). **`py_quote`** pasa de la biblioteca a `py.hpp`.
+
+**Verificación:**
+- **Casos:** 3 pasos nuevos con BOM (ajustes y biblioteca) contra el Python real, y un test del historial con BOM.
+- **Tests:** 26 comprobaciones de `py_lower` y 90 de rutas y `quote`, con los valores medidos en Python.
+- **Resultado:** 80 tests y 110 740 aserciones en verde, en Debug y en Release, con 0 warnings.

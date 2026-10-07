@@ -31,21 +31,6 @@ bool is_youtube(const std::string& url) {
 }
 
 // urllib.parse.quote(texto): todo menos letras, cifras, «_.-~» y «/» en %XX (UTF-8).
-std::string url_quote(std::string_view text) {
-    static constexpr char kHex[] = "0123456789ABCDEF";
-    std::string out;
-    for (const unsigned char c : text) {
-        if (detail::ascii_alnum(static_cast<char>(c)) || c == '_' || c == '.' || c == '-' || c == '~' || c == '/') {
-            out += static_cast<char>(c);
-        } else {
-            out += '%';
-            out += kHex[c >> 4];
-            out += kHex[c & 15];
-        }
-    }
-    return out;
-}
-
 const char* disk_kind(std::string_view resource_type) {
     return resource_type == "clip" ? "video" : resource_type == "image" ? "image" : "audio";
 }
@@ -140,7 +125,7 @@ Result<Json> material_dto(const Json& item, std::string_view scope) {
             return invalid("filename debe ser texto"); // quote() no admite otra cosa
         }
         out["url"] = "/api/library/media/" + std::string(disk_kind(rt)) + "/" +
-                     url_quote(py_truthy(fn) ? fn.get<std::string>() : std::string());
+                     detail::py_quote(py_truthy(fn) ? fn.get<std::string>() : std::string());
     }
     return out;
 }
@@ -181,7 +166,7 @@ Json LibraryFile::load() const {
     if (!std::filesystem::exists(file(), ec)) {
         return empty_library();
     }
-    auto raw = read_json_file(file());
+    auto raw = read_json_file_py(file());
     if (!raw || !raw->is_object()) {
         return empty_library();
     }
