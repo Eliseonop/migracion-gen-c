@@ -1,6 +1,7 @@
 add_executable(gc_tests
     support/json_diff.cpp
     unit/test_coercion.cpp
+    unit/test_keyframes.cpp
     unit/test_migrations.cpp
     unit/test_model.cpp
     unit/test_py.cpp
@@ -8,6 +9,7 @@ add_executable(gc_tests
     parity/bench_edit.cpp
     parity/test_edit_parity.cpp
     parity/test_keyframes_parity.cpp
+    parity/test_layout_parity.cpp
     parity/test_model_parity.cpp
 )
 # support/: utilidades de los tests. src/core/src: tests de caja blanca de piezas internas (py.hpp).

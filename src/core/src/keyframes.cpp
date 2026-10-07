@@ -218,9 +218,20 @@ std::optional<KfValue> interp_key(const std::vector<const Json*>& s, std::string
     return val(ks.back());
 }
 
+std::vector<Json> iter_items(const Json& items) { return py_iter(items).value_or(std::vector<Json>{}); }
+
+} // namespace
+
 KfProps interp_items(const std::vector<Json>& items, double t, const KfProps& fallback) {
-    const auto s = sorted_items(items);
+    // `_merge(static_props({}), fallback)`: un NaN del respaldo vale lo de un clip vacío.
+    static const KfProps kEmpty = static_props(TimelineClip{});
     KfProps out = fallback;
+    for (std::size_t i = 0; i < out.values.size(); ++i) {
+        if (std::isnan(out.values[i])) {
+            out.values[i] = kEmpty.values[i];
+        }
+    }
+    const auto s = sorted_items(items);
     if (s.empty()) {
         return out;
     }
@@ -232,10 +243,6 @@ KfProps interp_items(const std::vector<Json>& items, double t, const KfProps& fa
     }
     return out;
 }
-
-std::vector<Json> iter_items(const Json& items) { return py_iter(items).value_or(std::vector<Json>{}); }
-
-} // namespace
 
 // --- Curvas -----------------------------------------------------------------------------
 
@@ -446,16 +453,20 @@ KfProps static_props(const TimelineClip& clip) {
     return p;
 }
 
-KfProps clip_props_at(const TimelineClip& clip, double local_t) {
-    KfProps base = static_props(clip);
+std::optional<KfProps> clip_props_over(const TimelineClip& clip, double local_t, const KfProps& base) {
     if (!keyframes_enabled(clip)) {
-        return base;
+        return std::nullopt;
     }
     const Json& items = items_of(clip);
     if (!py_truthy(items)) {
-        return base;
+        return std::nullopt;
     }
     return interp_items(iter_items(items), local_t, base);
+}
+
+KfProps clip_props_at(const TimelineClip& clip, double local_t) {
+    const KfProps base = static_props(clip);
+    return clip_props_over(clip, local_t, base).value_or(base);
 }
 
 double clip_volume_at(const TimelineClip& clip, double local_t) {

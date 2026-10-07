@@ -12,8 +12,11 @@ Uso, con el Python de video-yt (tiene pydantic y el resto de dependencias):
 Salida:
   tests/fixtures/model/synthetic.json   modelo: casos de model_cases.py        (al repo)
   tests/fixtures/edit/synthetic.json    edición: casos de ops_cases.py         (al repo)
+  tests/fixtures/keyframes/synthetic.json  animación: casos de kf_cases.py     (al repo)
+  tests/fixtures/layout/synthetic.json  encuadre: casos de layout_cases.py     (al repo)
   tests/fixtures/local/model/real.json  con --real: TUS proyectos de data/projects.json
   tests/fixtures/local/edit/real.json   con --real: operaciones sobre TUS timelines
+  tests/fixtures/local/{keyframes,layout}/real.json  con --real: TUS clips
                                         tests/fixtures/local/ son datos personales: está
                                         en .gitignore y nunca se sube.
 
@@ -357,6 +360,89 @@ def real_keyframe_fixtures(ctx: Ctx, data: dict) -> dict:
     return {"clips": cases, "ease": [], "masks": [], "styles": []}
 
 
+# --- Encuadre (clip_layout) -------------------------------------------------------------------
+
+def _floats(values) -> list[float]:
+    """Las salidas de clip_layout son cálculos, no datos guardados: se comparan como reales."""
+    return [float(v) for v in values]
+
+
+def _outcome(fn, *args) -> dict:
+    """{"ok": [...]} o {"error": tipo}. NaN e infinito van como texto ("nan", "inf", "-inf"):
+    JSON no los admite y Python no falla con un transform {"scale": "nan"}."""
+    try:
+        values = fn(*args)
+    except Exception as e:  # noqa: BLE001 — basta con saber que Python falla
+        return {"error": type(e).__name__}
+    return {"ok": [repr(v) if isinstance(v, float) and v - v != 0 else v for v in values]}
+
+
+def dest_case(transform, crop_sw: float, crop_sh: float, out_w: float, out_h: float) -> dict:
+    from app import clip_layout as cl
+    return {"transform": transform, "crop_sw": crop_sw, "crop_sh": crop_sh, "out_w": out_w, "out_h": out_h,
+            "rect": _outcome(cl.dest_rect, transform, crop_sw, crop_sh, out_w, out_h),
+            "even": _outcome(cl.dest_rect_even, transform, crop_sw, crop_sh, out_w, out_h)}
+
+
+def layout_case(ctx: Ctx, name: str, raw_clip: dict, crops: list[tuple], points: list[tuple]) -> dict:
+    """crops: (src_aspect, out_aspect, src_t, local_t). points: (nx, ny, src_w, src_h, out_w, out_h, src_t, local_t)."""
+    from app import clip_layout as cl
+    c = ctx.schemas.TimelineClip.model_validate(raw_clip)
+    out_crops = []
+    for sa, oa, st, lt in crops:
+        w = cl.crop_window(c, sa, oa, st, lt)
+        out_crops.append({"src_aspect": sa, "out_aspect": oa, "src_t": st, "local_t": lt,
+                          "crop": _floats([w["cx"], w["cy"], w["wf"], w["hf"]])})
+    out_points = [{"args": list(p), "out": _floats(cl.source_point_to_output(c, *p))} for p in points]
+    return _pure({"name": name, "clip": c.model_dump(), "is_overlay": cl.is_overlay(c),
+                  "flip": list(cl.clip_flip(c)), "flip_filters": cl.flip_filters(c),
+                  "crops": out_crops, "points": out_points})
+
+
+def synthetic_layout_fixtures(ctx: Ctx) -> dict:
+    from app import clip_layout as cl
+    sys.path.insert(0, str(HERE))
+    import layout_cases as lc
+    crops = [(sa, oa, st, lt) for sa, oa in lc.ASPECTS for st, lt in lc.TIMES]
+    points = [(nx, ny, sw, sh, ow, oh, st, lt) for sw, sh, ow, oh in lc.DIMS for st, lt in lc.POINT_TIMES
+              for nx, ny in lc.POINTS]
+    return _pure({
+        "clips": [layout_case(ctx, c["name"], c["clip"], crops, points) for c in lc.CLIPS],
+        "dest": [dest_case(t, *s) for t in lc.TRANSFORMS for s in lc.DEST_SIZES],
+        "crop_px": [{"args": list(a), "out": _floats(cl.source_crop_px(*a))} for a in lc.CROP_PX],
+    })
+
+
+def real_layout_fixtures(ctx: Ctx, data: dict) -> dict:
+    """Tus clips de vídeo e imagen: encuadre en 5 instantes, tres puntos llevados a la salida y,
+    con el recorte de cada instante, el rectángulo de destino de su transform (como compose.py)."""
+    from app import clip_layout as cl
+    clips, dests = [], []
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        out_w, out_h = proj.timeline.width, proj.timeline.height
+        dims = {a.id: (a.width, a.height) for a in (*proj.clips, *proj.images)
+                if getattr(a, "width", None) and getattr(a, "height", None)}
+        for c in proj.timeline.clips:
+            if c.kind not in ("video", "image"):
+                continue
+            src_w, src_h = dims.get(c.asset_id, (1920, 1080))
+            dur = ctx.clip_speed.clip_timeline_duration(c)
+            times = [(c.in_point + dur * k / 4 * (c.speed or 1.0), dur * k / 4) for k in range(5)]
+            crops = [(src_w / src_h, out_w / out_h, st, lt) for st, lt in times]
+            points = [(nx, ny, src_w, src_h, out_w, out_h, st, lt) for st, lt in times
+                      for nx, ny in ((0.5, 0.5), (0.2, 0.3), (0.9, 0.8))]
+            case = layout_case(ctx, f"{proj.id} · {c.id}", c.model_dump(), crops, points)
+            clips.append(case)
+            for cr in case["crops"]:
+                cx, cy, wf, hf = cr["crop"]
+                _, _, csw, csh = cl.source_crop_px(wf, hf, cx, cy, src_w, src_h)
+                dests.append(dest_case(c.transform, csw, csh, out_w, out_h))
+    return _pure({"clips": clips, "dest": dests, "crop_px": []})
+
+
 def _fits(clip_kind: str, track_kind: str) -> bool:
     family = {"video": "video", "image": "video", "shape": "video", "motion": "video", "adjustment": "video",
               "audio": "audio", "text": "text"}
@@ -401,6 +487,10 @@ def main() -> None:
     kf = synthetic_keyframe_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "keyframes" / "synthetic.json", kf,
           len(kf["clips"]) + len(kf["ease"]) + len(kf["masks"]) + len(kf["styles"]), 0)
+    lay = synthetic_layout_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "layout" / "synthetic.json", lay,
+          len(lay["clips"]) + len(lay["dest"]) + len(lay["crop_px"]),
+          sum("error" in d["rect"] for d in lay["dest"]))
 
     if args.real:
         data_file = args.video_yt / "backend" / "data" / "projects.json"
@@ -417,6 +507,9 @@ def main() -> None:
               sum("error" in c for c in edit_real["cases"]))
         kf_real = real_keyframe_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "keyframes" / "real.json", kf_real, len(kf_real["clips"]), 0)
+        lay_real = real_layout_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "layout" / "real.json", lay_real,
+              len(lay_real["clips"]) + len(lay_real["dest"]), sum("error" in d["rect"] for d in lay_real["dest"]))
     print(f"listo en {time.perf_counter() - t0:.1f} s")
 
 

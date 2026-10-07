@@ -15,6 +15,7 @@
 #include <cstddef>
 #include <optional>
 #include <string_view>
+#include <vector>
 
 #include "gc/core/error.hpp"
 #include "gc/core/ids.hpp"
@@ -76,8 +77,15 @@ struct KfProps {
 [[nodiscard]] double clamp_volume(const Json& value); // 0–2; lo que no es número = 1
 // Valores sin animar (transform/estilo/figura, máscara, volumen, audio).
 [[nodiscard]] KfProps static_props(const TimelineClip& clip);
+// Propiedades en `t` interpoladas entre `items` (keyframes {t, interpolation, props…},
+// tal como los recorre Python). Lo que ningún item anima sale de `fallback`; un NaN
+// de `fallback` vale lo mismo que en un clip vacío (`_merge` de video-yt).
+[[nodiscard]] KfProps interp_items(const std::vector<Json>& items, double t, const KfProps& fallback);
 // Propiedades en `local_t` (con keyframes si están activos).
 [[nodiscard]] KfProps clip_props_at(const TimelineClip& clip, double local_t);
+// Como clip_props_at, pero lo que no animan los keyframes sale de `base` y no de
+// static_props(clip). nullopt si los keyframes están apagados o no tienen items.
+[[nodiscard]] std::optional<KfProps> clip_props_over(const TimelineClip& clip, double local_t, const KfProps& base);
 [[nodiscard]] double clip_volume_at(const TimelineClip& clip, double local_t);
 
 // Estilo de texto animado en `local_t`: solo las propiedades con keyframes.

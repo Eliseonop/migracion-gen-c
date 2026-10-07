@@ -22,9 +22,9 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 38 tests y 31 158 aserciones en verde (Debug y Release, 0 warnings).
-Paridad exacta con video-yt en modelo (18 proyectos), edición (228 casos sintéticos + 1452 ops reales)
-y animación (236 casos + 733 clips reales).
+**Cifras actuales:** 41 tests y 44 238 aserciones en verde (Debug y Release, 0 warnings).
+Paridad exacta con video-yt en modelo (18 proyectos), edición (228 casos sintéticos + 1452 ops reales),
+animación (236 casos + 733 clips reales) y encuadre (2283 muestras sintéticas + 5875 de 235 clips reales).
 
 ---
 
@@ -82,7 +82,7 @@ y animación (236 casos + 733 clips reales).
 - [x] `keyframes`: curvas (ease, cúbicas, rebote, bézier, *hold*), interpolación por propiedad, colores, estilo de texto animado, `upsert_keyframe_at` y fundidos de volumen
 - [x] `masks`: normalizar y evaluar máscaras animadas
 - [x] `fx_catalog` (recurso `resources/fx/catalog.json`), `pose` (`clip_pose`, `frame_at`), `shapes`, `bg` y `captions`
-- [ ] `clip_layout` (`destRectOnFrame`, `cropWindow`) con fixtures de layout *(parcial: ya están pose y `frame_at`; F3 lo necesita para evaluar)*
+- [x] `clip_layout`: `crop_window`, `source_point_to_output`, `source_crop_px`, `dest_rect[_even]` y volteo, con fixtures de layout (las funciones que solo usa la vista previa de `clipLayout.js` van con F5)
 - [ ] `clip_motion`, para `animate_clip`
 - [ ] `clip_attrs`, para `paste_clip_attributes`
 
@@ -102,8 +102,10 @@ y animación (236 casos + 733 clips reales).
 - [ ] `apply_recipe` (`recipes.py`, `recipe_layout.py`)
 
 ### Notas para la 4ª tanda (análisis hecho el 2026-10-07, sin código aún)
-- **Orden:** `clip_layout` (`crop_window`, `source_point_to_output`, `dest_rect[_even]`) → `clip_attrs` → `follow_object` (usa `source_point_to_output`) → `add_sound_design` → `clip_motion` (`animate_clip`) → recetas.
-- **`interp_items`:** hay que hacerla pública en `keyframes.hpp` (la usan `clip_attrs` y `crop_window`).
+- **Orden:** ~~`clip_layout`~~ (hecho) → `clip_attrs` → `follow_object` (usa `source_point_to_output`) → `add_sound_design` → `clip_motion` (`animate_clip`) → recetas.
+- **`interp_items`:** ya es pública en `keyframes.hpp`, con el `_merge` de Python (un NaN del respaldo vale lo de un clip vacío). `clip_props_over` = `clip_props_at` con otra base (la usa `crop_window`).
+- **`sin`/`cos`:** la libm de MinGW difiere de la de CPython en el último bit: `source_point_to_output` (y lo que lo use, como `follow_object`) se compara con una tolerancia de 1e-12. Si `follow_object` redondea después (`round(x, 4)`), el resultado guardado debería salir exacto.
+- **Encuadre real:** los 235 clips de vídeo e imagen de tus timelines son `overlay`. El modo relleno solo lo cubren los casos sintéticos.
 - **`clip_attrs._constant_props`:** recorre un `set` de Python, así que el orden de las claves en `props` es aleatorio. En la paridad de `paste_clip_attributes` hay que comparar `keyframes.items[*].props` sin orden.
 - **Orden de los uuid en `paste_attributes`:** primero los grupos en el orden de `ATTR_GROUP_IDS` (crop: ids de keyframes; mask: `m…`; vfx: `fx` + 10 hex), después los ids de los items de `merge_keyframes`.
 - **Recetas:**
@@ -166,6 +168,7 @@ y animación (236 casos + 733 clips reales).
 - [ ] 5. Export con progreso
 - [ ] 6. Ajustes
 - [ ] 7. Atajos de teclado
+- [ ] Geometría de la vista previa de `clipLayout.js` (`frameOf`, `slotAspectOf`, `destRectOnFrame`, `freeFrameAt`, tiradores de recorte)
 - [ ] Reproductor: reloj de audio maestro, preview a ½ o ¼, proxies al importar, repintado solo si algo cambia y 60 fps en el cabezal
 - [ ] Puente REST temporal con el backend Python (`:8000`) para lo no portado
 - [ ] **Salida:** editar y exportar un short completo sin abrir la UI React

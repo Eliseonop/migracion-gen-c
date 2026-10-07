@@ -6,4 +6,5 @@
 4. **Revisión.** Cuando el autopiloto lo pida (porque hay tareas nuevas marcadas como hechas), lanza el subagente `revisor-migracion`. Si no aparece como tipo de agente, usa `general-purpose` y pásale las instrucciones de `.claude/agents/revisor-migracion.md`. Corrige lo bloqueante en un commit aparte y sigue con la tarea que proponga.
 5. **Fin de fase.** Actualiza la tabla «Estado de un vistazo» y pasa a la siguiente fase. Si esa fase necesita algo de Edu, adelanta mientras tanto lo que no dependa de él, por ejemplo los pendientes de fases anteriores.
 6. **Bloqueo.** Si ya no queda nada útil que hacer sin Edu (Windows SDK, remoto de GitHub, una decisión, credenciales), escribe en `.claude/autopiloto/bloqueado.md` el motivo y lo que necesitas, y termina el turno.
-7. **Nunca:** hacer push, borrar trabajo de Edu, modificar video-yt (solo se lee) ni subir `tests/fixtures/local/`.
+7. **Contexto.** El contexto se compacta solo cuando se llena. Apunta lo que descubras de la tanda en curso (semántica de Python, trampas, orden pendiente) en la subsección de notas de la fase en `docs/TODO.md` según avances, no solo al final, para que sobreviva a la compactación.
+8. **Nunca:** hacer push, borrar trabajo de Edu, modificar video-yt (solo se lee) ni subir `tests/fixtures/local/`.

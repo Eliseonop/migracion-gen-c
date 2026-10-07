@@ -452,3 +452,21 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 **Pendiente de F2:**
 1. `animate_clip` (`clip_motion`), `paste_clip_attributes` (`clip_attrs`), `follow_object` (`object_track.follow_keys`), `add_sound_design` y `apply_recipe` (`recipes`, `recipe_layout`).
 2. Persistir el historial y el autosave.
+
+### 2026-10-07 — F2, 4ª tanda: encuadre y comandos compuestos *(en curso)*
+
+**Autopiloto:** un hook `Stop` (`.claude/autopiloto/`) mantiene el trabajo en marcha entre turnos y pide una revisión al subagente `revisor-migracion` cada vez que se marcan tareas como hechas. Se enciende y se apaga con `.claude/autopiloto/activo`. Cada tanda verificada va en su propio commit local.
+
+**Hecho:**
+- **`clip_layout`** (espejo de `clip_layout.py`):
+  - `crop_window` (reframe, keyframes cx/cy/zoom o recorte libre del overlay);
+  - `source_point_to_output` (recorte → pose → volteo → giro), que es la base de `follow_object`;
+  - `source_crop_px`, `dest_rect` y `dest_rect_even` (enteros pares con los empates al par de `round()`), además de `flip_filters`, que necesita el render de F3.
+- `interp_items` pasa a ser pública, con el `_merge` de Python, y aparece `clip_props_over`.
+- `tools/dev/verificar.sh` compila y pasa los tests en Debug y Release con el CMake de CLion.
+
+**Verificación:**
+- **Encuadre:** 2283 muestras sintéticas (48 de error) y 5875 de tus 235 clips reales (recorte, puntos y rectángulo de destino de cada transform).
+- **Exactitud:** recortes y rectángulos coinciden bit a bit. Los puntos usan `sin`/`cos`, así que van con tolerancia de 1e-12: con tolerancia 0 fallan 115, porque la libm de MinGW no es la de CPython.
+- **Mutación:** se detecta quitar el `fit=cover` de los keyframes, cambiar el redondeo al par por `round()`, quitar el volteo, tratar `x: 0` como valor y quitar el NaN → defecto de `interp_items`.
+- **Resultado:** 41 tests y 44 238 aserciones en verde, en Debug y en Release, con 0 warnings.
