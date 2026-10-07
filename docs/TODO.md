@@ -30,6 +30,17 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 
 ---
 
+## Siguiente (para el autopiloto)
+
+F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 necesita el Windows SDK, así que el orden es:
+
+1. **Con el Windows SDK instalado:** F3, empezando por MSVC + vcpkg (FFmpeg, Skia, ONNX Runtime) y `gc_media`.
+2. **Sin él, en este orden:**
+   - F3, evaluación de la timeline en un instante: `layersAt`/`videosAt` de `frontend/src/lib/clipLayout.js` (fixtures con node: el JS corre en Node 24) más la pose, el encuadre y las máscaras, que ya están portados;
+   - F1, biblioteca de SFX de disco (`sfx.py`) y colecciones (`collections.py`). Las colecciones son de la interfaz y pueden esperar a F5: escanean carpetas y ordenan como `WindowsPath`, con el `lower()` de Unicode;
+   - F0, `.clang-tidy` y spdlog.
+3. `recipe_layout.py` se porta con el render de F3: casi todo son cadenas de filtros de FFmpeg que con Skia quizá no hagan falta.
+
 ## Pendiente por tu parte (Edu)
 
 - [ ] Instalar el **Windows SDK**: *Visual Studio Installer → Modificar → «Desarrollo para el escritorio con C++»* y marcar un Windows 11 SDK. Sin esto MSVC no enlaza, y F3 lo necesita.
