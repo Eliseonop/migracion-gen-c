@@ -25,7 +25,7 @@ export y una UI que nunca se bloquea. El plan por fases está en
 ├────────────────────────────────── gc_core ───────────────────────────┤
 │ EditSession                documento vivo: snapshot actual, historial, │  ✅
 │                            grupos, observadores, revisión              │
-│ Motor de edición           comando → operación pura → sin solapes →    │  ✅ 43 ops
+│ Motor de edición           comando → operación pura → sin solapes →    │  ✅ 44 ops
 │                            validación                                  │
 │ Animación                  keyframes (curvas, bézier, colores),        │  ✅
 │                            máscaras, volumen: valores en el instante t │
@@ -77,7 +77,7 @@ apply_command(timeline, command, ids):
    ──► EditResult { timeline, changed, warnings }
 ```
 
-- **Comandos disponibles (43):**
+- **Comandos disponibles (44):**
 
   | Grupo | Comandos |
   |---|---|
@@ -89,7 +89,7 @@ apply_command(timeline, command, ids):
   | Material nuevo | `add_subtitles` (desde la transcripción), `add_shape` (figuras y trazados), `add_cinema_bars`, `add_adjustment_layer` |
   | Audio | `set_clip_volume` (con fundidos), `set_track_audio`, `set_clip_audio_fx` (con rampa animada) |
   | Timeline y material | `set_project_format`, `set_markers`, `replace_media` |
-  | Compuestos | `paste_clip_attributes`, `follow_object`, `add_sound_design` |
+  | Compuestos | `paste_clip_attributes`, `follow_object`, `add_sound_design`, `animate_clip` |
 
 - **Módulos de datos que usan los comandos:** el render de F3 los reutiliza.
 
@@ -103,9 +103,10 @@ apply_command(timeline, command, ids):
   | `clip_layout.hpp` | Encuadre: ventana de recorte, punto de la fuente → salida y rectángulo de destino |
   | `clip_attrs.hpp` | Grupos de atributos y «Pegar atributos», con la fusión de keyframes |
   | `follow.hpp` | Del recorrido de un objeto a los keyframes del clip que lo acompaña |
+  | `clip_motion.hpp` | Presets de animación (zoom, giro, deslizar, fundido, pop, pulso, trazo) |
 
 - **Parámetros:** los nombres son los del MCP de video-yt. `parse_command` aplica las reglas de los kwargs de Python: parámetro desconocido = error y obligatorio ausente = error.
-- **Paridad:** 305 casos sintéticos (136 de error) y 1657 operaciones sobre tus 18 timelines reales coinciden con `timeline_store.apply_op` en timeline, `changed` y `warnings`, y fallan donde Python falla (el mensaje no se compara). Las reales incluyen subtítulos generados desde sus transcripciones y fotogramas congelados.
+- **Paridad:** 348 casos sintéticos (144 de error) y 1845 operaciones sobre tus 18 timelines reales coinciden con `timeline_store.apply_op` en timeline, `changed` y `warnings`, y fallan donde Python falla (el mensaje no se compara). Las reales incluyen subtítulos generados desde sus transcripciones y fotogramas congelados.
   - **Casos límite cubiertos:** el «crece → empuja» de `no_overlap` (un clip a velocidad 0,5 empuja a los de detrás) y el reparto de subtítulos solapados en pistas nuevas.
   - **Tipos de Python:** se respetan detalles como que un valor acotado a un límite entero salga entero (`min(1, max(0, 1.5))` es el int `1`).
 

@@ -25,7 +25,7 @@ using detail::py_number;
 using detail::py_truthy;
 
 // Mismo orden que las alternativas de `Command` (lo comprueba el static_assert).
-constexpr std::array<std::string_view, 43> kNames{
+constexpr std::array<std::string_view, 44> kNames{
     "add_track",        "reorder_track",  "rename_track",      "remove_track",       "link_tracks",
     "unlink_track",     "add_clip",       "move_clip",         "remove_clip",        "split_clip",
     "duplicate_clip",   "set_project_format", "set_markers",   "set_clip_opacity",   "set_clip_speed",
@@ -34,7 +34,7 @@ constexpr std::array<std::string_view, 43> kNames{
     "set_clip_beats",   "set_clip_masks", "set_clip_effects",  "set_clip_volume",    "set_track_audio",
     "set_clip_audio_fx", "replace_media",  "apply_effect",      "set_clip_animation", "freeze_frame",
     "add_subtitles",    "add_shape",      "add_cinema_bars",   "add_adjustment_layer", "set_clip_bg_removal",
-    "paste_clip_attributes", "follow_object", "add_sound_design",
+    "paste_clip_attributes", "follow_object", "add_sound_design", "animate_clip",
 };
 static_assert(kNames.size() == std::variant_size_v<Command>, "kNames debe tener un nombre por comando");
 
@@ -490,6 +490,14 @@ const std::vector<std::pair<std::string_view, Parser>>& parsers() {
              GC_TRY(clip_id, k.str("clip_id"));
              GC_TRY(sounds, k.json("sounds"));
              return ops::AddSoundDesign{clip_id, sounds};
+         }},
+        {"animate_clip",
+         [](Kwargs& k) -> Result<Command> {
+             GC_TRY(clip_id, k.str("clip_id"));
+             GC_TRY(motion, k.json("motion"));
+             return ops::AnimateClip{clip_id,           motion,
+                                     k.json_or("duration"), k.json_or("intensity", 1.0),
+                                     k.json_or("turns", 1.0), k.json_or("envelope")};
          }},
     };
     return table;

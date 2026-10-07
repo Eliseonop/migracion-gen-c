@@ -272,6 +272,7 @@ def real_edit_fixtures(ctx: Ctx, data: dict) -> dict:
         ops += compound_real_ops(tl)
         ops += follow_real_ops(tl, proj, ctx)
         ops += sound_real_ops(tl)
+        ops += animate_real_ops(tl)
         for name, op, params in ops:
             cases.append(run_edit_case(ctx, pid, tl, f"{pid} · {name}", op, params, compact=True))
     return {"timelines": timelines, "cases": cases}
@@ -409,6 +410,23 @@ def sound_real_ops(tl: dict) -> list[tuple[str, str, dict]]:
             {"sfx": {"id": "impactos/golpe.mp3", "duration": 1.5}, "start": 1.3, "duration": 0.5, "kind": "spot"},
         ]
         ops.append((f"sonorizar {v['id']}", "add_sound_design", {"clip_id": v["id"], "sounds": sounds}))
+    return ops
+
+
+def animate_real_ops(tl: dict) -> list[tuple[str, str, dict]]:
+    """animate_clip sobre una timeline real: un preset por tipo de clip, alguno con envolvente."""
+    ops: list[tuple[str, str, dict]] = []
+    presets = {"video": ("zoom_in", "slide_left", "fade_out"), "image": ("pop", "spin"), "text": ("pop", "pulse"),
+               "shape": ("draw_in", "spin_in")}
+    env = [[0, 0.05], [0.15, 0.9], [0.3, 0.8], [0.5, 0.4], [0.8, 0.2]]
+    for kind, motions in presets.items():
+        clips = [c for c in tl["clips"] if c["kind"] == kind][:2]
+        for c in clips:
+            for i, m in enumerate(motions):
+                params = {"clip_id": c["id"], "motion": m}
+                if i == 1:
+                    params["envelope"] = env
+                ops.append((f"{m} en {c['id']}", "animate_clip", params))
     return ops
 
 

@@ -526,3 +526,15 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 - **Mutación:** se detectan las 13.
 - **Cambio de `py_str`:** no altera ninguna de las 1657 operaciones reales.
 - **Resultado:** 44 tests y 45 792 aserciones en verde, en Debug y en Release.
+
+**Hecho (5): `animate_clip`:**
+- `clip_motion.hpp`: los 13 presets (zoom, giro, deslizar, fundido, pop, pulso y trazo) con sus alias.
+- Envolvente de audio: el corte tras el pico en los movimientos de aparición y el remate al final del clip.
+- Los items generados se fusionan con las propiedades que el clip tenía en cada instante (volumen, efectos…).
+- En clips de relleno, el zoom se escribe también como keyframes del reframe, en tiempo de la fuente.
+- Lo que lee el audio con ffmpeg (`sample_rms_envelope`) se deja para F3/F7: el comando recibe la envolvente ya calculada.
+
+**Verificación (5):**
+- **Casos:** 43 sintéticos (8 de error): todos los presets, alias con mayúsculas y guiones, valores extremos, envolventes con basura, un punto justo en el umbral tras el pico y clips muy cortos. Además, 188 operaciones sobre tus timelines reales.
+- **Mutación:** se detectan las 13.
+- **Resultado:** 44 tests y 46 513 aserciones en verde, en Debug y en Release.

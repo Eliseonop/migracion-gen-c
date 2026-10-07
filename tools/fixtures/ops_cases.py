@@ -789,6 +789,75 @@ CASES += [
 ]
 
 
+# --- 4ª tanda: animar con un preset ----------------------------------------------------------
+
+ANIM = {
+    "schema_version": 5, "width": 720, "height": 1280,
+    "tracks": [track("V1", "video"), track("V2", "video"), track("V3", "video"), track("T1", "text"),
+               track("A1", "audio")],
+    "clips": [
+        clip("fill", "V1", start=0, inp=2, out=8, opacity=0.9,
+             reframe={"zoom": 0.8, "keyframes": [{"t": 2, "cx": 0.3}], "keyframes2": [{"t": 3, "cx": 0.6}],
+                      "dual_crop": True},
+             keyframes={"enabled": True, "items": [{"id": "v1", "t": 0, "props": {"volume": 0.5, "eq": 0.2}},
+                                                   {"id": "v2", "t": 4, "props": {"volume": 1.5, "x": 0.7}}]}),
+        clip("fast", "V1", start=6, inp=10, out=16, speed=2),
+        clip("ov", "V2", start=0, out=5, layout="overlay", transform={"x": 0.4, "y": 0.6, "scale": 0.6, "rotation": 10}),
+        clip("img", "V3", kind="image", start=0, out=0.3, layout="overlay", transform={"scale": 0.5}),
+        clip("txt", "T1", kind="text", start=0, out=3, text="hola",
+             style={"x": 0.3, "y": 0.8, "scale": 1.4, "opacity": 0.7, "rotation": -5}),
+        clip("shp", "V3", kind="shape", start=1, out=4, shape={"type": "path", "draw": 0.3, "x": 0.2}),
+        clip("aud", "A1", kind="audio", start=0, out=5),
+    ],
+}
+
+ENV = [{"t": 0, "amp": 0.1}, {"t": 0.2, "amp": 0.9}, [0.4, 0.85], {"t": 0.6, "v": 0.3}, {"t": 1, "amp": 0.75},
+       "raro", [2], {"t": 9, "amp": 1}, {"t": "0.8", "amp": "0.5"}, {"t": 0.1, "amp": None, "v": 1}]
+
+
+def anim(name, params, base=ANIM):
+    return op(name, base, "animate_clip", {"clip_id": "ov", **params})
+
+
+CASES += [anim(f"animate_clip {m} en overlay", {"motion": m}) for m in
+          ("zoom_in", "zoom_out", "spin", "spin_in", "slide_left", "slide_right", "slide_up", "slide_down",
+           "fade_in", "fade_out", "pop", "pulse")]
+CASES += [
+    anim("animate_clip zoom_in en relleno escribe el reframe", {"clip_id": "fill", "motion": "zoom_in"}),
+    anim("animate_clip zoom_out en relleno a velocidad 2", {"clip_id": "fast", "motion": "zoom_out", "intensity": 2}),
+    anim("animate_clip zoom_in con envolvente en relleno", {"clip_id": "fill", "motion": "zoom_in", "envelope": ENV}),
+    anim("animate_clip zoom de texto con la escala", {"clip_id": "txt", "motion": "zoom_out", "intensity": 0.5}),
+    anim("animate_clip alias y mayúsculas", {"clip_id": "txt", "motion": "  Spin-Out ", "turns": 2.5}),
+    anim("animate_clip alias whoosh", {"motion": "WHOOSH", "duration": "0.3"}),
+    anim("animate_clip alias hit", {"clip_id": "txt", "motion": "hit", "intensity": "x"}),
+    anim("animate_clip alias fade", {"motion": "fade", "duration": 100}),
+    anim("animate_clip alias zoom con intensidad infinita", {"motion": "zoom", "intensity": "inf"}),
+    anim("animate_clip trazo de figura", {"clip_id": "shp", "motion": "draw", "duration": 0.05}),
+    anim("animate_clip trazo con duración larga", {"clip_id": "shp", "motion": "draw_in", "duration": 10}),
+    anim("animate_clip pop en un clip muy corto", {"clip_id": "img", "motion": "pop"}),
+    anim("animate_clip fade_out más largo que el clip", {"clip_id": "img", "motion": "fade_out", "duration": 2}),
+    anim("animate_clip giro con vueltas al mínimo y al máximo", {"motion": "spin", "turns": 0.1}),
+    anim("animate_clip giro de entrada con 10 vueltas", {"clip_id": "txt", "motion": "spin_in", "turns": 10}),
+    anim("animate_clip deslizar con duración negativa", {"motion": "slide_up", "duration": -1, "intensity": 0}),
+    anim("animate_clip envolvente de aparición", {"motion": "slide_right", "envelope": ENV}),
+    anim("animate_clip envolvente con un punto justo en el umbral tras el pico",
+         {"motion": "slide_left", "envelope": [[0, 0.2], [0.2, 1.0], [0.4, 0.8], [0.6, 0.79], [1, 0.1]]}),
+    anim("animate_clip envolvente de pulso", {"clip_id": "txt", "motion": "pulse", "envelope": ENV}),
+    anim("animate_clip envolvente en silencio", {"motion": "pop", "envelope": [[0, 0.01], [1, 0.02]]}),
+    anim("animate_clip envolvente fuera del clip", {"motion": "fade_in", "envelope": [[7, 1], [8, 0.5]]}),
+    anim("animate_clip envolvente que no llega al final", {"motion": "spin", "envelope": [[0, 0], [0.5, 1]]}),
+    anim("animate_clip envolvente vacía y como dict", {"motion": "pulse", "envelope": {"t": 1}}),
+    anim("ERROR animate_clip movimiento desconocido", {"motion": "bailar"}),
+    anim("ERROR animate_clip movimiento numérico", {"motion": 5}),
+    anim("ERROR animate_clip movimiento vacío", {"motion": None}),
+    anim("ERROR animate_clip en un audio", {"clip_id": "aud", "motion": "fade_in"}),
+    anim("ERROR animate_clip trazo en un texto", {"clip_id": "txt", "motion": "draw_in"}),
+    anim("ERROR animate_clip envolvente numérica", {"motion": "pop", "envelope": 5}),
+    anim("ERROR animate_clip clip inexistente", {"clip_id": "nope", "motion": "pop"}),
+    anim("ERROR animate_clip sin motion", {}),
+]
+
+
 def materialize() -> list[dict]:
     """Copia profunda de cada caso (las bases se comparten entre casos)."""
     return [copy.deepcopy(c) for c in CASES]

@@ -294,6 +294,16 @@ struct AddSoundDesign {
     std::string clip_id; // la escena: los tiempos de `sounds` son locales a ella
     Json sounds;         // [{sfx: {id, name?, duration?}, start, duration, volume, kind, what}]
 };
+// Animación generada con un preset (clip_motion.hpp): zoom, giro, deslizar, fundido,
+// pop, pulso o trazo. En los clips de relleno, el zoom también va al reframe.
+struct AnimateClip {
+    std::string clip_id;
+    Json motion;          // nombre del preset o alias
+    Json duration;        // s del movimiento; null = el del preset
+    Json intensity = 1.0; // 0,15–2
+    Json turns = 1.0;     // vueltas del giro, 0,25–4
+    Json envelope;        // [{t, amp}] o [[t, amp]]: sigue un sonido
+};
 
 } // namespace ops
 
@@ -307,7 +317,7 @@ using Command =
                  ops::SetClipAudioFx, ops::ReplaceMedia, ops::ApplyEffect, ops::SetClipAnimation, ops::FreezeFrame,
                  ops::AddSubtitles, ops::AddShape, ops::AddCinemaBars, ops::AddAdjustmentLayer,
                  ops::SetClipBgRemoval, ops::PasteClipAttributes,
-                 ops::FollowObject, ops::AddSoundDesign>;
+                 ops::FollowObject, ops::AddSoundDesign, ops::AnimateClip>;
 
 // Nombre de la operación ("move_clip"…), el mismo del MCP y de video-yt.
 [[nodiscard]] std::string_view command_name(const Command& command);

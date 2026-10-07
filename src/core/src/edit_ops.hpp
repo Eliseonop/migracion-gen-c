@@ -53,6 +53,7 @@ Result<EditResult> run(const Timeline& tl, const ops::SetClipBgRemoval& op, IdSo
 Result<EditResult> run(const Timeline& tl, const ops::PasteClipAttributes& op, IdSource& ids);
 Result<EditResult> run(const Timeline& tl, const ops::FollowObject& op, IdSource& ids);
 Result<EditResult> run(const Timeline& tl, const ops::AddSoundDesign& op, IdSource& ids);
+Result<EditResult> run(const Timeline& tl, const ops::AnimateClip& op, IdSource& ids);
 
 // edit_ops_audio.cpp
 Result<EditResult> run(const Timeline& tl, const ops::SetClipVolume& op, IdSource& ids);

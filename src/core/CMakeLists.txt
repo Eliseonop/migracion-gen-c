@@ -15,6 +15,7 @@ add_library(gc_core
     src/captions.cpp
     src/clip_attrs.cpp
     src/clip_layout.cpp
+    src/clip_motion.cpp
     src/edit_commands.cpp
     src/edit_ops.cpp
     src/edit_ops_audio.cpp

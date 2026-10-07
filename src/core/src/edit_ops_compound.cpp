@@ -1,11 +1,12 @@
-// Operaciones compuestas: pegar atributos, seguir un objeto y sonorizar (espejo de
-// backend/app/timeline_ops.py).
+// Operaciones compuestas: pegar atributos, seguir un objeto, sonorizar y animar con
+// un preset (espejo de backend/app/timeline_ops.py).
 
 #include <algorithm>
 
 #include "edit_ops.hpp"
 #include "edit_util.hpp"
 #include "gc/core/clip_attrs.hpp"
+#include "gc/core/clip_motion.hpp"
 #include "gc/core/follow.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/timeline_rules.hpp"
@@ -309,6 +310,45 @@ Result<EditResult> run(const Timeline& tl, const ops::AddSoundDesign& op, IdSour
         return invalid("no hay sonidos que colocar");
     }
     return EditResult{std::move(out), std::move(changed), {}};
+}
+
+Result<EditResult> run(const Timeline& tl, const ops::AnimateClip& op, IdSource& ids) {
+    Timeline out = tl;
+    GC_TRY(ci, find_clip(out, op.clip_id));
+    TimelineClip c = *out.clips[ci];
+    if (c.kind != "video" && c.kind != "image" && c.kind != "text" && c.kind != "shape") {
+        return invalid("animate_clip solo aplica a vídeo, imagen, texto o figura");
+    }
+    GC_TRY(items, build_motion_items(c, op.motion, op.duration, op.intensity, op.turns, op.envelope, ids));
+    c.keyframes = merge_visual_keyframes(c, items);
+    GC_TRY(motion, normalize_motion(op.motion));
+    // En los clips de relleno el zoom es un recorte: también va al reframe (en tiempo de
+    // la FUENTE) para que el export coincida con la vista previa.
+    if ((motion == "zoom_in" || motion == "zoom_out") && !uses_scale_zoom(c)) {
+        const double spd = clip_speed(c);
+        std::vector<Keyframe> kfs;
+        double last_zoom = 1.0;
+        auto clamp01 = [](const std::optional<double>& v) {
+            return v ? std::max(0.0, std::min(1.0, *v)) : 0.5;
+        };
+        for (const auto& it : items) {
+            const auto& zoom = it.props[7];
+            const double z = std::max(0.1, std::min(1.0, zoom && *zoom != 0.0 ? *zoom : 1.0));
+            last_zoom = z;
+            Keyframe k;
+            k.t = round3(c.in_point + it.t * spd);
+            k.cx = clamp01(it.props[5]);
+            k.cy = clamp01(it.props[6]);
+            k.zoom = z;
+            kfs.push_back(std::move(k));
+        }
+        Reframe rf = c.reframe.value_or(Reframe{});
+        rf.zoom = last_zoom;
+        rf.keyframes = std::move(kfs);
+        c.reframe = std::move(rf);
+    }
+    out.clips[ci] = std::move(c);
+    return EditResult{std::move(out), {op.clip_id}, {}};
 }
 
 } // namespace gc::core::detail
