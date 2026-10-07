@@ -142,11 +142,12 @@ Lo que se dibuja de cada clip en un instante, además de la pose y las máscaras
 | `clip_fx.hpp` | Aparición y salida (`clip_fx_at`): opacidad, escala, desplazamiento, cortinilla y `look` |
 | `blend.hpp` | Modos de fusión válidos |
 | `clip_adjust.hpp` | Matriz 3×3 de los ajustes de color y pasadas de la máscara de ajuste (base + fantasma) |
+| `frame.hpp` | El fotograma de un instante (`evaluate`): por capa y pasada, tiempos, pose, aparición/salida, opacidad, fusión, volteo, máscaras y, para el material, los «blits» (rectángulo de la fuente + afín al cuadro) de overlay, relleno y doble encuadre |
 | `layers.hpp` | Qué clips se dibujan en un instante y en qué orden (`layers_at`, `videos_at`), con las reglas del render o las del preview; la pila de pistas (`stack_layers`, `buried_text_track_ids`) está en `timeline_rules.hpp` |
 
 Paridad con `fx_anims.py`, `clip_anim.render_pose`, `clip_fx.py`, `clip_blend.py` y `clip_adjust.py`: 41 clips sintéticos y tus 914 clips; exacta salvo 3 muestras de 1 ulp que pasan por `pow()`. Solo las curvas y matrices que usan `pow`/`sin`/`cos` llevan tolerancia (4e-15 relativa, unos 18 ulps).
 
-Las capas se comparan con el `layersAt` del preview ejecutado con Node (`kPreviewLayers`). El render usa sus propias reglas (`kRenderLayers`), las del export donde deciden el resultado: intervalo [inicio, fin) sin el margen de 0,02 s del preview, inicio acotado a ≥ 0, solo clips que encajan en su pista y de más de 0,02 s y, dentro de una capa, delante el clip que empieza después.
+Las capas y el fotograma se comparan con el JS real del preview ejecutado con Node: `layersAt` y `drawComposite` (sobre un contexto 2D que graba cada dibujo con su matriz), con `kPreviewLayers`. El fotograma coincide bit a bit salvo en las capas giradas (sin/cos). El render usa sus propias reglas (`kRenderLayers`), las del export donde deciden el resultado: intervalo [inicio, fin) sin el margen de 0,02 s del preview, inicio acotado a ≥ 0, solo clips que encajan en su pista y de más de 0,02 s y, dentro de una capa, delante el clip que empieza después.
 
 ## 5. EditSession: el documento vivo
 

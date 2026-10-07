@@ -2,11 +2,11 @@
 
     python tools/dev/mutantes.py <grupo> [preset] [filtro]
 
-`grupo`: eval (evaluación por clip, tests [eval]) o layers (capas de un instante, tests
-[layers]). `preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los
+`grupo`: eval (evaluación por clip, tests [eval]), layers (capas de un instante, tests
+[layers]) o frame (fotograma, tests [frame]). `preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los
 mutantes cuyo nombre contiene ese texto.
 
-Aplica cada cambio a la fuente, recompila gc_tests, pasa los tests [eval] y deshace el
+Aplica cada cambio a la fuente, recompila gc_tests, pasa los tests del grupo y deshace el
 cambio (también si algo falla). Un mutante «NO DETECTADO» es un hueco de las fixtures,
 salvo que sea equivalente (da el mismo resultado): esos van anotados en la lista.
 """
@@ -136,7 +136,37 @@ LAYERS = [
     ("videos_at con textos", "src/core/src/layers.cpp", 'return c->kind == "text"; });', "return false; });"),
 ]
 
-GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]")}
+F = "src/core/src/frame.cpp"
+FRAME = [
+    ("overlay: sin el desplazamiento de la aparición", F, "dx + dw / 2 + fx.tx * dw", "dx + dw / 2"),
+    ("overlay: sin volteo", F, "scaled(m, fx.scale * fh, fx.scale * fv)", "scaled(m, fx.scale, fx.scale)"),
+    ("overlay: giro al revés", F, "m = rotated(m, rot * std::numbers::pi / 180);\n        m = scaled(m, fx.scale",
+     "m = rotated(m, -rot * std::numbers::pi / 180);\n        m = scaled(m, fx.scale"),
+    ("overlay: sin cortinilla", F, "if (fx.wipe < 1) {\n            layer.wipe = quad(m, dx, dy",
+     "if (false) {\n            layer.wipe = quad(m, dx, dy"),
+    ("relleno: sin la escala de la aparición", F, "    m = scaled(m, fx.scale, fx.scale);\n", ""),
+    ("relleno: el render se salta la escala pequeña", F, "if (!preview || dx != 0", "if (dx != 0"),
+    ("relleno: el preview aplica la escala pequeña", F, "if (!preview || dx != 0", "if (true || dx != 0"),
+    ("relleno: la pose sin restar el centro", F, "(pose.x - 0.5) * out_w", "pose.x * out_w"),
+    ("relleno: contain sin centrar", F, "area.dx + (area.dw - dw) / 2", "area.dx"),
+    ("relleno: recorte de la pose ignorado", F, "        if (keyframes_enabled(clip)) {\n            const CropWindow",
+     "        if (false) {\n            const CropWindow"),
+    ("doble: zoom2 sin el zoom de respaldo", F, "rf.zoom2.value_or(rf.zoom)", "rf.zoom2.value_or(1.0)"),
+    ("doble: keyframes2 sin respaldo", F, "rf.keyframes2.empty() ? rf.keyframes : rf.keyframes2", "rf.keyframes2"),
+    ("doble: aspecto de la mitad", F, "out_aspect / 2 : out_aspect * 2", "out_aspect : out_aspect"),
+    ("doble: orientación por defecto al revés", F, 'out_aspect < 1 ? "vertical" : "horizontal"',
+     'out_aspect < 1 ? "horizontal" : "vertical"'),
+    ("tiempo de fuente: al revés ignorado", F, "clip.reverse ? clip.out_point - local : clip.in_point + local",
+     "clip.in_point + local"),
+    ("tiempo de fuente: sin acotar", F, "return clamp(src, clip.in_point, clip.out_point);", "return src;"),
+    ("opacidad sin la de la pose", F, "layer.fx.opacity * layer.pose.opacity", "layer.fx.opacity"),
+    ("render: inicio sin acotar a 0", F, "preview ? c->start : std::max(0.0, c->start)", "c->start"),
+    ("blit sin el origen del recorte", F, "d.dx - s.sx * d.dw / s.sw", "d.dx"),
+    ("motion sin material", F, '|| clip.kind == "motion"', ""),
+    ("render: material sin tamaño sin error", F, "                if (!preview) {", "                if (false) {"),
+]
+
+GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]")}
 
 
 def run(cmd: list[str]) -> subprocess.CompletedProcess:

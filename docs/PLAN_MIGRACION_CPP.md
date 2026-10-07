@@ -709,3 +709,23 @@ Sin el Windows SDK, F3 empieza por la evaluación, que es lógica pura: qué se 
 - Docs: firma de `layers_at` y campo de `LayerRules` en las notas, nota obsoleta de las duraciones, fila de F3, tope sin test de `animation_sample_times` y la decisión del relleno en «Pendiente por tu parte».
 - **Resultado:** 69 tests y 102 988 aserciones en verde, en Debug y en Release.
 
+### 2026-10-07 — F3, evaluación (3): el fotograma ensamblado
+
+**Hecho:**
+- **`frame.hpp`: `evaluate(timeline, t, FrameSpec, dimensiones del material)`.** Por cada capa visible (`layers_at`) y cada pasada (`adjust_passes`):
+  - tiempo local y de fuente, pose (`render_pose`), aparición/salida (`clip_fx_at`), opacidad final, fusión, volteo y máscaras;
+  - para el vídeo, la imagen y el motion, los «blits»: el rectángulo de la fuente y la transformación afín que lo lleva al cuadro, en el mismo orden de operaciones que el contexto 2D del preview. Hay overlay, relleno (cover y `contain`, con la pose sobre el cuadro entero) y doble encuadre (`split_orientation_for`, `contain_dest`), además del recorte de la cortinilla.
+- **Errores:** las dimensiones de salida tienen que ser finitas y mayores que 0. Con las reglas del render, también las de cada material (Python lanzaría ZeroDivisionError); con las del preview, esa capa va sin dibujo.
+- **Oráculo con el JS real:** `tools/fixtures/frame_js.mjs` ejecuta el `drawComposite` de `canvas.js` con Node (con un hook de resolución, `node_hook.mjs`, para sus imports sin extensión) sobre un contexto 2D que graba la matriz, el recorte y la opacidad de cada `drawImage` del material.
+- `recipe_layout.py` queda cubierto: lo que no está en `frame.cpp` son cadenas de FFmpeg.
+
+**Verificación:**
+- **Casos:** 10 timelines sintéticas en 95 instantes (203 dibujos): overlay con recorte libre, volteos y giro; todas las apariciones y salidas; pose animada y animaciones de catálogo; relleno con reframe, keyframes de encuadre, `contain` (en un tramo, en todos, vertical en una salida horizontal) y pose; el atajo de escala del preview; doble encuadre vertical y horizontal; imagen, motion, velocidad 2 y al revés; máscara de ajuste (base + fantasma) con fusión; y un clip sin material.
+- **Tus datos:** tus 18 timelines en 831 instantes, lejos de los bordes de los clips: 1692 dibujos comparados y 22 fuera, porque el `clipDur` de JS (sin redondeo) cambia la ventana de aparición o salida.
+- **Exactitud:** bit a bit salvo en las capas giradas (sin/cos de V8 frente a la libm: tolerancia relativa de 1e-12).
+- **Reglas del render y errores:** 7 tests propios.
+- **Mutación:** 21/21. Hizo falta un caso de `contain` que centre en horizontal.
+- **Resultado:** 78 tests y 110 605 aserciones en verde, en Debug y en Release, con 0 warnings.
+
+**Con esto, la evaluación de F3 está completa.** Lo siguiente de F3 es `gc_media` y `gc_render`, que necesitan el Windows SDK (MSVC + vcpkg). Mientras tanto quedan los pendientes de F1 (biblioteca de SFX de disco y colecciones) y de F0 (`.clang-tidy`, spdlog).
+

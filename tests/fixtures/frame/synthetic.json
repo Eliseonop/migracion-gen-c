@@ -1,0 +1,6997 @@
+{
+ "cases": [
+  {
+   "name": "overlay: transform, recorte libre y volteo",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "a",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "a",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 1.0,
+       "keyframes": [
+        {
+         "t": 0.0,
+         "cx": 0.05,
+         "cy": 0.95,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": null
+        },
+        {
+         "t": 3.0,
+         "cx": 0.6,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": null
+        }
+       ],
+       "pan_mode": "smooth",
+       "dual_crop": false,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [],
+       "crop_w": 0.4,
+       "crop_h": 0.3,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": {
+       "x": 0.3,
+       "y": 0.6,
+       "scale": 0.5,
+       "rotation": 30
+      },
+      "frame": "free",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": true,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "b",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "b",
+      "filename": "b.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 0.5,
+       "keyframes": [],
+       "pan_mode": "smooth",
+       "dual_crop": false,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [],
+       "crop_w": null,
+       "crop_h": null,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": {
+       "x": 0.8,
+       "y": 0.2,
+       "scale": 0.7,
+       "rotation": -45
+      },
+      "frame": "free",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": true,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "out": [
+    1080,
+    1920
+   ],
+   "media": {
+    "a": [
+     1920,
+     1080
+    ],
+    "b": [
+     1080,
+     1920
+    ]
+   },
+   "heads": [
+    0,
+    0.1,
+    0.2,
+    0.35,
+    0.5,
+    1,
+    1.5,
+    2.2,
+    3.65,
+    3.8,
+    3.9
+   ],
+   "js_dur": [],
+   "frames": [
+    [
+     {
+      "id": "a",
+      "src": [
+       0,
+       756,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       719.7768775266122,
+       850.4943396629426
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "src": [
+       0,
+       756,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       719.7768775266122,
+       850.4943396629426
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "src": [
+       0,
+       756,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       719.7768775266122,
+       850.4943396629426
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "src": [
+       0,
+       756,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       719.7768775266122,
+       850.4943396629426
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "src": [
+       0,
+       756,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       719.7768775266122,
+       850.4943396629426
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "src": [
+       63.99999999999988,
+       702,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       733.9896904477142,
+       889.8770255651225
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "src": [
+       239.9999999999999,
+       621,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       789.9499259807448,
+       968.9510544183922
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "src": [
+       486.3999999999999,
+       507.59999999999985,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       868.2942557269877,
+       1079.6546948129699
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "src": [
+       767.9999999999999,
+       378,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       957.8306325798367,
+       1206.1731409782014
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "src": [
+       767.9999999999999,
+       378,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       957.8306325798367,
+       1206.1731409782014
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "src": [
+       767.9999999999999,
+       378,
+       768,
+       324
+      ],
+      "m": [
+       -0.43301270189221935,
+       -0.24999999999999997,
+       -0.24999999999999997,
+       0.43301270189221935,
+       957.8306325798367,
+       1206.1731409782014
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     },
+     {
+      "id": "b",
+      "src": [
+       270,
+       480,
+       540,
+       960
+      ],
+      "m": [
+       0.4949747468305833,
+       -0.4949747468305832,
+       -0.4949747468305832,
+       -0.4949747468305833,
+       1071.889393668845,
+       1126.462120245875
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     }
+    ]
+   ]
+  },
+  {
+   "name": "overlay: apariciones y salidas",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "z",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "z",
+      "filename": "z.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": {
+       "scale": 0.6,
+       "rotation": 10
+      },
+      "frame": "free",
+      "appear": "zoom",
+      "exit": "pop",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "s",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "s",
+      "filename": "s.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": {
+       "x": 0.4,
+       "y": 0.4,
+       "scale": 0.3
+      },
+      "frame": "free",
+      "appear": "slide_left",
+      "exit": "slide_down",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "w",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "w",
+      "filename": "w.mp4",
+      "name": null,
+      "start": 4.0,
+      "in_point": 0.0,
+      "out_point": 2.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": {
+       "x": 0.5,
+       "y": 0.5,
+       "scale": 2,
+       "rotation": 90
+      },
+      "frame": "full",
+      "appear": "wipe",
+      "exit": "wipe",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "out": [
+    1080,
+    1920
+   ],
+   "media": {
+    "z": [
+     1920,
+     1080
+    ],
+    "s": [
+     1280,
+     720
+    ],
+    "w": [
+     640,
+     480
+    ]
+   },
+   "heads": [
+    0,
+    0.1,
+    0.2,
+    0.35,
+    0.5,
+    1,
+    1.5,
+    2.2,
+    3.65,
+    3.8,
+    3.9,
+    4,
+    4.1,
+    4.2,
+    4.5,
+    5.7,
+    5.9
+   ],
+   "js_dur": [],
+   "frames": [
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.6972438891326432,
+       0.12294290978818666,
+       -0.12294290978818666,
+       0.6972438891326432,
+       -62.96496228171668,
+       465.46310647171344
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       361.5,
+       660
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     }
+    ],
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.6706540798013138,
+       0.11825440899117955,
+       -0.11825440899117955,
+       0.6706540798013138,
+       -39.97053575402424,
+       484.3225642757582
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       331.125,
+       660
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     }
+    ],
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.6440642704699839,
+       0.11356590819417241,
+       -0.11356590819417241,
+       0.6440642704699839,
+       -16.976109226331573,
+       503.1820220798031
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       300.75,
+       660
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     }
+    ],
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.6041795564729896,
+       0.10653315699866174,
+       -0.10653315699866174,
+       0.6041795564729896,
+       17.515530565207314,
+       531.4712087858703
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       255.1875,
+       660
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     }
+    ],
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.5908846518073247,
+       0.1041889066001582,
+       -0.1041889066001582,
+       0.5908846518073247,
+       29.01274382905359,
+       540.9009376878927
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       240,
+       660
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.5908846518073247,
+       0.1041889066001582,
+       -0.1041889066001582,
+       0.5908846518073247,
+       29.01274382905359,
+       540.9009376878927
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       240,
+       660
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     }
+    ],
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.5908846518073247,
+       0.1041889066001582,
+       -0.1041889066001582,
+       0.5908846518073247,
+       29.01274382905359,
+       540.9009376878927
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       240,
+       660
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     }
+    ],
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.5908846518073247,
+       0.1041889066001582,
+       -0.1041889066001582,
+       0.5908846518073247,
+       29.01274382905359,
+       540.9009376878927
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       240,
+       660
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     }
+    ],
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.5702036889940685,
+       0.10054229486915267,
+       -0.10054229486915267,
+       0.5702036889940685,
+       46.89729779503671,
+       555.5694048688165
+      ],
+      "alpha": 0.8750000000000002,
+      "clip": null,
+      "src_t": 3.65
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       240,
+       687
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     }
+    ],
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.5081608005542994,
+       0.08960245967613606,
+       -0.08960245967613606,
+       0.5081608005542994,
+       100.55095969298605,
+       599.5748064115877
+      ],
+      "alpha": 0.5000000000000004,
+      "clip": null,
+      "src_t": 3.8
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       240,
+       767.9999999999999
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     }
+    ],
+    [
+     {
+      "id": "z",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.4667988749277866,
+       0.08230923621412498,
+       -0.08230923621412498,
+       0.4667988749277866,
+       136.32006762495234,
+       628.9117407734352
+      ],
+      "alpha": 0.2500000000000002,
+      "clip": null,
+      "src_t": 3.9
+     },
+     {
+      "id": "s",
+      "src": [
+       437.5,
+       0,
+       405,
+       720
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       240,
+       822
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     }
+    ],
+    [
+     {
+      "id": "w",
+      "src": [
+       185,
+       0,
+       270,
+       480
+      ],
+      "m": [
+       1.2246467991473532e-16,
+       2,
+       -2,
+       1.2246467991473532e-16,
+       1020,
+       320
+      ],
+      "alpha": 1,
+      "clip": [
+       [
+        270,
+        480
+       ],
+       [
+        270,
+        480
+       ],
+       [
+        270,
+        1440
+       ],
+       [
+        270,
+        1440
+       ]
+      ],
+      "src_t": 0
+     }
+    ],
+    [
+     {
+      "id": "w",
+      "src": [
+       185,
+       0,
+       270,
+       480
+      ],
+      "m": [
+       1.2246467991473532e-16,
+       2,
+       -2,
+       1.2246467991473532e-16,
+       1020,
+       320
+      ],
+      "alpha": 1,
+      "clip": [
+       [
+        270,
+        480
+       ],
+       [
+        404.99999999999955,
+        480
+       ],
+       [
+        404.99999999999955,
+        1440
+       ],
+       [
+        270,
+        1440
+       ]
+      ],
+      "src_t": 0.09999999999999964
+     }
+    ],
+    [
+     {
+      "id": "w",
+      "src": [
+       185,
+       0,
+       270,
+       480
+      ],
+      "m": [
+       1.2246467991473532e-16,
+       2,
+       -2,
+       1.2246467991473532e-16,
+       1020,
+       320
+      ],
+      "alpha": 1,
+      "clip": [
+       [
+        270,
+        480
+       ],
+       [
+        540.0000000000002,
+        480
+       ],
+       [
+        540.0000000000002,
+        1440
+       ],
+       [
+        270,
+        1440
+       ]
+      ],
+      "src_t": 0.20000000000000018
+     }
+    ],
+    [
+     {
+      "id": "w",
+      "src": [
+       185,
+       0,
+       270,
+       480
+      ],
+      "m": [
+       1.2246467991473532e-16,
+       2,
+       -2,
+       1.2246467991473532e-16,
+       1020,
+       320
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "w",
+      "src": [
+       185,
+       0,
+       270,
+       480
+      ],
+      "m": [
+       1.2246467991473532e-16,
+       2,
+       -2,
+       1.2246467991473532e-16,
+       1020,
+       320
+      ],
+      "alpha": 1,
+      "clip": [
+       [
+        270,
+        480
+       ],
+       [
+        674.9999999999998,
+        480
+       ],
+       [
+        674.9999999999998,
+        1440
+       ],
+       [
+        270,
+        1440
+       ]
+      ],
+      "src_t": 1.7000000000000002
+     }
+    ],
+    [
+     {
+      "id": "w",
+      "src": [
+       185,
+       0,
+       270,
+       480
+      ],
+      "m": [
+       1.2246467991473532e-16,
+       2,
+       -2,
+       1.2246467991473532e-16,
+       1020,
+       320
+      ],
+      "alpha": 1,
+      "clip": [
+       [
+        270,
+        480
+       ],
+       [
+        404.99999999999955,
+        480
+       ],
+       [
+        404.99999999999955,
+        1440
+       ],
+       [
+        270,
+        1440
+       ]
+      ],
+      "src_t": 1.9000000000000004
+     }
+    ]
+   ]
+  },
+  {
+   "name": "overlay: pose animada y animaciones de catálogo",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "k",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "k",
+      "filename": "k.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 1.0,
+       "keyframes": [],
+       "pan_mode": "smooth",
+       "dual_crop": false,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [],
+       "crop_w": 0.5,
+       "crop_h": 0.5,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": null,
+      "frame": "free",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": {
+       "enabled": true,
+       "items": [
+        {
+         "t": 0,
+         "props": {
+          "x": 0.2,
+          "scale": 0.5,
+          "rotation": -30,
+          "cx": 0.3
+         }
+        },
+        {
+         "t": 3,
+         "interpolation": "ease-in-out",
+         "props": {
+          "x": 0.8,
+          "scale": 1.5,
+          "rotation": 200,
+          "cx": 0.7
+         }
+        }
+       ]
+      },
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "an",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "an",
+      "filename": "an.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": {
+       "x": 0.5,
+       "y": 0.3,
+       "scale": 0.8
+      },
+      "frame": "free",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": {
+       "in": {
+        "id": "spin_in"
+       },
+       "out": {
+        "id": "fade_out"
+       },
+       "loop": {
+        "id": "pulse"
+       }
+      },
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "out": [
+    1080,
+    1920
+   ],
+   "media": {
+    "k": [
+     1920,
+     1080
+    ],
+    "an": [
+     1080,
+     1080
+    ]
+   },
+   "heads": [
+    0,
+    0.1,
+    0.2,
+    0.35,
+    0.5,
+    1,
+    1.5,
+    2.2,
+    3.65,
+    3.8,
+    3.9
+   ],
+   "js_dur": [],
+   "frames": [
+    [
+     {
+      "id": "k",
+      "src": [
+       95.99999999999997,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       0.43301270189221935,
+       -0.24999999999999997,
+       0.24999999999999997,
+       0.43301270189221935,
+       -168.41531628991834,
+       870.1731409782016
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       -0.16000000000000003,
+       -1.9594348786357654e-17,
+       1.9594348786357654e-17,
+       -0.16000000000000003,
+       626.4,
+       662.4000000000001
+      ],
+      "alpha": 0,
+      "clip": null,
+      "src_t": 0
+     }
+    ],
+    [
+     {
+      "id": "k",
+      "src": [
+       97.70666666666664,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       0.4371599224626325,
+       -0.24722128283441192,
+       0.24722128283441192,
+       0.4371599224626325,
+       -168.6096943367283,
+       866.7550251055038
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       -0.10607291502097928,
+       -0.42022395072094704,
+       0.4202239507209471,
+       -0.10607291502097929,
+       370.35844072201735,
+       860.2003075006403
+      ],
+      "alpha": 0.5555555555555557,
+      "clip": null,
+      "src_t": 0.1
+     }
+    ],
+    [
+     {
+      "id": "k",
+      "src": [
+       102.8266666666666,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       0.4495074063326144,
+       -0.23856025001389847,
+       0.23856025001389847,
+       0.4495074063326144,
+       -169.04743828232162,
+       856.3052758951553
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.37542254811110287,
+       -0.504279997151897,
+       0.504279997151897,
+       0.37542254811110287,
+       64.96062555798017,
+       645.5830224820288
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     }
+    ],
+    [
+     {
+      "id": "k",
+      "src": [
+       116.90666666666665,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       0.4826137205265086,
+       -0.2122434177177218,
+       0.2122434177177218,
+       0.4826137205265086,
+       -169.04679277464626,
+       826.0781019075116
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.7767071929662973,
+       -0.17961448131748484,
+       0.17961448131748484,
+       0.7767071929662973,
+       23.586295886757625,
+       253.5699357096413
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     }
+    ],
+    [
+     {
+      "id": "k",
+      "src": [
+       138.6666666666666,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       0.5306464442378461,
+       -0.16448807411594438,
+       0.16448807411594438,
+       0.5306464442378461,
+       -165.11682685775742,
+       775.214208631294
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.8377672385611674,
+       -0.01218568983041302,
+       0.01218568983041302,
+       0.8377672385611674,
+       81.02541866854654,
+       130.1859636853926
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "k",
+      "src": [
+       266.6666666666666,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       0.6737493423064448,
+       0.26012835680340185,
+       -0.26012835680340185,
+       0.6737493423064448,
+       -2.596862914975077,
+       401.94618207464634
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.8240000000000001,
+       0,
+       0,
+       0.8240000000000001,
+       95.03999999999996,
+       131.03999999999996
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     }
+    ],
+    [
+     {
+      "id": "k",
+      "src": [
+       480,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       0.08715574274765814,
+       0.9961946980917455,
+       -0.9961946980917455,
+       0.08715574274765814,
+       994.2756239317907,
+       -43.411011251811146
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.8070294372515229,
+       0,
+       0,
+       0.8070294372515229,
+       104.20410388417764,
+       140.20410388417764
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     }
+    ],
+    [
+     {
+      "id": "k",
+      "src": [
+       754.7733333333333,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       -1.3245012131204508,
+       0.2987591509387024,
+       -0.2987591509387024,
+       -1.3245012131204508,
+       2568.6287194356823,
+       1306.3308224166253
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.8240000000000001,
+       0,
+       0,
+       0.8240000000000001,
+       95.03999999999996,
+       131.03999999999996
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     }
+    ],
+    [
+     {
+      "id": "k",
+      "src": [
+       863.9999999999999,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       -1.4095389311788626,
+       -0.513030214988503,
+       0.513030214988503,
+       -1.4095389311788626,
+       2481.3840074105997,
+       2410.663631781134
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.846173108780271,
+       0,
+       0,
+       0.846173108780271,
+       83.06652125865367,
+       119.06652125865367
+      ],
+      "alpha": 0.9100000000000001,
+      "clip": null,
+      "src_t": 3.65
+     }
+    ],
+    [
+     {
+      "id": "k",
+      "src": [
+       863.9999999999999,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       -1.4095389311788626,
+       -0.513030214988503,
+       0.513030214988503,
+       -1.4095389311788626,
+       2481.3840074105997,
+       2410.663631781134
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.8240000000000003,
+       0,
+       0,
+       0.8240000000000003,
+       95.03999999999985,
+       131.03999999999985
+      ],
+      "alpha": 0.6400000000000003,
+      "clip": null,
+      "src_t": 3.8
+     }
+    ],
+    [
+     {
+      "id": "k",
+      "src": [
+       863.9999999999999,
+       270,
+       960,
+       540
+      ],
+      "m": [
+       -1.4095389311788626,
+       -0.513030214988503,
+       0.513030214988503,
+       -1.4095389311788626,
+       2481.3840074105997,
+       2410.663631781134
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     },
+     {
+      "id": "an",
+      "src": [
+       236.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.8070294372515229,
+       0,
+       0,
+       0.8070294372515229,
+       104.20410388417764,
+       140.20410388417764
+      ],
+      "alpha": 0.3600000000000003,
+      "clip": null,
+      "src_t": 3.9
+     }
+    ]
+   ]
+  },
+  {
+   "name": "relleno: reframe, zoom y keyframes de encuadre",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "r",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "r",
+      "filename": "r.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 0.6,
+       "keyframes": [
+        {
+         "t": 0.0,
+         "cx": 0.2,
+         "cy": 0.3,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": null
+        },
+        {
+         "t": 2.0,
+         "cx": 0.8,
+         "cy": 0.5,
+         "zoom": 0.4,
+         "pan_mode": null,
+         "fit": null
+        },
+        {
+         "t": 3.0,
+         "cx": 0.1,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": "direct",
+         "fit": null
+        }
+       ],
+       "pan_mode": "smooth",
+       "dual_crop": false,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [],
+       "crop_w": null,
+       "crop_h": null,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "p",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "p",
+      "filename": "p.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": {
+       "enabled": true,
+       "items": [
+        {
+         "t": 0,
+         "props": {
+          "cx": 0.1,
+          "zoom": 0.4,
+          "x": 0.4
+         }
+        },
+        {
+         "t": 2,
+         "props": {
+          "cx": 0.9,
+          "cy": 0.2,
+          "zoom": 1,
+          "x": 0.6,
+          "rotation": 15
+         }
+        }
+       ]
+      },
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "out": [
+    1080,
+    1920
+   ],
+   "media": {
+    "r": [
+     1920,
+     1080
+    ],
+    "p": [
+     3840,
+     2160
+    ]
+   },
+   "heads": [
+    0,
+    0.1,
+    0.2,
+    0.35,
+    0.5,
+    1,
+    1.5,
+    2.2,
+    3.65,
+    3.8,
+    3.9
+   ],
+   "js_dur": [],
+   "frames": [
+    [
+     {
+      "id": "r",
+      "src": [
+       201.75000000000003,
+       0,
+       364.5,
+       648
+      ],
+      "m": [
+       2.962962962962963,
+       0,
+       0,
+       2.962962962962963,
+       -597.7777777777778,
+       0
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     },
+     {
+      "id": "p",
+      "src": [
+       140.99999999999997,
+       0,
+       486.0000000000001,
+       864
+      ],
+      "m": [
+       2.1465018361979293,
+       0.5751534335611571,
+       -0.5751534335611572,
+       2.14650183619793,
+       -143.7904218015849,
+       -188.14771172499007
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     }
+    ],
+    [
+     {
+      "id": "r",
+      "src": [
+       262.3875,
+       16.200000000000014,
+       358.425,
+       637.1999999999999
+      ],
+      "m": [
+       3.0131826741996233,
+       0,
+       0,
+       3.0131826741996237,
+       -790.6214689265537,
+       -48.813559322033946
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     },
+     {
+      "id": "p",
+      "src": [
+       276.375,
+       0,
+       522.45,
+       928.8000000000001
+      ],
+      "m": [
+       1.9967458941376088,
+       0.5350264498243322,
+       -0.5350264498243322,
+       1.9967458941376088,
+       -382.1843093899585,
+       -254.91901266306675
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     }
+    ],
+    [
+     {
+      "id": "r",
+      "src": [
+       323.02500000000003,
+       32.40000000000003,
+       352.34999999999997,
+       626.4
+      ],
+      "m": [
+       3.0651340996168583,
+       0,
+       0,
+       3.0651340996168583,
+       -990.1149425287359,
+       -99.31034482758629
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     },
+     {
+      "id": "p",
+      "src": [
+       411.75000000000006,
+       0,
+       558.9000000000001,
+       993.6
+      ],
+      "m": [
+       1.8665233358242863,
+       0.5001334204879627,
+       -0.5001334204879627,
+       1.8665233358242865,
+       -588.0746464233271,
+       -312.9810134787856
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     }
+    ],
+    [
+     {
+      "id": "r",
+      "src": [
+       413.98125000000016,
+       56.69999999999999,
+       343.23749999999995,
+       610.1999999999999
+      ],
+      "m": [
+       3.1465093411996072,
+       0,
+       0,
+       3.1465093411996072,
+       -1302.5958702064904,
+       -178.40707964601768
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     },
+     {
+      "id": "p",
+      "src": [
+       614.8125,
+       0,
+       613.575,
+       1090.8
+      ],
+      "m": [
+       1.7001994742161817,
+       0.45556707608804525,
+       -0.4555670760880453,
+       1.700199474216182,
+       -848.6375521392131,
+       -387.1394105602482
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     }
+    ],
+    [
+     {
+      "id": "r",
+      "src": [
+       504.9375,
+       80.99999999999996,
+       334.12500000000006,
+       594
+      ],
+      "m": [
+       3.232323232323232,
+       0,
+       0,
+       3.2323232323232323,
+       -1632.1212121212118,
+       -261.8181818181817
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "p",
+      "src": [
+       817.8750000000001,
+       0,
+       668.2500000000001,
+       1188
+      ],
+      "m": [
+       1.561092244507585,
+       0.41829340622629607,
+       -0.4182934062262961,
+       1.5610922445075852,
+       -1063.911982374318,
+       -449.1627972101989
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "r",
+      "src": [
+       808.125,
+       162.00000000000003,
+       303.75,
+       540
+      ],
+      "m": [
+       3.5555555555555554,
+       0,
+       0,
+       3.5555555555555554,
+       -2873.3333333333335,
+       -576.0000000000001
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     },
+     {
+      "id": "p",
+      "src": [
+       1494.75,
+       0,
+       850.5,
+       1512
+      ],
+      "m": [
+       1.2265724778273883,
+       0.3286591048920898,
+       -0.3286591048920898,
+       1.2265724778273883,
+       -1566.5528741301655,
+       -598.3142746303182
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     }
+    ],
+    [
+     {
+      "id": "r",
+      "src": [
+       1111.3125000000002,
+       243,
+       273.375,
+       486
+      ],
+      "m": [
+       3.950617283950617,
+       0,
+       0,
+       3.950617283950617,
+       -4390.370370370371,
+       -960
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     },
+     {
+      "id": "p",
+      "src": [
+       2171.6250000000005,
+       0,
+       1032.75,
+       1836
+      ],
+      "m": [
+       1.0101185111519668,
+       0.2706604393228975,
+       -0.2706604393228975,
+       1.0101185111519668,
+       -1872.7322746780674,
+       -694.8240541374544
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     }
+    ],
+    [
+     {
+      "id": "r",
+      "src": [
+       1414.5000000000002,
+       324,
+       243.00000000000006,
+       432
+      ],
+      "m": [
+       4.444444444444444,
+       0,
+       0,
+       4.444444444444445,
+       -6286.666666666666,
+       -1440
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     },
+     {
+      "id": "p",
+      "src": [
+       2625,
+       0,
+       1215,
+       2160
+      ],
+      "m": [
+       0.8586007344791717,
+       0.23006137342446287,
+       -0.23006137342446287,
+       0.8586007344791717,
+       -1878.960590905503,
+       -710.962182832082
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     }
+    ],
+    [
+     {
+      "id": "r",
+      "src": [
+       9.750000000000005,
+       216,
+       364.5,
+       648
+      ],
+      "m": [
+       2.962962962962963,
+       0,
+       0,
+       2.962962962962963,
+       -28.888888888888903,
+       -640
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     },
+     {
+      "id": "p",
+      "src": [
+       2625,
+       0,
+       1215,
+       2160
+      ],
+      "m": [
+       0.8586007344791717,
+       0.23006137342446287,
+       -0.23006137342446287,
+       0.8586007344791717,
+       -1878.960590905503,
+       -710.962182832082
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     }
+    ],
+    [
+     {
+      "id": "r",
+      "src": [
+       9.750000000000005,
+       216,
+       364.5,
+       648
+      ],
+      "m": [
+       2.962962962962963,
+       0,
+       0,
+       2.962962962962963,
+       -28.888888888888903,
+       -640
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     },
+     {
+      "id": "p",
+      "src": [
+       2625,
+       0,
+       1215,
+       2160
+      ],
+      "m": [
+       0.8586007344791717,
+       0.23006137342446287,
+       -0.23006137342446287,
+       0.8586007344791717,
+       -1878.960590905503,
+       -710.962182832082
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     }
+    ],
+    [
+     {
+      "id": "r",
+      "src": [
+       9.750000000000005,
+       216,
+       364.5,
+       648
+      ],
+      "m": [
+       2.962962962962963,
+       0,
+       0,
+       2.962962962962963,
+       -28.888888888888903,
+       -640
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     },
+     {
+      "id": "p",
+      "src": [
+       2625,
+       0,
+       1215,
+       2160
+      ],
+      "m": [
+       0.8586007344791717,
+       0.23006137342446287,
+       -0.23006137342446287,
+       0.8586007344791717,
+       -1878.960590905503,
+       -710.962182832082
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     }
+    ]
+   ]
+  },
+  {
+   "name": "relleno: contain en un tramo y en todos",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "m",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "m",
+      "filename": "m.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 0.7,
+       "keyframes": [
+        {
+         "t": 0.0,
+         "cx": 0.5,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": "contain"
+        },
+        {
+         "t": 1.5,
+         "cx": 0.9,
+         "cy": 0.5,
+         "zoom": 0.4,
+         "pan_mode": null,
+         "fit": null
+        },
+        {
+         "t": 3.0,
+         "cx": 0.0,
+         "cy": 1.0,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": "contain"
+        }
+       ],
+       "pan_mode": "smooth",
+       "dual_crop": false,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [],
+       "crop_w": null,
+       "crop_h": null,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "c",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "c",
+      "filename": "c.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 1.0,
+       "keyframes": [
+        {
+         "t": 0.0,
+         "cx": 0.5,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": "contain"
+        }
+       ],
+       "pan_mode": "smooth",
+       "dual_crop": false,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [],
+       "crop_w": null,
+       "crop_h": null,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": {
+       "scale": 0.5
+      },
+      "frame": "full",
+      "appear": "wipe",
+      "exit": "fade",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": true,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "out": [
+    1080,
+    1920
+   ],
+   "media": {
+    "m": [
+     1920,
+     1080
+    ],
+    "c": [
+     1080,
+     1920
+    ]
+   },
+   "heads": [
+    0,
+    0.1,
+    0.2,
+    0.35,
+    0.5,
+    1,
+    1.5,
+    2.2,
+    3.65,
+    3.8,
+    3.9
+   ],
+   "js_dur": [],
+   "frames": [
+    [
+     {
+      "id": "m",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.5625,
+       0,
+       0,
+       0.5625,
+       0,
+       656.25
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 1,
+      "clip": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        1920
+       ],
+       [
+        0,
+        1920
+       ]
+      ],
+      "src_t": 0
+     }
+    ],
+    [
+     {
+      "id": "m",
+      "src": [
+       804.65,
+       172.80000000000004,
+       413.09999999999997,
+       734.4
+      ],
+      "m": [
+       2.6143790849673203,
+       0,
+       0,
+       2.6143790849673203,
+       -2103.6601307189544,
+       -451.76470588235304
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 1,
+      "clip": [
+       [
+        0,
+        0
+       ],
+       [
+        270,
+        0
+       ],
+       [
+        270,
+        1920
+       ],
+       [
+        0,
+        1920
+       ]
+      ],
+      "src_t": 0.1
+     }
+    ],
+    [
+     {
+      "id": "m",
+      "src": [
+       861.925,
+       183.60000000000005,
+       400.95,
+       712.8
+      ],
+      "m": [
+       2.6936026936026938,
+       0,
+       0,
+       2.6936026936026938,
+       -2321.6835016835016,
+       -494.54545454545473
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 1,
+      "clip": [
+       [
+        0,
+        0
+       ],
+       [
+        540,
+        0
+       ],
+       [
+        540,
+        1920
+       ],
+       [
+        0,
+        1920
+       ]
+      ],
+      "src_t": 0.2
+     }
+    ],
+    [
+     {
+      "id": "m",
+      "src": [
+       947.8374999999999,
+       199.8,
+       382.725,
+       680.4
+      ],
+      "m": [
+       2.821869488536155,
+       0,
+       0,
+       2.8218694885361555,
+       -2674.6737213403876,
+       -563.8095238095239
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 1,
+      "clip": [
+       [
+        0,
+        0
+       ],
+       [
+        944.9999999999999,
+        0
+       ],
+       [
+        944.9999999999999,
+        1920
+       ],
+       [
+        0,
+        1920
+       ]
+      ],
+      "src_t": 0.35
+     }
+    ],
+    [
+     {
+      "id": "m",
+      "src": [
+       1033.7499999999998,
+       216,
+       364.5,
+       648
+      ],
+      "m": [
+       2.962962962962963,
+       0,
+       0,
+       2.962962962962963,
+       -3062.962962962962,
+       -640
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "m",
+      "src": [
+       1320.125,
+       270,
+       303.75,
+       540
+      ],
+      "m": [
+       3.5555555555555554,
+       0,
+       0,
+       3.5555555555555554,
+       -4693.777777777777,
+       -960
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     }
+    ],
+    [
+     {
+      "id": "m",
+      "src": [
+       1606.5,
+       324,
+       243.00000000000006,
+       432
+      ],
+      "m": [
+       4.444444444444444,
+       0,
+       0,
+       4.444444444444445,
+       -7139.999999999998,
+       -1440
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     }
+    ],
+    [
+     {
+      "id": "m",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.5625,
+       0,
+       0,
+       0.5625,
+       0,
+       656.25
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     }
+    ],
+    [
+     {
+      "id": "m",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.5625,
+       0,
+       0,
+       0.5625,
+       0,
+       656.25
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 0.8750000000000002,
+      "clip": null,
+      "src_t": 3.65
+     }
+    ],
+    [
+     {
+      "id": "m",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.5625,
+       0,
+       0,
+       0.5625,
+       0,
+       656.25
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 0.5000000000000004,
+      "clip": null,
+      "src_t": 3.8
+     }
+    ],
+    [
+     {
+      "id": "m",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.5625,
+       0,
+       0,
+       0.5625,
+       0,
+       656.25
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     },
+     {
+      "id": "c",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       -0.5,
+       0,
+       0,
+       0.5,
+       810,
+       480
+      ],
+      "alpha": 0.2500000000000002,
+      "clip": null,
+      "src_t": 3.9
+     }
+    ]
+   ]
+  },
+  {
+   "name": "relleno: pose, volteo, el atajo de escala 0,001 y contain vertical en horizontal",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "f",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "f",
+      "filename": "f.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": {
+       "x": 0.4,
+       "y": 0.6,
+       "scale": 1.2,
+       "rotation": -20
+      },
+      "frame": "full",
+      "appear": "slide_up",
+      "exit": "zoom",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": true,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "q",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "q",
+      "filename": "q.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": {
+       "scale": 1.0005
+      },
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": 0.5,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "cp",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "cp",
+      "filename": "cp.mp4",
+      "name": null,
+      "start": 4.0,
+      "in_point": 0.0,
+      "out_point": 2.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 1.0,
+       "keyframes": [
+        {
+         "t": 0.0,
+         "cx": 0.5,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": "contain"
+        }
+       ],
+       "pan_mode": "smooth",
+       "dual_crop": false,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [],
+       "crop_w": null,
+       "crop_h": null,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "out": [
+    1920,
+    1080
+   ],
+   "media": {
+    "f": [
+     1920,
+     1080
+    ],
+    "q": [
+     1080,
+     1920
+    ],
+    "cp": [
+     1080,
+     1920
+    ]
+   },
+   "heads": [
+    0,
+    0.1,
+    0.2,
+    0.35,
+    0.5,
+    1,
+    1.5,
+    2.2,
+    3.65,
+    3.8,
+    3.9,
+    4.5,
+    5
+   ],
+   "js_dur": [],
+   "frames": [
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.12763114494309,
+       -0.41042417199080244,
+       -0.41042417199080244,
+       -1.12763114494309,
+       -92.89684627033307,
+       2730.928023380439
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 0
+     }
+    ],
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.12763114494309,
+       -0.41042417199080244,
+       -0.41042417199080244,
+       -1.12763114494309,
+       -92.89684627033307,
+       2460.928023380439
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 0.1
+     }
+    ],
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.12763114494309,
+       -0.41042417199080244,
+       -0.41042417199080244,
+       -1.12763114494309,
+       -92.89684627033307,
+       2190.928023380439
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 0.2
+     }
+    ],
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.12763114494309,
+       -0.41042417199080244,
+       -0.41042417199080244,
+       -1.12763114494309,
+       -92.89684627033307,
+       1785.9280233804388
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 0.35
+     }
+    ],
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.12763114494309,
+       -0.41042417199080244,
+       -0.41042417199080244,
+       -1.12763114494309,
+       -92.89684627033307,
+       1650.9280233804388
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.12763114494309,
+       -0.41042417199080244,
+       -0.41042417199080244,
+       -1.12763114494309,
+       -92.89684627033307,
+       1650.9280233804388
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 1
+     }
+    ],
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.12763114494309,
+       -0.41042417199080244,
+       -0.41042417199080244,
+       -1.12763114494309,
+       -92.89684627033307,
+       1650.9280233804388
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 1.5
+     }
+    ],
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.12763114494309,
+       -0.41042417199080244,
+       -0.41042417199080244,
+       -1.12763114494309,
+       -92.89684627033307,
+       1650.9280233804388
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 2.2
+     }
+    ],
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.1530028457043096,
+       -0.41965871586059544,
+       -0.41965871586059544,
+       -1.1530028457043096,
+       -116.58702531141546,
+       1675.9239039064987
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 3.65
+     }
+    ],
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.229117947987968,
+       -0.4473623474699746,
+       -0.4473623474699746,
+       -1.229117947987968,
+       -187.65756243466285,
+       1750.9115454846783
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 3.8
+     }
+    ],
+    [
+     {
+      "id": "f",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       1.2798613495104072,
+       -0.4658314352095608,
+       -0.4658314352095608,
+       -1.2798613495104072,
+       -235.03792051682785,
+       1800.9033065367985
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     },
+     {
+      "id": "q",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       0.5625,
+       0,
+       0
+      ],
+      "alpha": 0.5,
+      "clip": null,
+      "src_t": 3.9
+     }
+    ],
+    [
+     {
+      "id": "cp",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       0.5625,
+       0,
+       0,
+       0.5625,
+       656.25,
+       0
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "cp",
+      "src": [
+       0,
+       0,
+       1080,
+       1920
+      ],
+      "m": [
+       0.5625,
+       0,
+       0,
+       0.5625,
+       656.25,
+       0
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     }
+    ]
+   ]
+  },
+  {
+   "name": "relleno: doble encuadre vertical y horizontal",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "d1",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "d1",
+      "filename": "d1.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 0.8,
+       "keyframes": [
+        {
+         "t": 0.0,
+         "cx": 0.3,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": null
+        }
+       ],
+       "pan_mode": "smooth",
+       "dual_crop": true,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [
+        {
+         "t": 0.0,
+         "cx": 0.7,
+         "cy": 0.5,
+         "zoom": 0.5,
+         "pan_mode": null,
+         "fit": null
+        },
+        {
+         "t": 3.0,
+         "cx": 0.2,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": null
+        }
+       ],
+       "crop_w": null,
+       "crop_h": null,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "d2",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "d2",
+      "filename": "d2.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 1.0,
+       "keyframes": [
+        {
+         "t": 0.0,
+         "cx": 0.4,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": "contain"
+        }
+       ],
+       "pan_mode": "smooth",
+       "dual_crop": true,
+       "split_orientation": "vertical",
+       "zoom2": 0.4,
+       "keyframes2": [],
+       "crop_w": null,
+       "crop_h": null,
+       "master": false,
+       "split_layout": "horizontal",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": {
+       "x": 0.5,
+       "y": 0.5,
+       "scale": 0.5
+      },
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "out": [
+    1080,
+    1920
+   ],
+   "media": {
+    "d1": [
+     1920,
+     1080
+    ],
+    "d2": [
+     1920,
+     1080
+    ]
+   },
+   "heads": [
+    0,
+    0.1,
+    0.2,
+    0.35,
+    0.5,
+    1,
+    1.5,
+    2.2,
+    3.65,
+    3.8,
+    3.9
+   ],
+   "js_dur": [],
+   "frames": [
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     },
+     {
+      "id": "d1",
+      "src": [
+       1040.25,
+       270,
+       607.5,
+       540
+      ],
+      "m": [
+       1.7777777777777777,
+       0,
+       0,
+       1.7777777777777777,
+       -1849.3333333333333,
+       480
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     }
+    ],
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     },
+     {
+      "id": "d1",
+      "src": [
+       1002.175,
+       264.6,
+       619.6500000000001,
+       550.8
+      ],
+      "m": [
+       1.7429193899782132,
+       0,
+       0,
+       1.7429193899782136,
+       -1746.7102396514158,
+       498.82352941176464
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.1
+     }
+    ],
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     },
+     {
+      "id": "d1",
+      "src": [
+       964.0999999999999,
+       259.2,
+       631.8,
+       561.6
+      ],
+      "m": [
+       1.7094017094017095,
+       0,
+       0,
+       1.7094017094017093,
+       -1648.034188034188,
+       516.9230769230769
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.2
+     }
+    ],
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     },
+     {
+      "id": "d1",
+      "src": [
+       906.9874999999998,
+       251.1,
+       650.0250000000001,
+       577.8000000000001
+      ],
+      "m": [
+       1.6614745586708202,
+       0,
+       0,
+       1.6614745586708202,
+       -1506.9366562824503,
+       542.803738317757
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.35
+     }
+    ],
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "d1",
+      "src": [
+       849.875,
+       242.99999999999997,
+       668.2500000000001,
+       594
+      ],
+      "m": [
+       1.616161616161616,
+       0,
+       0,
+       1.6161616161616161,
+       -1373.5353535353534,
+       567.2727272727273
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     },
+     {
+      "id": "d1",
+      "src": [
+       659.5,
+       216,
+       729,
+       648
+      ],
+      "m": [
+       1.4814814814814814,
+       0,
+       0,
+       1.4814814814814814,
+       -977.0370370370371,
+       640
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     }
+    ],
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     },
+     {
+      "id": "d1",
+      "src": [
+       469.1249999999999,
+       189,
+       789.7500000000001,
+       702
+      ],
+      "m": [
+       1.3675213675213673,
+       0,
+       0,
+       1.3675213675213675,
+       -641.5384615384613,
+       701.5384615384615
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     }
+    ],
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     },
+     {
+      "id": "d1",
+      "src": [
+       202.5999999999999,
+       151.19999999999996,
+       874.8000000000001,
+       777.6000000000001
+      ],
+      "m": [
+       1.2345679012345678,
+       0,
+       0,
+       1.2345679012345676,
+       -250.12345679012333,
+       773.3333333333334
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.2
+     }
+    ],
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     },
+     {
+      "id": "d1",
+      "src": [
+       0,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       0,
+       840
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.65
+     }
+    ],
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     },
+     {
+      "id": "d1",
+      "src": [
+       0,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       0,
+       840
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.8
+     }
+    ],
+    [
+     {
+      "id": "d1",
+      "src": [
+       89.99999999999989,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       -99.99999999999986,
+       -119.99999999999997
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     },
+     {
+      "id": "d1",
+      "src": [
+       0,
+       107.99999999999997,
+       972.0000000000002,
+       864
+      ],
+      "m": [
+       1.111111111111111,
+       0,
+       0,
+       1.1111111111111112,
+       0,
+       840
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       270,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     },
+     {
+      "id": "d2",
+      "src": [
+       0,
+       0,
+       1920,
+       1080
+      ],
+      "m": [
+       0.140625,
+       0,
+       0,
+       0.140625,
+       540,
+       884.0625
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.9
+     }
+    ]
+   ]
+  },
+  {
+   "name": "imagen, motion, velocidad 2 y al revés",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "img",
+      "track_id": "V1",
+      "kind": "image",
+      "asset_kind": "images",
+      "asset_id": "img",
+      "filename": "img.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 2.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": {
+       "scale": 0.4
+      },
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "mo",
+      "track_id": "V2",
+      "kind": "motion",
+      "asset_kind": "shape",
+      "asset_id": "mo",
+      "filename": "mo.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 2.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "sp",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "sp",
+      "filename": "sp.mp4",
+      "name": null,
+      "start": 2.0,
+      "in_point": 1.0,
+      "out_point": 9.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 0.5,
+       "keyframes": [
+        {
+         "t": 1.0,
+         "cx": 0.1,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": null
+        },
+        {
+         "t": 9.0,
+         "cx": 0.9,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": null
+        }
+       ],
+       "pan_mode": "smooth",
+       "dual_crop": false,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [],
+       "crop_w": null,
+       "crop_h": null,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 2.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "rev",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "rev",
+      "filename": "rev.mp4",
+      "name": null,
+      "start": 2.0,
+      "in_point": 1.0,
+      "out_point": 5.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": {
+       "zoom": 0.5,
+       "keyframes": [
+        {
+         "t": 1.0,
+         "cx": 0.1,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": null
+        },
+        {
+         "t": 5.0,
+         "cx": 0.9,
+         "cy": 0.5,
+         "zoom": null,
+         "pan_mode": null,
+         "fit": null
+        }
+       ],
+       "pan_mode": "smooth",
+       "dual_crop": false,
+       "split_orientation": "vertical",
+       "zoom2": null,
+       "keyframes2": [],
+       "crop_w": null,
+       "crop_h": null,
+       "master": false,
+       "split_layout": "auto",
+       "face_track_mode": null
+      },
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": true,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "out": [
+    1080,
+    1080
+   ],
+   "media": {
+    "img": [
+     800,
+     600
+    ],
+    "mo": [
+     1080,
+     1080
+    ],
+    "sp": [
+     1920,
+     1080
+    ],
+    "rev": [
+     1920,
+     1080
+    ]
+   },
+   "heads": [
+    0,
+    0.5,
+    1.5,
+    2,
+    2.5,
+    3.5,
+    4.9
+   ],
+   "js_dur": [],
+   "frames": [
+    [
+     {
+      "id": "img",
+      "src": [
+       100,
+       0,
+       600,
+       600
+      ],
+      "m": [
+       0.4,
+       0,
+       0,
+       0.4,
+       380,
+       420
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     },
+     {
+      "id": "mo",
+      "src": [
+       0,
+       0,
+       1080,
+       1080
+      ],
+      "m": [
+       1,
+       0,
+       0,
+       1,
+       0,
+       0
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0
+     }
+    ],
+    [
+     {
+      "id": "img",
+      "src": [
+       100,
+       0,
+       600,
+       600
+      ],
+      "m": [
+       0.4,
+       0,
+       0,
+       0.4,
+       380,
+       420
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "mo",
+      "src": [
+       0,
+       0,
+       1080,
+       1080
+      ],
+      "m": [
+       1,
+       0,
+       0,
+       1,
+       0,
+       0
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "img",
+      "src": [
+       100,
+       0,
+       600,
+       600
+      ],
+      "m": [
+       0.4,
+       0,
+       0,
+       0.4,
+       380,
+       420
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     },
+     {
+      "id": "mo",
+      "src": [
+       0,
+       0,
+       1080,
+       1080
+      ],
+      "m": [
+       1,
+       0,
+       0,
+       1,
+       0,
+       0
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1.5
+     }
+    ],
+    [
+     {
+      "id": "sp",
+      "src": [
+       0,
+       270,
+       540,
+       540
+      ],
+      "m": [
+       2,
+       0,
+       0,
+       2,
+       0,
+       -540
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     },
+     {
+      "id": "rev",
+      "src": [
+       1380,
+       270,
+       540,
+       540
+      ],
+      "m": [
+       2,
+       0,
+       0,
+       2,
+       -2760,
+       -540
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 5
+     }
+    ],
+    [
+     {
+      "id": "sp",
+      "src": [
+       114.00000000000003,
+       270,
+       540,
+       540
+      ],
+      "m": [
+       2,
+       0,
+       0,
+       2,
+       -228.00000000000006,
+       -540
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2
+     },
+     {
+      "id": "rev",
+      "src": [
+       1266,
+       270,
+       540,
+       540
+      ],
+      "m": [
+       2,
+       0,
+       0,
+       2,
+       -2532,
+       -540
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 4.5
+     }
+    ],
+    [
+     {
+      "id": "sp",
+      "src": [
+       498.00000000000006,
+       270,
+       540,
+       540
+      ],
+      "m": [
+       2,
+       0,
+       0,
+       2,
+       -996.0000000000002,
+       -540
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 4
+     },
+     {
+      "id": "rev",
+      "src": [
+       882,
+       270,
+       540,
+       540
+      ],
+      "m": [
+       2,
+       0,
+       0,
+       2,
+       -1764,
+       -540
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 3.5
+     }
+    ],
+    [
+     {
+      "id": "sp",
+      "src": [
+       1035.6000000000001,
+       270,
+       540,
+       540
+      ],
+      "m": [
+       2,
+       0,
+       0,
+       2,
+       -2071.2000000000003,
+       -540
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 6.800000000000001
+     },
+     {
+      "id": "rev",
+      "src": [
+       344.3999999999999,
+       270,
+       540,
+       540
+      ],
+      "m": [
+       2,
+       0,
+       0,
+       2,
+       -688.7999999999998,
+       -540
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2.0999999999999996
+     }
+    ]
+   ]
+  },
+  {
+   "name": "máscara de ajuste: base y fantasma; texto y figura sin dibujo de material",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "aj",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "aj",
+      "filename": "aj.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": {
+       "scale": 0.5
+      },
+      "frame": "free",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": {
+       "exposure": 0.5
+      },
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": "multiply",
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [
+       {
+        "type": "rectangle",
+        "target": "adjust",
+        "x": 0.6
+       }
+      ],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t",
+      "filename": "",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "hola",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "sh",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "sh",
+      "filename": "sh.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": {
+       "type": "rect"
+      },
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "out": [
+    1080,
+    1920
+   ],
+   "media": {
+    "aj": [
+     1920,
+     1080
+    ]
+   },
+   "heads": [
+    0.5,
+    2
+   ],
+   "js_dur": [],
+   "frames": [
+    [
+     {
+      "id": "aj",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.5,
+       0,
+       0,
+       0.5,
+       60,
+       690
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     },
+     {
+      "id": "aj",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.5,
+       0,
+       0,
+       0.5,
+       60,
+       690
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 0.5
+     }
+    ],
+    [
+     {
+      "id": "aj",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.5,
+       0,
+       0,
+       0.5,
+       60,
+       690
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2
+     },
+     {
+      "id": "aj",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.5,
+       0,
+       0,
+       0.5,
+       60,
+       690
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 2
+     }
+    ]
+   ]
+  },
+  {
+   "name": "clip sin material: no se dibuja",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "a",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "a",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": null,
+      "frame": "free",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "b",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "b",
+      "filename": "b.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "overlay",
+      "transform": {
+       "scale": 0.3
+      },
+      "frame": "free",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "out": [
+    1080,
+    1920
+   ],
+   "media": {
+    "b": [
+     1920,
+     1080
+    ]
+   },
+   "heads": [
+    1
+   ],
+   "js_dur": [],
+   "frames": [
+    [
+     {
+      "id": "b",
+      "src": [
+       656.25,
+       0,
+       607.5,
+       1080
+      ],
+      "m": [
+       0.3,
+       0,
+       0,
+       0.3,
+       252,
+       798
+      ],
+      "alpha": 1,
+      "clip": null,
+      "src_t": 1
+     }
+    ]
+   ]
+  }
+ ]
+}

@@ -1,6 +1,7 @@
 add_executable(gc_tests
     support/json_diff.cpp
     unit/test_coercion.cpp
+    unit/test_frame.cpp
     unit/test_keyframes.cpp
     unit/test_layers.cpp
     unit/test_migrations.cpp
@@ -11,6 +12,7 @@ add_executable(gc_tests
     parity/bench_edit.cpp
     parity/test_edit_parity.cpp
     parity/test_eval_parity.cpp
+    parity/test_frame_parity.cpp
     parity/test_history_parity.cpp
     parity/test_keyframes_parity.cpp
     parity/test_layers_parity.cpp

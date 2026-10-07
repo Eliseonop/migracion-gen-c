@@ -13,7 +13,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo MSVC y CI en marcha | |
 | **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo, ajustes y biblioteca hechos · faltan las colecciones y la biblioteca de SFX de disco | |
 | **F2** Lógica de edición | ops, sin solapes, keyframes, undo | ✅ hecha: las 42 ops, el historial en disco y el autoguardado | |
-| **F3** Media + export | gc_media, gc_render v1, `genclip render` | 🟡 evaluación por clip y capas de un instante hechas · lo demás espera al Windows SDK | **M1** |
+| **F3** Media + export | gc_media, gc_render v1, `genclip render` | 🟡 evaluación hecha (por clip, capas y fotograma) · lo demás espera al Windows SDK | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | ⬜ | |
 | **F5** Editor de escritorio | app Qt Quick | ⬜ | **M2** |
 | **F6** IA local | fondo, SAM, Whisper, TTS, tracking | ⬜ | |
@@ -22,10 +22,10 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 69 tests y 102 988 aserciones en verde (Debug y Release, 0 warnings).
+**Cifras actuales:** 78 tests y 110 605 aserciones en verde (Debug y Release, 0 warnings).
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
-historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (59 pasos + los tuyos, con las claves redactadas) biblioteca (52 pasos + 23 materiales + la tuya) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) y capas de un instante (81 instantes sintéticos + 6675 de tus timelines, contra el JS real con Node).
+historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (59 pasos + los tuyos, con las claves redactadas) biblioteca (52 pasos + 23 materiales + la tuya) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12 (4e-15 en la evaluación).
 
 ---
@@ -36,10 +36,9 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 
 1. **Con el Windows SDK instalado:** F3, empezando por MSVC + vcpkg (FFmpeg, Skia, ONNX Runtime) y `gc_media`.
 2. **Sin él, en este orden:**
-   - F3, el fotograma ensamblado `evaluate(timeline, t, dimensiones del material)`, con la comprobación de ancho o alto 0 (las capas de un instante ya están; ver las notas de F3);
    - F1, biblioteca de SFX de disco (`sfx.py`) y colecciones (`collections.py`). Las colecciones son de la interfaz y pueden esperar a F5: escanean carpetas y ordenan como `WindowsPath`, con el `lower()` de Unicode;
    - F0, `.clang-tidy` y spdlog.
-3. `recipe_layout.py` se porta con el render de F3: casi todo son cadenas de filtros de FFmpeg que con Skia quizá no hagan falta.
+3. La evaluación de F3 está completa (por clip, capas y fotograma): lo siguiente de F3 ya es `gc_media` y `gc_render`, que necesitan el SDK.
 
 ## Pendiente por tu parte (Edu)
 
@@ -161,12 +160,12 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 ## F3 — Media + export C++ → **M1**
 
 - [ ] Prerrequisito: MSVC + vcpkg con FFmpeg, Skia y ONNX Runtime
-- [ ] **Evaluación:** timeline en el instante *t* → lista de capas (usa keyframes, pose, máscaras y layout)
+- [x] **Evaluación:** timeline en el instante *t* → lista de capas (usa keyframes, pose, máscaras y layout)
   - [x] Por clip: animaciones de catálogo (`fx_anims`: `clip_animations`, `animation_delta`, `render_pose`, `anim_opacity` y `animation_sample_times`), aparición y salida (`clip_fx`: `clip_fx_at`, `fx_windows`), modo de fusión (`blend`) y ajustes de color (`clip_adjust`: matriz 3×3, `has_color_adjust`, `strip_color` y las pasadas base + fantasma de la máscara de ajuste). Paridad: 41 clips sintéticos en 24 instantes (uno es NaN), 240 puntos de curva, 150 de pista, 10 ventanas, 16 efectos y 18 modos de fusión sueltos, y tus 914 clips en 7122 instantes; 34/35 mutaciones con `tools/dev/mutantes.py eval` (la otra es equivalente)
   - [x] Capas de un instante: `stack_layers` y `buried_text_track_ids` (`timeline_rules`) y `layers_at`/`videos_at` (`layers.hpp`) con dos reglas, `kRenderLayers` (la del render C++) y `kPreviewLayers` (el `layersAt` literal del preview). Paridad contra el JS real ejecutado con Node: 81 instantes en 13 timelines sintéticas y 6675 en tus 18 timelines, sin descartes (a Node le llega un gemelo de cada clip con la duración de Python); las reglas del render, con 10 tests propios. 20/20 mutaciones (`tools/dev/mutantes.py layers`)
-  - [ ] Fotograma ensamblado `evaluate(timeline, t, dimensiones del material)`: por capa, tiempo local y de fuente, pose, fx, fusión, volteo, máscaras, recorte y destino
-- [ ] `recipe_layout.py` (corte doble: `split_orientation_for`, `contain_dest`, filtros `vstack`/`hstack`)
-- [ ] Comprobar las dimensiones antes de llamar a `clip_layout`: con ancho o alto 0, Python lanza ZeroDivisionError y C++ daría inf/NaN (p. ej. si falla la sonda de un vídeo)
+  - [x] Fotograma ensamblado (`frame.hpp`: `evaluate(timeline, t, FrameSpec, dimensiones del material)`): por capa y pasada, tiempo local y de fuente, pose, aparición/salida, opacidad, fusión, volteo y máscaras, y para vídeo, imagen y motion los «blits» (rectángulo de la fuente + transformación afín al cuadro, en el mismo orden de operaciones que el contexto 2D), con overlay, relleno (cover/contain) y doble encuadre, y la cortinilla. Paridad contra el `drawComposite` real ejecutado con Node sobre un contexto que graba: 10 timelines sintéticas (95 instantes, 203 dibujos) y tus 18 (831 instantes, 1692 dibujos; 22 fuera por el `clipDur` de JS); 7 tests de las reglas del render y los errores; 21/21 mutaciones (`tools/dev/mutantes.py frame`)
+- [x] `recipe_layout.py`: `split_orientation_for` y `contain_dest` están en `frame.cpp` (doble encuadre y `contain` del relleno). Los filtros `vstack`/`hstack` y `dual_slot_wh` son cadenas de FFmpeg: con Skia no hacen falta
+- [x] Comprobar las dimensiones antes de llamar a `clip_layout`: `evaluate` falla si las de salida no son finitas y mayores que 0 y, con las reglas del render, si las de un material tampoco (Python lanza ZeroDivisionError); con las del preview esa capa va sin blits, como `drawComposite`
 - [ ] **gc_media:** demux y decode con hwaccel (D3D11VA/NVDEC), seek exacto
 - [ ] Caché de frames con presupuesto de RAM, proxies, miniaturas y formas de onda
 - [ ] Mezcla de audio y `loudnorm` a −14 LUFS
@@ -197,12 +196,16 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 - **Capas (hecho):** `export_fixtures.py` pasa cada timeline (normalizada por el modelo de Python) a `tools/fixtures/layers_js.mjs`, que importa `clipLayout.js` y `trackStack.js` de video-yt con Node y devuelve, por instante, la POSICIÓN de cada clip en la lista (los ids pueden repetirse). A Node le llega un gemelo de cada clip (`_js_twin`: `in_point` 0, `out_point` = duración de Python, velocidad 1), así que el `clipEnd` de JS da bit a bit el fin de Python y no hay que descartar instantes (antes se descartaban 48: 14 por clips de audio y 34 por fines de JS 1–3 ulps por encima).
   - Rarezas del preview que el modo literal conserva: un clip de duración 0 se ve en [inicio − 0,02, inicio); con ids de clip repetidos, el índice de desempate es el del último; con ids de pista repetidos manda la última pista (su `hidden` y su capa); un clip visual en una pista de audio tiene capa −1 y va al fondo.
   - El render (`kRenderLayers`) toma `max(0, start)` para el intervalo y para el orden, como `compose.build_command` (`start = max(0.0, c.start)`, `end = start + dur`).
-- **Fotograma ensamblado (en estudio):** por capa, el preview (`canvas.js` → `drawComposite`) calcula `localT = max(0, head − start)`, `srcTime = clamp(timelineToSource(clip, head), in, out)` (vídeo: el `currentTime` del `<video>`, que va sincronizado), `clipRenderPose`, `clipFxAt` (opacidad final = fx × pose), `blendOp`, `clipFlip` y `clipMasksAt`; luego:
+- **Fotograma ensamblado (hecho; esto es lo que hace el preview y lo que reproduce `evaluate`):** por capa, el preview (`canvas.js` → `drawComposite`) calcula `localT = max(0, head − start)`, `srcTime = clamp(timelineToSource(clip, head), in, out)` (vídeo: el `currentTime` del `<video>`, que va sincronizado), `clipRenderPose`, `clipFxAt` (opacidad final = fx × pose), `blendOp`, `clipFlip` y `clipMasksAt`; luego:
   - **overlay:** `cropWindow` → `sourceCropPx` → `destRect(posedRenderTransform)` (traslada, gira y escala por `fx.scale` alrededor del centro del destino, desplazado `fx.tx/ty` × destino);
   - **relleno:** `drawReframe` sobre todo el cuadro con el aspecto de SALIDA (no el del hueco `frame`, que es legado) y después la pose sobre el cuadro entero (`fillDestRect`). `fit: contain` se decide en cada instante (`frameAt` → `sourceDrawRect` con `containDest`); con `dual_crop`, dos mitades (`splitOrientationFor`, `targetAspectFor`). Con keyframes de pose y sin `dual_crop`, el recorte sale de la pose (`reframeForDraw`).
   - **El export difiere en el relleno:** `contain` solo si TODOS los keyframes del reframe lo son (`_kfs_all_contain`; si no, cover siempre) y el doble encuadre va por `recipe_layout` (vstack/hstack). Hay que elegir una semántica, como con las capas.
   - **Tus datos:** los 235 clips de vídeo e imagen son overlay (`frame: free`); no hay relleno, `dual_crop` ni `contain` (2 clips tienen keyframes de reframe, sin `contain`). La divergencia del relleno solo afecta a casos sintéticos o a proyectos antiguos.
-  - Oráculo: no hay una función de Python que dé el fotograma; se compone con las piezas reales (`render_pose`, `clip_fx_at`, `clip_masks_at`, `crop_window`, `source_crop_px`, `dest_rect`) y la geometría de relleno de `source_point_to_output`.
+  - **Oráculo:** `tools/fixtures/frame_js.mjs` importa `canvas.js` con Node (con `tools/fixtures/node_hook.mjs`, que añade la extensión a los imports relativos, como Vite) y ejecuta `drawComposite` sobre un contexto 2D que GRABA: lleva la matriz (translate/rotate/scale/setTransform), el último recorte y la opacidad, y por cada `drawImage` del material (un objeto con sus dimensiones y `currentTime` = el tiempo de fuente) guarda el rectángulo de la fuente y la afín fuente → cuadro. El C++ repite el mismo orden de operaciones, así que coincide bit a bit salvo en las capas giradas (sin/cos de V8 frente a la libm: tolerancia relativa de 1e-12).
+  - **Lo que el oráculo no ve:** sin `document`, las máscaras y la fusión se dibujan sin capa aparte (se comparan por sus piezas, ya probadas), el filtro CSS (`look`, efectos) no se compara (F4), y textos, figuras y capas de ajuste no dibujan material.
+  - **`clipDur` de JS:** se excluyen los dibujos de los clips cuyo `clipDur` de JS no es la duración de Python y en los que eso cambia el dibujo (con salida, aparición en un clip de menos de 0,8 s con cualquiera de las dos duraciones, o animaciones de catálogo): 22 de 1714 en tus datos. Ejemplo: una duración de 0,8 en Python es 0,7999999999999972 en JS y cambia la ventana de aparición.
+  - **Rareza del preview que solo reproduce el modo preview:** en relleno, una escala que se aparta de 1 en 0,001 o menos (sin otra transformación) no se aplica; `kRenderLayers` la aplica.
+  - **El relleno sigue al preview:** `contain` en cada instante y el doble encuadre por mitades. El export lo hace distinto (abajo) y está pendiente de que Edu elija.
 - **Duraciones del preview ≠ Python:** `clipEnd` de `editorModel.js` usa `clipSpeed` de JS, que trata las **figuras** como velocidad 1 (Python solo exime texto, imagen y ajuste) y **no redondea**; `clip_timeline_duration` de Python redondea la fuente y el resultado a 3 decimales. El C++ usa siempre la duración de Python; las fixtures de `layersAt` lo resuelven con el gemelo de cada clip. El JS se importa bien desde Node 24 (`clipLayout.js` usa rutas con extensión; probado con `pathToFileURL`).
 - **`animation_sample_times`:** tope de `kMaxAnimSamples` (10⁷ intervalos) sin test: solo se alcanza con duraciones irreales. Con una duración infinita Python lanza OverflowError y C++ construye 10⁷ muestras (~80 MB).
 - **`fx_anims`:** el catálogo no usa `linear`, `inOutQuad`, `inOutCubic` ni `hold`; la rejilla de curvas los cubre. En `eval_track`, la rama de tramo de longitud 0 (`f = 1`) es inalcanzable: el tramo anterior ya cubre ese instante (también con claves desordenadas).
