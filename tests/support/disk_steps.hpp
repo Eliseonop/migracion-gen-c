@@ -1,0 +1,64 @@
+#pragma once
+
+// Utilidades de los tests de paridad que repiten pasos sobre una carpeta temporal (SFX en
+// disco, colecciones): escribir archivos, «{TMP}» y la ruta que devuelve un resolve.
+
+#include <cstddef>
+#include <filesystem>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <string_view>
+#include <vector>
+
+#include "gc/core/io.hpp"
+#include "gc/core/json.hpp"
+#include "py.hpp"
+
+namespace gc::test {
+
+inline std::string replace_all(std::string s, std::string_view from, std::string_view to) {
+    for (auto pos = s.find(from); pos != std::string::npos; pos = s.find(from, pos + to.size())) {
+        s.replace(pos, from.size(), to);
+    }
+    return s;
+}
+
+// El contenido de un paso: el texto tal cual o el JSON escrito.
+inline std::string text_of(const Json& content) {
+    return content.is_string() ? content.get<std::string>() : content.dump();
+}
+
+inline void write_file(const std::filesystem::path& file, const std::string& bytes) {
+    std::filesystem::create_directories(file.parent_path());
+    std::ofstream(file, std::ios::binary | std::ios::trunc) << bytes;
+}
+
+inline std::string read_file(const std::filesystem::path& file) {
+    const std::ifstream in(file, std::ios::binary);
+    std::stringstream text;
+    text << in.rdbuf();
+    return text.str();
+}
+
+// La ruta de `target` relativa a la carpeta `base` (ya resuelta), con «/» y en minúsculas:
+// Python da las mayúsculas del disco y std::filesystem las pedidas. «.» si es la carpeta.
+inline std::string lowered_relative(const std::filesystem::path& target, const std::filesystem::path& base) {
+    const auto parts = [](const std::filesystem::path& p) {
+        std::vector<std::string> out;
+        for (const auto& part : p) {
+            if (!part.empty()) {
+                out.push_back(core::path_to_utf8(part));
+            }
+        }
+        return out;
+    };
+    const auto t = parts(target);
+    std::string rel;
+    for (std::size_t k = parts(std::filesystem::weakly_canonical(base)).size(); k < t.size(); ++k) {
+        rel += (rel.empty() ? "" : "/") + t[k];
+    }
+    return core::detail::py_lower(rel.empty() ? "." : rel);
+}
+
+} // namespace gc::test

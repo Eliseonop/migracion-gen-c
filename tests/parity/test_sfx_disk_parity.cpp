@@ -21,23 +21,20 @@
 #include "gc/core/io.hpp"
 #include "gc/core/settings.hpp"
 #include "gc/core/sfx_disk.hpp"
+#include "disk_steps.hpp"
 #include "json_diff.hpp"
 #include "py.hpp"
 
 namespace fs = std::filesystem;
 using gc::Json;
 using namespace gc::core;
+using gc::test::replace_all;
+using gc::test::text_of;
+using gc::test::write_file;
 
 namespace {
 
 const fs::path kFixtures = path_from_utf8(GC_FIXTURES_DIR);
-
-std::string replace_all(std::string s, std::string_view from, std::string_view to) {
-    for (auto pos = s.find(from); pos != std::string::npos; pos = s.find(from, pos + to.size())) {
-        s.replace(pos, from.size(), to);
-    }
-    return s;
-}
 
 // Los bytes latin-1 de un texto UTF-8 con caracteres < 256 (para escribir UTF-8 inválido).
 std::string latin1(std::string_view utf8) {
@@ -51,13 +48,6 @@ std::string latin1(std::string_view utf8) {
         }
     }
     return out;
-}
-
-std::string text_of(const Json& content) { return content.is_string() ? content.get<std::string>() : content.dump(); }
-
-void write_file(const fs::path& file, const std::string& bytes) {
-    fs::create_directories(file.parent_path());
-    std::ofstream(file, std::ios::binary | std::ios::trunc) << bytes;
 }
 
 // La sonda falsa del exportador: el número que contiene el archivo (si no, sin duración).
@@ -154,23 +144,7 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
         } else if (kind == "resolve") {
             const auto target = sfx_resolve(base, replace_all(step[1].get<std::string>(), "{TMP}", posix));
             if (target) {
-                // La ruta relativa a la carpeta, con «/» y sin distinguir mayúsculas (Python
-                // da las de disco; std::filesystem, las pedidas).
-                const auto parts = [](const fs::path& p) {
-                    std::vector<std::string> out;
-                    for (const fs::path& part : p) {
-                        if (!part.empty()) {
-                            out.push_back(path_to_utf8(part));
-                        }
-                    }
-                    return out;
-                };
-                const auto t = parts(*target);
-                std::string rel;
-                for (std::size_t k = parts(fs::weakly_canonical(*base)).size(); k < t.size(); ++k) {
-                    rel += (rel.empty() ? "" : "/") + t[k];
-                }
-                result = detail::py_lower(rel.empty() ? "." : rel);
+                result = gc::test::lowered_relative(*target, *base);
             }
             if (s.contains("result") && s.at("result").is_string()) {
                 const Json expected = detail::py_lower(s.at("result").get<std::string>());

@@ -11,7 +11,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | Fase | Contenido | Estado | Hito |
 |---|---|---|---|
 | **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo MSVC y CI en marcha | |
-| **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo, ajustes, biblioteca y SFX de disco hechos · faltan las colecciones (pueden esperar a F5) | |
+| **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo, ajustes, biblioteca, SFX de disco y colecciones hechos · lo que escribe desde la interfaz (guardar en la biblioteca, dar de alta SFX) llega con F5 | |
 | **F2** Lógica de edición | ops, sin solapes, keyframes, undo | ✅ hecha: las 42 ops, el historial en disco y el autoguardado | |
 | **F3** Media + export | gc_media, gc_render v1, `genclip render` | 🟡 evaluación hecha (por clip, capas y fotograma) · lo demás espera al Windows SDK | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | ⬜ | |
@@ -22,21 +22,20 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 91 tests (89 de Catch2 y 2 de la CLI) y 111 329 aserciones en verde (Debug y Release, 0 warnings) y 0 avisos de clang-tidy.
+**Cifras actuales:** 93 tests (91 de Catch2 y 2 de la CLI) y 111 874 aserciones en verde (Debug y Release, 0 warnings) y 0 avisos de clang-tidy.
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
-historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (61 pasos + los tuyos, con las claves redactadas) biblioteca (55 pasos + 23 materiales + la tuya) SFX en disco (205 pasos + tu carpeta de 626 sonidos) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
+historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (61 pasos + los tuyos, con las claves redactadas) biblioteca (55 pasos + 23 materiales + la tuya) SFX en disco (205 pasos + tu carpeta de 626 sonidos), colecciones de material (256 pasos + tu carpeta, 46 medios) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12 (4e-15 en la evaluación).
 
 ---
 
 ## Siguiente (para el autopiloto)
 
-F2 está cerrada y F1 casi: solo faltan las colecciones, que son de la interfaz. F3 necesita el Windows SDK, así que el orden es:
+F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo de F1, la interfaz (F5). La evaluación de F3 también está completa (por clip, capas y fotograma).
 
 1. **Con el Windows SDK instalado:** F3, empezando por MSVC + vcpkg (FFmpeg, Skia, ONNX Runtime) y `gc_media`.
-2. **Sin él:** F1, colecciones (`collections.py`). Son de la interfaz y pueden esperar a F5: escanean carpetas y ordenan como `WindowsPath` (lo que ya hace `sfx_scan`, con `py_lower`). F0 (`.clang-tidy` y spdlog) ya está hecho.
-3. La evaluación de F3 está completa (por clip, capas y fotograma): lo siguiente de F3 ya es `gc_media` y `gc_render`, que necesitan el SDK.
+2. **Sin él** no queda nada útil en orden: el autopiloto se pausa (`.claude/autopiloto/bloqueado.md`) hasta que esté.
 
 ## Pendiente por tu parte (Edu)
 
@@ -79,18 +78,21 @@ F2 está cerrada y F1 casi: solo faltan las colecciones, que son de la interfaz.
 - [x] `genclip projects` y `genclip normalize [--preserve]`; Python relee lo que escribe C++
 - [x] Biblioteca de `data/library` (`library.hpp`): carga tolerante, tipo, origen y fuente deducidos, `material_dto` (con la URL codificada como `urllib.parse.quote`), lista ordenada por fecha, editar título y descripción, metadata semántica, proyectos que la usan y quitar (borra el archivo). Paridad: 55 pasos sobre un `data/` temporal (con los mensajes de error que ve el usuario), 23 materiales sueltos y tu `library.json`; 8/8 mutaciones
 - [ ] «Guardar en la biblioteca» desde un proyecto (`library.save_from_project`): cambia el proyecto (`retarget_timeline_asset`, `remove_material`) y copia archivos, así que llega con el almacén de proyectos de la app (F5)
-- [ ] Colecciones de `data/` (`collections`: carpetas de material bajo `material_root`)
+- [x] Colecciones de material (`collections.hpp`, espejo de `collections.py`): raíz (`material_root` o la de fábrica), preferencias en `collections_meta`, lista (favoritas primero, portada, `stick.json`), búsqueda por palabras, tipo y colección con cuentas y `items[:limit]`, crear y añadir archivos con los nombres saneados de Python, y `resolve` sin salir de la raíz. Paridad: 256 pasos sobre una carpeta temporal (36 de error, con los mensajes que ve el usuario) y tu carpeta (`scientist_stick`, 46 medios); 40/42 mutaciones (`tools/dev/mutantes.py collections`; una es equivalente y otra está pendiente)
 - [x] Biblioteca de SFX desde disco (`sfx_disk.hpp`, la parte de lectura de `sfx.py`): carpeta activa (`sfx_folder` o la de fábrica), `sfx_library.json` con sus fallos (los sonidos salen del escaneo y las categorías leídas se quedan), escaneo en el orden de `sorted()` de `WindowsPath`, búsqueda por categoría, favoritos y palabras, `resolve` sin salir de la carpeta y `load_sfx_library` (lo que usa `sound_design`, con la sonda de duración inyectada) → `set_sfx_library`. Paridad: 205 pasos sobre una carpeta temporal y tu carpeta (626 sonidos, 15 categorías, 21 favoritos); 34/35 mutaciones (`tools/dev/mutantes.py sfx`; la otra es equivalente)
 - [ ] Dar de alta, editar y crear categorías de SFX (`add_sound`, `update_sound`, `create_category`): escriben archivos y el índice, y llegan con la pantalla de la biblioteca de SFX (F5)
 - [x] Ajustes y API keys (`settings.hpp`: `settings.py`, `export_settings.py` y `transcribe_settings.py`): carga con defectos, `save` con la fusión de claves y máscaras, varias claves por proveedor y la vista pública sin secretos. Paridad: 61 pasos sintéticos con claves falsas y tus ajustes con las claves redactadas; 10/10 mutaciones
 
 ### Notas de F1
 
-- **Colecciones (siguiente, `collections.py`, 267 líneas → `collections.hpp/.cpp`; plan de la revisión de F0):**
-  - Ya está lo que necesitan: `py_lower` (clave `name.lower()`), `py_path_stem`/`py_path_suffix`, `py_quote`, el orden de `sorted(rglob)` de `sfx_scan`, el anti-traversal de `sfx_resolve` y `SettingsFile` para `material_root` y `collections_meta`. Hay que comprobar que `SettingsFile::save` conserva esas dos claves.
-  - Portar: `kind_for`, `get_root`/`set_root`, `set_prefs` con `_safe_collection_id`, `_entry`, `_scan_dir`, `list_collections` (orden `(not favorite, name.lower())`, `stick.json`, `cover_url`), `_match` y `search` (counts, límite, favoritos), `create_collection` (regex de saneado y sufijo « N»), `add_files` (con el stream inyectado) y `resolve`.
-  - Mensajes de error literales: «Colección no válida.», «No hay carpeta raíz de material.», «Ponle un nombre a la carpeta.» y «Carpeta no encontrada.».
-  - Fixtures: `tools/fixtures/collections_cases.py` y, en `export_fixtures.py`, unos pasos como los de `_run_sfx_steps` que llamen al `collections.py` real con `config.ASSETS_DIR` y los ajustes apuntando a un directorio temporal. Casos: árboles con Unicode, mayúsculas, `.GIF`, extensiones no soportadas, anidados y `stick.json`; ids `..`, `a/b` y con espacios; nombres con `<>:"`; colisiones en `add_files` y `create_collection`; y tu `material_root` real si existe. Grupo `collections` en `tools/dev/mutantes.py`.
+- **Colecciones (`collections.hpp`, hecho):**
+  - **Compartido con las SFX (`disk_scan.hpp`):** la carpeta de los ajustes (`dir_from_settings`), el recorrido de `sorted(base.rglob("*"))` (`sorted_files`) y el `resolve` que no deja salir de la carpeta (`resolve_inside`). `sfx_disk` usa lo mismo, sin cambiar nada.
+  - **Orden:** las carpetas de la raíz, por `py_lower` del nombre (`sorted(iterdir())`); la lista, por `(not favorite, name.lower())`; la búsqueda recorre `sorted(enabled)`, que es orden de puntos de código, el mismo de los bytes UTF-8 de un `std::set<std::string>`.
+  - **Nombres saneados** (`create_collection` y `add_files`): `[<>:"/\|?*\x00-\x1f]` → «_» y `strip(" .")`. Son ASCII, así que se cambian byte a byte. Un nombre que ya existe (sin distinguir mayúsculas, como el disco de Windows) lleva « 2», « 3»… en las colecciones y «_2», «_3»… antes de la extensión en los archivos.
+  - **`items[:limit]`** de Python: con un límite negativo quita los últimos (`-2` deja todos menos dos).
+  - **NUL en el id:** `_safe_collection_id("a\0b")` lo acepta, pero `is_dir()` da False, así que `add_files` responde «Carpeta no encontrada.» y `_scan_dir` no da nada. En C++ hay que comprobarlo antes de tocar el disco: Windows cortaría la ruta en el NUL y escribiría en `a`.
+  - **Divergencias que se quedan:** un `material_root` que no es texto se ignora (Python falla en `Path(x)`, como con `sfx_folder`); unas preferencias de `collections_meta[id]` que no son un objeto son un error en `set_prefs` (Python hace `dict(x)`, que acepta una lista de pares); los nombres de carpeta que no son UTF-16 válido se saltan.
+  - **`add_files` en C++** recibe, por cada archivo, el nombre y quien escribe el contenido (`IncomingFile::write`): la API lo copiará de una subida y el escritorio, de un archivo arrastrado.
 
 - **JSON como Python:** `json.loads(read_text("utf-8"))` falla con un BOM de UTF-8. Ajustes, biblioteca e historial usan `read_json_file_py`, que también falla; `read_json_file` (proyectos y timelines) lo sigue saltando.
 - **Texto de Python en `py.hpp`:** `py_lower` (`str.lower()` de Unicode 16, con la sigma final; tabla generada con `tools/gen/gen_py_lower.py`), `py_path_str` (`str(Path(x))`), `py_path_name`, `py_path_suffix` y `py_path_stem` (Python 3.14 en Windows, con el `splitroot` de C: unidades de UTF-16, UNC y `\\?\UNC\`) y `py_quote`.

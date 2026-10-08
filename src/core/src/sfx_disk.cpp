@@ -1,10 +1,10 @@
 #include "gc/core/sfx_disk.hpp"
 
 #include <algorithm>
-#include <exception>
 #include <system_error>
 #include <utility>
 
+#include "disk_scan.hpp"
 #include "gc/core/io.hpp"
 #include "json_reader.hpp"
 #include "py.hpp"
@@ -33,19 +33,6 @@ const Json kEmptyText = "";
 const Json& get_or(const Json& obj, std::string_view key, const Json& fallback) {
     const auto it = obj.find(key);
     return it == obj.end() ? fallback : *it;
-}
-
-// Las partes de una ruta en minúsculas, para compararlas como WindowsPath (sin las vacías
-// de una barra final).
-std::vector<std::string> lowered_parts(const fs::path& p) {
-    std::vector<std::string> out;
-    for (const fs::path& part : p) {
-        const std::string s = path_to_utf8(part);
-        if (!s.empty()) {
-            out.push_back(py_lower(s));
-        }
-    }
-    return out;
 }
 
 // Las categorías y los sonidos de sfx_library.json. false donde Python lanzaría: las
@@ -107,22 +94,7 @@ bool is_sfx_audio(std::string_view filename) {
 }
 
 std::optional<fs::path> sfx_base(const Json& settings, const fs::path& default_dir) {
-    std::error_code ec;
-    const Json& custom = settings.is_object() ? get_or(settings, "sfx_folder", kNull) : kNull;
-    if (custom.is_string()) {
-        const auto& text = custom.get_ref<const std::string&>();
-        // Con un NUL, Path.exists() da False; Windows cortaría la ruta en él.
-        if (!text.empty() && !text.contains('\0')) {
-            fs::path p = path_from_utf8(text);
-            if (fs::is_directory(p, ec)) {
-                return p;
-            }
-        }
-    }
-    if (fs::is_directory(default_dir, ec)) {
-        return default_dir;
-    }
-    return std::nullopt;
+    return detail::dir_from_settings(settings, "sfx_folder", default_dir);
 }
 
 Result<Json> sfx_entry(const Json& folder, const Json& filename, const Json& category, const Json& uso,
@@ -151,47 +123,15 @@ Result<Json> sfx_entry(const Json& folder, const Json& filename, const Json& cat
 }
 
 std::vector<Json> sfx_scan(const fs::path& base) {
-    struct Found {
-        std::vector<std::string> key; // partes en minúsculas: el orden de sorted() de WindowsPath
-        std::vector<std::string> parts;
-    };
-    std::vector<Found> found;
-    std::error_code ec;
-    fs::recursive_directory_iterator it(base, fs::directory_options::skip_permission_denied, ec);
-    for (const fs::recursive_directory_iterator end{}; !ec && it != end; it.increment(ec)) {
-        std::error_code ec_file;
-        if (!it->is_regular_file(ec_file)) { // como is_file(): sigue los enlaces
-            continue;
-        }
-        try {
-            std::vector<std::string> all;
-            for (const fs::path& part : it->path()) {
-                all.push_back(path_to_utf8(part));
-            }
-            // Las últimas depth() + 1 partes son la ruta relativa a la carpeta.
-            const auto depth = static_cast<std::size_t>(it.depth()) + 1;
-            if (all.size() < depth || !is_sfx_audio(all.back())) {
-                continue;
-            }
-            Found f;
-            f.parts.assign(all.end() - static_cast<std::ptrdiff_t>(depth), all.end());
-            for (const auto& p : f.parts) {
-                f.key.push_back(py_lower(p));
-            }
-            found.push_back(std::move(f));
-        } catch (const std::exception&) {
-            continue; // un nombre que no es UTF-16 válido
-        }
-    }
-    std::ranges::stable_sort(found, {}, &Found::key);
+    const auto found = detail::sorted_files(base, is_sfx_audio);
     std::vector<Json> items;
     items.reserve(found.size());
-    for (const auto& f : found) {
+    for (const auto& parts : found) {
         std::string folder;
-        for (std::size_t k = 0; k + 1 < f.parts.size(); ++k) {
-            folder += (k > 0 ? "/" : "") + f.parts[k];
+        for (std::size_t k = 0; k + 1 < parts.size(); ++k) {
+            folder += (k > 0 ? "/" : "") + parts[k];
         }
-        if (auto entry = sfx_entry(folder, f.parts.back())) {
+        if (auto entry = sfx_entry(folder, parts.back())) {
             items.push_back(std::move(*entry));
         }
     }
@@ -299,25 +239,12 @@ Json sfx_search(const std::optional<fs::path>& base, const Json& settings, std::
 }
 
 std::optional<fs::path> sfx_resolve(const std::optional<fs::path>& base, std::string_view relpath) {
-    if (!base || relpath.contains('\0')) {
+    if (!base) {
         return std::nullopt;
     }
+    auto target = detail::resolve_inside(*base, relpath);
     std::error_code ec;
-    const fs::path root = fs::weakly_canonical(fs::absolute(*base, ec), ec);
-    if (ec) {
-        return std::nullopt;
-    }
-    fs::path target = fs::weakly_canonical(root / path_from_utf8(relpath), ec);
-    if (ec) {
-        return std::nullopt;
-    }
-    // base == target o base en target.parents, sin distinguir mayúsculas (WindowsPath).
-    const auto r = lowered_parts(root);
-    const auto t = lowered_parts(target);
-    if (t.size() < r.size() || !std::equal(r.begin(), r.end(), t.begin())) {
-        return std::nullopt;
-    }
-    if (!fs::exists(target, ec)) {
+    if (!target || !fs::exists(*target, ec)) {
         return std::nullopt;
     }
     return target;

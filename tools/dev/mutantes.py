@@ -3,13 +3,15 @@
     python tools/dev/mutantes.py <grupo> [preset] [filtro]
 
 `grupo`: eval (evaluación por clip, tests [eval]), layers (capas de un instante, tests
-[layers]), frame (fotograma, tests [frame]) o sfx (biblioteca de SFX en disco, tests [sfx]).
+[layers]), frame (fotograma, tests [frame]), sfx (biblioteca de SFX en disco, tests [sfx]) o
+collections (colecciones de material, tests [collections]).
 `preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los mutantes cuyo
 nombre contiene ese texto.
 
 Aplica cada cambio a la fuente, recompila gc_tests, pasa los tests del grupo y deshace el
 cambio (también si algo falla). Un mutante «NO DETECTADO» es un hueco de las fixtures,
-salvo que sea equivalente (da el mismo resultado): esos van anotados en la lista.
+salvo que sea equivalente (da el mismo resultado): esos van anotados en la lista. Uno que
+«cuelga» los tests (no acaban en TEST_TIMEOUT segundos) cuenta como detectado.
 """
 from __future__ import annotations
 
@@ -168,13 +170,14 @@ FRAME = [
 ]
 
 X = "src/core/src/sfx_disk.cpp"
+D = "src/core/src/disk_scan.cpp"  # recorrido, resolve y carpeta de los ajustes, compartidos con las colecciones
 SFX = [
     ("audio: sin .flac", X, ' || ext == ".flac"', ""),
     ("audio: sufijo sin minúsculas", X, "py_lower(py_path_suffix(filename))", "py_path_suffix(filename)"),
-    ("escaneo: orden sin minúsculas", X, "f.key.push_back(py_lower(p));", "f.key.push_back(p);"),
-    ("escaneo: sin ordenar", X, "std::ranges::stable_sort(found, {}, &Found::key);", ""),
+    ("escaneo: orden sin minúsculas", D, "f.key.push_back(py_lower(p));", "f.key.push_back(p);"),
+    ("escaneo: sin ordenar", D, "std::ranges::stable_sort(found, {}, &Found::key);", ""),
     ("escaneo: carpeta con otro separador", X, '(k > 0 ? "/" : "")', '(k > 0 ? "|" : "")'),
-    ("escaneo: sin subcarpetas", X, "if (all.size() < depth || ", "if (depth > 1 || "),
+    ("escaneo: sin subcarpetas", D, "if (all.size() < depth || ", "if (depth > 1 || "),
     ("índice: sin categorías", X, "categories.push_back(std::move(cat));", "(void)cat;"),
     ("índice: etiqueta sin defecto", X, 'get_or(v, "etiqueta", id)', 'get_or(v, "etiqueta", kNull)'),
     ("índice: cuenta por defecto 1", X, 'get_or(v, "cantidad", Json(0))', 'get_or(v, "cantidad", Json(1))'),
@@ -189,7 +192,7 @@ SFX = [
     ("entry: un nombre falso se queda", X, "if (py_truthy(name)) {", "if (!name.is_null()) {"),
     ("entry: carpeta falsa cuenta", X, "py_truthy(folder) ? Json(", "!folder.is_null() ? Json("),
     ("entry: URL sin codificar", X, "py_quote(rel.get_ref<const std::string&>())", "rel.get_ref<const std::string&>()"),
-    ("base: sin sfx_folder", X, "if (custom.is_string()) {", "if (false) {"),
+    ("base: sin sfx_folder", D, "if (it != settings.end() && it->is_string()) {", "if (false) {"),
     ("base: ruta sin normalizar", X, "py_path_str(path_to_utf8(*base))", "path_to_utf8(*base)"),
     ("filtro: categoría sin strip", X, "py_lower(py_strip(category))", "py_lower(category)"),
     ("filtro: categoría solo en la carpeta", X, 'py_lower(py_str(get_or(it, "category", kEmptyText)));',
@@ -207,22 +210,81 @@ SFX = [
     ("búsqueda: categorías sin favoritos", X,
      "with_favorites_category(idx.at(\"categories\").get<std::vector<Json>>(), all, favorites)",
      'idx.at("categories")'),
-    ("resolve: sale de la carpeta", X, "if (t.size() < r.size() || !std::equal(r.begin(), r.end(), t.begin())) {",
+    ("resolve: sale de la carpeta", D, "if (t.size() < r.size() || !std::equal(r.begin(), r.end(), t.begin())) {",
      "if (false) {"),
-    ("resolve: distingue mayúsculas", X, "            out.push_back(py_lower(s));", "            out.push_back(s);"),
-    ("resolve: sin comprobar que existe", X, "if (!fs::exists(target, ec)) {", "if (false) {"),
+    ("resolve: distingue mayúsculas", D, "            out.push_back(py_lower(s));", "            out.push_back(s);"),
+    ("resolve: sin comprobar que existe", X, "if (!target || !fs::exists(*target, ec)) {", "if (!target) {"),
     ("biblioteca: duración sin redondear", X, "py_round(*seconds, 3)", "*seconds"),
     ("biblioteca: sin duración da 1", X, "py_round(*seconds, 3) : 0.0;", "py_round(*seconds, 3) : 1.0;"),
     ("biblioteca: límite de 3", X, "constexpr std::size_t kAll = 100000;", "constexpr std::size_t kAll = 3;"),
 ]
 
+C = "src/core/src/collections.cpp"
+COLLECTIONS = [
+    ("tipo: el GIF es imagen", C, 'if (ext == ".gif") {', "if (false) {"),
+    ("tipo: sin .wma", C, '".wma"', '".wmx"'),
+    ("tipo: sufijo sin minúsculas", C, "py_lower(py_path_suffix(filename))", "py_path_suffix(filename)"),
+    ("raíz: sin material_root", C, '"material_root", default_dir', '"material_rot", default_dir'),
+    ("set_root: sin strip", C, "py_path_str(py_strip(path))", "py_path_str(path)"),
+    ("set_root: guarda aunque no sea carpeta", C, " || !fs::is_directory(path_from_utf8(text), ec)) {", ") {"),
+    ("id: «..» vale", C, ' || name == ".."', ""),
+    ("id: sin comparar con el texto", C, " || name != text", ""),
+    ("prefs: etiqueta vacía se queda", C, 'cur.erase("label");', 'cur["label"] = "";'),
+    ("prefs: etiqueta sin strip", C, "py_strip(*label)", "std::string(*label)"),
+    ("prefs: no se guardan", C, 'settings.save(Json{{"collections_meta", meta}})', "Result<Json>(Json())"),
+    ("entry: URL sin codificar", C, "py_quote(ref)", "ref"),
+    ("entry: nombre con la extensión", C, "py_path_stem(rel)", "py_path_name(rel)"),
+    ("entry: id sin prefijo", C, '"col_" + ref', "ref"),
+    # Equivalente: collection_entry pasa la ruta por py_path_str y vuelve a poner «/».
+    ("recorrido: otro separador (EQUIVALENTE)", C, '(rel.empty() ? "" : "/")', '(rel.empty() ? "" : "\\\\")'),
+    ("lista: sin las favoritas primero", C,
+     "std::tie(a.not_favorite, a.name_key) < std::tie(b.not_favorite, b.name_key)", "a.name_key < b.name_key"),
+    ("lista: nombre sin minúsculas al ordenar", C, "py_lower(name.get_ref<const std::string&>())",
+     "name.get_ref<const std::string&>()"),
+    ("lista: carpetas en el orden del disco", C, "std::ranges::stable_sort(subs, {}, &Sub::key);", ""),
+    ("lista: desactivadas por defecto", C, 'get_or(pref, "enabled", Json(true))', 'get_or(pref, "enabled", Json(false))'),
+    ("lista: etiqueta que no es texto vale", C, "if (!name.is_string()) {", "if (false) {"),
+    ("lista: portada solo de imágenes", C, 'kind == "image" || kind == "gif"', 'kind == "image"'),
+    ("lista: sin stick", C, 'fs::is_regular_file(dir / "stick.json", ec_stick)', "false"),
+    ("match: alguna palabra basta", C, "std::ranges::all_of(py_split(py_lower(q))", "std::ranges::any_of(py_split(py_lower(q))"),
+    ("match: sin la colección", C, 'py_str(get_or(item, "collection", Json("")))', "std::string()"),
+    ("búsqueda: cuenta tras filtrar por tipo", C,
+     "counts[k] = counts.value(k, std::int64_t{0}) + 1;\n                if (!want_kind.empty() && k != want_kind) {\n"
+     "                    continue;\n                }",
+     "if (!want_kind.empty() && k != want_kind) {\n                    continue;\n                }\n"
+     "                counts[k] = counts.value(k, std::int64_t{0}) + 1;"),
+    ("búsqueda: total tras el límite", C, 'out["total"] = total;', 'out["total"] = items.size();'),
+    ("búsqueda: límite negativo como 0", C, "std::max<std::int64_t>(0, n + limit)", "std::int64_t{0}"),
+    ("búsqueda: tipo sin minúsculas", C, "py_lower(py_strip(kind))", "py_strip(kind)"),
+    ("búsqueda: colección sin strip", C, "py_strip(collection)", "std::string(collection)"),
+    ("búsqueda: también las desactivadas", C, 'if (c.at("enabled").get<bool>()) {', "if (true) {"),
+    ("búsqueda: sin favorita", C, 'it["favorite"] = favorite.contains(cid);', 'it["favorite"] = false;'),
+    ("crear: sufijo con guion bajo", C, 'std::format("{} {}", clean, n)', 'std::format("{}_{}", clean, n)'),
+    ("nombre: los puntos de los extremos se quedan", C, 'out.find_first_not_of(" .")', 'out.find_first_not_of(" ")'),
+    ("nombre: los dos puntos se quedan", C, r'R"(<>:"/\|?*)"', r'R"(<>"/\|?*)"'),
+    ("nombre: los caracteres de control se quedan", C, "static_cast<unsigned char>(c) < 0x20 || ", ""),
+    ("añadir: duplicado con espacio", C, 'std::format("{}_{}{}", stem, n, suffix)',
+     'std::format("{} {}{}", stem, n, suffix)'),
+    ("añadir: nombre con la ruta", C, "clean_name(py_path_name(py_truthy(f.name)", "clean_name((py_truthy(f.name)"),
+    ("añadir: el error lleva el nombre limpio", C, '{"file", f.name}', '{"file", name}'),
+    ("añadir: otro mensaje sin carpeta", C, '"Carpeta no encontrada."', '"Carpeta no encontrada"'),
+    ("resolve: también carpetas", C, "!fs::is_regular_file(*target, ec)", "!fs::exists(*target, ec)"),
+    ("añadir: un NUL en el id llega al disco", C, "cid->contains('\\0') || ", ""),
+    ("recorrido: un NUL en el id llega al disco", C, "collection.contains('\\0') || ", ""),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
-          "sfx": (SFX, "[sfx]")}
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]")}
 
 
-def run(cmd: list[str]) -> subprocess.CompletedProcess:
+def run(cmd: list[str], timeout: float | None = None) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, cwd=REPO, env=ENV, capture_output=True, text=True, encoding="utf-8",
-                          errors="replace")
+                          errors="replace", timeout=timeout)
+
+
+# Un mutante puede colgar los tests (un bucle que no acaba): pasado este tiempo se mata el
+# proceso y cuenta como detectado.
+TEST_TIMEOUT = 600
 
 
 def main() -> int:
@@ -251,9 +313,13 @@ def main() -> int:
             if b.returncode != 0:
                 print(f"NO COMPILA    {name}\n{b.stdout[-800:]}")
                 continue
-            ok = run([str(tests), tag]).returncode != 0
+            try:
+                ok = run([str(tests), tag], timeout=TEST_TIMEOUT).returncode != 0
+                how = "detectado     "
+            except subprocess.TimeoutExpired:
+                ok, how = True, "cuelga        "
             caught += ok
-            print(("detectado     " if ok else "NO DETECTADO  ") + name)
+            print((how if ok else "NO DETECTADO  ") + name, flush=True)
         finally:
             path.write_text(original, encoding="utf-8", newline="\n")
     run([cmake, "--build", str(build), "--target", "gc_tests"])

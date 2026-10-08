@@ -1,0 +1,9193 @@
+{
+ "root": null,
+ "steps": [
+  {
+   "step": [
+    "assets",
+    "no_existe"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": false,
+    "root": null,
+    "collections": []
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": false,
+    "root": null,
+    "counts": {
+     "video": 0,
+     "image": 0,
+     "gif": 0,
+     "audio": 0,
+     "all": 0
+    },
+    "total": 0,
+    "items": [],
+    "collections": []
+   }
+  },
+  {
+   "step": [
+    "scan",
+    "fondos"
+   ],
+   "error": "TypeError"
+  },
+  {
+   "step": [
+    "resolve",
+    "fondos/a.gif"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "nueva"
+   ],
+   "error": "ValueError",
+   "message": "No hay carpeta raíz de material."
+  },
+  {
+   "step": [
+    "add",
+    "fondos",
+    [
+     [
+      "a.png",
+      "1"
+     ]
+    ]
+   ],
+   "error": "LookupError",
+   "message": "Carpeta no encontrada."
+  },
+  {
+   "step": [
+    "add",
+    "..",
+    [
+     [
+      "a.png",
+      "1"
+     ]
+    ]
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "files",
+    [
+     "assets/material/fondos/cielo.PNG",
+     "assets/material/fondos/sub/b.jpg",
+     "assets/material/fondos/Árbol.webp",
+     "assets/material/fondos/z.GIF",
+     "assets/material/fondos/a.gif",
+     "assets/material/fondos/notas.txt",
+     "assets/material/fondos/sin_ext",
+     "assets/material/fondos/.hidden.mp4",
+     "assets/material/fondos/x.mp4.bak",
+     "assets/material/fondos/clip.MOV",
+     "assets/material/fondos/sub/deep/v.mkv",
+     "assets/material/fondos/İx.png",
+     "assets/material/fondos/iz.png",
+     "assets/material/fondos/ß.png",
+     "assets/material/fondos/SS.jpeg",
+     "assets/material/fondos/sub/A.wav",
+     "assets/material/sonidos/a.mp3",
+     "assets/material/sonidos/b.WMA",
+     "assets/material/sonidos/c.flac",
+     "assets/material/sonidos/d.aiff",
+     "assets/material/Zeta/one.webm",
+     "assets/material/alfa/one.bmp",
+     "assets/material/ΟΔΟΣ/x.mpeg",
+     "assets/material/stick_char/stick.json",
+     "assets/material/stick_char/happy.png",
+     "assets/material/g r#ú%/x y.mp4",
+     "assets/material/solo_audio/s.ogg",
+     "assets/material/solo_audio/t.m4a",
+     "assets/material/solo_audio/u.aac",
+     "assets/material/suelto.mp4",
+     "assets/fuera.mp4"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "dirs",
+    [
+     "assets/material/vacía",
+     "assets/material/fondos/carpeta.mp4"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "assets",
+    "assets"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": "{TMP}\\assets\\material"
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "scan",
+    "fondos"
+   ],
+   "result": [
+    {
+     "id": "col_fondos/.hidden.mp4",
+     "collection": "fondos",
+     "name": ".hidden",
+     "kind": "video",
+     "filename": "fondos/.hidden.mp4",
+     "url": "/api/collections/file/fondos/.hidden.mp4"
+    },
+    {
+     "id": "col_fondos/a.gif",
+     "collection": "fondos",
+     "name": "a",
+     "kind": "gif",
+     "filename": "fondos/a.gif",
+     "url": "/api/collections/file/fondos/a.gif"
+    },
+    {
+     "id": "col_fondos/cielo.PNG",
+     "collection": "fondos",
+     "name": "cielo",
+     "kind": "image",
+     "filename": "fondos/cielo.PNG",
+     "url": "/api/collections/file/fondos/cielo.PNG"
+    },
+    {
+     "id": "col_fondos/clip.MOV",
+     "collection": "fondos",
+     "name": "clip",
+     "kind": "video",
+     "filename": "fondos/clip.MOV",
+     "url": "/api/collections/file/fondos/clip.MOV"
+    },
+    {
+     "id": "col_fondos/iz.png",
+     "collection": "fondos",
+     "name": "iz",
+     "kind": "image",
+     "filename": "fondos/iz.png",
+     "url": "/api/collections/file/fondos/iz.png"
+    },
+    {
+     "id": "col_fondos/İx.png",
+     "collection": "fondos",
+     "name": "İx",
+     "kind": "image",
+     "filename": "fondos/İx.png",
+     "url": "/api/collections/file/fondos/%C4%B0x.png"
+    },
+    {
+     "id": "col_fondos/SS.jpeg",
+     "collection": "fondos",
+     "name": "SS",
+     "kind": "image",
+     "filename": "fondos/SS.jpeg",
+     "url": "/api/collections/file/fondos/SS.jpeg"
+    },
+    {
+     "id": "col_fondos/sub/A.wav",
+     "collection": "fondos",
+     "name": "A",
+     "kind": "audio",
+     "filename": "fondos/sub/A.wav",
+     "url": "/api/collections/file/fondos/sub/A.wav"
+    },
+    {
+     "id": "col_fondos/sub/b.jpg",
+     "collection": "fondos",
+     "name": "b",
+     "kind": "image",
+     "filename": "fondos/sub/b.jpg",
+     "url": "/api/collections/file/fondos/sub/b.jpg"
+    },
+    {
+     "id": "col_fondos/sub/deep/v.mkv",
+     "collection": "fondos",
+     "name": "v",
+     "kind": "video",
+     "filename": "fondos/sub/deep/v.mkv",
+     "url": "/api/collections/file/fondos/sub/deep/v.mkv"
+    },
+    {
+     "id": "col_fondos/z.GIF",
+     "collection": "fondos",
+     "name": "z",
+     "kind": "gif",
+     "filename": "fondos/z.GIF",
+     "url": "/api/collections/file/fondos/z.GIF"
+    },
+    {
+     "id": "col_fondos/ß.png",
+     "collection": "fondos",
+     "name": "ß",
+     "kind": "image",
+     "filename": "fondos/ß.png",
+     "url": "/api/collections/file/fondos/%C3%9F.png"
+    },
+    {
+     "id": "col_fondos/Árbol.webp",
+     "collection": "fondos",
+     "name": "Árbol",
+     "kind": "image",
+     "filename": "fondos/Árbol.webp",
+     "url": "/api/collections/file/fondos/%C3%81rbol.webp"
+    }
+   ]
+  },
+  {
+   "step": [
+    "scan",
+    "FONDOS"
+   ],
+   "result": [
+    {
+     "id": "col_FONDOS/.hidden.mp4",
+     "collection": "FONDOS",
+     "name": ".hidden",
+     "kind": "video",
+     "filename": "FONDOS/.hidden.mp4",
+     "url": "/api/collections/file/FONDOS/.hidden.mp4"
+    },
+    {
+     "id": "col_FONDOS/a.gif",
+     "collection": "FONDOS",
+     "name": "a",
+     "kind": "gif",
+     "filename": "FONDOS/a.gif",
+     "url": "/api/collections/file/FONDOS/a.gif"
+    },
+    {
+     "id": "col_FONDOS/cielo.PNG",
+     "collection": "FONDOS",
+     "name": "cielo",
+     "kind": "image",
+     "filename": "FONDOS/cielo.PNG",
+     "url": "/api/collections/file/FONDOS/cielo.PNG"
+    },
+    {
+     "id": "col_FONDOS/clip.MOV",
+     "collection": "FONDOS",
+     "name": "clip",
+     "kind": "video",
+     "filename": "FONDOS/clip.MOV",
+     "url": "/api/collections/file/FONDOS/clip.MOV"
+    },
+    {
+     "id": "col_FONDOS/iz.png",
+     "collection": "FONDOS",
+     "name": "iz",
+     "kind": "image",
+     "filename": "FONDOS/iz.png",
+     "url": "/api/collections/file/FONDOS/iz.png"
+    },
+    {
+     "id": "col_FONDOS/İx.png",
+     "collection": "FONDOS",
+     "name": "İx",
+     "kind": "image",
+     "filename": "FONDOS/İx.png",
+     "url": "/api/collections/file/FONDOS/%C4%B0x.png"
+    },
+    {
+     "id": "col_FONDOS/SS.jpeg",
+     "collection": "FONDOS",
+     "name": "SS",
+     "kind": "image",
+     "filename": "FONDOS/SS.jpeg",
+     "url": "/api/collections/file/FONDOS/SS.jpeg"
+    },
+    {
+     "id": "col_FONDOS/sub/A.wav",
+     "collection": "FONDOS",
+     "name": "A",
+     "kind": "audio",
+     "filename": "FONDOS/sub/A.wav",
+     "url": "/api/collections/file/FONDOS/sub/A.wav"
+    },
+    {
+     "id": "col_FONDOS/sub/b.jpg",
+     "collection": "FONDOS",
+     "name": "b",
+     "kind": "image",
+     "filename": "FONDOS/sub/b.jpg",
+     "url": "/api/collections/file/FONDOS/sub/b.jpg"
+    },
+    {
+     "id": "col_FONDOS/sub/deep/v.mkv",
+     "collection": "FONDOS",
+     "name": "v",
+     "kind": "video",
+     "filename": "FONDOS/sub/deep/v.mkv",
+     "url": "/api/collections/file/FONDOS/sub/deep/v.mkv"
+    },
+    {
+     "id": "col_FONDOS/z.GIF",
+     "collection": "FONDOS",
+     "name": "z",
+     "kind": "gif",
+     "filename": "FONDOS/z.GIF",
+     "url": "/api/collections/file/FONDOS/z.GIF"
+    },
+    {
+     "id": "col_FONDOS/ß.png",
+     "collection": "FONDOS",
+     "name": "ß",
+     "kind": "image",
+     "filename": "FONDOS/ß.png",
+     "url": "/api/collections/file/FONDOS/%C3%9F.png"
+    },
+    {
+     "id": "col_FONDOS/Árbol.webp",
+     "collection": "FONDOS",
+     "name": "Árbol",
+     "kind": "image",
+     "filename": "FONDOS/Árbol.webp",
+     "url": "/api/collections/file/FONDOS/%C3%81rbol.webp"
+    }
+   ]
+  },
+  {
+   "step": [
+    "scan",
+    "sonidos"
+   ],
+   "result": [
+    {
+     "id": "col_sonidos/a.mp3",
+     "collection": "sonidos",
+     "name": "a",
+     "kind": "audio",
+     "filename": "sonidos/a.mp3",
+     "url": "/api/collections/file/sonidos/a.mp3"
+    },
+    {
+     "id": "col_sonidos/b.WMA",
+     "collection": "sonidos",
+     "name": "b",
+     "kind": "audio",
+     "filename": "sonidos/b.WMA",
+     "url": "/api/collections/file/sonidos/b.WMA"
+    },
+    {
+     "id": "col_sonidos/c.flac",
+     "collection": "sonidos",
+     "name": "c",
+     "kind": "audio",
+     "filename": "sonidos/c.flac",
+     "url": "/api/collections/file/sonidos/c.flac"
+    }
+   ]
+  },
+  {
+   "step": [
+    "scan",
+    "vacía"
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "scan",
+    "no_existe"
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "scan",
+    "suelto.mp4"
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "scan",
+    "ΟΔΟΣ"
+   ],
+   "result": [
+    {
+     "id": "col_ΟΔΟΣ/x.mpeg",
+     "collection": "ΟΔΟΣ",
+     "name": "x",
+     "kind": "video",
+     "filename": "ΟΔΟΣ/x.mpeg",
+     "url": "/api/collections/file/%CE%9F%CE%94%CE%9F%CE%A3/x.mpeg"
+    }
+   ]
+  },
+  {
+   "step": [
+    "scan",
+    "g r#ú%"
+   ],
+   "result": [
+    {
+     "id": "col_g r#ú%/x y.mp4",
+     "collection": "g r#ú%",
+     "name": "x y",
+     "kind": "video",
+     "filename": "g r#ú%/x y.mp4",
+     "url": "/api/collections/file/g%20r%23%C3%BA%25/x%20y.mp4"
+    }
+   ]
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 24,
+    "items": [
+     {
+      "id": "col_Zeta/one.webm",
+      "collection": "Zeta",
+      "name": "one",
+      "kind": "video",
+      "filename": "Zeta/one.webm",
+      "url": "/api/collections/file/Zeta/one.webm",
+      "favorite": false
+     },
+     {
+      "id": "col_alfa/one.bmp",
+      "collection": "alfa",
+      "name": "one",
+      "kind": "image",
+      "filename": "alfa/one.bmp",
+      "url": "/api/collections/file/alfa/one.bmp",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/.hidden.mp4",
+      "collection": "fondos",
+      "name": ".hidden",
+      "kind": "video",
+      "filename": "fondos/.hidden.mp4",
+      "url": "/api/collections/file/fondos/.hidden.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/a.gif",
+      "collection": "fondos",
+      "name": "a",
+      "kind": "gif",
+      "filename": "fondos/a.gif",
+      "url": "/api/collections/file/fondos/a.gif",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/cielo.PNG",
+      "collection": "fondos",
+      "name": "cielo",
+      "kind": "image",
+      "filename": "fondos/cielo.PNG",
+      "url": "/api/collections/file/fondos/cielo.PNG",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/clip.MOV",
+      "collection": "fondos",
+      "name": "clip",
+      "kind": "video",
+      "filename": "fondos/clip.MOV",
+      "url": "/api/collections/file/fondos/clip.MOV",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/iz.png",
+      "collection": "fondos",
+      "name": "iz",
+      "kind": "image",
+      "filename": "fondos/iz.png",
+      "url": "/api/collections/file/fondos/iz.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/İx.png",
+      "collection": "fondos",
+      "name": "İx",
+      "kind": "image",
+      "filename": "fondos/İx.png",
+      "url": "/api/collections/file/fondos/%C4%B0x.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/SS.jpeg",
+      "collection": "fondos",
+      "name": "SS",
+      "kind": "image",
+      "filename": "fondos/SS.jpeg",
+      "url": "/api/collections/file/fondos/SS.jpeg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/A.wav",
+      "collection": "fondos",
+      "name": "A",
+      "kind": "audio",
+      "filename": "fondos/sub/A.wav",
+      "url": "/api/collections/file/fondos/sub/A.wav",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/b.jpg",
+      "collection": "fondos",
+      "name": "b",
+      "kind": "image",
+      "filename": "fondos/sub/b.jpg",
+      "url": "/api/collections/file/fondos/sub/b.jpg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/deep/v.mkv",
+      "collection": "fondos",
+      "name": "v",
+      "kind": "video",
+      "filename": "fondos/sub/deep/v.mkv",
+      "url": "/api/collections/file/fondos/sub/deep/v.mkv",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/z.GIF",
+      "collection": "fondos",
+      "name": "z",
+      "kind": "gif",
+      "filename": "fondos/z.GIF",
+      "url": "/api/collections/file/fondos/z.GIF",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/ß.png",
+      "collection": "fondos",
+      "name": "ß",
+      "kind": "image",
+      "filename": "fondos/ß.png",
+      "url": "/api/collections/file/fondos/%C3%9F.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/Árbol.webp",
+      "collection": "fondos",
+      "name": "Árbol",
+      "kind": "image",
+      "filename": "fondos/Árbol.webp",
+      "url": "/api/collections/file/fondos/%C3%81rbol.webp",
+      "favorite": false
+     },
+     {
+      "id": "col_g r#ú%/x y.mp4",
+      "collection": "g r#ú%",
+      "name": "x y",
+      "kind": "video",
+      "filename": "g r#ú%/x y.mp4",
+      "url": "/api/collections/file/g%20r%23%C3%BA%25/x%20y.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/s.ogg",
+      "collection": "solo_audio",
+      "name": "s",
+      "kind": "audio",
+      "filename": "solo_audio/s.ogg",
+      "url": "/api/collections/file/solo_audio/s.ogg",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/t.m4a",
+      "collection": "solo_audio",
+      "name": "t",
+      "kind": "audio",
+      "filename": "solo_audio/t.m4a",
+      "url": "/api/collections/file/solo_audio/t.m4a",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/u.aac",
+      "collection": "solo_audio",
+      "name": "u",
+      "kind": "audio",
+      "filename": "solo_audio/u.aac",
+      "url": "/api/collections/file/solo_audio/u.aac",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/a.mp3",
+      "collection": "sonidos",
+      "name": "a",
+      "kind": "audio",
+      "filename": "sonidos/a.mp3",
+      "url": "/api/collections/file/sonidos/a.mp3",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/b.WMA",
+      "collection": "sonidos",
+      "name": "b",
+      "kind": "audio",
+      "filename": "sonidos/b.WMA",
+      "url": "/api/collections/file/sonidos/b.WMA",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/c.flac",
+      "collection": "sonidos",
+      "name": "c",
+      "kind": "audio",
+      "filename": "sonidos/c.flac",
+      "url": "/api/collections/file/sonidos/c.flac",
+      "favorite": false
+     },
+     {
+      "id": "col_stick_char/happy.png",
+      "collection": "stick_char",
+      "name": "happy",
+      "kind": "image",
+      "filename": "stick_char/happy.png",
+      "url": "/api/collections/file/stick_char/happy.png",
+      "favorite": false
+     },
+     {
+      "id": "col_ΟΔΟΣ/x.mpeg",
+      "collection": "ΟΔΟΣ",
+      "name": "x",
+      "kind": "video",
+      "filename": "ΟΔΟΣ/x.mpeg",
+      "url": "/api/collections/file/%CE%9F%CE%94%CE%9F%CE%A3/x.mpeg",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "video",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 6,
+    "items": [
+     {
+      "id": "col_Zeta/one.webm",
+      "collection": "Zeta",
+      "name": "one",
+      "kind": "video",
+      "filename": "Zeta/one.webm",
+      "url": "/api/collections/file/Zeta/one.webm",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/.hidden.mp4",
+      "collection": "fondos",
+      "name": ".hidden",
+      "kind": "video",
+      "filename": "fondos/.hidden.mp4",
+      "url": "/api/collections/file/fondos/.hidden.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/clip.MOV",
+      "collection": "fondos",
+      "name": "clip",
+      "kind": "video",
+      "filename": "fondos/clip.MOV",
+      "url": "/api/collections/file/fondos/clip.MOV",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/deep/v.mkv",
+      "collection": "fondos",
+      "name": "v",
+      "kind": "video",
+      "filename": "fondos/sub/deep/v.mkv",
+      "url": "/api/collections/file/fondos/sub/deep/v.mkv",
+      "favorite": false
+     },
+     {
+      "id": "col_g r#ú%/x y.mp4",
+      "collection": "g r#ú%",
+      "name": "x y",
+      "kind": "video",
+      "filename": "g r#ú%/x y.mp4",
+      "url": "/api/collections/file/g%20r%23%C3%BA%25/x%20y.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_ΟΔΟΣ/x.mpeg",
+      "collection": "ΟΔΟΣ",
+      "name": "x",
+      "kind": "video",
+      "filename": "ΟΔΟΣ/x.mpeg",
+      "url": "/api/collections/file/%CE%9F%CE%94%CE%9F%CE%A3/x.mpeg",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    " IMAGE ",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 9,
+    "items": [
+     {
+      "id": "col_alfa/one.bmp",
+      "collection": "alfa",
+      "name": "one",
+      "kind": "image",
+      "filename": "alfa/one.bmp",
+      "url": "/api/collections/file/alfa/one.bmp",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/cielo.PNG",
+      "collection": "fondos",
+      "name": "cielo",
+      "kind": "image",
+      "filename": "fondos/cielo.PNG",
+      "url": "/api/collections/file/fondos/cielo.PNG",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/iz.png",
+      "collection": "fondos",
+      "name": "iz",
+      "kind": "image",
+      "filename": "fondos/iz.png",
+      "url": "/api/collections/file/fondos/iz.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/İx.png",
+      "collection": "fondos",
+      "name": "İx",
+      "kind": "image",
+      "filename": "fondos/İx.png",
+      "url": "/api/collections/file/fondos/%C4%B0x.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/SS.jpeg",
+      "collection": "fondos",
+      "name": "SS",
+      "kind": "image",
+      "filename": "fondos/SS.jpeg",
+      "url": "/api/collections/file/fondos/SS.jpeg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/b.jpg",
+      "collection": "fondos",
+      "name": "b",
+      "kind": "image",
+      "filename": "fondos/sub/b.jpg",
+      "url": "/api/collections/file/fondos/sub/b.jpg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/ß.png",
+      "collection": "fondos",
+      "name": "ß",
+      "kind": "image",
+      "filename": "fondos/ß.png",
+      "url": "/api/collections/file/fondos/%C3%9F.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/Árbol.webp",
+      "collection": "fondos",
+      "name": "Árbol",
+      "kind": "image",
+      "filename": "fondos/Árbol.webp",
+      "url": "/api/collections/file/fondos/%C3%81rbol.webp",
+      "favorite": false
+     },
+     {
+      "id": "col_stick_char/happy.png",
+      "collection": "stick_char",
+      "name": "happy",
+      "kind": "image",
+      "filename": "stick_char/happy.png",
+      "url": "/api/collections/file/stick_char/happy.png",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "gif",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 2,
+    "items": [
+     {
+      "id": "col_fondos/a.gif",
+      "collection": "fondos",
+      "name": "a",
+      "kind": "gif",
+      "filename": "fondos/a.gif",
+      "url": "/api/collections/file/fondos/a.gif",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/z.GIF",
+      "collection": "fondos",
+      "name": "z",
+      "kind": "gif",
+      "filename": "fondos/z.GIF",
+      "url": "/api/collections/file/fondos/z.GIF",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "audio",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 7,
+    "items": [
+     {
+      "id": "col_fondos/sub/A.wav",
+      "collection": "fondos",
+      "name": "A",
+      "kind": "audio",
+      "filename": "fondos/sub/A.wav",
+      "url": "/api/collections/file/fondos/sub/A.wav",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/s.ogg",
+      "collection": "solo_audio",
+      "name": "s",
+      "kind": "audio",
+      "filename": "solo_audio/s.ogg",
+      "url": "/api/collections/file/solo_audio/s.ogg",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/t.m4a",
+      "collection": "solo_audio",
+      "name": "t",
+      "kind": "audio",
+      "filename": "solo_audio/t.m4a",
+      "url": "/api/collections/file/solo_audio/t.m4a",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/u.aac",
+      "collection": "solo_audio",
+      "name": "u",
+      "kind": "audio",
+      "filename": "solo_audio/u.aac",
+      "url": "/api/collections/file/solo_audio/u.aac",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/a.mp3",
+      "collection": "sonidos",
+      "name": "a",
+      "kind": "audio",
+      "filename": "sonidos/a.mp3",
+      "url": "/api/collections/file/sonidos/a.mp3",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/b.WMA",
+      "collection": "sonidos",
+      "name": "b",
+      "kind": "audio",
+      "filename": "sonidos/b.WMA",
+      "url": "/api/collections/file/sonidos/b.WMA",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/c.flac",
+      "collection": "sonidos",
+      "name": "c",
+      "kind": "audio",
+      "filename": "sonidos/c.flac",
+      "url": "/api/collections/file/sonidos/c.flac",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "otro",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 0,
+    "items": [],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "one",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 1,
+     "image": 1,
+     "gif": 0,
+     "audio": 0,
+     "all": 2
+    },
+    "total": 2,
+    "items": [
+     {
+      "id": "col_Zeta/one.webm",
+      "collection": "Zeta",
+      "name": "one",
+      "kind": "video",
+      "filename": "Zeta/one.webm",
+      "url": "/api/collections/file/Zeta/one.webm",
+      "favorite": false
+     },
+     {
+      "id": "col_alfa/one.bmp",
+      "collection": "alfa",
+      "name": "one",
+      "kind": "image",
+      "filename": "alfa/one.bmp",
+      "url": "/api/collections/file/alfa/one.bmp",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "ONE alfa",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 0,
+     "image": 1,
+     "gif": 0,
+     "audio": 0,
+     "all": 1
+    },
+    "total": 1,
+    "items": [
+     {
+      "id": "col_alfa/one.bmp",
+      "collection": "alfa",
+      "name": "one",
+      "kind": "image",
+      "filename": "alfa/one.bmp",
+      "url": "/api/collections/file/alfa/one.bmp",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "árbol",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 0,
+     "image": 1,
+     "gif": 0,
+     "audio": 0,
+     "all": 1
+    },
+    "total": 1,
+    "items": [
+     {
+      "id": "col_fondos/Árbol.webp",
+      "collection": "fondos",
+      "name": "Árbol",
+      "kind": "image",
+      "filename": "fondos/Árbol.webp",
+      "url": "/api/collections/file/fondos/%C3%81rbol.webp",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "ÁRBOL",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 0,
+     "image": 1,
+     "gif": 0,
+     "audio": 0,
+     "all": 1
+    },
+    "total": 1,
+    "items": [
+     {
+      "id": "col_fondos/Árbol.webp",
+      "collection": "fondos",
+      "name": "Árbol",
+      "kind": "image",
+      "filename": "fondos/Árbol.webp",
+      "url": "/api/collections/file/fondos/%C3%81rbol.webp",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "οδος",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 1,
+     "image": 0,
+     "gif": 0,
+     "audio": 0,
+     "all": 1
+    },
+    "total": 1,
+    "items": [
+     {
+      "id": "col_ΟΔΟΣ/x.mpeg",
+      "collection": "ΟΔΟΣ",
+      "name": "x",
+      "kind": "video",
+      "filename": "ΟΔΟΣ/x.mpeg",
+      "url": "/api/collections/file/%CE%9F%CE%94%CE%9F%CE%A3/x.mpeg",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "οδοσ",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 0,
+     "image": 0,
+     "gif": 0,
+     "audio": 0,
+     "all": 0
+    },
+    "total": 0,
+    "items": [],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "x y",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 1,
+     "image": 0,
+     "gif": 0,
+     "audio": 0,
+     "all": 1
+    },
+    "total": 1,
+    "items": [
+     {
+      "id": "col_g r#ú%/x y.mp4",
+      "collection": "g r#ú%",
+      "name": "x y",
+      "kind": "video",
+      "filename": "g r#ú%/x y.mp4",
+      "url": "/api/collections/file/g%20r%23%C3%BA%25/x%20y.mp4",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "  ",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 24,
+    "items": [
+     {
+      "id": "col_Zeta/one.webm",
+      "collection": "Zeta",
+      "name": "one",
+      "kind": "video",
+      "filename": "Zeta/one.webm",
+      "url": "/api/collections/file/Zeta/one.webm",
+      "favorite": false
+     },
+     {
+      "id": "col_alfa/one.bmp",
+      "collection": "alfa",
+      "name": "one",
+      "kind": "image",
+      "filename": "alfa/one.bmp",
+      "url": "/api/collections/file/alfa/one.bmp",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/.hidden.mp4",
+      "collection": "fondos",
+      "name": ".hidden",
+      "kind": "video",
+      "filename": "fondos/.hidden.mp4",
+      "url": "/api/collections/file/fondos/.hidden.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/a.gif",
+      "collection": "fondos",
+      "name": "a",
+      "kind": "gif",
+      "filename": "fondos/a.gif",
+      "url": "/api/collections/file/fondos/a.gif",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/cielo.PNG",
+      "collection": "fondos",
+      "name": "cielo",
+      "kind": "image",
+      "filename": "fondos/cielo.PNG",
+      "url": "/api/collections/file/fondos/cielo.PNG",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/clip.MOV",
+      "collection": "fondos",
+      "name": "clip",
+      "kind": "video",
+      "filename": "fondos/clip.MOV",
+      "url": "/api/collections/file/fondos/clip.MOV",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/iz.png",
+      "collection": "fondos",
+      "name": "iz",
+      "kind": "image",
+      "filename": "fondos/iz.png",
+      "url": "/api/collections/file/fondos/iz.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/İx.png",
+      "collection": "fondos",
+      "name": "İx",
+      "kind": "image",
+      "filename": "fondos/İx.png",
+      "url": "/api/collections/file/fondos/%C4%B0x.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/SS.jpeg",
+      "collection": "fondos",
+      "name": "SS",
+      "kind": "image",
+      "filename": "fondos/SS.jpeg",
+      "url": "/api/collections/file/fondos/SS.jpeg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/A.wav",
+      "collection": "fondos",
+      "name": "A",
+      "kind": "audio",
+      "filename": "fondos/sub/A.wav",
+      "url": "/api/collections/file/fondos/sub/A.wav",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/b.jpg",
+      "collection": "fondos",
+      "name": "b",
+      "kind": "image",
+      "filename": "fondos/sub/b.jpg",
+      "url": "/api/collections/file/fondos/sub/b.jpg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/deep/v.mkv",
+      "collection": "fondos",
+      "name": "v",
+      "kind": "video",
+      "filename": "fondos/sub/deep/v.mkv",
+      "url": "/api/collections/file/fondos/sub/deep/v.mkv",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/z.GIF",
+      "collection": "fondos",
+      "name": "z",
+      "kind": "gif",
+      "filename": "fondos/z.GIF",
+      "url": "/api/collections/file/fondos/z.GIF",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/ß.png",
+      "collection": "fondos",
+      "name": "ß",
+      "kind": "image",
+      "filename": "fondos/ß.png",
+      "url": "/api/collections/file/fondos/%C3%9F.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/Árbol.webp",
+      "collection": "fondos",
+      "name": "Árbol",
+      "kind": "image",
+      "filename": "fondos/Árbol.webp",
+      "url": "/api/collections/file/fondos/%C3%81rbol.webp",
+      "favorite": false
+     },
+     {
+      "id": "col_g r#ú%/x y.mp4",
+      "collection": "g r#ú%",
+      "name": "x y",
+      "kind": "video",
+      "filename": "g r#ú%/x y.mp4",
+      "url": "/api/collections/file/g%20r%23%C3%BA%25/x%20y.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/s.ogg",
+      "collection": "solo_audio",
+      "name": "s",
+      "kind": "audio",
+      "filename": "solo_audio/s.ogg",
+      "url": "/api/collections/file/solo_audio/s.ogg",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/t.m4a",
+      "collection": "solo_audio",
+      "name": "t",
+      "kind": "audio",
+      "filename": "solo_audio/t.m4a",
+      "url": "/api/collections/file/solo_audio/t.m4a",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/u.aac",
+      "collection": "solo_audio",
+      "name": "u",
+      "kind": "audio",
+      "filename": "solo_audio/u.aac",
+      "url": "/api/collections/file/solo_audio/u.aac",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/a.mp3",
+      "collection": "sonidos",
+      "name": "a",
+      "kind": "audio",
+      "filename": "sonidos/a.mp3",
+      "url": "/api/collections/file/sonidos/a.mp3",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/b.WMA",
+      "collection": "sonidos",
+      "name": "b",
+      "kind": "audio",
+      "filename": "sonidos/b.WMA",
+      "url": "/api/collections/file/sonidos/b.WMA",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/c.flac",
+      "collection": "sonidos",
+      "name": "c",
+      "kind": "audio",
+      "filename": "sonidos/c.flac",
+      "url": "/api/collections/file/sonidos/c.flac",
+      "favorite": false
+     },
+     {
+      "id": "col_stick_char/happy.png",
+      "collection": "stick_char",
+      "name": "happy",
+      "kind": "image",
+      "filename": "stick_char/happy.png",
+      "url": "/api/collections/file/stick_char/happy.png",
+      "favorite": false
+     },
+     {
+      "id": "col_ΟΔΟΣ/x.mpeg",
+      "collection": "ΟΔΟΣ",
+      "name": "x",
+      "kind": "video",
+      "filename": "ΟΔΟΣ/x.mpeg",
+      "url": "/api/collections/file/%CE%9F%CE%94%CE%9F%CE%A3/x.mpeg",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "nada",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 0,
+     "image": 0,
+     "gif": 0,
+     "audio": 0,
+     "all": 0
+    },
+    "total": 0,
+    "items": [],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "fondos",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 3,
+     "image": 7,
+     "gif": 2,
+     "audio": 1,
+     "all": 13
+    },
+    "total": 13,
+    "items": [
+     {
+      "id": "col_fondos/.hidden.mp4",
+      "collection": "fondos",
+      "name": ".hidden",
+      "kind": "video",
+      "filename": "fondos/.hidden.mp4",
+      "url": "/api/collections/file/fondos/.hidden.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/a.gif",
+      "collection": "fondos",
+      "name": "a",
+      "kind": "gif",
+      "filename": "fondos/a.gif",
+      "url": "/api/collections/file/fondos/a.gif",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/cielo.PNG",
+      "collection": "fondos",
+      "name": "cielo",
+      "kind": "image",
+      "filename": "fondos/cielo.PNG",
+      "url": "/api/collections/file/fondos/cielo.PNG",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/clip.MOV",
+      "collection": "fondos",
+      "name": "clip",
+      "kind": "video",
+      "filename": "fondos/clip.MOV",
+      "url": "/api/collections/file/fondos/clip.MOV",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/iz.png",
+      "collection": "fondos",
+      "name": "iz",
+      "kind": "image",
+      "filename": "fondos/iz.png",
+      "url": "/api/collections/file/fondos/iz.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/İx.png",
+      "collection": "fondos",
+      "name": "İx",
+      "kind": "image",
+      "filename": "fondos/İx.png",
+      "url": "/api/collections/file/fondos/%C4%B0x.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/SS.jpeg",
+      "collection": "fondos",
+      "name": "SS",
+      "kind": "image",
+      "filename": "fondos/SS.jpeg",
+      "url": "/api/collections/file/fondos/SS.jpeg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/A.wav",
+      "collection": "fondos",
+      "name": "A",
+      "kind": "audio",
+      "filename": "fondos/sub/A.wav",
+      "url": "/api/collections/file/fondos/sub/A.wav",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/b.jpg",
+      "collection": "fondos",
+      "name": "b",
+      "kind": "image",
+      "filename": "fondos/sub/b.jpg",
+      "url": "/api/collections/file/fondos/sub/b.jpg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/deep/v.mkv",
+      "collection": "fondos",
+      "name": "v",
+      "kind": "video",
+      "filename": "fondos/sub/deep/v.mkv",
+      "url": "/api/collections/file/fondos/sub/deep/v.mkv",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/z.GIF",
+      "collection": "fondos",
+      "name": "z",
+      "kind": "gif",
+      "filename": "fondos/z.GIF",
+      "url": "/api/collections/file/fondos/z.GIF",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/ß.png",
+      "collection": "fondos",
+      "name": "ß",
+      "kind": "image",
+      "filename": "fondos/ß.png",
+      "url": "/api/collections/file/fondos/%C3%9F.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/Árbol.webp",
+      "collection": "fondos",
+      "name": "Árbol",
+      "kind": "image",
+      "filename": "fondos/Árbol.webp",
+      "url": "/api/collections/file/fondos/%C3%81rbol.webp",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    " fondos ",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 3,
+     "image": 7,
+     "gif": 2,
+     "audio": 1,
+     "all": 13
+    },
+    "total": 13,
+    "items": [
+     {
+      "id": "col_fondos/.hidden.mp4",
+      "collection": "fondos",
+      "name": ".hidden",
+      "kind": "video",
+      "filename": "fondos/.hidden.mp4",
+      "url": "/api/collections/file/fondos/.hidden.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/a.gif",
+      "collection": "fondos",
+      "name": "a",
+      "kind": "gif",
+      "filename": "fondos/a.gif",
+      "url": "/api/collections/file/fondos/a.gif",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/cielo.PNG",
+      "collection": "fondos",
+      "name": "cielo",
+      "kind": "image",
+      "filename": "fondos/cielo.PNG",
+      "url": "/api/collections/file/fondos/cielo.PNG",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/clip.MOV",
+      "collection": "fondos",
+      "name": "clip",
+      "kind": "video",
+      "filename": "fondos/clip.MOV",
+      "url": "/api/collections/file/fondos/clip.MOV",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/iz.png",
+      "collection": "fondos",
+      "name": "iz",
+      "kind": "image",
+      "filename": "fondos/iz.png",
+      "url": "/api/collections/file/fondos/iz.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/İx.png",
+      "collection": "fondos",
+      "name": "İx",
+      "kind": "image",
+      "filename": "fondos/İx.png",
+      "url": "/api/collections/file/fondos/%C4%B0x.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/SS.jpeg",
+      "collection": "fondos",
+      "name": "SS",
+      "kind": "image",
+      "filename": "fondos/SS.jpeg",
+      "url": "/api/collections/file/fondos/SS.jpeg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/A.wav",
+      "collection": "fondos",
+      "name": "A",
+      "kind": "audio",
+      "filename": "fondos/sub/A.wav",
+      "url": "/api/collections/file/fondos/sub/A.wav",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/b.jpg",
+      "collection": "fondos",
+      "name": "b",
+      "kind": "image",
+      "filename": "fondos/sub/b.jpg",
+      "url": "/api/collections/file/fondos/sub/b.jpg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/deep/v.mkv",
+      "collection": "fondos",
+      "name": "v",
+      "kind": "video",
+      "filename": "fondos/sub/deep/v.mkv",
+      "url": "/api/collections/file/fondos/sub/deep/v.mkv",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/z.GIF",
+      "collection": "fondos",
+      "name": "z",
+      "kind": "gif",
+      "filename": "fondos/z.GIF",
+      "url": "/api/collections/file/fondos/z.GIF",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/ß.png",
+      "collection": "fondos",
+      "name": "ß",
+      "kind": "image",
+      "filename": "fondos/ß.png",
+      "url": "/api/collections/file/fondos/%C3%9F.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/Árbol.webp",
+      "collection": "fondos",
+      "name": "Árbol",
+      "kind": "image",
+      "filename": "fondos/Árbol.webp",
+      "url": "/api/collections/file/fondos/%C3%81rbol.webp",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "Fondos",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 0,
+     "image": 0,
+     "gif": 0,
+     "audio": 0,
+     "all": 0
+    },
+    "total": 0,
+    "items": [],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "image",
+    "fondos",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 3,
+     "image": 7,
+     "gif": 2,
+     "audio": 1,
+     "all": 13
+    },
+    "total": 7,
+    "items": [
+     {
+      "id": "col_fondos/cielo.PNG",
+      "collection": "fondos",
+      "name": "cielo",
+      "kind": "image",
+      "filename": "fondos/cielo.PNG",
+      "url": "/api/collections/file/fondos/cielo.PNG",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/iz.png",
+      "collection": "fondos",
+      "name": "iz",
+      "kind": "image",
+      "filename": "fondos/iz.png",
+      "url": "/api/collections/file/fondos/iz.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/İx.png",
+      "collection": "fondos",
+      "name": "İx",
+      "kind": "image",
+      "filename": "fondos/İx.png",
+      "url": "/api/collections/file/fondos/%C4%B0x.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/SS.jpeg",
+      "collection": "fondos",
+      "name": "SS",
+      "kind": "image",
+      "filename": "fondos/SS.jpeg",
+      "url": "/api/collections/file/fondos/SS.jpeg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/b.jpg",
+      "collection": "fondos",
+      "name": "b",
+      "kind": "image",
+      "filename": "fondos/sub/b.jpg",
+      "url": "/api/collections/file/fondos/sub/b.jpg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/ß.png",
+      "collection": "fondos",
+      "name": "ß",
+      "kind": "image",
+      "filename": "fondos/ß.png",
+      "url": "/api/collections/file/fondos/%C3%9F.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/Árbol.webp",
+      "collection": "fondos",
+      "name": "Árbol",
+      "kind": "image",
+      "filename": "fondos/Árbol.webp",
+      "url": "/api/collections/file/fondos/%C3%81rbol.webp",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "sub",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 0,
+     "image": 0,
+     "gif": 0,
+     "audio": 0,
+     "all": 0
+    },
+    "total": 0,
+    "items": [],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "",
+    0
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 24,
+    "items": [],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "",
+    3
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 24,
+    "items": [
+     {
+      "id": "col_Zeta/one.webm",
+      "collection": "Zeta",
+      "name": "one",
+      "kind": "video",
+      "filename": "Zeta/one.webm",
+      "url": "/api/collections/file/Zeta/one.webm",
+      "favorite": false
+     },
+     {
+      "id": "col_alfa/one.bmp",
+      "collection": "alfa",
+      "name": "one",
+      "kind": "image",
+      "filename": "alfa/one.bmp",
+      "url": "/api/collections/file/alfa/one.bmp",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/.hidden.mp4",
+      "collection": "fondos",
+      "name": ".hidden",
+      "kind": "video",
+      "filename": "fondos/.hidden.mp4",
+      "url": "/api/collections/file/fondos/.hidden.mp4",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "",
+    -2
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 24,
+    "items": [
+     {
+      "id": "col_Zeta/one.webm",
+      "collection": "Zeta",
+      "name": "one",
+      "kind": "video",
+      "filename": "Zeta/one.webm",
+      "url": "/api/collections/file/Zeta/one.webm",
+      "favorite": false
+     },
+     {
+      "id": "col_alfa/one.bmp",
+      "collection": "alfa",
+      "name": "one",
+      "kind": "image",
+      "filename": "alfa/one.bmp",
+      "url": "/api/collections/file/alfa/one.bmp",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/.hidden.mp4",
+      "collection": "fondos",
+      "name": ".hidden",
+      "kind": "video",
+      "filename": "fondos/.hidden.mp4",
+      "url": "/api/collections/file/fondos/.hidden.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/a.gif",
+      "collection": "fondos",
+      "name": "a",
+      "kind": "gif",
+      "filename": "fondos/a.gif",
+      "url": "/api/collections/file/fondos/a.gif",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/cielo.PNG",
+      "collection": "fondos",
+      "name": "cielo",
+      "kind": "image",
+      "filename": "fondos/cielo.PNG",
+      "url": "/api/collections/file/fondos/cielo.PNG",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/clip.MOV",
+      "collection": "fondos",
+      "name": "clip",
+      "kind": "video",
+      "filename": "fondos/clip.MOV",
+      "url": "/api/collections/file/fondos/clip.MOV",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/iz.png",
+      "collection": "fondos",
+      "name": "iz",
+      "kind": "image",
+      "filename": "fondos/iz.png",
+      "url": "/api/collections/file/fondos/iz.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/İx.png",
+      "collection": "fondos",
+      "name": "İx",
+      "kind": "image",
+      "filename": "fondos/İx.png",
+      "url": "/api/collections/file/fondos/%C4%B0x.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/SS.jpeg",
+      "collection": "fondos",
+      "name": "SS",
+      "kind": "image",
+      "filename": "fondos/SS.jpeg",
+      "url": "/api/collections/file/fondos/SS.jpeg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/A.wav",
+      "collection": "fondos",
+      "name": "A",
+      "kind": "audio",
+      "filename": "fondos/sub/A.wav",
+      "url": "/api/collections/file/fondos/sub/A.wav",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/b.jpg",
+      "collection": "fondos",
+      "name": "b",
+      "kind": "image",
+      "filename": "fondos/sub/b.jpg",
+      "url": "/api/collections/file/fondos/sub/b.jpg",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/sub/deep/v.mkv",
+      "collection": "fondos",
+      "name": "v",
+      "kind": "video",
+      "filename": "fondos/sub/deep/v.mkv",
+      "url": "/api/collections/file/fondos/sub/deep/v.mkv",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/z.GIF",
+      "collection": "fondos",
+      "name": "z",
+      "kind": "gif",
+      "filename": "fondos/z.GIF",
+      "url": "/api/collections/file/fondos/z.GIF",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/ß.png",
+      "collection": "fondos",
+      "name": "ß",
+      "kind": "image",
+      "filename": "fondos/ß.png",
+      "url": "/api/collections/file/fondos/%C3%9F.png",
+      "favorite": false
+     },
+     {
+      "id": "col_fondos/Árbol.webp",
+      "collection": "fondos",
+      "name": "Árbol",
+      "kind": "image",
+      "filename": "fondos/Árbol.webp",
+      "url": "/api/collections/file/fondos/%C3%81rbol.webp",
+      "favorite": false
+     },
+     {
+      "id": "col_g r#ú%/x y.mp4",
+      "collection": "g r#ú%",
+      "name": "x y",
+      "kind": "video",
+      "filename": "g r#ú%/x y.mp4",
+      "url": "/api/collections/file/g%20r%23%C3%BA%25/x%20y.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/s.ogg",
+      "collection": "solo_audio",
+      "name": "s",
+      "kind": "audio",
+      "filename": "solo_audio/s.ogg",
+      "url": "/api/collections/file/solo_audio/s.ogg",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/t.m4a",
+      "collection": "solo_audio",
+      "name": "t",
+      "kind": "audio",
+      "filename": "solo_audio/t.m4a",
+      "url": "/api/collections/file/solo_audio/t.m4a",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/u.aac",
+      "collection": "solo_audio",
+      "name": "u",
+      "kind": "audio",
+      "filename": "solo_audio/u.aac",
+      "url": "/api/collections/file/solo_audio/u.aac",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/a.mp3",
+      "collection": "sonidos",
+      "name": "a",
+      "kind": "audio",
+      "filename": "sonidos/a.mp3",
+      "url": "/api/collections/file/sonidos/a.mp3",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/b.WMA",
+      "collection": "sonidos",
+      "name": "b",
+      "kind": "audio",
+      "filename": "sonidos/b.WMA",
+      "url": "/api/collections/file/sonidos/b.WMA",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/c.flac",
+      "collection": "sonidos",
+      "name": "c",
+      "kind": "audio",
+      "filename": "sonidos/c.flac",
+      "url": "/api/collections/file/sonidos/c.flac",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "",
+    -100
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 6,
+     "image": 9,
+     "gif": 2,
+     "audio": 7,
+     "all": 24
+    },
+    "total": 24,
+    "items": [],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "resolve",
+    "fondos/cielo.PNG"
+   ],
+   "result": "fondos/cielo.PNG"
+  },
+  {
+   "step": [
+    "resolve",
+    "FONDOS/CIELO.png"
+   ],
+   "result": "fondos/cielo.PNG"
+  },
+  {
+   "step": [
+    "resolve",
+    "fondos\\sub\\b.jpg"
+   ],
+   "result": "fondos/sub/b.jpg"
+  },
+  {
+   "step": [
+    "resolve",
+    "fondos/../sonidos/a.mp3"
+   ],
+   "result": "sonidos/a.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "../fuera.mp4"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "fondos/../../fuera.mp4"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "{TMP}/assets/material/fondos/z.GIF"
+   ],
+   "result": "fondos/z.GIF"
+  },
+  {
+   "step": [
+    "resolve",
+    "{TMP}/assets/fuera.mp4"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "fondos"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    ""
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "fondos/sub"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "fondos/no.png"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "fondos/notas.txt"
+   ],
+   "result": "fondos/notas.txt"
+  },
+  {
+   "step": [
+    "resolve",
+    "suelto.mp4"
+   ],
+   "result": "suelto.mp4"
+  },
+  {
+   "step": [
+    "resolve",
+    "."
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "/"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "../MATERIAL/fondos/a.gif"
+   ],
+   "result": "fondos/a.gif"
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": null,
+    "collections_meta": null
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    "fondos",
+    false,
+    null,
+    null
+   ],
+   "result": {
+    "enabled": false
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    "alfa",
+    null,
+    true,
+    "  Mi Alfa  "
+   ],
+   "result": {
+    "favorite": true,
+    "label": "Mi Alfa"
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    "Zeta",
+    null,
+    true,
+    null
+   ],
+   "result": {
+    "favorite": true
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    " sonidos ",
+    true,
+    null,
+    null
+   ],
+   "result": {
+    "enabled": true
+   }
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": null,
+    "collections_meta": {
+     "fondos": {
+      "enabled": false
+     },
+     "alfa": {
+      "favorite": true,
+      "label": "Mi Alfa"
+     },
+     "Zeta": {
+      "favorite": true
+     },
+     "sonidos": {
+      "enabled": true
+     }
+    }
+   }
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "Mi Alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": false,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 3,
+     "image": 2,
+     "gif": 0,
+     "audio": 6,
+     "all": 11
+    },
+    "total": 11,
+    "items": [
+     {
+      "id": "col_Zeta/one.webm",
+      "collection": "Zeta",
+      "name": "one",
+      "kind": "video",
+      "filename": "Zeta/one.webm",
+      "url": "/api/collections/file/Zeta/one.webm",
+      "favorite": true
+     },
+     {
+      "id": "col_alfa/one.bmp",
+      "collection": "alfa",
+      "name": "one",
+      "kind": "image",
+      "filename": "alfa/one.bmp",
+      "url": "/api/collections/file/alfa/one.bmp",
+      "favorite": true
+     },
+     {
+      "id": "col_g r#ú%/x y.mp4",
+      "collection": "g r#ú%",
+      "name": "x y",
+      "kind": "video",
+      "filename": "g r#ú%/x y.mp4",
+      "url": "/api/collections/file/g%20r%23%C3%BA%25/x%20y.mp4",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/s.ogg",
+      "collection": "solo_audio",
+      "name": "s",
+      "kind": "audio",
+      "filename": "solo_audio/s.ogg",
+      "url": "/api/collections/file/solo_audio/s.ogg",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/t.m4a",
+      "collection": "solo_audio",
+      "name": "t",
+      "kind": "audio",
+      "filename": "solo_audio/t.m4a",
+      "url": "/api/collections/file/solo_audio/t.m4a",
+      "favorite": false
+     },
+     {
+      "id": "col_solo_audio/u.aac",
+      "collection": "solo_audio",
+      "name": "u",
+      "kind": "audio",
+      "filename": "solo_audio/u.aac",
+      "url": "/api/collections/file/solo_audio/u.aac",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/a.mp3",
+      "collection": "sonidos",
+      "name": "a",
+      "kind": "audio",
+      "filename": "sonidos/a.mp3",
+      "url": "/api/collections/file/sonidos/a.mp3",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/b.WMA",
+      "collection": "sonidos",
+      "name": "b",
+      "kind": "audio",
+      "filename": "sonidos/b.WMA",
+      "url": "/api/collections/file/sonidos/b.WMA",
+      "favorite": false
+     },
+     {
+      "id": "col_sonidos/c.flac",
+      "collection": "sonidos",
+      "name": "c",
+      "kind": "audio",
+      "filename": "sonidos/c.flac",
+      "url": "/api/collections/file/sonidos/c.flac",
+      "favorite": false
+     },
+     {
+      "id": "col_stick_char/happy.png",
+      "collection": "stick_char",
+      "name": "happy",
+      "kind": "image",
+      "filename": "stick_char/happy.png",
+      "url": "/api/collections/file/stick_char/happy.png",
+      "favorite": false
+     },
+     {
+      "id": "col_ΟΔΟΣ/x.mpeg",
+      "collection": "ΟΔΟΣ",
+      "name": "x",
+      "kind": "video",
+      "filename": "ΟΔΟΣ/x.mpeg",
+      "url": "/api/collections/file/%CE%9F%CE%94%CE%9F%CE%A3/x.mpeg",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "Mi Alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": false,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "fondos",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 0,
+     "image": 0,
+     "gif": 0,
+     "audio": 0,
+     "all": 0
+    },
+    "total": 0,
+    "items": [],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "Mi Alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": false,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "one",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 1,
+     "image": 1,
+     "gif": 0,
+     "audio": 0,
+     "all": 2
+    },
+    "total": 2,
+    "items": [
+     {
+      "id": "col_Zeta/one.webm",
+      "collection": "Zeta",
+      "name": "one",
+      "kind": "video",
+      "filename": "Zeta/one.webm",
+      "url": "/api/collections/file/Zeta/one.webm",
+      "favorite": true
+     },
+     {
+      "id": "col_alfa/one.bmp",
+      "collection": "alfa",
+      "name": "one",
+      "kind": "image",
+      "filename": "alfa/one.bmp",
+      "url": "/api/collections/file/alfa/one.bmp",
+      "favorite": true
+     }
+    ],
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "Mi Alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": false,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    "alfa",
+    null,
+    null,
+    ""
+   ],
+   "result": {
+    "favorite": true
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    "alfa",
+    true,
+    false,
+    null
+   ],
+   "result": {
+    "favorite": false,
+    "enabled": true
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    "alfa",
+    null,
+    null,
+    " B "
+   ],
+   "result": {
+    "favorite": false,
+    "enabled": true,
+    "label": "B"
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    "no_existe",
+    true,
+    null,
+    null
+   ],
+   "result": {
+    "enabled": true
+   }
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": null,
+    "collections_meta": {
+     "fondos": {
+      "enabled": false
+     },
+     "alfa": {
+      "favorite": false,
+      "enabled": true,
+      "label": "B"
+     },
+     "Zeta": {
+      "favorite": true
+     },
+     "sonidos": {
+      "enabled": true
+     },
+     "no_existe": {
+      "enabled": true
+     }
+    }
+   }
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "alfa",
+      "name": "B",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": false,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    "..",
+    true,
+    null,
+    null
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "prefs",
+    ".",
+    true,
+    null,
+    null
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "prefs",
+    "a/b",
+    true,
+    null,
+    null
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "prefs",
+    "a\\b",
+    true,
+    null,
+    null
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "prefs",
+    "",
+    true,
+    null,
+    null
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "prefs",
+    "C:x",
+    true,
+    null,
+    null
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "prefs",
+    "x/",
+    true,
+    null,
+    null
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "save",
+    {
+     "tts": {
+      "voice": "otra"
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": null,
+    "collections_meta": {
+     "fondos": {
+      "enabled": false
+     },
+     "alfa": {
+      "favorite": false,
+      "enabled": true,
+      "label": "B"
+     },
+     "Zeta": {
+      "favorite": true
+     },
+     "sonidos": {
+      "enabled": true
+     },
+     "no_existe": {
+      "enabled": true
+     }
+    }
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "collections_meta": [
+      1
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    "alfa",
+    null,
+    true,
+    null
+   ],
+   "result": {
+    "favorite": true
+   }
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": null,
+    "collections_meta": {
+     "alfa": {
+      "favorite": true
+     }
+    }
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "collections_meta": {
+      "alfa": 5,
+      "Zeta": null
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "prefs",
+    "alfa",
+    true,
+    null,
+    null
+   ],
+   "error": "TypeError"
+  },
+  {
+   "step": [
+    "prefs",
+    "Zeta",
+    true,
+    null,
+    null
+   ],
+   "result": {
+    "enabled": true
+   }
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": null,
+    "collections_meta": {
+     "alfa": 5,
+     "Zeta": {
+      "enabled": true
+     }
+    }
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "collections_meta": {
+      "alfa": {
+       "label": 5
+      }
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "error": "AttributeError"
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "",
+    500
+   ],
+   "error": "AttributeError"
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "collections_meta": {
+      "alfa": {
+       "label": true
+      }
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "error": "AttributeError"
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "collections_meta": {
+      "alfa": {
+       "label": 0,
+       "enabled": 0,
+       "favorite": "sí"
+      }
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": false,
+      "favorite": true,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "collections_meta": {
+      "alfa": {
+       "label": [],
+       "enabled": [],
+       "favorite": [
+        0
+       ]
+      }
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": false,
+      "favorite": true,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "collections_meta": {
+      "alfa": {
+       "label": "zz"
+      },
+      "Zeta": {
+       "label": "ÁRBOL"
+      },
+      "fondos": {
+       "label": "árbol",
+       "favorite": true
+      },
+      "sonidos": {
+       "label": "Árbol",
+       "favorite": true
+      }
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "fondos",
+      "name": "árbol",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "Árbol",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "alfa",
+      "name": "zz",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "ÁRBOL",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    "{ roto"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": null,
+    "collections_meta": null
+   }
+  },
+  {
+   "step": [
+    "files",
+    [
+     "assets/material/ab/x.png",
+     "assets/material/a_/y.png",
+     "assets/material/Ab_/z.png"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "collections_meta": {
+      "ab": {
+       "label": "igual"
+      },
+      "a_": {
+       "label": "igual"
+      },
+      "Ab_": {
+       "label": "Igual"
+      }
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "a_",
+      "name": "igual",
+      "path": "{TMP}\\assets\\material\\a_",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/a_/y.png",
+      "stick": false
+     },
+     {
+      "id": "ab",
+      "name": "igual",
+      "path": "{TMP}\\assets\\material\\ab",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/ab/x.png",
+      "stick": false
+     },
+     {
+      "id": "Ab_",
+      "name": "Igual",
+      "path": "{TMP}\\assets\\material\\Ab_",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/Ab_/z.png",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "collections_meta": {
+      "ab": {
+       "label": "igual",
+       "favorite": true
+      },
+      "a_": {
+       "label": "igual",
+       "favorite": true
+      }
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "a_",
+      "name": "igual",
+      "path": "{TMP}\\assets\\material\\a_",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "/api/collections/file/a_/y.png",
+      "stick": false
+     },
+     {
+      "id": "ab",
+      "name": "igual",
+      "path": "{TMP}\\assets\\material\\ab",
+      "count": 1,
+      "enabled": true,
+      "favorite": true,
+      "cover_url": "/api/collections/file/ab/x.png",
+      "stick": false
+     },
+     {
+      "id": "Ab_",
+      "name": "Ab_",
+      "path": "{TMP}\\assets\\material\\Ab_",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/Ab_/z.png",
+      "stick": false
+     },
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {}
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "files",
+    [
+     "custom/col1/a.png",
+     "custom/col1/b/c.MP4",
+     "custom/col2/x.txt"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "material_root": "{TMP}/custom"
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": "{TMP}\\custom"
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\custom",
+    "collections": [
+     {
+      "id": "col1",
+      "name": "col1",
+      "path": "{TMP}\\custom\\col1",
+      "count": 2,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/col1/a.png",
+      "stick": false
+     },
+     {
+      "id": "col2",
+      "name": "col2",
+      "path": "{TMP}\\custom\\col2",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\custom",
+    "counts": {
+     "video": 1,
+     "image": 1,
+     "gif": 0,
+     "audio": 0,
+     "all": 2
+    },
+    "total": 2,
+    "items": [
+     {
+      "id": "col_col1/a.png",
+      "collection": "col1",
+      "name": "a",
+      "kind": "image",
+      "filename": "col1/a.png",
+      "url": "/api/collections/file/col1/a.png",
+      "favorite": false
+     },
+     {
+      "id": "col_col1/b/c.MP4",
+      "collection": "col1",
+      "name": "c",
+      "kind": "video",
+      "filename": "col1/b/c.MP4",
+      "url": "/api/collections/file/col1/b/c.MP4",
+      "favorite": false
+     }
+    ],
+    "collections": [
+     {
+      "id": "col1",
+      "name": "col1",
+      "path": "{TMP}\\custom\\col1",
+      "count": 2,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/col1/a.png",
+      "stick": false
+     },
+     {
+      "id": "col2",
+      "name": "col2",
+      "path": "{TMP}\\custom\\col2",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "resolve",
+    "col1/b/c.MP4"
+   ],
+   "result": "col1/b/c.MP4"
+  },
+  {
+   "step": [
+    "resolve",
+    "../assets/material/fondos/a.gif"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "material_root": "{TMP}//custom/./"
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": "{TMP}\\custom"
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\custom",
+    "collections": [
+     {
+      "id": "col1",
+      "name": "col1",
+      "path": "{TMP}\\custom\\col1",
+      "count": 2,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/col1/a.png",
+      "stick": false
+     },
+     {
+      "id": "col2",
+      "name": "col2",
+      "path": "{TMP}\\custom\\col2",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "material_root": "{TMP}\\custom\\"
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": "{TMP}\\custom"
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "material_root": "{TMP}/no_existe"
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": "{TMP}\\assets\\material"
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "material_root": "{TMP}/custom/col1/a.png"
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": "{TMP}\\assets\\material"
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "material_root": ""
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": "{TMP}\\assets\\material"
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "material_root": null
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": "{TMP}\\assets\\material"
+  },
+  {
+   "step": [
+    "settings",
+    {}
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "set_root",
+    "  {TMP}/custom  "
+   ],
+   "result": "{TMP}\\custom"
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": "{TMP}\\custom",
+    "collections_meta": null
+   }
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": "{TMP}\\custom"
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\custom",
+    "collections": [
+     {
+      "id": "col1",
+      "name": "col1",
+      "path": "{TMP}\\custom\\col1",
+      "count": 2,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/col1/a.png",
+      "stick": false
+     },
+     {
+      "id": "col2",
+      "name": "col2",
+      "path": "{TMP}\\custom\\col2",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "set_root",
+    "{TMP}/no_existe"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "set_root",
+    "{TMP}/custom/col1/a.png"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": "{TMP}\\custom",
+    "collections_meta": null
+   }
+  },
+  {
+   "step": [
+    "set_root",
+    "{TMP}\\custom\\col1\\"
+   ],
+   "result": "{TMP}\\custom\\col1"
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": "{TMP}\\custom\\col1",
+    "collections_meta": null
+   }
+  },
+  {
+   "step": [
+    "root"
+   ],
+   "result": "{TMP}\\custom\\col1"
+  },
+  {
+   "step": [
+    "set_root",
+    "  "
+   ],
+   "result": "."
+  },
+  {
+   "step": [
+    "meta"
+   ],
+   "result": {
+    "material_root": ".",
+    "collections_meta": null
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {}
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "Nueva"
+   ],
+   "result": "Nueva"
+  },
+  {
+   "step": [
+    "create",
+    "Nueva"
+   ],
+   "result": "Nueva 2"
+  },
+  {
+   "step": [
+    "create",
+    "nueva"
+   ],
+   "result": "nueva 3"
+  },
+  {
+   "step": [
+    "create",
+    "a<b>:c\"d/e\\f|g?h*i"
+   ],
+   "result": "a_b__c_d_e_f_g_h_i"
+  },
+  {
+   "step": [
+    "create",
+    "  ..  "
+   ],
+   "error": "ValueError",
+   "message": "Ponle un nombre a la carpeta."
+  },
+  {
+   "step": [
+    "create",
+    "..."
+   ],
+   "error": "ValueError",
+   "message": "Ponle un nombre a la carpeta."
+  },
+  {
+   "step": [
+    "create",
+    " . x . "
+   ],
+   "result": "x"
+  },
+  {
+   "step": [
+    "create",
+    "\u0001tab\t"
+   ],
+   "result": "_tab_"
+  },
+  {
+   "step": [
+    "create",
+    ""
+   ],
+   "error": "ValueError",
+   "message": "Ponle un nombre a la carpeta."
+  },
+  {
+   "step": [
+    "create",
+    "ΟΔΟΣ"
+   ],
+   "result": "ΟΔΟΣ 2"
+  },
+  {
+   "step": [
+    "create",
+    "alfa"
+   ],
+   "result": "alfa 2"
+  },
+  {
+   "step": [
+    "create",
+    "dos  espacios"
+   ],
+   "result": "dos  espacios"
+  },
+  {
+   "step": [
+    "create",
+    "punto.final."
+   ],
+   "result": "punto.final"
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "collections": [
+     {
+      "id": "_tab_",
+      "name": "_tab_",
+      "path": "{TMP}\\assets\\material\\_tab_",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "a_",
+      "name": "a_",
+      "path": "{TMP}\\assets\\material\\a_",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/a_/y.png",
+      "stick": false
+     },
+     {
+      "id": "a_b__c_d_e_f_g_h_i",
+      "name": "a_b__c_d_e_f_g_h_i",
+      "path": "{TMP}\\assets\\material\\a_b__c_d_e_f_g_h_i",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ab",
+      "name": "ab",
+      "path": "{TMP}\\assets\\material\\ab",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/ab/x.png",
+      "stick": false
+     },
+     {
+      "id": "Ab_",
+      "name": "Ab_",
+      "path": "{TMP}\\assets\\material\\Ab_",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/Ab_/z.png",
+      "stick": false
+     },
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/one.bmp",
+      "stick": false
+     },
+     {
+      "id": "alfa 2",
+      "name": "alfa 2",
+      "path": "{TMP}\\assets\\material\\alfa 2",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "dos  espacios",
+      "name": "dos  espacios",
+      "path": "{TMP}\\assets\\material\\dos  espacios",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Nueva",
+      "name": "Nueva",
+      "path": "{TMP}\\assets\\material\\Nueva",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Nueva 2",
+      "name": "Nueva 2",
+      "path": "{TMP}\\assets\\material\\Nueva 2",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "nueva 3",
+      "name": "nueva 3",
+      "path": "{TMP}\\assets\\material\\nueva 3",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "punto.final",
+      "name": "punto.final",
+      "path": "{TMP}\\assets\\material\\punto.final",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "x",
+      "name": "x",
+      "path": "{TMP}\\assets\\material\\x",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ 2",
+      "name": "ΟΔΟΣ 2",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ 2",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "tree",
+    "assets/material"
+   ],
+   "result": [
+    [
+     "Ab_",
+     null
+    ],
+    [
+     "Ab_/z.png",
+     "x"
+    ],
+    [
+     "Nueva",
+     null
+    ],
+    [
+     "Nueva 2",
+     null
+    ],
+    [
+     "Zeta",
+     null
+    ],
+    [
+     "Zeta/one.webm",
+     "x"
+    ],
+    [
+     "_tab_",
+     null
+    ],
+    [
+     "a_",
+     null
+    ],
+    [
+     "a_/y.png",
+     "x"
+    ],
+    [
+     "a_b__c_d_e_f_g_h_i",
+     null
+    ],
+    [
+     "ab",
+     null
+    ],
+    [
+     "ab/x.png",
+     "x"
+    ],
+    [
+     "alfa",
+     null
+    ],
+    [
+     "alfa 2",
+     null
+    ],
+    [
+     "alfa/one.bmp",
+     "x"
+    ],
+    [
+     "dos  espacios",
+     null
+    ],
+    [
+     "fondos",
+     null
+    ],
+    [
+     "fondos/.hidden.mp4",
+     "x"
+    ],
+    [
+     "fondos/SS.jpeg",
+     "x"
+    ],
+    [
+     "fondos/a.gif",
+     "x"
+    ],
+    [
+     "fondos/carpeta.mp4",
+     null
+    ],
+    [
+     "fondos/cielo.PNG",
+     "x"
+    ],
+    [
+     "fondos/clip.MOV",
+     "x"
+    ],
+    [
+     "fondos/iz.png",
+     "x"
+    ],
+    [
+     "fondos/notas.txt",
+     "x"
+    ],
+    [
+     "fondos/sin_ext",
+     "x"
+    ],
+    [
+     "fondos/sub",
+     null
+    ],
+    [
+     "fondos/sub/A.wav",
+     "x"
+    ],
+    [
+     "fondos/sub/b.jpg",
+     "x"
+    ],
+    [
+     "fondos/sub/deep",
+     null
+    ],
+    [
+     "fondos/sub/deep/v.mkv",
+     "x"
+    ],
+    [
+     "fondos/x.mp4.bak",
+     "x"
+    ],
+    [
+     "fondos/z.GIF",
+     "x"
+    ],
+    [
+     "fondos/Árbol.webp",
+     "x"
+    ],
+    [
+     "fondos/ß.png",
+     "x"
+    ],
+    [
+     "fondos/İx.png",
+     "x"
+    ],
+    [
+     "g r#ú%",
+     null
+    ],
+    [
+     "g r#ú%/x y.mp4",
+     "x"
+    ],
+    [
+     "nueva 3",
+     null
+    ],
+    [
+     "punto.final",
+     null
+    ],
+    [
+     "solo_audio",
+     null
+    ],
+    [
+     "solo_audio/s.ogg",
+     "x"
+    ],
+    [
+     "solo_audio/t.m4a",
+     "x"
+    ],
+    [
+     "solo_audio/u.aac",
+     "x"
+    ],
+    [
+     "sonidos",
+     null
+    ],
+    [
+     "sonidos/a.mp3",
+     "x"
+    ],
+    [
+     "sonidos/b.WMA",
+     "x"
+    ],
+    [
+     "sonidos/c.flac",
+     "x"
+    ],
+    [
+     "sonidos/d.aiff",
+     "x"
+    ],
+    [
+     "stick_char",
+     null
+    ],
+    [
+     "stick_char/happy.png",
+     "x"
+    ],
+    [
+     "stick_char/stick.json",
+     "x"
+    ],
+    [
+     "suelto.mp4",
+     "x"
+    ],
+    [
+     "vacía",
+     null
+    ],
+    [
+     "x",
+     null
+    ],
+    [
+     "ΟΔΟΣ",
+     null
+    ],
+    [
+     "ΟΔΟΣ 2",
+     null
+    ],
+    [
+     "ΟΔΟΣ/x.mpeg",
+     "x"
+    ]
+   ]
+  },
+  {
+   "step": [
+    "add",
+    "alfa",
+    [
+     [
+      "foto.PNG",
+      "1"
+     ],
+     [
+      "foto.png",
+      "2"
+     ],
+     [
+      "C:\\x\\y\\clip.mp4",
+      "3"
+     ],
+     [
+      "../../evil.mp4",
+      "4"
+     ],
+     [
+      "a:b.mp3",
+      "5"
+     ],
+     [
+      "notas.txt",
+      "6"
+     ],
+     [
+      null,
+      "7"
+     ],
+     [
+      "",
+      "8"
+     ],
+     [
+      "  .mp4",
+      "9"
+     ],
+     [
+      "x.tar.gz",
+      "10"
+     ],
+     [
+      "dos.puntos.gif",
+      "11"
+     ],
+     [
+      "dos.puntos.gif",
+      "12"
+     ],
+     [
+      5,
+      "13"
+     ],
+     [
+      " con espacio .webm ",
+      "14"
+     ],
+     [
+      "x.mp4.",
+      "15"
+     ],
+     [
+      "one.BMP",
+      "16"
+     ],
+     [
+      "ok\u0001.wav",
+      "17"
+     ],
+     [
+      "Ñandú.MP3",
+      "ñ"
+     ],
+     [
+      "foto.png",
+      "18"
+     ]
+    ]
+   ],
+   "result": {
+    "saved": [
+     {
+      "id": "col_alfa/foto.PNG",
+      "collection": "alfa",
+      "name": "foto",
+      "kind": "image",
+      "filename": "alfa/foto.PNG",
+      "url": "/api/collections/file/alfa/foto.PNG"
+     },
+     {
+      "id": "col_alfa/foto_2.png",
+      "collection": "alfa",
+      "name": "foto_2",
+      "kind": "image",
+      "filename": "alfa/foto_2.png",
+      "url": "/api/collections/file/alfa/foto_2.png"
+     },
+     {
+      "id": "col_alfa/clip.mp4",
+      "collection": "alfa",
+      "name": "clip",
+      "kind": "video",
+      "filename": "alfa/clip.mp4",
+      "url": "/api/collections/file/alfa/clip.mp4"
+     },
+     {
+      "id": "col_alfa/evil.mp4",
+      "collection": "alfa",
+      "name": "evil",
+      "kind": "video",
+      "filename": "alfa/evil.mp4",
+      "url": "/api/collections/file/alfa/evil.mp4"
+     },
+     {
+      "id": "col_alfa/b.mp3",
+      "collection": "alfa",
+      "name": "b",
+      "kind": "audio",
+      "filename": "alfa/b.mp3",
+      "url": "/api/collections/file/alfa/b.mp3"
+     },
+     {
+      "id": "col_alfa/dos.puntos.gif",
+      "collection": "alfa",
+      "name": "dos.puntos",
+      "kind": "gif",
+      "filename": "alfa/dos.puntos.gif",
+      "url": "/api/collections/file/alfa/dos.puntos.gif"
+     },
+     {
+      "id": "col_alfa/dos.puntos_2.gif",
+      "collection": "alfa",
+      "name": "dos.puntos_2",
+      "kind": "gif",
+      "filename": "alfa/dos.puntos_2.gif",
+      "url": "/api/collections/file/alfa/dos.puntos_2.gif"
+     },
+     {
+      "id": "col_alfa/con espacio .webm",
+      "collection": "alfa",
+      "name": "con espacio ",
+      "kind": "video",
+      "filename": "alfa/con espacio .webm",
+      "url": "/api/collections/file/alfa/con%20espacio%20.webm"
+     },
+     {
+      "id": "col_alfa/x.mp4",
+      "collection": "alfa",
+      "name": "x",
+      "kind": "video",
+      "filename": "alfa/x.mp4",
+      "url": "/api/collections/file/alfa/x.mp4"
+     },
+     {
+      "id": "col_alfa/one_2.BMP",
+      "collection": "alfa",
+      "name": "one_2",
+      "kind": "image",
+      "filename": "alfa/one_2.BMP",
+      "url": "/api/collections/file/alfa/one_2.BMP"
+     },
+     {
+      "id": "col_alfa/ok_.wav",
+      "collection": "alfa",
+      "name": "ok_",
+      "kind": "audio",
+      "filename": "alfa/ok_.wav",
+      "url": "/api/collections/file/alfa/ok_.wav"
+     },
+     {
+      "id": "col_alfa/Ñandú.MP3",
+      "collection": "alfa",
+      "name": "Ñandú",
+      "kind": "audio",
+      "filename": "alfa/Ñandú.MP3",
+      "url": "/api/collections/file/alfa/%C3%91and%C3%BA.MP3"
+     },
+     {
+      "id": "col_alfa/foto_3.png",
+      "collection": "alfa",
+      "name": "foto_3",
+      "kind": "image",
+      "filename": "alfa/foto_3.png",
+      "url": "/api/collections/file/alfa/foto_3.png"
+     }
+    ],
+    "errors": [
+     {
+      "file": "notas.txt",
+      "error": "Tipo de archivo no soportado."
+     },
+     {
+      "file": null,
+      "error": "Tipo de archivo no soportado."
+     },
+     {
+      "file": "",
+      "error": "Tipo de archivo no soportado."
+     },
+     {
+      "file": "  .mp4",
+      "error": "Tipo de archivo no soportado."
+     },
+     {
+      "file": "x.tar.gz",
+      "error": "Tipo de archivo no soportado."
+     },
+     {
+      "file": 5,
+      "error": "Tipo de archivo no soportado."
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "tree",
+    "assets/material/alfa"
+   ],
+   "result": [
+    [
+     "b.mp3",
+     "5"
+    ],
+    [
+     "clip.mp4",
+     "3"
+    ],
+    [
+     "con espacio .webm",
+     "14"
+    ],
+    [
+     "dos.puntos.gif",
+     "11"
+    ],
+    [
+     "dos.puntos_2.gif",
+     "12"
+    ],
+    [
+     "evil.mp4",
+     "4"
+    ],
+    [
+     "foto.PNG",
+     "1"
+    ],
+    [
+     "foto_2.png",
+     "2"
+    ],
+    [
+     "foto_3.png",
+     "18"
+    ],
+    [
+     "ok_.wav",
+     "17"
+    ],
+    [
+     "one.bmp",
+     "x"
+    ],
+    [
+     "one_2.BMP",
+     "16"
+    ],
+    [
+     "x.mp4",
+     "15"
+    ],
+    [
+     "Ñandú.MP3",
+     "ñ"
+    ]
+   ]
+  },
+  {
+   "step": [
+    "scan",
+    "alfa"
+   ],
+   "result": [
+    {
+     "id": "col_alfa/b.mp3",
+     "collection": "alfa",
+     "name": "b",
+     "kind": "audio",
+     "filename": "alfa/b.mp3",
+     "url": "/api/collections/file/alfa/b.mp3"
+    },
+    {
+     "id": "col_alfa/clip.mp4",
+     "collection": "alfa",
+     "name": "clip",
+     "kind": "video",
+     "filename": "alfa/clip.mp4",
+     "url": "/api/collections/file/alfa/clip.mp4"
+    },
+    {
+     "id": "col_alfa/con espacio .webm",
+     "collection": "alfa",
+     "name": "con espacio ",
+     "kind": "video",
+     "filename": "alfa/con espacio .webm",
+     "url": "/api/collections/file/alfa/con%20espacio%20.webm"
+    },
+    {
+     "id": "col_alfa/dos.puntos.gif",
+     "collection": "alfa",
+     "name": "dos.puntos",
+     "kind": "gif",
+     "filename": "alfa/dos.puntos.gif",
+     "url": "/api/collections/file/alfa/dos.puntos.gif"
+    },
+    {
+     "id": "col_alfa/dos.puntos_2.gif",
+     "collection": "alfa",
+     "name": "dos.puntos_2",
+     "kind": "gif",
+     "filename": "alfa/dos.puntos_2.gif",
+     "url": "/api/collections/file/alfa/dos.puntos_2.gif"
+    },
+    {
+     "id": "col_alfa/evil.mp4",
+     "collection": "alfa",
+     "name": "evil",
+     "kind": "video",
+     "filename": "alfa/evil.mp4",
+     "url": "/api/collections/file/alfa/evil.mp4"
+    },
+    {
+     "id": "col_alfa/foto.PNG",
+     "collection": "alfa",
+     "name": "foto",
+     "kind": "image",
+     "filename": "alfa/foto.PNG",
+     "url": "/api/collections/file/alfa/foto.PNG"
+    },
+    {
+     "id": "col_alfa/foto_2.png",
+     "collection": "alfa",
+     "name": "foto_2",
+     "kind": "image",
+     "filename": "alfa/foto_2.png",
+     "url": "/api/collections/file/alfa/foto_2.png"
+    },
+    {
+     "id": "col_alfa/foto_3.png",
+     "collection": "alfa",
+     "name": "foto_3",
+     "kind": "image",
+     "filename": "alfa/foto_3.png",
+     "url": "/api/collections/file/alfa/foto_3.png"
+    },
+    {
+     "id": "col_alfa/ok_.wav",
+     "collection": "alfa",
+     "name": "ok_",
+     "kind": "audio",
+     "filename": "alfa/ok_.wav",
+     "url": "/api/collections/file/alfa/ok_.wav"
+    },
+    {
+     "id": "col_alfa/one.bmp",
+     "collection": "alfa",
+     "name": "one",
+     "kind": "image",
+     "filename": "alfa/one.bmp",
+     "url": "/api/collections/file/alfa/one.bmp"
+    },
+    {
+     "id": "col_alfa/one_2.BMP",
+     "collection": "alfa",
+     "name": "one_2",
+     "kind": "image",
+     "filename": "alfa/one_2.BMP",
+     "url": "/api/collections/file/alfa/one_2.BMP"
+    },
+    {
+     "id": "col_alfa/x.mp4",
+     "collection": "alfa",
+     "name": "x",
+     "kind": "video",
+     "filename": "alfa/x.mp4",
+     "url": "/api/collections/file/alfa/x.mp4"
+    },
+    {
+     "id": "col_alfa/Ñandú.MP3",
+     "collection": "alfa",
+     "name": "Ñandú",
+     "kind": "audio",
+     "filename": "alfa/Ñandú.MP3",
+     "url": "/api/collections/file/alfa/%C3%91and%C3%BA.MP3"
+    }
+   ]
+  },
+  {
+   "step": [
+    "add",
+    " alfa ",
+    [
+     [
+      "otro.gif",
+      "x"
+     ]
+    ]
+   ],
+   "result": {
+    "saved": [
+     {
+      "id": "col_alfa/otro.gif",
+      "collection": "alfa",
+      "name": "otro",
+      "kind": "gif",
+      "filename": "alfa/otro.gif",
+      "url": "/api/collections/file/alfa/otro.gif"
+     }
+    ],
+    "errors": []
+   }
+  },
+  {
+   "step": [
+    "add",
+    "no_existe",
+    [
+     [
+      "a.png",
+      "1"
+     ]
+    ]
+   ],
+   "error": "LookupError",
+   "message": "Carpeta no encontrada."
+  },
+  {
+   "step": [
+    "add",
+    "..",
+    []
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "add",
+    "",
+    []
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "add",
+    "alfa/sub",
+    [
+     [
+      "a.png",
+      "1"
+     ]
+    ]
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "add",
+    "suelto.mp4",
+    [
+     [
+      "a.png",
+      "1"
+     ]
+    ]
+   ],
+   "error": "LookupError",
+   "message": "Carpeta no encontrada."
+  },
+  {
+   "step": [
+    "add",
+    "alfa",
+    []
+   ],
+   "result": {
+    "saved": [],
+    "errors": []
+   }
+  },
+  {
+   "step": [
+    "add",
+    "alfa\u0000x",
+    [
+     [
+      "nul.png",
+      "1"
+     ]
+    ]
+   ],
+   "error": "LookupError",
+   "message": "Carpeta no encontrada."
+  },
+  {
+   "step": [
+    "scan",
+    "alfa\u0000x"
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    "alfa\u0000x",
+    500
+   ],
+   "result": {
+    "available": true,
+    "root": "{TMP}\\assets\\material",
+    "counts": {
+     "video": 0,
+     "image": 0,
+     "gif": 0,
+     "audio": 0,
+     "all": 0
+    },
+    "total": 0,
+    "items": [],
+    "collections": [
+     {
+      "id": "_tab_",
+      "name": "_tab_",
+      "path": "{TMP}\\assets\\material\\_tab_",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "a_",
+      "name": "a_",
+      "path": "{TMP}\\assets\\material\\a_",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/a_/y.png",
+      "stick": false
+     },
+     {
+      "id": "a_b__c_d_e_f_g_h_i",
+      "name": "a_b__c_d_e_f_g_h_i",
+      "path": "{TMP}\\assets\\material\\a_b__c_d_e_f_g_h_i",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ab",
+      "name": "ab",
+      "path": "{TMP}\\assets\\material\\ab",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/ab/x.png",
+      "stick": false
+     },
+     {
+      "id": "Ab_",
+      "name": "Ab_",
+      "path": "{TMP}\\assets\\material\\Ab_",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/Ab_/z.png",
+      "stick": false
+     },
+     {
+      "id": "alfa",
+      "name": "alfa",
+      "path": "{TMP}\\assets\\material\\alfa",
+      "count": 15,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/alfa/dos.puntos.gif",
+      "stick": false
+     },
+     {
+      "id": "alfa 2",
+      "name": "alfa 2",
+      "path": "{TMP}\\assets\\material\\alfa 2",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "dos  espacios",
+      "name": "dos  espacios",
+      "path": "{TMP}\\assets\\material\\dos  espacios",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "fondos",
+      "name": "fondos",
+      "path": "{TMP}\\assets\\material\\fondos",
+      "count": 13,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/fondos/a.gif",
+      "stick": false
+     },
+     {
+      "id": "g r#ú%",
+      "name": "g r#ú%",
+      "path": "{TMP}\\assets\\material\\g r#ú%",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Nueva",
+      "name": "Nueva",
+      "path": "{TMP}\\assets\\material\\Nueva",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Nueva 2",
+      "name": "Nueva 2",
+      "path": "{TMP}\\assets\\material\\Nueva 2",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "nueva 3",
+      "name": "nueva 3",
+      "path": "{TMP}\\assets\\material\\nueva 3",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "punto.final",
+      "name": "punto.final",
+      "path": "{TMP}\\assets\\material\\punto.final",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "solo_audio",
+      "name": "solo_audio",
+      "path": "{TMP}\\assets\\material\\solo_audio",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "sonidos",
+      "name": "sonidos",
+      "path": "{TMP}\\assets\\material\\sonidos",
+      "count": 3,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "stick_char",
+      "name": "stick_char",
+      "path": "{TMP}\\assets\\material\\stick_char",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "/api/collections/file/stick_char/happy.png",
+      "stick": true
+     },
+     {
+      "id": "vacía",
+      "name": "vacía",
+      "path": "{TMP}\\assets\\material\\vacía",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "x",
+      "name": "x",
+      "path": "{TMP}\\assets\\material\\x",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "Zeta",
+      "name": "Zeta",
+      "path": "{TMP}\\assets\\material\\Zeta",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ",
+      "name": "ΟΔΟΣ",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ",
+      "count": 1,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     },
+     {
+      "id": "ΟΔΟΣ 2",
+      "name": "ΟΔΟΣ 2",
+      "path": "{TMP}\\assets\\material\\ΟΔΟΣ 2",
+      "count": 0,
+      "enabled": true,
+      "favorite": false,
+      "cover_url": "",
+      "stick": false
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "resolve",
+    "alfa/one.bmp\u0000x"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "alfa\u0000/one.bmp"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "prefs",
+    "alfa\u0000x",
+    true,
+    null,
+    null
+   ],
+   "result": {
+    "enabled": true
+   }
+  },
+  {
+   "step": [
+    "tree",
+    "assets/material/alfa"
+   ],
+   "result": [
+    [
+     "b.mp3",
+     "5"
+    ],
+    [
+     "clip.mp4",
+     "3"
+    ],
+    [
+     "con espacio .webm",
+     "14"
+    ],
+    [
+     "dos.puntos.gif",
+     "11"
+    ],
+    [
+     "dos.puntos_2.gif",
+     "12"
+    ],
+    [
+     "evil.mp4",
+     "4"
+    ],
+    [
+     "foto.PNG",
+     "1"
+    ],
+    [
+     "foto_2.png",
+     "2"
+    ],
+    [
+     "foto_3.png",
+     "18"
+    ],
+    [
+     "ok_.wav",
+     "17"
+    ],
+    [
+     "one.bmp",
+     "x"
+    ],
+    [
+     "one_2.BMP",
+     "16"
+    ],
+    [
+     "otro.gif",
+     "x"
+    ],
+    [
+     "x.mp4",
+     "15"
+    ],
+    [
+     "Ñandú.MP3",
+     "ñ"
+    ]
+   ]
+  },
+  {
+   "step": [
+    "settings",
+    {}
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "kind",
+    "x.mp4"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "x.MP4"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "x.gif"
+   ],
+   "result": "gif"
+  },
+  {
+   "step": [
+    "kind",
+    "x.GIF"
+   ],
+   "result": "gif"
+  },
+  {
+   "step": [
+    "kind",
+    "x.png"
+   ],
+   "result": "image"
+  },
+  {
+   "step": [
+    "kind",
+    "x.jpeg"
+   ],
+   "result": "image"
+  },
+  {
+   "step": [
+    "kind",
+    "x.webp"
+   ],
+   "result": "image"
+  },
+  {
+   "step": [
+    "kind",
+    "x.bmp"
+   ],
+   "result": "image"
+  },
+  {
+   "step": [
+    "kind",
+    "x.mp3"
+   ],
+   "result": "audio"
+  },
+  {
+   "step": [
+    "kind",
+    "x.wma"
+   ],
+   "result": "audio"
+  },
+  {
+   "step": [
+    "kind",
+    "x.aiff"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "kind",
+    "x"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "kind",
+    "x."
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "kind",
+    ".mp4"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "kind",
+    "..mp4"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "kind",
+    "a/b.mov"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "a.mp4/b"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "kind",
+    "x.ＭＰ４"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "kind",
+    "x.mkv"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "x.m4v"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "x.mpg"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "x.mpeg"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "x.wmv"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "x.flv"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "x.avi"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "x.webm"
+   ],
+   "result": "video"
+  },
+  {
+   "step": [
+    "kind",
+    "x.jpg"
+   ],
+   "result": "image"
+  },
+  {
+   "step": [
+    "kind",
+    "x.m4a"
+   ],
+   "result": "audio"
+  },
+  {
+   "step": [
+    "kind",
+    "x.aac"
+   ],
+   "result": "audio"
+  },
+  {
+   "step": [
+    "kind",
+    "x.ogg"
+   ],
+   "result": "audio"
+  },
+  {
+   "step": [
+    "kind",
+    "x.flac"
+   ],
+   "result": "audio"
+  },
+  {
+   "step": [
+    "kind",
+    "x.wav"
+   ],
+   "result": "audio"
+  },
+  {
+   "step": [
+    "kind",
+    "C:x.gif"
+   ],
+   "result": "gif"
+  },
+  {
+   "step": [
+    "kind",
+    "x.tar.gz"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "safe_id",
+    "alfa"
+   ],
+   "result": "alfa"
+  },
+  {
+   "step": [
+    "safe_id",
+    " alfa "
+   ],
+   "result": "alfa"
+  },
+  {
+   "step": [
+    "safe_id",
+    ""
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "  "
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "."
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    ".."
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "a/b"
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "a\\b"
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "C:"
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "C:x"
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "x/"
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "/x"
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "Ñandú"
+   ],
+   "result": "Ñandú"
+  },
+  {
+   "step": [
+    "safe_id",
+    "a.b"
+   ],
+   "result": "a.b"
+  },
+  {
+   "step": [
+    "safe_id",
+    " . "
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "\\\\server\\share"
+   ],
+   "error": "ValueError",
+   "message": "Colección no válida."
+  },
+  {
+   "step": [
+    "safe_id",
+    "a\u0000b"
+   ],
+   "result": "a\u0000b"
+  },
+  {
+   "step": [
+    "entry",
+    "fondos",
+    "sub/x.PNG"
+   ],
+   "result": {
+    "id": "col_fondos/sub/x.PNG",
+    "collection": "fondos",
+    "name": "x",
+    "kind": "image",
+    "filename": "fondos/sub/x.PNG",
+    "url": "/api/collections/file/fondos/sub/x.PNG"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "c",
+    "a\\b.mp4"
+   ],
+   "result": {
+    "id": "col_c/a/b.mp4",
+    "collection": "c",
+    "name": "b",
+    "kind": "video",
+    "filename": "c/a/b.mp4",
+    "url": "/api/collections/file/c/a/b.mp4"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "c",
+    "x"
+   ],
+   "result": {
+    "id": "col_c/x",
+    "collection": "c",
+    "name": "x",
+    "kind": null,
+    "filename": "c/x",
+    "url": "/api/collections/file/c/x"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "c",
+    "./y.gif"
+   ],
+   "result": {
+    "id": "col_c/y.gif",
+    "collection": "c",
+    "name": "y",
+    "kind": "gif",
+    "filename": "c/y.gif",
+    "url": "/api/collections/file/c/y.gif"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "c",
+    "a//b.MP3"
+   ],
+   "result": {
+    "id": "col_c/a/b.MP3",
+    "collection": "c",
+    "name": "b",
+    "kind": "audio",
+    "filename": "c/a/b.MP3",
+    "url": "/api/collections/file/c/a/b.MP3"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "g r#ú%",
+    "x y.mp4"
+   ],
+   "result": {
+    "id": "col_g r#ú%/x y.mp4",
+    "collection": "g r#ú%",
+    "name": "x y",
+    "kind": "video",
+    "filename": "g r#ú%/x y.mp4",
+    "url": "/api/collections/file/g%20r%23%C3%BA%25/x%20y.mp4"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "c",
+    ".mp4"
+   ],
+   "result": {
+    "id": "col_c/.mp4",
+    "collection": "c",
+    "name": ".mp4",
+    "kind": null,
+    "filename": "c/.mp4",
+    "url": "/api/collections/file/c/.mp4"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "c",
+    ".."
+   ],
+   "result": {
+    "id": "col_c/..",
+    "collection": "c",
+    "name": "..",
+    "kind": null,
+    "filename": "c/..",
+    "url": "/api/collections/file/c/.."
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "",
+    "x.png"
+   ],
+   "result": {
+    "id": "col_/x.png",
+    "collection": "",
+    "name": "x",
+    "kind": "image",
+    "filename": "/x.png",
+    "url": "/api/collections/file//x.png"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "c",
+    "Ñandú ü.mp3"
+   ],
+   "result": {
+    "id": "col_c/Ñandú ü.mp3",
+    "collection": "c",
+    "name": "Ñandú ü",
+    "kind": "audio",
+    "filename": "c/Ñandú ü.mp3",
+    "url": "/api/collections/file/c/%C3%91and%C3%BA%20%C3%BC.mp3"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "c",
+    "a/./b/x.jpg"
+   ],
+   "result": {
+    "id": "col_c/a/b/x.jpg",
+    "collection": "c",
+    "name": "x",
+    "kind": "image",
+    "filename": "c/a/b/x.jpg",
+    "url": "/api/collections/file/c/a/b/x.jpg"
+   }
+  },
+  {
+   "step": [
+    "match",
+    {
+     "name": "Alfa Beta",
+     "collection": "Fondos"
+    },
+    ""
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "match",
+    {
+     "name": "Alfa Beta",
+     "collection": "Fondos"
+    },
+    "alfa fondos"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "match",
+    {
+     "name": "Alfa Beta",
+     "collection": "Fondos"
+    },
+    "beta  ALFA"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "match",
+    {
+     "name": "Alfa Beta",
+     "collection": "Fondos"
+    },
+    "gamma"
+   ],
+   "result": false
+  },
+  {
+   "step": [
+    "match",
+    {
+     "name": "Alfa Beta",
+     "collection": "Fondos"
+    },
+    "a f"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "match",
+    {
+     "name": "Alfa Beta",
+     "collection": "Fondos"
+    },
+    "  "
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "match",
+    {
+     "name": null,
+     "collection": 5
+    },
+    "none 5"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "match",
+    {},
+    " "
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "match",
+    {
+     "name": "ΟΔΟΣ"
+    },
+    "οδος"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "match",
+    {
+     "name": "ΟΔΟΣ"
+    },
+    "οδοσ"
+   ],
+   "result": false
+  }
+ ]
+}

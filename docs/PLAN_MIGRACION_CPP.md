@@ -800,3 +800,31 @@ Preparación de la biblioteca de SFX y de las colecciones, que ordenan y filtran
 - **Resultado:** 91 tests (89 de Catch2 y 2 de la CLI) y 111 329 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 65 archivos.
 
 **Siguiente:** F1, colecciones (`collections.py`: el plan de la revisión está en el TODO). F3 sigue esperando al Windows SDK.
+
+### 2026-10-08 — F1: colecciones de material
+
+**Hecho: `collections.hpp`** (espejo de `collections.py`): la carpeta raíz de material (`material_root` o la de fábrica, `<assets>/material`) cuyas subcarpetas son colecciones.
+- **Tipo de medio** (`collection_kind`): vídeo, imagen, GIF o audio por la extensión, sin distinguir mayúsculas.
+- **Raíz** (`collections_root`, `set_collections_root`): la de los ajustes si existe y, si no, la de fábrica. Guardarla escribe `str(Path(x.strip()))`, y solo si es una carpeta.
+- **Preferencias** (`set_collection_prefs`, con `safe_collection_id`): activa, favorita y etiqueta, mezcladas en `collections_meta`. Una etiqueta vacía se borra.
+- **Lista** (`list_collections`): `{available, root, collections}`, con la cuenta, la portada (la primera imagen o GIF), si es un personaje stick (`stick.json`) y las favoritas primero.
+- **Búsqueda** (`collections_search`, `collection_match`): en las activas o en una sola, por palabras (todas en «nombre colección», sin distinguir mayúsculas) y por tipo. Las cuentas por tipo se hacen antes de filtrar por tipo, y los resultados se cortan como `items[:limit]`.
+- **Crear y añadir** (`create_collection`, `add_collection_files`): nombres saneados como en Python, con « N» o «_N» si ya existen. Los archivos que no son medio van a `errors`, y el contenido lo escribe quien llama (`IncomingFile`).
+- **`collection_resolve`:** el archivo de un `filename` de colección, sin salir de la raíz y solo si es un archivo.
+- **`disk_scan.hpp`:** la carpeta de los ajustes, el recorrido de `sorted(rglob)` y el `resolve` seguro salen de `sfx_disk.cpp` y los usan las dos bibliotecas.
+- Los errores que ve el usuario llevan el texto de Python, y el test los compara.
+
+**Verificación:**
+- **Casos:** 256 pasos (36 de error, 31 con el mensaje que ve el usuario) con el `collections.py` REAL sobre una carpeta temporal y un `settings.json` temporal (`collections_cases.py`). Cubren:
+  - sin raíz;
+  - la raíz de fábrica con colecciones en Unicode (`ΟΔΟΣ`, `g r#ú%`), mayúsculas, `.GIF`, extensiones no soportadas, subcarpetas, una carpeta con nombre de vídeo y `stick.json`;
+  - búsquedas por tipo, palabras, colección y límites 0, 3, −2 y −100;
+  - `resolve` dentro, fuera, absoluto, con otras mayúsculas y de carpetas;
+  - preferencias, también con `collections_meta` raros a mano y con un `save` de otra cosa (no las pierde);
+  - la raíz de los ajustes (normalizada, inexistente, un archivo, vacía), `set_root` (también «» → «.»), crear (colisiones, caracteres prohibidos, puntos y controles) y añadir (rutas, «a:b», colisiones, no medios, nombres que no son texto), con el árbol de carpetas resultante;
+  - un empate de (favorita, nombre), que ordena `sorted(iterdir())` en minúsculas y no el disco (NTFS ordena en mayúsculas), y un NUL en el id.
+- **Tu carpeta:** la de fábrica de video-yt (`scientist_stick`: 27 imágenes, 19 vídeos y su `stick.json`), solo lectura: lista, búsquedas, el recorrido y la ruta de cada medio.
+- **Mutación:** 40 de 42 detectados (`tools/dev/mutantes.py collections`); uno es equivalente (el separador del recorrido: `collection_entry` vuelve a poner «/»). El de quitar la protección del NUL en `add` cuelga los tests: Windows corta la ruta en el NUL, así que `exists()` de «alfa\0x/nul_N.png» mira la carpeta `alfa`, que existe, y la búsqueda de un nombre libre no acaba. `mutantes.py` no tenía tiempo máximo y se quedó esperando; ahora lo tiene (600 s) y un mutante que cuelga cuenta como detectado. El de la protección del NUL en el recorrido está pendiente de ejecutar. Los de SFX que pasaron a `disk_scan.cpp` siguen igual: 34/35, y el otro es el equivalente de siempre.
+- **Resultado:** 93 tests (91 de Catch2 y 2 de la CLI) y 111 874 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 68 archivos.
+
+**Siguiente:** nada más sin Edu. Lo que queda de F0 necesita el Windows SDK o el remoto, lo de F1 llega con la interfaz (F5) y F3 necesita el SDK. El autopiloto se pausa (`.claude/autopiloto/bloqueado.md`).

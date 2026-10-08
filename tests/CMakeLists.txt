@@ -12,6 +12,7 @@ add_executable(gc_tests
     unit/test_session.cpp
     unit/test_sfx.cpp
     parity/bench_edit.cpp
+    parity/test_collections_parity.cpp
     parity/test_edit_parity.cpp
     parity/test_eval_parity.cpp
     parity/test_frame_parity.cpp

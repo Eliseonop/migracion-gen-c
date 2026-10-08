@@ -21,8 +21,9 @@ Salida (al repo):
   tests/fixtures/settings/synthetic.json   ajustes: pasos de settings_cases.py
   tests/fixtures/library/synthetic.json    biblioteca: pasos de library_cases.py
   tests/fixtures/sfx/synthetic.json        biblioteca de SFX en disco: pasos de sfx_cases.py
+  tests/fixtures/collections/synthetic.json  colecciones de material: pasos de collections_cases.py
 Con --real, en tests/fixtures/local/<lo mismo>/real.json: TUS proyectos, timelines,
-clips, historiales, ajustes (con las claves redactadas), biblioteca y SFX de video-yt.
+clips, historiales, ajustes (con las claves redactadas), biblioteca, SFX y material de video-yt.
 tests/fixtures/local/ son datos personales: está en .gitignore y nunca se sube.
 
 Las operaciones pasan por el `timeline_store.apply_op` REAL de video-yt (con el disco
@@ -865,6 +866,154 @@ def real_sfx_fixtures(ctx: Ctx) -> dict:
     return {"root": root.as_posix(), "steps": _run_sfx_steps(steps, root)}
 
 
+# --- Colecciones de material (collections.py) --------------------------------------------------
+
+# Los mensajes de los errores que ve el usuario (ValueError y LookupError de collections.py):
+# el test de C++ los compara literalmente.
+_COLLECTION_MESSAGES = {"Colección no válida.", "No hay carpeta raíz de material.",
+                        "Ponle un nombre a la carpeta.", "Carpeta no encontrada."}
+
+
+def _run_collections_steps(steps: list, root: Path | None) -> list[dict]:
+    """Ejecuta los pasos con el collections.py REAL sobre `root` (o una carpeta temporal) y un
+    settings.json temporal. «{TMP}» es la carpeta (con «/») en los ajustes y las rutas, y la
+    carpeta de los resultados vuelve a ser «{TMP}»."""
+    import io
+
+    from app import collections as col
+    from app import config
+    from app import settings as st
+    tmp = Path(tempfile.mkdtemp(prefix="gc_col_"))
+    base_dir = root or tmp
+    posix, native = base_dir.as_posix(), str(base_dir)
+    saved = (st._FILE, config.ASSETS_DIR)
+    st._FILE = tmp / "__settings__.json"
+
+    def tmp_of(value):
+        return value.replace(native, "{TMP}") if isinstance(value, str) else value
+
+    def with_root(result: dict) -> dict:
+        result["root"] = tmp_of(result.get("root"))
+        for c in result.get("collections") or []:
+            c["path"] = tmp_of(c["path"])
+        return result
+
+    out = []
+    try:
+        for step in steps:
+            kind, args = step[0], step[1:]
+            entry: dict = {"step": list(step)}
+            try:
+                result = None
+                if kind == "files":
+                    for rel in args[0]:
+                        f = base_dir / rel
+                        f.parent.mkdir(parents=True, exist_ok=True)
+                        f.write_bytes(b"x")
+                elif kind == "file":
+                    f = base_dir / args[0]
+                    f.parent.mkdir(parents=True, exist_ok=True)
+                    content = args[1] if isinstance(args[1], str) else json.dumps(args[1], ensure_ascii=False)
+                    f.write_bytes(content.encode("utf-8"))
+                elif kind == "dirs":
+                    for rel in args[0]:
+                        (base_dir / rel).mkdir(parents=True, exist_ok=True)
+                elif kind == "assets":
+                    config.ASSETS_DIR = base_dir / args[0]
+                elif kind == "settings":
+                    content = args[0] if isinstance(args[0], str) else json.dumps(args[0], ensure_ascii=False)
+                    st._FILE.write_text(content.replace("{TMP}", posix), encoding="utf-8")
+                elif kind == "save":
+                    st.save(args[0])
+                elif kind == "meta":
+                    data = st.load()
+                    result = {"material_root": tmp_of(data.get("material_root")),
+                              "collections_meta": data.get("collections_meta")}
+                elif kind == "root":
+                    r = col.get_root()
+                    result = None if r is None else tmp_of(str(r))
+                elif kind == "set_root":
+                    r = col.set_root(args[0].replace("{TMP}", posix))
+                    result = None if r is None else tmp_of(str(r))
+                elif kind == "prefs":
+                    result = col.set_prefs(args[0], enabled=args[1], favorite=args[2], label=args[3])
+                elif kind == "safe_id":
+                    result = col._safe_collection_id(args[0])
+                elif kind == "kind":
+                    result = col.kind_for(Path(args[0]))
+                elif kind == "entry":
+                    result = col._entry(args[0], Path(args[1]))
+                elif kind == "scan":
+                    result = col._scan_dir(col.get_root(), args[0])
+                elif kind == "list":
+                    result = with_root(col.list_collections())
+                elif kind == "match":
+                    result = col._match(args[0], args[1])
+                elif kind == "search":
+                    result = with_root(col.search(args[0], args[1], args[2], args[3]))
+                elif kind == "create":
+                    result = col.create_collection(args[0])
+                elif kind == "add":
+                    result = col.add_files(args[0], [(n, io.BytesIO(c.encode("utf-8"))) for n, c in args[1]])
+                elif kind == "resolve":
+                    target = col.resolve(args[0].replace("{TMP}", posix))
+                    result = None if target is None else target.relative_to(col.get_root().resolve()).as_posix()
+                elif kind == "resolve_items":   # el `filename` de cada medio, resuelto
+                    result = {}
+                    for it in col.search("", limit=100000)["items"]:
+                        target = col.resolve(it["filename"])
+                        result[it["filename"]] = (None if target is None else
+                                                  target.relative_to(col.get_root().resolve()).as_posix())
+                elif kind == "tree":
+                    top = base_dir / args[0]
+                    result = [[p.relative_to(top).as_posix(), p.read_text(encoding="utf-8") if p.is_file() else None]
+                              for p in sorted(top.rglob("*"), key=lambda p: p.relative_to(top).as_posix())]
+                else:
+                    raise ValueError(f"paso desconocido: {kind}")
+                entry["result"] = result
+            except Exception as e:  # noqa: BLE001
+                entry["error"] = type(e).__name__
+                if str(e) in _COLLECTION_MESSAGES:
+                    entry["message"] = str(e)
+            out.append(entry)
+    finally:
+        st._FILE, config.ASSETS_DIR = saved
+        shutil.rmtree(tmp, ignore_errors=True)
+    return _pure(out)
+
+
+def synthetic_collections_fixtures(ctx: Ctx) -> dict:
+    sys.path.insert(0, str(HERE))
+    import collections_cases as cc
+    return {"root": None, "steps": _run_collections_steps(cc.STEPS, None)}
+
+
+def real_collections_fixtures(ctx: Ctx) -> dict:
+    """Tu carpeta de material (la de fábrica de video-yt o la de `material_root`) con tus
+    preferencias: solo lectura (raíz, lista, búsquedas, recorrido de cada colección y la ruta
+    de cada medio). Nada que escriba en ella."""
+    from app import collections as col
+    from app import config
+    assets = Path(config.ASSETS_DIR)
+    settings_file = ctx.root / "backend" / "data" / "settings.json"
+    mine = json.loads(settings_file.read_text(encoding="utf-8")) if settings_file.exists() else {}
+    prefs = {k: mine[k] for k in ("material_root", "collections_meta") if mine.get(k) is not None}
+    custom = prefs.get("material_root")
+    root = Path(custom) if isinstance(custom, str) and Path(custom).is_dir() else assets / "material"
+    if not root.is_dir():
+        return {"root": None, "steps": []}
+    # La carpeta del test es la de `assets`; con material_root, la raíz de tus ajustes tal cual.
+    steps = [("assets", ""), ("settings", prefs), ("root",), ("list",), ("search", "", "", "", 100000)]
+    steps += [("search", "", k, "", 100000) for k in ("video", "image", "gif", "audio")]
+    steps += [("search", q, "", "", 500) for q in ("scientist", "pointing", "1080p", "…", "zz")]
+    try:
+        cids = [c["id"] for c in col.list_collections()["collections"]] if root == assets / "material" else []
+    except Exception:  # noqa: BLE001
+        cids = []
+    steps += [("scan", c) for c in cids] + [("resolve_items",)]
+    return {"root": assets.as_posix(), "steps": _run_collections_steps(steps, assets)}
+
+
 # --- Animación (keyframes y máscaras) ---------------------------------------------------------
 
 def keyframe_case(ctx: Ctx, name: str, raw_clip: dict, times: list[float]) -> dict:
@@ -1273,6 +1422,9 @@ def main() -> None:
     sfx_syn = synthetic_sfx_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "sfx" / "synthetic.json", sfx_syn, len(sfx_syn["steps"]),
           sum("error" in s for s in sfx_syn["steps"]))
+    col_syn = synthetic_collections_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "collections" / "synthetic.json", col_syn, len(col_syn["steps"]),
+          sum("error" in s for s in col_syn["steps"]))
     hist = synthetic_history_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "history" / "synthetic.json", hist, len(hist["steps"]), 0)
     lay = synthetic_layout_fixtures(ctx)
@@ -1312,6 +1464,9 @@ def main() -> None:
         sfx_real = real_sfx_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "local" / "sfx" / "real.json", sfx_real, len(sfx_real["steps"]),
               sum("error" in s for s in sfx_real["steps"]))
+        col_real = real_collections_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "local" / "collections" / "real.json", col_real, len(col_real["steps"]),
+              sum("error" in s for s in col_real["steps"]))
         hist_real = real_history_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "history" / "real.json", hist_real, len(hist_real["cases"]), 0)
         lay_real = real_layout_fixtures(ctx, data)
