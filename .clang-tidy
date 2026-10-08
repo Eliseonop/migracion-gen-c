@@ -8,7 +8,10 @@
 #     con nombre (comprobado), nunca temporales que se guarden.
 #   - throwing-static-initialization: constantes Json y std::string estáticas.
 #   - unchecked-optional-access: no ve las comprobaciones hechas en funciones aparte
-#     (has_text, py_number antes de usarlo) y casi todo eran falsos positivos.
+#     (has_text, py_number antes de usarlo) y casi todo eran falsos positivos. Revisado a
+#     mano el 2026-10-08: el único real (un `range` del catálogo de efectos sin min o max)
+#     ya es un error; los 31 que quedan están protegidos por has_text, valid_kf_value,
+#     keyframes_enabled, valores ya numéricos, claves constantes o un REQUIRE en los tests.
 #   - include-cleaner, no-recursion, avoid-c-arrays, designated-initializers,
 #     trailing-return-type, use-auto, raw-string-literal, return-braced-init-list,
 #     enum-size, avoid-pragma-once, redundant-parentheses y Padding: estilo.

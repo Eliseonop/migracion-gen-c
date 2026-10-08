@@ -22,7 +22,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 87 tests y 111 318 aserciones en verde (Debug y Release, 0 warnings) y 0 avisos de clang-tidy.
+**Cifras actuales:** 91 tests (89 de Catch2 y 2 de la CLI) y 111 329 aserciones en verde (Debug y Release, 0 warnings) y 0 avisos de clang-tidy.
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
 historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (61 pasos + los tuyos, con las claves redactadas) biblioteca (55 pasos + 23 materiales + la tuya) SFX en disco (205 pasos + tu carpeta de 626 sonidos) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
@@ -54,7 +54,7 @@ F2 está cerrada y F1 casi: solo faltan las colecciones, que son de la interfaz.
 
 - [x] Repositorio git (`main`) con `.gitignore`, `.gitattributes` (git-lfs), `.clang-format` y `.editorconfig`
 - [x] CMake ≥ 3.28 con presets: `mingw-*`, `msvc-*`, `msvc-vcpkg-*`, `linux-debug`, `macos-debug` y `ci`
-- [x] Dependencias con `find_package` y, si no están, FetchContent con hash verificado (nlohmann/json 3.12.0, Catch2 3.9.1)
+- [x] Dependencias con `find_package` y, si no están, FetchContent con hash verificado (nlohmann/json 3.12.0, spdlog 1.15.3, Catch2 3.9.1)
 - [x] `vcpkg.json` preparado para F3
 - [x] Warnings estrictos (`gc_set_warnings`): 0 warnings con GCC 15
 - [x] `-ffp-contract=off` para que los cálculos den los mismos bits en todas las plataformas
@@ -85,6 +85,12 @@ F2 está cerrada y F1 casi: solo faltan las colecciones, que son de la interfaz.
 - [x] Ajustes y API keys (`settings.hpp`: `settings.py`, `export_settings.py` y `transcribe_settings.py`): carga con defectos, `save` con la fusión de claves y máscaras, varias claves por proveedor y la vista pública sin secretos. Paridad: 61 pasos sintéticos con claves falsas y tus ajustes con las claves redactadas; 10/10 mutaciones
 
 ### Notas de F1
+
+- **Colecciones (siguiente, `collections.py`, 267 líneas → `collections.hpp/.cpp`; plan de la revisión de F0):**
+  - Ya está lo que necesitan: `py_lower` (clave `name.lower()`), `py_path_stem`/`py_path_suffix`, `py_quote`, el orden de `sorted(rglob)` de `sfx_scan`, el anti-traversal de `sfx_resolve` y `SettingsFile` para `material_root` y `collections_meta`. Hay que comprobar que `SettingsFile::save` conserva esas dos claves.
+  - Portar: `kind_for`, `get_root`/`set_root`, `set_prefs` con `_safe_collection_id`, `_entry`, `_scan_dir`, `list_collections` (orden `(not favorite, name.lower())`, `stick.json`, `cover_url`), `_match` y `search` (counts, límite, favoritos), `create_collection` (regex de saneado y sufijo « N»), `add_files` (con el stream inyectado) y `resolve`.
+  - Mensajes de error literales: «Colección no válida.», «No hay carpeta raíz de material.», «Ponle un nombre a la carpeta.» y «Carpeta no encontrada.».
+  - Fixtures: `tools/fixtures/collections_cases.py` y, en `export_fixtures.py`, unos pasos como los de `_run_sfx_steps` que llamen al `collections.py` real con `config.ASSETS_DIR` y los ajustes apuntando a un directorio temporal. Casos: árboles con Unicode, mayúsculas, `.GIF`, extensiones no soportadas, anidados y `stick.json`; ids `..`, `a/b` y con espacios; nombres con `<>:"`; colisiones en `add_files` y `create_collection`; y tu `material_root` real si existe. Grupo `collections` en `tools/dev/mutantes.py`.
 
 - **JSON como Python:** `json.loads(read_text("utf-8"))` falla con un BOM de UTF-8. Ajustes, biblioteca e historial usan `read_json_file_py`, que también falla; `read_json_file` (proyectos y timelines) lo sigue saltando.
 - **Texto de Python en `py.hpp`:** `py_lower` (`str.lower()` de Unicode 16, con la sigma final; tabla generada con `tools/gen/gen_py_lower.py`), `py_path_str` (`str(Path(x))`), `py_path_name`, `py_path_suffix` y `py_path_stem` (Python 3.14 en Windows, con el `splitroot` de C: unidades de UTF-16, UNC y `\\?\UNC\`) y `py_quote`.

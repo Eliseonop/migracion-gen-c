@@ -40,8 +40,9 @@ const Json* find_by_id(const Json& list, const Json& id) {
     return nullptr;
 }
 
-// _param_value de fx_catalog.py (= paramValue de fx/core/params.js).
-Json param_value(const Json& p, const Json& v) {
+// _param_value de fx_catalog.py (= paramValue de fx/core/params.js). Un `range` sin `min` o
+// `max` numéricos es un catálogo roto: Python lanza KeyError o ValueError y aquí es un error.
+Result<Json> param_value(const Json& p, const Json& v) {
     const Json& def = field(p, "def");
     if (v.is_null()) {
         return def;
@@ -52,9 +53,13 @@ Json param_value(const Json& p, const Json& v) {
         if (!n) {
             return def;
         }
-        const double lo = *py_float(field(p, "min"));
-        const double hi = *py_float(field(p, "max"));
-        return std::min(hi, std::max(lo, *n));
+        const auto lo = py_float(field(p, "min"));
+        const auto hi = py_float(field(p, "max"));
+        if (!lo || !hi) {
+            return fail(ErrorCode::Internal,
+                        "catálogo de efectos: el parámetro " + py_str(field(p, "id")) + " no tiene min y max numéricos");
+        }
+        return std::min(*hi, std::max(*lo, *n));
     }
     if (type == "toggle") {
         return (v.is_boolean() && v.get<bool>()) || ((v.is_number()) && v.get<double>() == 1.0) || v == "true";
@@ -108,15 +113,22 @@ const Json* FxCatalog::effect(const Json& id) const { return find_by_id(field(da
 
 const Json* FxCatalog::anim(const Json& id) const { return find_by_id(field(data_, "anims"), id); }
 
-Json FxCatalog::resolve_params(const Json& manifest, const Json& raw) {
+Result<Json> FxCatalog::resolve_params(const Json& manifest, const Json& raw) {
     Json out = Json::object();
     const Json& params = field(manifest, "params");
     if (!params.is_array()) {
         return out;
     }
     for (const Json& p : params) {
-        const std::string id = field(p, "id").get<std::string>();
-        out[id] = param_value(p, field(raw, id));
+        const Json& id = field(p, "id");
+        if (!id.is_string()) { // p["id"] de Python: KeyError (y con otro tipo, un JSON que no se puede escribir)
+            return fail(ErrorCode::Internal, "catálogo de efectos: un parámetro sin id de texto");
+        }
+        auto value = param_value(p, field(raw, id.get_ref<const std::string&>()));
+        if (!value) {
+            return std::unexpected(std::move(value.error()));
+        }
+        out[id.get_ref<const std::string&>()] = std::move(*value);
     }
     return out;
 }

@@ -1,6 +1,6 @@
 # Plan de migración: video-yt → GenClipPro (C++)
 
-> Estado: **en marcha** desde 2026-10-06 · F0 hecha (salvo MSVC y CI) · F1 casi cerrada (faltan colecciones y SFX de disco) · F2 cerrada · F3 en curso (lo que no necesita MSVC). Ver §14, [ARQUITECTURA.md](ARQUITECTURA.md) y la lista de tareas [TODO.md](TODO.md).
+> Estado: **en marcha** desde 2026-10-06 · F0 hecha (salvo MSVC y CI) · F1 casi cerrada (faltan las colecciones) · F2 cerrada · F3 en curso (lo que no necesita MSVC). Ver §14, [ARQUITECTURA.md](ARQUITECTURA.md) y la lista de tareas [TODO.md](TODO.md).
 > Origen: `E:\proyectos\video-yt` (FastAPI + React). Destino: `C:\Users\Edu\CLionProjects\GenClipPro`.
 
 ## 0. Resumen
@@ -790,4 +790,13 @@ Preparación de la biblioteca de SFX y de las colecciones, que ordenan y filtran
 - **tidy:** 0 avisos en 64 archivos. La primera pasada en `main` daba 10: `build/tidy` era de antes de spdlog (`tidy.py` solo configuraba si faltaba `compile_commands.json`; ahora reconfigura siempre), la firma de `main` (NOLINT con el motivo) y 6 concatenaciones de mensajes dentro de bucles, que pasan a `std::format` con el mismo texto.
 - **Resultado:** 87 tests y 111 318 aserciones en verde, en Debug y en Release, con 0 warnings.
 
-**Siguiente:** F1, colecciones (o esperar a F5 con ellas). F3 sigue esperando al Windows SDK.
+**Revisión del subagente (APROBADO, sin bloqueantes), ya aplicada:**
+- Los arreglos de tidy no cambian nada: revisados uno a uno (`is_free`, los `std::format`, `json_or`, `prepare`, `ValidationFailure`…), y los 111 patrones de `tools/dev/mutantes.py` siguen encontrando su texto.
+- **Errores de `genclip`:** pasaban por el filtro del registro, así que con `GENCLIP_LOG=off` salía con código 1 y sin mensaje. Ahora se escriben siempre («error: …» en stderr) y el registro queda para la traza. Importa en F3, cuando video-yt lance `genclip render` y lea stderr. Hay 2 tests de la CLI (`tests/cli/errores.cmake`, con el nivel por defecto y con `off`): comprueban el código 1 y el mensaje.
+- **Catálogo roto:** `param_value` hacía `*py_float(min)` sin comprobar. Con un `range` sin `min` o `max` numéricos, Python lanza KeyError o ValueError y C++ desreferenciaba un `nullopt`. Ahora `resolve_params` devuelve `Result` y `apply_effect` falla con un error Internal; un parámetro sin id de texto también es un error (antes, `type_error` sin capturar). El catálogo incluido no lo dispara. Hay un test con los dos casos y otro de defectos y rangos.
+- **`unchecked-optional-access`** sigue desactivado: con el check activo quedan 31 avisos, revisados a mano y todos protegidos (el motivo está en `.clang-tidy`).
+- **`tidy.py`:** un archivo en el que clang-tidy falla sin dar ningún aviso nuestro (por ejemplo, un error en una cabecera de terceros) cuenta como «sin analizar» y hace fallar la pasada, en vez de dar «0 avisos».
+- Docs: el estado del plan (las SFX de disco ya estaban hechas), spdlog en la lista de dependencias con hash, el comentario de `log.hpp` (spdlog usa su fmt) y el estado de F0 en el README.
+- **Resultado:** 91 tests (89 de Catch2 y 2 de la CLI) y 111 329 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 65 archivos.
+
+**Siguiente:** F1, colecciones (`collections.py`: el plan de la revisión está en el TODO). F3 sigue esperando al Windows SDK.

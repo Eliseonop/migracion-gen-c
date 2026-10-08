@@ -4,8 +4,8 @@
 //   genclip projects <projects.json>                     valida todos los proyectos
 //   genclip normalize <projects.json> <salida> [--preserve]
 //
-// Los argumentos y la salida van en UTF-8 en todos los SO (rutas con tildes). Los errores
-// y el registro van a stderr («error: …»); GENCLIP_LOG=debug muestra también la traza.
+// Los argumentos y la salida van en UTF-8 en todos los SO (rutas con tildes). Los errores van
+// siempre a stderr («error: …»), con cualquier GENCLIP_LOG; GENCLIP_LOG=debug añade la traza.
 
 #include <format>
 #include <iostream>
@@ -86,6 +86,13 @@ std::string truncate(std::string s, std::size_t n) {
     return s;
 }
 
+// Los errores salen siempre por stderr, sea cual sea GENCLIP_LOG: quien lanza genclip (video-yt
+// en F3) los lee. El registro (spdlog) queda para la traza.
+int report_error(std::string_view message) {
+    std::cerr << "error: " << message << '\n';
+    return 1;
+}
+
 int cmd_projects(Args args) {
     if (args.size() != 1) {
         usage();
@@ -93,13 +100,11 @@ int cmd_projects(Args args) {
     }
     auto raw = gc::core::read_json_file(gc::core::path_from_utf8(args[0]));
     if (!raw) {
-        spdlog::error("{}", raw.error().to_string());
-        return 1;
+        return report_error(raw.error().to_string());
     }
     const auto it = raw->find("projects");
     if (it == raw->end() || !it->is_array()) {
-        spdlog::error("el archivo no tiene una lista \"projects\"");
-        return 1;
+        return report_error("el archivo no tiene una lista \"projects\"");
     }
     int failed = 0;
     std::size_t total_clips = 0;
@@ -131,17 +136,14 @@ int cmd_normalize(Args args) {
     const auto mode = args.size() == 3 ? gc::core::DumpMode::Preserve : gc::core::DumpMode::Model;
     auto raw = gc::core::read_json_file(gc::core::path_from_utf8(args[0]));
     if (!raw) {
-        spdlog::error("{}", raw.error().to_string());
-        return 1;
+        return report_error(raw.error().to_string());
     }
     auto file = gc::core::projects_file_from_json(*raw);
     if (!file) {
-        spdlog::error("{}", file.error().to_string());
-        return 1;
+        return report_error(file.error().to_string());
     }
     if (auto ok = gc::core::write_json_file(gc::core::path_from_utf8(args[1]), gc::core::to_json(*file, mode)); !ok) {
-        spdlog::error("{}", ok.error().to_string());
-        return 1;
+        return report_error(ok.error().to_string());
     }
     std::cout << file->projects.size() << " proyectos escritos en " << args[1] << "\n";
     return 0;

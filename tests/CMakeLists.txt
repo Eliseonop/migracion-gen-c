@@ -2,6 +2,7 @@ add_executable(gc_tests
     support/json_diff.cpp
     unit/test_coercion.cpp
     unit/test_frame.cpp
+    unit/test_fx_catalog.cpp
     unit/test_keyframes.cpp
     unit/test_layers.cpp
     unit/test_log.cpp
@@ -37,3 +38,12 @@ if(catch2_SOURCE_DIR)
 endif()
 include(Catch)
 catch_discover_tests(gc_tests DISCOVERY_MODE PRE_TEST)
+
+# genclip: los errores salen por stderr con el nivel por defecto y con el registro apagado.
+if(TARGET genclip)
+    foreach(level IN ITEMS "" off)
+        add_test(NAME "genclip: un error sale por stderr (GENCLIP_LOG=${level})"
+            COMMAND "${CMAKE_COMMAND}" -DGENCLIP=$<TARGET_FILE:genclip> -DLOG=${level}
+                    -P "${CMAKE_CURRENT_SOURCE_DIR}/cli/errores.cmake")
+    endforeach()
+endif()

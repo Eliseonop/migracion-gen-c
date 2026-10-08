@@ -127,7 +127,8 @@ Result<Json> fx_entry(const FxCatalog& catalog, const Json& eid, const Json& par
     const Json& v = field(*man, "v");
     out["v"] = py_truthy(v) ? py_int(v).value_or(1) : 1;
     out["enabled"] = true;
-    out["params"] = FxCatalog::resolve_params(*man, params);
+    GC_TRY(resolved, FxCatalog::resolve_params(*man, params));
+    out["params"] = std::move(resolved);
     out["from"] = from;
     if (to.is_null()) {
         out["to"] = nullptr;

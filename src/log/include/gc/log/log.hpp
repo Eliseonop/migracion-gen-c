@@ -4,8 +4,10 @@
 // render, servicios, app). gc_core no lo usa: es lógica pura, solo STL y JSON.
 //
 // Uso: gc::log::init(...) una vez al arrancar y después spdlog::info/debug/warn/error con
-// el formato de std::format. Los mensajes van a stderr («nivel: texto»), así que no se
-// mezclan con la salida de una orden (stdout).
+// el formato de fmt (el fmt que trae spdlog; con `{}` es igual que std::format). Los
+// mensajes van a stderr («nivel: texto»), así que no se mezclan con la salida de una orden
+// (stdout). El registro es para la traza: un error que el usuario tiene que ver se escribe
+// siempre, porque con GENCLIP_LOG=off el registro no saca nada.
 //
 // El nivel sale de la variable de entorno GENCLIP_LOG (trace, debug, info, warn, error u
 // off) si está y es válida; si no, del que pida el programa. El archivo de registro de la

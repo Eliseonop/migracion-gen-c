@@ -34,8 +34,9 @@ public:
     [[nodiscard]] const Json& data() const noexcept { return data_; }
 
     // Parámetros completos y saneados (paramValue de fx/core/params.js): lo que
-    // falta o no vale toma el defecto; los rangos se acotan.
-    [[nodiscard]] static Json resolve_params(const Json& manifest, const Json& raw);
+    // falta o no vale toma el defecto; los rangos se acotan. Error (Internal) si el
+    // manifiesto está roto: un parámetro sin id de texto o un `range` sin min y max.
+    [[nodiscard]] static Result<Json> resolve_params(const Json& manifest, const Json& raw);
 
 private:
     Json data_ = Json::object();
