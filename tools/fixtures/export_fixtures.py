@@ -723,6 +723,74 @@ def _run_library_steps(steps: list, projects_data: dict) -> list[dict]:
     return _pure(out)
 
 
+def _run_save_steps(ctx: Ctx, steps: list) -> list[dict]:
+    """«Guardar en la biblioteca»: library.save_from_project y projects.py REALES sobre un data/ y
+    unas carpetas de clips temporales, con uuid4 y _now fijados. «{TMP}» es la carpeta (con «/»)
+    en los argumentos y vuelve a serlo en lo que se guarda: el resultado, library.json,
+    projects.json y lo que hay en disco (fuera de esos dos archivos)."""
+    from app import config, library
+    projects = ctx.projects
+    tmp = Path(tempfile.mkdtemp(prefix="gc_save_"))
+    posix = tmp.as_posix()
+    saved = (projects._FILE, config.OUTPUT_DIR, config.DATA_DIR, uuid.uuid4, library._now)
+    projects._FILE = tmp / "data" / "projects.json"
+    config.DATA_DIR = tmp / "data"
+    config.OUTPUT_DIR = tmp / "clips"
+    uuid.uuid4 = _SequentialUuid()
+    library._now = _FixedNow()
+    lib_file = tmp / "data" / "library" / "library.json"
+
+    def tmp_of(value):
+        return json.loads(json.dumps(value, ensure_ascii=False).replace(posix, "{TMP}"))
+
+    def read(path: Path):
+        if not path.exists():
+            return None
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except ValueError:
+            return {"texto": path.read_text(encoding="utf-8")}
+
+    out = []
+    try:
+        for step in steps:
+            kind = step[0]
+            args = json.loads(json.dumps(list(step[1:]), ensure_ascii=False).replace("{TMP}", posix))
+            entry: dict = {"step": list(step)}
+            try:
+                result = None
+                if kind in ("projects", "library"):
+                    f = projects._FILE if kind == "projects" else lib_file
+                    f.parent.mkdir(parents=True, exist_ok=True)
+                    f.write_text(args[0] if isinstance(args[0], str) else json.dumps(args[0], ensure_ascii=False),
+                                 encoding="utf-8")
+                elif kind == "disk":
+                    for rel in args[0]:
+                        f = tmp / rel
+                        f.parent.mkdir(parents=True, exist_ok=True)
+                        f.write_text(rel, encoding="utf-8")
+                elif kind == "save":
+                    result = library.save_from_project(*args)
+                else:
+                    raise ValueError(f"paso desconocido: {kind}")
+                entry["result"] = tmp_of(result)
+            except Exception as e:  # noqa: BLE001
+                entry["error"] = type(e).__name__
+                if isinstance(e, LookupError):  # los mensajes que ve el usuario
+                    entry["message"] = str(e)
+            entry["library"] = tmp_of(read(lib_file))
+            entry["projects"] = tmp_of(read(projects._FILE))
+            skip = {lib_file, projects._FILE}
+            entry["disk"] = [[p.relative_to(tmp).as_posix(), p.read_text(encoding="utf-8") if p.is_file() else None]
+                             for p in sorted(tmp.rglob("*"), key=lambda p: p.relative_to(tmp).as_posix())
+                             if p not in skip]
+            out.append(entry)
+    finally:
+        projects._FILE, config.OUTPUT_DIR, config.DATA_DIR, uuid.uuid4, library._now = saved
+        shutil.rmtree(tmp, ignore_errors=True)
+    return _pure(out)
+
+
 def synthetic_library_fixtures(ctx: Ctx) -> dict:
     from app import library
     sys.path.insert(0, str(HERE))
@@ -733,16 +801,38 @@ def synthetic_library_fixtures(ctx: Ctx) -> dict:
             dto.append({"item": item, "scope": scope, "result": library.material_dto(item, scope)})
         except Exception as e:  # noqa: BLE001
             dto.append({"item": item, "scope": scope, "error": type(e).__name__})
-    return _pure({"projects": lc.PROJECTS, "steps": _run_library_steps(lc.STEPS, lc.PROJECTS), "dto": dto})
+    return _pure({"projects": lc.PROJECTS, "steps": _run_library_steps(lc.STEPS, lc.PROJECTS), "dto": dto,
+                  "save": _run_save_steps(ctx, lc.SAVE_STEPS)})
+
+
+def _real_save_steps(data: dict) -> list:
+    """«Guardar en la biblioteca» sobre una copia de tus proyectos: el primer clip, audio e imagen
+    de proyectos sin carpeta propia, con un archivo diminuto en su sitio (en la carpeta temporal;
+    tus archivos no se tocan)."""
+    steps: list = [("projects", data)]
+    disk, saves, done = [], [], set()
+    for p in data.get("projects", []):
+        if p.get("folder"):
+            continue
+        for kind, key, ident, disk_kind in (("clip", "clips", "index", "video"), ("audio", "audios", "id", "audio"),
+                                            ("image", "images", "id", "image")):
+            items = p.get(key) or []
+            if kind in done or not items or not isinstance(items[0].get("filename"), str):
+                continue
+            done.add(kind)
+            disk.append(f"clips/{p['id']}/{disk_kind}/{items[0]['filename']}")
+            saves.append(("save", p["id"], kind, str(items[0].get(ident))))
+    return steps + [("disk", disk)] + saves if saves else []
 
 
 def real_library_fixtures(ctx: Ctx, data: dict) -> dict:
+    save = _run_save_steps(ctx, _real_save_steps(data))
     src = ctx.root / "backend" / "data" / "library" / "library.json"
     if not src.exists():
-        return {"projects": data, "steps": [], "dto": []}
+        return {"projects": data, "steps": [], "dto": [], "save": save}
     lib = json.loads(src.read_text(encoding="utf-8"))
     return _pure({"projects": data, "steps": _run_library_steps([("write", lib), ("load",), ("list",)], data),
-                  "dto": []})
+                  "dto": [], "save": save})
 
 
 # --- Biblioteca de SFX en disco (sfx.py) -------------------------------------------------------
@@ -1574,8 +1664,9 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "keyframes" / "synthetic.json", kf,
           len(kf["clips"]) + len(kf["ease"]) + len(kf["masks"]) + len(kf["styles"]), 0)
     libr = synthetic_library_fixtures(ctx)
-    write(REPO / "tests" / "fixtures" / "library" / "synthetic.json", libr, len(libr["steps"]) + len(libr["dto"]),
-          sum("error" in s for s in libr["steps"] + libr["dto"]))
+    write(REPO / "tests" / "fixtures" / "library" / "synthetic.json", libr,
+          len(libr["steps"]) + len(libr["dto"]) + len(libr["save"]),
+          sum("error" in s for s in libr["steps"] + libr["dto"] + libr["save"]))
     sett = synthetic_settings_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "settings" / "synthetic.json", sett, len(sett["steps"]),
           sum("error" in s for s in sett["steps"]))

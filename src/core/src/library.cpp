@@ -6,6 +6,7 @@
 
 #include "edit_util.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/serialize.hpp"
 
 namespace gc::core {
 
@@ -332,6 +333,173 @@ Result<Json> LibraryFile::unsave(std::string_view item_id, const ProjectsFile& p
         }
     }
     return Json{{"deleted", item_id}};
+}
+
+namespace {
+
+// segments.is_shared_file: ¿otro clip del proyecto usa ese archivo (un segmento por referencia
+// o su vídeo de origen)? El propio, por su index o su id, no cuenta.
+bool is_shared_file(const Project& project, std::string_view filename, std::string_view exclude_ident) {
+    return std::ranges::any_of(project.clips, [&](const ClipInfo& c) {
+        return c.filename == filename && std::to_string(c.index) != exclude_ident &&
+               (c.id ? *c.id : std::string("None")) != exclude_ident;
+    });
+}
+
+} // namespace
+
+Result<Json> LibraryFile::save_from_project(ProjectsStore& projects, std::string_view project_id,
+                                            std::string_view resource_type, std::string_view ident, IdSource& ids,
+                                            const std::function<std::string()>& now) {
+    if (resource_type != "audio" && resource_type != "clip" && resource_type != "image") {
+        return fail(ErrorCode::NotFound, "Tipo no válido.");
+    }
+    auto found = projects.get_project(project_id);
+    if (!found) {
+        return std::unexpected(found.error());
+    }
+    if (!*found) {
+        return fail(ErrorCode::NotFound, "Proyecto no encontrado.");
+    }
+    const Project& project = **found;
+    const bool is_audio = resource_type == "audio";
+    const bool is_clip = resource_type == "clip";
+    const std::string disk_kind = is_audio ? "audio" : is_clip ? "video" : "image";
+    const std::string asset_kind = is_audio ? "audios" : is_clip ? "clips" : "images";
+    // El material, como model_dump(): un audio o una imagen por su id, un clip por su index.
+    std::optional<Json> raw;
+    if (is_audio) {
+        const auto it = std::ranges::find_if(project.audios, [&](const AudioInfo& a) { return a.id == ident; });
+        raw = it != project.audios.end() ? std::optional<Json>(to_json(*it)) : std::nullopt;
+    } else if (is_clip) {
+        const auto it = std::ranges::find_if(project.clips,
+                                             [&](const ClipInfo& c) { return std::to_string(c.index) == ident; });
+        raw = it != project.clips.end() ? std::optional<Json>(to_json(*it)) : std::nullopt;
+    } else {
+        const auto it = std::ranges::find_if(project.images, [&](const ImageInfo& i) { return i.id == ident; });
+        raw = it != project.images.end() ? std::optional<Json>(to_json(*it)) : std::nullopt;
+    }
+    if (!raw) {
+        return fail(ErrorCode::NotFound, "Material no encontrado.");
+    }
+    const auto get = [&](const char* key) { return raw->value(key, Json()); };
+    const std::string filename = raw->at("filename").get<std::string>();
+    const auto src = resolve_project_media(projects.clips_dir(), project, disk_kind, filename);
+    std::error_code ec;
+    if (!src || !std::filesystem::exists(*src, ec)) {
+        return fail(ErrorCode::NotFound, "Archivo no encontrado.");
+    }
+
+    const std::string lib_id = "lib_" + ids.hex32().substr(0, 12);
+    std::string ext = detail::py_path_suffix(filename);
+    if (ext.empty()) {
+        ext = is_audio ? ".m4a" : is_clip ? ".mp4" : ".png";
+    }
+    const Json label = get("label");
+    const std::string stem = safe_file_name(py_truthy(label) ? py_str(label) : detail::py_path_stem(filename));
+    const std::string dest_name = stem + "_" + lib_id.substr(4) + ext;
+    // library_root(): data/library con sus carpetas audio/, video/ e image/.
+    const std::filesystem::path root = data_dir_ / "library";
+    for (const char* sub : {"audio", "video", "image"}) {
+        std::filesystem::create_directories(root / sub, ec);
+    }
+    const std::filesystem::path dest = root / disk_kind / path_from_utf8(dest_name);
+    std::filesystem::copy_file(*src, dest, std::filesystem::copy_options::overwrite_existing, ec); // shutil.copy2
+    if (ec) {
+        return fail(ErrorCode::Io, "no se pudo copiar " + path_to_utf8(*src) + ": " + ec.message());
+    }
+
+    const auto [origin, source] = library_origin_source(*raw, resource_type);
+    Json duration = get("duration");
+    if (duration.is_null() && !get("start").is_null() && !get("end").is_null()) {
+        duration = *detail::py_float(get("end")) - *detail::py_float(get("start"));
+    }
+    const Json description = get("description");
+    const Json youtube_url = get("youtube_url");
+    Json entry = Json::object();
+    entry["id"] = lib_id;
+    entry["resource_type"] = std::string(resource_type);
+    entry["scope"] = "library";
+    entry["source"] = source;
+    entry["origin"] = origin;
+    entry["filename"] = dest_name;
+    entry["label"] = label;
+    entry["description"] = py_truthy(description) ? description : get("text");
+    entry["duration"] = duration;
+    entry["created_at"] = get("created_at");
+    entry["saved_at"] = now();
+    entry["saved_from_project_id"] = std::string(project_id);
+    for (const char* key : {"voice", "voice2", "blend", "speed", "pause", "text", "engine"}) {
+        entry[key] = get(key);
+    }
+    entry["youtube_url"] = py_truthy(youtube_url) ? youtube_url : origin == "youtube" ? get("source_url") : Json();
+    // El segmento por referencia: la copia es el vídeo entero y el tramo viaja en in/out_point.
+    for (const char* key : {"youtube_id", "start", "end", "source_url", "reframe", "width", "height", "provider",
+                            "external_id", "author", "license_info", "in_point", "out_point", "face_track"}) {
+        entry[key] = get(key);
+    }
+
+    // Un segmento por referencia comparte archivo con su vídeo de origen y con otros segmentos,
+    // que siguen en el proyecto: el archivo no se borra y la timeline se empareja solo por id.
+    const bool shared = is_clip && is_shared_file(project, filename, ident);
+
+    // El except de Python: [x for x in data["items"] if x.get("id") != lib_id], se guarda y se
+    // borra la copia. Si eso falla (items no se puede recorrer o tiene algo que no es un dict),
+    // Python sale con ese error y la copia se queda.
+    const auto rollback = [&] {
+        const std::scoped_lock lock(mutex_);
+        Json data = load();
+        Json& items = data["items"];
+        Json kept = Json::array();
+        if (items.is_array()) {
+            for (const Json& x : items) {
+                if (!x.is_object()) {
+                    return;
+                }
+                if (x.value("id", Json()) != lib_id) {
+                    kept.push_back(x);
+                }
+            }
+        } else if (!(items.is_object() && items.empty()) &&
+                   !(items.is_string() && items.get_ref<const std::string&>().empty())) {
+            return;
+        }
+        items = std::move(kept);
+        if (!save(data)) {
+            return; // si no se puede guardar, Python sale con ese error y la copia se queda
+        }
+        std::error_code ec_rm;
+        std::filesystem::remove(dest, ec_rm);
+    };
+    Result<void> step = [&] -> Result<void> {
+        const std::scoped_lock lock(mutex_);
+        Json data = load();
+        if (!data["items"].is_array()) {
+            return invalid("library.json: items debe ser una lista");
+        }
+        data["items"].push_back(entry);
+        return save(data);
+    }();
+    if (step) {
+        step = projects.retarget_timeline_asset(project_id, asset_kind, Json(std::string(ident)), Json(filename),
+                                                Json(lib_id), Json(dest_name), !shared);
+    }
+    if (step) {
+        auto removed = projects.remove_material(project_id, asset_kind, ident);
+        if (!removed) {
+            step = std::unexpected(removed.error());
+        } else if (!*removed) {
+            step = fail(ErrorCode::NotFound, "Material no encontrado.");
+        }
+    }
+    if (!step) {
+        rollback();
+        return std::unexpected(step.error());
+    }
+    if (!shared) {
+        std::filesystem::remove(*src, ec); // como Python: si no se puede borrar, se queda
+    }
+    return material_dto(entry, "library");
 }
 
 } // namespace gc::core

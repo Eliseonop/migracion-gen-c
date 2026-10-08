@@ -385,7 +385,46 @@ JSON = [
      'auto parsed = py_json_loads(replace_all(text, "NaN", "null"));'),
 ]
 
+L = "src/core/src/library.cpp"
+LIBRARY = [
+    ("guardar: tipo raro vale", L, 'if (resource_type != "audio" && resource_type != "clip" && resource_type != "image") {',
+     "if (false) {"),
+    ("guardar: clip por id", L, "std::to_string(c.index) == ident; });", "(c.id ? *c.id : std::string()) == ident; });"),
+    ("guardar: sin mirar que existe", L, "if (!src || !std::filesystem::exists(*src, ec)) {", "if (!src) {"),
+    ("guardar: id de 8", L, '"lib_" + ids.hex32().substr(0, 12)', '"lib_" + ids.hex32().substr(0, 8)'),
+    ("guardar: audio sin extensión es .mp3", L, 'is_audio ? ".m4a"', 'is_audio ? ".mp3"'),
+    ("guardar: nombre sin la etiqueta", L, "py_truthy(label) ? py_str(label) : detail::py_path_stem(filename)",
+     "detail::py_path_stem(filename)"),
+    ("guardar: solo la carpeta audio", L, 'for (const char* sub : {"audio", "video", "image"}) {',
+     'for (const char* sub : {"audio"}) {'),
+    ("guardar: duración sin start/end", L,
+     'if (duration.is_null() && !get("start").is_null() && !get("end").is_null()) {', "if (false) {"),
+    ("guardar: descripción sin el texto", L, 'py_truthy(description) ? description : get("text")', "description"),
+    ("guardar: youtube_url sin source_url", L, 'origin == "youtube" ? get("source_url") : Json()', "Json()"),
+    ("guardar: compartido también se borra", L, "if (!shared) {\n        std::filesystem::remove(*src, ec);",
+     "if (true) {\n        std::filesystem::remove(*src, ec);"),
+    ("guardar: compartido empareja por nombre", L, "Json(lib_id), Json(dest_name), !shared);",
+     "Json(lib_id), Json(dest_name), true);"),
+    ("guardar: el propio cuenta como compartido", L, "c.filename == filename && std::to_string(c.index) != exclude_ident &&",
+     "c.filename == filename &&"),
+    ("guardar: sin deshacer el alta", L, "        items = std::move(kept);\n        if (!save(data)) {",
+     "        (void)kept;\n        if (false) {"),
+    ("guardar: sin borrar la copia al deshacer", L, "        std::filesystem::remove(dest, ec_rm);", ""),
+    ("guardar: items {} no se guarda al deshacer", L, "} else if (!(items.is_object() && items.empty()) &&",
+     "} else if (true &&"),
+    ("guardar: sin quitarlo del proyecto", L, "auto removed = projects.remove_material(project_id, asset_kind, ident);",
+     "gc::Result<std::optional<Json>> removed = std::optional<Json>(Json());"),
+    ("safe_name: sin juntar espacios", "src/core/src/projects_store.cpp",
+     "for (const auto& word : py_split(py_strip(kept))) {",
+     "for (const auto& word : std::vector<std::string>{py_strip(kept)}) {"),
+    ("safe_name: 59 caracteres", "src/core/include/gc/core/projects_store.hpp", "std::size_t maxlen = 60", "std::size_t maxlen = 59"),
+    ("safe_name: sin «video»", "src/core/src/projects_store.cpp", 'return out.empty() ? "video" : out;', "return out;"),
+    ("resolve_media: la propia carpeta vale", "src/core/src/projects_store.cpp",
+     "if (*target == fs::weakly_canonical(fs::absolute(base, ec), ec)) {", "if (false) {"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
+          "library": (LIBRARY, "[library]"),
           "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 

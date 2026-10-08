@@ -5,10 +5,10 @@
 //
 // Cada material es un dict libre ({id, resource_type, filename, label, origin…}); como en
 // Python, el tipo, el origen y la fuente se deducen si faltan. «Guardar en la biblioteca»
-// desde un proyecto (save_from_project) cambia el proyecto (ProjectsStore) y copia archivos:
-// es lo siguiente que se porta.
+// desde un proyecto (save_from_project) copia el archivo y cambia el proyecto (ProjectsStore).
 
 #include <filesystem>
+#include <functional>
 #include <mutex>
 #include <optional>
 #include <string>
@@ -16,8 +16,10 @@
 #include <utility>
 
 #include "gc/core/error.hpp"
+#include "gc/core/ids.hpp"
 #include "gc/core/json.hpp"
 #include "gc/core/model.hpp"
+#include "gc/core/projects_store.hpp"
 
 namespace gc::core {
 
@@ -52,6 +54,16 @@ public:
     [[nodiscard]] Result<Json> set_semantic(std::string_view item_id, const Json& semantic);
     // Lo quita de la biblioteca y borra su archivo. Error si algún proyecto lo usa.
     [[nodiscard]] Result<Json> unsave(std::string_view item_id, const ProjectsFile& projects);
+    // «Guardar en la biblioteca» (save_from_project): copia el archivo del material (`ident` es
+    // el index de un clip o el id de un audio o una imagen) a data/library/<video|audio|image>/
+    // <título>_<id><ext>, lo da de alta, apunta la timeline del proyecto al nuevo ítem, lo quita
+    // del proyecto y borra el original, salvo un segmento que comparte archivo con otros. Si
+    // falla algo después de copiar, se deshacen el alta y la copia (no lo que ya cambió en la
+    // timeline, como en Python). Devuelve su DTO. Errores que ve el usuario (NotFound): «Tipo no
+    // válido.», «Proyecto no encontrado.», «Material no encontrado.» y «Archivo no encontrado.».
+    [[nodiscard]] Result<Json> save_from_project(ProjectsStore& projects, std::string_view project_id,
+                                                 std::string_view resource_type, std::string_view ident, IdSource& ids,
+                                                 const std::function<std::string()>& now = utc_now_iso);
 
     [[nodiscard]] std::filesystem::path file() const { return data_dir_ / "library" / "library.json"; }
 

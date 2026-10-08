@@ -905,3 +905,23 @@ Lo encontró la revisión del almacén de proyectos: con un `NaN` en `projects.j
 - **Resultado:** 103 tests (101 de Catch2 y 2 de la CLI) y 118 111 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 72 archivos.
 
 **Siguiente:** «Guardar en la biblioteca» (`library.save_from_project`).
+
+### 2026-10-08 — F1: «Guardar en la biblioteca» (library.save_from_project)
+
+**Hecho:**
+- **`LibraryFile::save_from_project`:** copia el archivo de un clip, audio o imagen del proyecto a `data/library/<video|audio|image>/<título>_<id><ext>`. Después da de alta el material, apunta la timeline al ítem nuevo (`ProjectsStore::retarget_timeline_asset`), lo quita del proyecto (`remove_material`) y borra el original. Devuelve el DTO.
+  - **Segmento por referencia** que comparte archivo con otros: el archivo se queda y la timeline se empareja solo por id.
+  - **Si algo falla tras copiar,** se deshacen el alta y la copia como en el `except` de Python, incluido el caso en que deshacer también falla.
+- **`storage.py`:** `safe_file_name` (`safe_name`) y `resolve_project_media` (`resolve_media`). **`segments.is_shared_file`**, interna de la biblioteca.
+
+**Verificación:**
+- **Casos:** 42 pasos (12 de error, 10 con el mensaje que ve el usuario) con el `library.py` y el `projects.py` REALES sobre un `data/` y unas carpetas temporales, con `uuid4` y `_now` fijados (`library_cases.SAVE_STEPS`). Tras cada paso se comparan el resultado, `library.json`, `projects.json` y todo lo que hay en disco. Cubren:
+  - los cuatro errores, un archivo fuera de la carpeta (`../../`) y la propia carpeta (`..`);
+  - clips sin extensión, en subcarpeta, con punto final, con NaN e infinito en `start`/`end`, con etiqueta larga o que se queda vacía, de YouTube, y segmentos compartidos y con id propio;
+  - audios (uno con una clave `index` que `remove_material` no encuentra, para forzar la vuelta atrás), imágenes y una carpeta de proyecto propia;
+  - bibliotecas rotas: JSON roto, `items` como `{}`, `[1]` y `"x"`.
+- **Tus proyectos:** una copia con un archivo diminuto para el primer clip, audio e imagen de un proyecto sin carpeta propia. Los tres guardados salen como en Python.
+- **Mutación:** 21/21 (`tools/dev/mutantes.py library`). Con eso salieron tres casos que faltaban (un clip con id propio solo en su archivo, una etiqueta que se queda vacía y la propia carpeta del proyecto) y un detalle de la vuelta atrás: si no se puede guardar `library.json`, la copia se queda, como en Python.
+- **Resultado:** 105 tests (103 de Catch2 y 2 de la CLI) y 118 381 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 72 archivos.
+
+**Siguiente:** `stick_library.py` y lo que falta de `clip_motion`. F3 sigue esperando al Windows SDK.

@@ -100,3 +100,85 @@ STEPS = [
 ]
 
 DTO = [(item, scope) for item in ITEMS for scope in ("library", "project")] + [("texto", "library")]
+
+# --- «Guardar en la biblioteca» (save_from_project) ------------------------------------------
+# Pasos con el library.py y el projects.py REALES sobre un data/ y unas carpetas de clips
+# temporales («{TMP}»; los clips por defecto en {TMP}/clips), con uuid4 y _now fijados:
+#   projects contenido    escribe data/projects.json
+#   library contenido     escribe data/library/library.json
+#   disk [rutas]          crea archivos bajo {TMP} (su contenido es su ruta)
+#   save pid tipo ident   save_from_project(pid, tipo, ident)
+# Tras cada paso se guardan library.json, projects.json y lo que hay en disco.
+
+T0 = "2026-10-06T00:00:00+00:00"
+
+
+def _clip(index, filename, **kw):
+    c = {"index": index, "filename": filename, "url": f"/api/media/p1/video/{filename}", "start": 0, "end": 10}
+    c.update(kw)
+    return c
+
+
+def _tl_clip(cid, asset_kind, asset_id, filename):
+    return {"id": cid, "track_id": "V1" if asset_kind != "audios" else "A1",
+            "kind": {"clips": "video", "audios": "audio", "images": "image"}[asset_kind],
+            "asset_kind": asset_kind, "asset_id": asset_id, "filename": filename, "start": 0, "duration": 1}
+
+
+SAVE_PROJECTS = {"projects": [
+    {"id": "p1", "name": "Uno", "created_at": T0,
+     "clips": [_clip(0, "c0.mp4", label="  Mi clip: <bueno>?\t ", start=1, end=3.5, created_at=T0),
+               _clip(1, "c1"),
+               _clip(2, "orig.mp4", in_point=1, out_point=2, id="seg2"),
+               _clip(3, "orig.mp4", in_point=3, out_point=4),
+               _clip(4, "../../fuera.mp4"),
+               _clip(5, "falta.mp4"),
+               _clip(6, "nan.mp4", start=float("nan"), end=float("inf")),
+               _clip(7, "largo.mp4", label="Un título   muy\nlargo " + "x" * 70 + " fin"),
+               _clip(8, "yt.mp4", origin="youtube", source_url="https://youtu.be/abc"),
+               _clip(9, "sub/dentro.mp4"),
+               _clip(10, "punto.", label="..."),
+               _clip(11, "solo.mp4", id="propio"),       # id propio y solo en su archivo: no es compartido
+               _clip(12, "v.mp4", label="<<>>"),        # la etiqueta se queda vacía: «video»
+               _clip(13, "..")],                        # la propia carpeta del proyecto: no vale
+     "audios": [{"id": "au1", "filename": "voz.wav", "url": "/api/media/p1/audio/voz.wav", "voice": "ana",
+                 "text": "Hola", "duration": 2.5, "engine": "kokoro"},
+                {"id": "au2", "filename": "otra", "url": "u", "text": "sin duración", "description": ""},
+                {"id": "au3", "filename": "au3.wav", "url": "u", "index": 99}],   # remove_material no lo encuentra
+     "images": [{"id": "im1", "filename": "foto.png", "url": "u", "width": 640, "height": 480, "label": "Foto"},
+                {"id": "im2", "filename": "anim", "url": "u", "animated": True, "duration": 1.5}],
+     "timeline": {"schema_version": 5,
+                  "tracks": [{"id": "V1", "kind": "video", "name": "V"}, {"id": "A1", "kind": "audio", "name": "A"}],
+                  "clips": [_tl_clip("t0", "clips", "0", "c0.mp4"), _tl_clip("t2", "clips", "2", "orig.mp4"),
+                            _tl_clip("t3", "clips", "3", "orig.mp4"), _tl_clip("t9", "clips", "77", "c0.mp4"),
+                            _tl_clip("ta", "audios", "au1", "voz.wav")]}},
+    {"id": "p2", "name": "Dos", "created_at": T0, "folder": "{TMP}/propia",
+     "clips": [_clip(0, "x.mp4")]},
+]}
+
+SAVE_STEPS = [
+    ("projects", SAVE_PROJECTS),
+    ("disk", ["clips/p1/video/c0.mp4", "clips/p1/video/c1", "clips/p1/video/orig.mp4", "clips/fuera.mp4",
+              "clips/p1/video/nan.mp4", "clips/p1/video/largo.mp4", "clips/p1/video/yt.mp4",
+              "clips/p1/video/sub/dentro.mp4", "clips/p1/video/punto.", "clips/p1/video/solo.mp4", "clips/p1/video/v.mp4", "clips/p1/audio/voz.wav",
+              "clips/p1/audio/otra", "clips/p1/audio/au3.wav", "clips/p1/image/foto.png", "clips/p1/image/anim",
+              "propia/video/x.mp4"]),
+    ("save", "p1", "otro", "0"), ("save", "nada", "clip", "0"), ("save", "p1", "clip", "99"),
+    ("save", "p1", "clip", "5"), ("save", "p1", "clip", "4"), ("save", "p1", "audio", "0"),
+    ("save", "p1", "clip", "0"), ("save", "p1", "clip", "0"),
+    ("save", "p1", "clip", "1"), ("save", "p1", "clip", "2"), ("save", "p1", "clip", "3"),
+    ("save", "p1", "clip", "6"), ("save", "p1", "clip", "7"), ("save", "p1", "clip", "8"),
+    ("save", "p1", "clip", "9"), ("save", "p1", "clip", "10"), ("save", "p1", "clip", "11"),
+    ("save", "p1", "clip", "12"), ("save", "p1", "clip", "13"),
+    ("save", "p1", "audio", "au1"), ("save", "p1", "audio", "au2"), ("save", "p1", "audio", "au3"),
+    ("save", "p1", "image", "im1"), ("save", "p1", "image", "im2"), ("save", "p1", "image", "nada"),
+    ("save", "p2", "clip", "0"),
+    # Una biblioteca rota se lee vacía; con «items» que no es lista falla y se deshace.
+    ("projects", SAVE_PROJECTS), ("disk", ["clips/p1/video/c0.mp4"]), ("library", "{ roto"),
+    ("save", "p1", "clip", "0"),
+    ("projects", SAVE_PROJECTS), ("disk", ["clips/p1/video/c0.mp4"]), ("library", {"version": 1, "items": {}}),
+    ("save", "p1", "clip", "0"),
+    ("library", {"version": 1, "items": [1]}), ("save", "p1", "clip", "0"),
+    ("projects", SAVE_PROJECTS), ("disk", ["clips/p1/video/c0.mp4"]), ("library", {"items": "x"}),
+    ("save", "p1", "clip", "0"),
+]

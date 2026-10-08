@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "disk_scan.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
 #include "json_reader.hpp"
@@ -20,6 +21,7 @@ namespace gc::core {
 namespace fs = std::filesystem;
 using detail::py_equal;
 using detail::py_lower;
+using detail::py_split;
 using detail::py_str;
 using detail::py_strip;
 using detail::py_truthy;
@@ -206,6 +208,42 @@ Result<void> ensure_project_dirs(const fs::path& base) {
         }
     }
     return {};
+}
+
+std::optional<fs::path> resolve_project_media(const fs::path& clips_dir, const Project& project,
+                                              std::string_view kind, std::string_view filename) {
+    if (kind != "video" && kind != "audio" && kind != "image") {
+        return std::nullopt;
+    }
+    const fs::path base = project_base(clips_dir, project);
+    auto target = detail::resolve_inside(base, std::string(kind) + "/" + std::string(filename));
+    if (!target) {
+        return std::nullopt;
+    }
+    // `base not in target.parents`: la propia carpeta tampoco vale.
+    std::error_code ec;
+    if (*target == fs::weakly_canonical(fs::absolute(base, ec), ec)) {
+        return std::nullopt;
+    }
+    return target;
+}
+
+std::string safe_file_name(std::string_view title, std::size_t maxlen) {
+    // re.sub(r'[<>:"/\\|?*\n\r\t]+', "", title).strip(): son ASCII, se quitan byte a byte.
+    constexpr std::string_view kBad = "<>:\"/\\|?*\n\r\t";
+    std::string kept;
+    for (const char c : title) {
+        if (!kBad.contains(c)) {
+            kept += c;
+        }
+    }
+    // re.sub(r"\s+", " ", s) sobre un texto ya sin espacios en los extremos = " ".join(s.split()).
+    std::string joined;
+    for (const auto& word : py_split(py_strip(kept))) {
+        joined += (joined.empty() ? "" : " ") + word;
+    }
+    const std::string out = py_strip(detail::py_slice(joined, maxlen));
+    return out.empty() ? "video" : out;
 }
 
 std::string utc_now_iso() {

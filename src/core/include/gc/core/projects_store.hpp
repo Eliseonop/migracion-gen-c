@@ -37,6 +37,15 @@ namespace gc::core {
 [[nodiscard]] std::filesystem::path project_base(const std::filesystem::path& clips_dir, const Project& project);
 // storage.ensure_dirs: la carpeta y sus subcarpetas video/, audio/ e image/.
 [[nodiscard]] Result<void> ensure_project_dirs(const std::filesystem::path& base);
+// storage.resolve_media: <carpeta del proyecto>/<kind>/<filename> si `kind` es video, audio o
+// image y la ruta queda DENTRO de la carpeta del proyecto (no tiene por qué existir).
+[[nodiscard]] std::optional<std::filesystem::path> resolve_project_media(const std::filesystem::path& clips_dir,
+                                                                         const Project& project,
+                                                                         std::string_view kind,
+                                                                         std::string_view filename);
+// storage.safe_name: un título como nombre de archivo, sin <>:"/\|?*, saltos ni tabuladores,
+// con los espacios seguidos en uno y como mucho `maxlen` caracteres; «video» si no queda nada.
+[[nodiscard]] std::string safe_file_name(std::string_view title, std::size_t maxlen = 60);
 
 // _now() de projects.py: la hora UTC en ISO 8601 con segundos («2026-10-08T12:00:00+00:00»).
 [[nodiscard]] std::string utc_now_iso();
