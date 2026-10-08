@@ -103,7 +103,8 @@ DTO = [(item, scope) for item in ITEMS for scope in ("library", "project")] + [(
 
 # --- «Guardar en la biblioteca» (save_from_project) ------------------------------------------
 # Pasos con el library.py y el projects.py REALES sobre un data/ y unas carpetas de clips
-# temporales («{TMP}»; los clips por defecto en {TMP}/clips), con uuid4 y _now fijados:
+# temporales («{TMP}»; los clips por defecto en {TMP}/clips; «{DRIVE}», su unidad), con uuid4 y
+# _now fijados:
 #   projects contenido    escribe data/projects.json
 #   library contenido     escribe data/library/library.json
 #   disk [rutas]          crea archivos bajo {TMP} (su contenido es su ruta)
@@ -140,11 +141,20 @@ SAVE_PROJECTS = {"projects": [
                _clip(10, "punto.", label="..."),
                _clip(11, "solo.mp4", id="propio"),       # id propio y solo en su archivo: no es compartido
                _clip(12, "v.mp4", label="<<>>"),        # la etiqueta se queda vacía: «video»
-               _clip(13, "..")],                        # la propia carpeta del proyecto: no vale
+               _clip(13, ".."),                         # la propia carpeta del proyecto: no vale
+               _clip(14, "/c0.mp4"),                    # raíz sin unidad: la de la base (fuera)
+               _clip(15, "{TMP}/clips/p1/video/c0b.mp4"),  # absoluta, dentro: vale
+               _clip(16, "{DRIVE}c0c.mp4"),             # la misma unidad sin raíz: se añade a video/
+               _clip(17, "todo.mp4", reframe={"zoom": 0.5, "keyframes": [{"t": 0, "cx": 0.4}]},
+                     face_track={"start": 0, "end": 2, "width": 640, "height": 360, "samples": 3},
+                     provider="pexels", external_id="123", author="Ana", license_info="CC0",
+                     description="", in_point=0.5, out_point=1.5)],
      "audios": [{"id": "au1", "filename": "voz.wav", "url": "/api/media/p1/audio/voz.wav", "voice": "ana",
                  "text": "Hola", "duration": 2.5, "engine": "kokoro"},
                 {"id": "au2", "filename": "otra", "url": "u", "text": "sin duración", "description": ""},
-                {"id": "au3", "filename": "au3.wav", "url": "u", "index": 99}],   # remove_material no lo encuentra
+                {"id": "au3", "filename": "au3.wav", "url": "u", "index": 99},    # remove_material no lo encuentra
+                {"id": "au4", "filename": "yt.m4a", "url": "u", "origin": "youtube", "youtube_url": "https://y/1",
+                 "youtube_id": "1", "duration": 0.0, "description": "", "text": "texto", "speed": 1.25}],
      "images": [{"id": "im1", "filename": "foto.png", "url": "u", "width": 640, "height": 480, "label": "Foto"},
                 {"id": "im2", "filename": "anim", "url": "u", "animated": True, "duration": 1.5}],
      "timeline": {"schema_version": 5,
@@ -160,7 +170,8 @@ SAVE_STEPS = [
     ("projects", SAVE_PROJECTS),
     ("disk", ["clips/p1/video/c0.mp4", "clips/p1/video/c1", "clips/p1/video/orig.mp4", "clips/fuera.mp4",
               "clips/p1/video/nan.mp4", "clips/p1/video/largo.mp4", "clips/p1/video/yt.mp4",
-              "clips/p1/video/sub/dentro.mp4", "clips/p1/video/punto.", "clips/p1/video/solo.mp4", "clips/p1/video/v.mp4", "clips/p1/audio/voz.wav",
+              "clips/p1/video/sub/dentro.mp4", "clips/p1/video/punto.", "clips/p1/video/solo.mp4", "clips/p1/video/v.mp4", "clips/p1/video/c0b.mp4",
+              "clips/p1/video/c0c.mp4", "clips/p1/video/todo.mp4", "clips/p1/audio/yt.m4a", "clips/p1/audio/voz.wav",
               "clips/p1/audio/otra", "clips/p1/audio/au3.wav", "clips/p1/image/foto.png", "clips/p1/image/anim",
               "propia/video/x.mp4"]),
     ("save", "p1", "otro", "0"), ("save", "nada", "clip", "0"), ("save", "p1", "clip", "99"),
@@ -169,7 +180,9 @@ SAVE_STEPS = [
     ("save", "p1", "clip", "1"), ("save", "p1", "clip", "2"), ("save", "p1", "clip", "3"),
     ("save", "p1", "clip", "6"), ("save", "p1", "clip", "7"), ("save", "p1", "clip", "8"),
     ("save", "p1", "clip", "9"), ("save", "p1", "clip", "10"), ("save", "p1", "clip", "11"),
-    ("save", "p1", "clip", "12"), ("save", "p1", "clip", "13"),
+    ("save", "p1", "clip", "12"), ("save", "p1", "clip", "13"), ("save", "p1", "clip", "14"),
+    ("save", "p1", "clip", "15"), ("save", "p1", "clip", "16"), ("save", "p1", "clip", "17"),
+    ("save", "p1", "audio", "au4"),
     ("save", "p1", "audio", "au1"), ("save", "p1", "audio", "au2"), ("save", "p1", "audio", "au3"),
     ("save", "p1", "image", "im1"), ("save", "p1", "image", "im2"), ("save", "p1", "image", "nada"),
     ("save", "p2", "clip", "0"),

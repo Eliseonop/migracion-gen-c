@@ -6,6 +6,7 @@
 
 #include <filesystem>
 #include <functional>
+#include <initializer_list>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -27,10 +28,20 @@ namespace gc::core::detail {
 [[nodiscard]] std::vector<std::vector<std::string>> sorted_files(const std::filesystem::path& base,
                                                                  const std::function<bool(std::string_view)>& keep);
 
+// base / p de pathlib en Windows: una ruta con otra unidad (sin distinguir mayúsculas) o
+// absoluta sustituye a la base; una raíz sin unidad (\x) se queda la unidad de la base; la misma
+// unidad sin raíz (C:x) se añade a la base.
+[[nodiscard]] std::filesystem::path pathlib_join(const std::filesystem::path& base, const std::filesystem::path& p);
+
 // (base.resolve() / rel).resolve() si queda dentro de la carpeta: el objetivo es la carpeta o
 // está debajo, sin distinguir mayúsculas (WindowsPath). nullopt si sale (con «..» o una ruta
 // absoluta), si `rel` lleva un NUL o si falla. No mira si existe.
 [[nodiscard]] std::optional<std::filesystem::path> resolve_inside(const std::filesystem::path& base,
                                                                   std::string_view rel);
+// Lo mismo con base / parts[0] / parts[1]… (cada parte se une como en pathlib). Con `strict`, la
+// propia carpeta no vale (`base not in target.parents`).
+[[nodiscard]] std::optional<std::filesystem::path> resolve_inside(const std::filesystem::path& base,
+                                                                  std::initializer_list<std::string_view> parts,
+                                                                  bool strict);
 
 } // namespace gc::core::detail

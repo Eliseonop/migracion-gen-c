@@ -924,4 +924,13 @@ Lo encontró la revisión del almacén de proyectos: con un `NaN` en `projects.j
 - **Mutación:** 21/21 (`tools/dev/mutantes.py library`). Con eso salieron tres casos que faltaban (un clip con id propio solo en su archivo, una etiqueta que se queda vacía y la propia carpeta del proyecto) y un detalle de la vuelta atrás: si no se puede guardar `library.json`, la copia se queda, como en Python.
 - **Resultado:** 105 tests (103 de Catch2 y 2 de la CLI) y 118 381 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 72 archivos.
 
+**Revisión del subagente (CORREGIR: un bloqueante), ya aplicada:**
+- **Bloqueante:** `resolve_project_media` unía el texto «kind/filename», y Python hace `base / kind / filename`, donde una raíz o una unidad en `filename` sustituye la ruta. Con `/c9.mp4`, Python da «Archivo no encontrado.»; C++ daba por buena `video/c9.mp4`, la copiaba, quitaba el clip y la BORRABA. Con una ruta absoluta dentro de la carpeta o con `C:c9.mp4`, Python guarda y C++ no. Ahora `pathlib_join` (`disk_scan`) une como pathlib y `resolve_inside` acepta varias partes y el modo estricto. Hay casos en las fixtures (`/c0.mp4`, la absoluta y `{DRIVE}c0c.mp4`) y mutantes.
+- **Dispositivos de Windows:** `NUL`, `CON`, `COM1` y el resto, también con espacios o puntos detrás, se rechazan. Python falla con OSError, y C++ los daba por archivos que existen y se inventaba un material. Hay un test unitario: no van en las fixtures porque el OSError de Python cambiaría la secuencia de uuids.
+- **Fixtures:** cubren `reframe`, `face_track`, `provider`, `external_id`, `author`, `license_info`, una descripción vacía con `text`, y un audio de YouTube con duración 0.0.
+- `py_float` comprobado en la duración. Nota sobre los tipos de error al deshacer.
+- **Contraste de la revisión, fuera del repo:** 235 escenarios contra `library.py`/`projects.py`, comparando resultado, `library.json`, `projects.json`, disco, orden de claves y 1 frente a 1.0. Todo coincide salvo lo de arriba.
+- **Mutación:** 25/25 (`tools/dev/mutantes.py library`; 4 nuevos: unir como texto, NUL, y las dos reglas de `pathlib_join`).
+- **Resultado:** 47 pasos (13 de error, 11 con mensaje); 106 tests (104 de Catch2 y 2 de la CLI) y 118 426 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 72 archivos.
+
 **Siguiente:** `stick_library.py` y lo que falta de `clip_motion`. F3 sigue esperando al Windows SDK.

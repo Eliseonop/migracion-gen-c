@@ -755,7 +755,8 @@ def _run_save_steps(ctx: Ctx, steps: list) -> list[dict]:
     try:
         for step in steps:
             kind = step[0]
-            args = json.loads(json.dumps(list(step[1:]), ensure_ascii=False).replace("{TMP}", posix))
+            args = json.loads(json.dumps(list(step[1:]), ensure_ascii=False).replace("{TMP}", posix)
+                              .replace("{DRIVE}", posix[:2]))
             entry: dict = {"step": list(step)}
             try:
                 result = None

@@ -180,7 +180,8 @@ std::size_t run_save_steps(const Json& steps) {
     for (const Json& s : steps) {
         const Json& step = s.at("step");
         INFO("paso " << n++ << ": " << step.dump().substr(0, 160));
-        const Json a = gc::test::replace_in_strings(step, "{TMP}", posix);
+        const Json a =
+            gc::test::replace_in_strings(gc::test::replace_in_strings(step, "{TMP}", posix), "{DRIVE}", posix.substr(0, 2));
         const auto kind = a[0].get<std::string>();
         gc::Result<Json> r = Json();
         if (kind == "projects" || kind == "library") {

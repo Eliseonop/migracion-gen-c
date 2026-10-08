@@ -412,7 +412,11 @@ Result<Json> LibraryFile::save_from_project(ProjectsStore& projects, std::string
     const auto [origin, source] = library_origin_source(*raw, resource_type);
     Json duration = get("duration");
     if (duration.is_null() && !get("start").is_null() && !get("end").is_null()) {
-        duration = *detail::py_float(get("end")) - *detail::py_float(get("start"));
+        const auto end = detail::py_float(get("end"));
+        const auto start = detail::py_float(get("start"));
+        if (start && end) { // en ClipInfo son reales; un material de otra forma no tiene duración
+            duration = *end - *start;
+        }
     }
     const Json description = get("description");
     const Json youtube_url = get("youtube_url");

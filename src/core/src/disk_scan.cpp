@@ -92,8 +92,23 @@ std::vector<std::vector<std::string>> sorted_files(const fs::path& base,
     return out;
 }
 
-std::optional<fs::path> resolve_inside(const fs::path& base, std::string_view rel) {
-    if (rel.contains('\0')) {
+fs::path pathlib_join(const fs::path& base, const fs::path& p) {
+    if (p.has_root_name()) {
+        const bool same_drive = py_lower(path_to_utf8(p.root_name())) == py_lower(path_to_utf8(base.root_name()));
+        if (!same_drive || p.has_root_directory()) {
+            return p;
+        }
+        return base / p.relative_path();
+    }
+    if (p.has_root_directory()) {
+        return base.root_name() / p;
+    }
+    return base / p;
+}
+
+std::optional<fs::path> resolve_inside(const fs::path& base, std::initializer_list<std::string_view> parts,
+                                       bool strict) {
+    if (std::ranges::any_of(parts, [](std::string_view part) { return part.contains('\0'); })) {
         return std::nullopt;
     }
     std::error_code ec;
@@ -101,17 +116,25 @@ std::optional<fs::path> resolve_inside(const fs::path& base, std::string_view re
     if (ec) {
         return std::nullopt;
     }
-    fs::path target = fs::weakly_canonical(root / path_from_utf8(rel), ec);
+    fs::path joined = root;
+    for (const std::string_view part : parts) {
+        joined = pathlib_join(joined, path_from_utf8(part));
+    }
+    fs::path target = fs::weakly_canonical(joined, ec);
     if (ec) {
         return std::nullopt;
     }
-    // base == target o base en target.parents, sin distinguir mayúsculas (WindowsPath).
+    // base == target (si no es `strict`) o base en target.parents, sin distinguir mayúsculas.
     const auto r = lowered_parts(root);
     const auto t = lowered_parts(target);
-    if (t.size() < r.size() || !std::equal(r.begin(), r.end(), t.begin())) {
+    if (t.size() < r.size() + (strict ? 1 : 0) || !std::equal(r.begin(), r.end(), t.begin())) {
         return std::nullopt;
     }
     return target;
+}
+
+std::optional<fs::path> resolve_inside(const fs::path& base, std::string_view rel) {
+    return resolve_inside(base, {rel}, false);
 }
 
 } // namespace gc::core::detail

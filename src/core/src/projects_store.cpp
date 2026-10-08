@@ -215,17 +215,23 @@ std::optional<fs::path> resolve_project_media(const fs::path& clips_dir, const P
     if (kind != "video" && kind != "audio" && kind != "image") {
         return std::nullopt;
     }
-    const fs::path base = project_base(clips_dir, project);
-    auto target = detail::resolve_inside(base, std::string(kind) + "/" + std::string(filename));
-    if (!target) {
+    // Un dispositivo de Windows (NUL, CON, COM1…, con espacios o puntos detrás): Python falla al
+    // usarlo y C++ lo daría por un archivo que existe.
+    std::string device = detail::py_path_name(filename);
+    while (!device.empty() && (device.back() == ' ' || device.back() == '.')) {
+        device.pop_back();
+    }
+    std::ranges::transform(device, device.begin(), detail::ascii_upper);
+    static constexpr std::array<std::string_view, 10> kDevices{"CON",    "PRN",    "AUX",    "NUL",    "COM¹",
+                                                               "COM²", "COM³", "LPT¹", "LPT²", "LPT³"};
+    const bool numbered = device.size() == 4 && (device.starts_with("COM") || device.starts_with("LPT")) &&
+                          device[3] >= '0' && device[3] <= '9';
+    if (numbered || std::ranges::find(kDevices, device) != kDevices.end()) {
         return std::nullopt;
     }
-    // `base not in target.parents`: la propia carpeta tampoco vale.
-    std::error_code ec;
-    if (*target == fs::weakly_canonical(fs::absolute(base, ec), ec)) {
-        return std::nullopt;
-    }
-    return target;
+    // base / kind / filename de pathlib (una ruta absoluta o con raíz en `filename` sustituye a
+    // la base) y `base not in target.parents`: estrictamente dentro.
+    return detail::resolve_inside(project_base(clips_dir, project), {kind, filename}, true);
 }
 
 std::string safe_file_name(std::string_view title, std::size_t maxlen) {

@@ -420,11 +420,21 @@ LIBRARY = [
     ("safe_name: 59 caracteres", "src/core/include/gc/core/projects_store.hpp", "std::size_t maxlen = 60", "std::size_t maxlen = 59"),
     ("safe_name: sin «video»", "src/core/src/projects_store.cpp", 'return out.empty() ? "video" : out;', "return out;"),
     ("resolve_media: la propia carpeta vale", "src/core/src/projects_store.cpp",
-     "if (*target == fs::weakly_canonical(fs::absolute(base, ec), ec)) {", "if (false) {"),
+     "return detail::resolve_inside(project_base(clips_dir, project), {kind, filename}, true);",
+     "return detail::resolve_inside(project_base(clips_dir, project), {kind, filename}, false);"),
+    ("resolve_media: unir como texto", "src/core/src/projects_store.cpp",
+     "return detail::resolve_inside(project_base(clips_dir, project), {kind, filename}, true);",
+     'return detail::resolve_inside(project_base(clips_dir, project), {std::string(kind) + "/" + std::string(filename)}, true);'),
+    ("resolve_media: NUL vale", "src/core/src/projects_store.cpp",
+     "if (numbered || std::ranges::find(kDevices, device) != kDevices.end()) {", "if (false) {"),
+    ("pathlib: una raíz sin unidad se añade", "src/core/src/disk_scan.cpp", "return base.root_name() / p;",
+     "return base / p.relative_path();"),
+    ("pathlib: la misma unidad sustituye", "src/core/src/disk_scan.cpp",
+     "if (!same_drive || p.has_root_directory()) {", "if (true) {"),
 ]
 
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
-          "library": (LIBRARY, "[library]"),
+          "library": (LIBRARY, "[library],[projects]"),
           "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
