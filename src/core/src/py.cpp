@@ -382,32 +382,105 @@ std::string py_repr(const Json& j) {
     }
 }
 
-std::string py_path_name(std::string_view text) {
+namespace {
+
+// Bytes de la unidad «X:» al principio de `p` (sin barras al principio), o 0. Como
+// _Py_skiproot, que mira unidades de UTF-16: un carácter fuera del plano básico ocupa dos
+// y no hace unidad.
+std::size_t drive_letter_size(std::string_view p) {
+    if (p.empty()) {
+        return 0;
+    }
+    std::size_t i = 0;
+    const char32_t first = next_code_point(p, i);
+    return first < 0x10000 && i < p.size() && p[i] == ':' ? i + 1 : 0;
+}
+
+// _parse_path de PureWindowsPath: unidad, raíz y partes (sin vacías ni «.»), con «/» → «\».
+struct WinPath {
+    std::string drive;
+    std::string root;
+    std::vector<std::string> tail;
+};
+
+WinPath parse_win_path(std::string_view text) {
     std::string p(text);
     std::ranges::replace(p, '/', '\\');
-    std::string_view rest = p;
-    if (rest.starts_with("\\\\")) { // UNC: \\servidor\recurso
-        const auto server = rest.find('\\', 2);
-        const auto share = server == std::string_view::npos ? server : rest.find('\\', server + 1);
-        rest = share == std::string_view::npos ? std::string_view() : rest.substr(share);
-    } else if (!rest.empty() && rest[0] != '\\') { // unidad: un carácter (no la raíz) + «:»
-        std::size_t first = 0;
-        (void)next_code_point(rest, first);
-        if (first < rest.size() && rest[first] == ':') {
-            rest.remove_prefix(first + 1);
+    const std::string_view v = p;
+    constexpr auto npos = std::string_view::npos;
+    WinPath out;
+    std::string_view rest;
+    // ntpath.splitroot (_Py_skiproot)
+    if (v.starts_with("\\\\")) { // \\servidor\recurso, \\?\UNC\servidor\recurso, \\.\dispositivo
+        const bool unc = v.size() >= 8 && v[2] == '?' && v[3] == '\\' && ascii_upper(v[4]) == 'U' &&
+                         ascii_upper(v[5]) == 'N' && ascii_upper(v[6]) == 'C' && v[7] == '\\';
+        const auto server = v.find('\\', unc ? 8 : 2);
+        const auto share = server == npos ? npos : v.find('\\', server + 1);
+        if (share == npos) {
+            out.drive = p;
+        } else {
+            out.drive = v.substr(0, share);
+            out.root = "\\";
+            rest = v.substr(share + 1);
+        }
+    } else if (v.starts_with('\\')) {
+        out.root = "\\";
+        rest = v.substr(1);
+    } else if (const auto d = drive_letter_size(v); d > 0) {
+        out.drive = v.substr(0, d);
+        if (d < v.size() && v[d] == '\\') {
+            out.root = "\\";
+            rest = v.substr(d + 1);
+        } else {
+            rest = v.substr(d);
+        }
+    } else {
+        rest = v;
+    }
+    // «\\servidor\recurso» sin barra final también tiene raíz.
+    if (out.root.empty() && out.drive.starts_with('\\') && !out.drive.ends_with('\\')) {
+        const auto seps = std::ranges::count(out.drive, '\\');
+        const auto second = out.drive.find('\\', 2);
+        const std::string_view server =
+            seps == 3 ? std::string_view(out.drive).substr(2, second - 2) : std::string_view();
+        if ((seps == 3 && server != "" && server != "?" && server != "." && server != "?.") || seps == 5) {
+            out.root = "\\";
         }
     }
-    std::string_view name;
     std::size_t i = 0;
     while (i <= rest.size()) {
         const auto j = std::min(rest.find('\\', i), rest.size());
         const auto part = rest.substr(i, j - i);
         if (!part.empty() && part != ".") {
-            name = part;
+            out.tail.emplace_back(part);
         }
         i = j + 1;
     }
-    return std::string(name);
+    return out;
+}
+
+} // namespace
+
+std::string py_path_str(std::string_view text) {
+    const WinPath p = parse_win_path(text);
+    std::string out = p.drive + p.root;
+    // Sin unidad ni raíz, una primera parte que parece una unidad («c:x») va tras «.\».
+    const bool dot = out.empty() && !p.tail.empty() && drive_letter_size(p.tail.front()) > 0;
+    if (dot) {
+        out = ".";
+    }
+    for (std::size_t k = 0; k < p.tail.size(); ++k) {
+        if (k > 0 || dot) {
+            out += '\\';
+        }
+        out += p.tail[k];
+    }
+    return out.empty() ? std::string(".") : out;
+}
+
+std::string py_path_name(std::string_view text) {
+    WinPath p = parse_win_path(text);
+    return p.tail.empty() ? std::string() : std::move(p.tail.back());
 }
 
 std::string py_path_suffix(std::string_view text) {

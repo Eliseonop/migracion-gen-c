@@ -52,9 +52,14 @@ Result<std::string> read_bytes(const std::filesystem::path& path) {
 }
 
 Result<Json> parse_text(const std::string& text, const std::filesystem::path& path) {
+    // nlohmann toma un NUL por el final del texto («{"a":1}\0basura» cargaría); para json.loads
+    // de Python es un error, dentro o fuera de un texto. Pasa en archivos a medio escribir.
+    if (text.find('\0') != std::string::npos) {
+        return fail(ErrorCode::Parse, "carácter NUL en el JSON", path_to_utf8(path));
+    }
     try {
         return Json::parse(text);
-    } catch (const Json::parse_error& e) {
+    } catch (const Json::exception& e) { // también out_of_range: un número que se desborda (1e999)
         return fail(ErrorCode::Parse, e.what(), path_to_utf8(path));
     }
 }

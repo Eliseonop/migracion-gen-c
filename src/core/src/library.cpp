@@ -30,7 +30,7 @@ bool is_youtube(const std::string& url) {
     return std::ranges::any_of(kYtHints, [&](std::string_view h) { return low.find(h) != std::string::npos; });
 }
 
-// urllib.parse.quote(texto): todo menos letras, cifras, «_.-~» y «/» en %XX (UTF-8).
+// La carpeta de la URL del material según su tipo guardado.
 const char* disk_kind(std::string_view resource_type) {
     return resource_type == "clip" ? "video" : resource_type == "image" ? "image" : "audio";
 }

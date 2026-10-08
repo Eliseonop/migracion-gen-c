@@ -60,14 +60,16 @@ namespace gc::core::detail {
 // escapan (\xa0, \u200b…) usa una tabla aproximada de los no imprimibles.
 [[nodiscard]] std::string py_repr(const Json& j);
 
-// Path(texto).stem de Python 3.14 en Windows: sin unidad («C:», «\\servidor\recurso»),
-// último componente (con / o \) y sin su última extensión, salvo que delante solo
-// queden puntos («.hidden», «..»).
-// Path(x).name de Python 3.14 en Windows: el último componente, sin la unidad («C:x» → «x»,
-// cualquier carácter + «:» es unidad) ni el recurso UNC, y sin «.» (que no cuenta).
+// str(Path(x)) de Python 3.14 en Windows: «/» → «\», sin partes vacías ni «.» y sin la
+// barra final; «\\servidor\recurso» gana la raíz («\\servidor\recurso\») y «» es «.».
+// La unidad es un carácter de UTF-16 (no uno de fuera del plano básico) + «:».
+[[nodiscard]] std::string py_path_str(std::string_view text);
+// Path(x).name de Python 3.14 en Windows: el último componente, sin la unidad («C:x» → «x»)
+// ni el recurso UNC, y sin «.» (que no cuenta).
 [[nodiscard]] std::string py_path_name(std::string_view text);
 // Path(x).suffix de Python 3.14: «x.mp3» → «.mp3», «x.» → «.», «.mp3» y «..» → «».
 [[nodiscard]] std::string py_path_suffix(std::string_view text);
+// Path(x).stem: el nombre sin el sufijo («.hidden» y «..» se quedan como están).
 [[nodiscard]] std::string py_path_stem(std::string_view text);
 
 // ¿`c` es un carácter de palabra (\w) para las regex de Python (str.isalnum() o «_»)?

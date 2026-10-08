@@ -735,11 +735,19 @@ Sin el Windows SDK, F3 empieza por la evaluación, que es lógica pura: qué se 
 Preparación de la biblioteca de SFX y de las colecciones, que ordenan y filtran texto como Python.
 
 **Hecho:**
-- **Un BOM de UTF-8 ya no se acepta donde Python lo rechaza.** `json.loads(path.read_text("utf-8"))` falla con un BOM; C++ lo saltaba sin decir nada. `read_json_file_py` falla igual, y la usan los ajustes, la biblioteca y el historial: con BOM, los ajustes de fábrica, la biblioteca vacía y el historial vacío, como en video-yt. `read_json_file` (proyectos y timelines, que Pydantic lee de otra forma) sigue igual.
+- **Un BOM de UTF-8 ya no se acepta donde Python lo rechaza.** `json.loads(path.read_text("utf-8"))` falla con un BOM; C++ lo saltaba sin decir nada. `read_json_file_py` falla igual, y la usan los ajustes, la biblioteca y el historial: con BOM, los ajustes de fábrica, la biblioteca vacía y el historial vacío, como en video-yt. `read_json_file` sigue saltando el BOM para el CLI y las fixtures; `projects.json` también es estricto en video-yt (`projects.py`, cae a `{"projects": []}`), así que el almacén de proyectos de F5 tiene que usar `read_json_file_py`.
 - **`py_lower`: `str.lower()` de Python** con toda la tabla de Unicode 16 (incluidas las expansiones, como «İ» → «i̇») y la sigma final («ΟΔΟΣ» → «οδος»). La tabla y los rangos «cased» y «case-ignorable» se generan desde el Python de video-yt (`tools/gen/gen_py_lower.py` → `py_lower.inc`).
 - **`py_path_name`, `py_path_suffix` y `py_path_stem`:** `Path(x).name`, `.suffix` y `.stem` de Python 3.14 en Windows (unidades, UNC, «x.» con sufijo «.»…). **`py_quote`** pasa de la biblioteca a `py.hpp`.
 
 **Verificación:**
-- **Casos:** 3 pasos nuevos con BOM (ajustes y biblioteca) contra el Python real, y un test del historial con BOM.
+- **Casos:** 5 pasos nuevos con BOM (2 en ajustes y 3 en biblioteca) contra el Python real, y un test del historial con BOM.
 - **Tests:** 26 comprobaciones de `py_lower` y 90 de rutas y `quote`, con los valores medidos en Python.
 - **Resultado:** 80 tests y 110 740 aserciones en verde, en Debug y en Release, con 0 warnings.
+
+**Revisión del subagente (fotograma y lectura de JSON; APROBADO, sin bloqueantes), ya aplicada:**
+- El fotograma coincide línea a línea con `canvas.js`, `panning.js`, `recipeLayout.js` y `clipLayout.js`, y al volver a ejecutar el JS salen las mismas fixtures. `py_lower` y `py_quote` dan lo mismo que Python en todos los puntos de código (7,8 millones de casos de `lower`).
+- **Rutas exóticas:** `\\?\UNC\servidor` y una unidad con un carácter fuera del plano básico daban otro `name` (591 de 209 862 cadenas raras). `py_path_name` usa ahora el mismo `splitroot` que Python (`_Py_skiproot`, en unidades de UTF-16), y hay `py_path_str` (`str(Path(x))`). 84 comprobaciones más con valores medidos.
+- **JSON:** `1e999` cerraba la app (`out_of_range` sin capturar) y un NUL cortaba el texto («`{"a":1}\0basura`» cargaba). Los dos son ahora errores de lectura, con un test.
+- **Divergencias del export sin anotar:** el `slide` en overlay (el preview desplaza una fracción del clip y el export el cuadro entero; 3 de tus clips, decisión de Edu), el redondeo a pares del overlay estático, las dimensiones pares del export (`FrameSpec` lo dice), `x`/`y`/`scale` a 0 leídos como 0,5 o 1 en el export, y el `transform` estático que el export ignora en relleno.
+- Docs: cifras de pasos (ajustes 61, biblioteca 55, 5 pasos con BOM), `projects.json` también es estricto en Python (el almacén de F5 usará `read_json_file_py`), `dual_slot_wh` y dos comentarios fuera de sitio.
+- **Resultado:** 82 tests en verde, en Debug y en Release, con 0 warnings (verificado junto con la tanda siguiente, la biblioteca de SFX).

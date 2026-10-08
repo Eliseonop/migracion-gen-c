@@ -87,6 +87,8 @@ struct MediaSize {
 // Dimensiones del material de un clip (nullopt = no se conocen: la capa va sin blits).
 using MediaSizeFn = std::function<std::optional<MediaSize>(const TimelineClip&)>;
 
+// Dimensiones de salida tal cual: el export las hace pares (compose.py) y el doble encuadre
+// usa H//2; quien llame para exportar tiene que pasarlas ya pares.
 struct FrameSpec {
     double out_w = 0.0;
     double out_h = 0.0;
