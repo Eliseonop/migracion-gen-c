@@ -890,4 +890,18 @@ Lo encontró la revisión del almacén de proyectos: con un `NaN` en `projects.j
 - **Mutación:** 17/17 (`tools/dev/mutantes.py json`): los umbrales y el formato de `repr`, los separadores, los escapes, `NaN` como `null`, el CRLF y cada pieza del lector de NaN e infinitos.
 - **Resultado:** 101 tests (99 de Catch2 y 2 de la CLI) y 118 076 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 72 archivos.
 
+**Revisión del subagente (CORREGIR: un bloqueante), ya aplicada:**
+- **Bloqueante:** `duplicate_project` pasaba el proyecto por el `dump()`/`parse()` de nlohmann, que escribe NaN e infinitos como `null`. La copia los perdía y, en un campo del modelo, fallaba después de escribirse. Ahora usa `py_json_dumps` y `py_json_loads` (nueva: `json.loads` de un texto). Hay un paso de fixture (duplicar con NaN e Infinity) y un mutante.
+- **El lector, más fiel:**
+  - `NaN`, `Infinity` o un número como clave son un error, como en Python. Antes, C++ los aceptaba con una clave marcador.
+  - Un texto de verdad igual a un marcador ya no pasa a NaN: los marcadores llevan un número y, si salen más de los puestos, se repite con otro.
+  - Un sustituto suelto de UTF-16 pasa a U+FFFD en vez de dar el archivo por ilegible.
+  - `restore_marks` ya no es recursivo.
+- **Escritura:** más de 1500 niveles de anidamiento son un error, no un desbordamiento de la pila.
+- **Biblioteca:** con un `saved_at` NaN, el comparador ya no rompe el orden estricto. Los NaN van al final; Python da el orden de su timsort, que no se puede reproducir.
+- **Docs:** las divergencias que quedan (enteros grandes, sustitutos sueltos, profundidad, `saved_at` NaN) y el CRLF de las fixtures para el CI de Linux y macOS.
+- **Contraste de la revisión, fuera del repo:** 3 752 179 dobles con `repr` (0 diferencias); 81 973 textos de decimales largos; los escapes de los 128 caracteres de control y de todos los planos de Unicode; 1190 archivos de `data/` reescritos con el mismo texto que Python. Tu `projects.json`, de 4 586 120 bytes, sale con los mismos bytes, CRLF incluidos.
+- **Mutación:** 23/23 (`tools/dev/mutantes.py json`; 6 nuevos: NaN como clave, marcador que choca, sustitutos altos y bajos, profundidad y duplicar con NaN).
+- **Resultado:** 103 tests (101 de Catch2 y 2 de la CLI) y 118 111 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 72 archivos.
+
 **Siguiente:** «Guardar en la biblioteca» (`library.save_from_project`).

@@ -5,6 +5,7 @@
 
 #include <bit>
 #include <charconv>
+#include <cmath>
 #include <cstdint>
 #include <filesystem>
 #include <random>
@@ -82,4 +83,29 @@ TEST_CASE("read_json_file_py lee como json.loads: NaN, Infinity y lo que se desb
     }
     std::error_code ec;
     fs::remove_all(dir, ec);
+}
+
+TEST_CASE("py_json_loads: un sustituto suelto de UTF-16 pasa a U+FFFD, no a archivo ilegible", "[json]") {
+    // Python lo lee (aunque luego no podría escribirlo en UTF-8); nlohmann no, y el archivo
+    // entero se tomaría por ilegible. Una pareja válida es un carácter normal.
+    const auto r = py_json_loads(R"(["\ud800", "x\udc00y", "\ud83c\udfac", "\ud800\ud800", "\u00e9", NaN])");
+    REQUIRE(r);
+    CHECK(r->at(0) == "\xEF\xBF\xBD");
+    CHECK(r->at(1) == "x\xEF\xBF\xBDy");
+    CHECK(r->at(2) == "\xF0\x9F\x8E\xAC");
+    CHECK(r->at(3) == "\xEF\xBF\xBD\xEF\xBF\xBD");
+    CHECK(r->at(4) == "\xC3\xA9");
+    CHECK(std::isnan(r->at(5).get<double>()));
+}
+
+TEST_CASE("JSON muy anidado: se lee, y al escribirlo es un error, no un cierre", "[json]") {
+    const auto nested = [](int depth) { return std::string(depth, '[') + "NaN" + std::string(depth, ']'); };
+    const auto deep = py_json_loads(nested(10000)); // nlohmann lee sin recursión
+    REQUIRE(deep);
+    CHECK_FALSE(py_json_dumps(*deep)); // más de 1500 niveles
+    const auto ok = py_json_loads(nested(1000));
+    REQUIRE(ok);
+    const auto text = py_json_dumps(*ok);
+    REQUIRE(text);
+    CHECK(*text == nested(1000));
 }

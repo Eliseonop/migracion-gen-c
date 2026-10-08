@@ -276,3 +276,13 @@ STEPS += [
     ("file", '{"projects": [], "x": NaN, "y": Infinity, "z": -Infinity, "w": 1e999, "v": -1e999, "u": 1e-999}'),
     ("load",), ("create", "a", None), ("data",),
 ]
+
+# Duplicar un proyecto con NaN e Infinity: json.dumps/json.loads los conservan (el dump de
+# nlohmann los pasaba a null).
+STEPS += [
+    ("remove",),
+    ("file", '{"projects": [{"id": "p1", "name": "uno", "created_at": "2026-01-01T00:00:00+00:00", "clips": '
+             '[{"index": 0, "filename": "a.mp4", "url": "/api/media/p1/a.mp4", "start": 0, "end": NaN, '
+             '"zoom": Infinity}]}]}'),
+    ("duplicate", "p1"), ("data",),
+]

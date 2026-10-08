@@ -21014,6 +21014,34 @@
    ]
   },
   {
+   "text": "{\"a\": NaN, \"m\": \"\\u0000gc0:NaN\\u0000\", \"\\u0000gc0:+inf\\u0000\": Infinity}",
+   "result": {
+    "a": NaN,
+    "m": "\u0000gc0:NaN\u0000",
+    "\u0000gc0:+inf\u0000": Infinity
+   }
+  },
+  {
+   "text": "{NaN: 1}",
+   "error": "JSONDecodeError"
+  },
+  {
+   "text": "{Infinity: 1}",
+   "error": "JSONDecodeError"
+  },
+  {
+   "text": "{-Infinity: 1}",
+   "error": "JSONDecodeError"
+  },
+  {
+   "text": "{1e999: 1}",
+   "error": "JSONDecodeError"
+  },
+  {
+   "text": "{\"a\": {NaN : 2}}",
+   "error": "JSONDecodeError"
+  },
+  {
    "text": "-NaN",
    "error": "JSONDecodeError"
   },

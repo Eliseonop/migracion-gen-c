@@ -525,12 +525,21 @@ Result<std::optional<Project>> ProjectsStore::duplicate_project(std::string_view
     if (*raw == nullptr) {
         return std::optional<Project>();
     }
-    // Como Python: las URLs se cambian en el texto JSON del proyecto (claves incluidas).
-    std::string text = (**raw).dump(-1, ' ', false, Json::error_handler_t::replace);
+    // Como Python: las URLs se cambian en el texto JSON del proyecto (claves incluidas), con
+    // json.dumps y json.loads, que conservan los NaN y los infinitos (el dump de nlohmann no).
+    auto dumped = py_json_dumps(**raw);
+    if (!dumped) {
+        return std::unexpected(dumped.error());
+    }
+    std::string text = std::move(*dumped);
     for (const std::string_view prefix : {"/api/media/", "/api/projects/"}) {
         text = replace_all(std::move(text), std::format("{}{}/", prefix, pid), std::format("{}{}/", prefix, new_id));
     }
-    Json copy = Json::parse(text);
+    auto parsed = py_json_loads(text);
+    if (!parsed) {
+        return std::unexpected(parsed.error());
+    }
+    Json copy = std::move(*parsed);
     copy["id"] = new_id;
     copy["name"] = (*src)->name + " (copia)";
     copy["created_at"] = now_();

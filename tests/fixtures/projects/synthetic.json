@@ -12827,6 +12827,74 @@
     "data"
    ],
    "result": "{\r\n  \"projects\": [\r\n    {\r\n      \"id\": \"000028ab\",\r\n      \"name\": \"a\",\r\n      \"created_at\": \"2026-01-01T00:00:45+00:00\",\r\n      \"folder\": null,\r\n      \"group_id\": null,\r\n      \"clips\": [],\r\n      \"transcripts\": [],\r\n      \"audios\": [],\r\n      \"images\": [],\r\n      \"timeline\": null,\r\n      \"motion_compositions\": [],\r\n      \"scene_directions\": {},\r\n      \"visual_blueprint\": {}\r\n    }\r\n  ],\r\n  \"x\": NaN,\r\n  \"y\": Infinity,\r\n  \"z\": -Infinity,\r\n  \"w\": Infinity,\r\n  \"v\": -Infinity,\r\n  \"u\": 0.0\r\n}"
+  },
+  {
+   "step": [
+    "remove"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    "{\"projects\": [{\"id\": \"p1\", \"name\": \"uno\", \"created_at\": \"2026-01-01T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/api/media/p1/a.mp4\", \"start\": 0, \"end\": NaN, \"zoom\": Infinity}]}]}"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "duplicate",
+    "p1"
+   ],
+   "result": {
+    "id": "000029ab",
+    "name": "uno (copia)",
+    "created_at": "2026-01-01T00:00:46+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [
+     {
+      "index": 0,
+      "filename": "a.mp4",
+      "url": "/api/media/000029ab/a.mp4",
+      "start": 0.0,
+      "end": NaN,
+      "id": "0",
+      "source_url": null,
+      "created_at": null,
+      "label": null,
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": null,
+      "external_id": null,
+      "author": null,
+      "license_info": null,
+      "in_point": null,
+      "out_point": null,
+      "parent_id": null,
+      "face_track": null
+     }
+    ],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\r\n  \"projects\": [\r\n    {\r\n      \"id\": \"000029ab\",\r\n      \"name\": \"uno (copia)\",\r\n      \"created_at\": \"2026-01-01T00:00:46+00:00\",\r\n      \"clips\": [\r\n        {\r\n          \"index\": 0,\r\n          \"filename\": \"a.mp4\",\r\n          \"url\": \"/api/media/000029ab/a.mp4\",\r\n          \"start\": 0,\r\n          \"end\": NaN,\r\n          \"zoom\": Infinity\r\n        }\r\n      ],\r\n      \"folder\": null\r\n    },\r\n    {\r\n      \"id\": \"p1\",\r\n      \"name\": \"uno\",\r\n      \"created_at\": \"2026-01-01T00:00:00+00:00\",\r\n      \"clips\": [\r\n        {\r\n          \"index\": 0,\r\n          \"filename\": \"a.mp4\",\r\n          \"url\": \"/api/media/p1/a.mp4\",\r\n          \"start\": 0,\r\n          \"end\": NaN,\r\n          \"zoom\": Infinity\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
+  },
+  {
+   "step": [
+    "data"
+   ],
+   "result": "{\r\n  \"projects\": [\r\n    {\r\n      \"id\": \"000029ab\",\r\n      \"name\": \"uno (copia)\",\r\n      \"created_at\": \"2026-01-01T00:00:46+00:00\",\r\n      \"clips\": [\r\n        {\r\n          \"index\": 0,\r\n          \"filename\": \"a.mp4\",\r\n          \"url\": \"/api/media/000029ab/a.mp4\",\r\n          \"start\": 0,\r\n          \"end\": NaN,\r\n          \"zoom\": Infinity\r\n        }\r\n      ],\r\n      \"folder\": null\r\n    },\r\n    {\r\n      \"id\": \"p1\",\r\n      \"name\": \"uno\",\r\n      \"created_at\": \"2026-01-01T00:00:00+00:00\",\r\n      \"clips\": [\r\n        {\r\n          \"index\": 0,\r\n          \"filename\": \"a.mp4\",\r\n          \"url\": \"/api/media/p1/a.mp4\",\r\n          \"start\": 0,\r\n          \"end\": NaN,\r\n          \"zoom\": Infinity\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
   }
  ]
 }

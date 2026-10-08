@@ -27,10 +27,15 @@ namespace gc::core {
 // valor por defecto.
 [[nodiscard]] Result<Json> read_json_file_py(const std::filesystem::path& path);
 
+// json.loads(text) de Python, como los lectores de archivo (sin el BOM). Divergencias: un
+// entero de más de 64 bits pasa a real (y uno de más de 308 cifras, a infinito), y un sustituto
+// suelto de UTF-16 (\ud800) pasa a U+FFFD (Python lo lee, aunque no podría volver a escribirlo).
+[[nodiscard]] Result<Json> py_json_loads(std::string_view text);
+
 // El texto exacto de json.dumps(value, ensure_ascii=False, indent=indent) de Python: los reales
 // como repr() (y NaN, Infinity y -Infinity), «, » y «: » sin sangría (indent < 0) o «,» y «: »
 // con ella, y solo se escapan las comillas, la barra y los caracteres de control. Error si un
-// texto no es UTF-8 válido.
+// texto no es UTF-8 válido o si hay más de 1500 niveles (Python sí los escribe).
 [[nodiscard]] Result<std::string> py_json_dumps(const Json& value, int indent = -1);
 
 // Escribe py_json_dumps(value, indent) como path.write_text() de Python (en Windows, con los

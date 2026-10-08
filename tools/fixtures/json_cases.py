@@ -59,6 +59,10 @@ LOADS = [
     '[18446744073709551615, -9223372036854775808, 9223372036854775807]',
     '{"a": 1, "a": 2, "b": NaN, "b": 3}',
     '  [ NaN , Infinity ]  ',
+    # Un texto igual al marcador de C++ (NUL + gc0:NaN + NUL) sigue siendo texto.
+    r'{"a": NaN, "m": "\u0000gc0:NaN\u0000", "\u0000gc0:+inf\u0000": Infinity}',
+    # NaN, Infinity y números como clave: error en Python.
+    '{NaN: 1}', '{Infinity: 1}', '{-Infinity: 1}', '{1e999: 1}', '{"a": {NaN : 2}}',
     # Errores de json.loads.
     '-NaN', 'nan', 'inf', '[1NaN]', '[NaNx]', 'Infinityx', '[--1]', '{"a": +1}', '[1.]', '[.5]', '01',
 ]

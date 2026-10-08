@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 
 #include "edit_util.hpp"
 #include "gc/core/io.hpp"
@@ -230,7 +231,14 @@ Result<Json> LibraryFile::list() const {
             if (ka.is_string()) {
                 return ka.get_ref<const std::string&>() > kb.get_ref<const std::string&>();
             }
-            return *py_number(ka) > *py_number(kb);
+            // Con NaN, el orden de Python sale de su timsort con comparaciones incoherentes y no
+            // se puede reproducir; aquí los NaN van al final, para que el orden sea válido.
+            const double na = *py_number(ka);
+            const double nb = *py_number(kb);
+            if (std::isnan(na) || std::isnan(nb)) {
+                return !std::isnan(na) && std::isnan(nb);
+            }
+            return na > nb;
         });
         *list = Json(v);
     }
