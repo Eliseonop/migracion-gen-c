@@ -1,6 +1,6 @@
 # Plan de migración: video-yt → GenClipPro (C++)
 
-> Estado: **en marcha** desde 2026-10-06 · F0 hecha (salvo MSVC y CI) · F1 casi cerrada (faltan las colecciones) · F2 cerrada · F3 en curso (lo que no necesita MSVC). Ver §14, [ARQUITECTURA.md](ARQUITECTURA.md) y la lista de tareas [TODO.md](TODO.md).
+> Estado: **en marcha** desde 2026-10-06 · F0 hecha (salvo MSVC y CI) · F1 hecha (salvo `stick_library` y lo que escribe desde la interfaz) · F2 cerrada (salvo lo que falta de `clip_motion`) · F3 en curso (lo que no necesita MSVC). Ver §14, [ARQUITECTURA.md](ARQUITECTURA.md) y la lista de tareas [TODO.md](TODO.md).
 > Origen: `E:\proyectos\video-yt` (FastAPI + React). Destino: `C:\Users\Edu\CLionProjects\GenClipPro`.
 
 ## 0. Resumen
@@ -934,3 +934,16 @@ Lo encontró la revisión del almacén de proyectos: con un `NaN` en `projects.j
 - **Resultado:** 47 pasos (13 de error, 11 con mensaje); 106 tests (104 de Catch2 y 2 de la CLI) y 118 426 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 72 archivos.
 
 **Siguiente:** `stick_library.py` y lo que falta de `clip_motion`. F3 sigue esperando al Windows SDK.
+
+### 2026-10-08 — Revisión de estado tras cuatro tandas
+
+El autopiloto pidió una revisión de conjunto (colecciones, almacén de proyectos, JSON como Python y «Guardar en la biblioteca», cada una ya revisada por su cuenta). **APROBADO, sin bloqueantes.**
+- **Compilación desde cero** (`verificar.sh --limpio`): 106 tests y 118 426 aserciones en Debug y Release, con 0 warnings; tidy, 0 avisos.
+- **Fixtures:** las 14 sintéticas, regeneradas con el Python real en una copia aparte, salen idénticas byte a byte a las del repo.
+- **Mutantes:** el de SFX «resolve: sale de la carpeta» buscaba un texto que cambió con `pathlib_join`. Ya lo encuentra y se detecta. Además, `mutantes.py` ahora termina con error si algún mutante no encuentra su texto; antes imprimía `??` y salía con 0.
+- **Docs:**
+  - las cifras de SFX (207 pasos) y ajustes (67);
+  - el estado del plan («F1 casi cerrada (faltan las colecciones)»);
+  - ARQUITECTURA, que aún daba por pendientes el autoguardado y el historial;
+  - la nota de qué lector usa cada almacén;
+  - casillas en el TODO para los personajes stick y lo que falta de `clip_motion`, para que el autopiloto las vea.

@@ -2,9 +2,10 @@
 
     python tools/dev/mutantes.py <grupo> [preset] [filtro]
 
-`grupo`: eval (evaluación por clip, tests [eval]), layers (capas de un instante, tests
-[layers]), frame (fotograma, tests [frame]), sfx (biblioteca de SFX en disco, tests [sfx]) o
-collections (colecciones de material, tests [collections]).
+`grupo`: eval (evaluación por clip), layers (capas de un instante), frame (fotograma), sfx
+(biblioteca de SFX en disco), collections (colecciones de material), projects (almacén de
+proyectos), json (JSON como Python) o library («Guardar en la biblioteca»). Cada uno pasa los
+tests de su etiqueta (GROUPS).
 `preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los mutantes cuyo
 nombre contiene ese texto.
 
@@ -210,7 +211,8 @@ SFX = [
     ("búsqueda: categorías sin favoritos", X,
      "with_favorites_category(idx.at(\"categories\").get<std::vector<Json>>(), all, favorites)",
      'idx.at("categories")'),
-    ("resolve: sale de la carpeta", D, "if (t.size() < r.size() || !std::equal(r.begin(), r.end(), t.begin())) {",
+    ("resolve: sale de la carpeta", D,
+     "if (t.size() < r.size() + (strict ? 1 : 0) || !std::equal(r.begin(), r.end(), t.begin())) {",
      "if (false) {"),
     ("resolve: distingue mayúsculas", D, "            out.push_back(py_lower(s));", "            out.push_back(s);"),
     ("resolve: sin comprobar que existe", X, "if (!target || !fs::exists(*target, ec)) {", "if (!target) {"),
@@ -463,11 +465,13 @@ def main() -> int:
         print("Falta cmake o la build: compila antes con tools/dev/verificar.sh")
         return 2
     caught = 0
+    missing = 0
     for name, rel, old, new in mutants:
         path = REPO / rel
         original = path.read_text(encoding="utf-8")
         if old not in original:
             print(f"??            {name}: no encuentro el texto")
+            missing += 1
             continue
         path.write_text(original.replace(old, new, 1), encoding="utf-8", newline="\n")
         try:
@@ -486,6 +490,9 @@ def main() -> int:
             path.write_text(original, encoding="utf-8", newline="\n")
     run([cmake, "--build", str(build), "--target", "gc_tests"])
     print(f"{caught}/{len(mutants)} detectados")
+    if missing:
+        print(f"{missing} mutantes no encuentran su texto: actualízalos")
+        return 1
     return 0
 
 

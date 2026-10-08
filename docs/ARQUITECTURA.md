@@ -201,9 +201,8 @@ Autosave autosave(s2, history_path(data_dir, pid), [&](const Timeline& tl) { ret
 ## 8. Persistencia
 
 - **Proyectos:** lee y escribe `data/projects.json` de video-yt sin convertirlo. Con `Preserve` no se pierden las claves que solo conoce Python. La escritura es atómica: archivo temporal y reemplazo, con reintentos en Windows si otro proceso lo tiene abierto.
-- **Pendiente:**
-  - Autosave como observador de la sesión, con espera tras el último cambio (*debounce*).
-  - Historial persistido por proyecto (`data/history/<id>.json`, como hoy).
+- **Historial y autoguardado (hechos, §5):** el historial por proyecto en `data/history/<id>.json`, con el formato de Python, y el autoguardado como observador de la sesión. Queda la espera tras el último cambio (*debounce*) y el hilo de fondo, que son de la app (F5).
+- **Almacén de proyectos** (`projects_store.hpp`): el texto que escribe es el de Python (`json.dumps` con `indent=2` y CRLF en Windows), así que video-yt y GenClipPro pueden escribir el mismo `projects.json` sin cambiarlo de forma.
 
 ## 9. Empaquetado: sí, un .exe
 
