@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <format>
 #include <string_view>
 
 namespace gc::test {
@@ -20,7 +21,7 @@ int category(const Json& j) {
 }
 
 std::string brief(const Json& j) {
-    std::string s = j.dump();
+    const std::string s = j.dump();
     return s.size() > 80 ? s.substr(0, 77) + "..." : s;
 }
 
@@ -34,12 +35,12 @@ std::optional<std::string> diff(const Json& e, const Json& a, const std::string&
         if (e.size() != a.size()) {
             for (const auto& [key, value] : e.items()) {
                 if (!a.contains(key)) {
-                    return path + "." + key + ": falta en el resultado";
+                    return std::format("{}.{}: falta en el resultado", path, key);
                 }
             }
             for (const auto& [key, value] : a.items()) {
                 if (!e.contains(key)) {
-                    return path + "." + key + ": sobra en el resultado";
+                    return std::format("{}.{}: sobra en el resultado", path, key);
                 }
             }
         }

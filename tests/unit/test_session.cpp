@@ -113,7 +113,7 @@ TEST_CASE("un grupo sin commit vuelve atrás", "[session]") {
     EditSession s = session();
     const TimelineSnapshot original = s.timeline();
     {
-        EditSession::Group g(s);
+        const EditSession::Group g(s);
         REQUIRE(s.apply("remove_clip", {{"clip_id", "a"}}));
     }
     CHECK(s.timeline() == original);
@@ -195,11 +195,11 @@ struct TempDir {
 } // namespace
 
 TEST_CASE("autoguardado: historial tras cada paso y timeline tras cada cambio", "[session][history]") {
-    TempDir dir;
+    const TempDir dir;
     const auto file = history_path(dir.path, "proyecto");
     EditSession s = session();
     std::vector<Json> saved;
-    Autosave autosave(s, file, [&](const Timeline& tl) -> gc::Result<void> {
+    const Autosave autosave(s, file, [&](const Timeline& tl) -> gc::Result<void> {
         saved.push_back(to_json(tl));
         return {};
     });
@@ -231,10 +231,10 @@ TEST_CASE("autoguardado: historial tras cada paso y timeline tras cada cambio", 
 }
 
 TEST_CASE("autoguardado: un fallo al guardar no para la edición y se recuerda", "[session][history]") {
-    TempDir dir;
+    const TempDir dir;
     EditSession s = session();
     bool fail_next = true;
-    Autosave autosave(s, history_path(dir.path, "p"), [&](const Timeline&) -> gc::Result<void> {
+    const Autosave autosave(s, history_path(dir.path, "p"), [&](const Timeline&) -> gc::Result<void> {
         if (fail_next) {
             return gc::fail(gc::ErrorCode::Io, "disco lleno");
         }
@@ -249,13 +249,13 @@ TEST_CASE("autoguardado: un fallo al guardar no para la edición y se recuerda",
 }
 
 TEST_CASE("retomar una sesión con su historial guardado", "[session][history]") {
-    TempDir dir;
+    const TempDir dir;
     const auto file = history_path(dir.path, "p");
     Json first;
     {
         EditSession s = session();
         first = to_json(*s.timeline());
-        Autosave autosave(s, file);
+        const Autosave autosave(s, file);
         REQUIRE(s.apply("move_clip", {{"clip_id", "c"}, {"start", 10}}));
         s.checkpoint("uno");
     }
@@ -268,7 +268,7 @@ TEST_CASE("retomar una sesión con su historial guardado", "[session][history]")
 }
 
 TEST_CASE("historial ilegible o ausente: vacío, sin error", "[session][history]") {
-    TempDir dir;
+    const TempDir dir;
     CHECK_FALSE(load_history(dir.path / "no-existe.json").can_undo());
     const auto bad = dir.path / "roto.json";
     {
@@ -289,7 +289,7 @@ TEST_CASE("historial ilegible o ausente: vacío, sin error", "[session][history]
     }
     REQUIRE(load_history(good).can_undo());
     {
-        std::ifstream in(good, std::ios::binary);
+        const std::ifstream in(good, std::ios::binary);
         std::stringstream text;
         text << in.rdbuf();
         std::ofstream(bom, std::ios::binary) << "\xEF\xBB\xBF" << text.str();

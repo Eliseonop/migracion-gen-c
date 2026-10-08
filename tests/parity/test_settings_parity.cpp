@@ -88,7 +88,7 @@ std::size_t run_steps(const Json& steps, const std::string& fname) {
         }
         // El archivo tal como queda.
         if (s.contains("file_text")) {
-            std::ifstream in(file, std::ios::binary);
+            const std::ifstream in(file, std::ios::binary);
             std::stringstream text;
             text << in.rdbuf();
             CHECK(text.str() == s.at("file_text").get<std::string>());

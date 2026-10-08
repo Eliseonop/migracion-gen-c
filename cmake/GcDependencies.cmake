@@ -16,6 +16,14 @@ FetchContent_Declare(nlohmann_json
     FIND_PACKAGE_ARGS 3.11 CONFIG)
 FetchContent_MakeAvailable(nlohmann_json)
 
+# Registro (gc_log). Con el fmt que trae dentro; con vcpkg, el de vcpkg.
+FetchContent_Declare(spdlog
+    URL https://github.com/gabime/spdlog/archive/refs/tags/v1.15.3.tar.gz
+    URL_HASH SHA256=15a04e69c222eb6c01094b5c7ff8a249b36bb22788d72519646fb85feb267e67
+    SYSTEM
+    FIND_PACKAGE_ARGS 1.12 CONFIG)
+FetchContent_MakeAvailable(spdlog)
+
 if(GC_BUILD_TESTS)
     FetchContent_Declare(Catch2
         URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.9.1.tar.gz

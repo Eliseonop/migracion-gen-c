@@ -144,7 +144,7 @@ std::string normalize_hex(const Json& raw, const std::string& fallback) {
     if (text.starts_with("0x") || text.starts_with("0X")) {
         text = "#" + text.substr(2);
     }
-    if (!text.starts_with("#")) {
+    if (!text.starts_with('#')) {
         text = "#" + text;
     }
     auto chars = py_iter(Json(text.substr(1))).value_or(std::vector<Json>{});

@@ -4,7 +4,8 @@
 //   genclip projects <projects.json>                     valida todos los proyectos
 //   genclip normalize <projects.json> <salida> [--preserve]
 //
-// Los argumentos y la salida van en UTF-8 en todos los SO (rutas con tildes).
+// Los argumentos y la salida van en UTF-8 en todos los SO (rutas con tildes). Los errores
+// y el registro van a stderr («error: …»); GENCLIP_LOG=debug muestra también la traza.
 
 #include <format>
 #include <iostream>
@@ -13,10 +14,13 @@
 #include <string_view>
 #include <vector>
 
+#include <spdlog/spdlog.h>
+
 #include "gc/core/io.hpp"
 #include "gc/core/migrations.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/version.hpp"
+#include "gc/log/log.hpp"
 
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -36,7 +40,7 @@ namespace {
 using gc::Json;
 using Args = std::span<const std::string>;
 
-std::vector<std::string> utf8_args(int argc, char** argv) {
+std::vector<std::string> utf8_args(int argc, char* const* argv) {
 #ifdef _WIN32
     (void)argc;
     (void)argv;
@@ -51,7 +55,7 @@ std::vector<std::string> utf8_args(int argc, char** argv) {
         }
         out.push_back(std::move(s));
     }
-    LocalFree(wargs);
+    LocalFree(static_cast<HLOCAL>(wargs));
     return out;
 #else
     return {argv, argv + argc};
@@ -73,11 +77,11 @@ void usage() {
 std::string truncate(std::string s, std::size_t n) {
     if (s.size() > n) {
         std::size_t cut = n - 1;
-        while (cut > 0 && (static_cast<unsigned char>(s[cut]) & 0xC0) == 0x80) {
+        while (cut > 0 && (static_cast<unsigned>(static_cast<unsigned char>(s[cut])) & 0xC0U) == 0x80U) {
             --cut;
         }
         s.resize(cut);
-        s += "~";
+        s += '~';
     }
     return s;
 }
@@ -89,12 +93,12 @@ int cmd_projects(Args args) {
     }
     auto raw = gc::core::read_json_file(gc::core::path_from_utf8(args[0]));
     if (!raw) {
-        std::cerr << raw.error().to_string() << "\n";
+        spdlog::error("{}", raw.error().to_string());
         return 1;
     }
     const auto it = raw->find("projects");
     if (it == raw->end() || !it->is_array()) {
-        std::cerr << "el archivo no tiene una lista \"projects\"\n";
+        spdlog::error("el archivo no tiene una lista \"projects\"");
         return 1;
     }
     int failed = 0;
@@ -127,29 +131,26 @@ int cmd_normalize(Args args) {
     const auto mode = args.size() == 3 ? gc::core::DumpMode::Preserve : gc::core::DumpMode::Model;
     auto raw = gc::core::read_json_file(gc::core::path_from_utf8(args[0]));
     if (!raw) {
-        std::cerr << raw.error().to_string() << "\n";
+        spdlog::error("{}", raw.error().to_string());
         return 1;
     }
     auto file = gc::core::projects_file_from_json(*raw);
     if (!file) {
-        std::cerr << file.error().to_string() << "\n";
+        spdlog::error("{}", file.error().to_string());
         return 1;
     }
     if (auto ok = gc::core::write_json_file(gc::core::path_from_utf8(args[1]), gc::core::to_json(*file, mode)); !ok) {
-        std::cerr << ok.error().to_string() << "\n";
+        spdlog::error("{}", ok.error().to_string());
         return 1;
     }
     std::cout << file->projects.size() << " proyectos escritos en " << args[1] << "\n";
     return 0;
 }
 
-} // namespace
-
-int main(int argc, char** argv) {
-#ifdef _WIN32
-    SetConsoleOutputCP(CP_UTF8);
-#endif
+int run(int argc, char* const* argv) {
+    gc::log::init(gc::log::level_from_env(gc::log::Level::warn));
     const std::vector<std::string> all = utf8_args(argc, argv);
+    spdlog::debug("genclip {}: {} argumentos", gc::kVersion, all.size());
     if (all.size() < 2) {
         usage();
         return 2;
@@ -168,4 +169,18 @@ int main(int argc, char** argv) {
     }
     usage();
     return cmd == "help" || cmd == "--help" ? 0 : 2;
+}
+
+} // namespace
+
+int main(int argc, char** argv) { // NOLINT(misc-const-correctness): la firma estándar de main
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+#endif
+    try {
+        return run(argc, argv);
+    } catch (const std::exception& e) { // un fallo inesperado (memoria, formato): sin cierre brusco
+        std::cerr << "error inesperado: " << e.what() << "\n";
+        return 1;
+    }
 }

@@ -43,9 +43,9 @@ std::string replace_all(std::string s, std::string_view from, std::string_view t
 std::string latin1(std::string_view utf8) {
     std::string out;
     for (std::size_t i = 0; i < utf8.size(); ++i) {
-        const auto b = static_cast<unsigned char>(utf8[i]);
+        const auto b = static_cast<unsigned>(static_cast<unsigned char>(utf8[i]));
         if (b >= 0xC0 && i + 1 < utf8.size()) {
-            out += static_cast<char>(((b & 0x1FU) << 6) | (static_cast<unsigned char>(utf8[++i]) & 0x3FU));
+            out += static_cast<char>(((b & 0x1FU) << 6U) | (static_cast<unsigned>(static_cast<unsigned char>(utf8[++i])) & 0x3FU));
         } else {
             out += static_cast<char>(b);
         }
@@ -62,7 +62,7 @@ void write_file(const fs::path& file, const std::string& bytes) {
 
 // La sonda falsa del exportador: el número que contiene el archivo (si no, sin duración).
 std::optional<double> fake_probe(const fs::path& path) {
-    std::ifstream in(path, std::ios::binary);
+    const std::ifstream in(path, std::ios::binary);
     if (!in) {
         return std::nullopt;
     }

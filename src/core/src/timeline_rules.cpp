@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <format>
+#include <ranges>
 #include <unordered_map>
 
 #include "py.hpp"
@@ -90,14 +92,14 @@ std::unordered_map<std::string, std::size_t> stack_layers(const std::vector<Time
 std::set<std::string> buried_text_track_ids(const std::vector<TimelineTrack>& tracks) {
     std::set<std::string> buried;
     bool video_above = false;
-    for (auto it = tracks.rbegin(); it != tracks.rend(); ++it) {
-        if (!is_stack_track(*it)) {
+    for (const auto& track : std::views::reverse(tracks)) {
+        if (!is_stack_track(track)) {
             continue;
         }
-        if (it->kind == "video") {
+        if (track.kind == "video") {
             video_above = true;
         } else if (video_above) {
-            buried.insert(it->id);
+            buried.insert(track.id);
         }
     }
     return buried;
@@ -172,9 +174,9 @@ Result<std::vector<TimelineTrack>> reorder_tracks(const std::vector<TimelineTrac
 
     std::vector<TimelineTrack> out;
     out.reserve(tracks.size());
-    for (auto it = rest.rbegin(); it != rest.rend(); ++it) { // la pila vuelve a su orden (fondo primero)
-        if (is_stack_track(tracks[*it])) {
-            out.push_back(tracks[*it]);
+    for (const std::size_t i : std::views::reverse(rest)) { // la pila vuelve a su orden (fondo primero)
+        if (is_stack_track(tracks[i])) {
+            out.push_back(tracks[i]);
         }
     }
     for (const std::size_t i : rest) {
@@ -209,7 +211,7 @@ std::vector<std::pair<std::string, std::string>> track_overlaps(const Timeline& 
 std::vector<std::string> track_overlap_warnings(const Timeline& timeline, std::string_view track_id) {
     std::vector<std::string> out;
     for (const auto& [a, b] : track_overlaps(timeline, track_id)) {
-        out.push_back("solape en " + std::string(track_id) + ": " + a + " ↔ " + b);
+        out.push_back(std::format("solape en {}: {} ↔ {}", track_id, a, b));
     }
     return out;
 }

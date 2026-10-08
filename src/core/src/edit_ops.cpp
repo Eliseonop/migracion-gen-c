@@ -371,7 +371,7 @@ Result<EditResult> run(const Timeline& tl, const ops::SetProjectFormat& op, IdSo
     Timeline out = tl;
     const Aspect* aspect = nullptr;
     if (op.aspect) {
-        const auto it = std::ranges::find(kAspects, *op.aspect, &Aspect::id);
+        const auto* const it = std::ranges::find(kAspects, *op.aspect, &Aspect::id);
         if (it == kAspects.end()) {
             return invalid("aspect inválido: " + *op.aspect + " (usa ['16:9', '9:16', '1:1', '4:3', '3:4', '4:5'])");
         }
@@ -442,6 +442,7 @@ Result<EditResult> run(const Timeline& tl, const ops::SetMarkers& op, IdSource& 
     Timeline out = tl;
     out.markers = std::move(norm);
     std::vector<std::string> changed;
+    changed.reserve(out.markers.size());
     for (const Json& m : out.markers) {
         changed.push_back(m["id"].get<std::string>());
     }

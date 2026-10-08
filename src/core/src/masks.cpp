@@ -201,6 +201,7 @@ bool mask_animates(const TimelineClip& clip, double duration, double eps) {
         }
     }
     std::vector<KfProps> samples;
+    samples.reserve(times.size());
     for (const double t : times) {
         samples.push_back(clip_props_at(clip, t));
     }

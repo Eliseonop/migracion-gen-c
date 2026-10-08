@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# Sin módulos de C++20: no se usan, y su escaneo (p1689) añade opciones de GCC que
+# clang-tidy y clangd no entienden.
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -20,6 +23,7 @@ include(GcOptions)
 include(GcDependencies)
 
 add_subdirectory(src/core)
+add_subdirectory(src/log)
 
 if(GC_BUILD_CLI)
     add_subdirectory(apps/cli)

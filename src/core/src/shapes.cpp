@@ -56,8 +56,8 @@ bool py_hex_ok(std::string_view s) {
 
 // shapes._hex: "#rrggbb" (7 caracteres) o el defecto.
 Json hex_or(const Json& v, const Json& fallback) {
-    const std::string s = py_truthy(v) ? detail::py_strip(detail::py_str(v)) : std::string();
-    if (detail::py_len(s) == 7 && s.starts_with("#") && py_hex_ok(std::string_view(s).substr(1))) {
+    std::string s = py_truthy(v) ? detail::py_strip(detail::py_str(v)) : std::string();
+    if (detail::py_len(s) == 7 && s.starts_with('#') && py_hex_ok(std::string_view(s).substr(1))) {
         return s;
     }
     return fallback;
@@ -185,7 +185,7 @@ Result<Json> normalize_shape(const Json& raw_in) {
     if (!var##_r) {                                                                                                   \
         return std::unexpected(var##_r.error());                                                                      \
     }                                                                                                                 \
-    const double var = *var##_r
+    const double var = *var##_r // NOLINT(bugprone-macro-parentheses): declara `var`
 
     GC_NUM(x, "x");
     GC_NUM(y, "y");

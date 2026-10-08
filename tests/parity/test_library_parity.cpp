@@ -97,7 +97,7 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
         }
         check_result(s, r);
         if (s.contains("file_text")) {
-            std::ifstream in(lib.file(), std::ios::binary);
+            const std::ifstream in(lib.file(), std::ios::binary);
             std::stringstream text;
             text << in.rdbuf();
             CHECK(text.str() == s.at("file_text").get<std::string>());

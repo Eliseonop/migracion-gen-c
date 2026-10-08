@@ -2,8 +2,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <format>
 #include <tuple>
 #include <unordered_map>
+#include <utility>
 
 #include "gc/core/timeline_rules.hpp"
 #include "py.hpp"
@@ -23,15 +25,10 @@ bool same(double a, double b) { return std::abs(a - b) < 1e-6; }
 
 bool is_free(const Timeline& tl, std::string_view track_id, double start, double dur, std::string_view exclude) {
     const double end = start + std::max(0.0, dur);
-    for (const auto& c : tl.clips) {
-        if (c->track_id != track_id || c->id == exclude) {
-            continue;
-        }
-        if (start < clip_end(*c) && c->start < end && clip_end(*c) > c->start) {
-            return false;
-        }
-    }
-    return true;
+    return std::ranges::none_of(tl.clips, [&](const auto& c) {
+        return c->track_id == track_id && c->id != exclude && start < clip_end(*c) && c->start < end &&
+               clip_end(*c) > c->start;
+    });
 }
 
 std::string_view prefix_for(std::string_view kind) {
@@ -108,7 +105,7 @@ std::optional<Lift> lift(Timeline& tl, std::size_t clip_index, IdSource& ids) {
     // La pila crece hacia arriba (delante); el audio, hacia abajo.
     const std::ptrdiff_t j = is_stack_track(src) ? i - 1 : i + 1;
     const double dur = clip_timeline_duration(clip);
-    if (j >= 0 && j < static_cast<std::ptrdiff_t>(rows.size())) {
+    if (j >= 0 && std::cmp_less(j, rows.size())) {
         const TimelineTrack& next = tl.tracks[rows[static_cast<std::size_t>(j)]];
         if (next.kind == src.kind && !next.locked && !next.hidden &&
             is_free(tl, next.id, clip.start, dur, clip.id)) {
@@ -245,8 +242,8 @@ std::optional<Settled> settle_timeline(const Timeline& before, const Timeline& a
                     ++moved;
                 }
             }
-            out.notes.push_back(id + " creció: " + std::to_string(moved) + " clip(s) de " + track +
-                                " se desplazaron " + py_repr(py_round(shift, 3)) + " s");
+            out.notes.push_back(std::format("{} creció: {} clip(s) de {} se desplazaron {} s", id, moved, track,
+                                            py_repr(py_round(shift, 3))));
             continue;
         }
         const std::string src = c.track_id;
@@ -259,8 +256,8 @@ std::optional<Settled> settle_timeline(const Timeline& before, const Timeline& a
         if (to->created) {
             out.created_tracks.push_back(to->track_id);
         }
-        out.notes.push_back(id + " no cabía en " + src + " (ocupada): va en " +
-                            (to->created ? "la pista nueva " : "") + to->track_id);
+        out.notes.push_back(std::format("{} no cabía en {} (ocupada): va en {}{}", id, src,
+                                        to->created ? "la pista nueva " : "", to->track_id));
     }
     if (out.created_tracks.empty() && out.notes.empty()) {
         return std::nullopt;

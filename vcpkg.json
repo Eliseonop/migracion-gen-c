@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "description": "Motor C++ multiplataforma de GenClipPro (migración de video-yt)",
   "dependencies": [
-    "nlohmann-json"
+    "nlohmann-json",
+    "spdlog"
   ],
   "features": {
     "tests": {

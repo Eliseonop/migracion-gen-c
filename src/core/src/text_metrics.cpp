@@ -39,14 +39,14 @@ double estimate_width(double em, std::string_view text, double ls) {
 } // namespace
 
 void set_text_width(TextWidthFn fn) {
-    const std::lock_guard lock(g_mutex);
+    const std::scoped_lock lock(g_mutex);
     g_width = fn ? std::make_shared<const TextWidthFn>(std::move(fn)) : nullptr;
 }
 
 double text_width(std::string_view font, bool bold, double em, std::string_view text, double letter_spacing) {
     std::shared_ptr<const TextWidthFn> fn;
     {
-        const std::lock_guard lock(g_mutex);
+        const std::scoped_lock lock(g_mutex);
         fn = g_width;
     }
     return fn ? (*fn)(font, bold, em, text, letter_spacing) : estimate_width(em, text, letter_spacing);

@@ -775,3 +775,19 @@ Preparación de la biblioteca de SFX y de las colecciones, que ordenan y filtran
 - **Resultado:** 84 tests y 111 305 aserciones en verde, en Debug y en Release, con 0 warnings.
 
 **Siguiente:** F0 (`.clang-tidy` y spdlog). Las colecciones de F1 pueden esperar a F5, y F3 sigue esperando al Windows SDK.
+
+### 2026-10-08 — F0: `.clang-tidy` y spdlog
+
+**Hecho:**
+- **`.clang-tidy`** con `bugprone`, `clang-analyzer`, `concurrency`, `misc`, `modernize`, `performance`, `portability` y una selección de `readability`. Lo que se desactiva y por qué está en el propio archivo: estilo, choques con cómo está escrito el motor (los `get_or` que devuelven el defecto por referencia, varios `Json` o `double` seguidos) y falsos positivos (`unchecked-optional-access` no ve las comprobaciones hechas en otra función). Las condiciones no se reescriben con De Morgan, porque copian las de Python.
+- **`tools/dev/tidy.py [--fix] [filtro]`:** pasa el clang-tidy de CLion por `src`, `apps` y `tests` con una build propia (`build/tidy`, sin el escaneo de módulos de C++20, cuyas opciones de GCC clang no entiende) y sale con error si hay algún aviso. Ese clang-tidy no trae las cabeceras internas de clang; sirven las de GCC, salvo las de intrínsecos x86 que incluye `windows.h`, que se sustituyen por las vacías de `tools/dev/tidy_shim`.
+- **Lo que arregló tidy** (sin cambiar ningún resultado; lo confirman las fixtures de paridad): `std::scoped_lock`, `contains`, `starts_with('#')`, `std::views::reverse`, `std::ranges::none_of`/`any_of`, `std::cmp_less`, `reserve` antes de llenar vectores, `const` donde faltaba, parámetros `Json` por referencia, máscaras de bits en `unsigned`, nombres de parámetros iguales en la declaración y la definición, y `ValidationFailure` deriva ahora de `std::exception` (solo la captura `parse_model`; ninguna otra captura de `std::exception` envuelve la validación).
+- **`gc_log`** (`src/log`): registro sobre spdlog 1.15.3 (FetchContent con hash verificado, o el de vcpkg). `init(nivel, sinks extra)` crea el logger por defecto con salida a stderr («nivel: texto»), `GENCLIP_LOG` (trace, debug, info, warn, error, critical u off) manda sobre el nivel del programa y `parse_level` acepta mayúsculas y espacios. `gc_core` no lo usa: es lógica pura y devuelve los errores en `Result`.
+- **`genclip`:** los errores van por el registro («error: …» en stderr), `GENCLIP_LOG=debug` muestra la traza y una excepción inesperada sale con un mensaje y código 1 en vez de cerrar el programa de golpe.
+
+**Verificación:**
+- **Tests:** 3 de `gc_log` (nombres de nivel, la variable de entorno y el filtrado por nivel con un sink que graba, también con «ñ»).
+- **tidy:** 0 avisos en 64 archivos. La primera pasada en `main` daba 10: `build/tidy` era de antes de spdlog (`tidy.py` solo configuraba si faltaba `compile_commands.json`; ahora reconfigura siempre), la firma de `main` (NOLINT con el motivo) y 6 concatenaciones de mensajes dentro de bucles, que pasan a `std::format` con el mismo texto.
+- **Resultado:** 87 tests y 111 318 aserciones en verde, en Debug y en Release, con 0 warnings.
+
+**Siguiente:** F1, colecciones (o esperar a F5 con ellas). F3 sigue esperando al Windows SDK.

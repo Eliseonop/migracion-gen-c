@@ -126,7 +126,7 @@ public:
         if (!n) {
             return bad_param(op_, key, "debe ser un número");
         }
-        return std::optional<double>{*n};
+        return n;
     }
     // float(x) de Python: también acepta texto numérico.
     [[nodiscard]] Result<std::optional<double>> opt_float(std::string_view key) {
@@ -138,7 +138,7 @@ public:
         if (!n) {
             return bad_param(op_, key, "debe ser un número");
         }
-        return std::optional<double>{*n};
+        return n;
     }
     // int(x) de Python.
     [[nodiscard]] Result<std::optional<std::int64_t>> opt_int(std::string_view key) {
@@ -150,7 +150,7 @@ public:
         if (!n) {
             return bad_param(op_, key, "debe ser un entero");
         }
-        return std::optional<std::int64_t>{*n};
+        return n;
     }
     [[nodiscard]] Result<Json> json(std::string_view key) {
         const Json* v = get(key);
@@ -160,9 +160,9 @@ public:
         return *v;
     }
     // Parámetro con valor por defecto en la firma: ausente = el defecto, tal cual.
-    [[nodiscard]] Json json_or(std::string_view key, Json fallback = Json()) {
+    [[nodiscard]] Json json_or(std::string_view key, const Json& fallback = Json()) {
         const Json* v = get(key);
-        return v == nullptr ? std::move(fallback) : *v;
+        return v == nullptr ? fallback : *v;
     }
     // bool(x) de un parámetro con defecto.
     [[nodiscard]] bool truthy_or(std::string_view key, bool fallback) {
@@ -197,7 +197,7 @@ private:
         const auto it = params_.find(key);
         return it == params_.end() ? nullptr : &*it;
     }
-    std::unexpected<Error> missing(std::string_view key) const { return bad_param(op_, key, "es obligatorio"); }
+    [[nodiscard]] std::unexpected<Error> missing(std::string_view key) const { return bad_param(op_, key, "es obligatorio"); }
 
     std::string_view op_;
     const Json& params_;

@@ -68,7 +68,7 @@ Json param_value(const Json& p, const Json& v) {
         return ok ? Json(s) : def;
     }
     if (type == "select") {
-        const std::string s = py_str(v);
+        std::string s = py_str(v);
         const Json& options = field(p, "options");
         if (options.is_array()) {
             for (const Json& o : options) {
@@ -122,12 +122,12 @@ Json FxCatalog::resolve_params(const Json& manifest, const Json& raw) {
 }
 
 void set_fx_catalog(std::shared_ptr<const FxCatalog> catalog) {
-    const std::lock_guard lock(g_mutex);
+    const std::scoped_lock lock(g_mutex);
     g_catalog = catalog ? std::move(catalog) : std::make_shared<const FxCatalog>();
 }
 
 std::shared_ptr<const FxCatalog> fx_catalog() {
-    const std::lock_guard lock(g_mutex);
+    const std::scoped_lock lock(g_mutex);
     return g_catalog;
 }
 

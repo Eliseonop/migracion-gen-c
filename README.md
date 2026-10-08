@@ -13,6 +13,7 @@ Lista de tareas de todas las fases: [docs/TODO.md](docs/TODO.md).
 ```
 src/core/      gc_core: documento (modelo, JSON, migraciones) y motor de edición
                (comandos, EditSession, deshacer). Sin Qt, sin GPU.
+src/log/       gc_log: registro sobre spdlog (ejecutables y capas con E/S; gc_core no lo usa)
 apps/cli/      genclip: herramienta de línea de órdenes
 resources/     recursos de la app (fx/catalog.json: catálogo de efectos y animaciones)
 tests/         unit/ · parity/ (contra video-yt) · fixtures/
@@ -37,6 +38,9 @@ ctest --preset mingw-debug
 Atajo con el CMake de CLion: `bash tools/dev/verificar.sh [--limpio]` compila y pasa los tests en
 Debug y Release, y falla si hay algún warning.
 
+Análisis estático: `python tools/dev/tidy.py [--fix] [filtro]` pasa el clang-tidy de CLion con el
+`.clang-tidy` del repo por `src`, `apps` y `tests`, y falla si hay algún aviso (tiene que quedar en 0).
+
 | Preset | Para qué |
 |---|---|
 | `mingw-debug` / `mingw-release` | MinGW de CLion. Provisional, solo para el núcleo (F0–F2). |
@@ -45,7 +49,7 @@ Debug y Release, y falla si hay algún warning.
 | `linux-debug`, `macos-debug` | Otras plataformas. |
 | `ci` | Release con warnings como errores (GitHub Actions). |
 
-Las dependencias (nlohmann/json, Catch2) se buscan primero con `find_package` y,
+Las dependencias (nlohmann/json, spdlog, Catch2) se buscan primero con `find_package` y,
 si no están, CMake las descarga y verifica su hash (`cmake/GcDependencies.cmake`).
 
 ## Paridad con video-yt
@@ -68,3 +72,6 @@ Si cambia `schemas.py` o `migrations.py` en video-yt, regenera las fixtures; el 
 genclip projects E:/proyectos/video-yt/backend/data/projects.json   # valida todos los proyectos
 genclip normalize <projects.json> <salida.json> [--preserve]          # reescribe normalizado
 ```
+
+Los errores van a stderr («error: …»). `GENCLIP_LOG=debug` (o `trace`, `info`, `warn`, `error`,
+`off`) cambia el nivel del registro; por defecto, `warn`.

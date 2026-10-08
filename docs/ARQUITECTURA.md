@@ -45,6 +45,8 @@ export y una UI que nunca se bloquea. El plan por fases está en
 
 Las dependencias van solo hacia abajo: `gc_core` no sabe que existen Qt, la GPU ni FFmpeg, y por eso corre igual en Windows, macOS, Linux, Android e iOS.
 
+El registro (`gc_log`, sobre spdlog) es de los ejecutables y de las capas con E/S. `gc_core` no registra nada: devuelve `Result` con el error y quien lo llama decide si lo muestra.
+
 ## 3. Documento
 
 | Pieza | Archivo | Qué hace |

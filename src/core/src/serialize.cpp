@@ -202,12 +202,7 @@ private:
         return *v;
     }
     [[nodiscard]] bool used(std::string_view key) const {
-        for (const auto k : used_) {
-            if (k == key) {
-                return true;
-            }
-        }
-        return false;
+        return std::ranges::any_of(used_, [&](const auto k) { return k == key; });
     }
 
     const Json& obj_;
@@ -629,7 +624,7 @@ Result<S> parse_model(const Json& raw, Prepare&& prepare) {
         if (!raw.is_object()) {
             return fail(ErrorCode::Validation, std::string("se esperaba un objeto y llegó ") + json_type_name(raw));
         }
-        const Json input = prepare(raw);
+        const Json& input = prepare(raw);
         S out{};
         const PathNode root{};
         read_value(input, out, root);

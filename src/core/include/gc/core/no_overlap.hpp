@@ -34,7 +34,7 @@ struct Settled {
 
 // Empaqueta la pista en el sitio: orden por inicio y sin huecos desde 0. En un empate
 // van delante los de `priority` (recién soltados). true si cambió algo.
-bool pack_magnetic(Timeline& timeline, std::string_view track_id, const std::unordered_set<std::string>& priority);
+bool pack_magnetic(Timeline& tl, std::string_view track_id, const std::unordered_set<std::string>& priority);
 
 // nullopt = no había nada que resolver (`after` vale tal cual).
 [[nodiscard]] std::optional<Settled> settle_timeline(const Timeline& before, const Timeline& after, IdSource& ids,

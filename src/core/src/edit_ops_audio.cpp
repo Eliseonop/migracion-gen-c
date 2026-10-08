@@ -127,13 +127,13 @@ Result<EditResult> run(const Timeline& tl, const ops::SetClipAudioFx& op, IdSour
             return invalid("ramp debe ser {start, end, from?} en segundos del clip");
         }
         const double dur = clip_timeline_duration(c);
-        const auto t0 = py_float(op.ramp.contains("start") ? op.ramp["start"] : Json(0.0));
-        const auto t1 = op.ramp.contains("end") ? py_float(op.ramp["end"]) : std::nullopt;
-        if (!t0 || !t1) {
+        const auto ramp_start = py_float(op.ramp.contains("start") ? op.ramp["start"] : Json(0.0));
+        const auto ramp_end = op.ramp.contains("end") ? py_float(op.ramp["end"]) : std::nullopt;
+        if (!ramp_start || !ramp_end) {
             return invalid("ramp debe ser {start, end, from?} en segundos del clip");
         }
         GC_TRY(v0, to_py_float(op.ramp.contains("from") ? op.ramp["from"] : Json(0.0), "ramp.from"));
-        if (!(0 <= *t0 && *t0 < *t1 && *t1 <= dur + 1e-6)) {
+        if (!(0 <= *ramp_start && *ramp_start < *ramp_end && *ramp_end <= dur + 1e-6)) {
             return invalid("ramp: 0 <= start < end <= duración del clip");
         }
         if (!op.audio_fx.is_object()) {
@@ -152,8 +152,8 @@ Result<EditResult> run(const Timeline& tl, const ops::SetClipAudioFx& op, IdSour
             GC_TRY(v, to_py_float(value, key));
             end_vals[key] = std::min(1.0, std::max(0.0, v));
         }
-        upsert_keyframe_at(c, *t0, start_vals, std::nullopt, ids);
-        upsert_keyframe_at(c, *t1, end_vals, Interp::EaseInOut, ids);
+        upsert_keyframe_at(c, *ramp_start, start_vals, std::nullopt, ids);
+        upsert_keyframe_at(c, *ramp_end, end_vals, Interp::EaseInOut, ids);
     }
     return EditResult{std::move(out), {op.clip_id}, {}};
 }

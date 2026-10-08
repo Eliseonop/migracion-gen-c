@@ -40,7 +40,7 @@ constexpr NfkdAscii kNfkdAscii[] = {
 };
 
 std::string_view ascii_of(char32_t c) {
-    const auto it = std::ranges::lower_bound(kNfkdAscii, c, {}, &NfkdAscii::code);
+    const auto* const it = std::ranges::lower_bound(kNfkdAscii, c, {}, &NfkdAscii::code);
     return it != std::end(kNfkdAscii) && it->code == c ? it->ascii : std::string_view();
 }
 
@@ -61,12 +61,12 @@ std::vector<std::string_view> tokens(std::string_view s) {
 } // namespace
 
 void set_sfx_library(std::shared_ptr<const SfxLibrary> library) {
-    const std::lock_guard lock(g_mutex);
+    const std::scoped_lock lock(g_mutex);
     g_library = library ? std::move(library) : std::make_shared<const SfxLibrary>();
 }
 
 std::shared_ptr<const SfxLibrary> sfx_library() {
-    const std::lock_guard lock(g_mutex);
+    const std::scoped_lock lock(g_mutex);
     return g_library;
 }
 
@@ -115,9 +115,9 @@ double sfx_score(const Json& item, const std::vector<Json>& keywords) {
             continue;
         }
         const std::string padded = " " + k + " ";
-        if (name.find(padded) != std::string::npos) {
+        if (name.contains(padded)) {
             score += 3;
-        } else if (k.size() >= 4 && name.find(k) != std::string::npos) {
+        } else if (k.size() >= 4 && name.contains(k)) {
             score += 2;
         } else {
             std::vector<std::string_view> toks;
@@ -133,7 +133,7 @@ double sfx_score(const Json& item, const std::vector<Json>& keywords) {
                 score += 1;
             }
         }
-        if (meta.find(padded) != std::string::npos) {
+        if (meta.contains(padded)) {
             score += 0.5;
         }
     }

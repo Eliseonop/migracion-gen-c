@@ -2,7 +2,7 @@
 
 > Lista de tareas con checks de **todas las fases** del [plan](PLAN_MIGRACION_CPP.md).
 > El detalle de cada tanda (qué se hizo, cómo se verificó, cifras) está en el §14 del plan.
-> Arquitectura: [ARQUITECTURA.md](ARQUITECTURA.md). Actualizado: **2026-10-07**.
+> Arquitectura: [ARQUITECTURA.md](ARQUITECTURA.md). Actualizado: **2026-10-08**.
 
 Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 
@@ -22,7 +22,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 84 tests y 111 305 aserciones en verde (Debug y Release, 0 warnings).
+**Cifras actuales:** 87 tests y 111 318 aserciones en verde (Debug y Release, 0 warnings) y 0 avisos de clang-tidy.
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
 historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (61 pasos + los tuyos, con las claves redactadas) biblioteca (55 pasos + 23 materiales + la tuya) SFX en disco (205 pasos + tu carpeta de 626 sonidos) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
@@ -35,9 +35,7 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 F2 está cerrada y F1 casi: solo faltan las colecciones, que son de la interfaz. F3 necesita el Windows SDK, así que el orden es:
 
 1. **Con el Windows SDK instalado:** F3, empezando por MSVC + vcpkg (FFmpeg, Skia, ONNX Runtime) y `gc_media`.
-2. **Sin él, en este orden:**
-   - F0, `.clang-tidy` y spdlog;
-   - F1, colecciones (`collections.py`). Son de la interfaz y pueden esperar a F5: escanean carpetas y ordenan como `WindowsPath` (lo que ya hace `sfx_scan`, con `py_lower`).
+2. **Sin él:** F1, colecciones (`collections.py`). Son de la interfaz y pueden esperar a F5: escanean carpetas y ordenan como `WindowsPath` (lo que ya hace `sfx_scan`, con `py_lower`). F0 (`.clang-tidy` y spdlog) ya está hecho.
 3. La evaluación de F3 está completa (por clip, capas y fotograma): lo siguiente de F3 ya es `gc_media` y `gc_render`, que necesitan el SDK.
 
 ## Pendiente por tu parte (Edu)
@@ -65,7 +63,8 @@ F2 está cerrada y F1 casi: solo faltan las colecciones, que son de la interfaz.
 - [ ] CI ejecutándose (falta el remoto)
 - [ ] Toolchain MSVC operativo (`msvc-debug`): depende del Windows SDK
 - [ ] `GC_WARNINGS_AS_ERRORS` activado en el CI de Windows
-- [ ] `.clang-tidy` y spdlog
+- [x] `.clang-tidy` y spdlog. `python tools/dev/tidy.py [--fix] [filtro]` pasa el clang-tidy de CLion por `src`, `apps` y `tests` y tiene que quedar en 0 avisos (lo que se desactiva y por qué está en el propio `.clang-tidy`). El registro es `gc_log` (`src/log`, spdlog 1.15.3 con hash verificado o el de vcpkg): `init`, el nivel de `GENCLIP_LOG` y salida a stderr. `genclip` lo usa para sus errores; `gc_core` no registra nada
+- [ ] clang-tidy en el CI (`tidy.py` usa el clang-tidy y la MinGW de CLion; en el CI, el `run-clang-tidy` de cada plataforma)
 - [ ] CI con ASan/UBSan (clang)
 
 ## F1 — Modelo y formato

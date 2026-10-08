@@ -35,13 +35,13 @@ TEST_CASE("coste de una edición en la timeline real más grande", "[.bench]") {
 
     SequentialIdSource ids;
     constexpr int kRuns = 2000;
-    const auto t0 = std::chrono::steady_clock::now();
+    const auto started = std::chrono::steady_clock::now();
     for (int i = 0; i < kRuns; ++i) {
         auto res = apply_command(biggest, ops::MoveClip{clip_id, 1000.0 + i * 0.01, std::nullopt}, ids);
         REQUIRE(res);
     }
-    const auto t1 = std::chrono::steady_clock::now();
-    const double us = std::chrono::duration<double, std::micro>(t1 - t0).count() / kRuns;
+    const auto finished = std::chrono::steady_clock::now();
+    const double us = std::chrono::duration<double, std::micro>(finished - started).count() / kRuns;
     std::cout << "move_clip + settle + validación en " << biggest.clips.size() << " clips: " << us
               << " µs por operación\n";
 }

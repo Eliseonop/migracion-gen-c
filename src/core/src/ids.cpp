@@ -5,12 +5,18 @@
 
 namespace gc::core {
 
-RandomIdSource::RandomIdSource() {
+namespace {
+
+std::mt19937_64 seeded_rng() {
     std::random_device rd;
     const auto now = static_cast<std::uint64_t>(std::chrono::steady_clock::now().time_since_epoch().count());
-    std::seed_seq seq{rd(), rd(), rd(), rd(), static_cast<unsigned>(now), static_cast<unsigned>(now >> 32)};
-    rng_.seed(seq);
+    std::seed_seq seq{rd(), rd(), rd(), rd(), static_cast<unsigned>(now), static_cast<unsigned>(now >> 32U)};
+    return std::mt19937_64(seq);
 }
+
+} // namespace
+
+RandomIdSource::RandomIdSource() : rng_(seeded_rng()) {}
 
 std::string RandomIdSource::hex32() { return std::format("{:016x}{:016x}", rng_(), rng_()); }
 

@@ -25,7 +25,7 @@ TimelineClip clip(std::string id, std::string track, double start, double dur, s
     return c;
 }
 
-TimelineTrack track(std::string id, std::string kind = "video") {
+TimelineTrack track(const std::string& id, std::string kind = "video") {
     TimelineTrack t;
     t.id = id;
     t.name = id;
@@ -35,6 +35,7 @@ TimelineTrack track(std::string id, std::string kind = "video") {
 
 std::vector<std::string> ids(const std::vector<Cow<TimelineClip>>& list) {
     std::vector<std::string> out;
+    out.reserve(list.size());
     for (const auto& c : list) {
         out.push_back(c->id);
     }

@@ -54,7 +54,7 @@ Result<std::string> read_bytes(const std::filesystem::path& path) {
 Result<Json> parse_text(const std::string& text, const std::filesystem::path& path) {
     // nlohmann toma un NUL por el final del texto («{"a":1}\0basura» cargaría); para json.loads
     // de Python es un error, dentro o fuera de un texto. Pasa en archivos a medio escribir.
-    if (text.find('\0') != std::string::npos) {
+    if (text.contains('\0')) {
         return fail(ErrorCode::Parse, "carácter NUL en el JSON", path_to_utf8(path));
     }
     try {

@@ -334,7 +334,7 @@ Result<void> paste_style(Json& out, const Json& src) {
 }
 
 Result<void> apply_group(std::string_view g, Json& out, const Json& src, IdSource& ids) {
-    auto truthy_or = [&](const char* key, Json fallback) {
+    auto truthy_or = [&](const char* key, const Json& fallback) {
         const Json& v = field(src, key);
         return py_truthy(v) ? v : fallback;
     };

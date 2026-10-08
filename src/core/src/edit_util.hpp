@@ -88,7 +88,7 @@ inline Result<std::optional<double>> opt_py_number(const Json& v, std::string_vi
         return std::optional<double>{};
     }
     if (const auto n = py_number(v)) {
-        return std::optional<double>{*n};
+        return n;
     }
     return invalid(std::string(what) + " debe ser un número");
 }
@@ -117,6 +117,6 @@ inline Result<std::string> req_string(const Json& v, std::string_view what) {
     if (!var##_r) {                                                                                                   \
         return std::unexpected(var##_r.error());                                                                      \
     }                                                                                                                 \
-    auto var = std::move(*var##_r)
+    auto var = std::move(*var##_r) // NOLINT(bugprone-macro-parentheses): declara `var`
 
 } // namespace gc::core::detail

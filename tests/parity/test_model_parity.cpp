@@ -77,7 +77,7 @@ void check_file(const FixtureFile& file) {
             if (!paths.empty()) {
                 INFO("C++ falló en: " << result.error().to_string());
                 INFO("Python falló en: " << paths.dump());
-                CHECK(std::find(paths.begin(), paths.end(), Json(result.error().path)) != paths.end());
+                CHECK(std::ranges::find(paths, Json(result.error().path)) != paths.end());
             }
             continue;
         }

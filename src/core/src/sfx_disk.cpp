@@ -40,7 +40,7 @@ const Json& get_or(const Json& obj, std::string_view key, const Json& fallback) 
 std::vector<std::string> lowered_parts(const fs::path& p) {
     std::vector<std::string> out;
     for (const fs::path& part : p) {
-        std::string s = path_to_utf8(part);
+        const std::string s = path_to_utf8(part);
         if (!s.empty()) {
             out.push_back(py_lower(s));
         }
@@ -112,7 +112,7 @@ std::optional<fs::path> sfx_base(const Json& settings, const fs::path& default_d
     if (custom.is_string()) {
         const auto& text = custom.get_ref<const std::string&>();
         // Con un NUL, Path.exists() da False; Windows cortaría la ruta en él.
-        if (!text.empty() && text.find('\0') == std::string::npos) {
+        if (!text.empty() && !text.contains('\0')) {
             fs::path p = path_from_utf8(text);
             if (fs::is_directory(p, ec)) {
                 return p;
@@ -245,7 +245,7 @@ std::vector<Json> filter_sfx_items(const std::vector<Json>& items, std::string_v
         } else if (!cat.empty()) {
             const std::string where = py_lower(py_str(get_or(it, "folder", kEmptyText))) + " " +
                                       py_lower(py_str(get_or(it, "category", kEmptyText)));
-            if (where.find(cat) == std::string::npos) {
+            if (!where.contains(cat)) {
                 continue;
             }
         }
@@ -254,7 +254,7 @@ std::vector<Json> filter_sfx_items(const std::vector<Json>& items, std::string_v
                 py_str(get_or(it, "name", kEmptyText)) + " " + py_str(get_or(it, "category", kEmptyText)) + " " +
                 py_str(get_or(it, "uso", kEmptyText)) + " " + py_str(get_or(it, "folder", kEmptyText)));
             const bool all = std::ranges::all_of(tokens, [&](const std::string& t) {
-                return hay.find(t) != std::string::npos;
+                return hay.contains(t);
             });
             if (!all) {
                 continue;
@@ -299,7 +299,7 @@ Json sfx_search(const std::optional<fs::path>& base, const Json& settings, std::
 }
 
 std::optional<fs::path> sfx_resolve(const std::optional<fs::path>& base, std::string_view relpath) {
-    if (!base || relpath.find('\0') != std::string_view::npos) {
+    if (!base || relpath.contains('\0')) {
         return std::nullopt;
     }
     std::error_code ec;
@@ -307,7 +307,7 @@ std::optional<fs::path> sfx_resolve(const std::optional<fs::path>& base, std::st
     if (ec) {
         return std::nullopt;
     }
-    const fs::path target = fs::weakly_canonical(root / path_from_utf8(relpath), ec);
+    fs::path target = fs::weakly_canonical(root / path_from_utf8(relpath), ec);
     if (ec) {
         return std::nullopt;
     }

@@ -6,9 +6,11 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <optional>
 #include <string>
 #include <string_view>
+#include <utility>
 
 #include "gc/core/json.hpp"
 
@@ -29,7 +31,9 @@ struct PathNode {
 };
 
 // Se lanza al validar y se convierte en gc::Error en la frontera de serialize.cpp.
-struct ValidationFailure {
+struct ValidationFailure : std::exception {
+    ValidationFailure(std::string p, std::string m) : path(std::move(p)), message(std::move(m)) {}
+    [[nodiscard]] const char* what() const noexcept override { return message.c_str(); }
     std::string path;
     std::string message;
 };

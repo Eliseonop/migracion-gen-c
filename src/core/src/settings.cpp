@@ -58,7 +58,7 @@ std::string secret(const Json& value) {
     if (value.is_boolean() || value.is_null()) {
         return {};
     }
-    std::string text = py_strip(py_str(value));
+    const std::string text = py_strip(py_str(value));
     return is_mask(text) ? std::string() : text;
 }
 
@@ -286,7 +286,7 @@ Json SettingsFile::load_unlocked() const {
 Json SettingsFile::load() const { return load_unlocked(); }
 
 Result<Json> SettingsFile::save(const Json& patch) {
-    const std::lock_guard lock(mutex_);
+    const std::scoped_lock lock(mutex_);
     Json current = load_unlocked();
     GC_TRY(incoming, mapping(patch, "ajustes"));
     incoming.erase("gemini_api_key_set");
@@ -425,7 +425,7 @@ Result<std::size_t> SettingsFile::add_key(std::string_view provider, std::string
     if (val.empty()) {
         return invalid("La API key está vacía.");
     }
-    const std::lock_guard lock(mutex_);
+    const std::scoped_lock lock(mutex_);
     Json d = read_raw();
     GC_TRY(keys, keys_list_from(d, kid));
     keys.push_back(val);
@@ -444,7 +444,7 @@ Result<std::size_t> SettingsFile::set_key(std::string_view provider, std::int64_
     if (val.empty()) {
         return invalid("La API key está vacía.");
     }
-    const std::lock_guard lock(mutex_);
+    const std::scoped_lock lock(mutex_);
     Json d = read_raw();
     GC_TRY(keys, keys_list_from(d, kid));
     if (index >= 0 && static_cast<std::size_t>(index) < keys.size()) {
@@ -463,7 +463,7 @@ Result<std::size_t> SettingsFile::set_key(std::string_view provider, std::int64_
 
 Result<std::size_t> SettingsFile::remove_key(std::string_view provider, std::int64_t index) {
     const std::string kid = py_strip(provider);
-    const std::lock_guard lock(mutex_);
+    const std::scoped_lock lock(mutex_);
     Json d = read_raw();
     GC_TRY(keys, keys_list_from(d, kid));
     if (index >= 0 && static_cast<std::size_t>(index) < keys.size()) {

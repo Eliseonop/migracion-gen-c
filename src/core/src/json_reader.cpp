@@ -5,6 +5,7 @@
 #include <limits>
 #include <locale>
 #include <optional>
+#include <ranges>
 #include <sstream>
 #include <utility>
 #include <vector>
@@ -55,7 +56,7 @@ std::optional<std::string> strip_underscores(std::string_view s) {
 } // namespace
 
 std::optional<double> parse_py_float(std::string_view text) {
-    std::string_view s = trim(text);
+    const std::string_view s = trim(text);
     if (s.empty()) {
         return std::nullopt;
     }
@@ -99,7 +100,7 @@ std::optional<double> parse_py_float(std::string_view text) {
 }
 
 std::optional<std::int64_t> parse_py_int(std::string_view text, bool accept_real_text) {
-    std::string_view s = trim(text);
+    const std::string_view s = trim(text);
     if (s.empty()) {
         return std::nullopt;
     }
@@ -160,8 +161,8 @@ std::string PathNode::str() const {
         chain.push_back(n);
     }
     std::string out;
-    for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
-        const PathNode& n = **it;
+    for (const PathNode* node : std::views::reverse(chain)) {
+        const PathNode& n = *node;
         if (n.is_index) {
             out += '[';
             out += std::to_string(n.index);

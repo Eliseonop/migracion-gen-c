@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <format>
 
 #include "edit_ops.hpp"
 #include "edit_util.hpp"
@@ -155,8 +156,8 @@ Result<EditResult> run(const Timeline& tl, const ops::ApplyEffect& op, IdSource&
         }
         const std::string kind = out.clips[*ci]->kind;
         if (kind != "video" && kind != "image" && kind != "motion") {
-            return invalid("los efectos de vídeo solo aplican a vídeo, imagen o motion (clip " + cid + " es " +
-                           kind + ")");
+            return invalid(
+                std::format("los efectos de vídeo solo aplican a vídeo, imagen o motion (clip {} es {})", cid, kind));
         }
         std::vector<Json> cur;
         if (const auto& vfx = out.clips[*ci]->vfx; vfx && vfx->is_array()) {

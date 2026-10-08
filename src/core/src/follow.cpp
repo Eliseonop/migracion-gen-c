@@ -134,6 +134,7 @@ Result<std::vector<FollowKey>> follow_keys(const TimelineClip& video, const Time
     const double f_dur = clip_timeline_duration(follower);
 
     std::vector<const TrackPt*> order;
+    order.reserve(pts.size());
     for (const auto& p : pts) {
         order.push_back(&p);
     }

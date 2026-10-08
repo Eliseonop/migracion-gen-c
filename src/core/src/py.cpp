@@ -11,6 +11,7 @@
 #include <span>
 #include <sstream>
 #include <system_error>
+#include <utility>
 
 #include "json_reader.hpp"
 
@@ -41,7 +42,7 @@ char32_t next_code_point(std::string_view s, std::size_t& i) {
         cp = b0;
     } else {
         for (std::size_t k = 1; k < len; ++k) {
-            cp = (cp << 6) | (static_cast<unsigned char>(s[i + k]) & 0x3FU);
+            cp = (cp << 6U) | (static_cast<char32_t>(static_cast<unsigned char>(s[i + k])) & 0x3FU);
         }
     }
     i += len;
@@ -91,7 +92,7 @@ double py_round(double x, int ndigits) {
             digits.push_back(c);
         }
     }
-    if (ndigits >= 0 && ndigits < static_cast<int>(kPow10.size()) && digits.size() <= 15) {
+    if (ndigits >= 0 && std::cmp_less(ndigits, kPow10.size()) && digits.size() <= 15) {
         // Entero exacto (< 2^53) entre una potencia de 10 exacta: la división IEEE
         // da el double más cercano al decimal, igual que strtod.
         std::uint64_t n = 0;
@@ -323,8 +324,8 @@ std::string hex_escape(char32_t c) {
 }
 
 std::string repr_text(std::string_view utf8) {
-    const bool single = utf8.find('\'') != std::string_view::npos;
-    const bool dbl = utf8.find('"') != std::string_view::npos;
+    const bool single = utf8.contains('\'');
+    const bool dbl = utf8.contains('"');
     const char quote = single && !dbl ? '"' : '\'';
     std::string out(1, quote);
     std::size_t i = 0;
@@ -443,7 +444,7 @@ WinPath parse_win_path(std::string_view text) {
         const auto second = out.drive.find('\\', 2);
         const std::string_view server =
             seps == 3 ? std::string_view(out.drive).substr(2, second - 2) : std::string_view();
-        if ((seps == 3 && server != "" && server != "?" && server != "." && server != "?.") || seps == 5) {
+        if ((seps == 3 && !server.empty() && server != "?" && server != "." && server != "?.") || seps == 5) {
             out.root = "\\";
         }
     }
@@ -505,8 +506,8 @@ std::string py_quote(std::string_view text) {
             out += static_cast<char>(c);
         } else {
             out += '%';
-            out += kHex[c >> 4];
-            out += kHex[c & 15];
+            out += kHex[static_cast<unsigned>(c) >> 4U];
+            out += kHex[static_cast<unsigned>(c) & 15U];
         }
     }
     return out;
@@ -586,7 +587,7 @@ std::string py_lower(std::string_view utf8) {
             out += final_sigma ? "\xCF\x82" : "\xCF\x83"; // ς o σ
             continue;
         }
-        const auto it = std::ranges::lower_bound(kLower, c, {}, &LowerEntry::cp);
+        const auto* const it = std::ranges::lower_bound(kLower, c, {}, &LowerEntry::cp);
         if (it != std::end(kLower) && it->cp == c) {
             out += it->utf8;
         } else {

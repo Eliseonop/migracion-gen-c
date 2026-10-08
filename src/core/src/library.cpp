@@ -27,7 +27,7 @@ std::string ascii_lower(std::string s) {
 
 bool is_youtube(const std::string& url) {
     const std::string low = ascii_lower(url);
-    return std::ranges::any_of(kYtHints, [&](std::string_view h) { return low.find(h) != std::string::npos; });
+    return std::ranges::any_of(kYtHints, [&](std::string_view h) { return low.contains(h); });
 }
 
 // La carpeta de la URL del material según su tipo guardado.
@@ -154,7 +154,7 @@ std::optional<std::filesystem::path> resolve_library_media(const std::filesystem
     }
     std::error_code ec;
     const auto folder = std::filesystem::weakly_canonical(data_dir / "library" / path_from_utf8(kind), ec);
-    const auto target = std::filesystem::weakly_canonical(folder / path_from_utf8(filename), ec);
+    auto target = std::filesystem::weakly_canonical(folder / path_from_utf8(filename), ec);
     if (ec || target.parent_path() != folder) {
         return std::nullopt;
     }
@@ -238,7 +238,7 @@ Result<Json> LibraryFile::list() const {
 }
 
 Result<Json> LibraryFile::update_item(std::string_view item_id, const Json& fields) {
-    const std::lock_guard lock(mutex_);
+    const std::scoped_lock lock(mutex_);
     Json data = load();
     GC_TRY(idx, find_item(data, item_id));
     if (!idx) {
@@ -261,7 +261,7 @@ Result<Json> LibraryFile::update_item(std::string_view item_id, const Json& fiel
 }
 
 Result<Json> LibraryFile::set_semantic(std::string_view item_id, const Json& semantic) {
-    const std::lock_guard lock(mutex_);
+    const std::scoped_lock lock(mutex_);
     Json data = load();
     GC_TRY(idx, find_item(data, item_id));
     if (!idx) {
@@ -289,7 +289,7 @@ Result<Json> LibraryFile::unsave(std::string_view item_id, const ProjectsFile& p
     }
     Json item;
     {
-        const std::lock_guard lock(mutex_);
+        const std::scoped_lock lock(mutex_);
         Json data = load();
         GC_TRY(idx, find_item(data, item_id));
         if (!idx) {

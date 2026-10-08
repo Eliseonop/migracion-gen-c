@@ -120,6 +120,7 @@ Frame frame_at(const std::vector<Keyframe>& keyframes, double time, double fallb
         return {0.5, 0.5, fallback_zoom, fallback_mode, "cover"};
     }
     std::vector<const Keyframe*> s;
+    s.reserve(keyframes.size());
     for (const auto& k : keyframes) {
         s.push_back(&k);
     }

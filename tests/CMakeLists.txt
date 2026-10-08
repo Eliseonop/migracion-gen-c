@@ -4,6 +4,7 @@ add_executable(gc_tests
     unit/test_frame.cpp
     unit/test_keyframes.cpp
     unit/test_layers.cpp
+    unit/test_log.cpp
     unit/test_migrations.cpp
     unit/test_model.cpp
     unit/test_py.cpp
@@ -24,7 +25,7 @@ add_executable(gc_tests
 )
 # support/: utilidades de los tests. src/core/src: tests de caja blanca de piezas internas (py.hpp).
 target_include_directories(gc_tests PRIVATE support "${PROJECT_SOURCE_DIR}/src/core/src")
-target_link_libraries(gc_tests PRIVATE gc::core Catch2::Catch2WithMain)
+target_link_libraries(gc_tests PRIVATE gc::core gc::log Catch2::Catch2WithMain)
 # Fixtures: tests/fixtures/model (al repo) y tests/fixtures/local (tus datos, ignorado por git).
 target_compile_definitions(gc_tests PRIVATE
     GC_FIXTURES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fixtures"
