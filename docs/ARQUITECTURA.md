@@ -111,6 +111,8 @@ apply_command(timeline, command, ids):
   | `sfx_disk.hpp` | La biblioteca de SFX en disco: carpeta activa, `sfx_library.json` o escaneo, búsqueda, favoritos, `resolve` y `load_sfx_library` |
   | `library.hpp` | `data/library`: materiales guardados, su DTO y quitarlos |
   | `settings.hpp` | `data/settings.json`: ajustes con defectos, API keys (varias por proveedor) y vista pública sin secretos |
+  | `collections.hpp` | Colecciones de material (`material_root`): lista, búsqueda, preferencias, crear, añadir archivos y `resolve` |
+  | `projects_store.hpp` | `data/projects.json`: proyectos y carpetas del inicio, duplicar con sus archivos, materiales, timeline y documentos (en crudo, como `projects.py`) |
 
 - **Parámetros:** los nombres son los del MCP de video-yt. `parse_command` aplica las reglas de los kwargs de Python: parámetro desconocido = error y obligatorio ausente = error.
 - **Paridad:** 378 casos sintéticos (156 de error) y 1919 operaciones sobre tus 18 timelines reales coinciden con `timeline_store.apply_op` en timeline, `changed` y `warnings`, y fallan donde Python falla (el mensaje no se compara). Las reales incluyen subtítulos generados desde sus transcripciones y fotogramas congelados.

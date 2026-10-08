@@ -4,6 +4,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <cmath>
+#include <cstdint>
 #include <utility>
 
 #include "json_reader.hpp"
@@ -325,4 +326,29 @@ TEST_CASE("py_path_str y py_path_name con unidades, UNC y raíces son los de Pyt
     CHECK(py_path_name("\x61\x3A").empty());
     CHECK(py_path_str("\x31\x3A\x2F\x78") == "\x31\x3A\x5C\x78");
     CHECK(py_path_name("\x31\x3A\x2F\x78") == "\x78");
+}
+
+TEST_CASE("py_equal es el == de Python entre valores JSON (valores medidos en Python)", "[py]") {
+    using gc::Json;
+    const auto u64 = [](std::uint64_t v) { return Json(v); };
+    const auto i64 = [](std::int64_t v) { return Json(v); };
+    CHECK(py_equal(Json(true), i64(1)));
+    CHECK(py_equal(Json(true), Json(1.0)));
+    CHECK(py_equal(Json(false), i64(0)));
+    CHECK_FALSE(py_equal(Json(true), i64(2)));
+    CHECK_FALSE(py_equal(i64(9007199254740993), Json(9007199254740992.0))); // 2**53 + 1 != 2.0**53
+    CHECK(py_equal(i64(9007199254740992), Json(9007199254740992.0)));
+    CHECK_FALSE(py_equal(u64(18446744073709551615ULL), Json(18446744073709551616.0))); // 2**64 - 1 != 2.0**64
+    CHECK(py_equal(u64(9223372036854775808ULL), Json(9223372036854775808.0)));       // 2**63
+    CHECK_FALSE(py_equal(i64(-1), u64(18446744073709551615ULL)));
+    CHECK(py_equal(u64(18446744073709551615ULL), u64(18446744073709551615ULL)));
+    CHECK(py_equal(i64(9223372036854775807), u64(9223372036854775807ULL)));
+    CHECK_FALSE(py_equal(i64(1), Json("1")));
+    CHECK(py_equal(Json(), Json()));
+    CHECK(py_equal(Json::parse("[1, 2.0]"), Json::parse("[1.0, 2]")));
+    CHECK(py_equal(Json::parse(R"({"a": 1, "b": 2})"), Json::parse(R"({"b": 2.0, "a": true})")));
+    CHECK_FALSE(py_equal(Json::parse(R"({"a": 1})"), Json::parse(R"({"a": 1, "b": 2})")));
+    CHECK_FALSE(py_equal(Json(std::nan("")), Json(std::nan(""))));
+    CHECK_FALSE(py_equal(Json(0.5), i64(0)));
+    CHECK(py_equal(Json(-0.0), i64(0)));
 }

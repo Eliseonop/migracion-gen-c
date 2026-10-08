@@ -835,7 +835,9 @@ Preparación de la biblioteca de SFX y de las colecciones, que ordenan y filtran
 
 **Siguiente:** `gc_services`, el almacén de proyectos (`projects.py`). F3 sigue esperando al Windows SDK.
 
-### 2026-10-08 — `gc_services`: el almacén de proyectos (projects.py)
+### 2026-10-08 — F1: el almacén de proyectos (projects.py)
+
+En el plan va en `gc_services`. De momento vive en `gc_core`, con los ajustes, la biblioteca y las colecciones; se separará cuando haya servicios con E/S de verdad (F5-F7).
 
 **Hecho: `projects_store.hpp`** (espejo de `projects.py` y de lo que usa de `storage.py`):
 - **`ProjectsStore`:** `data/projects.json` en crudo, con un mutex como el `_lock` de Python y la hora inyectable (`_now`). Hace lo mismo que `projects.py`:
@@ -856,6 +858,16 @@ Preparación de la biblioteca de SFX y de las colecciones, que ordenan y filtran
   - upsert de clips (con y sin id, `index` 0), manifest con `file` repetido, vacío o ausente;
   - `retarget` por id, por nombre y sin nombre;
   - 13 formas raras del archivo.
-- **Tu `projects.json`:** una copia (18 proyectos) en una carpeta temporal, con lista, grupos, cada proyecto, renombrar, mover, duplicar, guardar una timeline, editar un material y borrar. El archivo final sale byte a byte igual que el de Python. El tuyo no se toca.
+- **Tu `projects.json`:** una copia (18 proyectos) en una carpeta temporal, con lista, grupos, cada proyecto, renombrar, mover, duplicar, guardar una timeline, editar un material y borrar. El archivo final sale con el mismo texto que el de Python. El tuyo no se toca.
 - **Mutación:** 41/41 (`tools/dev/mutantes.py projects`). En la primera pasada se escaparon 5 por huecos de las fixtures, ya cubiertos: el BOM con el mismo contenido que el defecto, `set_folder` sobre un proyecto sin nada que preparar, un `null` sobre un campo que ya lo era, un `retarget` sin nadie con ese nombre y `True == 1`.
 - **Resultado:** 95 tests (93 de Catch2 y 2 de la CLI) y 112 349 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 70 archivos.
+
+**Revisión del subagente (CORREGIR: un bloqueante), ya aplicada:**
+- **Bloqueante:** `get_or` devolvía la dirección de su `fallback`, y tres llamadas le pasaban un temporal (`Json::array()`): `list_groups`, `create_project`/`move_project` con grupo y `apply_manifest` sin «materials». Al faltar la clave (un `projects.json` nuevo no tiene «groups») se leía memoria ya liberada; los tests pasaban de casualidad. Ahora el defecto es una constante y `get_or` con un temporal no compila. Pasos de regresión en las fixtures.
+- 153 pasos adversariales de la revisión, pasados por el Python real: ids y grupos numéricos, `set_folder` y timelines de otro tipo, manifest con `file` y `project` raros, materiales con `index` raros, motion y retarget con tipos raros, grupos de otra forma, `EXPORTS` y un archivo «exports» al duplicar, y Unicode en `strip`. Destaparon un orden distinto: `add_clips` sobre unos `clips` que son `{}` o `""` pide el uuid antes de fallar en el `append`, como Python.
+- Docs: «byte a byte» era demasiado. Python en Windows escribe CRLF, nlohmann escribe los reales con Grisu2 (y no con `repr`) y los enteros de más de 64 bits pasan a real. Queda anotado y va en la tanda siguiente.
+- **Riesgo anotado como lo siguiente:** `NaN`, `Infinity` y `1e999` se leen como archivo ilegible, y la primera escritura vaciaría `projects.json`. Python los lee y los escribe.
+- Tests directos de `py_equal` (enteros de más de 2^53 y de 64 bits, `True == 1`, listas y dicts, NaN) y de `utc_now_iso` y `project_base`, que solo cubrían las fixtures.
+- **Resultado:** 304 pasos (77 de error, 6 con mensaje); 98 tests (96 de Catch2 y 2 de la CLI) y 112 774 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 71 archivos.
+
+**Siguiente:** JSON como Python (leer `NaN`, `Infinity` y `1e999`, y escribir como `json.dumps`); después, «Guardar en la biblioteca» (`library.save_from_project`).

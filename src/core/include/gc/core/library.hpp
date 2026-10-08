@@ -5,8 +5,8 @@
 //
 // Cada material es un dict libre ({id, resource_type, filename, label, origin…}); como en
 // Python, el tipo, el origen y la fuente se deducen si faltan. «Guardar en la biblioteca»
-// desde un proyecto (save_from_project) cambia el proyecto y copia archivos: llega con el
-// almacén de proyectos de la app (F5).
+// desde un proyecto (save_from_project) cambia el proyecto (ProjectsStore) y copia archivos:
+// es lo siguiente que se porta.
 
 #include <filesystem>
 #include <mutex>

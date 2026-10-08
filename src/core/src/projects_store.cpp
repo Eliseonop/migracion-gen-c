@@ -27,6 +27,7 @@ using detail::py_truthy;
 namespace {
 
 const Json kNull;
+const Json kEmptyArray = Json::array();
 
 // Un projects.json con otra forma: Python lanza KeyError, TypeError o AttributeError.
 std::unexpected<Error> shape_error(std::string what) {
@@ -47,7 +48,8 @@ Result<Json*> at_key(Json& data, const char* key) {
     return &*it;
 }
 
-// d.get(key, default) de Python: error si no es un dict.
+// d.get(key, default) de Python: error si no es un dict. Devuelve la dirección de `fallback`
+// si falta la clave, así que tiene que vivir más que el resultado (un temporal no compila).
 Result<const Json*> get_or(const Json& d, const char* key, const Json& fallback) {
     if (!d.is_object()) {
         return shape_error(std::string("se esperaba un objeto al leer «") + key + "»");
@@ -55,6 +57,7 @@ Result<const Json*> get_or(const Json& d, const char* key, const Json& fallback)
     const auto it = d.find(key);
     return it == d.end() ? &fallback : &*it;
 }
+Result<const Json*> get_or(const Json& d, const char* key, Json&& fallback) = delete;
 
 // Lo que recorre `for x in seq` cuando cada x se usa como dict: los elementos de una lista.
 // Un dict o un texto vacíos no dan nada; con algo dentro dan textos, y x["…"] o x.get fallan.
@@ -109,7 +112,7 @@ Result<Json*> find_project(Json& data, std::string_view pid) {
 
 // any(g["id"] == gid for g in data.get("groups", [])).
 Result<bool> group_exists(const Json& data, std::string_view gid) {
-    auto groups = get_or(data, "groups", Json::array());
+    auto groups = get_or(data, "groups", kEmptyArray);
     if (!groups) {
         return std::unexpected(groups.error());
     }
@@ -299,7 +302,7 @@ Result<Project> ProjectsStore::create_project(std::string_view name, std::option
 
 Result<std::vector<ProjectGroup>> ProjectsStore::list_groups() const {
     const Json data = load();
-    auto groups = get_or(data, "groups", Json::array());
+    auto groups = get_or(data, "groups", kEmptyArray);
     if (!groups) {
         return std::unexpected(groups.error());
     }
@@ -611,12 +614,13 @@ Result<void> ProjectsStore::add_clips(std::string_view pid, const std::vector<Cl
             d["created_at"] = stamp;
             // Upsert por índice: regenerar un tramo actualiza su clip en vez de duplicarlo
             // (mismo index → mismo archivo en disco).
-            if (!list.is_array()) {
-                return shape_error("«clips» no es una lista");
+            auto items = dict_items(list, "«clips»");
+            if (!items) {
+                return std::unexpected(items.error());
             }
             std::optional<std::size_t> existing;
-            for (std::size_t i = 0; i < list.size(); ++i) {
-                auto index = get_or(list[i], "index", kNull);
+            for (std::size_t i = 0; i < items->size(); ++i) {
+                auto index = get_or((*items)[i], "index", kNull);
                 if (!index) {
                     return std::unexpected(index.error());
                 }
@@ -637,7 +641,10 @@ Result<void> ProjectsStore::add_clips(std::string_view pid, const std::vector<Cl
                 list[*existing] = std::move(d);
             } else {
                 if (!py_truthy(d.value("id", Json()))) {
-                    d["id"] = ids.hex32().substr(0, 12);
+                    d["id"] = ids.hex32().substr(0, 12); // antes del append, que falla si no es lista
+                }
+                if (!list.is_array()) {
+                    return shape_error("«clips» no es una lista");
                 }
                 list.push_back(std::move(d));
             }
@@ -766,7 +773,7 @@ Result<std::optional<Json>> ProjectsStore::remove_material(std::string_view pid,
 Result<std::optional<Project>> ProjectsStore::apply_manifest(std::string_view pid, const Json& manifest) {
     // by_file: los materiales del manifest por su `file` (una clave igual sustituye al anterior).
     std::vector<std::pair<Json, const Json*>> by_file;
-    auto materials = get_or(manifest, "materials", Json::array());
+    auto materials = get_or(manifest, "materials", kEmptyArray);
     if (!materials) {
         return std::unexpected(materials.error());
     }

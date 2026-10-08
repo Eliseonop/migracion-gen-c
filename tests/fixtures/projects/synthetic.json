@@ -8906,6 +8906,3829 @@
    ],
    "error": "TypeError",
    "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"audios\": null, \"motion_compositions\": null}]}"
+  },
+  {
+   "step": [
+    "remove"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Uno",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "clips": [
+        {
+         "index": 0,
+         "filename": "clip_0.mp4",
+         "url": "/api/media/p1/video/clip_0.mp4",
+         "start": 0,
+         "end": 10
+        }
+       ]
+      },
+      {
+       "id": "5",
+       "name": "Cinco",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "group_id": 5
+      }
+     ],
+     "groups": [
+      {
+       "id": 5,
+       "name": "num",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      },
+      {
+       "id": "g1",
+       "name": "g",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Uno\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"clip_0.mp4\", \"url\": \"/api/media/p1/video/clip_0.mp4\", \"start\": 0, \"end\": 10}]}, {\"id\": \"5\", \"name\": \"Cinco\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"group_id\": 5}], \"groups\": [{\"id\": 5, \"name\": \"num\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}, {\"id\": \"g1\", \"name\": \"g\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "get",
+    "5"
+   ],
+   "error": "ValidationError"
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "error": "ValidationError"
+  },
+  {
+   "step": [
+    "move",
+    "5",
+    "g1"
+   ],
+   "result": {
+    "id": "5",
+    "name": "Cinco",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": null,
+    "group_id": "g1",
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ]\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": \"g1\"\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "move",
+    "p1",
+    "5"
+   ],
+   "error": "ValueError",
+   "message": "La carpeta no existe.",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ]\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": \"g1\"\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "delete_group",
+    "5"
+   ],
+   "result": false,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ]\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": \"g1\"\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "rename_group",
+    "5",
+    "x"
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ]\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": \"g1\"\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "create",
+    "n",
+    "5"
+   ],
+   "result": {
+    "id": "000015ab",
+    "name": "n",
+    "created_at": "2026-01-01T00:00:23+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000015ab\",\n      \"name\": \"n\",\n      \"created_at\": \"2026-01-01T00:00:23+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ]\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": \"g1\"\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "delete",
+    "5"
+   ],
+   "result": true,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000015ab\",\n      \"name\": \"n\",\n      \"created_at\": \"2026-01-01T00:00:23+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ]\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Uno",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "clips": [
+        {
+         "index": 0,
+         "filename": "clip_0.mp4",
+         "url": "/api/media/p1/video/clip_0.mp4",
+         "start": 0,
+         "end": 10
+        }
+       ]
+      },
+      {
+       "id": "5",
+       "name": "Cinco",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "group_id": 5
+      }
+     ],
+     "groups": [
+      {
+       "id": 5,
+       "name": "num",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      },
+      {
+       "id": "g1",
+       "name": "g",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Uno\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"clip_0.mp4\", \"url\": \"/api/media/p1/video/clip_0.mp4\", \"start\": 0, \"end\": 10}]}, {\"id\": \"5\", \"name\": \"Cinco\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"group_id\": 5}], \"groups\": [{\"id\": 5, \"name\": \"num\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}, {\"id\": \"g1\", \"name\": \"g\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "set_folder",
+    "p1",
+    5
+   ],
+   "error": "ValidationError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ],\n      \"folder\": 5\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": 5\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "set_folder",
+    "p1",
+    null
+   ],
+   "result": {
+    "id": "p1",
+    "name": "Uno",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [
+     {
+      "index": 0,
+      "filename": "clip_0.mp4",
+      "url": "/api/media/p1/video/clip_0.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "id": null,
+      "source_url": null,
+      "created_at": null,
+      "label": null,
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": null,
+      "external_id": null,
+      "author": null,
+      "license_info": null,
+      "in_point": null,
+      "out_point": null,
+      "parent_id": null,
+      "face_track": null
+     }
+    ],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ],\n      \"folder\": null\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": 5\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "set_folder",
+    "p1",
+    ""
+   ],
+   "result": {
+    "id": "p1",
+    "name": "Uno",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": "",
+    "group_id": null,
+    "clips": [
+     {
+      "index": 0,
+      "filename": "clip_0.mp4",
+      "url": "/api/media/p1/video/clip_0.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "id": null,
+      "source_url": null,
+      "created_at": null,
+      "label": null,
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": null,
+      "external_id": null,
+      "author": null,
+      "license_info": null,
+      "in_point": null,
+      "out_point": null,
+      "parent_id": null,
+      "face_track": null
+     }
+    ],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ],\n      \"folder\": \"\"\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": 5\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "set_folder",
+    "p1",
+    []
+   ],
+   "error": "ValidationError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ],\n      \"folder\": []\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": 5\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "set_folder",
+    "p1",
+    "  "
+   ],
+   "result": {
+    "id": "p1",
+    "name": "Uno",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": "  ",
+    "group_id": null,
+    "clips": [
+     {
+      "index": 0,
+      "filename": "clip_0.mp4",
+      "url": "/api/media/p1/video/clip_0.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "id": null,
+      "source_url": null,
+      "created_at": null,
+      "label": null,
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": null,
+      "external_id": null,
+      "author": null,
+      "license_info": null,
+      "in_point": null,
+      "out_point": null,
+      "parent_id": null,
+      "face_track": null
+     }
+    ],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ],\n      \"folder\": \"  \"\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": 5\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "get",
+    "p1"
+   ],
+   "result": {
+    "id": "p1",
+    "name": "Uno",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": "  ",
+    "group_id": null,
+    "clips": [
+     {
+      "index": 0,
+      "filename": "clip_0.mp4",
+      "url": "/api/media/p1/video/clip_0.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "id": "0",
+      "source_url": null,
+      "created_at": null,
+      "label": null,
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": null,
+      "external_id": null,
+      "author": null,
+      "license_info": null,
+      "in_point": null,
+      "out_point": null,
+      "parent_id": null,
+      "face_track": null
+     }
+    ],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   }
+  },
+  {
+   "step": [
+    "timeline",
+    "p1",
+    []
+   ],
+   "error": "ValidationError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ],\n      \"folder\": \"  \",\n      \"timeline\": []\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": 5\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "timeline",
+    "p1",
+    null
+   ],
+   "result": {
+    "id": "p1",
+    "name": "Uno",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": "  ",
+    "group_id": null,
+    "clips": [
+     {
+      "index": 0,
+      "filename": "clip_0.mp4",
+      "url": "/api/media/p1/video/clip_0.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "id": null,
+      "source_url": null,
+      "created_at": null,
+      "label": null,
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": null,
+      "external_id": null,
+      "author": null,
+      "license_info": null,
+      "in_point": null,
+      "out_point": null,
+      "parent_id": null,
+      "face_track": null
+     }
+    ],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ],\n      \"folder\": \"  \",\n      \"timeline\": null\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": 5\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "timeline",
+    "p1",
+    "x"
+   ],
+   "error": "ValidationError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ],\n      \"folder\": \"  \",\n      \"timeline\": \"x\"\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": 5\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "timeline",
+    "p1",
+    {
+     "schema_version": 99
+    }
+   ],
+   "result": {
+    "id": "p1",
+    "name": "Uno",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": "  ",
+    "group_id": null,
+    "clips": [
+     {
+      "index": 0,
+      "filename": "clip_0.mp4",
+      "url": "/api/media/p1/video/clip_0.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "id": null,
+      "source_url": null,
+      "created_at": null,
+      "label": null,
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": null,
+      "external_id": null,
+      "author": null,
+      "license_info": null,
+      "in_point": null,
+      "out_point": null,
+      "parent_id": null,
+      "face_track": null
+     }
+    ],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": {
+     "version": 1,
+     "schema_version": 99,
+     "fps": 30,
+     "width": 720,
+     "height": 1280,
+     "audio_target_db": -14.0,
+     "tracks": [],
+     "clips": [],
+     "markers": []
+    },
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ],\n      \"folder\": \"  \",\n      \"timeline\": {\n        \"schema_version\": 99\n      }\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": 5\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "timeline",
+    "p1",
+    {
+     "schema_version": 5,
+     "tracks": [
+      {
+       "id": "T1",
+       "kind": "text",
+       "name": "Texto 1"
+      },
+      {
+       "id": "V1",
+       "kind": "video",
+       "name": "Vídeo 1"
+      },
+      {
+       "id": "A1",
+       "kind": "audio",
+       "name": "Audio 1"
+      },
+      {
+       "id": "V2",
+       "kind": "video",
+       "name": "Vídeo 2"
+      },
+      {
+       "id": "T2",
+       "kind": "text",
+       "name": "Texto 2"
+      }
+     ],
+     "clips": [
+      {
+       "id": "c1",
+       "track_id": "V1",
+       "kind": "video",
+       "asset_kind": "clips",
+       "asset_id": "0",
+       "filename": "a.mp4",
+       "start": 1.5
+      }
+     ]
+    }
+   ],
+   "result": {
+    "id": "p1",
+    "name": "Uno",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": "  ",
+    "group_id": null,
+    "clips": [
+     {
+      "index": 0,
+      "filename": "clip_0.mp4",
+      "url": "/api/media/p1/video/clip_0.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "id": null,
+      "source_url": null,
+      "created_at": null,
+      "label": null,
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": null,
+      "external_id": null,
+      "author": null,
+      "license_info": null,
+      "in_point": null,
+      "out_point": null,
+      "parent_id": null,
+      "face_track": null
+     }
+    ],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": {
+     "version": 1,
+     "schema_version": 5,
+     "fps": 30,
+     "width": 720,
+     "height": 1280,
+     "audio_target_db": -14.0,
+     "tracks": [
+      {
+       "id": "T1",
+       "kind": "text",
+       "name": "Texto 1",
+       "hidden": false,
+       "muted": false,
+       "locked": false,
+       "style": null,
+       "linked_track_id": null,
+       "magnetic": false
+      },
+      {
+       "id": "V1",
+       "kind": "video",
+       "name": "Vídeo 1",
+       "hidden": false,
+       "muted": false,
+       "locked": false,
+       "style": null,
+       "linked_track_id": null,
+       "magnetic": false
+      },
+      {
+       "id": "A1",
+       "kind": "audio",
+       "name": "Audio 1",
+       "hidden": false,
+       "muted": false,
+       "locked": false,
+       "style": null,
+       "linked_track_id": null,
+       "magnetic": false
+      },
+      {
+       "id": "V2",
+       "kind": "video",
+       "name": "Vídeo 2",
+       "hidden": false,
+       "muted": false,
+       "locked": false,
+       "style": null,
+       "linked_track_id": null,
+       "magnetic": false
+      },
+      {
+       "id": "T2",
+       "kind": "text",
+       "name": "Texto 2",
+       "hidden": false,
+       "muted": false,
+       "locked": false,
+       "style": null,
+       "linked_track_id": null,
+       "magnetic": false
+      }
+     ],
+     "clips": [
+      {
+       "id": "c1",
+       "track_id": "V1",
+       "kind": "video",
+       "asset_kind": "clips",
+       "asset_id": "0",
+       "filename": "a.mp4",
+       "name": null,
+       "start": 1.5,
+       "in_point": 0.0,
+       "out_point": 0.0,
+       "source_duration": 0.0,
+       "ref_segment": null,
+       "volume": 1.0,
+       "media_version": null,
+       "reframe": null,
+       "text": null,
+       "style": null,
+       "layout": "fill",
+       "transform": null,
+       "frame": "full",
+       "appear": "none",
+       "exit": "none",
+       "look": "none",
+       "effects": null,
+       "filters": null,
+       "audio_fx": null,
+       "muted": false,
+       "speed": 1.0,
+       "keep_pitch": true,
+       "reverse": false,
+       "speed_curve": null,
+       "opacity": null,
+       "flip_h": false,
+       "flip_v": false,
+       "blend_mode": null,
+       "disabled": false,
+       "beats": null,
+       "loop": null,
+       "words": [],
+       "origin": null,
+       "text_role": null,
+       "shape": null,
+       "masks": [],
+       "bg_removal": null,
+       "anim": null,
+       "vfx": null,
+       "animations": null,
+       "keyframes": null,
+       "asset_scope": "project",
+       "description": null,
+       "note": null,
+       "note_source": null,
+       "dup_of": null,
+       "composition_id": null
+      }
+     ],
+     "markers": []
+    },
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 0,\n          \"filename\": \"clip_0.mp4\",\n          \"url\": \"/api/media/p1/video/clip_0.mp4\",\n          \"start\": 0,\n          \"end\": 10\n        }\n      ],\n      \"folder\": \"  \",\n      \"timeline\": {\n        \"schema_version\": 5,\n        \"tracks\": [\n          {\n            \"id\": \"T1\",\n            \"kind\": \"text\",\n            \"name\": \"Texto 1\"\n          },\n          {\n            \"id\": \"V1\",\n            \"kind\": \"video\",\n            \"name\": \"Vídeo 1\"\n          },\n          {\n            \"id\": \"A1\",\n            \"kind\": \"audio\",\n            \"name\": \"Audio 1\"\n          },\n          {\n            \"id\": \"V2\",\n            \"kind\": \"video\",\n            \"name\": \"Vídeo 2\"\n          },\n          {\n            \"id\": \"T2\",\n            \"kind\": \"text\",\n            \"name\": \"Texto 2\"\n          }\n        ],\n        \"clips\": [\n          {\n            \"id\": \"c1\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"0\",\n            \"filename\": \"a.mp4\",\n            \"start\": 1.5\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"5\",\n      \"name\": \"Cinco\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": 5\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": 5,\n      \"name\": \"num\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    },\n    {\n      \"id\": \"g1\",\n      \"name\": \"g\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "remove"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Uno",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "folder": "{TMP}/mi/carpeta",
+       "notes": {
+        "/api/media/p1/x": "/api/projects/p1/y"
+       }
+      },
+      {
+       "id": "p2",
+       "name": "Dos",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "folder": ""
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Uno\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"folder\": \"{TMP}/mi/carpeta\", \"notes\": {\"/api/media/p1/x\": \"/api/projects/p1/y\"}}, {\"id\": \"p2\", \"name\": \"Dos\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"folder\": \"\"}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "disk",
+    [
+     "mi/carpeta/exports",
+     "mi/carpeta/video/EXPORTS",
+     "mi/carpeta/audio/a.wav",
+     "mi/carpeta/x/exports/deep.txt",
+     "mi/carpeta/video/exports.txt",
+     "mi/carpeta/image/Export/z.png",
+     "clips/p1/motion/m.json",
+     "clips/p2/video/v.mp4",
+     "clips/p2/motion/q/r/s.json",
+     "clips/p2/exports/e.mp4"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "duplicate",
+    "p1"
+   ],
+   "result": {
+    "id": "000016ab",
+    "name": "Uno (copia)",
+    "created_at": "2026-01-01T00:00:24+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000016ab\",\n      \"name\": \"Uno (copia)\",\n      \"created_at\": \"2026-01-01T00:00:24+00:00\",\n      \"folder\": null,\n      \"notes\": {\n        \"/api/media/000016ab/x\": \"/api/projects/000016ab/y\"\n      }\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/mi/carpeta\",\n      \"notes\": {\n        \"/api/media/p1/x\": \"/api/projects/p1/y\"\n      }\n    },\n    {\n      \"id\": \"p2\",\n      \"name\": \"Dos\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "duplicate",
+    "p2"
+   ],
+   "result": {
+    "id": "000017ab",
+    "name": "Dos (copia)",
+    "created_at": "2026-01-01T00:00:25+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000016ab\",\n      \"name\": \"Uno (copia)\",\n      \"created_at\": \"2026-01-01T00:00:24+00:00\",\n      \"folder\": null,\n      \"notes\": {\n        \"/api/media/000016ab/x\": \"/api/projects/000016ab/y\"\n      }\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/mi/carpeta\",\n      \"notes\": {\n        \"/api/media/p1/x\": \"/api/projects/p1/y\"\n      }\n    },\n    {\n      \"id\": \"000017ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:25+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"p2\",\n      \"name\": \"Dos\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "tree"
+   ],
+   "result": [
+    [
+     "000009ab",
+     null
+    ],
+    [
+     "000009ab/audio",
+     null
+    ],
+    [
+     "000009ab/image",
+     null
+    ],
+    [
+     "000009ab/motion",
+     null
+    ],
+    [
+     "000009ab/motion/m1.json",
+     "clips/aaaa0001/motion/m1.json"
+    ],
+    [
+     "000009ab/video",
+     null
+    ],
+    [
+     "000009ab/video/clip_0.mp4",
+     "clips/aaaa0001/video/clip_0.mp4"
+    ],
+    [
+     "00000aab",
+     null
+    ],
+    [
+     "00000aab/audio",
+     null
+    ],
+    [
+     "00000aab/image",
+     null
+    ],
+    [
+     "00000aab/motion",
+     null
+    ],
+    [
+     "00000aab/motion/m.json",
+     "clips/bbbb0002/motion/m.json"
+    ],
+    [
+     "00000aab/video",
+     null
+    ],
+    [
+     "00000aab/video/b.mp4",
+     "propia/video/b.mp4"
+    ],
+    [
+     "000016ab",
+     null
+    ],
+    [
+     "000016ab/audio",
+     null
+    ],
+    [
+     "000016ab/audio/a.wav",
+     "mi/carpeta/audio/a.wav"
+    ],
+    [
+     "000016ab/image",
+     null
+    ],
+    [
+     "000016ab/image/Export",
+     null
+    ],
+    [
+     "000016ab/image/Export/z.png",
+     "mi/carpeta/image/Export/z.png"
+    ],
+    [
+     "000016ab/motion",
+     null
+    ],
+    [
+     "000016ab/motion/m.json",
+     "clips/p1/motion/m.json"
+    ],
+    [
+     "000016ab/video",
+     null
+    ],
+    [
+     "000016ab/video/exports.txt",
+     "mi/carpeta/video/exports.txt"
+    ],
+    [
+     "000016ab/x",
+     null
+    ],
+    [
+     "000017ab",
+     null
+    ],
+    [
+     "000017ab/audio",
+     null
+    ],
+    [
+     "000017ab/image",
+     null
+    ],
+    [
+     "000017ab/motion",
+     null
+    ],
+    [
+     "000017ab/motion/q",
+     null
+    ],
+    [
+     "000017ab/motion/q/r",
+     null
+    ],
+    [
+     "000017ab/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "000017ab/video",
+     null
+    ],
+    [
+     "000017ab/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ],
+    [
+     "aaaa0001",
+     null
+    ],
+    [
+     "aaaa0001/exports",
+     null
+    ],
+    [
+     "aaaa0001/exports/final.mp4",
+     "clips/aaaa0001/exports/final.mp4"
+    ],
+    [
+     "aaaa0001/motion",
+     null
+    ],
+    [
+     "aaaa0001/motion/m1.json",
+     "clips/aaaa0001/motion/m1.json"
+    ],
+    [
+     "aaaa0001/video",
+     null
+    ],
+    [
+     "aaaa0001/video/Exports",
+     null
+    ],
+    [
+     "aaaa0001/video/Exports/x.mp4",
+     "clips/aaaa0001/video/Exports/x.mp4"
+    ],
+    [
+     "aaaa0001/video/clip_0.mp4",
+     "clips/aaaa0001/video/clip_0.mp4"
+    ],
+    [
+     "bbbb0002",
+     null
+    ],
+    [
+     "bbbb0002/motion",
+     null
+    ],
+    [
+     "bbbb0002/motion/m.json",
+     "clips/bbbb0002/motion/m.json"
+    ],
+    [
+     "p1",
+     null
+    ],
+    [
+     "p1/motion",
+     null
+    ],
+    [
+     "p1/motion/m.json",
+     "clips/p1/motion/m.json"
+    ],
+    [
+     "p2",
+     null
+    ],
+    [
+     "p2/exports",
+     null
+    ],
+    [
+     "p2/exports/e.mp4",
+     "clips/p2/exports/e.mp4"
+    ],
+    [
+     "p2/motion",
+     null
+    ],
+    [
+     "p2/motion/q",
+     null
+    ],
+    [
+     "p2/motion/q/r",
+     null
+    ],
+    [
+     "p2/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "p2/video",
+     null
+    ],
+    [
+     "p2/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ]
+   ]
+  },
+  {
+   "step": [
+    "list"
+   ],
+   "result": [
+    {
+     "id": "000016ab",
+     "name": "Uno (copia)",
+     "created_at": "2026-01-01T00:00:24+00:00",
+     "folder": null,
+     "group_id": null,
+     "clips": [],
+     "transcripts": [],
+     "audios": [],
+     "images": [],
+     "timeline": null,
+     "motion_compositions": [],
+     "scene_directions": {},
+     "visual_blueprint": {}
+    },
+    {
+     "id": "p1",
+     "name": "Uno",
+     "created_at": "2026-10-06T00:00:00+00:00",
+     "folder": "{TMP}/mi/carpeta",
+     "group_id": null,
+     "clips": [],
+     "transcripts": [],
+     "audios": [],
+     "images": [],
+     "timeline": null,
+     "motion_compositions": [],
+     "scene_directions": {},
+     "visual_blueprint": {}
+    },
+    {
+     "id": "000017ab",
+     "name": "Dos (copia)",
+     "created_at": "2026-01-01T00:00:25+00:00",
+     "folder": null,
+     "group_id": null,
+     "clips": [],
+     "transcripts": [],
+     "audios": [],
+     "images": [],
+     "timeline": null,
+     "motion_compositions": [],
+     "scene_directions": {},
+     "visual_blueprint": {}
+    },
+    {
+     "id": "p2",
+     "name": "Dos",
+     "created_at": "2026-10-06T00:00:00+00:00",
+     "folder": "",
+     "group_id": null,
+     "clips": [],
+     "transcripts": [],
+     "audios": [],
+     "images": [],
+     "timeline": null,
+     "motion_compositions": [],
+     "scene_directions": {},
+     "visual_blueprint": {}
+    }
+   ]
+  },
+  {
+   "step": [
+    "data"
+   ],
+   "result": "{\n  \"projects\": [\n    {\n      \"id\": \"000016ab\",\n      \"name\": \"Uno (copia)\",\n      \"created_at\": \"2026-01-01T00:00:24+00:00\",\n      \"folder\": null,\n      \"notes\": {\n        \"/api/media/000016ab/x\": \"/api/projects/000016ab/y\"\n      }\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/mi/carpeta\",\n      \"notes\": {\n        \"/api/media/p1/x\": \"/api/projects/p1/y\"\n      }\n    },\n    {\n      \"id\": \"000017ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:25+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"p2\",\n      \"name\": \"Dos\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "duplicate",
+    "p2"
+   ],
+   "result": {
+    "id": "000018ab",
+    "name": "Dos (copia)",
+    "created_at": "2026-01-01T00:00:26+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000016ab\",\n      \"name\": \"Uno (copia)\",\n      \"created_at\": \"2026-01-01T00:00:24+00:00\",\n      \"folder\": null,\n      \"notes\": {\n        \"/api/media/000016ab/x\": \"/api/projects/000016ab/y\"\n      }\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/mi/carpeta\",\n      \"notes\": {\n        \"/api/media/p1/x\": \"/api/projects/p1/y\"\n      }\n    },\n    {\n      \"id\": \"000017ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:25+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"000018ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:26+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"p2\",\n      \"name\": \"Dos\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "tree"
+   ],
+   "result": [
+    [
+     "000009ab",
+     null
+    ],
+    [
+     "000009ab/audio",
+     null
+    ],
+    [
+     "000009ab/image",
+     null
+    ],
+    [
+     "000009ab/motion",
+     null
+    ],
+    [
+     "000009ab/motion/m1.json",
+     "clips/aaaa0001/motion/m1.json"
+    ],
+    [
+     "000009ab/video",
+     null
+    ],
+    [
+     "000009ab/video/clip_0.mp4",
+     "clips/aaaa0001/video/clip_0.mp4"
+    ],
+    [
+     "00000aab",
+     null
+    ],
+    [
+     "00000aab/audio",
+     null
+    ],
+    [
+     "00000aab/image",
+     null
+    ],
+    [
+     "00000aab/motion",
+     null
+    ],
+    [
+     "00000aab/motion/m.json",
+     "clips/bbbb0002/motion/m.json"
+    ],
+    [
+     "00000aab/video",
+     null
+    ],
+    [
+     "00000aab/video/b.mp4",
+     "propia/video/b.mp4"
+    ],
+    [
+     "000016ab",
+     null
+    ],
+    [
+     "000016ab/audio",
+     null
+    ],
+    [
+     "000016ab/audio/a.wav",
+     "mi/carpeta/audio/a.wav"
+    ],
+    [
+     "000016ab/image",
+     null
+    ],
+    [
+     "000016ab/image/Export",
+     null
+    ],
+    [
+     "000016ab/image/Export/z.png",
+     "mi/carpeta/image/Export/z.png"
+    ],
+    [
+     "000016ab/motion",
+     null
+    ],
+    [
+     "000016ab/motion/m.json",
+     "clips/p1/motion/m.json"
+    ],
+    [
+     "000016ab/video",
+     null
+    ],
+    [
+     "000016ab/video/exports.txt",
+     "mi/carpeta/video/exports.txt"
+    ],
+    [
+     "000016ab/x",
+     null
+    ],
+    [
+     "000017ab",
+     null
+    ],
+    [
+     "000017ab/audio",
+     null
+    ],
+    [
+     "000017ab/image",
+     null
+    ],
+    [
+     "000017ab/motion",
+     null
+    ],
+    [
+     "000017ab/motion/q",
+     null
+    ],
+    [
+     "000017ab/motion/q/r",
+     null
+    ],
+    [
+     "000017ab/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "000017ab/video",
+     null
+    ],
+    [
+     "000017ab/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ],
+    [
+     "000018ab",
+     null
+    ],
+    [
+     "000018ab/audio",
+     null
+    ],
+    [
+     "000018ab/image",
+     null
+    ],
+    [
+     "000018ab/motion",
+     null
+    ],
+    [
+     "000018ab/motion/q",
+     null
+    ],
+    [
+     "000018ab/motion/q/r",
+     null
+    ],
+    [
+     "000018ab/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "000018ab/video",
+     null
+    ],
+    [
+     "000018ab/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ],
+    [
+     "aaaa0001",
+     null
+    ],
+    [
+     "aaaa0001/exports",
+     null
+    ],
+    [
+     "aaaa0001/exports/final.mp4",
+     "clips/aaaa0001/exports/final.mp4"
+    ],
+    [
+     "aaaa0001/motion",
+     null
+    ],
+    [
+     "aaaa0001/motion/m1.json",
+     "clips/aaaa0001/motion/m1.json"
+    ],
+    [
+     "aaaa0001/video",
+     null
+    ],
+    [
+     "aaaa0001/video/Exports",
+     null
+    ],
+    [
+     "aaaa0001/video/Exports/x.mp4",
+     "clips/aaaa0001/video/Exports/x.mp4"
+    ],
+    [
+     "aaaa0001/video/clip_0.mp4",
+     "clips/aaaa0001/video/clip_0.mp4"
+    ],
+    [
+     "bbbb0002",
+     null
+    ],
+    [
+     "bbbb0002/motion",
+     null
+    ],
+    [
+     "bbbb0002/motion/m.json",
+     "clips/bbbb0002/motion/m.json"
+    ],
+    [
+     "p1",
+     null
+    ],
+    [
+     "p1/motion",
+     null
+    ],
+    [
+     "p1/motion/m.json",
+     "clips/p1/motion/m.json"
+    ],
+    [
+     "p2",
+     null
+    ],
+    [
+     "p2/exports",
+     null
+    ],
+    [
+     "p2/exports/e.mp4",
+     "clips/p2/exports/e.mp4"
+    ],
+    [
+     "p2/motion",
+     null
+    ],
+    [
+     "p2/motion/q",
+     null
+    ],
+    [
+     "p2/motion/q/r",
+     null
+    ],
+    [
+     "p2/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "p2/video",
+     null
+    ],
+    [
+     "p2/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ]
+   ]
+  },
+  {
+   "step": [
+    "set_folder",
+    "p2",
+    "{TMP}/noexiste"
+   ],
+   "result": {
+    "id": "p2",
+    "name": "Dos",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": "{TMP}/noexiste",
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000016ab\",\n      \"name\": \"Uno (copia)\",\n      \"created_at\": \"2026-01-01T00:00:24+00:00\",\n      \"folder\": null,\n      \"notes\": {\n        \"/api/media/000016ab/x\": \"/api/projects/000016ab/y\"\n      }\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/mi/carpeta\",\n      \"notes\": {\n        \"/api/media/p1/x\": \"/api/projects/p1/y\"\n      }\n    },\n    {\n      \"id\": \"000017ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:25+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"000018ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:26+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"p2\",\n      \"name\": \"Dos\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/noexiste\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "duplicate",
+    "p2"
+   ],
+   "result": {
+    "id": "000019ab",
+    "name": "Dos (copia)",
+    "created_at": "2026-01-01T00:00:27+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000016ab\",\n      \"name\": \"Uno (copia)\",\n      \"created_at\": \"2026-01-01T00:00:24+00:00\",\n      \"folder\": null,\n      \"notes\": {\n        \"/api/media/000016ab/x\": \"/api/projects/000016ab/y\"\n      }\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/mi/carpeta\",\n      \"notes\": {\n        \"/api/media/p1/x\": \"/api/projects/p1/y\"\n      }\n    },\n    {\n      \"id\": \"000017ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:25+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"000018ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:26+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"000019ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:27+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"p2\",\n      \"name\": \"Dos\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/noexiste\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "tree"
+   ],
+   "result": [
+    [
+     "000009ab",
+     null
+    ],
+    [
+     "000009ab/audio",
+     null
+    ],
+    [
+     "000009ab/image",
+     null
+    ],
+    [
+     "000009ab/motion",
+     null
+    ],
+    [
+     "000009ab/motion/m1.json",
+     "clips/aaaa0001/motion/m1.json"
+    ],
+    [
+     "000009ab/video",
+     null
+    ],
+    [
+     "000009ab/video/clip_0.mp4",
+     "clips/aaaa0001/video/clip_0.mp4"
+    ],
+    [
+     "00000aab",
+     null
+    ],
+    [
+     "00000aab/audio",
+     null
+    ],
+    [
+     "00000aab/image",
+     null
+    ],
+    [
+     "00000aab/motion",
+     null
+    ],
+    [
+     "00000aab/motion/m.json",
+     "clips/bbbb0002/motion/m.json"
+    ],
+    [
+     "00000aab/video",
+     null
+    ],
+    [
+     "00000aab/video/b.mp4",
+     "propia/video/b.mp4"
+    ],
+    [
+     "000016ab",
+     null
+    ],
+    [
+     "000016ab/audio",
+     null
+    ],
+    [
+     "000016ab/audio/a.wav",
+     "mi/carpeta/audio/a.wav"
+    ],
+    [
+     "000016ab/image",
+     null
+    ],
+    [
+     "000016ab/image/Export",
+     null
+    ],
+    [
+     "000016ab/image/Export/z.png",
+     "mi/carpeta/image/Export/z.png"
+    ],
+    [
+     "000016ab/motion",
+     null
+    ],
+    [
+     "000016ab/motion/m.json",
+     "clips/p1/motion/m.json"
+    ],
+    [
+     "000016ab/video",
+     null
+    ],
+    [
+     "000016ab/video/exports.txt",
+     "mi/carpeta/video/exports.txt"
+    ],
+    [
+     "000016ab/x",
+     null
+    ],
+    [
+     "000017ab",
+     null
+    ],
+    [
+     "000017ab/audio",
+     null
+    ],
+    [
+     "000017ab/image",
+     null
+    ],
+    [
+     "000017ab/motion",
+     null
+    ],
+    [
+     "000017ab/motion/q",
+     null
+    ],
+    [
+     "000017ab/motion/q/r",
+     null
+    ],
+    [
+     "000017ab/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "000017ab/video",
+     null
+    ],
+    [
+     "000017ab/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ],
+    [
+     "000018ab",
+     null
+    ],
+    [
+     "000018ab/audio",
+     null
+    ],
+    [
+     "000018ab/image",
+     null
+    ],
+    [
+     "000018ab/motion",
+     null
+    ],
+    [
+     "000018ab/motion/q",
+     null
+    ],
+    [
+     "000018ab/motion/q/r",
+     null
+    ],
+    [
+     "000018ab/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "000018ab/video",
+     null
+    ],
+    [
+     "000018ab/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ],
+    [
+     "000019ab",
+     null
+    ],
+    [
+     "000019ab/audio",
+     null
+    ],
+    [
+     "000019ab/image",
+     null
+    ],
+    [
+     "000019ab/motion",
+     null
+    ],
+    [
+     "000019ab/motion/q",
+     null
+    ],
+    [
+     "000019ab/motion/q/r",
+     null
+    ],
+    [
+     "000019ab/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "000019ab/video",
+     null
+    ],
+    [
+     "aaaa0001",
+     null
+    ],
+    [
+     "aaaa0001/exports",
+     null
+    ],
+    [
+     "aaaa0001/exports/final.mp4",
+     "clips/aaaa0001/exports/final.mp4"
+    ],
+    [
+     "aaaa0001/motion",
+     null
+    ],
+    [
+     "aaaa0001/motion/m1.json",
+     "clips/aaaa0001/motion/m1.json"
+    ],
+    [
+     "aaaa0001/video",
+     null
+    ],
+    [
+     "aaaa0001/video/Exports",
+     null
+    ],
+    [
+     "aaaa0001/video/Exports/x.mp4",
+     "clips/aaaa0001/video/Exports/x.mp4"
+    ],
+    [
+     "aaaa0001/video/clip_0.mp4",
+     "clips/aaaa0001/video/clip_0.mp4"
+    ],
+    [
+     "bbbb0002",
+     null
+    ],
+    [
+     "bbbb0002/motion",
+     null
+    ],
+    [
+     "bbbb0002/motion/m.json",
+     "clips/bbbb0002/motion/m.json"
+    ],
+    [
+     "p1",
+     null
+    ],
+    [
+     "p1/motion",
+     null
+    ],
+    [
+     "p1/motion/m.json",
+     "clips/p1/motion/m.json"
+    ],
+    [
+     "p2",
+     null
+    ],
+    [
+     "p2/exports",
+     null
+    ],
+    [
+     "p2/exports/e.mp4",
+     "clips/p2/exports/e.mp4"
+    ],
+    [
+     "p2/motion",
+     null
+    ],
+    [
+     "p2/motion/q",
+     null
+    ],
+    [
+     "p2/motion/q/r",
+     null
+    ],
+    [
+     "p2/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "p2/video",
+     null
+    ],
+    [
+     "p2/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ]
+   ]
+  },
+  {
+   "step": [
+    "disk",
+    [
+     "unarchivo"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "set_folder",
+    "p2",
+    "{TMP}/unarchivo"
+   ],
+   "result": {
+    "id": "p2",
+    "name": "Dos",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": "{TMP}/unarchivo",
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000016ab\",\n      \"name\": \"Uno (copia)\",\n      \"created_at\": \"2026-01-01T00:00:24+00:00\",\n      \"folder\": null,\n      \"notes\": {\n        \"/api/media/000016ab/x\": \"/api/projects/000016ab/y\"\n      }\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/mi/carpeta\",\n      \"notes\": {\n        \"/api/media/p1/x\": \"/api/projects/p1/y\"\n      }\n    },\n    {\n      \"id\": \"000017ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:25+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"000018ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:26+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"000019ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:27+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"p2\",\n      \"name\": \"Dos\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/unarchivo\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "duplicate",
+    "p2"
+   ],
+   "error": "NotADirectoryError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000016ab\",\n      \"name\": \"Uno (copia)\",\n      \"created_at\": \"2026-01-01T00:00:24+00:00\",\n      \"folder\": null,\n      \"notes\": {\n        \"/api/media/000016ab/x\": \"/api/projects/000016ab/y\"\n      }\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Uno\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/mi/carpeta\",\n      \"notes\": {\n        \"/api/media/p1/x\": \"/api/projects/p1/y\"\n      }\n    },\n    {\n      \"id\": \"000017ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:25+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"000018ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:26+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"000019ab\",\n      \"name\": \"Dos (copia)\",\n      \"created_at\": \"2026-01-01T00:00:27+00:00\",\n      \"folder\": null\n    },\n    {\n      \"id\": \"p2\",\n      \"name\": \"Dos\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"folder\": \"{TMP}/unarchivo\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "tree"
+   ],
+   "result": [
+    [
+     "000009ab",
+     null
+    ],
+    [
+     "000009ab/audio",
+     null
+    ],
+    [
+     "000009ab/image",
+     null
+    ],
+    [
+     "000009ab/motion",
+     null
+    ],
+    [
+     "000009ab/motion/m1.json",
+     "clips/aaaa0001/motion/m1.json"
+    ],
+    [
+     "000009ab/video",
+     null
+    ],
+    [
+     "000009ab/video/clip_0.mp4",
+     "clips/aaaa0001/video/clip_0.mp4"
+    ],
+    [
+     "00000aab",
+     null
+    ],
+    [
+     "00000aab/audio",
+     null
+    ],
+    [
+     "00000aab/image",
+     null
+    ],
+    [
+     "00000aab/motion",
+     null
+    ],
+    [
+     "00000aab/motion/m.json",
+     "clips/bbbb0002/motion/m.json"
+    ],
+    [
+     "00000aab/video",
+     null
+    ],
+    [
+     "00000aab/video/b.mp4",
+     "propia/video/b.mp4"
+    ],
+    [
+     "000016ab",
+     null
+    ],
+    [
+     "000016ab/audio",
+     null
+    ],
+    [
+     "000016ab/audio/a.wav",
+     "mi/carpeta/audio/a.wav"
+    ],
+    [
+     "000016ab/image",
+     null
+    ],
+    [
+     "000016ab/image/Export",
+     null
+    ],
+    [
+     "000016ab/image/Export/z.png",
+     "mi/carpeta/image/Export/z.png"
+    ],
+    [
+     "000016ab/motion",
+     null
+    ],
+    [
+     "000016ab/motion/m.json",
+     "clips/p1/motion/m.json"
+    ],
+    [
+     "000016ab/video",
+     null
+    ],
+    [
+     "000016ab/video/exports.txt",
+     "mi/carpeta/video/exports.txt"
+    ],
+    [
+     "000016ab/x",
+     null
+    ],
+    [
+     "000017ab",
+     null
+    ],
+    [
+     "000017ab/audio",
+     null
+    ],
+    [
+     "000017ab/image",
+     null
+    ],
+    [
+     "000017ab/motion",
+     null
+    ],
+    [
+     "000017ab/motion/q",
+     null
+    ],
+    [
+     "000017ab/motion/q/r",
+     null
+    ],
+    [
+     "000017ab/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "000017ab/video",
+     null
+    ],
+    [
+     "000017ab/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ],
+    [
+     "000018ab",
+     null
+    ],
+    [
+     "000018ab/audio",
+     null
+    ],
+    [
+     "000018ab/image",
+     null
+    ],
+    [
+     "000018ab/motion",
+     null
+    ],
+    [
+     "000018ab/motion/q",
+     null
+    ],
+    [
+     "000018ab/motion/q/r",
+     null
+    ],
+    [
+     "000018ab/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "000018ab/video",
+     null
+    ],
+    [
+     "000018ab/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ],
+    [
+     "000019ab",
+     null
+    ],
+    [
+     "000019ab/audio",
+     null
+    ],
+    [
+     "000019ab/image",
+     null
+    ],
+    [
+     "000019ab/motion",
+     null
+    ],
+    [
+     "000019ab/motion/q",
+     null
+    ],
+    [
+     "000019ab/motion/q/r",
+     null
+    ],
+    [
+     "000019ab/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "000019ab/video",
+     null
+    ],
+    [
+     "aaaa0001",
+     null
+    ],
+    [
+     "aaaa0001/exports",
+     null
+    ],
+    [
+     "aaaa0001/exports/final.mp4",
+     "clips/aaaa0001/exports/final.mp4"
+    ],
+    [
+     "aaaa0001/motion",
+     null
+    ],
+    [
+     "aaaa0001/motion/m1.json",
+     "clips/aaaa0001/motion/m1.json"
+    ],
+    [
+     "aaaa0001/video",
+     null
+    ],
+    [
+     "aaaa0001/video/Exports",
+     null
+    ],
+    [
+     "aaaa0001/video/Exports/x.mp4",
+     "clips/aaaa0001/video/Exports/x.mp4"
+    ],
+    [
+     "aaaa0001/video/clip_0.mp4",
+     "clips/aaaa0001/video/clip_0.mp4"
+    ],
+    [
+     "bbbb0002",
+     null
+    ],
+    [
+     "bbbb0002/motion",
+     null
+    ],
+    [
+     "bbbb0002/motion/m.json",
+     "clips/bbbb0002/motion/m.json"
+    ],
+    [
+     "p1",
+     null
+    ],
+    [
+     "p1/motion",
+     null
+    ],
+    [
+     "p1/motion/m.json",
+     "clips/p1/motion/m.json"
+    ],
+    [
+     "p2",
+     null
+    ],
+    [
+     "p2/exports",
+     null
+    ],
+    [
+     "p2/exports/e.mp4",
+     "clips/p2/exports/e.mp4"
+    ],
+    [
+     "p2/motion",
+     null
+    ],
+    [
+     "p2/motion/q",
+     null
+    ],
+    [
+     "p2/motion/q/r",
+     null
+    ],
+    [
+     "p2/motion/q/r/s.json",
+     "clips/p2/motion/q/r/s.json"
+    ],
+    [
+     "p2/video",
+     null
+    ],
+    [
+     "p2/video/v.mp4",
+     "clips/p2/video/v.mp4"
+    ]
+   ]
+  },
+  {
+   "step": [
+    "remove"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "clips": [
+        {
+         "index": 0,
+         "filename": "a.mp4",
+         "url": "/clips/p1/clip_0.mp4",
+         "start": 0,
+         "end": 10
+        },
+        {
+         "index": 1,
+         "filename": 1,
+         "url": "/clips/p1/clip_1.mp4",
+         "start": 0,
+         "end": 10
+        },
+        {
+         "index": 2,
+         "filename": true,
+         "url": "/clips/p1/clip_2.mp4",
+         "start": 0,
+         "end": 10
+        },
+        {
+         "index": 3,
+         "filename": null,
+         "url": "/clips/p1/clip_3.mp4",
+         "start": 0,
+         "end": 10
+        },
+        {
+         "index": 4,
+         "filename": [
+          "x"
+         ],
+         "url": "/clips/p1/clip_4.mp4",
+         "start": 0,
+         "end": 10
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "materials": [
+      {
+       "file": 1,
+       "label": "uno"
+      }
+     ]
+    }
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "materials": [
+      {
+       "file": true,
+       "label": "true"
+      }
+     ]
+    }
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "materials": [
+      {
+       "file": 1.0,
+       "label": "flt"
+      }
+     ]
+    }
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "materials": [
+      {
+       "file": [
+        "x"
+       ],
+       "label": "bad"
+      }
+     ]
+    }
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "materials": [
+      {
+       "file": {
+        "a": 1
+       }
+      }
+     ]
+    }
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "materials": {
+      "a": 1
+     }
+    }
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "materials": 5
+    }
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "materials": "x"
+    }
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "project": {
+      "name": 5
+     }
+    }
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "project": {
+      "name": [
+       "a"
+      ]
+     }
+    }
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "project": "abc"
+    }
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "project": [
+      1
+     ]
+    }
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "project": {
+      "name": "   "
+     }
+    }
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    []
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    null
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {
+     "materials": [
+      {
+       "file": "a.mp4",
+       "label": null,
+       "start": null,
+       "end": 3.5
+      }
+     ]
+    }
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"a.mp4\", \"url\": \"/clips/p1/clip_0.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 1, \"filename\": 1, \"url\": \"/clips/p1/clip_1.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 2, \"filename\": true, \"url\": \"/clips/p1/clip_2.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 3, \"filename\": null, \"url\": \"/clips/p1/clip_3.mp4\", \"start\": 0, \"end\": 10}, {\"index\": 4, \"filename\": [\"x\"], \"url\": \"/clips/p1/clip_4.mp4\", \"start\": 0, \"end\": 10}]}]}"
+  },
+  {
+   "step": [
+    "remove"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "update",
+    "p1",
+    "clips",
+    "0",
+    {
+     "label": {
+      "a": [
+       1
+      ]
+     },
+     "start": 1.0
+    }
+   ],
+   "result": null,
+   "file": null
+  },
+  {
+   "step": [
+    "update",
+    "p1",
+    "clips",
+    "0",
+    []
+   ],
+   "result": null,
+   "file": null
+  },
+  {
+   "step": [
+    "update",
+    "p1",
+    "clips",
+    "0",
+    null
+   ],
+   "result": null,
+   "file": null
+  },
+  {
+   "step": [
+    "update",
+    "p1",
+    "clips",
+    "nomatch",
+    []
+   ],
+   "result": null,
+   "file": null
+  },
+  {
+   "step": [
+    "remove_material",
+    "p1",
+    "clips",
+    "None"
+   ],
+   "result": null,
+   "file": null
+  },
+  {
+   "step": [
+    "remove_material",
+    "p1",
+    "clips",
+    "0"
+   ],
+   "result": null,
+   "file": null
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "clips": [
+        {
+         "id": "a"
+        },
+        {
+         "index": null,
+         "id": "b"
+        },
+        {
+         "index": 1.0
+        },
+        {
+         "index": true
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"id\": \"a\"}, {\"index\": null, \"id\": \"b\"}, {\"index\": 1.0}, {\"index\": true}]}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "update",
+    "p1",
+    "clips",
+    "a",
+    {
+     "label": "A"
+    }
+   ],
+   "result": {
+    "id": "a",
+    "label": "A"
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"id\": \"a\",\n          \"label\": \"A\"\n        },\n        {\n          \"index\": null,\n          \"id\": \"b\"\n        },\n        {\n          \"index\": 1.0\n        },\n        {\n          \"index\": true\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "update",
+    "p1",
+    "clips",
+    "None",
+    {
+     "label": "N"
+    }
+   ],
+   "result": {
+    "index": null,
+    "id": "b",
+    "label": "N"
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"id\": \"a\",\n          \"label\": \"A\"\n        },\n        {\n          \"index\": null,\n          \"id\": \"b\",\n          \"label\": \"N\"\n        },\n        {\n          \"index\": 1.0\n        },\n        {\n          \"index\": true\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "update",
+    "p1",
+    "clips",
+    "1.0",
+    {
+     "label": "F"
+    }
+   ],
+   "result": {
+    "index": 1.0,
+    "label": "F"
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"id\": \"a\",\n          \"label\": \"A\"\n        },\n        {\n          \"index\": null,\n          \"id\": \"b\",\n          \"label\": \"N\"\n        },\n        {\n          \"index\": 1.0,\n          \"label\": \"F\"\n        },\n        {\n          \"index\": true\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "update",
+    "p1",
+    "clips",
+    "True",
+    {
+     "label": "T"
+    }
+   ],
+   "result": {
+    "index": true,
+    "label": "T"
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"id\": \"a\",\n          \"label\": \"A\"\n        },\n        {\n          \"index\": null,\n          \"id\": \"b\",\n          \"label\": \"N\"\n        },\n        {\n          \"index\": 1.0,\n          \"label\": \"F\"\n        },\n        {\n          \"index\": true,\n          \"label\": \"T\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "update",
+    "p1",
+    "clips",
+    "1",
+    {
+     "label": "U"
+    }
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"id\": \"a\",\n          \"label\": \"A\"\n        },\n        {\n          \"index\": null,\n          \"id\": \"b\",\n          \"label\": \"N\"\n        },\n        {\n          \"index\": 1.0,\n          \"label\": \"F\"\n        },\n        {\n          \"index\": true,\n          \"label\": \"T\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "remove_material",
+    "p1",
+    "clips",
+    "1.0"
+   ],
+   "result": {
+    "index": 1.0,
+    "label": "F"
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"id\": \"a\",\n          \"label\": \"A\"\n        },\n        {\n          \"index\": null,\n          \"id\": \"b\",\n          \"label\": \"N\"\n        },\n        {\n          \"index\": true,\n          \"label\": \"T\"\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "clips": [
+        {
+         "index": 1.5,
+         "id": "x"
+        },
+        {
+         "index": "1",
+         "id": "y"
+        },
+        {
+         "index": 1,
+         "id": ""
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 1.5, \"id\": \"x\"}, {\"index\": \"1\", \"id\": \"y\"}, {\"index\": 1, \"id\": \"\"}]}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "add_clips",
+    "p1",
+    [
+     {
+      "index": 1,
+      "filename": "clip_1.mp4",
+      "url": "/clips/p1/clip_1.mp4",
+      "start": 0,
+      "end": 10
+     }
+    ]
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": [\n        {\n          \"index\": 1.5,\n          \"id\": \"x\"\n        },\n        {\n          \"index\": \"1\",\n          \"id\": \"y\"\n        },\n        {\n          \"index\": 1,\n          \"filename\": \"clip_1.mp4\",\n          \"url\": \"/clips/p1/clip_1.mp4\",\n          \"start\": 0.0,\n          \"end\": 10.0,\n          \"id\": \"1\",\n          \"source_url\": null,\n          \"created_at\": \"2026-01-01T00:00:28+00:00\",\n          \"label\": null,\n          \"description\": null,\n          \"description_ai\": null,\n          \"semantic\": null,\n          \"reframe\": null,\n          \"transcript\": null,\n          \"origin\": null,\n          \"source\": null,\n          \"provider\": null,\n          \"external_id\": null,\n          \"author\": null,\n          \"license_info\": null,\n          \"in_point\": null,\n          \"out_point\": null,\n          \"parent_id\": null,\n          \"face_track\": null\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "clips": [
+        {
+         "id": "x"
+        },
+        "str"
+       ]
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"id\": \"x\"}, \"str\"]}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "add_clips",
+    "p1",
+    [
+     {
+      "index": 1,
+      "filename": "clip_1.mp4",
+      "url": "/clips/p1/clip_1.mp4",
+      "start": 0,
+      "end": 10
+     }
+    ]
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"id\": \"x\"}, \"str\"]}]}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "clips": {}
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": {}}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "add_clips",
+    "p1",
+    [
+     {
+      "index": 1,
+      "filename": "clip_1.mp4",
+      "url": "/clips/p1/clip_1.mp4",
+      "start": 0,
+      "end": 10
+     }
+    ]
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": {}}]}"
+  },
+  {
+   "step": [
+    "add_clips",
+    "p1",
+    []
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": {}\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "clips": ""
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": \"\"}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "add_clips",
+    "p1",
+    [
+     {
+      "index": 1,
+      "filename": "clip_1.mp4",
+      "url": "/clips/p1/clip_1.mp4",
+      "start": 0,
+      "end": 10
+     }
+    ]
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": \"\"}]}"
+  },
+  {
+   "step": [
+    "add_clips",
+    "p1",
+    []
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"clips\": \"\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "remove"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "motion_compositions": [
+        {
+         "id": 5
+        },
+        {
+         "id": true
+        },
+        "s"
+       ]
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"motion_compositions\": [{\"id\": 5}, {\"id\": true}, \"s\"]}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "motion",
+    "p1",
+    {
+     "id": 5,
+     "n": 1
+    }
+   ],
+   "error": "ValidationError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5,\n          \"n\": 1\n        },\n        {\n          \"id\": true\n        },\n        \"s\"\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "motion",
+    "p1",
+    {
+     "id": "5"
+    }
+   ],
+   "error": "AttributeError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5,\n          \"n\": 1\n        },\n        {\n          \"id\": true\n        },\n        \"s\"\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "motion",
+    "p1",
+    {
+     "id": 1
+    }
+   ],
+   "error": "ValidationError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5,\n          \"n\": 1\n        },\n        {\n          \"id\": 1\n        },\n        \"s\"\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "motion",
+    "p1",
+    {
+     "id": "x"
+    }
+   ],
+   "error": "AttributeError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5,\n          \"n\": 1\n        },\n        {\n          \"id\": 1\n        },\n        \"s\"\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "motion",
+    "p1",
+    []
+   ],
+   "error": "AttributeError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5,\n          \"n\": 1\n        },\n        {\n          \"id\": 1\n        },\n        \"s\"\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "motion",
+    "p1",
+    null
+   ],
+   "error": "AttributeError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5,\n          \"n\": 1\n        },\n        {\n          \"id\": 1\n        },\n        \"s\"\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "motion",
+    "p1",
+    {
+     "id": []
+    }
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5,\n          \"n\": 1\n        },\n        {\n          \"id\": 1\n        },\n        \"s\"\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "delete_motion",
+    "p1",
+    "5"
+   ],
+   "error": "AttributeError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5,\n          \"n\": 1\n        },\n        {\n          \"id\": 1\n        },\n        \"s\"\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "delete_motion",
+    "p1",
+    "x"
+   ],
+   "error": "AttributeError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5,\n          \"n\": 1\n        },\n        {\n          \"id\": 1\n        },\n        \"s\"\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "motion_compositions": [
+        {
+         "id": 5
+        },
+        {
+         "id": "a"
+        },
+        {
+         "no": 1
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"motion_compositions\": [{\"id\": 5}, {\"id\": \"a\"}, {\"no\": 1}]}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "delete_motion",
+    "p1",
+    "5"
+   ],
+   "result": false,
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"motion_compositions\": [{\"id\": 5}, {\"id\": \"a\"}, {\"no\": 1}]}]}"
+  },
+  {
+   "step": [
+    "delete_motion",
+    "p1",
+    "a"
+   ],
+   "result": true,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5\n        },\n        {\n          \"no\": 1\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "delete_motion",
+    "p1",
+    "zz"
+   ],
+   "result": false,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"motion_compositions\": [\n        {\n          \"id\": 5\n        },\n        {\n          \"no\": 1\n        }\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "motion_compositions": 0
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"motion_compositions\": 0}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "delete_motion",
+    "p1",
+    "a"
+   ],
+   "result": false,
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"motion_compositions\": 0}]}"
+  },
+  {
+   "step": [
+    "motion",
+    "p1",
+    {
+     "id": "a"
+    }
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"motion_compositions\": 0}]}"
+  },
+  {
+   "step": [
+    "remove"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "timeline": {
+        "schema_version": 5,
+        "tracks": [
+         {
+          "id": "T1",
+          "kind": "text",
+          "name": "Texto 1"
+         },
+         {
+          "id": "V1",
+          "kind": "video",
+          "name": "Vídeo 1"
+         },
+         {
+          "id": "A1",
+          "kind": "audio",
+          "name": "Audio 1"
+         },
+         {
+          "id": "V2",
+          "kind": "video",
+          "name": "Vídeo 2"
+         },
+         {
+          "id": "T2",
+          "kind": "text",
+          "name": "Texto 2"
+         }
+        ],
+        "clips": [
+         {
+          "id": "c1",
+          "track_id": "V1",
+          "kind": "video",
+          "asset_kind": "clips",
+          "asset_id": null,
+          "filename": null
+         },
+         {
+          "id": "c2",
+          "track_id": "V1",
+          "kind": "video",
+          "asset_kind": "clips",
+          "asset_id": 0,
+          "filename": 0
+         },
+         {
+          "id": "c3",
+          "track_id": "V1",
+          "kind": "video",
+          "asset_kind": "clips",
+          "asset_id": 0.0,
+          "filename": false
+         },
+         {
+          "id": "c4",
+          "track_id": "V1",
+          "kind": "video",
+          "asset_kind": null,
+          "asset_id": "0",
+          "filename": "a.mp4"
+         },
+         {
+          "id": "c5",
+          "track_id": "V1",
+          "kind": "video",
+          "asset_kind": "clips",
+          "asset_id": "None",
+          "filename": "a.mp4"
+         }
+        ]
+       }
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"timeline\": {\"schema_version\": 5, \"tracks\": [{\"id\": \"T1\", \"kind\": \"text\", \"name\": \"Texto 1\"}, {\"id\": \"V1\", \"kind\": \"video\", \"name\": \"Vídeo 1\"}, {\"id\": \"A1\", \"kind\": \"audio\", \"name\": \"Audio 1\"}, {\"id\": \"V2\", \"kind\": \"video\", \"name\": \"Vídeo 2\"}, {\"id\": \"T2\", \"kind\": \"text\", \"name\": \"Texto 2\"}], \"clips\": [{\"id\": \"c1\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": null, \"filename\": null}, {\"id\": \"c2\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": 0, \"filename\": 0}, {\"id\": \"c3\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": 0.0, \"filename\": false}, {\"id\": \"c4\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": null, \"asset_id\": \"0\", \"filename\": \"a.mp4\"}, {\"id\": \"c5\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"None\", \"filename\": \"a.mp4\"}]}}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "retarget",
+    "p1",
+    "clips",
+    null,
+    null,
+    "n",
+    "f",
+    true
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"timeline\": {\n        \"schema_version\": 5,\n        \"tracks\": [\n          {\n            \"id\": \"T1\",\n            \"kind\": \"text\",\n            \"name\": \"Texto 1\"\n          },\n          {\n            \"id\": \"V1\",\n            \"kind\": \"video\",\n            \"name\": \"Vídeo 1\"\n          },\n          {\n            \"id\": \"A1\",\n            \"kind\": \"audio\",\n            \"name\": \"Audio 1\"\n          },\n          {\n            \"id\": \"V2\",\n            \"kind\": \"video\",\n            \"name\": \"Vídeo 2\"\n          },\n          {\n            \"id\": \"T2\",\n            \"kind\": \"text\",\n            \"name\": \"Texto 2\"\n          }\n        ],\n        \"clips\": [\n          {\n            \"id\": \"c1\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n\",\n            \"filename\": \"f\",\n            \"asset_scope\": \"library\"\n          },\n          {\n            \"id\": \"c2\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": 0,\n            \"filename\": 0\n          },\n          {\n            \"id\": \"c3\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": 0.0,\n            \"filename\": false\n          },\n          {\n            \"id\": \"c4\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": null,\n            \"asset_id\": \"0\",\n            \"filename\": \"a.mp4\"\n          },\n          {\n            \"id\": \"c5\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n\",\n            \"filename\": \"f\",\n            \"asset_scope\": \"library\"\n          }\n        ]\n      }\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "retarget",
+    "p1",
+    "clips",
+    0,
+    0,
+    "n2",
+    "f2",
+    true
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"timeline\": {\n        \"schema_version\": 5,\n        \"tracks\": [\n          {\n            \"id\": \"T1\",\n            \"kind\": \"text\",\n            \"name\": \"Texto 1\"\n          },\n          {\n            \"id\": \"V1\",\n            \"kind\": \"video\",\n            \"name\": \"Vídeo 1\"\n          },\n          {\n            \"id\": \"A1\",\n            \"kind\": \"audio\",\n            \"name\": \"Audio 1\"\n          },\n          {\n            \"id\": \"V2\",\n            \"kind\": \"video\",\n            \"name\": \"Vídeo 2\"\n          },\n          {\n            \"id\": \"T2\",\n            \"kind\": \"text\",\n            \"name\": \"Texto 2\"\n          }\n        ],\n        \"clips\": [\n          {\n            \"id\": \"c1\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n\",\n            \"filename\": \"f\",\n            \"asset_scope\": \"library\"\n          },\n          {\n            \"id\": \"c2\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n2\",\n            \"filename\": \"f2\",\n            \"asset_scope\": \"library\"\n          },\n          {\n            \"id\": \"c3\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n2\",\n            \"filename\": \"f2\",\n            \"asset_scope\": \"library\"\n          },\n          {\n            \"id\": \"c4\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": null,\n            \"asset_id\": \"0\",\n            \"filename\": \"a.mp4\"\n          },\n          {\n            \"id\": \"c5\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n\",\n            \"filename\": \"f\",\n            \"asset_scope\": \"library\"\n          }\n        ]\n      }\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "retarget",
+    "p1",
+    "clips",
+    "0.0",
+    false,
+    "n3",
+    "f3",
+    true
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"timeline\": {\n        \"schema_version\": 5,\n        \"tracks\": [\n          {\n            \"id\": \"T1\",\n            \"kind\": \"text\",\n            \"name\": \"Texto 1\"\n          },\n          {\n            \"id\": \"V1\",\n            \"kind\": \"video\",\n            \"name\": \"Vídeo 1\"\n          },\n          {\n            \"id\": \"A1\",\n            \"kind\": \"audio\",\n            \"name\": \"Audio 1\"\n          },\n          {\n            \"id\": \"V2\",\n            \"kind\": \"video\",\n            \"name\": \"Vídeo 2\"\n          },\n          {\n            \"id\": \"T2\",\n            \"kind\": \"text\",\n            \"name\": \"Texto 2\"\n          }\n        ],\n        \"clips\": [\n          {\n            \"id\": \"c1\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n\",\n            \"filename\": \"f\",\n            \"asset_scope\": \"library\"\n          },\n          {\n            \"id\": \"c2\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n2\",\n            \"filename\": \"f2\",\n            \"asset_scope\": \"library\"\n          },\n          {\n            \"id\": \"c3\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n2\",\n            \"filename\": \"f2\",\n            \"asset_scope\": \"library\"\n          },\n          {\n            \"id\": \"c4\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": null,\n            \"asset_id\": \"0\",\n            \"filename\": \"a.mp4\"\n          },\n          {\n            \"id\": \"c5\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n\",\n            \"filename\": \"f\",\n            \"asset_scope\": \"library\"\n          }\n        ]\n      }\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "retarget",
+    "p1",
+    "clips",
+    "x",
+    {
+     "a": 1
+    },
+    "n",
+    "f",
+    true
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"timeline\": {\n        \"schema_version\": 5,\n        \"tracks\": [\n          {\n            \"id\": \"T1\",\n            \"kind\": \"text\",\n            \"name\": \"Texto 1\"\n          },\n          {\n            \"id\": \"V1\",\n            \"kind\": \"video\",\n            \"name\": \"Vídeo 1\"\n          },\n          {\n            \"id\": \"A1\",\n            \"kind\": \"audio\",\n            \"name\": \"Audio 1\"\n          },\n          {\n            \"id\": \"V2\",\n            \"kind\": \"video\",\n            \"name\": \"Vídeo 2\"\n          },\n          {\n            \"id\": \"T2\",\n            \"kind\": \"text\",\n            \"name\": \"Texto 2\"\n          }\n        ],\n        \"clips\": [\n          {\n            \"id\": \"c1\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n\",\n            \"filename\": \"f\",\n            \"asset_scope\": \"library\"\n          },\n          {\n            \"id\": \"c2\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n2\",\n            \"filename\": \"f2\",\n            \"asset_scope\": \"library\"\n          },\n          {\n            \"id\": \"c3\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n2\",\n            \"filename\": \"f2\",\n            \"asset_scope\": \"library\"\n          },\n          {\n            \"id\": \"c4\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": null,\n            \"asset_id\": \"0\",\n            \"filename\": \"a.mp4\"\n          },\n          {\n            \"id\": \"c5\",\n            \"track_id\": \"V1\",\n            \"kind\": \"video\",\n            \"asset_kind\": \"clips\",\n            \"asset_id\": \"n\",\n            \"filename\": \"f\",\n            \"asset_scope\": \"library\"\n          }\n        ]\n      }\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "get",
+    "p1"
+   ],
+   "error": "ValidationError"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "timeline": {
+        "clips": 5
+       }
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"timeline\": {\"clips\": 5}}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "retarget",
+    "p1",
+    "clips",
+    "0",
+    "x",
+    "n",
+    "f",
+    true
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"timeline\": {\"clips\": 5}}]}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "timeline": {
+        "clips": [
+         5
+        ]
+       }
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"timeline\": {\"clips\": [5]}}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "retarget",
+    "p1",
+    "clips",
+    "0",
+    "x",
+    "n",
+    "f",
+    true
+   ],
+   "error": "AttributeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"timeline\": {\"clips\": [5]}}]}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "timeline": []
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"timeline\": []}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "retarget",
+    "p1",
+    "clips",
+    "0",
+    "x",
+    "n",
+    "f",
+    true
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"timeline\": []\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "timeline": {
+        "clips": {}
+       }
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"timeline\": {\"clips\": {}}}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "retarget",
+    "p1",
+    "clips",
+    "0",
+    "x",
+    "n",
+    "f",
+    true
+   ],
+   "result": null,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"timeline\": {\n        \"clips\": {}\n      }\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "remove"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "group_id": "g"
+      }
+     ],
+     "groups": []
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"group_id\": \"g\"}], \"groups\": []}",
+   "result": null
+  },
+  {
+   "step": [
+    "delete_group",
+    "g"
+   ],
+   "result": false,
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"group_id\": \"g\"}], \"groups\": []}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "group_id": "g"
+      }
+     ],
+     "groups": [
+      {
+       "id": "g",
+       "name": "n",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"group_id\": \"g\"}], \"groups\": [{\"id\": \"g\", \"name\": \"n\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "delete_group",
+    "g"
+   ],
+   "result": true,
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": null\n    }\n  ],\n  \"groups\": []\n}"
+  },
+  {
+   "step": [
+    "data"
+   ],
+   "result": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"group_id\": null\n    }\n  ],\n  \"groups\": []\n}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": 5,
+     "groups": [
+      {
+       "id": "g",
+       "name": "n",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": 5, \"groups\": [{\"id\": \"g\", \"name\": \"n\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "delete_group",
+    "g"
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": 5, \"groups\": [{\"id\": \"g\", \"name\": \"n\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}]}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "groups": [
+      {
+       "id": "g",
+       "name": "n",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ]
+    }
+   ],
+   "text": "{\"groups\": [{\"id\": \"g\", \"name\": \"n\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "delete_group",
+    "g"
+   ],
+   "error": "KeyError",
+   "file": "{\"groups\": [{\"id\": \"g\", \"name\": \"n\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}]}"
+  },
+  {
+   "step": [
+    "delete_group",
+    "z"
+   ],
+   "result": false,
+   "file": "{\"groups\": [{\"id\": \"g\", \"name\": \"n\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}]}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ],
+     "groups": [
+      {
+       "id": "g",
+       "name": "n",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "extra": 1
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}], \"groups\": [{\"id\": \"g\", \"name\": \"n\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"extra\": 1}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "groups"
+   ],
+   "result": [
+    {
+     "id": "g",
+     "name": "n",
+     "created_at": "2026-10-06T00:00:00+00:00"
+    }
+   ]
+  },
+  {
+   "step": [
+    "rename_group",
+    "g",
+    "nn"
+   ],
+   "result": {
+    "id": "g",
+    "name": "nn",
+    "created_at": "2026-10-06T00:00:00+00:00"
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": \"g\",\n      \"name\": \"nn\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"extra\": 1\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "data"
+   ],
+   "result": "{\n  \"projects\": [\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": \"g\",\n      \"name\": \"nn\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\n      \"extra\": 1\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ],
+     "groups": "x"
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}], \"groups\": \"x\"}",
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "a",
+    "g"
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}], \"groups\": \"x\"}"
+  },
+  {
+   "step": [
+    "create",
+    "a",
+    null
+   ],
+   "result": {
+    "id": "00001eab",
+    "name": "a",
+    "created_at": "2026-01-01T00:00:35+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"00001eab\",\n      \"name\": \"a\",\n      \"created_at\": \"2026-01-01T00:00:35+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ],\n  \"groups\": \"x\"\n}"
+  },
+  {
+   "step": [
+    "create_group",
+    "q"
+   ],
+   "error": "AttributeError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"00001eab\",\n      \"name\": \"a\",\n      \"created_at\": \"2026-01-01T00:00:35+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ],\n  \"groups\": \"x\"\n}"
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ],
+     "groups": {}
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}], \"groups\": {}}",
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "a",
+    "g"
+   ],
+   "result": {
+    "id": "000020ab",
+    "name": "a",
+    "created_at": "2026-01-01T00:00:37+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000020ab\",\n      \"name\": \"a\",\n      \"created_at\": \"2026-01-01T00:00:37+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ],\n  \"groups\": {}\n}"
+  },
+  {
+   "step": [
+    "create_group",
+    "q"
+   ],
+   "error": "AttributeError",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000020ab\",\n      \"name\": \"a\",\n      \"created_at\": \"2026-01-01T00:00:37+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ],\n  \"groups\": {}\n}"
+  },
+  {
+   "step": [
+    "groups"
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ],
+     "groups": [
+      []
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}], \"groups\": [[]]}",
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "a",
+    "g"
+   ],
+   "error": "TypeError",
+   "file": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}], \"groups\": [[]]}"
+  },
+  {
+   "step": [
+    "remove"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "   tab\t ñandú 🎬 ​ ",
+    null
+   ],
+   "result": {
+    "id": "000023ab",
+    "name": "tab\t ñandú 🎬 ​",
+    "created_at": "2026-01-01T00:00:40+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000023ab\",\n      \"name\": \"tab\\t ñandú 🎬 ​\",\n      \"created_at\": \"2026-01-01T00:00:40+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "create",
+    "　",
+    null
+   ],
+   "result": {
+    "id": "000024ab",
+    "name": "Sin título",
+    "created_at": "2026-01-01T00:00:41+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000024ab\",\n      \"name\": \"Sin título\",\n      \"created_at\": \"2026-01-01T00:00:41+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"000023ab\",\n      \"name\": \"tab\\t ñandú 🎬 ​\",\n      \"created_at\": \"2026-01-01T00:00:40+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "create_group",
+    "﻿x"
+   ],
+   "result": {
+    "id": "000025ab",
+    "name": "﻿x",
+    "created_at": "2026-01-01T00:00:42+00:00"
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000024ab\",\n      \"name\": \"Sin título\",\n      \"created_at\": \"2026-01-01T00:00:41+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"000023ab\",\n      \"name\": \"tab\\t ñandú 🎬 ​\",\n      \"created_at\": \"2026-01-01T00:00:40+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": \"000025ab\",\n      \"name\": \"﻿x\",\n      \"created_at\": \"2026-01-01T00:00:42+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "rename",
+    "p1",
+    "\u001c\u001d x "
+   ],
+   "result": {
+    "id": "p1",
+    "name": "x",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000024ab\",\n      \"name\": \"Sin título\",\n      \"created_at\": \"2026-01-01T00:00:41+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"000023ab\",\n      \"name\": \"tab\\t ñandú 🎬 ​\",\n      \"created_at\": \"2026-01-01T00:00:40+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"x\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": \"000025ab\",\n      \"name\": \"﻿x\",\n      \"created_at\": \"2026-01-01T00:00:42+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "data"
+   ],
+   "result": "{\n  \"projects\": [\n    {\n      \"id\": \"000024ab\",\n      \"name\": \"Sin título\",\n      \"created_at\": \"2026-01-01T00:00:41+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"000023ab\",\n      \"name\": \"tab\\t ñandú 🎬 ​\",\n      \"created_at\": \"2026-01-01T00:00:40+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"x\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ],\n  \"groups\": [\n    {\n      \"id\": \"000025ab\",\n      \"name\": \"﻿x\",\n      \"created_at\": \"2026-01-01T00:00:42+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "remove"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "p1",
+       "name": "Proyecto",
+       "created_at": "2026-10-06T00:00:00+00:00"
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"p1\", \"name\": \"Proyecto\", \"created_at\": \"2026-10-06T00:00:00+00:00\"}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "groups"
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "create",
+    "x",
+    "g"
+   ],
+   "result": {
+    "id": "000026ab",
+    "name": "x",
+    "created_at": "2026-01-01T00:00:43+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000026ab\",\n      \"name\": \"x\",\n      \"created_at\": \"2026-01-01T00:00:43+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "move",
+    "p1",
+    "g"
+   ],
+   "error": "ValueError",
+   "message": "La carpeta no existe.",
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000026ab\",\n      \"name\": \"x\",\n      \"created_at\": \"2026-01-01T00:00:43+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "manifest",
+    "p1",
+    {}
+   ],
+   "result": {
+    "id": "p1",
+    "name": "Proyecto",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": null,
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   },
+   "file": "{\n  \"projects\": [\n    {\n      \"id\": \"000026ab\",\n      \"name\": \"x\",\n      \"created_at\": \"2026-01-01T00:00:43+00:00\",\n      \"folder\": null,\n      \"group_id\": null,\n      \"clips\": [],\n      \"transcripts\": [],\n      \"audios\": [],\n      \"images\": [],\n      \"timeline\": null,\n      \"motion_compositions\": [],\n      \"scene_directions\": {},\n      \"visual_blueprint\": {}\n    },\n    {\n      \"id\": \"p1\",\n      \"name\": \"Proyecto\",\n      \"created_at\": \"2026-10-06T00:00:00+00:00\"\n    }\n  ]\n}"
+  },
+  {
+   "step": [
+    "groups"
+   ],
+   "result": []
   }
  ]
 }

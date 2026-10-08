@@ -8,6 +8,7 @@ add_executable(gc_tests
     unit/test_log.cpp
     unit/test_migrations.cpp
     unit/test_model.cpp
+    unit/test_projects_store.cpp
     unit/test_py.cpp
     unit/test_session.cpp
     unit/test_sfx.cpp

@@ -165,3 +165,101 @@ STEPS = [
     ("add_audio", "p1", AUDIO), ("delete_motion", "p1", "m"), ("motion", "p1", {"id": "m"}),
     ("update", "p1", "audios", "x", {}),
 ]
+
+# --- Casos adversariales de la revisión: ids y grupos numéricos, set_folder y timelines de otro
+# tipo, manifest con `file` y `project` raros, materiales con index raros, motion y retarget con
+# tipos raros, grupos de otra forma, EXPORTS y un archivo «exports» al duplicar, y Unicode en strip.
+
+BASE = {"projects": [project("p1", name="Uno", clips=[material(0, url="/api/media/p1/video/clip_0.mp4")]),
+                      project("5", name="Cinco", group_id=5)],
+        "groups": [{"id": 5, "name": "num", "created_at": T0}, {"id": "g1", "name": "g", "created_at": T0}]}
+G = {"id": "g", "name": "n", "created_at": T0}
+STEPS_IDS = [
+    ("file", BASE), ("get", "5"), ("list",), ("move", "5", "g1"), ("move", "p1", "5"), ("delete_group", "5"),
+    ("rename_group", "5", "x"), ("create", "n", "5"), ("delete", "5"),
+    ("file", BASE), ("set_folder", "p1", 5), ("set_folder", "p1", None), ("set_folder", "p1", ""), ("set_folder", "p1", []),
+    ("set_folder", "p1", "  "), ("get", "p1"),
+    ("timeline", "p1", []), ("timeline", "p1", None), ("timeline", "p1", "x"), ("timeline", "p1", {"schema_version": 99}),
+    ("timeline", "p1", {"schema_version": 5, "tracks": TRACKS_V4, "clips": [clip("c1", start=1.5)]}),
+]
+STEPS_DUP = [
+    ("file", {"projects": [project("p1", name="Uno", folder="{TMP}/mi/carpeta", notes={"/api/media/p1/x": "/api/projects/p1/y"}),
+                            project("p2", name="Dos", folder="")]}),
+    ("disk", ["mi/carpeta/exports", "mi/carpeta/video/EXPORTS", "mi/carpeta/audio/a.wav", "mi/carpeta/x/exports/deep.txt",
+              "mi/carpeta/video/exports.txt", "mi/carpeta/image/Export/z.png", "clips/p1/motion/m.json", "clips/p2/video/v.mp4",
+              "clips/p2/motion/q/r/s.json", "clips/p2/exports/e.mp4"]),
+    ("duplicate", "p1"), ("duplicate", "p2"), ("tree",), ("list",), ("data",),
+    ("duplicate", "p2"), ("tree",),
+    ("set_folder", "p2", "{TMP}/noexiste"), ("duplicate", "p2"), ("tree",),
+    ("disk", ["unarchivo"]), ("set_folder", "p2", "{TMP}/unarchivo"), ("duplicate", "p2"), ("tree",),
+]
+STEPS_MANIFEST = [
+    ("file", {"projects": [project("p1", clips=[{**material(0), "filename": "a.mp4"}, {**material(1), "filename": 1}, {**material(2), "filename": True}, {**material(3), "filename": None}, {**material(4), "filename": ["x"]}])]}),
+    ("manifest", "p1", {"materials": [{"file": 1, "label": "uno"}]}),
+    ("manifest", "p1", {"materials": [{"file": True, "label": "true"}]}),
+    ("manifest", "p1", {"materials": [{"file": 1.0, "label": "flt"}]}),
+    ("manifest", "p1", {"materials": [{"file": ["x"], "label": "bad"}]}),
+    ("manifest", "p1", {"materials": [{"file": {"a": 1}}]}),
+    ("manifest", "p1", {"materials": {"a": 1}}), ("manifest", "p1", {"materials": 5}), ("manifest", "p1", {"materials": "x"}),
+    ("manifest", "p1", {"project": {"name": 5}}), ("manifest", "p1", {"project": {"name": ["a"]}}), ("manifest", "p1", {"project": "abc"}),
+    ("manifest", "p1", {"project": [1]}), ("manifest", "p1", {"project": {"name": "   "}}),
+    ("manifest", "p1", []), ("manifest", "p1", None),
+    ("manifest", "p1", {"materials": [{"file": "a.mp4", "label": None, "start": None, "end": 3.5}]}),
+]
+STEPS_MAT = [
+    ("update", "p1", "clips", "0", {"label": {"a": [1]}, "start": 1.0}), ("update", "p1", "clips", "0", []), ("update", "p1", "clips", "0", None),
+    ("update", "p1", "clips", "nomatch", []), ("remove_material", "p1", "clips", "None"), ("remove_material", "p1", "clips", "0"),
+    ("file", {"projects": [project("p1", clips=[{"id": "a"}, {"index": None, "id": "b"}, {"index": 1.0}, {"index": True}])]}),
+    ("update", "p1", "clips", "a", {"label": "A"}), ("update", "p1", "clips", "None", {"label": "N"}), ("update", "p1", "clips", "1.0", {"label": "F"}),
+    ("update", "p1", "clips", "True", {"label": "T"}), ("update", "p1", "clips", "1", {"label": "U"}),
+    ("remove_material", "p1", "clips", "1.0"),
+    ("file", {"projects": [project("p1", clips=[{"index": 1.5, "id": "x"}, {"index": "1", "id": "y"}, {"index": 1, "id": ""}])]}),
+    ("add_clips", "p1", [material(1)]),
+    ("file", {"projects": [project("p1", clips=[{"id": "x"}, "str"])]}), ("add_clips", "p1", [material(1)]),
+    ("file", {"projects": [project("p1", clips={})]}), ("add_clips", "p1", [material(1)]), ("add_clips", "p1", []),
+    ("file", {"projects": [project("p1", clips="")]}), ("add_clips", "p1", [material(1)]), ("add_clips", "p1", []),
+]
+STEPS_MOTION = [
+    ("file", {"projects": [project("p1", motion_compositions=[{"id": 5}, {"id": True}, "s"])]}),
+    ("motion", "p1", {"id": 5, "n": 1}), ("motion", "p1", {"id": "5"}), ("motion", "p1", {"id": 1}), ("motion", "p1", {"id": "x"}),
+    ("motion", "p1", []), ("motion", "p1", None), ("motion", "p1", {"id": []}),
+    ("delete_motion", "p1", "5"), ("delete_motion", "p1", "x"),
+    ("file", {"projects": [project("p1", motion_compositions=[{"id": 5}, {"id": "a"}, {"no": 1}])]}),
+    ("delete_motion", "p1", "5"), ("delete_motion", "p1", "a"), ("delete_motion", "p1", "zz"),
+    ("file", {"projects": [project("p1", motion_compositions=0)]}), ("delete_motion", "p1", "a"), ("motion", "p1", {"id": "a"}),
+]
+STEPS_RETARGET = [
+    ("file", {"projects": [project("p1", timeline={"schema_version": 5, "tracks": TRACKS_V4, "clips": [
+        clip("c1", asset_id=None, filename=None), clip("c2", asset_id=0, filename=0), clip("c3", asset_id=0.0, filename=False),
+        clip("c4", asset_kind=None), clip("c5", asset_id="None")]})]}),
+    ("retarget", "p1", "clips", None, None, "n", "f", True), ("retarget", "p1", "clips", 0, 0, "n2", "f2", True),
+    ("retarget", "p1", "clips", "0.0", False, "n3", "f3", True), ("retarget", "p1", "clips", "x", {"a": 1}, "n", "f", True),
+    ("get", "p1"),
+    ("file", {"projects": [project("p1", timeline={"clips": 5})]}), ("retarget", "p1", "clips", "0", "x", "n", "f", True),
+    ("file", {"projects": [project("p1", timeline={"clips": [5]})]}), ("retarget", "p1", "clips", "0", "x", "n", "f", True),
+    ("file", {"projects": [project("p1", timeline=[])]}), ("retarget", "p1", "clips", "0", "x", "n", "f", True),
+    ("file", {"projects": [project("p1", timeline={"clips": {}})]}), ("retarget", "p1", "clips", "0", "x", "n", "f", True),
+]
+STEPS_GROUPS = [
+    ("file", {"projects": [project("p1", group_id="g")], "groups": []}), ("delete_group", "g"),
+    ("file", {"projects": [project("p1", group_id="g")], "groups": [G]}), ("delete_group", "g"), ("data",),
+    ("file", {"projects": 5, "groups": [G]}), ("delete_group", "g"),
+    ("file", {"groups": [G]}), ("delete_group", "g"), ("delete_group", "z"),
+    ("file", {"projects": [project("p1")], "groups": [{**G, "extra": 1}]}), ("groups",), ("rename_group", "g", "nn"), ("data",),
+    ("file", {"projects": [project("p1")], "groups": "x"}), ("create", "a", "g"), ("create", "a", None), ("create_group", "q"),
+    ("file", {"projects": [project("p1")], "groups": {}}), ("create", "a", "g"), ("create_group", "q"), ("groups",),
+    ("file", {"projects": [project("p1")], "groups": [[]]}), ("create", "a", "g"),
+]
+STEPS_UNI = [
+    ("file", {"projects": [project("p1")]}),
+    ("create", "\u00a0\u2003 tab\t \u00f1and\u00fa \U0001f3ac \u200b ", None), ("create", "\u3000", None), ("create_group", "\ufeffx"),
+    ("rename", "p1", "\x1c\x1d x \x85"),
+    ("data",),
+]
+
+for _steps in (STEPS_IDS, STEPS_DUP, STEPS_MANIFEST, STEPS_MAT, STEPS_MOTION, STEPS_RETARGET, STEPS_GROUPS, STEPS_UNI):
+    STEPS += [("remove",), *_steps]
+
+# Sin «groups» ni «materials»: los defectos de .get(…, []) (en C++ fueron un puntero a un temporal).
+STEPS += [("remove",), ("file", {"projects": [project("p1")]}), ("groups",), ("create", "x", "g"),
+          ("move", "p1", "g"), ("manifest", "p1", {}), ("groups",)]
