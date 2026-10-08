@@ -30,6 +30,20 @@ enum class DumpMode {
 // projects._project_from_dict: rellena el id de los clips sin id con su index y
 // migra la timeline al schema actual antes de validar.
 [[nodiscard]] Result<Project> project_from_json(const Json& raw);
+// Project(**raw) de Python: valida la entrada tal cual, sin rellenar ids ni migrar la
+// timeline (lo que hacen set_folder, apply_manifest y save_timeline de projects.py).
+[[nodiscard]] Result<Project> project_from_json_as_is(const Json& raw);
+
+// Los materiales sueltos de un proyecto (lo que reciben add_clips, add_audio, add_image y
+// add_transcript), sin migración.
+[[nodiscard]] Result<ClipInfo> clip_info_from_json(const Json& raw);
+[[nodiscard]] Result<AudioInfo> audio_info_from_json(const Json& raw);
+[[nodiscard]] Result<ImageInfo> image_info_from_json(const Json& raw);
+[[nodiscard]] Result<Transcript> transcript_from_json(const Json& raw);
+[[nodiscard]] Json to_json(const ClipInfo& clip, DumpMode mode = DumpMode::Model);
+[[nodiscard]] Json to_json(const AudioInfo& audio, DumpMode mode = DumpMode::Model);
+[[nodiscard]] Json to_json(const ImageInfo& image, DumpMode mode = DumpMode::Model);
+[[nodiscard]] Json to_json(const Transcript& transcript, DumpMode mode = DumpMode::Model);
 
 // Timeline cruda (p. ej. la que manda el editor): migración + validación.
 [[nodiscard]] Result<Timeline> timeline_from_json(const Json& raw);

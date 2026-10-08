@@ -834,3 +834,28 @@ Preparación de la biblioteca de SFX y de las colecciones, que ordenan y filtran
 - `write_file` de los tests de disco devuelve si pudo escribir, y el escritor de `add` de las colecciones falla si no.
 
 **Siguiente:** `gc_services`, el almacén de proyectos (`projects.py`). F3 sigue esperando al Windows SDK.
+
+### 2026-10-08 — `gc_services`: el almacén de proyectos (projects.py)
+
+**Hecho: `projects_store.hpp`** (espejo de `projects.py` y de lo que usa de `storage.py`):
+- **`ProjectsStore`:** `data/projects.json` en crudo, con un mutex como el `_lock` de Python y la hora inyectable (`_now`). Hace lo mismo que `projects.py`:
+  - proyectos: listar, leer, crear («Sin título», con un grupo que puede no existir), renombrar, mover a una carpeta del inicio y borrar;
+  - grupos: crear, renombrar y borrar (sus proyectos vuelven a la raíz);
+  - duplicar con los archivos, la carpeta en disco y los materiales: `add_clips` con upsert por `index`, `add_transcript`, `add_audio`, `add_image`, `update_material`, `remove_material` y `apply_manifest`;
+  - la timeline, las composiciones de Motion, la escaleta, la dirección visual y `retarget_timeline_asset`.
+- **`storage.py`:** `project_default_base`, `project_base` y `ensure_project_dirs`. El resto, que son diálogos y resolución de URLs, llega con F5 y F7.
+- **`serialize.hpp`:** `project_from_json_as_is` (`Project(**p)`, sin preparar) y lectura y escritura de `ClipInfo`, `AudioInfo`, `ImageInfo` y `Transcript`. **`py.hpp`:** `py_equal`, el `==` de Python entre valores JSON.
+- **`write_json_file`** ya no añade un salto de línea final: ningún archivo de video-yt lo lleva.
+
+**Verificación:**
+- **Casos:** 151 pasos (31 de error, 4 con el mensaje que ve el usuario) con el `projects.py` REAL sobre un `projects.json` temporal, con `uuid4` en la secuencia de `SequentialIdSource` y `_now` fijado (`projects_cases.py`). Tras cada paso que escribe se compara el TEXTO de `projects.json`. Cubren:
+  - sin archivo, roto y con BOM;
+  - el estado de partida con claves desconocidas y URLs del proyecto;
+  - grupos que existen y que no, nombres vacíos;
+  - duplicar con `exports/`, `Exports/`, `motion/` y carpeta propia, con el árbol de archivos resultante;
+  - upsert de clips (con y sin id, `index` 0), manifest con `file` repetido, vacío o ausente;
+  - `retarget` por id, por nombre y sin nombre;
+  - 13 formas raras del archivo.
+- **Tu `projects.json`:** una copia (18 proyectos) en una carpeta temporal, con lista, grupos, cada proyecto, renombrar, mover, duplicar, guardar una timeline, editar un material y borrar. El archivo final sale byte a byte igual que el de Python. El tuyo no se toca.
+- **Mutación:** 41/41 (`tools/dev/mutantes.py projects`). En la primera pasada se escaparon 5 por huecos de las fixtures, ya cubiertos: el BOM con el mismo contenido que el defecto, `set_folder` sobre un proyecto sin nada que preparar, un `null` sobre un campo que ya lo era, un `retarget` sin nadie con ese nombre y `True == 1`.
+- **Resultado:** 95 tests (93 de Catch2 y 2 de la CLI) y 112 349 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 70 archivos.

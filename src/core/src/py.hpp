@@ -88,6 +88,11 @@ namespace gc::core::detail {
 // tools/gen/gen_py_lower.py; los bytes que no son UTF-8 válido se copian tal cual.
 [[nodiscard]] std::string py_lower(std::string_view utf8);
 
+// a == b de Python entre valores JSON: los números se comparan por su valor exacto también
+// entre int, float y bool (True == 1 == 1.0; 2**53 + 1 != 2.0**53), y las listas y los
+// dicts por contenido (los dicts sin mirar el orden).
+[[nodiscard]] bool py_equal(const Json& a, const Json& b);
+
 // x % y de Python con reales: el resultado lleva el signo del divisor
 // ((-90.0) % 360 == 270.0), no el del dividendo como fmod.
 [[nodiscard]] double py_mod(double x, double y);

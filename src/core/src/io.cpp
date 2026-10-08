@@ -154,7 +154,7 @@ Result<void> write_json_file(const std::filesystem::path& path, const Json& valu
     } catch (const Json::type_error& e) {
         return fail(ErrorCode::InvalidArgument, e.what(), path_to_utf8(path));
     }
-    text.push_back('\n');
+    // Sin salto de línea final: video-yt escribe json.dumps(...) tal cual.
 
     std::error_code ec;
     if (path.has_parent_path()) {

@@ -39,6 +39,7 @@ add_library(gc_core
     src/masks.cpp
     src/no_overlap.cpp
     src/pose.cpp
+    src/projects_store.cpp
     src/shapes.cpp
     src/text_metrics.cpp
     src/py.cpp

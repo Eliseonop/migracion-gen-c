@@ -648,6 +648,19 @@ Result<Project> project_from_json(const Json& raw) {
     return detail::parse_model<Project>(raw, detail::prepare_project);
 }
 
+Result<Project> project_from_json_as_is(const Json& raw) { return detail::parse_model<Project>(raw, detail::kAsIs); }
+
+Result<ClipInfo> clip_info_from_json(const Json& raw) { return detail::parse_model<ClipInfo>(raw, detail::kAsIs); }
+Result<AudioInfo> audio_info_from_json(const Json& raw) { return detail::parse_model<AudioInfo>(raw, detail::kAsIs); }
+Result<ImageInfo> image_info_from_json(const Json& raw) { return detail::parse_model<ImageInfo>(raw, detail::kAsIs); }
+Result<Transcript> transcript_from_json(const Json& raw) {
+    return detail::parse_model<Transcript>(raw, detail::kAsIs);
+}
+Json to_json(const ClipInfo& clip, DumpMode mode) { return detail::write_value(clip, mode); }
+Json to_json(const AudioInfo& audio, DumpMode mode) { return detail::write_value(audio, mode); }
+Json to_json(const ImageInfo& image, DumpMode mode) { return detail::write_value(image, mode); }
+Json to_json(const Transcript& transcript, DumpMode mode) { return detail::write_value(transcript, mode); }
+
 Result<Timeline> timeline_from_json(const Json& raw) {
     return detail::parse_model<Timeline>(raw, [](const Json& tl) { return migrate_timeline(tl); });
 }

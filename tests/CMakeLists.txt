@@ -22,6 +22,7 @@ add_executable(gc_tests
     parity/test_layout_parity.cpp
     parity/test_library_parity.cpp
     parity/test_model_parity.cpp
+    parity/test_projects_parity.cpp
     parity/test_settings_parity.cpp
     parity/test_sfx_disk_parity.cpp
 )

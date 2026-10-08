@@ -276,6 +276,75 @@ std::optional<double> py_number(const Json& j) {
     }
 }
 
+namespace {
+
+// int == float de Python: el real tiene que ser finito, entero y del mismo valor exacto.
+bool int_equals_float(const Json& i, double f) {
+    constexpr double kTwo63 = 9223372036854775808.0;
+    if (!std::isfinite(f) || f != std::floor(f)) {
+        return false;
+    }
+    if (i.is_number_unsigned()) {
+        return f >= 0 && f < 2 * kTwo63 && static_cast<std::uint64_t>(f) == i.get<std::uint64_t>();
+    }
+    const std::int64_t n = i.is_boolean() ? static_cast<std::int64_t>(i.get<bool>()) : i.get<std::int64_t>();
+    return f >= -kTwo63 && f < kTwo63 && static_cast<std::int64_t>(f) == n;
+}
+
+// Un int o un bool como int64; false si es un entero sin signo que no cabe.
+bool as_int64(const Json& j, std::int64_t& out) {
+    if (j.is_boolean()) {
+        out = j.get<bool>() ? 1 : 0;
+    } else if (j.is_number_unsigned()) {
+        const auto u = j.get<std::uint64_t>();
+        if (u > static_cast<std::uint64_t>(std::numeric_limits<std::int64_t>::max())) {
+            return false;
+        }
+        out = static_cast<std::int64_t>(u);
+    } else {
+        out = j.get<std::int64_t>();
+    }
+    return true;
+}
+
+} // namespace
+
+bool py_equal(const Json& a, const Json& b) {
+    const auto numeric = [](const Json& j) { return j.is_number() || j.is_boolean(); };
+    if (numeric(a) && numeric(b)) {
+        if (a.is_number_float()) {
+            return b.is_number_float() ? a.get<double>() == b.get<double>() : int_equals_float(b, a.get<double>());
+        }
+        if (b.is_number_float()) {
+            return int_equals_float(a, b.get<double>());
+        }
+        std::int64_t x = 0;
+        std::int64_t y = 0;
+        const bool fits_a = as_int64(a, x);
+        const bool fits_b = as_int64(b, y);
+        if (fits_a && fits_b) {
+            return x == y;
+        }
+        return !fits_a && !fits_b && a.get<std::uint64_t>() == b.get<std::uint64_t>();
+    }
+    if (a.is_array() && b.is_array()) {
+        return a.size() == b.size() && std::equal(a.begin(), a.end(), b.begin(), py_equal);
+    }
+    if (a.is_object() && b.is_object()) {
+        if (a.size() != b.size()) {
+            return false;
+        }
+        for (auto it = a.begin(); it != a.end(); ++it) {
+            const auto other = b.find(it.key());
+            if (other == b.end() || !py_equal(*it, *other)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return a == b; // texto, None o tipos distintos
+}
+
 double py_mod(double x, double y) {
     // float_rem de CPython
     double mod = std::fmod(x, y);

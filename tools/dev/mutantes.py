@@ -273,8 +273,85 @@ COLLECTIONS = [
     ("recorrido: un NUL en el id llega al disco", C, "collection.contains('\\0') || ", ""),
 ]
 
+P = "src/core/src/projects_store.cpp"
+PROJECTS = [
+    ("cargar: con BOM se acepta", P, "read_json_file_py(file_)", "read_json_file(file_)"),
+    ("crear: nombre sin strip", P, "proj.name = py_strip(name);", "proj.name = std::string(name);"),
+    ("crear: sin «Sin título»", P, 'proj.name = "Sin título";', 'proj.name = "";'),
+    ("crear: al final de la lista", P, "(*projects)->insert((*projects)->begin(), to_json(proj));",
+     "(*projects)->push_back(to_json(proj));"),
+    ("crear: grupo inexistente se queda", P, "if (*exists) {\n            proj.group_id",
+     "if (true) {\n            proj.group_id"),
+    ("crear: id de 12", P, "proj.id = ids.hex32().substr(0, 8);", "proj.id = ids.hex32().substr(0, 12);"),
+    ("grupo: nombre vacío vale", P, "if (group.name.empty()) {", "if (false) {"),
+    ("renombrar grupo: no guarda", P, 'g["name"] = new_name;\n            if (auto saved = save(data); !saved) {',
+     'g["name"] = new_name;\n            if (auto saved = Result<void>(); !saved) {'),
+    ("borrar grupo: los proyectos se quedan en él", P, 'p["group_id"] = nullptr;', "(void)p;"),
+    ("mover: carpeta inexistente vale", P, 'return fail(ErrorCode::InvalidArgument, "La carpeta no existe.");',
+     "return std::optional<Project>();"),
+    ("mover: «» no saca a la raíz", P, "const bool to_group = group_id && !group_id->empty();",
+     "const bool to_group = group_id.has_value();"),
+    ("renombrar: nombre vacío vale", P,
+     "std::string_view name) {\n    const std::string new_name = py_strip(name);\n    if (new_name.empty()) {\n"
+     "        return empty_name();\n    }\n    const std::scoped_lock lock(mutex_);\n    Json data = load();\n"
+     "    auto p = find_project",
+     "std::string_view name) {\n    const std::string new_name = py_strip(name);\n    if (false) {\n"
+     "        return empty_name();\n    }\n    const std::scoped_lock lock(mutex_);\n    Json data = load();\n"
+     "    auto p = find_project"),
+    ("duplicar: copia exports", P, "copy_tree(src_base, dest_base, true)", "copy_tree(src_base, dest_base, false)"),
+    ("duplicar: «Exports» se copia", P, 'py_lower(path_to_utf8(it->path().filename())) == "exports"',
+     'path_to_utf8(it->path().filename()) == "exports"'),
+    ("duplicar: sin la carpeta motion", P, 'if (fs::exists(motion, ec) && !fs::exists(dest_base / "motion", ec)) {',
+     "if (false) {"),
+    ("duplicar: sin cambiar las URLs", P, 'for (const std::string_view prefix : {"/api/media/", "/api/projects/"}) {',
+     'for (const std::string_view prefix : {"/api/nada/"}) {'),
+    ("duplicar: solo /api/media/", P, 'for (const std::string_view prefix : {"/api/media/", "/api/projects/"}) {',
+     'for (const std::string_view prefix : {"/api/media/"}) {'),
+    ("duplicar: al final", P, "list.insert(list.begin() + at, copy);", "list.push_back(copy);"),
+    ("duplicar: sin «(copia)»", P, '(*src)->name + " (copia)"', "(*src)->name"),
+    ("duplicar: conserva la carpeta propia", P, 'copy["folder"] = nullptr;', ""),
+    ("duplicar: sin subcarpetas", P, "if (auto made = ensure_project_dirs(dest_base); !made) {",
+     "if (auto made = Result<void>(); !made) {"),
+    ("set_folder: con migración", P,
+     '(**p)["folder"] = path;\n    if (auto saved = save(data); !saved) {\n        return std::unexpected(saved.error());\n'
+     "    }\n    auto project = project_from_json_as_is(**p);",
+     '(**p)["folder"] = path;\n    if (auto saved = save(data); !saved) {\n        return std::unexpected(saved.error());\n'
+     "    }\n    auto project = project_from_json(**p);"),
+    ("timeline: con migración", P,
+     '(**p)["timeline"] = timeline;\n    if (auto saved = save(data); !saved) {\n        return std::unexpected(saved.error());\n'
+     "    }\n    auto project = project_from_json_as_is(**p);",
+     '(**p)["timeline"] = timeline;\n    if (auto saved = save(data); !saved) {\n        return std::unexpected(saved.error());\n'
+     "    }\n    auto project = project_from_json(**p);"),
+    ("borrar: no reescribe si no está", P, "    if (auto saved = save(data); !saved) {\n        return std::unexpected(saved.error());\n"
+     "    }\n    return after < before;",
+     "    if (auto saved = after < before ? save(data) : Result<void>(); !saved) {\n"
+     "        return std::unexpected(saved.error());\n    }\n    return after < before;"),
+    ("clips: sin upsert por index", P, 'if (py_equal(**index, d["index"])) {', "if (false) {"),
+    ("clips: pierde el id del anterior", P, 'd["id"] = prev_id;', "(void)prev_id;"),
+    ("clips: id sin el index", P, 'd["id"] = py_truthy(index) ? py_str(index) : ids.hex32().substr(0, 12);',
+     'd["id"] = ids.hex32().substr(0, 12);'),
+    ("clips: sin fecha", P, 'd["created_at"] = stamp;', ""),
+    ("material: el id antes que el index", P,
+     'const Json& key = index != item.end() ? *index : item.value("id", Json());',
+     'const Json& key = item.value("id", Json());'),
+    ("material: null también se aplica", P, "if (!it->is_null()) {\n                    item[it.key()] = *it;",
+     "if (true) {\n                    item[it.key()] = *it;"),
+    ("manifest: audio sin voz", P, '{"audios", {"label", "description", "voice"}}', '{"audios", {"label", "description"}}'),
+    ("manifest: gana el primero", P, "if (*found != nullptr) {", "if (*found != nullptr && false) {"),
+    ("manifest: nombre sin strip", P, "new_name = py_strip((*name)->get_ref<const std::string&>());",
+     "new_name = (*name)->get_ref<const std::string&>();"),
+    ("motion: sin id también", P, "if (!py_truthy(**cid)) {", "if (false) {"),
+    ("motion: siempre añade", P, "if (py_equal(**id, **cid)) {\n            c = comp;", "if (false) {\n            c = comp;"),
+    ("retarget: sin mirar el tipo", P, "if (!py_equal(**c_kind, kind)) {", "if (false) {"),
+    ("retarget: por nombre siempre", P, "(match_filename && py_equal(", "(py_equal("),
+    ("retarget: sin asset_scope", P, 'c["asset_scope"] = "library";', ""),
+    ("forma: un dict vacío falla", P, "if ((seq.is_object() && seq.empty()) ||", "if ((false) ||"),
+    ("forma: un proyecto sin id se salta", P, 'return shape_error("un elemento no tiene «id»");', "return false;"),
+    ("py_equal: True no es 1", "src/core/src/py.cpp", "out = j.get<bool>() ? 1 : 0;", "out = j.get<bool>() ? 7 : 0;"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]")}
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]")}
 
 
 def run(cmd: list[str], timeout: float | None = None) -> subprocess.CompletedProcess:

@@ -22,6 +22,7 @@ Salida (al repo):
   tests/fixtures/library/synthetic.json    biblioteca: pasos de library_cases.py
   tests/fixtures/sfx/synthetic.json        biblioteca de SFX en disco: pasos de sfx_cases.py
   tests/fixtures/collections/synthetic.json  colecciones de material: pasos de collections_cases.py
+  tests/fixtures/projects/synthetic.json   almacén de proyectos: pasos de projects_cases.py
 Con --real, en tests/fixtures/local/<lo mismo>/real.json: TUS proyectos, timelines,
 clips, historiales, ajustes (con las claves redactadas), biblioteca, SFX y material de video-yt.
 tests/fixtures/local/ son datos personales: está en .gitignore y nunca se sube.
@@ -866,6 +867,148 @@ def real_sfx_fixtures(ctx: Ctx) -> dict:
     return {"root": root.as_posix(), "steps": _run_sfx_steps(steps, root)}
 
 
+# --- Almacén de proyectos (projects.py) --------------------------------------------------------
+
+# Los mensajes de los errores que ve el usuario (ValueError de projects.py): se comparan.
+_PROJECTS_MESSAGES = {"El nombre no puede estar vacío.", "La carpeta no existe."}
+# Los pasos que pueden escribir projects.json: tras ellos se guarda su texto.
+_PROJECTS_WRITES = {"create", "create_group", "rename_group", "delete_group", "move", "rename", "duplicate",
+                    "set_folder", "delete", "add_clips", "add_transcript", "add_audio", "add_image", "update",
+                    "remove_material", "manifest", "timeline", "motion", "delete_motion", "scenes", "blueprint",
+                    "retarget"}
+
+
+class _FixedNow:
+    """_now() de projects.py fijado: la n-ésima llamada da 2026-01-01T00:00:00 + n segundos."""
+
+    def __init__(self):
+        self.n = 0
+
+    def __call__(self):
+        self.n += 1
+        return f"2026-01-01T{self.n // 3600:02d}:{self.n // 60 % 60:02d}:{self.n % 60:02d}+00:00"
+
+
+def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list[dict]:
+    """Ejecuta los pasos con el projects.py REAL sobre un projects.json temporal (y los clips por
+    defecto en {TMP}/clips), con uuid4 y _now fijados. «{TMP}» es la carpeta temporal (con «/»)
+    en los argumentos, y vuelve a serlo en los resultados y en el texto de projects.json."""
+    from app import config
+    projects, schemas = ctx.projects, ctx.schemas
+    tmp = Path(tempfile.mkdtemp(prefix="gc_prj_"))
+    posix = tmp.as_posix()
+    saved = (projects._FILE, config.OUTPUT_DIR, uuid.uuid4, projects._now)
+    projects._FILE = tmp / "data" / "projects.json"
+    config.OUTPUT_DIR = tmp / "clips"
+    uuid.uuid4 = _SequentialUuid()
+    projects._now = _FixedNow()
+
+    def dump(value):
+        if isinstance(value, (schemas.Project, schemas.ProjectGroup)):
+            return value.model_dump()
+        if isinstance(value, list):
+            return [dump(v) for v in value]
+        return value
+
+    def tmp_of(value):
+        return json.loads(json.dumps(value, ensure_ascii=False).replace(posix, "{TMP}"))
+
+    calls = {
+        "load": lambda: projects._load(),
+        "list": lambda: projects.list_projects(),
+        "groups": lambda: projects.list_groups(),
+        "get": projects.get_project, "create": projects.create_project, "create_group": projects.create_group,
+        "rename_group": projects.rename_group, "delete_group": projects.delete_group,
+        "move": projects.move_project, "rename": projects.rename_project,
+        "duplicate": projects.duplicate_project, "set_folder": projects.set_folder,
+        "delete": projects.delete_project, "update": projects.update_material,
+        "remove_material": projects.remove_material, "manifest": projects.apply_manifest,
+        "timeline": projects.save_timeline, "motion": projects.save_motion_composition,
+        "delete_motion": projects.delete_motion_composition, "scenes": projects.save_scene_directions,
+        "blueprint": projects.save_visual_blueprint, "retarget": projects.retarget_timeline_asset,
+        "add_clips": lambda pid, clips: projects.add_clips(pid, [schemas.ClipInfo(**c) for c in clips]),
+        "add_transcript": lambda pid, t: projects.add_transcript(pid, schemas.Transcript(**t)),
+        "add_audio": lambda pid, a: projects.add_audio(pid, schemas.AudioInfo(**a)),
+        "add_image": lambda pid, i: projects.add_image(pid, schemas.ImageInfo(**i)),
+    }
+    out = []
+    try:
+        for step in steps:
+            kind = step[0]
+            args = json.loads(json.dumps(list(step[1:]), ensure_ascii=False).replace("{TMP}", posix))
+            entry: dict = {"step": list(step)}
+            try:
+                result = None
+                if kind == "file":
+                    projects._FILE.parent.mkdir(parents=True, exist_ok=True)
+                    content = args[0] if isinstance(args[0], str) else json.dumps(args[0], ensure_ascii=False)
+                    projects._FILE.write_text(content, encoding="utf-8")
+                    if not isinstance(args[0], str):  # el texto exacto: el test escribe el mismo
+                        entry["text"] = json.dumps(step[1], ensure_ascii=False)
+                elif kind == "remove":
+                    projects._FILE.unlink(missing_ok=True)
+                elif kind == "disk":
+                    for rel in args[0]:
+                        f = tmp / rel
+                        f.parent.mkdir(parents=True, exist_ok=True)
+                        f.write_text(rel, encoding="utf-8")
+                elif kind == "data":
+                    result = projects._FILE.read_text(encoding="utf-8") if projects._FILE.exists() else None
+                elif kind == "tree":
+                    top = tmp / "clips"
+                    result = [[p.relative_to(top).as_posix(), p.read_text(encoding="utf-8") if p.is_file() else None]
+                              for p in sorted(top.rglob("*"), key=lambda p: p.relative_to(top).as_posix())]
+                elif kind in calls:
+                    result = dump(calls[kind](*args))
+                else:
+                    raise ValueError(f"paso desconocido: {kind}")
+                entry["result"] = tmp_of(result)
+            except Exception as e:  # noqa: BLE001
+                entry["error"] = type(e).__name__
+                if str(e) in _PROJECTS_MESSAGES:
+                    entry["message"] = str(e)
+            if record_file and kind in _PROJECTS_WRITES:
+                f = projects._FILE
+                entry["file"] = f.read_text(encoding="utf-8").replace(posix, "{TMP}") if f.exists() else None
+            out.append(entry)
+    finally:
+        projects._FILE, config.OUTPUT_DIR, uuid.uuid4, projects._now = saved
+        shutil.rmtree(tmp, ignore_errors=True)
+    return _pure(out)
+
+
+def synthetic_projects_fixtures(ctx: Ctx) -> dict:
+    sys.path.insert(0, str(HERE))
+    import projects_cases as pc
+    return {"steps": _run_projects_steps(ctx, pc.STEPS)}
+
+
+def real_projects_fixtures(ctx: Ctx) -> dict:
+    """Una copia de tu projects.json en una carpeta temporal: lista, grupos, cada proyecto, y
+    renombrar, mover, duplicar (sin carpeta propia, así que no se copia nada tuyo), guardar una
+    timeline, editar un material y borrar, con el archivo al final. Tu projects.json no se toca."""
+    src = ctx.root / "backend" / "data" / "projects.json"
+    if not src.exists():
+        return {"steps": []}
+    text = src.read_text(encoding="utf-8")
+    data = json.loads(text)
+    ids = [p["id"] for p in data.get("projects", [])]
+    groups = [g["id"] for g in data.get("groups", [])]
+    steps: list = [("file", text), ("list",), ("groups",)] + [("get", pid) for pid in ids]
+    if ids:
+        first = ids[0]
+        steps += [("rename", first, "Renombrado"), ("move", first, groups[0] if groups else None),
+                  ("move", first, None)]
+        no_folder = [p["id"] for p in data["projects"] if not p.get("folder")]
+        if no_folder:
+            steps += [("duplicate", no_folder[0]), ("tree",)]
+        timeline = next((p["timeline"] for p in data["projects"] if p.get("timeline")), None)
+        if timeline:
+            steps += [("timeline", first, timeline)]
+        steps += [("update", first, "clips", "0", {"label": "x"}), ("delete", ids[-1]), ("data",)]
+    return {"steps": _run_projects_steps(ctx, steps, record_file=False)}
+
+
 # --- Colecciones de material (collections.py) --------------------------------------------------
 
 # Los mensajes de los errores que ve el usuario (ValueError y LookupError de collections.py):
@@ -1422,6 +1565,9 @@ def main() -> None:
     sfx_syn = synthetic_sfx_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "sfx" / "synthetic.json", sfx_syn, len(sfx_syn["steps"]),
           sum("error" in s for s in sfx_syn["steps"]))
+    prj_syn = synthetic_projects_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "projects" / "synthetic.json", prj_syn, len(prj_syn["steps"]),
+          sum("error" in s for s in prj_syn["steps"]))
     col_syn = synthetic_collections_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "collections" / "synthetic.json", col_syn, len(col_syn["steps"]),
           sum("error" in s for s in col_syn["steps"]))
@@ -1464,6 +1610,9 @@ def main() -> None:
         sfx_real = real_sfx_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "local" / "sfx" / "real.json", sfx_real, len(sfx_real["steps"]),
               sum("error" in s for s in sfx_real["steps"]))
+        prj_real = real_projects_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "local" / "projects" / "real.json", prj_real, len(prj_real["steps"]),
+              sum("error" in s for s in prj_real["steps"]))
         col_real = real_collections_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "local" / "collections" / "real.json", col_real, len(col_real["steps"]),
               sum("error" in s for s in col_real["steps"]))
