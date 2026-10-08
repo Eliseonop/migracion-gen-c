@@ -284,7 +284,7 @@ def run(cmd: list[str], timeout: float | None = None) -> subprocess.CompletedPro
 
 # Un mutante puede colgar los tests (un bucle que no acaba): pasado este tiempo se mata el
 # proceso y cuenta como detectado.
-TEST_TIMEOUT = 600
+TEST_TIMEOUT = 120
 
 
 def main() -> int:

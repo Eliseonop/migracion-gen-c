@@ -9,6 +9,7 @@
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <system_error>
 #include <vector>
 
 #include "gc/core/io.hpp"
@@ -29,9 +30,14 @@ inline std::string text_of(const Json& content) {
     return content.is_string() ? content.get<std::string>() : content.dump();
 }
 
-inline void write_file(const std::filesystem::path& file, const std::string& bytes) {
-    std::filesystem::create_directories(file.parent_path());
-    std::ofstream(file, std::ios::binary | std::ios::trunc) << bytes;
+// Escribe `bytes` en `file` (y crea sus carpetas). false si no pudo.
+inline bool write_file(const std::filesystem::path& file, const std::string& bytes) {
+    std::error_code ec;
+    std::filesystem::create_directories(file.parent_path(), ec);
+    std::ofstream out(file, std::ios::binary | std::ios::trunc);
+    out << bytes;
+    out.close();
+    return static_cast<bool>(out);
 }
 
 inline std::string read_file(const std::filesystem::path& file) {

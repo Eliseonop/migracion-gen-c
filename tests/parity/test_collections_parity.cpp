@@ -166,7 +166,9 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
             for (const Json& f : step[2]) {
                 const std::string bytes = f[1].get<std::string>();
                 files.push_back({f[0], [bytes](const fs::path& target) -> gc::Result<void> {
-                                     write_file(target, bytes);
+                                     if (!write_file(target, bytes)) {
+                                         return gc::fail(gc::ErrorCode::Io, "no se pudo escribir");
+                                     }
                                      return {};
                                  }});
             }
