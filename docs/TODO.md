@@ -11,7 +11,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | Fase | Contenido | Estado | Hito |
 |---|---|---|---|
 | **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo MSVC y CI en marcha | |
-| **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo, ajustes y biblioteca hechos · faltan las colecciones y la biblioteca de SFX de disco | |
+| **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo, ajustes, biblioteca y SFX de disco hechos · faltan las colecciones (pueden esperar a F5) | |
 | **F2** Lógica de edición | ops, sin solapes, keyframes, undo | ✅ hecha: las 42 ops, el historial en disco y el autoguardado | |
 | **F3** Media + export | gc_media, gc_render v1, `genclip render` | 🟡 evaluación hecha (por clip, capas y fotograma) · lo demás espera al Windows SDK | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | ⬜ | |
@@ -22,22 +22,22 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 80 tests y 110 740 aserciones en verde (Debug y Release, 0 warnings).
+**Cifras actuales:** 84 tests y 111 305 aserciones en verde (Debug y Release, 0 warnings).
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
-historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (61 pasos + los tuyos, con las claves redactadas) biblioteca (55 pasos + 23 materiales + la tuya) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
+historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (61 pasos + los tuyos, con las claves redactadas) biblioteca (55 pasos + 23 materiales + la tuya) SFX en disco (205 pasos + tu carpeta de 626 sonidos) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12 (4e-15 en la evaluación).
 
 ---
 
 ## Siguiente (para el autopiloto)
 
-F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 necesita el Windows SDK, así que el orden es:
+F2 está cerrada y F1 casi: solo faltan las colecciones, que son de la interfaz. F3 necesita el Windows SDK, así que el orden es:
 
 1. **Con el Windows SDK instalado:** F3, empezando por MSVC + vcpkg (FFmpeg, Skia, ONNX Runtime) y `gc_media`.
 2. **Sin él, en este orden:**
-   - F1, biblioteca de SFX de disco (`sfx.py`) y colecciones (`collections.py`). Las colecciones son de la interfaz y pueden esperar a F5: escanean carpetas y ordenan como `WindowsPath`, con el `lower()` de Unicode;
-   - F0, `.clang-tidy` y spdlog.
+   - F0, `.clang-tidy` y spdlog;
+   - F1, colecciones (`collections.py`). Son de la interfaz y pueden esperar a F5: escanean carpetas y ordenan como `WindowsPath` (lo que ya hace `sfx_scan`, con `py_lower`).
 3. La evaluación de F3 está completa (por clip, capas y fotograma): lo siguiente de F3 ya es `gc_media` y `gc_render`, que necesitan el SDK.
 
 ## Pendiente por tu parte (Edu)
@@ -81,7 +81,8 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 - [x] Biblioteca de `data/library` (`library.hpp`): carga tolerante, tipo, origen y fuente deducidos, `material_dto` (con la URL codificada como `urllib.parse.quote`), lista ordenada por fecha, editar título y descripción, metadata semántica, proyectos que la usan y quitar (borra el archivo). Paridad: 55 pasos sobre un `data/` temporal (con los mensajes de error que ve el usuario), 23 materiales sueltos y tu `library.json`; 8/8 mutaciones
 - [ ] «Guardar en la biblioteca» desde un proyecto (`library.save_from_project`): cambia el proyecto (`retarget_timeline_asset`, `remove_material`) y copia archivos, así que llega con el almacén de proyectos de la app (F5)
 - [ ] Colecciones de `data/` (`collections`: carpetas de material bajo `material_root`)
-- [ ] Biblioteca de SFX desde disco (`sfx.load_index`, `_scan`, `_entry` y `resolve`, con la duración de `ffprobe`) → `set_sfx_library`. Sin ella, `subject_pop` avisa siempre de que faltan los sonidos
+- [x] Biblioteca de SFX desde disco (`sfx_disk.hpp`, la parte de lectura de `sfx.py`): carpeta activa (`sfx_folder` o la de fábrica), `sfx_library.json` con sus fallos (los sonidos salen del escaneo y las categorías leídas se quedan), escaneo en el orden de `sorted()` de `WindowsPath`, búsqueda por categoría, favoritos y palabras, `resolve` sin salir de la carpeta y `load_sfx_library` (lo que usa `sound_design`, con la sonda de duración inyectada) → `set_sfx_library`. Paridad: 205 pasos sobre una carpeta temporal y tu carpeta (626 sonidos, 15 categorías, 21 favoritos); 34/35 mutaciones (`tools/dev/mutantes.py sfx`; la otra es equivalente)
+- [ ] Dar de alta, editar y crear categorías de SFX (`add_sound`, `update_sound`, `create_category`): escriben archivos y el índice, y llegan con la pantalla de la biblioteca de SFX (F5)
 - [x] Ajustes y API keys (`settings.hpp`: `settings.py`, `export_settings.py` y `transcribe_settings.py`): carga con defectos, `save` con la fusión de claves y máscaras, varias claves por proveedor y la vista pública sin secretos. Paridad: 61 pasos sintéticos con claves falsas y tus ajustes con las claves redactadas; 10/10 mutaciones
 
 ### Notas de F1
@@ -89,6 +90,11 @@ F2 está cerrada y F1 casi: solo faltan dos piezas de entrada y salida. F3 neces
 - **JSON como Python:** `json.loads(read_text("utf-8"))` falla con un BOM de UTF-8. Ajustes, biblioteca e historial usan `read_json_file_py`, que también falla; `read_json_file` (proyectos y timelines) lo sigue saltando.
 - **Texto de Python en `py.hpp`:** `py_lower` (`str.lower()` de Unicode 16, con la sigma final; tabla generada con `tools/gen/gen_py_lower.py`), `py_path_str` (`str(Path(x))`), `py_path_name`, `py_path_suffix` y `py_path_stem` (Python 3.14 en Windows, con el `splitroot` de C: unidades de UTF-16, UNC y `\\?\UNC\`) y `py_quote`.
 - **JSON roto:** un NUL en el texto (nlohmann lo tomaba por el final) y un número que se desborda (`1e999`, que antes cerraba la app con `out_of_range`) son errores de lectura. Python lee `1e999` como `inf`, y NaN e Infinity: divergencia anotada en `io.hpp`.
+- **SFX en disco (`sfx_disk.hpp`):**
+  - **Orden del escaneo:** `sorted(base.rglob("*"))` compara las partes de la ruta con `str.lower()`; `sfx_scan` ordena por `py_lower` de cada parte (la barra no es «cased» ni «case-ignorable», así que la sigma final da lo mismo por partes). Ejemplos medidos: `a/z.mp3` < `a.mp3` < `A.WAV`, `iz.mp3` < `İx.mp3`, `Z.flac` < `ß.mp3` < `é.m4a`.
+  - **Fallos del índice:** cualquier excepción al leer `sfx_library.json` (BOM, UTF-8 inválido, no es un dict, una categoría o un sonido con otro tipo, un nombre de archivo que no es texto) deja las categorías leídas y saca los sonidos del escaneo. Con claves repetidas gana el último valor en la posición del primero, como en Python.
+  - **`load_sfx_library`:** sondea la duración de todos los sonidos al cargar (Python solo la de los emparejados, al proponer). La app tiene que cargarla en segundo plano; la sonda (ffprobe en Python) se inyecta y llega con `gc_media`.
+  - **Divergencias que se quedan:** NaN, Infinity o `1e999` en `sfx_library.json` (Python lo lee; aquí se escanea); un `sfx_folder` que no es texto (Python falla; aquí se ignora); `resolve` no sigue enlaces simbólicos en Windows (libstdc++), así que un enlace dentro de la carpeta que apunte fuera se acepta (Python lo rechaza) y devuelve la ruta con las mayúsculas pedidas (Python, las del disco); los nombres que no son UTF-16 válido se saltan (Python fallaría al codificar la URL).
 
 ## F2 — Lógica de edición *(hecha)*
 

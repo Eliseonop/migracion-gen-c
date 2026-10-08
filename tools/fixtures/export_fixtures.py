@@ -20,8 +20,9 @@ Salida (al repo):
   tests/fixtures/history/synthetic.json    historial: pasos de history_cases.py
   tests/fixtures/settings/synthetic.json   ajustes: pasos de settings_cases.py
   tests/fixtures/library/synthetic.json    biblioteca: pasos de library_cases.py
+  tests/fixtures/sfx/synthetic.json        biblioteca de SFX en disco: pasos de sfx_cases.py
 Con --real, en tests/fixtures/local/<lo mismo>/real.json: TUS proyectos, timelines,
-clips, historiales, ajustes (con las claves redactadas) y biblioteca de video-yt.
+clips, historiales, ajustes (con las claves redactadas), biblioteca y SFX de video-yt.
 tests/fixtures/local/ son datos personales: está en .gitignore y nunca se sube.
 
 Las operaciones pasan por el `timeline_store.apply_op` REAL de video-yt (con el disco
@@ -68,6 +69,8 @@ def _constant_props_in_order(items: list[dict]):
 
 # Biblioteca de SFX de la operación en curso (las recetas la leen con sfx.search/resolve).
 _SFX: dict = {"items": [], "durations": {}}
+# Las funciones de sfx.py antes de sustituirlas (las fixtures de SFX en disco usan las reales).
+_REAL_SFX: dict = {}
 
 
 def _text_width_estimate(font, bold, em, text, ls) -> float:
@@ -80,6 +83,8 @@ def _install_fakes() -> None:
     """Lo que en video-yt depende del disco o de las fuentes instaladas, inyectado: medida de
     texto, biblioteca de SFX y duración de cada sonido (ffprobe)."""
     from app import sfx, sound_design, text_ass
+    _REAL_SFX.setdefault("search", sfx.search)
+    _REAL_SFX.setdefault("resolve", sfx.resolve)
     text_ass.text_width = _text_width_estimate
     sfx.search = lambda *a, **k: {"items": copy.deepcopy(_SFX["items"]), "total": len(_SFX["items"])}
     sfx.resolve = lambda relpath: relpath if relpath in _SFX["durations"] else None
@@ -737,6 +742,129 @@ def real_library_fixtures(ctx: Ctx, data: dict) -> dict:
                   "dto": []})
 
 
+# --- Biblioteca de SFX en disco (sfx.py) -------------------------------------------------------
+
+def _fake_probe(path: Path) -> float:
+    """probe_duration con la sonda falsa: el número que contiene el archivo (si no, 0.0)."""
+    try:
+        return round(float(path.read_text(encoding="utf-8").strip()), 3)
+    except Exception:  # noqa: BLE001
+        return 0.0
+
+
+def _run_sfx_steps(steps: list, root: Path | None) -> list[dict]:
+    """Ejecuta los pasos con el sfx.py REAL sobre `root` (o una carpeta temporal) y un
+    settings.json temporal. «{TMP}» es la carpeta (con «/») en los ajustes y las rutas, y la
+    carpeta de los resultados vuelve a ser «{TMP}»."""
+    from app import settings as st
+    from app import sfx
+    tmp = Path(tempfile.mkdtemp(prefix="gc_sfx_"))
+    base_dir = root or tmp
+    posix, native = base_dir.as_posix(), str(base_dir)
+    saved = (st._FILE, sfx._DEFAULT_BASE, sfx.search, sfx.resolve)
+    st._FILE = tmp / "__settings__.json"
+    sfx.search, sfx.resolve = _REAL_SFX["search"], _REAL_SFX["resolve"]
+
+    def with_base(result: dict) -> dict:
+        if result.get("base"):
+            result["base"] = result["base"].replace(native, "{TMP}")
+        return result
+
+    out = []
+    try:
+        for step in steps:
+            kind, args = step[0], step[1:]
+            entry: dict = {"step": list(step)}
+            try:
+                result = None
+                if kind == "files":
+                    for rel in args[0]:
+                        f = base_dir / rel
+                        f.parent.mkdir(parents=True, exist_ok=True)
+                        f.write_bytes(b"x")
+                elif kind in ("file", "bytes"):
+                    f = base_dir / args[0]
+                    f.parent.mkdir(parents=True, exist_ok=True)
+                    content = args[1] if isinstance(args[1], str) else json.dumps(args[1], ensure_ascii=False)
+                    f.write_bytes(content.encode("latin-1" if kind == "bytes" else "utf-8"))
+                elif kind == "dirs":
+                    for rel in args[0]:
+                        (base_dir / rel).mkdir(parents=True, exist_ok=True)
+                elif kind == "remove":
+                    p = base_dir / args[0]
+                    p.rmdir() if p.is_dir() else p.unlink()
+                elif kind == "default":
+                    sfx._DEFAULT_BASE = base_dir / args[0]
+                elif kind == "settings":
+                    content = args[0] if isinstance(args[0], str) else json.dumps(args[0], ensure_ascii=False)
+                    st._FILE.write_text(content.replace("{TMP}", posix), encoding="utf-8")
+                elif kind == "index":
+                    result = with_base(sfx.load_index())
+                elif kind == "scan":
+                    result = sfx._scan(sfx.get_base())
+                elif kind == "search":
+                    result = with_base(sfx.search(args[0], args[1], args[2]))
+                elif kind == "resolve":
+                    target = sfx.resolve(args[0].replace("{TMP}", posix))
+                    result = None if target is None else target.relative_to(sfx.get_base().resolve()).as_posix()
+                elif kind == "library":   # sound_design.propose: search("", 100000) + resolve + probe
+                    lib = sfx.search("", limit=100000)
+                    durations = {}
+                    for it in lib["items"]:
+                        p = sfx.resolve(it["id"])
+                        if p:
+                            durations[it["id"]] = _fake_probe(p)
+                    result = {"items": lib["items"], "durations": dict(sorted(durations.items()))}
+                elif kind == "favorite_ids":
+                    result = sorted(sfx._favorite_sfx_ids())
+                elif kind == "entry":
+                    result = sfx._entry(args[0], args[1], category=args[2], uso=args[3], name=args[4])
+                elif kind == "filter":
+                    result = sfx.filter_sfx_items(args[0], q=args[1], category=args[2], favorite_ids=args[3])
+                elif kind == "favcat":
+                    result = sfx.with_favorites_category(args[0], args[1], args[2])
+                elif kind == "audio":
+                    result = Path(args[0]).suffix.lower() in sfx._AUDIO_EXT
+                else:
+                    raise ValueError(f"paso desconocido: {kind}")
+                entry["result"] = result
+            except Exception as e:  # noqa: BLE001
+                entry["error"] = type(e).__name__
+            out.append(entry)
+    finally:
+        st._FILE, sfx._DEFAULT_BASE, sfx.search, sfx.resolve = saved
+        shutil.rmtree(tmp, ignore_errors=True)
+    return _pure(out)
+
+
+def synthetic_sfx_fixtures(ctx: Ctx) -> dict:
+    sys.path.insert(0, str(HERE))
+    import sfx_cases as xc
+    return {"root": None, "steps": _run_sfx_steps(xc.STEPS, None)}
+
+
+def real_sfx_fixtures(ctx: Ctx) -> dict:
+    """Tu carpeta de SFX (la de fábrica de video-yt) con tus favoritos: índice, escaneo,
+    búsquedas por categoría y la biblioteca de sound_design con la ruta de cada sonido."""
+    from app import config
+    root = Path(config.SFX_DIR)
+    if not root.is_dir():
+        return {"root": None, "steps": []}
+    settings_file = ctx.root / "backend" / "data" / "settings.json"
+    favs = []
+    if settings_file.exists():
+        favs = ((json.loads(settings_file.read_text(encoding="utf-8")).get("favorites") or {}).get("sfx")) or []
+    steps = [("default", ""), ("settings", {"favorites": {"sfx": favs}}), ("index",), ("scan",),
+             ("search", "", "", 100000), ("search", "", "favoritos", 300), ("library",), ("favorite_ids",)]
+    try:
+        cats = list((json.loads((root / "sfx_library.json").read_text(encoding="utf-8")).get("categorias") or {}))
+    except Exception:  # noqa: BLE001
+        cats = []
+    steps += [("search", "", c, 300) for c in cats]
+    steps += [("search", q, "", 300) for q in ("golpe", "whoosh", "puerta", "risa", "click", "boom", "pop", "zz")]
+    return {"root": root.as_posix(), "steps": _run_sfx_steps(steps, root)}
+
+
 # --- Animación (keyframes y máscaras) ---------------------------------------------------------
 
 def keyframe_case(ctx: Ctx, name: str, raw_clip: dict, times: list[float]) -> dict:
@@ -1142,6 +1270,9 @@ def main() -> None:
     sett = synthetic_settings_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "settings" / "synthetic.json", sett, len(sett["steps"]),
           sum("error" in s for s in sett["steps"]))
+    sfx_syn = synthetic_sfx_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "sfx" / "synthetic.json", sfx_syn, len(sfx_syn["steps"]),
+          sum("error" in s for s in sfx_syn["steps"]))
     hist = synthetic_history_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "history" / "synthetic.json", hist, len(hist["steps"]), 0)
     lay = synthetic_layout_fixtures(ctx)
@@ -1178,6 +1309,9 @@ def main() -> None:
         write(REPO / "tests" / "fixtures" / "local" / "library" / "real.json", libr_real, len(libr_real["steps"]), 0)
         sett_real = real_settings_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "local" / "settings" / "real.json", sett_real, len(sett_real["steps"]), 0)
+        sfx_real = real_sfx_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "local" / "sfx" / "real.json", sfx_real, len(sfx_real["steps"]),
+              sum("error" in s for s in sfx_real["steps"]))
         hist_real = real_history_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "history" / "real.json", hist_real, len(hist_real["cases"]), 0)
         lay_real = real_layout_fixtures(ctx, data)

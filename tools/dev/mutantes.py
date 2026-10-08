@@ -3,8 +3,9 @@
     python tools/dev/mutantes.py <grupo> [preset] [filtro]
 
 `grupo`: eval (evaluación por clip, tests [eval]), layers (capas de un instante, tests
-[layers]) o frame (fotograma, tests [frame]). `preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los
-mutantes cuyo nombre contiene ese texto.
+[layers]), frame (fotograma, tests [frame]) o sfx (biblioteca de SFX en disco, tests [sfx]).
+`preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los mutantes cuyo
+nombre contiene ese texto.
 
 Aplica cada cambio a la fuente, recompila gc_tests, pasa los tests del grupo y deshace el
 cambio (también si algo falla). Un mutante «NO DETECTADO» es un hueco de las fixtures,
@@ -166,7 +167,57 @@ FRAME = [
     ("render: material sin tamaño sin error", F, "                if (!preview) {", "                if (false) {"),
 ]
 
-GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]")}
+X = "src/core/src/sfx_disk.cpp"
+SFX = [
+    ("audio: sin .flac", X, ' || ext == ".flac"', ""),
+    ("audio: sufijo sin minúsculas", X, "py_lower(py_path_suffix(filename))", "py_path_suffix(filename)"),
+    ("escaneo: orden sin minúsculas", X, "f.key.push_back(py_lower(p));", "f.key.push_back(p);"),
+    ("escaneo: sin ordenar", X, "std::ranges::stable_sort(found, {}, &Found::key);", ""),
+    ("escaneo: carpeta con otro separador", X, '(k > 0 ? "/" : "")', '(k > 0 ? "|" : "")'),
+    ("escaneo: sin subcarpetas", X, "if (all.size() < depth || ", "if (depth > 1 || "),
+    ("índice: sin categorías", X, "categories.push_back(std::move(cat));", "(void)cat;"),
+    ("índice: etiqueta sin defecto", X, 'get_or(v, "etiqueta", id)', 'get_or(v, "etiqueta", kNull)'),
+    ("índice: cuenta por defecto 1", X, 'get_or(v, "cantidad", Json(0))', 'get_or(v, "cantidad", Json(1))'),
+    ("índice: categoría que no es dict vale", X, "if (py_truthy(v) && !v.is_object()) {", "if (false) {"),
+    ("índice: sonido que no es dict se salta", X, "return false; // s.get", "continue; // s.get"),
+    ("índice: al fallar se borran las categorías", X, "        items = sfx_scan(*base);\n    }\n    Json out",
+     "        categories.clear();\n        items = sfx_scan(*base);\n    }\n    Json out"),
+    ("índice: con BOM se acepta", X, "read_json_file_py(file)", "read_json_file(file)"),
+    ("índice: sin archivo no escanea", X, "if (!fs::exists(file, ec) || !read_index(",
+     "if (fs::exists(file, ec) && !read_index("),
+    ("entry: categoría sin la carpeta", X, "py_truthy(category) ? category : folder", "category"),
+    ("entry: un nombre falso se queda", X, "if (py_truthy(name)) {", "if (!name.is_null()) {"),
+    ("entry: carpeta falsa cuenta", X, "py_truthy(folder) ? Json(", "!folder.is_null() ? Json("),
+    ("entry: URL sin codificar", X, "py_quote(rel.get_ref<const std::string&>())", "rel.get_ref<const std::string&>()"),
+    ("base: sin sfx_folder", X, "if (custom.is_string()) {", "if (false) {"),
+    ("base: ruta sin normalizar", X, "py_path_str(path_to_utf8(*base))", "path_to_utf8(*base)"),
+    ("filtro: categoría sin strip", X, "py_lower(py_strip(category))", "py_lower(category)"),
+    ("filtro: categoría solo en la carpeta", X, 'py_lower(py_str(get_or(it, "category", kEmptyText)));',
+     '"";'),
+    ("filtro: alguna palabra basta", X, "std::ranges::all_of(tokens", "std::ranges::any_of(tokens"),
+    ("filtro: palabras sin el uso", X, 'py_str(get_or(it, "uso", kEmptyText)) + " " + ', ""),
+    # Equivalente: split() sin argumentos ya descarta los blancos de los extremos, y una búsqueda
+    # solo de blancos da [] palabras: todo pasa, como con el strip.
+    ("filtro: palabras sin strip (EQUIVALENTE)", X, "py_split(py_lower(py_strip(q)))", "py_split(py_lower(q))"),
+    ("favoritos: se queda la categoría «favoritos»", X,
+     "if (!(id.is_string() && id.get_ref<const std::string&>() == kSfxFavorites)) {", "if (true) {"),
+    ("favoritos: cuenta todos", X, "[&](const Json& it) { return is_favorite(it, favorites); }",
+     "[&](const Json&) { return true; }"),
+    ("búsqueda: total tras el límite", X, 'out["total"] = total;', 'out["total"] = items.size();'),
+    ("búsqueda: categorías sin favoritos", X,
+     "with_favorites_category(idx.at(\"categories\").get<std::vector<Json>>(), all, favorites)",
+     'idx.at("categories")'),
+    ("resolve: sale de la carpeta", X, "if (t.size() < r.size() || !std::equal(r.begin(), r.end(), t.begin())) {",
+     "if (false) {"),
+    ("resolve: distingue mayúsculas", X, "            out.push_back(py_lower(s));", "            out.push_back(s);"),
+    ("resolve: sin comprobar que existe", X, "if (!fs::exists(target, ec)) {", "if (false) {"),
+    ("biblioteca: duración sin redondear", X, "py_round(*seconds, 3)", "*seconds"),
+    ("biblioteca: sin duración da 1", X, "py_round(*seconds, 3) : 0.0;", "py_round(*seconds, 3) : 1.0;"),
+    ("biblioteca: límite de 3", X, "constexpr std::size_t kAll = 100000;", "constexpr std::size_t kAll = 3;"),
+]
+
+GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
+          "sfx": (SFX, "[sfx]")}
 
 
 def run(cmd: list[str]) -> subprocess.CompletedProcess:

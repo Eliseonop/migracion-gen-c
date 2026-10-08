@@ -751,3 +751,27 @@ Preparación de la biblioteca de SFX y de las colecciones, que ordenan y filtran
 - **Divergencias del export sin anotar:** el `slide` en overlay (el preview desplaza una fracción del clip y el export el cuadro entero; 3 de tus clips, decisión de Edu), el redondeo a pares del overlay estático, las dimensiones pares del export (`FrameSpec` lo dice), `x`/`y`/`scale` a 0 leídos como 0,5 o 1 en el export, y el `transform` estático que el export ignora en relleno.
 - Docs: cifras de pasos (ajustes 61, biblioteca 55, 5 pasos con BOM), `projects.json` también es estricto en Python (el almacén de F5 usará `read_json_file_py`), `dual_slot_wh` y dos comentarios fuera de sitio.
 - **Resultado:** 82 tests en verde, en Debug y en Release, con 0 warnings (verificado junto con la tanda siguiente, la biblioteca de SFX).
+
+### 2026-10-07 — F1: biblioteca de SFX en disco
+
+**Hecho: `sfx_disk.hpp`** (la parte de lectura de `sfx.py` y lo que `sound_design.propose` hace con ella):
+- **Carpeta activa (`sfx_base`):** la de `sfx_folder` en los ajustes si es una carpeta; si no, la de fábrica. La que se devuelve en `base` es `str(Path)` de Python (`py_path_str`).
+- **Índice (`sfx_load_index`):** `sfx_library.json` con categorías y sonidos (`sfx_entry`: id, nombre o el stem, archivo, carpeta, categoría o la carpeta, uso y URL codificada). Si falla en cualquier punto, los sonidos salen del escaneo y las categorías ya leídas se quedan, como en Python.
+- **Escaneo (`sfx_scan`):** los audios (.mp3, .wav, .ogg, .m4a, .aac y .flac, sin distinguir mayúsculas) de la carpeta y sus subcarpetas, en el orden de `sorted()` de `WindowsPath`.
+- **Búsqueda (`sfx_search`, `filter_sfx_items`, `with_favorites_category`):** por categoría (en la carpeta o la categoría; «favoritos» son los marcados en los ajustes) y por palabras, que tienen que estar todas en el nombre, la categoría, el uso o la carpeta, con `str.lower()` de Python sobre el texto entero.
+- **`sfx_resolve`:** la ruta del sonido si existe y no sale de la carpeta (sin distinguir mayúsculas, como `WindowsPath`).
+- **`load_sfx_library`:** `search("", 100000)` y la duración de cada sonido que resuelve, con la sonda inyectada y redondeada a ms. Es lo que se pasa a `set_sfx_library` para que `subject_pop` encuentre sus sonidos.
+- Dar de alta, editar y crear categorías escriben archivos y llegan con la pantalla de SFX (F5).
+
+**Verificación:**
+- **Casos:** 205 pasos con el `sfx.py` REAL sobre una carpeta temporal y un `settings.json` temporal (`sfx_cases.py`). Cubren:
+  - el escaneo con subcarpetas, `.MP3`, `İ`, `ß`, `Σ`, archivos que no son audio y carpetas con nombre de audio;
+  - la carpeta de los ajustes (con barras repetidas, `..`, que no existe o que es un archivo);
+  - un índice válido con tipos raros y 22 variantes más: 15 que fallan (BOM, latin-1, no es un dict, tipos raros, es una carpeta…) y 7 vacías, falsas o con claves repetidas;
+  - búsquedas con espacios Unicode y sigma final, favoritos, `resolve` dentro, fuera, absoluto y con otras mayúsculas, y la biblioteca con duraciones de una sonda falsa;
+  - `_entry`, `filter_sfx_items` y `with_favorites_category` sueltos.
+- **Tu carpeta:** la de fábrica de video-yt, con tus favoritos. Son 626 sonidos en 15 categorías (619 en disco), 21 favoritos, una búsqueda por categoría y 8 por palabras.
+- **Mutación:** 34/35 (`tools/dev/mutantes.py sfx`); la otra es equivalente.
+- **Resultado:** 84 tests y 111 305 aserciones en verde, en Debug y en Release, con 0 warnings.
+
+**Siguiente:** F0 (`.clang-tidy` y spdlog). Las colecciones de F1 pueden esperar a F5, y F3 sigue esperando al Windows SDK.

@@ -1,0 +1,8269 @@
+{
+ "root": null,
+ "steps": [
+  {
+   "step": [
+    "default",
+    "no_existe"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": false,
+    "base": null,
+    "categories": [],
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    300
+   ],
+   "result": {
+    "available": false,
+    "base": null,
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 0,
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "resolve",
+    "b.mp3"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "library"
+   ],
+   "result": {
+    "items": [],
+    "durations": {}
+   }
+  },
+  {
+   "step": [
+    "favorite_ids"
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "files",
+    [
+     "lib/b.mp3",
+     "lib/A.WAV",
+     "lib/a/z.mp3",
+     "lib/a.mp3",
+     "lib/_x.ogg",
+     "lib/Z.flac",
+     "lib/é.m4a",
+     "lib/E.aac",
+     "lib/ß.mp3",
+     "lib/SS.mp3",
+     "lib/İx.mp3",
+     "lib/iz.mp3",
+     "lib/ΟΔΟΣ/AΟΔΟΣ.mp3",
+     "lib/sub/deep/x.Mp3",
+     "lib/sub/Readme.txt",
+     "lib/sub/.mp3",
+     "lib/sub/noext",
+     "lib/sub/name.with.dots.wav",
+     "lib/sub/a b%#&+.mp3",
+     "otro/fuera.mp3"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "dirs",
+    [
+     "lib/vacía",
+     "lib/sub/carpeta.mp3"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "default",
+    "lib"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "scan"
+   ],
+   "result": [
+    {
+     "id": "_x.ogg",
+     "name": "_x",
+     "file": "_x.ogg",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/_x.ogg"
+    },
+    {
+     "id": "a/z.mp3",
+     "name": "z",
+     "file": "z.mp3",
+     "folder": "a",
+     "category": "a",
+     "uso": "",
+     "url": "/api/sfx/file/a/z.mp3"
+    },
+    {
+     "id": "a.mp3",
+     "name": "a",
+     "file": "a.mp3",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/a.mp3"
+    },
+    {
+     "id": "A.WAV",
+     "name": "A",
+     "file": "A.WAV",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/A.WAV"
+    },
+    {
+     "id": "b.mp3",
+     "name": "b",
+     "file": "b.mp3",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/b.mp3"
+    },
+    {
+     "id": "E.aac",
+     "name": "E",
+     "file": "E.aac",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/E.aac"
+    },
+    {
+     "id": "iz.mp3",
+     "name": "iz",
+     "file": "iz.mp3",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/iz.mp3"
+    },
+    {
+     "id": "İx.mp3",
+     "name": "İx",
+     "file": "İx.mp3",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/%C4%B0x.mp3"
+    },
+    {
+     "id": "SS.mp3",
+     "name": "SS",
+     "file": "SS.mp3",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/SS.mp3"
+    },
+    {
+     "id": "sub/a b%#&+.mp3",
+     "name": "a b%#&+",
+     "file": "a b%#&+.mp3",
+     "folder": "sub",
+     "category": "sub",
+     "uso": "",
+     "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+    },
+    {
+     "id": "sub/deep/x.Mp3",
+     "name": "x",
+     "file": "x.Mp3",
+     "folder": "sub/deep",
+     "category": "sub/deep",
+     "uso": "",
+     "url": "/api/sfx/file/sub/deep/x.Mp3"
+    },
+    {
+     "id": "sub/name.with.dots.wav",
+     "name": "name.with.dots",
+     "file": "name.with.dots.wav",
+     "folder": "sub",
+     "category": "sub",
+     "uso": "",
+     "url": "/api/sfx/file/sub/name.with.dots.wav"
+    },
+    {
+     "id": "Z.flac",
+     "name": "Z",
+     "file": "Z.flac",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/Z.flac"
+    },
+    {
+     "id": "ß.mp3",
+     "name": "ß",
+     "file": "ß.mp3",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/%C3%9F.mp3"
+    },
+    {
+     "id": "é.m4a",
+     "name": "é",
+     "file": "é.m4a",
+     "folder": "",
+     "category": "",
+     "uso": "",
+     "url": "/api/sfx/file/%C3%A9.m4a"
+    },
+    {
+     "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+     "name": "AΟΔΟΣ",
+     "file": "AΟΔΟΣ.mp3",
+     "folder": "ΟΔΟΣ",
+     "category": "ΟΔΟΣ",
+     "uso": "",
+     "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+    }
+   ]
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 16,
+    "items": [
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    3
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 16,
+    "items": [
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "a",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 6,
+    "items": [
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "  Z  ",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 3,
+    "items": [
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "sub deep",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "SUB",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 3,
+    "items": [
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    " sub/deep ",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "x",
+    "deep",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "favoritos",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 0,
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "search",
+    "οδος",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "οδοσ",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 0,
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "search",
+    " Z ",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 3,
+    "items": [
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "nada de nada",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     }
+    ],
+    "total": 0,
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "resolve",
+    "b.mp3"
+   ],
+   "result": "b.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "B.MP3"
+   ],
+   "result": "b.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "a/z.mp3"
+   ],
+   "result": "a/z.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "a\\z.mp3"
+   ],
+   "result": "a/z.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "../otro/fuera.mp3"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "a/../b.mp3"
+   ],
+   "result": "b.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "a/../../lib/b.mp3"
+   ],
+   "result": "b.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "no.mp3"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    ""
+   ],
+   "result": "."
+  },
+  {
+   "step": [
+    "resolve",
+    "."
+   ],
+   "result": "."
+  },
+  {
+   "step": [
+    "resolve",
+    "sub"
+   ],
+   "result": "sub"
+  },
+  {
+   "step": [
+    "resolve",
+    "sub/"
+   ],
+   "result": "sub"
+  },
+  {
+   "step": [
+    "resolve",
+    "{TMP}/lib/b.mp3"
+   ],
+   "result": "b.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "{TMP}/otro/fuera.mp3"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "{TMP}/lib"
+   ],
+   "result": "."
+  },
+  {
+   "step": [
+    "resolve",
+    "/"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "resolve",
+    "sub/../../otro/../lib/a.mp3"
+   ],
+   "result": "a.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "vacía"
+   ],
+   "result": "vacía"
+  },
+  {
+   "step": [
+    "resolve",
+    "../LIB/b.mp3"
+   ],
+   "result": "b.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "{TMP}/LIB/A/Z.MP3"
+   ],
+   "result": "a/z.mp3"
+  },
+  {
+   "step": [
+    "library"
+   ],
+   "result": {
+    "items": [
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ],
+    "durations": {
+     "A.WAV": 0.0,
+     "E.aac": 0.0,
+     "SS.mp3": 0.0,
+     "Z.flac": 0.0,
+     "_x.ogg": 0.0,
+     "a.mp3": 0.0,
+     "a/z.mp3": 0.0,
+     "b.mp3": 0.0,
+     "iz.mp3": 0.0,
+     "sub/a b%#&+.mp3": 0.0,
+     "sub/deep/x.Mp3": 0.0,
+     "sub/name.with.dots.wav": 0.0,
+     "ß.mp3": 0.0,
+     "é.m4a": 0.0,
+     "İx.mp3": 0.0,
+     "ΟΔΟΣ/AΟΔΟΣ.mp3": 0.0
+    }
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/b.mp3",
+    "1.23456"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    "lib/A.WAV",
+    "2.0005"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    "lib/_x.ogg",
+    " 7 \n"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    "lib/a/z.mp3",
+    "0.0625"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "library"
+   ],
+   "result": {
+    "items": [
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ],
+    "durations": {
+     "A.WAV": 2.001,
+     "E.aac": 0.0,
+     "SS.mp3": 0.0,
+     "Z.flac": 0.0,
+     "_x.ogg": 7.0,
+     "a.mp3": 0.0,
+     "a/z.mp3": 0.062,
+     "b.mp3": 1.235,
+     "iz.mp3": 0.0,
+     "sub/a b%#&+.mp3": 0.0,
+     "sub/deep/x.Mp3": 0.0,
+     "sub/name.with.dots.wav": 0.0,
+     "ß.mp3": 0.0,
+     "é.m4a": 0.0,
+     "İx.mp3": 0.0,
+     "ΟΔΟΣ/AΟΔΟΣ.mp3": 0.0
+    }
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "favorites": {
+      "sfx": [
+       "b.mp3",
+       "a/z.mp3",
+       "no/existe.mp3",
+       5
+      ]
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "favorite_ids"
+   ],
+   "result": [
+    "5",
+    "a/z.mp3",
+    "b.mp3",
+    "no/existe.mp3"
+   ]
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "favoritos",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 2
+     }
+    ],
+    "total": 2,
+    "items": [
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    " FAVORITOS ",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 2
+     }
+    ],
+    "total": 2,
+    "items": [
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "z",
+    "favoritos",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 2
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 2
+     }
+    ],
+    "total": 16,
+    "items": [
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "favorites": {
+      "sfx": "b.mp3"
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "favorite_ids"
+   ],
+   "result": [
+    ".",
+    "3",
+    "b",
+    "m",
+    "p"
+   ]
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "favorites": {
+      "sfx": {
+       "b.mp3": 1
+      }
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "favorite_ids"
+   ],
+   "result": [
+    "b.mp3"
+   ]
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "favorites": 3
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "favorite_ids"
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "settings",
+    "{ roto"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "favorite_ids"
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "files",
+    [
+     "custom/c.mp3",
+     "custom/d/e.wav"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "sfx_folder": "{TMP}/custom",
+     "favorites": {
+      "sfx": [
+       "c.mp3"
+      ]
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\custom",
+    "categories": [],
+    "items": [
+     {
+      "id": "c.mp3",
+      "name": "c",
+      "file": "c.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/c.mp3"
+     },
+     {
+      "id": "d/e.wav",
+      "name": "e",
+      "file": "e.wav",
+      "folder": "d",
+      "category": "d",
+      "uso": "",
+      "url": "/api/sfx/file/d/e.wav"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\custom",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 1
+     }
+    ],
+    "total": 2,
+    "items": [
+     {
+      "id": "c.mp3",
+      "name": "c",
+      "file": "c.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/c.mp3"
+     },
+     {
+      "id": "d/e.wav",
+      "name": "e",
+      "file": "e.wav",
+      "folder": "d",
+      "category": "d",
+      "uso": "",
+      "url": "/api/sfx/file/d/e.wav"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "resolve",
+    "c.mp3"
+   ],
+   "result": "c.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "../lib/b.mp3"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "library"
+   ],
+   "result": {
+    "items": [
+     {
+      "id": "c.mp3",
+      "name": "c",
+      "file": "c.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/c.mp3"
+     },
+     {
+      "id": "d/e.wav",
+      "name": "e",
+      "file": "e.wav",
+      "folder": "d",
+      "category": "d",
+      "uso": "",
+      "url": "/api/sfx/file/d/e.wav"
+     }
+    ],
+    "durations": {
+     "c.mp3": 0.0,
+     "d/e.wav": 0.0
+    }
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "sfx_folder": "{TMP}//custom/./d/.."
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\custom\\d\\..",
+    "categories": [],
+    "items": [
+     {
+      "id": "c.mp3",
+      "name": "c",
+      "file": "c.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/c.mp3"
+     },
+     {
+      "id": "d/e.wav",
+      "name": "e",
+      "file": "e.wav",
+      "folder": "d",
+      "category": "d",
+      "uso": "",
+      "url": "/api/sfx/file/d/e.wav"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "sfx_folder": "{TMP}\\custom\\"
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\custom",
+    "categories": [],
+    "items": [
+     {
+      "id": "c.mp3",
+      "name": "c",
+      "file": "c.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/c.mp3"
+     },
+     {
+      "id": "d/e.wav",
+      "name": "e",
+      "file": "e.wav",
+      "folder": "d",
+      "category": "d",
+      "uso": "",
+      "url": "/api/sfx/file/d/e.wav"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "sfx_folder": "{TMP}/no_existe"
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "sfx_folder": "{TMP}/custom/c.mp3"
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "sfx_folder": ""
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "sfx_folder": null
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "settings",
+    {}
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "files",
+    [
+     "lib/01_IMPACTOS/golpe.mp3",
+     "lib/02_AIRE/whoosh.wav",
+     "lib/03_RARO/sub/Ñandú ü.mp3"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    "lib/02_AIRE/whoosh.wav",
+    "0.5"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "categorias": {
+      "01_IMPACTOS": {
+       "etiqueta": "Impactos",
+       "cantidad": 3
+      },
+      "02_AIRE": {},
+      "03_RARO": null,
+      "04_NULO": {
+       "etiqueta": null,
+       "cantidad": "muchos"
+      },
+      "favoritos": {
+       "etiqueta": "Mis favoritos"
+      }
+     },
+     "sonidos": [
+      {
+       "sonido": "Golpe seco",
+       "archivo": "golpe.mp3",
+       "carpeta": "01_IMPACTOS",
+       "categoria": "Impactos",
+       "uso_tipico": "puñetazos y caídas"
+      },
+      {
+       "archivo": "whoosh.wav",
+       "carpeta": "02_AIRE"
+      },
+      {
+       "sonido": "",
+       "archivo": "raro.name.ogg",
+       "carpeta": ""
+      },
+      {
+       "sonido": 5,
+       "archivo": "num.mp3",
+       "carpeta": 7,
+       "categoria": 0,
+       "uso_tipico": null
+      },
+      {
+       "sonido": [
+        "a"
+       ],
+       "archivo": null,
+       "carpeta": true
+      },
+      {
+       "archivo": "Ñandú ü.mp3",
+       "carpeta": "03_RARO/sub"
+      },
+      {},
+      {
+       "archivo": "dup.mp3",
+       "carpeta": "01_IMPACTOS"
+      },
+      {
+       "archivo": "dup.mp3",
+       "carpeta": "01_IMPACTOS",
+       "sonido": "Otra vez"
+      },
+      {
+       "sonido": "Real",
+       "archivo": 1.5,
+       "carpeta": "f"
+      },
+      {
+       "sonido": "ΟΔΟΣ",
+       "archivo": "s.mp3",
+       "carpeta": "g r#ú%"
+      }
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     },
+     {
+      "id": "favoritos",
+      "label": "Mis favoritos",
+      "count": 0
+     }
+    ],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "Golpe seco",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "Impactos",
+      "uso": "puñetazos y caídas",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "raro.name.ogg",
+      "name": "raro.name",
+      "file": "raro.name.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/raro.name.ogg"
+     },
+     {
+      "id": "7/num.mp3",
+      "name": 5,
+      "file": "num.mp3",
+      "folder": 7,
+      "category": 7,
+      "uso": null,
+      "url": "/api/sfx/file/7/num.mp3"
+     },
+     {
+      "id": "True/None",
+      "name": [
+       "a"
+      ],
+      "file": null,
+      "folder": true,
+      "category": true,
+      "uso": "",
+      "url": "/api/sfx/file/True/None"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "",
+      "name": "",
+      "file": "",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/"
+     },
+     {
+      "id": "01_IMPACTOS/dup.mp3",
+      "name": "dup",
+      "file": "dup.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/dup.mp3"
+     },
+     {
+      "id": "01_IMPACTOS/dup.mp3",
+      "name": "Otra vez",
+      "file": "dup.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/dup.mp3"
+     },
+     {
+      "id": "f/1.5",
+      "name": "Real",
+      "file": 1.5,
+      "folder": "f",
+      "category": "f",
+      "uso": "",
+      "url": "/api/sfx/file/f/1.5"
+     },
+     {
+      "id": "g r#ú%/s.mp3",
+      "name": "ΟΔΟΣ",
+      "file": "s.mp3",
+      "folder": "g r#ú%",
+      "category": "g r#ú%",
+      "uso": "",
+      "url": "/api/sfx/file/g%20r%23%C3%BA%25/s.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "golpe",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "Golpe seco",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "Impactos",
+      "uso": "puñetazos y caídas",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "impactos",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 3,
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "Golpe seco",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "Impactos",
+      "uso": "puñetazos y caídas",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "01_IMPACTOS/dup.mp3",
+      "name": "dup",
+      "file": "dup.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/dup.mp3"
+     },
+     {
+      "id": "01_IMPACTOS/dup.mp3",
+      "name": "Otra vez",
+      "file": "dup.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/dup.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "01",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 3,
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "Golpe seco",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "Impactos",
+      "uso": "puñetazos y caídas",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "01_IMPACTOS/dup.mp3",
+      "name": "dup",
+      "file": "dup.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/dup.mp3"
+     },
+     {
+      "id": "01_IMPACTOS/dup.mp3",
+      "name": "Otra vez",
+      "file": "dup.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/dup.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "5",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "7/num.mp3",
+      "name": 5,
+      "file": "num.mp3",
+      "folder": 7,
+      "category": 7,
+      "uso": null,
+      "url": "/api/sfx/file/7/num.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "true",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "True/None",
+      "name": [
+       "a"
+      ],
+      "file": null,
+      "folder": true,
+      "category": true,
+      "uso": "",
+      "url": "/api/sfx/file/True/None"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "none",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "7/num.mp3",
+      "name": 5,
+      "file": "num.mp3",
+      "folder": 7,
+      "category": 7,
+      "uso": null,
+      "url": "/api/sfx/file/7/num.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "ñandú",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "ÑANDÚ Ü",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "favoritos",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 0,
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "search",
+    "οδος",
+    "",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 1,
+    "items": [
+     {
+      "id": "g r#ú%/s.mp3",
+      "name": "ΟΔΟΣ",
+      "file": "s.mp3",
+      "folder": "g r#ú%",
+      "category": "g r#ú%",
+      "uso": "",
+      "url": "/api/sfx/file/g%20r%23%C3%BA%25/s.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "0",
+    300
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 5,
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "Golpe seco",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "Impactos",
+      "uso": "puñetazos y caídas",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "01_IMPACTOS/dup.mp3",
+      "name": "dup",
+      "file": "dup.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/dup.mp3"
+     },
+     {
+      "id": "01_IMPACTOS/dup.mp3",
+      "name": "Otra vez",
+      "file": "dup.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/dup.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "search",
+    "",
+    "",
+    2
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "favoritos",
+      "label": "Favoritos",
+      "count": 0
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE",
+      "label": "02_AIRE",
+      "count": 0
+     },
+     {
+      "id": "03_RARO",
+      "label": "03_RARO",
+      "count": 0
+     },
+     {
+      "id": "04_NULO",
+      "label": null,
+      "count": "muchos"
+     }
+    ],
+    "total": 11,
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "Golpe seco",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "Impactos",
+      "uso": "puñetazos y caídas",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "resolve",
+    "01_IMPACTOS/golpe.mp3"
+   ],
+   "result": "01_IMPACTOS/golpe.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "03_RARO/sub/Ñandú ü.mp3"
+   ],
+   "result": "03_RARO/sub/Ñandú ü.mp3"
+  },
+  {
+   "step": [
+    "resolve",
+    "f/1.5"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "library"
+   ],
+   "result": {
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "Golpe seco",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "Impactos",
+      "uso": "puñetazos y caídas",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "raro.name.ogg",
+      "name": "raro.name",
+      "file": "raro.name.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/raro.name.ogg"
+     },
+     {
+      "id": "7/num.mp3",
+      "name": 5,
+      "file": "num.mp3",
+      "folder": 7,
+      "category": 7,
+      "uso": null,
+      "url": "/api/sfx/file/7/num.mp3"
+     },
+     {
+      "id": "True/None",
+      "name": [
+       "a"
+      ],
+      "file": null,
+      "folder": true,
+      "category": true,
+      "uso": "",
+      "url": "/api/sfx/file/True/None"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "",
+      "name": "",
+      "file": "",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/"
+     },
+     {
+      "id": "01_IMPACTOS/dup.mp3",
+      "name": "dup",
+      "file": "dup.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/dup.mp3"
+     },
+     {
+      "id": "01_IMPACTOS/dup.mp3",
+      "name": "Otra vez",
+      "file": "dup.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/dup.mp3"
+     },
+     {
+      "id": "f/1.5",
+      "name": "Real",
+      "file": 1.5,
+      "folder": "f",
+      "category": "f",
+      "uso": "",
+      "url": "/api/sfx/file/f/1.5"
+     },
+     {
+      "id": "g r#ú%/s.mp3",
+      "name": "ΟΔΟΣ",
+      "file": "s.mp3",
+      "folder": "g r#ú%",
+      "category": "g r#ú%",
+      "uso": "",
+      "url": "/api/sfx/file/g%20r%23%C3%BA%25/s.mp3"
+     }
+    ],
+    "durations": {
+     "": 0.0,
+     "01_IMPACTOS/golpe.mp3": 0.0,
+     "02_AIRE/whoosh.wav": 0.5,
+     "03_RARO/sub/Ñandú ü.mp3": 0.0
+    }
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    "{ roto"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    "﻿{\"sonidos\": []}"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "bytes",
+    "lib/sfx_library.json",
+    "{\"sonidos\": [{\"archivo\": \"é.mp3\"}]}"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    []
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    "null"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    "\"texto\""
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "categorias": [
+      1
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "categorias": {
+      "a": {
+       "etiqueta": "A"
+      },
+      "b": 5,
+      "c": {}
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "a",
+      "label": "A",
+      "count": 0
+     }
+    ],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "categorias": {
+      "a": {}
+     },
+     "sonidos": {
+      "x": 1
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "a",
+      "label": "a",
+      "count": 0
+     }
+    ],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "sonidos": "abc"
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "sonidos": 5
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "sonidos": [
+      {
+       "archivo": "ok.mp3"
+      },
+      {
+       "archivo": null
+      }
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "sonidos": [
+      {
+       "archivo": 5,
+       "sonido": "x"
+      }
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "sonidos": [
+      {
+       "archivo": 5,
+       "sonido": "x",
+       "carpeta": "c"
+      }
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "c/5",
+      "name": "x",
+      "file": 5,
+      "folder": "c",
+      "category": "c",
+      "uso": "",
+      "url": "/api/sfx/file/c/5"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "sonidos": [
+      {
+       "archivo": "",
+       "sonido": null
+      }
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "",
+      "name": "",
+      "file": "",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "sonidos": [
+      1
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "sonidos": [],
+     "categorias": {}
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "sonidos": 0,
+     "categorias": null
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "categorias": {
+      "x": {
+       "etiqueta": "X"
+      }
+     },
+     "sonidos": false
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "x",
+      "label": "X",
+      "count": 0
+     }
+    ],
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    "{\"categorias\": {\"a\": {\"etiqueta\": \"1\"}, \"a\": {\"etiqueta\": \"2\"}, \"b\": {}}}"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "a",
+      "label": "2",
+      "count": 0
+     },
+     {
+      "id": "b",
+      "label": "b",
+      "count": 0
+     }
+    ],
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    "{\"sonidos\": [{\"archivo\": \"x.mp3\"}], \"sonidos\": []}"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": []
+   }
+  },
+  {
+   "step": [
+    "remove",
+    "lib/sfx_library.json"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "dirs",
+    [
+     "lib/sfx_library.json"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "golpe",
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": "",
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     },
+     {
+      "id": "02_AIRE/whoosh.wav",
+      "name": "whoosh",
+      "file": "whoosh.wav",
+      "folder": "02_AIRE",
+      "category": "02_AIRE",
+      "uso": "",
+      "url": "/api/sfx/file/02_AIRE/whoosh.wav"
+     },
+     {
+      "id": "03_RARO/sub/Ñandú ü.mp3",
+      "name": "Ñandú ü",
+      "file": "Ñandú ü.mp3",
+      "folder": "03_RARO/sub",
+      "category": "03_RARO/sub",
+      "uso": "",
+      "url": "/api/sfx/file/03_RARO/sub/%C3%91and%C3%BA%20%C3%BC.mp3"
+     },
+     {
+      "id": "_x.ogg",
+      "name": "_x",
+      "file": "_x.ogg",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/_x.ogg"
+     },
+     {
+      "id": "a/z.mp3",
+      "name": "z",
+      "file": "z.mp3",
+      "folder": "a",
+      "category": "a",
+      "uso": "",
+      "url": "/api/sfx/file/a/z.mp3"
+     },
+     {
+      "id": "a.mp3",
+      "name": "a",
+      "file": "a.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/a.mp3"
+     },
+     {
+      "id": "A.WAV",
+      "name": "A",
+      "file": "A.WAV",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/A.WAV"
+     },
+     {
+      "id": "b.mp3",
+      "name": "b",
+      "file": "b.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/b.mp3"
+     },
+     {
+      "id": "E.aac",
+      "name": "E",
+      "file": "E.aac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/E.aac"
+     },
+     {
+      "id": "iz.mp3",
+      "name": "iz",
+      "file": "iz.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/iz.mp3"
+     },
+     {
+      "id": "İx.mp3",
+      "name": "İx",
+      "file": "İx.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C4%B0x.mp3"
+     },
+     {
+      "id": "SS.mp3",
+      "name": "SS",
+      "file": "SS.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/SS.mp3"
+     },
+     {
+      "id": "sub/a b%#&+.mp3",
+      "name": "a b%#&+",
+      "file": "a b%#&+.mp3",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/a%20b%25%23%26%2B.mp3"
+     },
+     {
+      "id": "sub/deep/x.Mp3",
+      "name": "x",
+      "file": "x.Mp3",
+      "folder": "sub/deep",
+      "category": "sub/deep",
+      "uso": "",
+      "url": "/api/sfx/file/sub/deep/x.Mp3"
+     },
+     {
+      "id": "sub/name.with.dots.wav",
+      "name": "name.with.dots",
+      "file": "name.with.dots.wav",
+      "folder": "sub",
+      "category": "sub",
+      "uso": "",
+      "url": "/api/sfx/file/sub/name.with.dots.wav"
+     },
+     {
+      "id": "Z.flac",
+      "name": "Z",
+      "file": "Z.flac",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/Z.flac"
+     },
+     {
+      "id": "ß.mp3",
+      "name": "ß",
+      "file": "ß.mp3",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%9F.mp3"
+     },
+     {
+      "id": "é.m4a",
+      "name": "é",
+      "file": "é.m4a",
+      "folder": "",
+      "category": "",
+      "uso": "",
+      "url": "/api/sfx/file/%C3%A9.m4a"
+     },
+     {
+      "id": "ΟΔΟΣ/AΟΔΟΣ.mp3",
+      "name": "AΟΔΟΣ",
+      "file": "AΟΔΟΣ.mp3",
+      "folder": "ΟΔΟΣ",
+      "category": "ΟΔΟΣ",
+      "uso": "",
+      "url": "/api/sfx/file/%CE%9F%CE%94%CE%9F%CE%A3/A%CE%9F%CE%94%CE%9F%CE%A3.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "remove",
+    "lib/sfx_library.json"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "entry",
+    "",
+    "x.mp3",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "x.mp3",
+    "name": "x",
+    "file": "x.mp3",
+    "folder": "",
+    "category": "",
+    "uso": "",
+    "url": "/api/sfx/file/x.mp3"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "a",
+    "b.c.mp3",
+    "Cat",
+    "uso",
+    "Nombre"
+   ],
+   "result": {
+    "id": "a/b.c.mp3",
+    "name": "Nombre",
+    "file": "b.c.mp3",
+    "folder": "a",
+    "category": "Cat",
+    "uso": "uso",
+    "url": "/api/sfx/file/a/b.c.mp3"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    null,
+    "x",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "x",
+    "name": "x",
+    "file": "x",
+    "folder": null,
+    "category": null,
+    "uso": "",
+    "url": "/api/sfx/file/x"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    0,
+    "y.wav",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "y.wav",
+    "name": "y",
+    "file": "y.wav",
+    "folder": 0,
+    "category": 0,
+    "uso": "",
+    "url": "/api/sfx/file/y.wav"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    [],
+    "z",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "z",
+    "name": "z",
+    "file": "z",
+    "folder": [],
+    "category": [],
+    "uso": "",
+    "url": "/api/sfx/file/z"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    {
+     "a": 1
+    },
+    "w.mp3",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "{'a': 1}/w.mp3",
+    "name": "w",
+    "file": "w.mp3",
+    "folder": {
+     "a": 1
+    },
+    "category": {
+     "a": 1
+    },
+    "uso": "",
+    "url": "/api/sfx/file/%7B%27a%27%3A%201%7D/w.mp3"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    1.0,
+    2,
+    "",
+    "",
+    null
+   ],
+   "error": "TypeError"
+  },
+  {
+   "step": [
+    "entry",
+    1.0,
+    2,
+    "",
+    "",
+    "n"
+   ],
+   "result": {
+    "id": "1.0/2",
+    "name": "n",
+    "file": 2,
+    "folder": 1.0,
+    "category": 1.0,
+    "uso": "",
+    "url": "/api/sfx/file/1.0/2"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    true,
+    "t.mp3",
+    false,
+    null,
+    ""
+   ],
+   "result": {
+    "id": "True/t.mp3",
+    "name": "t",
+    "file": "t.mp3",
+    "folder": true,
+    "category": true,
+    "uso": null,
+    "url": "/api/sfx/file/True/t.mp3"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "",
+    null,
+    "",
+    "",
+    null
+   ],
+   "error": "TypeError"
+  },
+  {
+   "step": [
+    "entry",
+    "",
+    5,
+    "",
+    "",
+    "n"
+   ],
+   "error": "TypeError"
+  },
+  {
+   "step": [
+    "entry",
+    "",
+    "",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "",
+    "name": "",
+    "file": "",
+    "folder": "",
+    "category": "",
+    "uso": "",
+    "url": "/api/sfx/file/"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "a/b",
+    "c d#.mp3",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "a/b/c d#.mp3",
+    "name": "c d#",
+    "file": "c d#.mp3",
+    "folder": "a/b",
+    "category": "a/b",
+    "uso": "",
+    "url": "/api/sfx/file/a/b/c%20d%23.mp3"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    -0.0,
+    "x",
+    "",
+    "",
+    0
+   ],
+   "result": {
+    "id": "x",
+    "name": "x",
+    "file": "x",
+    "folder": -0.0,
+    "category": -0.0,
+    "uso": "",
+    "url": "/api/sfx/file/x"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    1e+16,
+    "x",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "1e+16/x",
+    "name": "x",
+    "file": "x",
+    "folder": 1e+16,
+    "category": 1e+16,
+    "uso": "",
+    "url": "/api/sfx/file/1e%2B16/x"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "",
+    ".hidden",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": ".hidden",
+    "name": ".hidden",
+    "file": ".hidden",
+    "folder": "",
+    "category": "",
+    "uso": "",
+    "url": "/api/sfx/file/.hidden"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "",
+    "..",
+    "",
+    "",
+    []
+   ],
+   "result": {
+    "id": "..",
+    "name": "..",
+    "file": "..",
+    "folder": "",
+    "category": "",
+    "uso": "",
+    "url": "/api/sfx/file/.."
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "",
+    "C:x.mp3",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "C:x.mp3",
+    "name": "x",
+    "file": "C:x.mp3",
+    "folder": "",
+    "category": "",
+    "uso": "",
+    "url": "/api/sfx/file/C%3Ax.mp3"
+   }
+  },
+  {
+   "step": [
+    "entry",
+    "",
+    "a\\b.mp3",
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "a\\b.mp3",
+    "name": "b",
+    "file": "a\\b.mp3",
+    "folder": "",
+    "category": "",
+    "uso": "",
+    "url": "/api/sfx/file/a%5Cb.mp3"
+   }
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "",
+    "",
+    []
+   ],
+   "result": [
+    {
+     "id": "a",
+     "name": "Alfa",
+     "category": "Cat",
+     "uso": "golpe fuerte",
+     "folder": "f"
+    },
+    {
+     "id": 5,
+     "name": null
+    },
+    {
+     "name": "ΟΔΟΣ"
+    },
+    {
+     "id": "b",
+     "folder": null,
+     "category": null,
+     "name": [
+      "x"
+     ]
+    },
+    {},
+    {
+     "id": "c",
+     "name": "Beta",
+     "folder": "Sub/Dir",
+     "category": "",
+     "uso": 1.5
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "none",
+    "",
+    []
+   ],
+   "result": [
+    {
+     "id": 5,
+     "name": null
+    },
+    {
+     "id": "b",
+     "folder": null,
+     "category": null,
+     "name": [
+      "x"
+     ]
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "οδος",
+    "",
+    []
+   ],
+   "result": [
+    {
+     "name": "ΟΔΟΣ"
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "οδοσ",
+    "",
+    []
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "",
+    "favoritos",
+    [
+     "a",
+     "5",
+     "zz"
+    ]
+   ],
+   "result": [
+    {
+     "id": "a",
+     "name": "Alfa",
+     "category": "Cat",
+     "uso": "golpe fuerte",
+     "folder": "f"
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "",
+    "cat",
+    []
+   ],
+   "result": [
+    {
+     "id": "a",
+     "name": "Alfa",
+     "category": "Cat",
+     "uso": "golpe fuerte",
+     "folder": "f"
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "",
+    "none",
+    []
+   ],
+   "result": [
+    {
+     "id": "b",
+     "folder": null,
+     "category": null,
+     "name": [
+      "x"
+     ]
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "",
+    "sub/dir",
+    []
+   ],
+   "result": [
+    {
+     "id": "c",
+     "name": "Beta",
+     "folder": "Sub/Dir",
+     "category": "",
+     "uso": 1.5
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    " alfa golpe　",
+    "",
+    []
+   ],
+   "result": [
+    {
+     "id": "a",
+     "name": "Alfa",
+     "category": "Cat",
+     "uso": "golpe fuerte",
+     "folder": "f"
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "x",
+    "",
+    []
+   ],
+   "result": [
+    {
+     "id": "b",
+     "folder": null,
+     "category": null,
+     "name": [
+      "x"
+     ]
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "1.5",
+    "",
+    []
+   ],
+   "result": [
+    {
+     "id": "c",
+     "name": "Beta",
+     "folder": "Sub/Dir",
+     "category": "",
+     "uso": 1.5
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "golpe",
+    "favoritos",
+    [
+     "a"
+    ]
+   ],
+   "result": [
+    {
+     "id": "a",
+     "name": "Alfa",
+     "category": "Cat",
+     "uso": "golpe fuerte",
+     "folder": "f"
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    "",
+    "  ",
+    []
+   ],
+   "result": [
+    {
+     "id": "a",
+     "name": "Alfa",
+     "category": "Cat",
+     "uso": "golpe fuerte",
+     "folder": "f"
+    },
+    {
+     "id": 5,
+     "name": null
+    },
+    {
+     "name": "ΟΔΟΣ"
+    },
+    {
+     "id": "b",
+     "folder": null,
+     "category": null,
+     "name": [
+      "x"
+     ]
+    },
+    {},
+    {
+     "id": "c",
+     "name": "Beta",
+     "folder": "Sub/Dir",
+     "category": "",
+     "uso": 1.5
+    }
+   ]
+  },
+  {
+   "step": [
+    "filter",
+    [],
+    "a",
+    "b",
+    []
+   ],
+   "result": []
+  },
+  {
+   "step": [
+    "favcat",
+    [
+     {
+      "id": "favoritos",
+      "label": "x"
+     },
+     {
+      "id": "a"
+     },
+     {
+      "label": "sin id"
+     }
+    ],
+    [
+     {
+      "id": "a",
+      "name": "Alfa",
+      "category": "Cat",
+      "uso": "golpe fuerte",
+      "folder": "f"
+     },
+     {
+      "id": 5,
+      "name": null
+     },
+     {
+      "name": "ΟΔΟΣ"
+     },
+     {
+      "id": "b",
+      "folder": null,
+      "category": null,
+      "name": [
+       "x"
+      ]
+     },
+     {},
+     {
+      "id": "c",
+      "name": "Beta",
+      "folder": "Sub/Dir",
+      "category": "",
+      "uso": 1.5
+     }
+    ],
+    [
+     "a",
+     "c",
+     "5"
+    ]
+   ],
+   "result": [
+    {
+     "id": "favoritos",
+     "label": "Favoritos",
+     "count": 2
+    },
+    {
+     "id": "a"
+    },
+    {
+     "label": "sin id"
+    }
+   ]
+  },
+  {
+   "step": [
+    "favcat",
+    [],
+    [],
+    []
+   ],
+   "result": [
+    {
+     "id": "favoritos",
+     "label": "Favoritos",
+     "count": 0
+    }
+   ]
+  },
+  {
+   "step": [
+    "audio",
+    "x.mp3"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "audio",
+    "x.MP3"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "audio",
+    "x.Mp3"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "audio",
+    ".mp3"
+   ],
+   "result": false
+  },
+  {
+   "step": [
+    "audio",
+    "x.mp3.txt"
+   ],
+   "result": false
+  },
+  {
+   "step": [
+    "audio",
+    "x."
+   ],
+   "result": false
+  },
+  {
+   "step": [
+    "audio",
+    "x"
+   ],
+   "result": false
+  },
+  {
+   "step": [
+    "audio",
+    "x.FLAC"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "audio",
+    "x.aac"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "audio",
+    "x.m4a"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "audio",
+    "x.ogg"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "audio",
+    "x.wav"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "audio",
+    "x.wma"
+   ],
+   "result": false
+  },
+  {
+   "step": [
+    "audio",
+    "x.mp4"
+   ],
+   "result": false
+  },
+  {
+   "step": [
+    "audio",
+    "a/b.mp3"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "audio",
+    "a.mp3/b"
+   ],
+   "result": false
+  },
+  {
+   "step": [
+    "audio",
+    "x.ＭＰ３"
+   ],
+   "result": false
+  },
+  {
+   "step": [
+    "audio",
+    "..mp3"
+   ],
+   "result": false
+  },
+  {
+   "step": [
+    "audio",
+    "x..mp3"
+   ],
+   "result": true
+  },
+  {
+   "step": [
+    "audio",
+    "C:x.wav"
+   ],
+   "result": true
+  }
+ ]
+}
