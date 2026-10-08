@@ -18,6 +18,7 @@ add_executable(gc_tests
     parity/test_eval_parity.cpp
     parity/test_frame_parity.cpp
     parity/test_history_parity.cpp
+    parity/test_json_parity.cpp
     parity/test_keyframes_parity.cpp
     parity/test_layers_parity.cpp
     parity/test_layout_parity.cpp

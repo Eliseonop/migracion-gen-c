@@ -53,4 +53,8 @@ STEPS = [
     ("public",),                                       # «vacio» no tiene ninguna clave: no cuenta
     ("write", {"transcribe": None, "model": "tiny"}),
     ("public",),
+    # NaN e Infinity: json.loads los lee y json.dumps los escribe (min(240, max(0, nan)) es 0.0).
+    ("write", '{"models": {"idle_minutes": NaN}, "otro": [Infinity, -Infinity, 1e999]}'),
+    ("load",), ("save", {"models": {}}), ("load",),
+    ("save", {"models": {"idle_minutes": "inf"}}), ("load",),
 ]

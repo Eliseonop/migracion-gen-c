@@ -6802,6 +6802,41 @@
   },
   {
    "step": [
+    "file",
+    "lib/sfx_library.json",
+    "{\"categorias\": {\"n\": {\"cantidad\": NaN}}, \"sonidos\": [{\"archivo\": \"golpe.mp3\", \"carpeta\": \"01_IMPACTOS\", \"sonido\": NaN, \"uso_tipico\": Infinity}]}"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "index"
+   ],
+   "result": {
+    "available": true,
+    "base": "{TMP}\\lib",
+    "categories": [
+     {
+      "id": "n",
+      "label": "n",
+      "count": NaN
+     }
+    ],
+    "items": [
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": NaN,
+      "file": "golpe.mp3",
+      "folder": "01_IMPACTOS",
+      "category": "01_IMPACTOS",
+      "uso": Infinity,
+      "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
     "remove",
     "lib/sfx_library.json"
    ],

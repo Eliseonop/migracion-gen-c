@@ -35,7 +35,8 @@ los clips por defecto es «{TMP}/clips».
   retarget pid tipo id fn id2 fn2 por_nombre    retarget_timeline_asset(...)
   tree                         los archivos bajo {TMP}/clips (ruta relativa y contenido)
 
-Tras cada paso que puede escribir se guarda también el texto de projects.json.
+Tras cada paso que puede escribir se guarda también el texto de projects.json tal cual (en
+Windows, con los CRLF de write_text).
 """
 from model_cases import T0, TRACKS_V4, clip, material, project
 
@@ -263,3 +264,15 @@ for _steps in (STEPS_IDS, STEPS_DUP, STEPS_MANIFEST, STEPS_MAT, STEPS_MOTION, ST
 # Sin «groups» ni «materials»: los defectos de .get(…, []) (en C++ fueron un puntero a un temporal).
 STEPS += [("remove",), ("file", {"projects": [project("p1")]}), ("groups",), ("create", "x", "g"),
           ("move", "p1", "g"), ("manifest", "p1", {}), ("groups",)]
+
+# Números y NaN como Python: los reales salen con repr(), y NaN, Infinity y 1e999 se leen (antes,
+# C++ tomaba el archivo por ilegible y la primera escritura lo vaciaba).
+STEPS += [
+    ("remove",),
+    ("file", '{"projects": [], "f15": 1e15, "f15b": 1234567890123456.0, "f16": 1e16, "fm5": 1e-5, '
+             '"fm4": 0.0001, "u64": 18446744073709551615, "neg0": -0.0, "e": 1E5, "r": 279.03900000000567}'),
+    ("create", "x", None), ("data",),
+    ("remove",),
+    ("file", '{"projects": [], "x": NaN, "y": Infinity, "z": -Infinity, "w": 1e999, "v": -1e999, "u": 1e-999}'),
+    ("load",), ("create", "a", None), ("data",),
+]

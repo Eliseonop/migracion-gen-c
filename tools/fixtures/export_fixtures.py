@@ -23,6 +23,7 @@ Salida (al repo):
   tests/fixtures/sfx/synthetic.json        biblioteca de SFX en disco: pasos de sfx_cases.py
   tests/fixtures/collections/synthetic.json  colecciones de material: pasos de collections_cases.py
   tests/fixtures/projects/synthetic.json   almacén de proyectos: pasos de projects_cases.py
+  tests/fixtures/json/synthetic.json       JSON como Python: json_cases.py (repr, dumps y loads)
 Con --real, en tests/fixtures/local/<lo mismo>/real.json: TUS proyectos, timelines,
 clips, historiales, ajustes (con las claves redactadas), biblioteca, SFX y material de video-yt.
 tests/fixtures/local/ son datos personales: está en .gitignore y nunca se sube.
@@ -867,6 +868,22 @@ def real_sfx_fixtures(ctx: Ctx) -> dict:
     return {"root": root.as_posix(), "steps": _run_sfx_steps(steps, root)}
 
 
+# --- JSON como Python (json.loads, json.dumps, repr de float) -----------------------------------
+
+def synthetic_json_fixtures() -> dict:
+    sys.path.insert(0, str(HERE))
+    import json_cases as jc
+    loads = []
+    for text in jc.LOADS:
+        try:
+            loads.append({"text": text, "result": json.loads(text)})
+        except ValueError as e:
+            loads.append({"text": text, "error": type(e).__name__})
+    return {"floats": jc.FLOATS,
+            "dumps": [[value, n, json.dumps(value, ensure_ascii=False, indent=n)] for value, n in jc.DUMPS],
+            "loads": loads}
+
+
 # --- Almacén de proyectos (projects.py) --------------------------------------------------------
 
 # Los mensajes de los errores que ve el usuario (ValueError de projects.py): se comparan.
@@ -953,7 +970,7 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
                         f.parent.mkdir(parents=True, exist_ok=True)
                         f.write_text(rel, encoding="utf-8")
                 elif kind == "data":
-                    result = projects._FILE.read_text(encoding="utf-8") if projects._FILE.exists() else None
+                    result = projects._FILE.read_bytes().decode("utf-8") if projects._FILE.exists() else None
                 elif kind == "tree":
                     top = tmp / "clips"
                     result = [[p.relative_to(top).as_posix(), p.read_text(encoding="utf-8") if p.is_file() else None]
@@ -969,7 +986,7 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
                     entry["message"] = str(e)
             if record_file and kind in _PROJECTS_WRITES:
                 f = projects._FILE
-                entry["file"] = f.read_text(encoding="utf-8").replace(posix, "{TMP}") if f.exists() else None
+                entry["file"] = f.read_bytes().decode("utf-8").replace(posix, "{TMP}") if f.exists() else None
             out.append(entry)
     finally:
         projects._FILE, config.OUTPUT_DIR, uuid.uuid4, projects._now = saved
@@ -1565,6 +1582,9 @@ def main() -> None:
     sfx_syn = synthetic_sfx_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "sfx" / "synthetic.json", sfx_syn, len(sfx_syn["steps"]),
           sum("error" in s for s in sfx_syn["steps"]))
+    js = synthetic_json_fixtures()
+    write(REPO / "tests" / "fixtures" / "json" / "synthetic.json", js,
+          len(js["floats"]) + len(js["dumps"]) + len(js["loads"]), sum("error" in c for c in js["loads"]))
     prj_syn = synthetic_projects_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "projects" / "synthetic.json", prj_syn, len(prj_syn["steps"]),
           sum("error" in s for s in prj_syn["steps"]))

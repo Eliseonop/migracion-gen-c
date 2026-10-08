@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <memory>
 #include <fstream>
+#include <limits>
 #include <random>
 #include <sstream>
 
@@ -298,7 +299,7 @@ TEST_CASE("historial ilegible o ausente: vacío, sin error", "[session][history]
 }
 
 
-TEST_CASE("leer JSON: un NUL o un número que se desborda son errores, no un cierre", "[io]") {
+TEST_CASE("leer JSON: un NUL es un error y un número que se desborda es inf, como en Python", "[io]") {
     TempDir dir;
     const auto write = [&](const char* name, std::string_view bytes) {
         const auto p = dir.path / name;
@@ -311,10 +312,13 @@ TEST_CASE("leer JSON: un NUL o un número que se desborda son errores, no un cie
     CHECK_FALSE(read_json_file_py(nul));
     const auto nul_text = write("nul_texto.json", std::string_view("{\"a\": \"x\0y\"}", 12));
     CHECK_FALSE(read_json_file_py(nul_text));
-    // 1e999: out_of_range de nlohmann, que antes no se capturaba (Python lo lee como inf).
-    const auto big = write("grande.json", "{\"a\": 1e999}");
-    CHECK_FALSE(read_json_file(big));
-    CHECK_FALSE(read_json_file_py(big));
+    // 1e999: nlohmann lanza out_of_range (que antes cerraba la app); Python lo lee como inf.
+    const auto big = write("grande.json", "{\"a\": 1e999, \"b\": -1e999}");
+    for (const auto& r : {read_json_file(big), read_json_file_py(big)}) {
+        REQUIRE(r);
+        CHECK(r->at("a").get<double>() == std::numeric_limits<double>::infinity());
+        CHECK(r->at("b").get<double>() == -std::numeric_limits<double>::infinity());
+    }
     const auto ok = write("bien.json", R"({"a": [1, 2.5, "\u0000"]})"); // el NUL escapado sí vale
     const auto r = read_json_file_py(ok);
     REQUIRE(r);

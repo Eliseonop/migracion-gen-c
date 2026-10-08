@@ -3789,6 +3789,354 @@
     "transcribe": null,
     "model": "tiny"
    }
+  },
+  {
+   "step": [
+    "write",
+    "{\"models\": {\"idle_minutes\": NaN}, \"otro\": [Infinity, -Infinity, 1e999]}"
+   ],
+   "result": null,
+   "file": {
+    "models": {
+     "idle_minutes": NaN
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   }
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": NaN
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   },
+   "file": {
+    "models": {
+     "idle_minutes": NaN
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   }
+  },
+  {
+   "step": [
+    "save",
+    {
+     "models": {}
+    }
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   },
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   }
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   },
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 0.0
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   }
+  },
+  {
+   "step": [
+    "save",
+    {
+     "models": {
+      "idle_minutes": "inf"
+     }
+    }
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   },
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   }
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   },
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 240.0
+    },
+    "otro": [
+     Infinity,
+     -Infinity,
+     Infinity
+    ]
+   }
   }
  ]
 }

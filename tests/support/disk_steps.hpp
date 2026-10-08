@@ -25,6 +25,29 @@ inline std::string replace_all(std::string s, std::string_view from, std::string
     return s;
 }
 
+// `value` con `from` cambiado por `to` en todos sus textos (valores y claves). Sin pasar por el
+// texto del JSON, que perdería los NaN y los infinitos.
+inline Json replace_in_strings(const Json& value, std::string_view from, std::string_view to) {
+    if (value.is_string()) {
+        return replace_all(value.get<std::string>(), from, to);
+    }
+    if (value.is_array()) {
+        Json out = Json::array();
+        for (const Json& v : value) {
+            out.push_back(replace_in_strings(v, from, to));
+        }
+        return out;
+    }
+    if (value.is_object()) {
+        Json out = Json::object();
+        for (auto it = value.begin(); it != value.end(); ++it) {
+            out[replace_all(it.key(), from, to)] = replace_in_strings(*it, from, to);
+        }
+        return out;
+    }
+    return value;
+}
+
 // El contenido de un paso: el texto tal cual o el JSON escrito.
 inline std::string text_of(const Json& content) {
     return content.is_string() ? content.get<std::string>() : content.dump();

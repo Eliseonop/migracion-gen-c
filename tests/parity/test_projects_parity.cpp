@@ -79,7 +79,7 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
     ProjectsStore store(file, tmp / "clips", [&clock] { return clock(); });
     SequentialIdSource ids;
     // Las rutas de la carpeta temporal vuelven a ser «{TMP}» (como hace el exportador).
-    const auto tmp_of = [&](const Json& v) { return Json::parse(replace_all(v.dump(), posix, "{TMP}")); };
+    const auto tmp_of = [&](const Json& v) { return gc::test::replace_in_strings(v, posix, "{TMP}"); };
 
     std::size_t n = 0;
     for (const Json& s : fixture.at("steps")) {
@@ -87,7 +87,7 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
         INFO(fname << " :: paso " << n << ": " << step.dump().substr(0, 200));
         const auto kind = step[0].get<std::string>();
         // Los argumentos con «{TMP}» → la carpeta temporal.
-        const Json a = Json::parse(replace_all(step.dump(), "{TMP}", posix));
+        const Json a = gc::test::replace_in_strings(step, "{TMP}", posix);
         const auto text = [&](std::size_t i) { return a[i].get<std::string>(); };
         gc::Result<void> ok;
         Json result;

@@ -5,6 +5,7 @@
 #include <charconv>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <iterator>
 #include <limits>
 #include <locale>
@@ -116,9 +117,54 @@ std::string py_repr(double x) {
     if (std::isinf(x)) {
         return x > 0 ? "inf" : "-inf";
     }
-    // Forma más corta que reproduce el valor, como repr(). Solo difiere de Python
-    // entre 1e15 y 1e16 (Python no pasa a notación científica hasta 1e16).
-    return Json(x).dump();
+    if (x == 0) {
+        return std::signbit(x) ? "-0.0" : "0.0";
+    }
+    // Las cifras más cortas que reproducen el valor (como el dtoa de CPython en modo 0) y el
+    // formato de format_float_short para repr: científica si el punto decimal queda a 4 o más
+    // ceros (1e-05) o más allá de 16 cifras (1e+16); si no, fija y con «.0» si es entera.
+    std::array<char, 64> buf{};
+    const auto res = std::to_chars(buf.data(), buf.data() + buf.size(), x, std::chars_format::scientific);
+    std::string_view s(buf.data(), static_cast<std::size_t>(res.ptr - buf.data())); // «-d.ddde+XX»
+    std::string out;
+    if (s.front() == '-') {
+        out += '-';
+        s.remove_prefix(1);
+    }
+    const std::size_t e = s.find('e');
+    std::string digits(1, s[0]);
+    if (e > 1) {
+        digits += s.substr(2, e - 2);
+    }
+    int exp10 = 0;
+    const std::string_view exp_text = s.substr(e + 1);
+    (void)std::from_chars(exp_text.data() + (exp_text.front() == '+' ? 1 : 0), exp_text.data() + exp_text.size(),
+                          exp10);
+    const int decpt = exp10 + 1;
+    const auto n = static_cast<int>(digits.size());
+    if (decpt <= -4 || decpt > 16) {
+        out += digits[0];
+        if (n > 1) {
+            out += '.';
+            out += digits.substr(1);
+        }
+        out += exp10 < 0 ? "e-" : "e+";
+        const int a = std::abs(exp10);
+        out += (a < 10 ? "0" : "") + std::to_string(a);
+    } else if (decpt <= 0) {
+        out += "0.";
+        out.append(static_cast<std::size_t>(-decpt), '0');
+        out += digits;
+    } else if (decpt >= n) {
+        out += digits;
+        out.append(static_cast<std::size_t>(decpt - n), '0');
+        out += ".0";
+    } else {
+        out += digits.substr(0, static_cast<std::size_t>(decpt));
+        out += '.';
+        out += digits.substr(static_cast<std::size_t>(decpt));
+    }
+    return out;
 }
 
 std::string py_strip(std::string_view utf8) {

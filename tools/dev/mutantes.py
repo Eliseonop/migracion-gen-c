@@ -350,8 +350,35 @@ PROJECTS = [
     ("py_equal: True no es 1", "src/core/src/py.cpp", "out = j.get<bool>() ? 1 : 0;", "out = j.get<bool>() ? 7 : 0;"),
 ]
 
+IO = "src/core/src/io.cpp"
+PY = "src/core/src/py.cpp"
+JSON = [
+    ("repr: científica desde 1e15", PY, "if (decpt <= -4 || decpt > 16) {", "if (decpt <= -4 || decpt > 15) {"),
+    ("repr: científica desde 1e-04", PY, "if (decpt <= -4 || decpt > 16) {", "if (decpt <= -3 || decpt > 16) {"),
+    ("repr: exponente sin el 0", PY, 'out += (a < 10 ? "0" : "") + std::to_string(a);', "out += std::to_string(a);"),
+    ("repr: entero sin .0", PY, 'out.append(static_cast<std::size_t>(decpt - n), \'0\');\n        out += ".0";',
+     "out.append(static_cast<std::size_t>(decpt - n), '0');"),
+    ("repr: -0.0 como 0.0", PY, 'return std::signbit(x) ? "-0.0" : "0.0";', 'return "0.0";'),
+    ("dumps: sin espacio tras la coma", IO, 'out += indent < 0 ? ", " : ",";', 'out += ",";'),
+    ("dumps: espacio tras la coma con sangría", IO, 'out += indent < 0 ? ", " : ",";', 'out += ", ";'),
+    ("dumps: \\u00XX en mayúsculas", IO, r'std::format("\\u{:04x}"', r'std::format("\\u{:04X}"'),
+    ("dumps: DEL escapado", IO, "if (static_cast<unsigned char>(ch) < 0x20) {",
+     "if (static_cast<unsigned char>(ch) < 0x20 || ch == 0x7f) {"),
+    ("dumps: NaN como null", IO, 'out += std::isnan(d) ? "NaN"', 'out += std::isnan(d) ? "null"'),
+    ("escribir: sin CRLF en Windows", IO, "        if (c == '\\n') {\n            crlf += '\\r';\n        }\n", ""),
+    ("leer: Infinity no se marca", IO, 'rest.starts_with("Infinity")', 'rest.starts_with("Infinityy")'),
+    ("leer: sin desbordes", IO, "if (overflows(token)) {", "if (false) {"),
+    ("leer: el desborde negativo es +inf", IO, "token.starts_with('-') ? kNegInfMark : kInfMark", "kInfMark"),
+    ("leer: los textos se cierran en cualquier carácter", IO, "in_string = c != '\"';", "in_string = false;"),
+    ("leer: sin saltar los escapes", IO, "            if (c == '\\\\') {\n                i += 2;",
+     "            if (c == '\\\\') {\n                i += 1;"),
+    ("leer: lo que se sale por abajo también desborda", IO,
+     "return static_cast<long long>(int_part.size() - first) - 1 + exp10 > 0;", "return true;"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]")}
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"),
+          "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 
 def run(cmd: list[str], timeout: float | None = None) -> subprocess.CompletedProcess:

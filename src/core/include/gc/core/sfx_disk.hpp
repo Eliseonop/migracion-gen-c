@@ -49,8 +49,7 @@ inline constexpr std::string_view kSfxIndexFile = "sfx_library.json";
 
 // load_index: {available, base, categories, items}, con `base` como str(Path) de Python. Si
 // sfx_library.json falla en cualquier punto, los sonidos salen del escaneo y las categorías
-// se quedan con las que dio tiempo a leer, como en Python. (Python lee NaN, Infinity y
-// 1e999; aquí ese índice falla y se escanea.)
+// se quedan con las que dio tiempo a leer, como en Python.
 [[nodiscard]] Json sfx_load_index(const std::optional<std::filesystem::path>& base);
 
 // Ids marcados con estrella en los ajustes (favorites.sfx, cada uno como str()).

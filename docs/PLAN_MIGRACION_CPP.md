@@ -871,3 +871,23 @@ En el plan va en `gc_services`. De momento vive en `gc_core`, con los ajustes, l
 - **Resultado:** 304 pasos (77 de error, 6 con mensaje); 98 tests (96 de Catch2 y 2 de la CLI) y 112 774 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 71 archivos.
 
 **Siguiente:** JSON como Python (leer `NaN`, `Infinity` y `1e999`, y escribir como `json.dumps`); después, «Guardar en la biblioteca» (`library.save_from_project`).
+
+### 2026-10-08 — F1: JSON como Python (leer NaN e Infinity, escribir como json.dumps)
+
+Lo encontró la revisión del almacén de proyectos: con un `NaN` en `projects.json` (Python lo escribe con `allow_nan`), C++ tomaba el archivo por ilegible, lo leía como `{"projects": []}` y la primera escritura borraba todos los proyectos. Lo mismo pasaba con los ajustes y la biblioteca.
+
+**Hecho (`io.hpp`, `py.hpp`):**
+- **Leer como `json.loads`:** `read_json_file` y `read_json_file_py` aceptan `NaN`, `Infinity`, `-Infinity` y los números que se desbordan (`1e999` es inf; antes, un error). nlohmann no los admite, así que fuera de los textos se cambian por un texto marcador (un NUL escapado delante y detrás) y, ya leído, por el real. `1e-999` ya daba 0.0, como en Python. Sigue habiendo una divergencia: un entero de más de 64 bits pasa a real.
+- **Escribir como `json.dumps(ensure_ascii=False)`:** `py_json_dumps` da el texto exacto de Python. Los reales salen con `repr`, `NaN`/`Infinity`/`-Infinity` también, con «, » y «: » sin sangría y «,» y «: » con ella, y solo se escapan las comillas, la barra y los caracteres de control (`\u00XX` en minúsculas). Un texto que no es UTF-8 válido es un error. `write_json_file` lo usa y, en Windows, escribe CRLF, como `path.write_text()` en modo texto. El historial (sin sangría) también sale ya como el de Python.
+- **`py_repr` es `repr()` exacto:** las cifras más cortas de `std::to_chars` con los umbrales de `format_float_short`: científica si el punto queda a 4 ceros o más o más allá de 16 cifras. Antes usaba el Grisu2 de nlohmann, que en algunos dobles no da las cifras más cortas, y pasaba a científica desde 1e15.
+
+**Verificación:**
+- **`json_cases.py`** con el CPython de video-yt:
+  - 5175 `repr`: bits aleatorios, decimales redondeados y alrededor de cada potencia de 10, incluidos 1e15, 1e16, 1e-05, 5e-324 y -0.0;
+  - 10 `json.dumps` con sangría None, 0, 2 y 4, con textos con todos los escapes, Unicode, U+2028, DEL, vacíos y anidados;
+  - 19 `json.loads`: `NaN`/`Infinity` sueltos y dentro de textos, desbordes por arriba y por abajo, claves repetidas y 11 errores (`-NaN`, `nan`, `[1NaN]`, `Infinityx`…).
+- **Pasos con NaN en los almacenes:** en proyectos, `NaN`/`Infinity`/`1e999` y reales en los bordes, comparando el texto del archivo, ahora con sus CRLF; en ajustes, `idle_minutes` NaN (`min(240, max(0, nan))` es 0.0 en los dos) y `inf`; en SFX, un índice con NaN.
+- **Mutación:** 17/17 (`tools/dev/mutantes.py json`): los umbrales y el formato de `repr`, los separadores, los escapes, `NaN` como `null`, el CRLF y cada pieza del lector de NaN e infinitos.
+- **Resultado:** 101 tests (99 de Catch2 y 2 de la CLI) y 118 076 aserciones en verde, en Debug y en Release, con 0 warnings; tidy, 0 avisos en 72 archivos.
+
+**Siguiente:** «Guardar en la biblioteca» (`library.save_from_project`).

@@ -138,6 +138,9 @@ STEPS = [
     ("file", "lib/sfx_library.json",
      "{\"categorias\": {\"a\": {\"etiqueta\": \"1\"}, \"a\": {\"etiqueta\": \"2\"}, \"b\": {}}}"), ("index",),
     ("file", "lib/sfx_library.json", "{\"sonidos\": [{\"archivo\": \"x.mp3\"}], \"sonidos\": []}"), ("index",),
+    ("file", "lib/sfx_library.json",                                     # NaN e Infinity se leen
+     '{"categorias": {"n": {"cantidad": NaN}}, "sonidos": [{"archivo": "golpe.mp3", "carpeta": "01_IMPACTOS", '
+     '"sonido": NaN, "uso_tipico": Infinity}]}'), ("index",),
     ("remove", "lib/sfx_library.json"), ("dirs", ["lib/sfx_library.json"]), ("index",),  # es una carpeta
     ("remove", "lib/sfx_library.json"),
 
