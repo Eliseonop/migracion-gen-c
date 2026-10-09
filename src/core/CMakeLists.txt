@@ -47,6 +47,7 @@ add_library(gc_core
     src/settings.cpp
     src/sfx_disk.cpp
     src/sfx_library.cpp
+    src/stick_library.cpp
     src/timeline_rules.cpp
 )
 add_library(gc::core ALIAS gc_core)

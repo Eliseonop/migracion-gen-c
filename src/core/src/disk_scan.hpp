@@ -28,6 +28,16 @@ namespace gc::core::detail {
 [[nodiscard]] std::vector<std::vector<std::string>> sorted_files(const std::filesystem::path& base,
                                                                  const std::function<bool(std::string_view)>& keep);
 
+// re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", text).strip(" .") de las colecciones y los sticks: lo
+// que Windows no admite en un nombre. Son caracteres ASCII, así que se cambian byte a byte
+// sin tocar el resto del UTF-8.
+[[nodiscard]] std::string clean_name(std::string_view text);
+
+// Los nombres de las subcarpetas directas de sorted(p for p in base.iterdir() if p.is_dir())
+// (is_dir(): sigue los enlaces), en el orden de WindowsPath: con el lower() de Python. Se
+// saltan los nombres que no son UTF-16 válido; vacío si `base` no se puede leer.
+[[nodiscard]] std::vector<std::string> sorted_subdirs(const std::filesystem::path& base);
+
 // base / p de pathlib en Windows: una ruta con otra unidad (sin distinguir mayúsculas) o
 // absoluta sustituye a la base; una raíz sin unidad (\x) se queda la unidad de la base; la misma
 // unidad sin raíz (C:x) se añade a la base.
@@ -43,5 +53,9 @@ namespace gc::core::detail {
 [[nodiscard]] std::optional<std::filesystem::path> resolve_inside(const std::filesystem::path& base,
                                                                   std::initializer_list<std::string_view> parts,
                                                                   bool strict);
+
+// ¿`target` (ya resuelto) es dir.resolve() o está debajo, sin distinguir mayúsculas? Con
+// `strict`, la propia carpeta no vale (`dir.resolve() in target.parents`).
+[[nodiscard]] bool resolved_inside(const std::filesystem::path& dir, const std::filesystem::path& target, bool strict);
 
 } // namespace gc::core::detail

@@ -22,6 +22,7 @@ Salida (al repo):
   tests/fixtures/library/synthetic.json    biblioteca: pasos de library_cases.py
   tests/fixtures/sfx/synthetic.json        biblioteca de SFX en disco: pasos de sfx_cases.py
   tests/fixtures/collections/synthetic.json  colecciones de material: pasos de collections_cases.py
+  tests/fixtures/stick/synthetic.json      personajes stick: pasos de stick_cases.py
   tests/fixtures/projects/synthetic.json   almacén de proyectos: pasos de projects_cases.py
   tests/fixtures/json/synthetic.json       JSON como Python: json_cases.py (repr, dumps y loads)
 Con --real, en tests/fixtures/local/<lo mismo>/real.json: TUS proyectos, timelines,
@@ -1265,6 +1266,106 @@ def real_collections_fixtures(ctx: Ctx) -> dict:
     return {"root": assets.as_posix(), "steps": _run_collections_steps(steps, assets)}
 
 
+# --- Personajes stick (stick_library.py) ------------------------------------------------------
+
+_STICK_MESSAGES = {"Stick no encontrado.", "Recurso no encontrado en el stick.", "Colección no válida.",
+                   "No hay carpeta raíz de material. Elige una en la Biblioteca.", "Ponle un nombre al stick.",
+                   "Solo se categorizan vídeos o imágenes."}
+
+
+def _run_stick_steps(steps: list, root: Path | None) -> list[dict]:
+    """Ejecuta los pasos con el stick_library.py REAL sobre `root` (o una carpeta temporal),
+    con un settings.json temporal vacío: la raíz de las colecciones es <assets>/material."""
+    import io
+
+    from app import config
+    from app import settings as st
+    from app import stick_library as sl
+    tmp = Path(tempfile.mkdtemp(prefix="gc_stick_"))
+    base_dir = root or tmp
+    saved = (st._FILE, config.ASSETS_DIR)
+    st._FILE = tmp / "__settings__.json"
+    out = []
+    try:
+        for step in steps:
+            kind, args = step[0], step[1:]
+            entry: dict = {"step": list(step)}
+            try:
+                result = None
+                if kind == "files":
+                    for rel in args[0]:
+                        f = base_dir / rel
+                        f.parent.mkdir(parents=True, exist_ok=True)
+                        f.write_bytes(b"x")
+                elif kind == "file":
+                    f = base_dir / args[0]
+                    f.parent.mkdir(parents=True, exist_ok=True)
+                    content = args[1] if isinstance(args[1], str) else json.dumps(args[1], ensure_ascii=False)
+                    f.write_bytes(content.encode("utf-8"))
+                elif kind == "dirs":
+                    for rel in args[0]:
+                        (base_dir / rel).mkdir(parents=True, exist_ok=True)
+                elif kind == "rm":
+                    (base_dir / args[0]).unlink()
+                elif kind == "assets":
+                    config.ASSETS_DIR = base_dir / args[0]
+                elif kind == "list":
+                    result = sl.list_sticks()
+                elif kind == "detail":
+                    result = sl.stick_detail(args[0])
+                elif kind == "create":
+                    result = sl.create_stick(args[0], args[1], args[2])
+                elif kind == "add":
+                    result = sl.add_files(args[0], [(n, io.BytesIO(c.encode("utf-8"))) for n, c in args[1]], args[2])
+                elif kind == "set":
+                    result = sl.set_expression(args[0], args[1], args[2])
+                elif kind == "norm":
+                    result = sl._norm(args[0])
+                elif kind == "slug":
+                    result = sl._slug(args[0], fallback=args[1])
+                elif kind == "pretty":
+                    result = sl._pretty_title(args[0])
+                elif kind == "title":
+                    result = args[0].title()
+                elif kind == "raw":
+                    f = base_dir / args[0]
+                    result = f.read_bytes().decode("utf-8") if f.is_file() else None
+                elif kind == "tree":
+                    top = base_dir / args[0]
+                    result = [[p.relative_to(top).as_posix(), p.read_text(encoding="utf-8") if p.is_file() else None]
+                              for p in sorted(top.rglob("*"), key=lambda p: p.relative_to(top).as_posix())]
+                else:
+                    raise ValueError(f"paso desconocido: {kind}")
+                entry["result"] = result
+            except Exception as e:  # noqa: BLE001
+                entry["error"] = type(e).__name__
+                if str(e) in _STICK_MESSAGES or str(e).startswith("Expresión desconocida: "):
+                    entry["message"] = str(e)
+            out.append(entry)
+    finally:
+        st._FILE, config.ASSETS_DIR = saved
+        shutil.rmtree(tmp, ignore_errors=True)
+    return _pure(out)
+
+
+def synthetic_stick_fixtures(ctx: Ctx) -> dict:
+    sys.path.insert(0, str(HERE))
+    import stick_cases as sc
+    return {"root": None, "steps": _run_stick_steps(sc.STEPS, None)}
+
+
+def real_stick_fixtures(ctx: Ctx) -> dict:
+    """Tus personajes stick (en la raíz de fábrica de video-yt): la lista y el detalle de cada
+    uno. Solo lectura."""
+    from app import config
+    assets = Path(config.ASSETS_DIR)
+    if not (assets / "material").is_dir():
+        return {"root": None, "steps": []}
+    listed = _run_stick_steps([("assets", ""), ("list",)], assets)[-1].get("result") or {}
+    steps = [("assets", ""), ("list",)] + [("detail", s["id"]) for s in listed.get("sticks", [])]
+    return {"root": assets.as_posix(), "steps": _run_stick_steps(steps, assets)}
+
+
 # --- Animación (keyframes y máscaras) ---------------------------------------------------------
 
 def keyframe_case(ctx: Ctx, name: str, raw_clip: dict, times: list[float]) -> dict:
@@ -1683,6 +1784,9 @@ def main() -> None:
     col_syn = synthetic_collections_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "collections" / "synthetic.json", col_syn, len(col_syn["steps"]),
           sum("error" in s for s in col_syn["steps"]))
+    stk_syn = synthetic_stick_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "stick" / "synthetic.json", stk_syn, len(stk_syn["steps"]),
+          sum("error" in s for s in stk_syn["steps"]))
     hist = synthetic_history_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "history" / "synthetic.json", hist, len(hist["steps"]), 0)
     lay = synthetic_layout_fixtures(ctx)
@@ -1728,6 +1832,9 @@ def main() -> None:
         col_real = real_collections_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "local" / "collections" / "real.json", col_real, len(col_real["steps"]),
               sum("error" in s for s in col_real["steps"]))
+        stk_real = real_stick_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "local" / "stick" / "real.json", stk_real, len(stk_real["steps"]),
+              sum("error" in s for s in stk_real["steps"]))
         hist_real = real_history_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "history" / "real.json", hist_real, len(hist_real["cases"]), 0)
         lay_real = real_layout_fixtures(ctx, data)

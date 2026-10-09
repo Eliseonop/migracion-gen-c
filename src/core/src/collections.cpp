@@ -46,23 +46,7 @@ const Json& get_or(const Json& obj, std::string_view key, const Json& fallback) 
     return it == obj.end() ? fallback : *it;
 }
 
-// re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", text).strip(" .") de create_collection y add_files:
-// lo que Windows no admite en un nombre. Son caracteres ASCII, así que se cambian byte a
-// byte sin tocar el resto del UTF-8.
-std::string clean_name(std::string_view text) {
-    constexpr std::string_view kBad = R"(<>:"/\|?*)";
-    std::string out(text);
-    for (char& c : out) {
-        if (static_cast<unsigned char>(c) < 0x20 || kBad.contains(c)) {
-            c = '_';
-        }
-    }
-    const auto first = out.find_first_not_of(" .");
-    if (first == std::string::npos) {
-        return {};
-    }
-    return out.substr(first, out.find_last_not_of(" .") - first + 1);
-}
+using detail::clean_name;
 
 // _meta(): collections_meta de los ajustes si es un dict; si no, vacío.
 Json collections_meta(const Json& settings) {
@@ -202,27 +186,6 @@ Result<Json> list_collections(const std::optional<fs::path>& base, const Json& s
     if (!base) {
         return Json{{"available", false}, {"root", nullptr}, {"collections", Json::array()}};
     }
-    // sorted(p for p in base.iterdir() if p.is_dir()): los nombres, sin distinguir mayúsculas.
-    struct Sub {
-        std::string key;
-        std::string name;
-    };
-    std::vector<Sub> subs;
-    std::error_code ec;
-    for (fs::directory_iterator it(*base, ec), end; !ec && it != end; it.increment(ec)) {
-        std::error_code ec_dir;
-        if (!it->is_directory(ec_dir)) { // como is_dir(): sigue los enlaces
-            continue;
-        }
-        try {
-            std::string name = path_to_utf8(it->path().filename());
-            subs.push_back({py_lower(name), std::move(name)});
-        } catch (const std::exception&) {
-            continue; // un nombre que no es UTF-16 válido
-        }
-    }
-    std::ranges::stable_sort(subs, {}, &Sub::key);
-
     const Json meta = collections_meta(settings);
     struct Listed {
         bool not_favorite;
@@ -230,19 +193,19 @@ Result<Json> list_collections(const std::optional<fs::path>& base, const Json& s
         Json value;
     };
     std::vector<Listed> listed;
-    for (const auto& sub : subs) {
-        const Json& raw = get_or(meta, sub.name, kNull);
+    for (const auto& sub : detail::sorted_subdirs(*base)) {
+        const Json& raw = get_or(meta, sub, kNull);
         const Json& pref = raw.is_object() ? raw : kEmptyObject;
-        const auto items = collection_scan(*base, sub.name);
+        const auto items = collection_scan(*base, sub);
         const Json& label = get_or(pref, "label", kNull);
-        Json name = py_truthy(label) ? label : Json(sub.name);
+        Json name = py_truthy(label) ? label : Json(sub);
         if (!name.is_string()) { // c["name"].lower() al ordenar: AttributeError
-            return fail(ErrorCode::InvalidArgument, "collections_meta: la etiqueta de " + sub.name + " no es texto");
+            return fail(ErrorCode::InvalidArgument, "collections_meta: la etiqueta de " + sub + " no es texto");
         }
-        const fs::path dir = *base / path_from_utf8(sub.name);
+        const fs::path dir = *base / path_from_utf8(sub);
         std::error_code ec_stick;
         Json c = Json::object();
-        c["id"] = sub.name;
+        c["id"] = sub;
         c["name"] = name;
         c["path"] = path_str(dir);
         c["count"] = items.size();

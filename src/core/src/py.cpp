@@ -712,6 +712,87 @@ std::string py_lower(std::string_view utf8) {
     return out;
 }
 
+namespace {
+
+constexpr LowerEntry kTitle[] = {
+#define GC_PY_TITLE_MAP
+#include "py_text.inc"
+#undef GC_PY_TITLE_MAP
+};
+constexpr CpRange kTitleCased[] = {
+#define GC_PY_TITLE_CASED
+#include "py_text.inc"
+#undef GC_PY_TITLE_CASED
+};
+constexpr CpRange kDecimal[] = {
+#define GC_PY_DECIMAL
+#include "py_text.inc"
+#undef GC_PY_DECIMAL
+};
+constexpr LowerEntry kFold[] = {
+#define GC_PY_FOLD_MAP
+#include "py_text.inc"
+#undef GC_PY_FOLD_MAP
+};
+
+const char* lookup(std::span<const LowerEntry> table, char32_t c) {
+    const auto it = std::ranges::lower_bound(table, c, {}, &LowerEntry::cp);
+    return it != table.end() && it->cp == c ? it->utf8 : nullptr;
+}
+
+} // namespace
+
+std::string py_title(std::string_view utf8) {
+    // do_title de CPython: título tras un carácter sin caja, lower_ucs4 (con la sigma final,
+    // que mira el texto entero) tras uno con caja.
+    std::string out;
+    out.reserve(utf8.size());
+    bool previous_is_cased = false;
+    for (std::size_t i = 0; i < utf8.size();) {
+        const std::size_t begin = i;
+        const char32_t c = next_code_point(utf8, i);
+        const std::string_view self = utf8.substr(begin, i - begin);
+        if (previous_is_cased) {
+            if (c == kCapitalSigma) {
+                // El contexto de la sigma es el texto entero: su trozo de py_lower(texto). Lo de
+                // antes mide lo mismo en los dos (solo la sigma depende del contexto, y «σ» y
+                // «ς» ocupan dos bytes).
+                out.append(py_lower(utf8), py_lower(utf8.substr(0, begin)).size(), 2);
+            } else if (const auto* const it = std::ranges::lower_bound(kLower, c, {}, &LowerEntry::cp);
+                       it != std::end(kLower) && it->cp == c) {
+                out += it->utf8;
+            } else {
+                out.append(self);
+            }
+        } else if (const char* t = lookup(kTitle, c)) {
+            out += t;
+        } else {
+            out.append(self);
+        }
+        previous_is_cased = in_ranges(kTitleCased, c);
+    }
+    return out;
+}
+
+bool py_isdecimal(char32_t c) { return in_ranges(kDecimal, c); }
+
+std::string py_nfkd_fold(std::string_view utf8) {
+    std::string out;
+    out.reserve(utf8.size());
+    for (std::size_t i = 0; i < utf8.size();) {
+        const char32_t c = next_code_point(utf8, i);
+        if (c < 0x80) {
+            const char a = ascii_lower(static_cast<char>(c));
+            out += ascii_alnum(a) ? a : '_';
+        } else if (const char* f = lookup(kFold, c)) {
+            out += f;
+        } else {
+            out += '_';
+        }
+    }
+    return out;
+}
+
 bool py_word_char(char32_t c) {
     if (c < 0x80) {
         return (c >= U'0' && c <= U'9') || (c >= U'a' && c <= U'z') || (c >= U'A' && c <= U'Z') || c == U'_';

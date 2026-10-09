@@ -11,38 +11,38 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | Fase | Contenido | Estado | Hito |
 |---|---|---|---|
 | **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo MSVC y CI en marcha | |
-| **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ modelo, ajustes, biblioteca, SFX de disco, colecciones, almacén de proyectos y JSON como Python hechos · faltan los personajes stick (lo siguiente); dar de alta SFX llega con F5 | |
+| **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ hecha: modelo, ajustes, biblioteca, SFX de disco, colecciones, personajes stick, almacén de proyectos y JSON como Python · dar de alta SFX llega con F5 | |
 | **F2** Lógica de edición | ops, sin solapes, keyframes, undo | ✅ hecha: las 42 ops, el historial en disco y el autoguardado · quedan cuatro funciones de `clip_motion` que usa el MCP | |
-| **F3** Media + export | gc_media, gc_render v1, `genclip render` | 🟡 evaluación hecha (por clip, capas y fotograma) · lo demás espera al Windows SDK | **M1** |
+| **F3** Media + export | gc_media, gc_render v1, `genclip render` | 🟡 evaluación hecha (por clip, capas y fotograma) · lo demás empieza con MSVC (el Windows SDK ya está) | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | ⬜ | |
 | **F5** Editor de escritorio | app Qt Quick | ⬜ | **M2** |
 | **F6** IA local | fondo, SAM, Whisper, TTS, tracking | ⬜ | |
 | **F7** Nube, agente, MCP | providers, chat, MCP :8000, YouTube | ⬜ | |
-| **F8** Motion, Stick, Paper | Skia + sidecar Chromium | ⬜ | |
+| ~~**F8** Motion, Stick, Paper~~ | fuera de alcance por ahora (plan §6): Paper ya es el efecto `paper_cutout` (F4) | — | |
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 106 tests (104 de Catch2 y 2 de la CLI) y 118 426 aserciones en verde (Debug y Release, 0 warnings) y 0 avisos de clang-tidy.
+**Cifras actuales:** 108 tests (106 de Catch2 y 2 de la CLI) y 118 914 aserciones en verde (Debug y Release, 0 warnings) y 0 avisos de clang-tidy.
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
-historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (67 pasos + los tuyos, con las claves redactadas) biblioteca (55 pasos + 23 materiales + la tuya; guardar desde un proyecto, 47 pasos + 3 de tus materiales) SFX en disco (207 pasos + tu carpeta de 626 sonidos), colecciones de material (256 pasos + tu carpeta, 46 medios), almacén de proyectos (317 pasos + una copia de tu `projects.json`, con el mismo texto), JSON como Python (5175 `repr`, `dumps` y `loads`) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
+historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (67 pasos + los tuyos, con las claves redactadas) biblioteca (55 pasos + 23 materiales + la tuya; guardar desde un proyecto, 47 pasos + 3 de tus materiales) SFX en disco (207 pasos + tu carpeta de 626 sonidos), colecciones de material (256 pasos + tu carpeta, 46 medios), personajes stick (245 pasos + tu `scientist_stick`), almacén de proyectos (317 pasos + una copia de tu `projects.json`, con el mismo texto), JSON como Python (5175 `repr`, `dumps` y `loads`) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12 (4e-15 en la evaluación).
 
 ---
 
 ## Siguiente (para el autopiloto)
 
-F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo de F1, la interfaz (F5). La evaluación de F3 también está completa (por clip, capas y fotograma).
+F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La evaluación de F3 también está completa (por clip, capas y fotograma). El Windows SDK (10.0.26100) ya está instalado y el remoto de GitHub existe.
 
-1. **Con el Windows SDK instalado:** F3, empezando por MSVC + vcpkg (FFmpeg, Skia, ONNX Runtime) y `gc_media`.
-2. **Sin él, en este orden:**
-   - `stick_library.py` (los personajes stick de las colecciones: `stick.json`) y lo que falta de `clip_motion` (`normalize_amps`, `downsample_envelope`, `overlap_window`, `audio_src_at`).
+1. **F3:** el toolchain MSVC (`msvc-debug` configura, compila y pasa los tests), luego vcpkg (FFmpeg, Skia, ONNX Runtime) y `gc_media`.
+2. **El CI:** subir los commits al remoto y ver que pasa en Windows, Linux y macOS (con el push que haga Edu).
+3. Lo que falta de `clip_motion` (`normalize_amps`, `downsample_envelope`, `overlap_window`, `audio_src_at`), en un hueco.
 
 ## Pendiente por tu parte (Edu)
 
-- [ ] Instalar el **Windows SDK**: *Visual Studio Installer → Modificar → «Desarrollo para el escritorio con C++»* y marcar un Windows 11 SDK. Sin esto MSVC no enlaza, y F3 lo necesita.
+- [x] Instalar el **Windows SDK** (10.0.26100.0, con `um` y `ucrt`).
 - [x] Primer commit hecho: un commit local por tanda verificada, sin push.
-- [ ] Crear el **remoto en GitHub** para que el CI se ejecute.
+- [x] Crear el **remoto en GitHub** (`Eliseonop/migracion-gen-c`). Falta el primer push para que el CI se ejecute.
 - [ ] Confirmar la **semántica de visibilidad y orden de capas** del render C++ (notas de F3): intervalo [inicio, fin) sin el margen de 0,02 s del preview, inicio acotado a 0, desempate por `start` dentro de una capa, solo clips que encajan en su pista y de más de 0,02 s, y fin con la duración redondeada de Python. Los textos se ordenan por la pila (el export los ordena por la lista en un .ass). Cambia algún fotograma de borde respecto al export actual. Mientras tanto se implementa así, con el modo del preview disponible.
 - [ ] Elegir la **semántica del relleno** (notas de F3): `fit: contain` decidido en cada instante (preview) o solo si todos los keyframes lo son (export), y el doble encuadre. Tus clips no lo usan (todos son overlay).
 - [ ] Elegir el **desplazamiento de `slide`** en overlay (notas de F3): el preview mueve el clip una fracción de SU tamaño (`fx.tx·ancho del destino`) y el export el cuadro entero (`overlay_xy_for_fx`). En un clip pequeño cambia mucho: ~335 px frente a 1280 px. Tres de tus clips lo usan. El C++ sigue al preview mientras tanto.
@@ -60,8 +60,8 @@ F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo 
 - [x] `-ffp-contract=off` para que los cálculos den los mismos bits en todas las plataformas
 - [x] `genclip --version` con argumentos y salida en UTF-8 en Windows
 - [x] CI de GitHub Actions escrito (Windows MSVC, Linux GCC, macOS Clang)
-- [ ] CI ejecutándose (falta el remoto). Ojo: las fixtures de disco (SFX y colecciones) llevan la semántica de `WindowsPath` (sin distinguir mayúsculas, «\» como separador, «C:x»), y las de proyectos guardan el texto de `projects.json` con los CRLF de Windows (`write_json_file` escribe LF fuera de Windows, como Python); en Linux y macOS habrá que saltarlas o adaptarlas
-- [ ] Toolchain MSVC operativo (`msvc-debug`): depende del Windows SDK
+- [ ] CI ejecutándose (el remoto ya existe: falta el primer push). Ojo: las fixtures de disco (SFX y colecciones) llevan la semántica de `WindowsPath` (sin distinguir mayúsculas, «\» como separador, «C:x»), y las de proyectos guardan el texto de `projects.json` con los CRLF de Windows (`write_json_file` escribe LF fuera de Windows, como Python); en Linux y macOS habrá que saltarlas o adaptarlas
+- [ ] Toolchain MSVC operativo (`msvc-debug`): el Windows SDK ya está; falta probarlo
 - [ ] `GC_WARNINGS_AS_ERRORS` activado en el CI de Windows
 - [x] `.clang-tidy` y spdlog. `python tools/dev/tidy.py [--fix] [filtro]` pasa el clang-tidy de CLion por `src`, `apps` y `tests` y tiene que quedar en 0 avisos (lo que se desactiva y por qué está en el propio `.clang-tidy`). El registro es `gc_log` (`src/log`, spdlog 1.15.3 con hash verificado o el de vcpkg): `init`, el nivel de `GENCLIP_LOG` y salida a stderr. `genclip` lo usa para sus errores; `gc_core` no registra nada
 - [ ] clang-tidy en el CI (`tidy.py` usa el clang-tidy y la MinGW de CLion; en el CI, el `run-clang-tidy` de cada plataforma)
@@ -84,7 +84,7 @@ F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo 
 - [x] Colecciones de material (`collections.hpp`, espejo de `collections.py`): raíz (`material_root` o la de fábrica), preferencias en `collections_meta`, lista (favoritas primero, portada, `stick.json`), búsqueda por palabras, tipo y colección con cuentas y `items[:limit]`, crear y añadir archivos con los nombres saneados de Python, y `resolve` sin salir de la raíz. Paridad: 256 pasos sobre una carpeta temporal (36 de error, con los mensajes que ve el usuario) y tu carpeta (`scientist_stick`, 46 medios); 41/42 mutaciones (`tools/dev/mutantes.py collections`; la otra es equivalente, y las dos que quitan la protección del NUL cuelgan los tests: cuentan como detectadas)
 - [x] Biblioteca de SFX desde disco (`sfx_disk.hpp`, la parte de lectura de `sfx.py`): carpeta activa (`sfx_folder` o la de fábrica), `sfx_library.json` con sus fallos (los sonidos salen del escaneo y las categorías leídas se quedan), escaneo en el orden de `sorted()` de `WindowsPath`, búsqueda por categoría, favoritos y palabras, `resolve` sin salir de la carpeta y `load_sfx_library` (lo que usa `sound_design`, con la sonda de duración inyectada) → `set_sfx_library`. Paridad: 207 pasos sobre una carpeta temporal y tu carpeta (626 sonidos, 15 categorías, 21 favoritos); 34/35 mutaciones (`tools/dev/mutantes.py sfx`; la otra es equivalente)
 - [ ] Dar de alta, editar y crear categorías de SFX (`add_sound`, `update_sound`, `create_category`): escriben archivos y el índice, y llegan con la pantalla de la biblioteca de SFX (F5)
-- [ ] Personajes stick (`stick_library.py` → `stick_library.hpp`): lista, detalle, crear, añadir archivos por expresión y cambiar la expresión de un material, sobre las colecciones con `stick.json`. Es lo siguiente
+- [x] Personajes stick (`stick_library.hpp`, espejo de `stick_library.py`): lista (por `order` y nombre), detalle agrupado por expresión (del manifiesto, de la subcarpeta o «otros»; las categorías propias por subcarpeta), crear (carpeta con slug, subcarpetas por expresión y `stick.json`), añadir archivos a una expresión y cambiar la expresión sin mover el archivo. Paridad: 245 pasos sobre una carpeta temporal (54 de error, con los mensajes que ve el usuario), con el texto exacto del `stick.json` escrito, `str.title()` y el plegado NFKD sobre rangos enteros de Unicode, y tu `scientist_stick`; 57/58 mutaciones (`tools/dev/mutantes.py stick`; la otra es equivalente)
 - [x] Ajustes y API keys (`settings.hpp`: `settings.py`, `export_settings.py` y `transcribe_settings.py`): carga con defectos, `save` con la fusión de claves y máscaras, varias claves por proveedor y la vista pública sin secretos. Paridad: 67 pasos sintéticos con claves falsas y tus ajustes con las claves redactadas; 10/10 mutaciones
 
 ### Notas de F1
@@ -117,6 +117,12 @@ F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo 
   - **Divergencias que se quedan:** un `material_root` que no es texto se ignora (Python falla en `Path(x)`, como con `sfx_folder`); unas preferencias de `collections_meta[id]` que no son un objeto son un error en `set_prefs` (Python hace `dict(x)`, que acepta una lista de pares); los nombres de carpeta que no son UTF-16 válido se saltan.
   - **`resolve` con nombres que Windows normaliza** (también en `sfx_resolve`, por `resolve_inside`): con «fondos/NUL» Python da None (el dispositivo queda fuera de la raíz) y C++ devuelve la ruta; con «a.png » o «a.png.» los dos encuentran el archivo, pero C++ devuelve la ruta como se pidió y Python la normalizada. CON, AUX, COM1 y LPT1 dan None en los dos. Hoy no importa; cuando F7 sirva `/api/collections/file/{ref}`, que rechace esos nombres antes.
   - **`add_files` en C++** recibe, por cada archivo, el nombre y quien escribe el contenido (`IncomingFile::write`): la API lo copiará de una subida y el escritorio, de un archivo arrastrado.
+- **Personajes stick (`stick_library.hpp`, hecho):**
+  - **Texto de Python nuevo en `py.hpp`** (tablas de `tools/gen/gen_py_text.py`, generadas con el Python de video-yt): `py_title` (`str.title()`: título tras un carácter sin caja y minúsculas tras uno con caja, con la sigma final), `py_isdecimal` (el `\d` de las regex de texto) y `py_nfkd_fold` (NFKD sin marcas, en minúsculas y lo que no es `[a-z0-9]` a «_»: la base de `_norm` y `_slug`; basta con cada carácter por separado porque NFKD solo reordena marcas, que se quitan).
+  - **`_pretty_title`:** la regex `_(?:\d{3,4}p|\d{8,})(?=_|$)` a mano, con `\d` de Unicode y el `$` que también vale antes de un «\n» final.
+  - **Ids de expresión que no son texto** (un manifiesto a mano): como claves de Python (`True == 1 == 1.0`, se queda la primera; una lista o un dict es un error, unhashable; los NaN de `json.loads` son el mismo objeto). Al ordenar, un empate de posición entre texto y números falla como `<` de Python, y un número sin etiqueta falla en `.replace` (AttributeError). Divergencia: un id NaN es un error (Python lo deja donde caiga su timsort) y un `order` de más de 64 bits también.
+  - **El orden de Python en los fallos:** `create_stick` crea la carpeta y sus subcarpetas antes de mirar los demás sticks (si uno tiene un `order` que no es entero, falla y la carpeta se queda); `add_files` crea la carpeta de la expresión aunque luego no guarde nada; `set_expression` reescribe `items` solo con los dicts y, si la expresión es una categoría propia, `expressions` con las que valen (o las de fábrica) más la nueva.
+  - **Compartido con las colecciones (`disk_scan`):** `sorted_subdirs` (el `sorted(iterdir())` de carpetas), `clean_name` (los nombres saneados) y `resolved_inside` (el `in path.parents` de `set_expression`).
 
 - **JSON como Python:** `json.loads(read_text("utf-8"))` falla con un BOM de UTF-8. Ajustes, biblioteca, historial, SFX, colecciones y el almacén de proyectos usan `read_json_file_py`, que también falla; `read_json_file` (el CLI y las fixtures) lo sigue saltando.
 - **Texto de Python en `py.hpp`:** `py_lower` (`str.lower()` de Unicode 16, con la sigma final; tabla generada con `tools/gen/gen_py_lower.py`), `py_path_str` (`str(Path(x))`), `py_path_name`, `py_path_suffix` y `py_path_stem` (Python 3.14 en Windows, con el `splitroot` de C: unidades de UTF-16, UNC y `\\?\UNC\`) y `py_quote`.
@@ -273,6 +279,7 @@ F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo 
 - [ ] Capa de ajuste, barras de cine y film
 - [ ] Contorno del sujeto y chroma key
 - [ ] Efectos animados del catálogo (fx → SkSL, efecto a efecto)
+- [ ] `paper_cutout` («Papel recortado», `fx/effects/paper.js`): borde rasgado, arrugas, sombra, vibración stop-motion y pliegue de apertura y cierre. Sustituye al editor de Paper, que no se porta (plan §6.2)
 - [ ] Alfa de «Eliminar fondo» leído desde la caché existente
 - [ ] Marco de plataforma TikTok/Shorts (solo en preview)
 - [ ] **Salida:** todo lo de `docs/` de video-yt se exporta desde C++, sin libass ni Chromium-fx
@@ -283,6 +290,7 @@ F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo 
 - [ ] 1. Inicio: proyectos y carpetas
 - [ ] 2. Editor: preview + timeline (arrastre sin solapes, pista magnética, zoom, beats y marcadores)
 - [ ] 3. Inspector: transform, texto, filtros, máscaras y modal de recortar
+- [ ] Pestaña **Efectos** del inspector (plan §6.3): aparece al añadir un efecto al clip; una subpestaña por efecto, en el orden de `vfx` y reordenable, con sus propiedades generadas desde los `params` del catálogo (`toggle`, `range`, `select`, `color`…), activar o desactivar, restablecer y quitar. Con muchos efectos, una lista de tarjetas plegables
 - [ ] 4. Biblioteca y materiales
 - [ ] 5. Export con progreso
 - [ ] 6. Ajustes
@@ -317,12 +325,12 @@ F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo 
 - [ ] Decidir si gc_cloud/gc_agent se hacen en Rust (`rmcp`) o en C++
 - [ ] **Salida:** las fixtures MCP pasan y Claude Desktop conecta sin tocar su configuración
 
-## F8 — Motion, Stick, Paper
+## F8 — Fuera de alcance por ahora
 
-- [ ] Stick nativo en Skia (port de `stick.js`)
-- [ ] Paper nativo en Skia (+ UI)
-- [ ] Motion Studio con sidecar Chromium por CDP (opción A)
-- [ ] Spike de 2 semanas del formato nativo (opción B: JSON declarativo o Lottie/Skottie)
+Decidido el 2026-10-08 (plan §6). No hay tareas:
+- **Motion Studio** (con su stick, `motion/stick.js` y `stick.py`) no se porta todavía. Las composiciones de Motion de los proyectos se conservan al leer y escribir, pero no se editan.
+- **Paper** ya es el efecto `paper_cutout` (va en F4) y su editor no se porta.
+- Los personajes stick de la biblioteca (`stick_library`) siguen en F1.
 
 ## F9 — Empaquetado de escritorio → **M3**
 
@@ -330,7 +338,7 @@ F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo 
 - [ ] Windows: `GenClipPro.exe` + `genclip.exe`, `windeployqt` e instalador NSIS/WiX/MSIX (o ZIP portátil)
 - [ ] macOS: `.dmg` firmado y notarizado
 - [ ] Linux: AppImage o Flatpak
-- [ ] Modelos y Chromium descargados en el primer uso (sustituye a `setup/nucleo.py`)
+- [ ] Modelos descargados en el primer uso (sustituye a `setup/nucleo.py`)
 - [ ] Actualizaciones e informes de fallos (Crashpad)
 - [ ] Firma de código
 - [ ] **Se retira la app Python**
@@ -342,7 +350,7 @@ F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo 
 - [ ] Codecs por hardware (MediaCodec, VideoToolbox)
 - [ ] ORT con NNAPI/XNNPACK o CoreML y modelos «lite»; límites de RAM
 - [ ] Export en segundo plano (*foreground service* en Android; limitado en iOS)
-- [ ] Sin YouTube; Motion en remoto o desactivado
+- [ ] Sin YouTube
 - [ ] CI de Android e iOS
 
 ## Opcionales
@@ -356,7 +364,7 @@ F0, F1 y F2 están hechas: lo que queda de F0 necesita el SDK o el remoto, y lo 
 
 - [x] Orden de dispositivos: escritorio primero, móvil al final
 - [x] UI: Qt Quick/QML
-- [x] Motion Studio: sidecar Chromium (A) + spike de formato nativo (B)
+- [x] Motion Studio: **aplazado** (2026-10-08), fuera de alcance por ahora; el editor de Paper no se porta (es el efecto `paper_cutout`)
 - [x] Congelar video-yt desde F3 (solo correcciones de bugs)
 - [x] Rust: no se usa por rendimiento; solo se valorará para gc_cloud/gc_agent en F7
 - [ ] Licencia de distribución: antes de F9

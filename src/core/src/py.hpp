@@ -88,6 +88,18 @@ namespace gc::core::detail {
 // tools/gen/gen_py_lower.py; los bytes que no son UTF-8 válido se copian tal cual.
 [[nodiscard]] std::string py_lower(std::string_view utf8);
 
+// str.title() de Python sobre UTF-8: cada carácter pasa a título si el anterior no tiene caja
+// y a minúsculas si la tiene (con la sigma final de lower()). Tablas de tools/gen/gen_py_text.py.
+[[nodiscard]] std::string py_title(std::string_view utf8);
+
+// str.isdecimal() de un carácter: el `\d` de las regex de texto de Python.
+[[nodiscard]] bool py_isdecimal(char32_t c);
+
+// El plegado de `_norm` y `_slug` de stick_library: NFKD, sin las marcas que combinan y en
+// minúsculas, con cada carácter que no es [a-z0-9] cambiado por «_». (`_norm` quita los «_»;
+// `_slug` junta cada racha en uno.)
+[[nodiscard]] std::string py_nfkd_fold(std::string_view utf8);
+
 // a == b de Python entre valores JSON: los números se comparan por su valor exacto también
 // entre int, float y bool (True == 1 == 1.0; 2**53 + 1 != 2.0**53), y las listas y los
 // dicts por contenido (los dicts sin mirar el orden).

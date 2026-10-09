@@ -28,6 +28,13 @@ std::vector<std::string> lowered_parts(const fs::path& p) {
     return out;
 }
 
+// root == target (si no es `strict`) o root en target.parents, sin distinguir mayúsculas.
+bool inside(const fs::path& root, const fs::path& target, bool strict) {
+    const auto r = lowered_parts(root);
+    const auto t = lowered_parts(target);
+    return t.size() >= r.size() + (strict ? 1 : 0) && std::equal(r.begin(), r.end(), t.begin());
+}
+
 } // namespace
 
 std::optional<fs::path> dir_from_settings(const Json& settings, std::string_view key, const fs::path& default_dir) {
@@ -92,6 +99,49 @@ std::vector<std::vector<std::string>> sorted_files(const fs::path& base,
     return out;
 }
 
+std::string clean_name(std::string_view text) {
+    constexpr std::string_view kBad = R"(<>:"/\|?*)";
+    std::string out(text);
+    for (char& c : out) {
+        if (static_cast<unsigned char>(c) < 0x20 || kBad.contains(c)) {
+            c = '_';
+        }
+    }
+    const auto first = out.find_first_not_of(" .");
+    if (first == std::string::npos) {
+        return {};
+    }
+    return out.substr(first, out.find_last_not_of(" .") - first + 1);
+}
+
+std::vector<std::string> sorted_subdirs(const fs::path& base) {
+    struct Sub {
+        std::string key;
+        std::string name;
+    };
+    std::vector<Sub> subs;
+    std::error_code ec;
+    for (fs::directory_iterator it(base, ec), end; !ec && it != end; it.increment(ec)) {
+        std::error_code ec_dir;
+        if (!it->is_directory(ec_dir)) { // como is_dir(): sigue los enlaces
+            continue;
+        }
+        try {
+            std::string name = path_to_utf8(it->path().filename());
+            subs.push_back({py_lower(name), std::move(name)});
+        } catch (const std::exception&) {
+            continue; // un nombre que no es UTF-16 válido
+        }
+    }
+    std::ranges::stable_sort(subs, {}, &Sub::key);
+    std::vector<std::string> out;
+    out.reserve(subs.size());
+    for (auto& s : subs) {
+        out.push_back(std::move(s.name));
+    }
+    return out;
+}
+
 fs::path pathlib_join(const fs::path& base, const fs::path& p) {
     if (p.has_root_name()) {
         const bool same_drive = py_lower(path_to_utf8(p.root_name())) == py_lower(path_to_utf8(base.root_name()));
@@ -121,16 +171,16 @@ std::optional<fs::path> resolve_inside(const fs::path& base, std::initializer_li
         joined = pathlib_join(joined, path_from_utf8(part));
     }
     fs::path target = fs::weakly_canonical(joined, ec);
-    if (ec) {
-        return std::nullopt;
-    }
-    // base == target (si no es `strict`) o base en target.parents, sin distinguir mayúsculas.
-    const auto r = lowered_parts(root);
-    const auto t = lowered_parts(target);
-    if (t.size() < r.size() + (strict ? 1 : 0) || !std::equal(r.begin(), r.end(), t.begin())) {
+    if (ec || !inside(root, target, strict)) {
         return std::nullopt;
     }
     return target;
+}
+
+bool resolved_inside(const fs::path& dir, const fs::path& target, bool strict) {
+    std::error_code ec;
+    const fs::path root = fs::weakly_canonical(fs::absolute(dir, ec), ec);
+    return !ec && inside(root, target, strict);
 }
 
 std::optional<fs::path> resolve_inside(const fs::path& base, std::string_view rel) {
