@@ -9,10 +9,11 @@
 - **La mayor ventaja no es la velocidad, sino tener un solo renderizador.** Hoy el preview (`canvas.js` + `lib/*.js`) y el export (`compose.py` → FFmpeg `filter_complex` + libass + Chromium) son dos motores con la lógica duplicada en JS y en Python. En C++ el **mismo compositor (Skia)** dibuja el preview y el export, así que la paridad entre ambos ya no hay que mantenerla a mano.
 - **Cómo se migra:** de forma **incremental (strangler)**. La app Python sigue en uso hasta que la C++ la iguale, y cada fase entrega algo que se usa de verdad:
   - **M1 (~4–5 meses):** la app Python exporta con el motor C++ (`genclip render`).
-  - **M2 (~8–10 meses):** editor C++ de escritorio usable; lo que aún no está portado (IA, Motion) se le pide al backend Python por su API REST actual.
+  - **M2 (~8–10 meses):** editor C++ de escritorio usable; lo que aún no está portado (IA) se le pide al backend Python por su API REST actual.
   - **M3 (~12–15 meses):** se retira Python; instaladores para Windows, macOS y Linux.
   - **M4 (~15–19 meses):** Android e iOS.
-- **Coste honesto:** ~92 k líneas de lógica (42,5 k de Python + 50 k de JS/JSX), lo que supone **≈ 56–81 semanas** de trabajo dedicado. Lo que protege el plan es que la paridad se **mide con fixtures generadas desde Python**: los 20,6 k de líneas de tests no se reescriben a mano.
+- **Fuera de alcance por ahora (§6):** Motion Studio y el editor de Paper. Paper ya es un efecto del catálogo (`paper_cutout`) y se porta con los demás efectos.
+- **Coste honesto:** ~92 k líneas de lógica (42,5 k de Python + 50 k de JS/JSX; Motion y el editor de Paper no se portan), lo que supone **≈ 50–71 semanas** de trabajo dedicado. Lo que protege el plan es que la paridad se **mide con fixtures generadas desde Python**: los 20,6 k de líneas de tests no se reescriben a mano.
 
 ---
 
@@ -48,7 +49,7 @@
 |---|---|---|
 | **T1** | Windows x64 (tu máquina, NVIDIA) | Completo. Referencia de paridad. |
 | **T2** | macOS (Apple Silicon), Linux x64 | Completo. CUDA → Metal/CoreML (mac) o Vulkan/CUDA (Linux). |
-| **T3** | Android (arm64), iOS | Editor, export e IA «ligera» (RVM mobilenet, U²-Netp, Whisper tiny/base, Kokoro). **Sin descarga de YouTube** (las políticas de Play Store y App Store la prohíben). Motion Studio en remoto o desactivado al principio. |
+| **T3** | Android (arm64), iOS | Editor, export e IA «ligera» (RVM mobilenet, U²-Netp, Whisper tiny/base, Kokoro). **Sin descarga de YouTube** (las políticas de Play Store y App Store la prohíben). |
 | T4 (opcional) | Linux headless | `genclip` CLI + servidor MCP para renderizar en un servidor. |
 | T5 (opcional) | Web (WASM) | El núcleo y Skia (CanvasKit) compilan a WebAssembly. Puede estudiarse cuando todo lo anterior esté hecho. |
 
@@ -87,7 +88,7 @@
 |---|---|---|
 | **gc_core** | `Timeline`/`Track`/`Clip`/`Project`, (de)serialización JSON + migraciones, todas las ops de `timeline_ops` (sin solapes, pista magnética, track stack), keyframes, curvas y easing, `clip_layout`/`reframe_math`, velocidad, congelar fotograma, undo/redo (patrón comando) | Solo STL + `nlohmann/json` (o `glaze`). Sin Qt. |
 | **gc_media** | Demux y decode con hwaccel (D3D11VA/NVDEC, VideoToolbox, MediaCodec, VAAPI), seek exacto, caché de frames con presupuesto, proxies, miniaturas y formas de onda, mezcla de audio, `loudnorm` a −14 LUFS, filtros de sonido mediante libavfilter, encode (NVENC/AMF/QSV, VideoToolbox, MediaCodec, x264 u OpenH264), reproducción de audio con miniaudio | FFmpeg (libav* **dentro del proceso**, nunca CLI: iOS no permite lanzar procesos) |
-| **gc_render** | Compositor de capas: vídeo, imagen, GIF, texto, figuras, máscaras, modos de fusión, filtros y ajustes de color (SkSL), chroma key, capa de ajuste, barras de cine, transiciones, efectos animados, stick y paper. Dibuja sobre una superficie de cualquier tamaño: **el preview a ½ o ¼ de resolución y el export a resolución completa usan el mismo código.** | Skia (GPU: D3D/Metal/Vulkan/GL; CPU raster como alternativa), HarfBuzz + SkParagraph |
+| **gc_render** | Compositor de capas: vídeo, imagen, GIF, texto, figuras, máscaras, modos de fusión, filtros y ajustes de color (SkSL), chroma key, capa de ajuste, barras de cine, transiciones y efectos del catálogo (paper incluido: es el efecto `paper_cutout`). Dibuja sobre una superficie de cualquier tamaño: **el preview a ½ o ¼ de resolución y el export a resolución completa usan el mismo código.** | Skia (GPU: D3D/Metal/Vulkan/GL; CPU raster como alternativa), HarfBuzz + SkParagraph |
 | **gc_ai** | Eliminar fondo (RVM, BiRefNet, U²-Net) con caché en 2 niveles, SAM 2.1 + seguimiento + pincel, Whisper (palabras con timestamps), TTS (Kokoro, Piper), YuNet + reframe, tracking LK + RANSAC, beats (FFT), `model_manager` (descarga en el primer uso y presupuesto de RAM) | ONNX Runtime C++ (CUDA, DirectML/WinML, CoreML, NNAPI/XNNPACK, CPU), whisper.cpp, OpenCV (core/imgproc/video/objdetect/dnn), espeak-ng |
 | **gc_cloud** | Clientes REST y SSE: Gemini, OpenAI-compatible (openrouter/groq/cerebras/mistral/hf), Azure (TTS/STT/Vision/imagen), Foundry, Pexels/Giphy/Pixabay/Unsplash | libcurl (+ cpr), JSON |
 | **gc_services** | Proyectos, carpetas del inicio, biblioteca y colecciones, ajustes y API keys, jobs (pool de hilos con progreso y cancelación), import, YouTube (sidecar `yt-dlp` solo en escritorio) | gc_core, gc_media |
@@ -98,7 +99,7 @@
 
 ### 4.2 Decisiones técnicas y motivo
 
-- **Skia como compositor.** El Canvas 2D de Chrome *es* Skia, así que `canvas.js`, `lib/*.js`, paper y stick se portan casi 1:1:
+- **Skia como compositor.** El Canvas 2D de Chrome *es* Skia, así que `canvas.js`, `lib/*.js` y los efectos de `fx/` se portan casi 1:1:
 
   | Canvas 2D (JS) | Skia (C++) |
   |---|---|
@@ -107,12 +108,12 @@
   | `ctx.filter` | `SkColorFilter` / `SkImageFilter` |
   | `Path2D` | `SkPath` |
 
-  El preview se verá como hoy. Además, Skia trae Skottie (Lottie) y un módulo SVG para Motion (§6).
+  El preview se verá como hoy. Además, Skia trae Skottie (Lottie) y un módulo SVG.
 - **FFmpeg solo para lo que hace bien:** decodificar, codificar, audio y algún filtro puntual. Ya no compone la imagen: el `filter_complex` no sirve para un preview interactivo y es justo el origen de la duplicación.
 - **Qt Quick para la UI.** Es el único toolkit C++ maduro que cubre Windows, macOS, Linux, Android e iOS con una sola base de código. QML es declarativo, mentalmente parecido a JSX, y CLion lo soporta.
 - **Modelo de hilos:** el hilo de UI solo muestra; el hilo de render recibe **snapshots inmutables** de la timeline (con estructura compartida); hay hilos de decodificación por clip visible y el reloj maestro es el de audio. Las ediciones entran como **ops** (las mismas que usa el MCP), lo que da undo/redo y diffs en lugar de enviar la timeline entera, como pasa ahora con el `PUT` y las respuestas del MCP.
 - **Errores:** `std::expected<T, gc::Error>` entre módulos; en el MCP se mapea al enum de 8 códigos actual.
-- **Prompts y plantillas como datos.** Los prompts de `scene_direction.py`, `motion/generator.py`, «Generar escena» y «Generar recurso» se sacan a `resources/prompts/*.md` y `resources/templates/*.json`. Son contenido del producto, no código, y así ambas apps los comparten durante la transición.
+- **Prompts y plantillas como datos.** Los prompts de `scene_direction.py`, «Generar escena» y «Generar recurso» se sacan a `resources/prompts/*.md` y `resources/templates/*.json`. Son contenido del producto, no código, y así ambas apps los comparten durante la transición.
 
 ---
 
@@ -128,9 +129,9 @@ Dificultad: S (días) · M (1–3 semanas) · L (1–2 meses) · XL (más de 2 m
 | `compose.py`, `compose_clip.py`, `compose_layout.py`, `clip_filters`, `clip_blend`, `clip_mask`, `clip_adjust`, `clip_fx`, `shapes`, `text3d` + `canvas.js`, `warp3d.js`, `vfxLayer.js` | gc_render | **XL** | El corazón de la migración. |
 | `text_ass.py` (libass) + `textstyles.js` | gc_render/text | L | Un solo motor de texto: SkParagraph + HarfBuzz para estilos, contorno, karaoke por palabra, 3D y máscara. Puede haber pequeñas diferencias con libass (§9). |
 | `fx_bake.py` + `frontend/src/fx` (Chromium) | gc_render/fx (SkSL) | L | Se porta efecto a efecto; el catálogo indica cuáles están listos. |
-| `motion/stick.js` + `stick.py` | gc_render/stick | M | Port directo a Skia. |
-| `features/paper` | gc_render/paper + UI | M | |
-| `motion/` (HTML/GSAP + Playwright) | ver §6 | XL | |
+| `fx/effects/paper.js` (efecto `paper_cutout`) | gc_render/fx | M | Uno más de los efectos del catálogo (F4). Sustituye al editor de Paper (§6). |
+| `features/paper` (editor de Paper) | — | — | No se porta (§6). |
+| `motion/` (HTML/GSAP + Playwright, con `stick.js` y `stick.py`) | — | — | Fuera de alcance por ahora (§6). |
 | `transcribe.py` (faster-whisper) | whisper.cpp | M | Los timestamps por palabra difieren algo: validar con fixtures. |
 | `tts.py`, `piper_tts.py`, kokoro-onnx | ORT + espeak-ng | M | espeak-ng es **GPLv3** (§10). |
 | `gemini_tts`, `azure_*`, `foundry*`, `media_search`, `material_ai` | gc_cloud | S cada uno | REST puro. |
@@ -143,20 +144,41 @@ Dificultad: S (días) · M (1–3 semanas) · L (1–2 meses) · XL (más de 2 m
 | `mcp_server/` (50 tools), `ai/` (agente) | gc_agent | M | JSON-RPC propio (los SDK MCP de C++ todavía están verdes). Mismo endpoint, para que Claude Desktop y `mcp-remote` no cambien de configuración. |
 | `projects`, `library`, `collections`, `storage`, `settings`, `stick_library` | gc_services | M | Los diálogos tkinter de `storage.py` pasan a `FileDialog` de Qt. |
 | `gpu.py`, `model_manager.py`, `diagnostics.py` | gc_platform, gc_ai | S | |
-| UI React (editor 24 k, paper, motion, ai, audio, direction, projects) | studio (QML) | **XL** | Se porta por pantallas, en orden de uso (F5). |
+| UI React (editor 24 k, ai, audio, direction, projects) | studio (QML) | **XL** | Se porta por pantallas, en orden de uso (F5). Sin paper ni motion (§6). |
 
 ---
 
-## 6. Motion Studio y contenido HTML
+## 6. Fuera de alcance: Motion y el editor de Paper. Los efectos en el inspector
 
-El problema: la IA genera **HTML, CSS y GSAP**, y eso necesita un motor web.
+*Decidido el 2026-10-08.*
 
-| Opción | Ventajas | Inconvenientes |
-|---|---|---|
-| **A. Sidecar Chromium headless por CDP** (escritorio). Se descarga `chrome-headless-shell` al usarlo y se controla por DevTools Protocol desde C++ (`__seek(t)`, después `Page.captureScreenshot` con fondo transparente). Es el mismo protocolo que usa hoy Playwright. | Mantiene el generador, los prompts y el validador tal cual. Es determinista. | ~100 MB adicionales y solo funciona en escritorio. |
-| **B. Formato nativo.** La IA genera un JSON declarativo (grafo de escena + tweens) que renderiza gc_render, o bien Lottie (Skottie). | Un solo motor, funciona en móvil y es rápido. | Hay que rehacer el generador y los prompts. Además, los motion graphics de *concepto* que buscas necesitan un vocabulario expresivo. |
+### 6.1 Motion Studio: fuera por ahora
 
-**Recomendación:** A en F8 para no perder nada en escritorio, más un **spike de B** (2 semanas) para decidir el formato a largo plazo. En móvil, al principio, Motion Studio renderiza en el escritorio o en un servidor (T4).
+Motion Studio no se porta todavía: ni el generador de HTML, CSS y GSAP, ni su render en Chromium (`motion/`, Playwright), ni su stick (`motion/stick.js`, `stick.py`). Las composiciones de Motion que ya hay en los proyectos se conservan tal cual al leer y escribir (el almacén de proyectos ya lo hace), pero GenClipPro no las edita ni las genera. El puente REST de F5 tampoco las pide a Python.
+
+Se volverá a ver cuando el editor esté hecho. Las dos opciones que se estudiaron siguen valiendo:
+- **A. Sidecar Chromium headless por CDP** (solo escritorio, ~100 MB). Mantiene el generador y los prompts tal cual.
+- **B. Formato nativo** (JSON declarativo con tweens, o Lottie con Skottie). Un solo motor, que también funciona en móvil, pero obliga a rehacer el generador.
+
+Los **personajes stick de la biblioteca** (`stick_library`, el menú «Agregar Stick») no son Motion: son clips normales de vídeo o imagen con croma, y siguen en F1.
+
+### 6.2 Paper: ya es un efecto
+
+El aspecto de Paper ya vive en el catálogo de efectos como **`paper_cutout`** («Papel recortado», `fx/effects/paper.js`, portado de `features/paper/paperRender.js`). Sus parámetros cubren lo que hacía el editor de Paper: borde rasgado (grosor, rugosidad, detalle), arrugas y su fusión, sombra, vibración stop-motion y el pliegue de apertura y cierre. Por eso:
+- **El editor de Paper** (`features/paper`: lienzo, capas y panel de propiedades propios) **no se porta**.
+- `paper_cutout` se porta en F4 como un efecto más del catálogo (fx → SkSL).
+- Las opciones de cómo aparece y desaparece el papel (el pliegue, la vibración) son **parámetros del efecto**, no una sección aparte.
+- Lo que el editor tenía y el efecto no (las letras recortadas de `assets/alfnum`, el borrador y el fondo propio) no se porta. Si hace falta, se valorará como efecto o como herramienta más adelante.
+
+### 6.3 Los efectos en el inspector
+
+En vez de una sección por cada tipo de efecto, el inspector trata todos los efectos del clip igual (F5):
+- Al añadir un efecto a un clip, aparece la pestaña **Efectos** en las propiedades. Si el clip no tiene ninguno, la pestaña no se muestra.
+- Dentro de **Efectos**, cada efecto añadido tiene su **subpestaña** (con su nombre). Al pulsarla se ven las propiedades de ese efecto.
+- Esas propiedades salen de los `params` del catálogo (`toggle`, `range`, `select`, `color`…): la UI se genera desde el catálogo, sin pantallas hechas a mano por efecto. Así, un efecto nuevo del catálogo aparece en el inspector sin tocar la UI.
+- Cada subpestaña también deja activar o desactivar el efecto, restablecer sus valores y quitarlo.
+- **El orden importa:** los efectos se aplican uno tras otro, en el orden de la lista `vfx` del clip. Las subpestañas siguen ese orden y se pueden reordenar arrastrándolas.
+- Si un clip acumula muchos efectos, las subpestañas pueden no caber. En ese caso se pasa a una lista vertical de tarjetas plegables, con el mismo contenido.
 
 ---
 
@@ -194,10 +216,10 @@ Las estimaciones suponen 1 persona con Claude, a dedicación alta.
 | **F5** Editor de escritorio | app Qt: proyectos, timeline, preview, inspector, export | 10–14 | **M2** |
 | **F6** IA local | fondo, SAM, Whisper, TTS, tracking, beats | 6–8 | |
 | **F7** Nube, agente, MCP | providers, chat, MCP :8000, YouTube, escena/recurso | 4–6 | |
-| **F8** Motion, Stick, Paper | §6 | 6–10 | |
+| ~~**F8** Motion, Stick, Paper~~ | fuera de alcance por ahora (§6) | — | |
 | **F9** Empaquetado escritorio | instaladores, modelos en el primer arranque, updates | 2–3 | **M3** |
 | **F10** Móvil | Android + iOS | 8–12 | **M4** |
-| | **Total** | **≈ 56–81** | |
+| | **Total** | **≈ 50–71** | |
 
 ### F0 — Cimientos (1–2 semanas)
 - **Toolchain:** en Windows, cambiar de la MinGW incluida en CLion a **MSVC (Visual Studio 2022 Build Tools)**. ONNX Runtime, CUDA y los binarios precompilados de Skia y Qt están pensados para MSVC; con MinGW darán problemas. En macOS e iOS, Apple Clang; en Linux, Clang o GCC; en Android, Clang del NDK.
@@ -226,20 +248,20 @@ Las estimaciones suponen 1 persona con Claude, a dedicación alta.
 - **Salida:** las fixtures de render pasan el umbral y el export es igual de rápido o más que el actual.
 
 ### F4 — Render completo (6–8 semanas)
-- Texto completo (temas de subtítulos, karaoke, contorno, sombras, 3D, máscara en texto), appear/exit, looks, capa de ajuste, barras de cine, film, contorno del sujeto, chroma key, efectos animados (fx → SkSL), alfa de «Eliminar fondo» leído desde la caché existente y marco de plataforma (solo en preview).
+- Texto completo (temas de subtítulos, karaoke, contorno, sombras, 3D, máscara en texto), appear/exit, looks, capa de ajuste, barras de cine, film, contorno del sujeto, chroma key, efectos animados (fx → SkSL; entre ellos `paper_cutout`, que sustituye al editor de Paper, §6.2), alfa de «Eliminar fondo» leído desde la caché existente y marco de plataforma (solo en preview).
 - **Salida:** todo lo descrito en `docs/` de video-yt se exporta desde C++. libass y Chromium-fx dejan de usarse en el export.
 
 ### F5 — Editor de escritorio Qt (10–14 semanas) → **M2**
 - **Orden de pantallas:**
   1. Inicio (proyectos y carpetas).
   2. Editor: preview + timeline (arrastre sin solapes, pista magnética, zoom, beats y marcadores).
-  3. Inspector: transform, texto, filtros, máscaras, modal de recortar.
+  3. Inspector: transform, texto, filtros, máscaras, modal de recortar y la pestaña **Efectos**, con una subpestaña por efecto añadido y sus propiedades generadas desde el catálogo (§6.3).
   4. Biblioteca y materiales.
   5. Export con progreso.
   6. Ajustes.
   7. Atajos de teclado.
 - **Reproductor:** reloj de audio, preview a ½ o ¼ de resolución, proxies generados al importar, repintado solo cuando cambia algo y 60 fps en el cabezal sin re-render del árbol de UI (justo lo que hoy cuesta en React).
-- **Puente transitorio:** lo que aún no está portado (eliminar fondo, Whisper, TTS, chat, Motion, YouTube) se pide al backend Python **por su API REST actual** (`:8000`), como cliente HTTP. Se retira en F6–F8.
+- **Puente transitorio:** lo que aún no está portado (eliminar fondo, Whisper, TTS, chat, YouTube) se pide al backend Python **por su API REST actual** (`:8000`), como cliente HTTP. Se retira en F6–F7. Motion no pasa por el puente: queda fuera (§6.1).
 - **Salida:** editas y exportas un short completo sin abrir la UI React.
 
 ### F6 — IA local (6–8 semanas)
@@ -254,19 +276,19 @@ Las estimaciones suponen 1 persona con Claude, a dedicación alta.
 - YouTube mediante el sidecar `yt-dlp`; Dirección de escena, Generar escena y Generar recurso con los prompts movidos a `resources/`.
 - **Salida:** las fixtures MCP pasan y Claude Desktop se conecta sin tocar su configuración.
 
-### F8 — Motion, Stick, Paper (6–10 semanas)
-- Stick y Paper nativos en Skia; Motion Studio con la opción A (§6) y el spike de B.
+### F8 — Fuera de alcance por ahora
+- Motion Studio (con su stick) no se porta todavía (§6.1). Paper ya es el efecto `paper_cutout` y va en F4 (§6.2). Se mantiene el número de las fases siguientes.
 
 ### F9 — Empaquetado escritorio (2–3 semanas) → **M3**
 - CPack: Windows con MSIX o NSIS/WiX; macOS `.dmg` firmado y notarizado; Linux AppImage o Flatpak.
-- Modelos y Chromium se descargan en el primer uso (sustituye a `setup/nucleo.py`). Actualizaciones e informes de fallos (Crashpad).
+- Los modelos se descargan en el primer uso (sustituye a `setup/nucleo.py`). Actualizaciones e informes de fallos (Crashpad).
 - **Se retira la app Python.**
 
 ### F10 — Móvil (8–12 semanas) → **M4**
 - Qt for Android/iOS; UI táctil (layouts QML adaptativos y gestos en timeline y preview).
 - Almacenamiento con *scoped storage* y selector de Fotos; codecs por hardware (MediaCodec, VideoToolbox); ORT con NNAPI/XNNPACK o CoreML; modelos «lite»; límites de RAM.
 - Export en segundo plano: *foreground service* en Android; en iOS es limitado.
-- Sin YouTube; Motion en remoto o desactivado.
+- Sin YouTube.
 
 ---
 
@@ -280,7 +302,6 @@ Las estimaciones suponen 1 persona con Claude, a dedicación alta.
 | Preview en tiempo real con varias pistas 1080p (sobre todo en móvil) | Medio | Proxies, preview a resolución reducida, decode por hardware y caché con presupuesto. |
 | Toolchain en 5 plataformas (Skia, Qt, ORT, FFmpeg) | Medio | Binarios precompilados, vcpkg con baseline y CI desde F0. |
 | Whisper C++ ≠ faster-whisper en tiempos por palabra | Bajo-medio | Fixtures con tolerancia y opción Azure STT. |
-| Motion Studio en móvil | Medio | §6: remoto al principio y spike de formato nativo. |
 | YouTube en tiendas | — | Solo en escritorio. |
 | NVENC bloqueado por el driver en tu máquina | Bajo | Mismo patrón de sonda real + alternativa por software que hoy. |
 
@@ -346,7 +367,7 @@ Espacio de nombres `gc::core`, `gc::media`… Cada módulo es una biblioteca CMa
 |---|---|---|---|
 | 1 | Orden de dispositivos | Escritorio primero (T1→T2) y móvil al final (F10) | Móvil desde F5: obliga a diseñar la UI táctil desde el principio y retrasa M2 |
 | 2 | UI | **Qt Quick/QML** | React en WebView con núcleo C++: más rápido de entregar, pero meter un preview nativo dentro del WebView es difícil. Flutter + C++ por FFI: buena en móvil, pero la UI no sería C++ |
-| 3 | Motion Studio | Sidecar Chromium (A) + spike de formato nativo (B) | Solo A, o solo B |
+| 3 | Motion Studio | **Aplazada (2026-10-08):** fuera de alcance por ahora (§6.1) | Más adelante: sidecar Chromium (A), formato nativo (B) o los dos |
 | 4 | Licencia de distribución | Decidirla antes de F9 | GPL frente a evitar x264 y espeak-ng |
 | 5 | Congelar video-yt | Desde F3, solo correcciones de bugs | Doble implementación con fixture obligatoria |
 
@@ -947,3 +968,11 @@ El autopiloto pidió una revisión de conjunto (colecciones, almacén de proyect
   - ARQUITECTURA, que aún daba por pendientes el autoguardado y el historial;
   - la nota de qué lector usa cada almacén;
   - casillas en el TODO para los personajes stick y lo que falta de `clip_motion`, para que el autopiloto las vea.
+
+### 2026-10-08 — Cambio de alcance: sin Motion ni editor de Paper; efectos en el inspector
+
+Decisión de Edu (§6):
+- **Motion Studio fuera por ahora**, con su stick (`motion/stick.js`, `stick.py`). F8 queda vacía; las demás fases mantienen su número. La decisión 3 de §13 queda aplazada. Los personajes stick de la biblioteca (`stick_library`) siguen en F1: son clips normales.
+- **Paper ya es un efecto** (`paper_cutout`, en el catálogo): el editor de Paper no se porta. Sus opciones de aparición (pliegue, vibración) son parámetros del efecto, y el efecto se porta en F4 con los demás.
+- **Pestaña Efectos en el inspector (F5):** aparece al añadir un efecto al clip, con una subpestaña por efecto (en el orden de `vfx` y reordenable) y sus propiedades generadas desde los `params` del catálogo.
+- Estimación total: de ≈ 56–81 a **≈ 50–71 semanas**.
