@@ -1,9 +1,13 @@
 name: CI
 
+# Solo a mano (pestaña Actions → CI → Run workflow), por decisión de Edu (2026-10-11):
+# así un push no dispara el CI ni los correos de fallo. Para que vuelva a correr en
+# cada push, sustituir `workflow_dispatch:` por:
+#   push:
+#     branches: [main]
+#   pull_request:
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
