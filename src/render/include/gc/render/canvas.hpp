@@ -69,6 +69,7 @@ public:
 
 private:
     struct Impl;
+    friend struct CanvasAccess; // el texto (text.cpp) dibuja en el mismo lienzo
     explicit Canvas(std::unique_ptr<Impl> impl);
     std::unique_ptr<Impl> impl_;
 };

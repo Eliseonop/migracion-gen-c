@@ -1753,6 +1753,50 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
         compose._clip_path = real_clip_path
 
 
+def synthetic_text_render_fixtures(ctx: Ctx) -> list[dict]:
+    """Fotogramas del export real (compose.render_frame, con el .ass de text_ass y libass) para
+    media_cases.RENDER_TEXT. El reparto en líneas usa la medida REAL de Pillow
+    (font_metrics.text_width), no la estimación de _install_fakes. Los PNG: x<escena>_<ms>.png."""
+    import media_cases as mc
+    from types import SimpleNamespace
+    from app import compose, font_metrics, text_ass
+    files = RENDER_DIR / "files"
+    real_clip_path, fake_width = compose._clip_path, text_ass.text_width
+    compose._clip_path = lambda project, clip, shape_files=None: files / clip.filename
+    text_ass.text_width = font_metrics.text_width
+    try:
+        cases = []
+        for i, (name, background, texts, times) in enumerate(mc.RENDER_TEXT):
+            tracks = [{"id": "T1", "kind": "text", "name": "T1"}]
+            clips = []
+            if background:
+                tracks.insert(0, {"id": "V1", "kind": "video", "name": "V1"})  # debajo del texto
+                still = not background.endswith(".mp4")
+                clips.append({"id": "bg", "track_id": "V1", "asset_id": "bg", "filename": background,
+                              "source_duration": 0.0 if still else _REAL_SFX["probe_duration"](files / background),
+                              "start": 0.0, "in_point": 0.0, "out_point": 2.0, **(mc._I if still else mc._V),
+                              "transform": {"x": 0.5, "y": 0.5, "scale": 1.0}})
+            for j, (text, style, fields) in enumerate(texts):
+                clips.append({"id": f"t{j + 1}", "track_id": "T1", "kind": "text", "asset_kind": "text",
+                              "asset_id": f"t{j + 1}", "filename": "", "text": text, "style": style,
+                              "start": 0.0, "in_point": 0.0, "out_point": 2.0, **fields})
+            raw = {"version": 2, "width": 540, "height": 960, "fps": 30, "tracks": tracks, "clips": clips}
+            timeline = ctx.schemas.Timeline.model_validate(ctx.migrations.migrate_timeline(raw))
+            for t in times:
+                png = f"x{i:02d}_{int(round(t * 1000)):05d}.png"
+                compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
+                (RENDER_DIR / png).with_suffix(".ass").unlink(missing_ok=True)  # el .ass que deja render_frame
+                case = {"name": name, "t": t, "frame": png, "timeline": _pure(timeline.model_dump())}
+                if name in mc.RENDER_TEXT_DIVERGENCES:
+                    case["divergence"] = mc.RENDER_TEXT_DIVERGENCES[name]
+                if name in mc.RENDER_TEXT_PENDING:
+                    case["pending"] = True
+                cases.append(case)
+        return cases
+    finally:
+        compose._clip_path, text_ass.text_width = real_clip_path, fake_width
+
+
 def synthetic_chroma_fixtures() -> list[dict]:
     """Las cadenas de FFmpeg del croma con las funciones REALES de clip_bg.py y la parte del
     croma de compose._bg_source_chain (sin matte), para media_cases.CHROMA."""
@@ -2426,6 +2470,8 @@ def main() -> None:
           + len(txt["font_files"]) + sum(len(lay["fonts"]) for lay in txt["font_layouts"]), 0)
     ren = synthetic_render_fixtures(ctx)
     write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
+    ren_txt = synthetic_text_render_fixtures(ctx)
+    write(RENDER_DIR / "text.json", ren_txt, len(ren_txt), 0)
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)

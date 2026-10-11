@@ -410,6 +410,70 @@ RENDER_SCENES = [
     # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).
 ]
 
+# Texto (el .ass global de text_ass.py, dibujado por libass): escenas de 540×960 a 30 fps.
+# Cada una: (nombre, fondo (imagen a pantalla completa) o None, [(texto, estilo, campos)], instantes).
+_PLAIN = {"size": 0.048, "bold": True, "align": "center", "x": 0.5, "y": 0.5, "w": 0.88, "bg": "none",
+          "shadow": False, "glow": False, "font": "Arial Black", "color": "#ffffff", "border_width": 5,
+          "border_color": "#111111", "word_fx": "none", "block_appear": "none", "opacity": 1}
+_CLASSIC_TXT = {**_PLAIN, "y": 0.86, "inactive_opacity": 0.55, "active_opacity": 1, "highlight_color": "#ffe566",
+                "word_fx": "highlight", "block_appear": "fade"}
+_HOLA = "Hola mundo que tal"
+RENDER_TEXT = [
+    ("texto blanco con trazo", None, [(_HOLA, _PLAIN, {})], [0.5]),
+    ("dos líneas", None, [(_HOLA + "\nsegunda línea", _PLAIN, {})], [0.5]),
+    ("alineado a la izquierda", None, [(_HOLA + "\nuna más", {**_PLAIN, "align": "left", "w": 0.7}, {})], [0.5]),
+    ("alineado a la derecha", None, [(_HOLA + "\nuna más", {**_PLAIN, "align": "right", "w": 0.7}, {})], [0.5]),
+    ("karaoke resaltado (el classic de Edu)", None, [(_HOLA, {**_CLASSIC_TXT, "block_appear": "none"}, {})],
+     [0.2, 0.7, 1.9]),
+    ("aparición fundida", None, [(_HOLA, _CLASSIC_TXT, {})], [0.0, 0.1, 0.3]),
+    ("opacidad 0,6", None, [(_HOLA, {**_PLAIN, "opacity": 0.6}, {})], [0.5]),
+    ("espaciado entre letras", None, [(_HOLA, {**_PLAIN, "letter_spacing": 0.1}, {})], [0.5]),
+    ("Segoe UI Black", None, [(_HOLA, {**_PLAIN, "font": "Segoe UI Black", "border_width": 2}, {})], [0.5]),
+    ("Tahoma", None, [(_HOLA, {**_PLAIN, "font": "Tahoma", "border_width": 0}, {})], [0.5]),
+    ("Arial sin negrita", None, [(_HOLA, {**_PLAIN, "font": "Arial", "bold": False}, {})], [0.5]),
+    ("Anton sin negrita", None, [(_HOLA, {**_PLAIN, "font": "Anton", "bold": False}, {})], [0.5]),
+    ("sobre un vídeo", "moving30.mp4", [(_HOLA, _PLAIN, {})], [0.5]),
+    ("sobre una imagen", "waves.png", [(_HOLA, _PLAIN, {})], [0.5]),
+    ("palabra que empieza en 0,1 (el fotograma 3 llega a libass en 99 ms)", None,
+     [(_HOLA, {**_CLASSIC_TXT, "block_appear": "none"},
+       {"words": [{"text": w, "start": s, "end": s + 0.3} for w, s in zip(_HOLA.split(), (0.0, 0.1, 0.6, 1.2))]})],
+     [0.1, 0.1334]),
+    ("palabra que empieza en 3,7 (k = 111: k · (1/30) · 1000 = 3699,99…)", None,
+     [(_HOLA, {**_CLASSIC_TXT, "block_appear": "none"},
+       {"out_point": 4.0,
+        "words": [{"text": w, "start": s, "end": s + 0.05} for w, s in zip(_HOLA.split(), (0.0, 1.0, 3.7, 3.8))]})],
+     [3.7, 3.7334]),
+    ("trazo de 8 px", None, [(_HOLA, {**_PLAIN, "border_width": 8}, {})], [0.5]),
+    ("texto largo que se parte", None,
+     [("Esto es un texto bastante largo que no cabe en una sola línea del vídeo vertical", _PLAIN, {})], [0.5]),
+    ("escribir", None, [(_HOLA, {**_PLAIN, "block_appear": "typing"}, {})], [0.5, 1.0]),
+    ("más grande y desplazado", None, [(_HOLA, {**_PLAIN, "size": 0.07, "x": 0.4, "y": 0.3}, {})], [0.5]),
+    ("dos textos a la vez", None, [(_HOLA, _PLAIN, {}), ("arriba", {**_PLAIN, "y": 0.2, "color": "#00ff88"}, {})],
+     [0.5]),
+    ("relleno oscuro semitransparente con trazo blanco (ass_fix_outline)", None,
+     [(_HOLA, {**_PLAIN, "color": "#202020", "border_color": "#ffffff", "border_width": 6, "opacity": 0.6}, {})],
+     [0.5]),
+    ("kerning fuerte (libass no lo aplica)", None,
+     [("AVAVAVAV WAWAWA Tò", {**_PLAIN, "font": "Arial", "bold": False, "border_width": 2}, {})], [0.5]),
+    # Etapa 2b: Fondo, sombra, Brillo y efectos de palabra.
+    ("Fondo por línea (tema box de Edu, sin aparición)", None,
+     [(_HOLA, {**_CLASSIC_TXT, "font": "Tahoma", "bg": "#111318", "bg_opacity": 0.72, "border_width": 0,
+               "inactive_opacity": 0.45, "block_appear": "none"}, {})], [0.7]),
+    ("Fondo con trazo", None, [(_HOLA, {**_PLAIN, "bg": "#2040a0", "bg_opacity": 0.9, "border_width": 4}, {})], [0.5]),
+    ("Fondo en bloque redondeado", None,
+     [(_HOLA + "\nsegunda línea", {**_PLAIN, "bg": "#202020", "bg_opacity": 0.8, "bg_style": "block",
+                                   "bg_radius": 0.4, "bg_pad_x": 0.2, "bg_pad_y": 0.1, "border_width": 0}, {})], [0.5]),
+    ("sombra paralela", None, [(_HOLA, {**_PLAIN, "shadow": True, "shadow_color": "#ff0000", "shadow_opacity": 0.8,
+                                        "shadow_distance": 0.08, "shadow_angle": 45, "shadow_blur": 0.05}, {})], [0.5]),
+    ("Brillo (tema neon de Edu)", None,
+     [(_HOLA, {**_CLASSIC_TXT, "font": "Segoe UI Black", "glow": True, "shadow_color": "#00e5ff", "word_fx": "glow",
+               "inactive_opacity": 0.74, "color": "#f4fbff", "border_width": 2, "border_color": "#063a48",
+               "highlight_color": "#00f0ff", "block_appear": "none"}, {})], [0.7]),
+    ("efecto de palabra pop", None, [(_HOLA, {**_CLASSIC_TXT, "word_fx": "pop", "block_appear": "none"}, {})], [0.7]),
+    ("aparición pop", None, [(_HOLA, {**_PLAIN, "block_appear": "pop"}, {})], [0.0, 0.1, 0.5]),
+    ("aparición deslizar", None, [(_HOLA, {**_PLAIN, "block_appear": "slide_up"}, {})], [0.0, 0.1, 0.5]),
+]
+
 # Croma: los dict crudos de bg_removal.chroma que se normalizan y se pasan a chroma_filters,
 # chroma_alpha_ffmpeg y la cadena de _bg_source_chain, con varios altos de material.
 CHROMA = [
@@ -431,3 +495,17 @@ CHROMA = [
     {},
 ]
 CHROMA_HEIGHTS = [0, 180, 512, 1080, 2160]
+
+# Escenas de RENDER_TEXT en las que el export se aparta de lo que pide el texto (decisión de Edu):
+# el test las dibuja pero no compara.
+RENDER_TEXT_DIVERGENCES = {
+    "sobre una imagen": "con una imagen PNG debajo, libass escribe el blanco como 235 (rango de TV) en un "
+                        "fotograma de rango completo: el texto sale gris (sobre vídeo o negro sale 255)",
+}
+
+# Escenas de RENDER_TEXT de la etapa 2b, que el render aún no dibuja: si da Unsupported, el test
+# las salta; si ya las dibuja, las compara.
+RENDER_TEXT_PENDING = {
+    "Fondo por línea (tema box de Edu, sin aparición)", "Fondo con trazo", "Fondo en bloque redondeado",
+    "sombra paralela", "Brillo (tema neon de Edu)", "efecto de palabra pop", "aparición pop", "aparición deslizar",
+}

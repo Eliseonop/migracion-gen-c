@@ -1161,3 +1161,22 @@ Decisión de Edu (§6):
   - MSVC + vcpkg: 139/139; MinGW: 123/123. 0 warnings.
 
 **Siguiente:** etapa 2, dibujar el texto en `gc_render` y compararlo con `compose.render_frame` (libass).
+
+### 2026-10-11 — F3: texto, etapa 2a: los textos quietos dibujados con Skia
+
+- **Hecho:**
+  - `gc_core/text_events`: los eventos del .ass de un texto quieto y el instante que FFmpeg pasa a libass (el pts en ms, truncado).
+  - `gc_render/text`: `TextFonts` (TTF para Skia y HarfBuzz, y la medida de Pillow para partir las líneas) y `draw_timeline_texts`.
+  - Qué dibuja: el texto plano con contorno, las alineaciones, el karaoke resaltado, las opacidades, el fundido de entrada, el espaciado entre letras y «escribir». Lo demás da Unsupported con el motivo.
+  - `genclip frame` dibuja los textos encima del compuesto.
+- **Lo que destapó la fixture:**
+  - libass no hace kerning sin «Kerning: yes».
+  - libass usa el hinting de FreeType (avances casi enteros, factor de 0,997 a 1,005 según la fuente).
+  - Dos fallos del export, anotados como decisiones de Edu: el color con alfa ≥ 0x80 se satura a blanco, y el blanco sale a 235 si hay una imagen PNG debajo.
+- **Verificación:**
+  - 30 fotogramas frente a `compose.render_frame`: PSNR de 19–33 dB en la zona del texto y de 42–63 dB perdonando 1 px.
+  - 13 mutantes del dibujo: fallan todos.
+  - MSVC + vcpkg: 140/140; MinGW: 123/123. 0 warnings.
+  - Paridad exacta de los eventos con `caption_dialogues` en los sintéticos y los 679 clips de Edu.
+
+**Siguiente:** etapa 2b, con Fondo, sombra y Brillo, los efectos de palabra brillo y pop, y las apariciones pop y deslizar.

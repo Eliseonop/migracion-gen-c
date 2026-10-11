@@ -18,13 +18,9 @@
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkSurface.h"
 
-namespace gc::render {
+#include "canvas_impl.hpp"
 
-struct Canvas::Impl {
-    sk_sp<SkSurface> surface;
-    int width = 0;
-    int height = 0;
-};
+namespace gc::render {
 
 namespace {
 

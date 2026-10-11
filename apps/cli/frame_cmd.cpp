@@ -22,8 +22,11 @@
 #include "gc/core/timeline_rules.hpp"
 #include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
+#include "gc/core/font_metrics.hpp"
+#include "gc/render/canvas.hpp"
 #include "gc/render/compose.hpp"
 #include "gc/render/png.hpp"
+#include "gc/render/text.hpp"
 
 namespace genclip {
 
@@ -180,6 +183,8 @@ int cmd_frame(std::span<const std::string> args) {
     if (!layers) {
         return fail_with(layers.error().to_string());
     }
+    // Los textos no son capas del compuesto: van encima, como el .ass global del export.
+    std::erase_if(*layers, [](const FrameLayer& layer) { return layer.clip->kind == "text"; });
     if (skip) {
         std::erase_if(*layers, [](const FrameLayer& layer) {
             const auto reason = gc::render::unsupported_reason(layer);
@@ -202,6 +207,25 @@ int cmd_frame(std::span<const std::string> args) {
     if (!image) {
         return fail_with(image.error().to_string());
     }
+    // Los textos, con las fuentes del sistema y las de video-yt (backend/app/fonts: Anton).
+    auto canvas = gc::render::Canvas::make(w, h);
+    if (!canvas) {
+        return fail_with(canvas.error().to_string());
+    }
+    if (auto ok = canvas->draw_image(*image, SourceCrop{0, 0, static_cast<double>(w), static_cast<double>(h)},
+                                     Affine{});
+        !ok) {
+        return fail_with(ok.error().to_string());
+    }
+    const gc::render::TextFonts fonts(FontDirs{default_system_font_dir(), root / "app" / "fonts"});
+    std::vector<std::string> warnings;
+    if (auto ok = gc::render::draw_timeline_texts(*canvas, timeline, tick, fonts, skip, &warnings); !ok) {
+        return fail_with(ok.error().to_string());
+    }
+    for (const auto& wmsg : warnings) {
+        std::cerr << "aviso: " << wmsg << ": se omite\n";
+    }
+    image = canvas->snapshot();
     if (auto ok = gc::render::write_png(*image, path_from_utf8(*out)); !ok) {
         return fail_with(ok.error().to_string());
     }
