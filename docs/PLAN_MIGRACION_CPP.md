@@ -1118,3 +1118,10 @@ Decisión de Edu (§6):
 - **Verificación:** 47 fotogramas de render frente al export (vídeos 66,7–67,7 dB, GIF 51,1 dB); mutante «redondear el inicio en vez de truncarlo»: ~24 dB, falla. MSVC + vcpkg: 131/131, 0 warnings; MinGW: 115/115.
 
 **Siguiente:** el croma (eliminar fondo por color), que el export hace con FFmpeg antes del encuadre; después el texto básico y `genclip render` a MP4.
+
+### 2026-10-11 — F3: croma en el render (adelantado de F4)
+
+- **Hecho:** `gc_core/bg.hpp` con las cadenas de FFmpeg del croma de `clip_bg.py` (`chroma_filters`, `chroma_alpha_ffmpeg`) y la parte del croma de `compose._bg_source_chain` (`chroma_source_chain`: la cadena sola o el subgrafo que separa el alfa, lo limpia y lo vuelve a unir). `export_frame_at` la aplica a cada clip con el croma activo, en el espacio del material y antes del encuadre, como el export; el desenfoque del borde va en px del alto real del material. `unsupported_reason` deja pasar el croma y sigue rechazando el matte automático y el contorno.
+- **Verificación:** paridad de las cadenas con las funciones reales (16 croma crudos × 5 altos) y 5 fotogramas con croma frente a `compose.render_frame` (imagen, derrame, limpieza del borde y vídeo): 50,7–51,1 dB. Mutante «alto fijo de 512 en la limpieza del borde»: 33,1 dB, falla. Fotograma real de «l filo del mañana» con el personaje recortado. MSVC + vcpkg: 133/133, 0 warnings; MinGW: 117/117.
+
+**Siguiente:** el texto básico (679 clips de texto en las timelines de Edu), el siguiente en uso.

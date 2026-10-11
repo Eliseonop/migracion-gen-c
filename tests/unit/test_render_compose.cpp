@@ -45,11 +45,17 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
     masked.masks.push_back(Json::object());
     CHECK(unsupported_reason(masked));
 
-    // Eliminar fondo: el croma activo cuenta; desactivado o sin el interruptor general, no.
+    // Eliminar fondo: el croma solo ya lo hace el decode; con contorno, aún no.
     TimelineClip chroma = video();
     chroma.bg_removal = Json{{"enabled", true}, {"mode", "chroma"}, {"chroma", {{"enabled", true}}}};
+    CHECK_FALSE(unsupported_reason(layer(chroma)));
+    chroma.bg_removal = Json{{"enabled", true},
+                             {"chroma", {{"enabled", true}}},
+                             {"outline", {{"enabled", true}, {"width", 0.3}, {"opacity", 1}}}};
     CHECK(unsupported_reason(layer(chroma)));
-    chroma.bg_removal = Json{{"enabled", false}, {"chroma", {{"enabled", true}}}};
+    chroma.bg_removal = Json{{"enabled", true},
+                             {"chroma", {{"enabled", true}}},
+                             {"outline", {{"enabled", true}, {"width", 0}, {"opacity", 1}}}};
     CHECK_FALSE(unsupported_reason(layer(chroma)));
     // El automático solo cuenta con el matte listo.
     TimelineClip matte = video();

@@ -33,20 +33,24 @@ bool truthy(const Json& v) {
     return false;
 }
 
-// bg_active de clip_bg.py: croma activo, o matte automático listo.
-bool bg_active(const core::TimelineClip& clip) {
+// Lo de «Eliminar fondo» que el render aún no hace: el matte automático listo (auto_active) y,
+// con el croma activo, el contorno (outline_params: ancho y opacidad mayores que 0). El croma
+// solo ya lo hace el decode (export_frame_at).
+std::optional<std::string> bg_unsupported(const core::TimelineClip& clip) {
     if (!clip.bg_removal || !core::bg_capable(clip)) {
-        return false;
+        return std::nullopt;
     }
     const Json bg = core::normalize_bg(*clip.bg_removal);
-    if (!bg.is_object() || !bg.value("enabled", false)) {
-        return false;
+    if (core::bg_auto_active(bg)) {
+        return std::string("el render aún no aplica el matte automático de «Eliminar fondo»");
     }
-    const Json& chroma = bg["chroma"];
-    const Json& a = bg["auto"];
-    const bool auto_ready = a.value("enabled", false) && !a.value("base_key", std::string()).empty() &&
-                            a.value("status", std::string()) == "ready";
-    return chroma.value("enabled", false) || auto_ready;
+    if (core::bg_chroma_active(bg)) {
+        const Json& o = bg["outline"];
+        if (o.value("enabled", false) && o.value("width", 0.0) > 0 && o.value("opacity", 0.0) > 0) {
+            return std::string("el render aún no dibuja el contorno de «Eliminar fondo»");
+        }
+    }
+    return std::nullopt;
 }
 
 } // namespace
@@ -62,8 +66,8 @@ std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
     if (!layer.masks.empty()) {
         return std::string("el render aún no aplica máscaras");
     }
-    if (bg_active(clip)) {
-        return std::string("el render aún no elimina el fondo (croma o automático)");
+    if (auto reason = bg_unsupported(clip)) {
+        return reason;
     }
     if ((!clip.look.empty() && clip.look != "none") ||
         (clip.filters && clip.filters->is_array() && !clip.filters->empty())) {

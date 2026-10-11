@@ -12,6 +12,7 @@
 #include <string_view>
 #include <vector>
 
+#include "gc/core/bg.hpp"
 #include "gc/core/export_input.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/timeline_rules.hpp"
@@ -417,6 +418,25 @@ Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip,
     };
 
     DecodeSpec spec = export_decode_spec(clip, path, fps);
+    // «Eliminar fondo» por croma: en el espacio del material, antes del encuadre
+    // (_bg_source_chain). El matte automático aún no.
+    if (clip.bg_removal && core::bg_capable(clip)) {
+        const Json bg = core::normalize_bg(*clip.bg_removal);
+        if (core::bg_auto_active(bg)) {
+            return fail(ErrorCode::Unsupported, std::format("el matte automático del clip {} aún no se aplica", clip.id));
+        }
+        if (core::bg_chroma_active(bg)) {
+            // El desenfoque del borde va en px del alto del material (detect.dims; 512 si no se sabe).
+            std::int64_t height = 512;
+            if (!core::chroma_alpha_ffmpeg(bg["chroma"], 512).empty()) {
+                auto first = frame_at(path, 0.0);
+                if (first && first->has_value() && (*first)->height > 0) {
+                    height = (*first)->height;
+                }
+            }
+            spec.chain += "," + core::chroma_source_chain(bg["chroma"], height);
+        }
+    }
     spec.chain += std::format(",fps={}", fps); // el fps=F que va tras el cropscale (un GIF a 10 fps → F)
 
     // El overlay, en el tick `tick` del fondo, toma el primer fotograma con ese pts o, si no hay,

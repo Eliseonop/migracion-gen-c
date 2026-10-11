@@ -272,11 +272,26 @@ RENDER = [
 # en H.264 de alta calidad. Se generan UNA vez (van a git-lfs).
 _MOVING = ("nullsrc=s=320x180:r={r}:d=2,format=rgb24,geq=r='128+110*sin(Y*0.35-T*20)':"
            "g='128+55*sin(X*0.35+T*30)+55*sin(Y*0.3-T*25)':b='128+110*sin((X+Y)*0.2+T*15)'")
+_INSIDE = "lt(hypot(X-160-40*sin(T*3),Y-90),60)"
+_KEYED = ("nullsrc=s=320x180:r={r}:d={d},format=rgb24,geq="
+          "r='if(" + _INSIDE + ",128+110*sin(Y*0.35-T*20),0)':"
+          "g='if(" + _INSIDE + ",128+55*sin(X*0.35+T*30)+55*sin(Y*0.3-T*25),255)':"
+          "b='if(" + _INSIDE + ",128+110*sin((X+Y)*0.2+T*15),0)'")
+_BARS = "lt(mod(X,24),12)"
+_KEYED_BARS = ("nullsrc=s=320x180:r=1:d=1,format=rgb24,geq="
+               "r='if(" + _BARS + ",250,0)':g='if(" + _BARS + ",40,255)':b='if(" + _BARS + ",210,0)'")
 RENDER_VIDEO_MEDIA = [
     ("moving30.mp4", ["-f", "lavfi", "-i", _MOVING.format(r=30), "-c:v", "libx264", "-crf", "8", "-pix_fmt", "yuv420p"]),
     ("moving25.mp4", ["-f", "lavfi", "-i", _MOVING.format(r=25), "-c:v", "libx264", "-crf", "8", "-pix_fmt", "yuv420p"]),
     # Un GIF animado a 10 fps: el export lo pasa a la rejilla de la timeline con su fps=F final.
     ("anim10.gif", ["-f", "lavfi", "-i", _MOVING.format(r=10)]),
+    # Croma: un círculo de ondas (r = 60 px) sobre verde puro, quieto y moviéndose.
+    ("keyed.png", ["-f", "lavfi", "-i", _KEYED.format(r=1, d=1), "-frames:v", "1"]),
+    ("keyed30.mp4", ["-f", "lavfi", "-i", _KEYED.format(r=30, d=2), "-c:v", "libx264", "-crf", "8",
+                     "-pix_fmt", "yuv420p"]),
+    # Barras magenta de 12 px sobre verde: bordes por todo el clip, para que la limpieza del borde
+    # (desenfoque en px del alto del material) se note sobre las ondas del fondo.
+    ("keyedbars.png", ["-f", "lavfi", "-i", _KEYED_BARS, "-frames:v", "1"]),
 ]
 # Escenas con varios clips o con vídeo: (nombre, fps de la timeline, pistas de vídeo, clips,
 # instantes en la rejilla de 1/fps). Cada clip: archivo, pista y los campos del clip. Posiciones
@@ -355,6 +370,31 @@ RENDER_SCENES = [
     ("instantes fuera de la rejilla", 30, ["V1"],
      [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 1.0, "transform": _CENTER})],
      [0.3335, 0.35, 0.36, 0.45, 0.967]),
+    # Croma (eliminar fondo por color) sobre las ondas: en el espacio del material, antes del
+    # encuadre; con derrame (despill) y con limpieza del borde (alfa aparte: alphaextract).
+    ("croma en una imagen", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyed.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "bg_removal": {"enabled": True, "mode": "chroma", "chroma": {"enabled": True}}})],
+     [0.5]),
+    ("croma con derrame", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyed.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "bg_removal": {"enabled": True, "mode": "chroma",
+                                          "chroma": {"enabled": True, "similarity": 0.3, "spill": 0.5}}})],
+     [0.5]),
+    ("croma con limpieza del borde", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyedbars.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                             "bg_removal": {"enabled": True, "mode": "chroma",
+                                            "chroma": {"enabled": True, "edge": 0.2, "shrink": -0.3}}})],
+     [0.5]),
+    ("croma en un vídeo", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyed30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                             "transform": {"x": 0.5, "y": 0.5, "scale": 0.8},
+                             "bg_removal": {"enabled": True, "mode": "chroma", "chroma": {"enabled": True}}})],
+     [0.5, 1.0]),
     # Sin el zoom (ni el pop) de aparición o salida: en un overlay estático el export escala con
     # `scale=eval=frame` pero el overlay se queda en x=ox:y=oy, así que crece desde la esquina
     # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).
