@@ -35,4 +35,9 @@ inline constexpr double kLastFramePull = 0.04;
 // (-loop 1 -framerate fps) y el resto, el archivo tal cual. `path` en UTF-8.
 [[nodiscard]] std::vector<std::string> ffmpeg_input_args(const TimelineClip& clip, std::string_view path, int fps);
 
+// La duración del vídeo exportado (compose.build_command): el mayor start + duración en la
+// timeline de los clips cuya pista existe (también los desactivados), redondeado a ms como
+// round(…, 3). 0 si no hay ninguno: Python lo da como «La timeline está vacía».
+[[nodiscard]] double export_total_duration(const Timeline& timeline);
+
 } // namespace gc::core

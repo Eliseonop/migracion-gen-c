@@ -1125,3 +1125,10 @@ Decisión de Edu (§6):
 - **Verificación:** paridad de las cadenas con las funciones reales (16 croma crudos × 5 altos) y 5 fotogramas con croma frente a `compose.render_frame` (imagen, derrame, limpieza del borde y vídeo): 50,7–51,1 dB. Mutante «alto fijo de 512 en la limpieza del borde»: 33,1 dB, falla. Fotograma real de «l filo del mañana» con el personaje recortado. MSVC + vcpkg: 133/133, 0 warnings; MinGW: 117/117.
 
 **Siguiente:** el texto básico (679 clips de texto en las timelines de Edu), el siguiente en uso.
+
+### 2026-10-11 — F3, revisión: croma y fotograma elegido, aprobados
+
+- **Revisión de `0277318^..HEAD`:** APROBADO, sin bloqueantes. Confirmó la corrección del fotograma elegido con ~45 fotogramas más de su arnés (timelines a 24, 25 y 60 fps, inicio negativo, revés con inicio fuera de la rejilla, GIF con velocidad y revés) y el croma con velocidad, revés, GIF y relleno con recorte. Menores aplicados: `genclip frame` da error con la timeline vacía o un fotograma fuera de ella, como `render_frame` (`export_total_duration` en `gc_core`, con test), y con un `--at` enorme; `export_frame_at` rechaza un inicio cuyo pts no cabe en 64 bits; la fixture suma un vídeo con inicio negativo y croma en un vídeo al revés a velocidad 1,5; cifras del TODO al día.
+- **Verificación:** 56 fotogramas de render. MSVC + vcpkg: 134/134, 0 warnings; MinGW: 118/118 (181 193 aserciones).
+
+**Siguiente:** el texto: portar `text_ass.build_ass` a `gc_core` con paridad exacta del `.ass` y dibujarlo después con Skia.

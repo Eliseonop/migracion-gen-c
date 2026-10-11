@@ -4,6 +4,7 @@
 #include <cmath>
 #include <format>
 
+#include "gc/core/timeline_rules.hpp"
 #include "py.hpp"
 
 namespace gc::core {
@@ -63,6 +64,17 @@ std::vector<std::string> ffmpeg_input_args(const TimelineClip& clip, std::string
         return {"-loop", "1", "-framerate", std::to_string(fps), "-t", fixed3(t), "-i", p};
     }
     return {"-i", p};
+}
+
+double export_total_duration(const Timeline& timeline) {
+    double total = 0.0;
+    for (const auto& c : timeline.clips) {
+        const bool has_track = std::ranges::any_of(timeline.tracks, [&](const TimelineTrack& tr) { return tr.id == c->track_id; });
+        if (has_track) {
+            total = std::max(total, c->start + clip_timeline_duration(*c));
+        }
+    }
+    return detail::py_round(total, 3);
 }
 
 } // namespace gc::core

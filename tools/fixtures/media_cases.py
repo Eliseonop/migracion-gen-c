@@ -395,6 +395,16 @@ RENDER_SCENES = [
                              "transform": {"x": 0.5, "y": 0.5, "scale": 0.8},
                              "bg_removal": {"enabled": True, "mode": "chroma", "chroma": {"enabled": True}}})],
      [0.5, 1.0]),
+    ("vídeo que empieza en −0,2", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": -0.2, "in_point": 0.0, "out_point": 1.0, "transform": _CENTER})],
+     [0.0, 0.3]),
+    ("croma en un vídeo al revés a velocidad 1,5", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyed30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 1.5, "speed": 1.5, "reverse": True,
+                             "transform": _CENTER,
+                             "bg_removal": {"enabled": True, "mode": "chroma",
+                                            "chroma": {"enabled": True, "spill": 0.3, "shrink": -0.3}}})],
+     [0.3, 0.6]),
     # Sin el zoom (ni el pop) de aparición o salida: en un overlay estático el export escala con
     # `scale=eval=frame` pero el overlay se queda en x=ox:y=oy, así que crece desde la esquina
     # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).

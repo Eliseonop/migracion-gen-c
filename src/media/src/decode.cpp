@@ -389,9 +389,10 @@ double parse_double(const std::string& text) {
 } // namespace
 
 std::int64_t export_frame_tick(double at, int fps) {
+    // Acotado a [0, 1e12] s para que el entero no se desborde (el CLI ya rechaza más de 1e9).
     // render_frame: `-ss {max(0.0, float(at)):.3f}` a la SALIDA del grafo da el fotograma
     // compuesto más cercano (medido con el ffmpeg del PATH; un empate va al siguiente).
-    const double ss = parse_double(std::format("{:.3f}", std::isnan(at) ? 0.0 : std::max(0.0, at)));
+    const double ss = parse_double(std::format("{:.3f}", std::isnan(at) ? 0.0 : std::clamp(at, 0.0, 1e12)));
     return static_cast<std::int64_t>(std::floor(ss * fps + 0.5));
 }
 
@@ -409,6 +410,9 @@ Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip,
     }
     const double start = parse_double(std::format("{:.3f}", std::max(0.0, clip.start)));
     const double offset = start / (1.0 / static_cast<double>(fps)); // `{start:.3f}/TB`, con TB = 1/F
+    if (!(offset < 1e15)) { // un pts que no cabe en un entero de 64 bits: el clip nunca se ve
+        return fail(ErrorCode::InvalidArgument, std::format("el inicio del clip {} está fuera de rango", clip.id));
+    }
     // pts (en ticks) del m-ésimo fotograma que sale de la cadena; el primero tiene 0 antes del
     // desplazamiento, así que STARTPTS no resta nada.
     const auto pts_of = [&](std::int64_t m) {

@@ -2,6 +2,7 @@ add_executable(gc_tests
     support/json_diff.cpp
     unit/test_clip_media.cpp
     unit/test_coercion.cpp
+    unit/test_export_total.cpp
     unit/test_frame.cpp
     unit/test_fx_catalog.cpp
     unit/test_keyframes.cpp

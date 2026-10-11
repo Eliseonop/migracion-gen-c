@@ -15,6 +15,7 @@
 #include "gc/core/clip_adjust.hpp"
 #include "gc/core/clip_media.hpp"
 #include "gc/core/collections.hpp"
+#include "gc/core/export_input.hpp"
 #include "gc/core/frame.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/projects_store.hpp"
@@ -56,6 +57,9 @@ int cmd_frame(std::span<const std::string> args) {
             if (ec != std::errc{} || end != v.data() + v.size() || !std::isfinite(t)) {
                 return fail_with(std::format("--at necesita un número de segundos, no «{}»", v));
             }
+            if (std::abs(t) > 1e9) { // ~31 años: fuera de cualquier timeline (y del rango de un entero)
+                return fail_with(std::format("--at {} está fuera de cualquier timeline", v));
+            }
             at = t;
         } else if (a == "-o" && i + 1 < args.size()) {
             out = args[++i];
@@ -96,6 +100,15 @@ int cmd_frame(std::span<const std::string> args) {
     const int fps = timeline.fps > 0 ? static_cast<int>(timeline.fps) : 30;
     const std::int64_t tick = gc::media::export_frame_tick(*at, fps);
     const double t = static_cast<double>(tick) / fps;
+    // Como compose.py: sin clips, «La timeline está vacía»; y el fondo dura `total`, así que un
+    // fotograma en round(total·F) o después no existe (render_frame falla).
+    const double total = export_total_duration(timeline);
+    if (total <= 0) {
+        return fail_with("la timeline está vacía: añade al menos un clip");
+    }
+    if (static_cast<double>(tick) >= std::round(total * fps)) {
+        return fail_with(std::format("el instante {:.3f} s queda fuera de la timeline ({:.3f} s)", t, total));
+    }
 
     // Como el export: solo los clips con material que existe (media_exists de compose.py). Los
     // motion graphics aún no: si alguno se ve en t, error (o, con --omitir, aviso).
