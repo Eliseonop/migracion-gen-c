@@ -262,3 +262,44 @@ RENDER = [
     ("ondas giradas 18°", "waves.png",
      {"transform": {"x": 0.5, "y": 0.5, "scale": 1.0, "rotation": 18}, "reframe": _FULL}, [0.5]),
 ]
+
+# Vídeos del render: ondas que se mueven ~1 rad por fotograma (un fotograma de más o de menos
+# baja la luma muy por debajo de 35 dB),
+# en H.264 de alta calidad. Se generan UNA vez (van a git-lfs).
+_MOVING = ("nullsrc=s=320x180:r={r}:d=2,format=rgb24,geq=r='128+110*sin(Y*0.35-T*20)':"
+           "g='128+55*sin(X*0.35+T*30)+55*sin(Y*0.3-T*25)':b='128+110*sin((X+Y)*0.2+T*15)'")
+RENDER_VIDEO_MEDIA = [
+    ("moving30.mp4", ["-f", "lavfi", "-i", _MOVING.format(r=30), "-c:v", "libx264", "-crf", "8", "-pix_fmt", "yuv420p"]),
+    ("moving25.mp4", ["-f", "lavfi", "-i", _MOVING.format(r=25), "-c:v", "libx264", "-crf", "8", "-pix_fmt", "yuv420p"]),
+]
+# Escenas con varios clips o con vídeo: (nombre, fps de la timeline, pistas de vídeo, clips,
+# instantes en la rejilla de 1/fps). Cada clip: archivo, pista y los campos del clip. Posiciones
+# donde el redondeo del export no mueve nada (ver RENDER).
+_V = {"kind": "video", "asset_kind": "clips", "layout": "overlay", "reframe": _FULL}
+_I = {"kind": "image", "asset_kind": "images", "layout": "overlay", "reframe": _FULL}
+_CENTER = {"x": 0.5, "y": 0.5, "scale": 1.0}
+RENDER_SCENES = [
+    ("vídeo centrado", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER})],
+     [0.0, 0.5, 1.0]),
+    ("vídeo con in_point y start", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.2, "in_point": 0.4, "out_point": 1.6, "transform": _CENTER})],
+     [0.2, 0.7]),
+    ("vídeo de 25 fps en una timeline de 30", 30, ["V1"],
+     [("moving25.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER})],
+     [0.5, 0.9, 1.3]),
+    ("vídeo a velocidad 1,5", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 1.8, "speed": 1.5,
+                               "transform": _CENTER})],
+     [0.6, 1.0]),
+    ("vídeo al revés", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.2, "out_point": 1.4, "reverse": True,
+                               "transform": _CENTER})],
+     [0.0, 0.4]),
+    ("imagen debajo y vídeo encima", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                           "transform": {"x": 0.5, "y": 0.3, "scale": 1.0}}),
+      ("moving30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                              "transform": {"x": 0.5, "y": 0.4015625, "scale": 0.5}})],  # y·640 − 45 = 212, par
+     [0.5]),
+]

@@ -1713,7 +1713,7 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
     ffmpeg = shutil.which("ffmpeg")
     files = RENDER_DIR / "files"
     files.mkdir(parents=True, exist_ok=True)
-    for name, args in mc.RENDER_MEDIA:
+    for name, args in mc.RENDER_MEDIA + mc.RENDER_VIDEO_MEDIA:
         if not (files / name).exists():
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args, "-map_metadata", "-1",
                             "-fflags", "+bitexact", str(files / name)], check=True)
@@ -1733,6 +1733,20 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
                 compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
                 cases.append({"name": name, "t": t, "file": file, "frame": png,
                               "timeline": _pure(timeline.model_dump())})
+        for i, (name, fps, tracks, clips, times) in enumerate(mc.RENDER_SCENES):
+            raw_clips = []
+            for j, (file, track, fields) in enumerate(clips):
+                still = fields["kind"] == "image"
+                raw_clips.append({"id": f"c{j + 1}", "track_id": track, "asset_id": f"a{j + 1}", "filename": file,
+                                  "source_duration": 0.0 if still else _REAL_SFX["probe_duration"](files / file),
+                                  **fields})
+            raw = {"version": 2, "width": 360, "height": 640, "fps": fps,
+                   "tracks": [{"id": tid, "kind": "video", "name": tid} for tid in tracks], "clips": raw_clips}
+            timeline = ctx.schemas.Timeline.model_validate(ctx.migrations.migrate_timeline(raw))
+            for t in times:
+                png = f"s{i:02d}_{int(round(t * 1000)):05d}.png"
+                compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
+                cases.append({"name": name, "t": t, "frame": png, "timeline": _pure(timeline.model_dump())})
         return cases
     finally:
         compose._clip_path = real_clip_path

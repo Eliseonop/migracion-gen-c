@@ -114,13 +114,21 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         INFO(name << " en " << t);
         auto timeline = timeline_from_json(c.at("timeline"));
         REQUIRE(timeline);
+        const auto media_path = [](const TimelineClip& clip) {
+            return kFixtures / "render" / "files" / path_from_utf8(clip.filename);
+        };
+        // Dimensiones del material: su primer fotograma.
         const auto source_of = [&](const TimelineClip& clip) -> const gc::render::Image& {
             auto [it, fresh] = sources.try_emplace(clip.filename);
             if (fresh) {
-                it->second = load(kFixtures / "render" / "files" / path_from_utf8(clip.filename));
+                it->second = load(media_path(clip));
             }
             return it->second;
         };
+        // El fotograma que el export compone en `t` (export_frame_at), uno por capa.
+        std::vector<gc::render::Image> frames;
+        frames.reserve(timeline->clips.size() * 2);
+        const int fps = static_cast<int>(timeline->fps);
         // Pares, como el export (W -= W % 2): las de la fixture ya lo son.
         const auto out_w = static_cast<double>(timeline->width - timeline->width % 2);
         const auto out_h = static_cast<double>(timeline->height - timeline->height % 2);
@@ -133,12 +141,19 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         const int w = static_cast<int>(out_w);
         const int h = static_cast<int>(out_h);
         auto frame = gc::render::compose_frame(
-            *layers, w, h,
-            [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> { return &source_of(*layer.clip); });
+            *layers, w, h, [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
+                auto got = gc::media::export_frame_at(*layer.clip, media_path(*layer.clip), fps, t);
+                if (!got) {
+                    return std::unexpected(got.error());
+                }
+                REQUIRE(got->has_value());
+                frames.push_back({(*got)->width, (*got)->height, std::move((*got)->pixels)});
+                return &frames.back();
+            });
         REQUIRE(frame);
         auto coverage = gc::render::compose_frame(
             *layers, w, h, [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
-                const auto& src = source_of(*layer.clip);
+                const auto& src = source_of(*layer.clip); // mismas dimensiones
                 auto [it, fresh] = blanks.try_emplace(layer.clip->filename);
                 if (fresh) {
                     it->second = {src.width, src.height, std::vector<std::uint8_t>(src.pixels.size(), 255)};

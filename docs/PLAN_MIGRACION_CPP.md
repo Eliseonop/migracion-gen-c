@@ -1085,3 +1085,10 @@ Decisión de Edu (§6):
 - **Anotado sin arreglar:** más redondeos del export que la fixture no ve (el recorte a enteros pares, la pose animada truncada a par), el `crop_w = 0` (1,0 en el export, 0,05 en el preview) y la reducción fuerte, donde el bicúbico de Skia no ensancha el soporte como swscale.
 
 **Siguiente:** vídeo en el render (el fotograma del export en el instante), varios clips por fotograma, PNG con alfa, cortinilla y `genclip frame … --at t`.
+
+### 2026-10-11 — F3: vídeo en el render
+
+- **Hecho:** `gc::media::export_frame_at(clip, ruta, fps, t)`, el fotograma de un clip que el export compone en el instante `t`: el n-ésimo de su cadena (`fps`, `trim`, `setpts`), con n = ⌊(t − max(0, start))·fps·velocidad⌋ (la velocidad como `setpts=PTS/{sp:.6f}` de `video_speed_filters`), contado desde el final si va al revés y el último si la cadena se acaba (`eof_action=repeat`). En un still no cuentan ni la velocidad ni el revés, como en `compose.py`. El test de render toma de ahí el material de cada capa, imágenes incluidas.
+- **Verificación:** 13 fotogramas nuevos de `compose.render_frame` con vídeos de ondas que cambian ~1 rad por fotograma: overlay con `in_point` e inicio, 25 fps sobre 30, velocidad 1,5, al revés y una imagen debajo con un vídeo encima. Vídeos: 66,8–67,6 dB de luma (la elección del fotograma coincide con el export en todos); dos clips: 51,5 dB. Mutante «un fotograma de más»: ~24 dB, falla. MSVC + vcpkg: 129/129, 0 warnings; MinGW: 114/114.
+
+**Siguiente:** PNG con alfa, cortinilla y fundidos (`fx.opacity`), y `genclip frame … --at t`.

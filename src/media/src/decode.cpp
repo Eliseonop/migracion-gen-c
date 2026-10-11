@@ -9,9 +9,11 @@
 #include <memory>
 #include <optional>
 #include <string_view>
+#include <vector>
 
 #include "gc/core/export_input.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/timeline_rules.hpp"
 #include "gc/media/probe.hpp"
 
 extern "C" {
@@ -371,6 +373,55 @@ Result<std::optional<RgbaFrame>> frame_at(const std::filesystem::path& path, dou
     if (!n) {
         return std::unexpected(n.error());
     }
+    return out;
+}
+
+Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip, const std::filesystem::path& path,
+                                                 int fps, double t) {
+    // compose.py: `[k:v]…{trim},setpts=PTS-STARTPTS,{cropscale},fps=F{spd},setpts=PTS-STARTPTS+start/TB`,
+    // con spd = video_speed_filters (vacío en un still): «reverse» y `setpts=PTS/{sp:.6f}`.
+    const double start = std::max(0.0, clip.start);
+    const bool still = core::is_still_clip(clip);
+    const bool reverse = !still && clip.reverse;
+    double speed = 1.0;
+    if (const double sp = core::clip_speed(clip); !still && std::abs(sp - 1.0) > 1e-3) {
+        const std::string text = std::format("{:.6f}", sp);
+        std::from_chars(text.data(), text.data() + text.size(), speed);
+    }
+    // El overlay toma el último fotograma del clip con pts ≤ t; el margen absorbe el redondeo
+    // de un t que cae justo en la rejilla.
+    const double pos = std::floor((t - start) * fps * speed + 1e-6);
+    if (!std::isfinite(pos) || pos < 0) {
+        return std::optional<RgbaFrame>{};
+    }
+    const auto n = static_cast<std::size_t>(std::min(pos, 1e15));
+    const DecodeSpec spec = export_decode_spec(clip, path, fps);
+    std::optional<RgbaFrame> out;
+    if (!reverse) {
+        // Pasado el último, `eof_action=repeat` repite el último.
+        std::size_t i = 0;
+        auto count = decode_frames(spec, [&](const RgbaFrame& f) {
+            out = f;
+            return i++ < n;
+        });
+        if (!count) {
+            return std::unexpected(count.error());
+        }
+        return out;
+    }
+    // Al revés: el filtro reverse los guarda todos y los suelta del último al primero.
+    std::vector<RgbaFrame> frames;
+    auto count = decode_frames(spec, [&](const RgbaFrame& f) {
+        frames.push_back(f);
+        return true;
+    });
+    if (!count) {
+        return std::unexpected(count.error());
+    }
+    if (frames.empty()) {
+        return out;
+    }
+    out = std::move(frames[frames.size() - 1 - std::min(n, frames.size() - 1)]);
     return out;
 }
 
