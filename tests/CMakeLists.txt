@@ -1,5 +1,6 @@
 add_executable(gc_tests
     support/json_diff.cpp
+    unit/test_clip_media.cpp
     unit/test_coercion.cpp
     unit/test_frame.cpp
     unit/test_fx_catalog.cpp
@@ -48,7 +49,7 @@ if(TARGET gc_media)
 endif()
 # Con Skia (vcpkg), los de gc_render.
 if(TARGET gc_render)
-    target_sources(gc_tests PRIVATE unit/test_render_canvas.cpp)
+    target_sources(gc_tests PRIVATE unit/test_render_canvas.cpp unit/test_render_compose.cpp)
     target_link_libraries(gc_tests PRIVATE gc::render)
     # La paridad del render lee el material y los fotogramas del export con gc_media.
     if(TARGET gc_media)

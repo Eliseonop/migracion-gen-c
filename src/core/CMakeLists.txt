@@ -18,6 +18,7 @@ add_library(gc_core
     src/clip_fx.cpp
     src/clip_layout.cpp
     src/clip_motion.cpp
+    src/clip_media.cpp
     src/collections.cpp
     src/disk_scan.cpp
     src/edit_commands.cpp
