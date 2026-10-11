@@ -1,14 +1,21 @@
 #include "gc/render/canvas.hpp"
 
+#include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <format>
 #include <utility>
 
 #include "include/core/SkCanvas.h"
 #include "include/core/SkColor.h"
+#include "include/core/SkImage.h"
 #include "include/core/SkImageInfo.h"
+#include "include/core/SkMatrix.h"
 #include "include/core/SkPaint.h"
+#include "include/core/SkPathBuilder.h"
+#include "include/core/SkPixmap.h"
 #include "include/core/SkRect.h"
+#include "include/core/SkSamplingOptions.h"
 #include "include/core/SkSurface.h"
 
 namespace gc::render {
@@ -59,6 +66,57 @@ void Canvas::fill_rect(double x, double y, double w, double h, Rgba8 color) {
     impl_->surface->getCanvas()->drawRect(
         SkRect::MakeXYWH(static_cast<float>(x), static_cast<float>(y), static_cast<float>(w), static_cast<float>(h)),
         paint);
+}
+
+Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src, const core::Affine& m, double alpha,
+                                const std::optional<std::array<core::Point, 4>>& clip) {
+    const auto row = static_cast<std::size_t>(image.width) * 4;
+    if (image.width <= 0 || image.height <= 0 || image.pixels.size() != row * static_cast<std::size_t>(image.height)) {
+        return fail(ErrorCode::InvalidArgument,
+                    std::format("imagen de {}x{} con {} bytes", image.width, image.height, image.pixels.size()));
+    }
+    // source_crop_px ya lo mete dentro de la imagen; el margen cubre el redondeo de sus cuentas.
+    constexpr double kSlack = 1e-6;
+    const bool inside = std::isfinite(src.sx) && std::isfinite(src.sy) && std::isfinite(src.sw) &&
+                        std::isfinite(src.sh) && src.sw > 0 && src.sh > 0 && src.sx >= -kSlack && src.sy >= -kSlack &&
+                        src.sx + src.sw <= image.width + kSlack && src.sy + src.sh <= image.height + kSlack;
+    if (!inside) {
+        return fail(ErrorCode::InvalidArgument,
+                    std::format("recorte ({}, {}, {}, {}) fuera de una imagen de {}x{}", src.sx, src.sy, src.sw, src.sh,
+                                image.width, image.height));
+    }
+    const SkPixmap pixmap(SkImageInfo::Make(image.width, image.height, kRGBA_8888_SkColorType, kUnpremul_SkAlphaType),
+                          image.pixels.data(), row);
+    const sk_sp<SkImage> sk_image = SkImages::RasterFromPixmapCopy(pixmap);
+    if (!sk_image) {
+        return fail(ErrorCode::Internal, "Skia no pudo copiar la imagen");
+    }
+
+    SkCanvas* canvas = impl_->surface->getCanvas();
+    canvas->save();
+    if (clip) {
+        SkPathBuilder path;
+        path.moveTo(static_cast<float>((*clip)[0].x), static_cast<float>((*clip)[0].y));
+        for (std::size_t i = 1; i < clip->size(); ++i) {
+            path.lineTo(static_cast<float>((*clip)[i].x), static_cast<float>((*clip)[i].y));
+        }
+        path.close();
+        canvas->clipPath(path.detach(), SkClipOp::kIntersect, false);
+    }
+    // Affine es la del contexto 2D (x' = a·x + c·y + e); SkMatrix va por filas.
+    canvas->concat(SkMatrix::MakeAll(static_cast<float>(m.a), static_cast<float>(m.c), static_cast<float>(m.e),
+                                     static_cast<float>(m.b), static_cast<float>(m.d), static_cast<float>(m.f), 0.0F,
+                                     0.0F, 1.0F));
+    SkPaint paint;
+    paint.setAlphaf(static_cast<float>(std::clamp(alpha, 0.0, 1.0)));
+    const SkRect rect = SkRect::MakeXYWH(static_cast<float>(src.sx), static_cast<float>(src.sy),
+                                         static_cast<float>(src.sw), static_cast<float>(src.sh));
+    // Bicúbico de swscale (libswscale/utils.c: B = 0 y C = 0,6 por defecto). Strict: no muestrea
+    // fuera del recorte.
+    canvas->drawImageRect(sk_image, rect, rect, SkSamplingOptions(SkCubicResampler{0.0F, 0.6F}), &paint,
+                          SkCanvas::kStrict_SrcRectConstraint);
+    canvas->restore();
+    return {};
 }
 
 Image Canvas::snapshot() const {

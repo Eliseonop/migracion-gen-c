@@ -6,11 +6,15 @@
 // Primera pieza de gc_render (F3): crear, limpiar, rellenar un rectángulo y leer los píxeles.
 // Lo que dibuja cada capa (blits de frame.hpp, máscaras, fusión, texto) llega encima.
 
+#include <array>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
+#include "gc/core/clip_layout.hpp"
 #include "gc/core/error.hpp"
+#include "gc/core/frame.hpp"
 
 namespace gc::render {
 
@@ -49,6 +53,16 @@ public:
     // Rellena el rectángulo (en píxeles, origen arriba a la izquierda) con `color`, fundido
     // con lo que haya debajo (src-over) y sin antialias.
     void fill_rect(double x, double y, double w, double h, Rgba8 color);
+
+    // Un blit de core::evaluate: el rectángulo `src` de `image` (px de la fuente) llevado al
+    // cuadro por `m` (px de la fuente → px del cuadro), con opacidad `alpha` (0–1) y src-over.
+    // Si hay `clip` (la cortinilla, en px del cuadro), solo se dibuja dentro de ese
+    // cuadrilátero. Muestreo bicúbico B = 0, C = 0,6, el `flags=bicubic` de swscale que usa el
+    // export; como B = 0 interpola, sin escala ni giro copia los píxeles tal cual. Error si el
+    // recorte no cabe en la imagen o está vacío.
+    [[nodiscard]] Result<void> draw_image(const Image& image, const core::SourceCrop& src, const core::Affine& m,
+                                          double alpha = 1.0,
+                                          const std::optional<std::array<core::Point, 4>>& clip = std::nullopt);
 
     [[nodiscard]] Image snapshot() const;
 
