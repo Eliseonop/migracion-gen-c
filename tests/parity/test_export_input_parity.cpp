@@ -2,7 +2,7 @@
 // ffmpeg_trim_window, ffmpeg_trim_filter y ffmpeg_input_args).
 //
 // Fixtures (tools/fixtures/export_fixtures.py):
-//   tests/fixtures/export_input/synthetic.json   export_input_cases.py (20 clips × 7 fps × 10 rutas)
+//   tests/fixtures/export_input/synthetic.json   export_input_cases.py (21 clips: trim × 7 fps; entrada × 11 rutas × 2 fps)
 //   tests/fixtures/local/export_input/real.json  tus clips, con el fps de su timeline y su ruta
 //
 // Exacta: ventanas (reales), textos de los filtros y argumentos. NaN viaja como "nan".

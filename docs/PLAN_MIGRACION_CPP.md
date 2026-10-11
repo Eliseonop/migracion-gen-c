@@ -1022,6 +1022,6 @@ Decisión de Edu (§6):
 
 - **Hecho:** `export_input.hpp` en `gc_core`: `is_still_clip`, `ffmpeg_trim_window` (still en bucle desde 0 con un mínimo de 0,1 s; vídeo con la salida adelantada `max(0,04, 1/fps)` si toca el final del archivo), `ffmpeg_trim_filter` y `ffmpeg_input_args`, con los mismos textos que Python. Es la especificación de lo que tendrá que hacer el decode de `gc_media` con cada material.
 - **Trampa:** Python escribe «nan» sin signo y `std::format` escribiría «-nan» con el NaN negativo que da x86 en `inf − inf` (una imagen con entrada y salida infinitas); hay un caso para eso.
-- **Verificación:** 21 clips sintéticos × 7 fps × 11 rutas y tus 979 clips (con el fps de su timeline y la ruta de `compose._clip_path`), contra el `clip_kind.py` real; exacto. 11/11 mutaciones. MinGW: 114 tests y 181 057 aserciones en Debug y Release, 0 warnings; tidy, 0 avisos.
+- **Verificación:** 21 clips sintéticos (la ventana y el filtro con 7 fps; la entrada con 11 rutas y 2 fps) y tus 979 clips (con el fps de su timeline y la ruta de `compose._clip_path`), contra el `clip_kind.py` real; exacto. 11/11 mutaciones. MinGW: 114 tests y 181 057 aserciones en Debug y Release, 0 warnings; tidy, 0 avisos.
 
 **Siguiente:** el decode de `gc_media` que reproduce `ffmpeg_input_args` + `fps=F,trim,setpts`.
