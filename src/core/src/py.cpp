@@ -630,6 +630,8 @@ std::string py_quote(std::string_view text) {
 
 char32_t utf8_next(std::string_view utf8, std::size_t& i) { return next_code_point(utf8, i); }
 
+bool py_is_space(char32_t c) { return py_isspace(c); }
+
 namespace {
 
 struct LowerEntry {

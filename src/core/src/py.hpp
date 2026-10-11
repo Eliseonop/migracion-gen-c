@@ -78,6 +78,8 @@ namespace gc::core::detail {
 
 // Siguiente carácter de un texto UTF-8 a partir del byte `i` (que avanza).
 [[nodiscard]] char32_t utf8_next(std::string_view utf8, std::size_t& i);
+// str.isspace() de Python para un carácter (también el `\s` de las regex de texto).
+[[nodiscard]] bool py_is_space(char32_t c);
 
 // urllib.parse.quote(s) de Python (safe="/"): los bytes UTF-8 fuera de letras y cifras
 // ASCII, «_.-~» y «/» van como %XX.
