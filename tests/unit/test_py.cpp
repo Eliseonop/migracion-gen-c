@@ -354,3 +354,15 @@ TEST_CASE("py_equal es el == de Python entre valores JSON (valores medidos en Py
     CHECK_FALSE(py_equal(Json(0.5), i64(0)));
     CHECK(py_equal(Json(-0.0), i64(0)));
 }
+
+TEST_CASE("py_upper es str.upper() de Python (valores medidos en Python)", "[py]") {
+    CHECK(py_upper("hola") == "HOLA");
+    CHECK(py_upper("Stra\xC3\x9F" "e") == "STRASSE");               // ß → SS
+    CHECK(py_upper("\xC7\x86" "emal") == "\xC7\x84" "EMAL");        // ǆ → Ǆ
+    CHECK(py_upper("\xEF\xAC\x81n") == "FIN");                      // ﬁ → FI
+    CHECK(py_upper("\xC5\x89") == "\xCA\xBC" "N");                  // ŉ → ʼN
+    CHECK(py_upper("\xCE\xAC \xCE\x90") == "\xCE\x86 \xCE\x99\xCC\x88\xCC\x81"); // ά ΐ → Ά Ϊ́
+    CHECK(py_upper("\xC4\xB0i") == "\xC4\xB0I");                    // İ se queda, i → I
+    CHECK(py_upper("\xC4\xB1") == "I");                             // ı → I
+    CHECK(py_upper("\xC7\xB0") == "J\xCC\x8C");                     // ǰ → J̌
+}

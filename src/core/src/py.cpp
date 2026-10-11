@@ -774,6 +774,32 @@ std::string py_title(std::string_view utf8) {
     return out;
 }
 
+namespace {
+
+constexpr LowerEntry kUpper[] = {
+#define GC_PY_UPPER_MAP
+#include "py_text.inc"
+#undef GC_PY_UPPER_MAP
+};
+
+} // namespace
+
+std::string py_upper(std::string_view utf8) {
+    // str.upper(): la mayúscula completa de cada carácter, sin contexto.
+    std::string out;
+    out.reserve(utf8.size());
+    for (std::size_t i = 0; i < utf8.size();) {
+        const std::size_t begin = i;
+        const char32_t c = next_code_point(utf8, i);
+        if (const char* u = lookup(kUpper, c)) {
+            out += u;
+        } else {
+            out.append(utf8.substr(begin, i - begin));
+        }
+    }
+    return out;
+}
+
 bool py_isdecimal(char32_t c) { return in_ranges(kDecimal, c); }
 
 std::string py_nfkd_fold(std::string_view utf8) {

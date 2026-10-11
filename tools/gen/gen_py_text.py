@@ -11,6 +11,8 @@
   (`x.title()`, puede ser más de un carácter: «ß» → «Ss») y los caracteres con caja
   (`_PyUnicode_IsCased`), que se deducen preguntando a title(): `(x + "a").title()` acaba en
   «a» ⇔ x tiene caja.
+- `str.upper()`: lo que da cada carácter que cambia (`x.upper()`, sin contexto; puede ser más
+  de un carácter: «ß» → «SS»), para May./min. del texto (`apply_text_case`).
 
 Ejecutar con el Python de video-yt cuando cambie su versión de Unicode:
 
@@ -48,7 +50,7 @@ def fold(x: str) -> str:
 
 
 def main() -> None:
-    folds, decimal, title, cased = [], [], [], []
+    folds, decimal, title, cased, upper = [], [], [], [], []
     for cp in range(sys.maxunicode + 1):
         if 0xD800 <= cp <= 0xDFFF:
             continue
@@ -63,6 +65,8 @@ def main() -> None:
             title.append(f"    {{0x{cp:05X}, {c_string(x.title())}}},")
         if (x + "a").title().endswith("a"):
             cased.append(cp)
+        if x.upper() != x:
+            upper.append(f"    {{0x{cp:05X}, {c_string(x.upper())}}},")
     fmt = lambda rs: "\n".join(f"    {{0x{a:05X}, 0x{b:05X}}}," for a, b in rs)  # noqa: E731
     dr, cr = ranges(decimal), ranges(cased)
     text = (f"// Generado por tools/gen/gen_py_text.py (Unicode {unicodedata.unidata_version}). No editar.\n"
@@ -73,10 +77,12 @@ def main() -> None:
             f"// str.title() a principio de palabra: {{carácter, resultado en UTF-8}}, ordenado.\n"
             f"#ifdef GC_PY_TITLE_MAP\n" + "\n".join(title) + "\n#endif\n"
             f"// Caracteres con caja para str.title() (rangos cerrados, ordenados).\n"
-            f"#ifdef GC_PY_TITLE_CASED\n" + fmt(cr) + "\n#endif\n")
+            f"#ifdef GC_PY_TITLE_CASED\n" + fmt(cr) + "\n#endif\n"
+            f"// str.upper(): {{carácter, resultado en UTF-8}} de los que cambian, ordenado.\n"
+            f"#ifdef GC_PY_UPPER_MAP\n" + "\n".join(upper) + "\n#endif\n")
     OUT.write_text(text, encoding="utf-8", newline="\n")
     print(f"{OUT.name}: {len(folds)} plegados, {len(dr)} rangos de dígitos, {len(title)} títulos, "
-          f"{len(cr)} rangos con caja (Unicode {unicodedata.unidata_version})")
+          f"{len(cr)} rangos con caja, {len(upper)} mayúsculas (Unicode {unicodedata.unidata_version})")
 
 
 if __name__ == "__main__":

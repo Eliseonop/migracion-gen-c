@@ -91,6 +91,8 @@ namespace gc::core::detail {
 // str.title() de Python sobre UTF-8: cada carácter pasa a título si el anterior no tiene caja
 // y a minúsculas si la tiene (con la sigma final de lower()). Tablas de tools/gen/gen_py_text.py.
 [[nodiscard]] std::string py_title(std::string_view utf8);
+// str.upper() de Python: la mayúscula completa de cada carácter («ß» → «SS»).
+[[nodiscard]] std::string py_upper(std::string_view utf8);
 
 // str.isdecimal() de un carácter: el `\d` de las regex de texto de Python.
 [[nodiscard]] bool py_isdecimal(char32_t c);
