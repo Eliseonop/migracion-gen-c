@@ -55,7 +55,8 @@ public:
     void fill_rect(double x, double y, double w, double h, Rgba8 color);
 
     // Un blit de core::evaluate: el rectángulo `src` de `image` (px de la fuente) llevado al
-    // cuadro por `m` (px de la fuente → px del cuadro), con opacidad `alpha` (0–1) y src-over.
+    // cuadro por `m` (px de la fuente → px del cuadro), con opacidad `alpha` (0–1; NaN = 1, como
+    // `globalAlpha` del contexto 2D) y src-over.
     // Si hay `clip` (la cortinilla, en px del cuadro), solo se dibuja dentro de ese
     // cuadrilátero. Muestreo bicúbico B = 0, C = 0,6, el `flags=bicubic` de swscale que usa el
     // export; como B = 0 interpola, sin escala ni giro copia los píxeles tal cual. Error si el

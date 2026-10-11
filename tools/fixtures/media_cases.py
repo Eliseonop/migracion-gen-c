@@ -220,10 +220,16 @@ MAGIC = [
 
 # --- Render: fotogramas del compuesto real (compose.render_frame) ---------------------------
 # Material: (archivo, argumentos de ffmpeg). Un degradado suave (las diferencias de muestreo
-# entre swscale y Skia pesan poco) y uno con alfa. Se generan UNA vez (van a git-lfs).
+# entre swscale y Skia pesan poco) y una textura de ondas en X e Y (periodo de ~18 px; en el
+# verde, que es lo que más pesa en la luma, en las dos direcciones) para que un error de
+# posición de 1 px se note dentro del clip, no solo en el borde. Se generan UNA
+# vez (van a git-lfs).
 RENDER_MEDIA = [
     ("grad.png", ["-f", "lavfi", "-i", "nullsrc=s=320x180,format=rgb24,geq=r='X*255/W':g='Y*255/H':b='96+64*sin(X/20)'",
                   "-frames:v", "1"]),
+    ("waves.png", ["-f", "lavfi", "-i",
+                   "nullsrc=s=320x180,format=rgb24,geq=r='128+110*sin(Y*0.35)':"
+                   "g='128+55*sin(X*0.35)+55*sin(Y*0.3)':b='128+110*sin((X+Y)*0.2)'", "-frames:v", "1"]),
 ]
 # Timelines de 360×640 a 30 fps con un clip de imagen en overlay: (nombre, archivo, campos del
 # clip, instantes). El fondo del export es negro. El reframe lleva crop_w/crop_h, como 218 de
@@ -243,4 +249,16 @@ RENDER = [
      {"transform": {"x": 0.5, "y": 0.5, "scale": 1.0},
       "reframe": {"crop_w": 0.6, "crop_h": 0.8, "zoom": 1.0, "keyframes": [{"t": 0.0, "cx": 0.35, "cy": 0.55, "zoom": 1.0}]}},
      [0.5]),
+    # Con las ondas, en posiciones donde el destino en coma flotante y el de dest_rect_even del
+    # export coinciden: así un error de posición del C++ se nota dentro del clip. Donde no
+    # coinciden (p. ej. x 0,41, y 0,57 a escala 0,8: el export cae 0,4 px a la derecha y 0,8 px
+    # arriba) la luma baja a ~30 dB solo por el redondeo (decisión de Edu, notas de F3).
+    ("ondas centradas", "waves.png", {"transform": {"x": 0.5, "y": 0.5, "scale": 1.0}, "reframe": _FULL}, [0.5]),
+    ("ondas desplazadas a escala 0,8", "waves.png", {"transform": {"x": 0.4, "y": 0.55, "scale": 0.8}, "reframe": _FULL},
+     [0.5]),
+    # 18°: el rotate del export da un cuadro de 360 × 270 (redondea rotw/roth), así que el
+    # (overlay_h − dh)/2 del overlay es entero. A 20° sale 279 de alto, el overlay trunca medio
+    # píxel y la luma baja a ~35 dB solo por eso (alineado ese medio píxel, 42 dB).
+    ("ondas giradas 18°", "waves.png",
+     {"transform": {"x": 0.5, "y": 0.5, "scale": 1.0, "rotation": 18}, "reframe": _FULL}, [0.5]),
 ]

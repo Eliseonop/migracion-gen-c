@@ -6,6 +6,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <numbers>
 
 #include "gc/render/canvas.hpp"
@@ -181,4 +182,13 @@ TEST_CASE("lienzo: un blit girado 90° (el orden de a, b, c, d del contexto 2D)"
     CHECK(same(pixel(img, 0, 1), {0, 255, 0, 255}));
     CHECK(pixel(img, 1, 0).a == 0);
     CHECK(pixel(img, 1, 1).a == 0);
+}
+
+TEST_CASE("lienzo: un alfa NaN dibuja opaco, como globalAlpha = NaN del contexto 2D", "[render]") {
+    Image src{1, 1, {200, 100, 50, 255}};
+    auto canvas = Canvas::make(1, 1);
+    REQUIRE(canvas);
+    canvas->clear({0, 0, 0, 255});
+    REQUIRE(canvas->draw_image(src, {0, 0, 1, 1}, gc::core::Affine{}, std::numeric_limits<double>::quiet_NaN()));
+    CHECK(same(pixel(canvas->snapshot(), 0, 0), {200, 100, 50, 255}));
 }

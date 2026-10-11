@@ -108,7 +108,8 @@ Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src,
                                      static_cast<float>(m.b), static_cast<float>(m.d), static_cast<float>(m.f), 0.0F,
                                      0.0F, 1.0F));
     SkPaint paint;
-    paint.setAlphaf(static_cast<float>(std::clamp(alpha, 0.0, 1.0)));
+    // Un alfa que no es un número no cambia nada, como `globalAlpha = NaN` en el contexto 2D.
+    paint.setAlphaf(static_cast<float>(std::isnan(alpha) ? 1.0 : std::clamp(alpha, 0.0, 1.0)));
     const SkRect rect = SkRect::MakeXYWH(static_cast<float>(src.sx), static_cast<float>(src.sy),
                                          static_cast<float>(src.sw), static_cast<float>(src.sh));
     // Bicúbico de swscale (libswscale/utils.c: B = 0 y C = 0,6 por defecto). Strict: no muestrea
