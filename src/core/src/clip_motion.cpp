@@ -25,7 +25,7 @@ namespace {
 enum Key : std::size_t { X, Y, SCALE, ROT, OPACITY, CX, CY, ZOOM, DRAW };
 using Pose = std::array<double, 8>;
 using Props = std::array<std::optional<double>, kMotionKeys.size()>;
-using EnvPoint = std::pair<double, double>; // (t local, amp 0–1)
+using EnvPoint = Envelope::value_type; // (t local, amp 0–1)
 
 bool in(std::string_view v, std::initializer_list<std::string_view> list) {
     return std::ranges::find(list, v) != list.end();
@@ -167,6 +167,34 @@ std::vector<EnvPoint> hold_after_peak(std::vector<EnvPoint> pts) {
     }
     pts.resize(cut + 1);
     return pts;
+}
+
+// `_num` de un real: un NaN vale el defecto.
+double num_or(double v, double fallback) { return std::isnan(v) ? fallback : v; }
+
+// `sum(x * x for x in chunk)` de Python ≥ 3.12: suma compensada de Neumaier sobre
+// `0 + x0`; la compensación solo se añade si es finita y distinta de 0.
+double py_sum_squares(const std::vector<float>& xs, std::size_t first, std::size_t last) {
+    double f = 0.0;
+    double c = 0.0;
+    for (std::size_t i = first; i < last; ++i) {
+        const double x = static_cast<double>(xs[i]) * static_cast<double>(xs[i]);
+        if (i == first) {
+            f = x; // 0 + x del entero inicial: exacto
+            continue;
+        }
+        const double t = f + x;
+        if (std::fabs(f) >= std::fabs(x)) {
+            c += (f - t) + x;
+        } else {
+            c += (x - t) + f;
+        }
+        f = t;
+    }
+    if (c != 0.0 && std::isfinite(c)) {
+        f += c;
+    }
+    return f;
 }
 
 } // namespace
@@ -331,6 +359,90 @@ Json merge_visual_keyframes(const TimelineClip& clip, const std::vector<MotionIt
     out["enabled"] = true;
     out["items"] = std::move(merged);
     return out;
+}
+
+Result<Envelope> downsample_envelope(const Envelope& points, int max_n) {
+    const std::size_t n = points.size();
+    if (max_n < 0) {
+        return Envelope{}; // range(max_n) vacío
+    }
+    if (std::cmp_less_equal(n, max_n)) {
+        return points;
+    }
+    if (max_n == 1) {
+        return invalid("float division by zero"); // round(i * (n - 1) / 0)
+    }
+    Envelope out;
+    out.reserve(static_cast<std::size_t>(max_n));
+    for (int i = 0; i < max_n; ++i) {
+        // i·(n−1) es exacto (< 2^53) y la división IEEE da el cociente de Python; round() al par.
+        const double q = static_cast<double>(static_cast<std::size_t>(i) * (n - 1)) / static_cast<double>(max_n - 1);
+        out.push_back(points[static_cast<std::size_t>(std::nearbyint(q))]);
+    }
+    return out;
+}
+
+Envelope normalize_amps(const Envelope& points) {
+    if (points.empty()) {
+        return points;
+    }
+    // max() de Python: se queda el primero y lo cambia solo por uno mayor (un NaN no gana).
+    double peak = points.front().second;
+    for (const auto& [t, a] : points) {
+        if (a > peak) {
+            peak = a;
+        }
+    }
+    if (peak == 0.0) { // `or 1.0`: 0.0 y −0.0 son falsos
+        peak = 1.0;
+    }
+    Envelope out;
+    out.reserve(points.size());
+    for (const auto& [t, a] : points) {
+        const double u = std::max(0.0, (a / peak - 0.06) / 0.94);
+        out.emplace_back(t, std::min(1.0, u));
+    }
+    return out;
+}
+
+std::optional<std::pair<double, double>> overlap_window(const TimelineClip& visual, const TimelineClip& audio) {
+    const double vs = num_or(visual.start, 0.0);
+    const double as = num_or(audio.start, 0.0);
+    const double ve = vs + clip_timeline_duration(visual);
+    const double ae = as + clip_timeline_duration(audio);
+    const double lo = std::max(vs, as);
+    const double hi = std::min(ve, ae);
+    if (hi - lo <= 0.02) {
+        return std::nullopt;
+    }
+    return std::pair{lo, hi};
+}
+
+double audio_src_at(const TimelineClip& audio, double t_tl) {
+    const double start = num_or(audio.start, 0.0);
+    const double inp = num_or(audio.in_point, 0.0);
+    return inp + std::max(0.0, t_tl - start) * clip_speed(audio);
+}
+
+Envelope rms_envelope(const std::vector<float>& samples, double duration, int rate) {
+    const double dur = std::max(0.05, num_or(duration, 0.0));
+    const auto hop = static_cast<std::size_t>(
+        std::max(1, static_cast<int>(static_cast<double>(kRmsSampleRate) / static_cast<double>(std::max(1, rate)))));
+    const std::size_t n = samples.size();
+    if (n < 2) {
+        return {{0.0, 0.0}, {py_round(dur, 3), 0.0}};
+    }
+    Envelope pts;
+    for (std::size_t i = 0; i < n; i += hop) {
+        const std::size_t last = std::min(n, i + hop);
+        const double rms = std::sqrt(py_sum_squares(samples, i, last) / static_cast<double>(last - i));
+        pts.emplace_back(py_round(static_cast<double>(i) / kRmsSampleRate, 3), rms);
+    }
+    if (pts.back().first < dur - 0.02) {
+        const double last_amp = pts.back().second;
+        pts.emplace_back(py_round(dur, 3), last_amp);
+    }
+    return *downsample_envelope(normalize_amps(pts)); // con 24 puntos no puede fallar
 }
 
 } // namespace gc::core

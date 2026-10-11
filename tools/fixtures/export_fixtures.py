@@ -13,6 +13,7 @@ Salida (al repo):
   tests/fixtures/model/synthetic.json      modelo: casos de model_cases.py
   tests/fixtures/edit/synthetic.json       edición: casos de ops_cases.py
   tests/fixtures/keyframes/synthetic.json  animación: casos de kf_cases.py
+  tests/fixtures/motion/synthetic.json     envolvente de un sonido (clip_motion): motion_cases.py
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
@@ -1414,6 +1415,113 @@ def real_keyframe_fixtures(ctx: Ctx, data: dict) -> dict:
     return {"clips": cases, "ease": [], "masks": [], "styles": []}
 
 
+# --- Envolvente de un sonido (clip_motion: lo que usa animate_clip con follow_audio_id) -------
+
+def _motion_pairs(ctx: Ctx, name: str, clips: list, times_of) -> dict:
+    """Todos los pares (visual, audio) de una timeline: overlap_window y audio_src_at en los
+    instantes que da times_of(visual, audio, ventana)."""
+    from app import clip_motion as cm
+    cs = [ctx.schemas.TimelineClip.model_validate(c) for c in clips]
+    pairs = []
+    for vi, v in enumerate(cs):
+        for ai, a in enumerate(cs):
+            if vi == ai or a.kind not in ("audio", "video"):
+                continue
+            ov = cm.overlap_window(v, a)
+            pairs.append({"v": vi, "a": ai, "window": None if ov is None else list(ov),
+                          "src": [[t, cm.audio_src_at(a, t)] for t in times_of(v, a, ov)]})
+    return _pure(_nan_safe({"name": name, "clips": [c.model_dump() for c in cs], "pairs": pairs}))
+
+
+def _rms_case(samples: list[float], duration, rate: int) -> dict:
+    """El sample_rms_envelope REAL con un ffmpeg falso que devuelve estas muestras."""
+    import struct
+    from types import SimpleNamespace
+    from unittest import mock
+    from app import clip_motion as cm
+    raw = struct.pack(f"<{len(samples)}f", *samples)
+    with mock.patch.object(shutil, "which", lambda _name: "ffmpeg"), \
+            mock.patch.object(subprocess, "run", lambda *_a, **_k: SimpleNamespace(returncode=0, stdout=raw, stderr=b"")):
+        out = cm.sample_rms_envelope("audio.wav", 0.0, duration, rate)
+    return _nan_safe({"samples": samples, "duration": duration, "rate": rate, "out": [list(p) for p in out]})
+
+
+def synthetic_motion_fixtures(ctx: Ctx) -> dict:
+    from app import clip_motion as cm
+    sys.path.insert(0, str(HERE))
+    import motion_cases as mc
+
+    def downsample(points, max_n):
+        try:
+            return {"out": [list(p) for p in cm.downsample_envelope(points, max_n)]}
+        except Exception as e:  # noqa: BLE001
+            return {"error": type(e).__name__}
+
+    def times_of(_v, a, ov):
+        return [a.start + d for d in mc.SRC_OFFSETS] + mc.SRC_ABS + ([] if ov is None else [ov[0]])
+
+    return _pure(_nan_safe({
+        "downsample": [{"points": [list(p) for p in pts], "max_n": m, **downsample(pts, m)}
+                       for pts, m in mc.DOWNSAMPLE],
+        "normalize": [{"points": [list(p) for p in pts], "out": [list(p) for p in cm.normalize_amps(pts)]}
+                      for pts in mc.NORMALIZE],
+        "timelines": [_motion_pairs(ctx, name, clips, times_of) for name, clips in mc.TIMELINES],
+        "rms": [_rms_case(s, d, r) for s, d, r in mc.RMS],
+    }))
+
+
+def real_motion_fixtures(ctx: Ctx, data: dict, max_rms: int = 60) -> dict:
+    """Tus timelines: todos los pares (visual, audio) y, por cada audio o vídeo con archivo que
+    se solapa con otro clip, el RMS de esa ventana con el ffmpeg REAL (se graban sus muestras)."""
+    import struct
+    from app import clip_motion as cm
+    from app import compose
+    timelines, rms = [], []
+    real_run = subprocess.run
+
+    def times_of(v, a, ov):
+        return [v.start, a.start + 0.25] + ([] if ov is None else [ov[0]])
+
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        clips = [c.model_dump() for c in proj.timeline.clips]
+        timelines.append(_motion_pairs(ctx, proj.id, clips, times_of))
+        for a in proj.timeline.clips:
+            if len(rms) >= max_rms or a.kind not in ("audio", "video"):
+                continue
+            path = compose._clip_path(proj, a)
+            visual = next((v for v in proj.timeline.clips if v.id != a.id and cm.overlap_window(v, a)), None)
+            if path is None or not path.exists() or visual is None:
+                continue
+            lo, hi = cm.overlap_window(visual, a)
+            if hi - lo > 30:
+                continue
+            got: list[bytes] = []
+
+            def recording_run(*args, **kwargs):
+                r = real_run(*args, **kwargs)
+                got.append(r.stdout or b"")
+                return r
+
+            src = cm.audio_src_at(a, lo)
+            subprocess.run = recording_run
+            try:
+                out = cm.sample_rms_envelope(path, src, hi - lo)
+            except ValueError as e:
+                print(f"  (RMS de {proj.id} · {a.id} omitido: {e})")
+                continue
+            finally:
+                subprocess.run = real_run
+            raw = got[-1]
+            n = len(raw) // 4
+            samples = list(struct.unpack(f"<{n}f", raw[: n * 4]))
+            rms.append(_nan_safe({"name": f"{proj.id} · {a.id}", "samples": samples, "duration": hi - lo,
+                                  "rate": 20, "out": [list(q) for q in out]}))
+    return _pure({"downsample": [], "normalize": [], "timelines": timelines, "rms": rms})
+
+
 # --- Encuadre (clip_layout) -------------------------------------------------------------------
 
 def _floats(values) -> list[float]:
@@ -1765,6 +1873,10 @@ def main() -> None:
     kf = synthetic_keyframe_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "keyframes" / "synthetic.json", kf,
           len(kf["clips"]) + len(kf["ease"]) + len(kf["masks"]) + len(kf["styles"]), 0)
+    mot = synthetic_motion_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "motion" / "synthetic.json", mot,
+          len(mot["downsample"]) + len(mot["normalize"]) + sum(len(t["pairs"]) for t in mot["timelines"])
+          + len(mot["rms"]), sum("error" in d for d in mot["downsample"]))
     libr = synthetic_library_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "library" / "synthetic.json", libr,
           len(libr["steps"]) + len(libr["dto"]) + len(libr["save"]),
@@ -1819,6 +1931,9 @@ def main() -> None:
               sum("error" in c for c in edit_real["cases"]))
         kf_real = real_keyframe_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "keyframes" / "real.json", kf_real, len(kf_real["clips"]), 0)
+        mot_real = real_motion_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "motion" / "real.json", mot_real,
+              sum(len(t["pairs"]) for t in mot_real["timelines"]) + len(mot_real["rms"]), 0)
         libr_real = real_library_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "library" / "real.json", libr_real, len(libr_real["steps"]), 0)
         sett_real = real_settings_fixtures(ctx)

@@ -4,8 +4,8 @@
 
 `grupo`: eval (evaluación por clip), layers (capas de un instante), frame (fotograma), sfx
 (biblioteca de SFX en disco), collections (colecciones de material), projects (almacén de
-proyectos), json (JSON como Python), library («Guardar en la biblioteca») o stick (personajes
-stick). Cada uno pasa los
+proyectos), json (JSON como Python), library («Guardar en la biblioteca»), stick (personajes
+stick) o motion (envolvente de un sonido, clip_motion). Cada uno pasa los
 tests de su etiqueta (GROUPS).
 `preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los mutantes cuyo
 nombre contiene ese texto.
@@ -517,8 +517,35 @@ STICK = [
     ("fold: sin tabla", PY, "} else if (const char* f = lookup(kFold, c)) {", "} else if (const char* f = nullptr) {"),
 ]
 
+M = "src/core/src/clip_motion.cpp"
+MOTION = [
+    ("suma ingenua: sin la compensación final", M, "if (c != 0.0 && std::isfinite(c)) {", "if (false) {"),
+    ("suma: compensación siempre por la primera rama", M, "if (std::fabs(f) >= std::fabs(x)) {", "if (true) {"),
+    ("suma: compensación aunque no sea finita", M, "if (c != 0.0 && std::isfinite(c)) {", "if (c != 0.0) {"),
+    ("downsample: round() lejos del 0", M, "std::nearbyint(q)", "std::round(q)"),
+    ("downsample: max_n negativo devuelve los puntos", M, "return Envelope{}; // range(max_n) vacío", "return points;"),
+    ("downsample: max_n = 1 no falla", M, "if (max_n == 1) {", "if (max_n == 1 && n == 0) {"),
+    ("normalize: un pico negativo vale 1", M, "if (peak == 0.0) {", "if (peak <= 0.0) {"),
+    ("normalize: un NaN gana el máximo", M, "if (a > peak) {", "if (!(a <= peak)) {"),
+    ("normalize: suelo de 0,05", M, "(a / peak - 0.06) / 0.94", "(a / peak - 0.05) / 0.94"),
+    ("normalize: sin tope de 1", M, "out.emplace_back(t, std::min(1.0, u));", "out.emplace_back(t, u);"),
+    ("solape: 0,02 s justos cuentan", M, "if (hi - lo <= 0.02) {", "if (hi - lo < 0.02) {"),
+    ("solape: fin con el máximo", M, "const double hi = std::min(ve, ae);", "const double hi = std::max(ve, ae);"),
+    ("audio_src_at: antes del inicio, negativo", M, "std::max(0.0, t_tl - start)", "(t_tl - start)"),
+    ("audio_src_at: speed sin clip_speed", M, "* clip_speed(audio);", "* audio.speed;"),
+    ("audio_src_at: sin in_point", M, "return inp + std::max", "return 0.0 * inp + std::max"),
+    ("rms: rate mínimo 2", M, "static_cast<double>(std::max(1, rate))", "static_cast<double>(std::max(2, rate))"),
+    ("rms: una muestra basta", M, "if (n < 2) {", "if (n < 1) {"),
+    ("rms: cola con 0,03 s", M, "if (pts.back().first < dur - 0.02) {", "if (pts.back().first < dur - 0.03) {"),
+    ("rms: duración mínima 0,04", M, "std::max(0.05, num_or(duration, 0.0))", "std::max(0.04, num_or(duration, 0.0))"),
+    ("rms: sin normalizar", M, "return *downsample_envelope(normalize_amps(pts));", "return *downsample_envelope(pts);"),
+    ("rms: media del trozo entre hop", M, "/ static_cast<double>(last - i));", "/ static_cast<double>(hop));"),
+    ("rms: t sin redondear", M, "pts.emplace_back(py_round(static_cast<double>(i) / kRmsSampleRate, 3), rms);",
+     "pts.emplace_back(static_cast<double>(i) / kRmsSampleRate, rms);"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
-          "stick": (STICK, "[stick]"),
+          "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"),
           "library": (LIBRARY, "[library],[projects]"),
           "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}

@@ -52,4 +52,28 @@ struct MotionItem {
 // de propiedades (volumen, efectos…) tal como estaban en su instante.
 [[nodiscard]] Json merge_visual_keyframes(const TimelineClip& clip, const std::vector<MotionItem>& items);
 
+// --- Envolvente de un sonido (lo que usa la herramienta MCP `animate_clip` con follow_audio_id) ---
+
+using Envelope = std::vector<std::pair<double, double>>; // [(t, amp)]
+
+// Como mucho `max_n` puntos repartidos por índice (`round(i·(n−1)/(max_n−1))`, al par).
+// Con max_n = 1 y más de un punto Python divide entre 0: error.
+[[nodiscard]] Result<Envelope> downsample_envelope(const Envelope& points, int max_n = 24);
+
+// Amplitudes entre el pico (o 1 si el pico es 0) con un suelo de 0,06, en [0, 1].
+[[nodiscard]] Envelope normalize_amps(const Envelope& points);
+
+// Ventana de timeline [inicio, fin) en la que los dos clips coinciden; nada si dura 0,02 s o menos.
+[[nodiscard]] std::optional<std::pair<double, double>> overlap_window(const TimelineClip& visual,
+                                                                      const TimelineClip& audio);
+
+// Segundo de la fuente del audio que suena en el instante `t_tl` de la timeline.
+[[nodiscard]] double audio_src_at(const TimelineClip& audio, double t_tl);
+
+// Núcleo de `sample_rms_envelope`: RMS a ~`rate` Hz de las muestras mono a 400 Hz (las que
+// devuelve ffmpeg con `-ac 1 -ar 400 -f f32le`), con `t` relativo al inicio de la ventana,
+// normalizado y reducido a 24 puntos. Con menos de 2 muestras, silencio de 0 a `duration`.
+inline constexpr int kRmsSampleRate = 400;
+[[nodiscard]] Envelope rms_envelope(const std::vector<float>& samples, double duration, int rate = 20);
+
 } // namespace gc::core
