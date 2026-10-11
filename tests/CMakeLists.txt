@@ -50,6 +50,10 @@ endif()
 if(TARGET gc_render)
     target_sources(gc_tests PRIVATE unit/test_render_canvas.cpp)
     target_link_libraries(gc_tests PRIVATE gc::render)
+    # La paridad del render lee el material y los fotogramas del export con gc_media.
+    if(TARGET gc_media)
+        target_sources(gc_tests PRIVATE parity/test_render_parity.cpp)
+    endif()
 endif()
 # MSVC sabe que FAIL() lanza y da por inalcanzable el `return`/`throw` que GCC necesita detrás.
 # El manifiesto pone argv en UTF-8: si no, con una página de códigos ANSI que no lo sea (la del

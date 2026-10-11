@@ -18,6 +18,7 @@ Salida (al repo):
   tests/fixtures/export_input/synthetic.json  cómo lee el export el material (clip_kind.py): export_input_cases.py
   tests/fixtures/media/decode.json         decode como el export: media_cases.DECODE (MD5 por fotograma del ffmpeg del PATH)
   tests/fixtures/media/seek.json           seek exacto de frame_grab.extract_frame: media_cases.SEEK
+  tests/fixtures/render/synthetic.json     fotogramas del compuesto real (compose.render_frame): media_cases.RENDER
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
@@ -1699,6 +1700,44 @@ def synthetic_seek_fixtures() -> list[dict]:
     return cases
 
 
+RENDER_DIR = REPO / "tests" / "fixtures" / "render"
+
+
+def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
+    """Fotogramas del COMPUESTO real del export (compose.render_frame: la misma tubería que el
+    export, pero con un solo PNG) para media_cases.RENDER. Solo se sustituye dónde está el
+    material (_clip_path). Los PNG van a tests/fixtures/render (git-lfs)."""
+    import media_cases as mc
+    from types import SimpleNamespace
+    from app import compose
+    ffmpeg = shutil.which("ffmpeg")
+    files = RENDER_DIR / "files"
+    files.mkdir(parents=True, exist_ok=True)
+    for name, args in mc.RENDER_MEDIA:
+        if not (files / name).exists():
+            subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args, "-map_metadata", "-1",
+                            "-fflags", "+bitexact", str(files / name)], check=True)
+    real_clip_path = compose._clip_path
+    compose._clip_path = lambda project, clip, shape_files=None: files / clip.filename
+    try:
+        cases = []
+        for i, (name, file, fields, times) in enumerate(mc.RENDER):
+            raw = {"version": 2, "width": 360, "height": 640, "fps": 30,
+                   "tracks": [{"id": "V1", "kind": "video", "name": "V1"}],
+                   "clips": [{"id": "c1", "track_id": "V1", "kind": "image", "asset_kind": "images", "asset_id": "a1",
+                              "filename": file, "start": 0.0, "in_point": 0.0, "out_point": 1.0,
+                              "source_duration": 0.0, "layout": "overlay", **fields}]}
+            timeline = ctx.schemas.Timeline.model_validate(ctx.migrations.migrate_timeline(raw))
+            for t in times:
+                png = f"r{i:02d}_{int(round(t * 1000)):05d}.png"
+                compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
+                cases.append({"name": name, "t": t, "file": file, "frame": png,
+                              "timeline": _pure(timeline.model_dump())})
+        return cases
+    finally:
+        compose._clip_path = real_clip_path
+
+
 def _probe(path: Path) -> dict:
     """Las tres sondas REALES de video-yt (ffprobe del PATH; probe_duration, la original y no
     la falsa de _install_fakes)."""
@@ -2127,6 +2166,8 @@ def main() -> None:
     dec = synthetic_decode_fixtures(ctx)
     seek = synthetic_seek_fixtures()
     write(REPO / "tests" / "fixtures" / "media" / "seek.json", seek, len(seek), 0)
+    ren = synthetic_render_fixtures(ctx)
+    write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)

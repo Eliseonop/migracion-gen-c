@@ -1068,3 +1068,12 @@ Decisión de Edu (§6):
 - **Verificación:** 3 tests del lienzo (dimensiones no válidas, relleno exacto por píxel y src-over semitransparente leído sin premultiplicar). MSVC + vcpkg: 122/122, 0 warnings; MinGW: 114/114 en Debug y Release.
 
 **Siguiente:** dibujar los blits de `frame.hpp` (imagen con transformación afín, recorte y opacidad) y la primera fixture de render contra `compose.py`/ffmpeg.
+
+### 2026-10-11 — F3: `gc_render` compone el fotograma y la primera fixture de render
+
+- **Hecho:** `Canvas::draw_image` dibuja un `Blit` de `evaluate` (la `Affine` del contexto 2D como `SkMatrix`, `drawImageRect` estricto sobre el recorte, bicúbico B = 0, C = 0,6 como el `flags=bicubic` de swscale, y la cortinilla como `clipPath`). `compose_frame` dibuja las capas de fondo a frente sobre el negro opaco del export; texto, figuras, ajuste, modos de fusión y máscaras son Unsupported por ahora. Fixture `tests/fixtures/render` con `compose.render_frame` real (6 fotogramas de una imagen en overlay: posición, escala, giro, opacidad, recorte parcial y una que se sale del cuadro).
+- **Verificación:** luma BT.709 de 49,7 a 60,7 dB frente al export sin la banda de 2 px del borde del clip (de 30,1 a 54,1 dB con ella); el objetivo del plan es ≥ 35 dB. Mutante «ignorar la opacidad»: 20,7 dB, falla. 13 tests del lienzo y el render. MSVC + vcpkg: 128/128, 0 warnings; MinGW: 114/114.
+- **Tolerancia justificada:** la banda de 2 px se excluye porque el export redondea el destino del overlay a píxeles pares (`dest_rect_even`) y el C++ lo deja en coma flotante, como el preview; contra el fondo negro, ese píxel de diferencia en el borde basta para bajar el fotograma entero a ~31 dB. Queda como decisión de Edu (redondear o no); si se decide redondear, la banda sobra.
+- **Divergencia nueva entre preview y export:** un overlay sin `reframe.crop_w/crop_h` se recorta al aspecto de la salida en el preview y no en el export (17 de los 235 overlays de Edu). Decisión de Edu; el C++ sigue al preview.
+
+**Siguiente:** vídeo (el fotograma de `decode_frames` en el instante del export), más de un clip por fotograma y `genclip frame … --at t`.

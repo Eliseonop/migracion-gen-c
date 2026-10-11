@@ -216,3 +216,31 @@ MAGIC = [
     b"RIFF\x00\x00\x00\x00WEBPVP8 ", b"RIFF\x00\x00\x00\x00WEB", b"RIFF\x00\x00\x00\x00WAVE", b"RIFX\x00\x00\x00\x00WEBP",
     b"\x00\x00\x00\x18ftypavif", b"BM", b"<svg", b"GIF89a\x89PNG",
 ]
+
+
+# --- Render: fotogramas del compuesto real (compose.render_frame) ---------------------------
+# Material: (archivo, argumentos de ffmpeg). Un degradado suave (las diferencias de muestreo
+# entre swscale y Skia pesan poco) y uno con alfa. Se generan UNA vez (van a git-lfs).
+RENDER_MEDIA = [
+    ("grad.png", ["-f", "lavfi", "-i", "nullsrc=s=320x180,format=rgb24,geq=r='X*255/W':g='Y*255/H':b='96+64*sin(X/20)'",
+                  "-frames:v", "1"]),
+]
+# Timelines de 360×640 a 30 fps con un clip de imagen en overlay: (nombre, archivo, campos del
+# clip, instantes). El fondo del export es negro. El reframe lleva crop_w/crop_h, como 218 de
+# los 235 overlays de tus timelines: sin ellos, el preview recorta la fuente al aspecto de la
+# salida y el export no (divergencia pendiente de decidir, notas de F3).
+_FULL = {"crop_w": 1.0, "crop_h": 1.0}
+RENDER = [
+    ("centrado a escala 0,5", "grad.png", {"transform": {"x": 0.5, "y": 0.5, "scale": 0.5}, "reframe": _FULL}, [0.5]),
+    ("desplazado a escala 0,8", "grad.png", {"transform": {"x": 0.35, "y": 0.62, "scale": 0.8}, "reframe": _FULL},
+     [0.5]),
+    ("girado 20°", "grad.png", {"transform": {"x": 0.5, "y": 0.45, "scale": 0.6, "rotation": 20}, "reframe": _FULL},
+     [0.5]),
+    ("opacidad 0,5", "grad.png", {"transform": {"x": 0.5, "y": 0.5, "scale": 0.7}, "reframe": _FULL, "opacity": 0.5},
+     [0.5]),
+    ("escala 1,4 que se sale", "grad.png", {"transform": {"x": 0.2, "y": 0.3, "scale": 1.4}, "reframe": _FULL}, [0.5]),
+    ("recorte parcial", "grad.png",
+     {"transform": {"x": 0.5, "y": 0.5, "scale": 1.0},
+      "reframe": {"crop_w": 0.6, "crop_h": 0.8, "zoom": 1.0, "keyframes": [{"t": 0.0, "cx": 0.35, "cy": 0.55, "zoom": 1.0}]}},
+     [0.5]),
+]
