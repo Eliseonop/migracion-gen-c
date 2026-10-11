@@ -1180,3 +1180,19 @@ Decisión de Edu (§6):
   - Paridad exacta de los eventos con `caption_dialogues` en los sintéticos y los 679 clips de Edu.
 
 **Siguiente:** etapa 2b, con Fondo, sombra y Brillo, los efectos de palabra brillo y pop, y las apariciones pop y deslizar.
+
+### 2026-10-11 — F3: texto, etapa 2b: Fondo, sombra, Brillo, efectos y apariciones
+
+- **Hecho:** `draw_timeline_texts` dibuja ya todos los textos quietos salvo la Curva, el giro y el volteo, la cursiva o el subrayado y la negrita sintética. Eso incluye:
+  - el Fondo por línea (BorderStyle 4) y el dibujado (`box_rects` con la forma de `_rrect_path`);
+  - la sombra paralela y el halo del Brillo (`\blur`, con σ = 0,85 · N);
+  - los efectos de palabra brillo y pop, la Escala X/Y y las apariciones deslizar y pop.
+- **Lo que destapó la fixture:**
+  - Con trazo, libass desenfoca solo el contorno.
+  - La aparición pop no escala el texto en el export (el override de cada palabra repone `\fscx`), pero sí la forma del Fondo dibujado. Queda anotado como decisión de Edu; el C++ copia el export.
+- **Verificación:**
+  - 51 fotogramas frente a `compose.render_frame`; las 16 escenas nuevas dan 36–50 dB perdonando 1 px.
+  - 14 mutantes: fallan todos.
+  - MSVC + vcpkg: 140/140; MinGW: 123/123. 0 warnings.
+
+**Siguiente:** etapa 2c, con el texto animado, el giro y el volteo, y la Curva.

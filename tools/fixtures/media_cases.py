@@ -472,6 +472,23 @@ RENDER_TEXT = [
     ("efecto de palabra pop", None, [(_HOLA, {**_CLASSIC_TXT, "word_fx": "pop", "block_appear": "none"}, {})], [0.7]),
     ("aparición pop", None, [(_HOLA, {**_PLAIN, "block_appear": "pop"}, {})], [0.0, 0.1, 0.5]),
     ("aparición deslizar", None, [(_HOLA, {**_PLAIN, "block_appear": "slide_up"}, {})], [0.0, 0.1, 0.5]),
+    ("aparición pop con Fondo dibujado (la forma sí escala)", None,
+     [(_HOLA, {**_PLAIN, "bg": "#303030", "bg_opacity": 0.8, "bg_style": "block", "border_width": 0,
+               "block_appear": "pop"}, {})], [0.0, 0.1, 0.5]),
+    ("aparición deslizar con sombra", None,
+     [(_HOLA, {**_PLAIN, "shadow": True, "shadow_distance": 0.1, "block_appear": "slide_up"}, {})], [0.1]),
+    ("Escala X / Y", None, [(_HOLA, {**_PLAIN, "scale_split": True, "stretch_x": 1.3, "stretch_y": 0.8}, {})], [0.5]),
+    ("Fondo dibujado muy redondeado", None,
+     [("Hola", {**_PLAIN, "bg": "#3050c0", "bg_opacity": 1, "bg_radius": 1, "bg_pad_x": 0.6, "bg_pad_y": 0.6,
+                "border_width": 0, "size": 0.07}, {})], [0.5]),
+    ("sombra lejana y nítida", None,
+     [(_HOLA, {**_PLAIN, "shadow": True, "shadow_color": "#ffffff", "shadow_opacity": 1, "shadow_distance": 0.4,
+               "shadow_angle": 60, "shadow_blur": 0, "border_width": 0}, {})], [0.5]),
+    ("efecto de palabra brillo sin trazo (se desenfoca el relleno)", None,
+     [(_HOLA, {**_CLASSIC_TXT, "word_fx": "glow", "border_width": 0, "block_appear": "none"}, {})], [0.7]),
+    ("Fondo por línea con fundido", None,
+     [(_HOLA, {**_PLAIN, "bg": "#a02020", "bg_opacity": 0.7, "border_width": 3, "block_appear": "fade"}, {})],
+     [0.1]),
 ]
 
 # Croma: los dict crudos de bg_removal.chroma que se normalizan y se pasan a chroma_filters,
@@ -503,9 +520,6 @@ RENDER_TEXT_DIVERGENCES = {
                         "fotograma de rango completo: el texto sale gris (sobre vídeo o negro sale 255)",
 }
 
-# Escenas de RENDER_TEXT de la etapa 2b, que el render aún no dibuja: si da Unsupported, el test
-# las salta; si ya las dibuja, las compara.
-RENDER_TEXT_PENDING = {
-    "Fondo por línea (tema box de Edu, sin aparición)", "Fondo con trazo", "Fondo en bloque redondeado",
-    "sombra paralela", "Brillo (tema neon de Edu)", "efecto de palabra pop", "aparición pop", "aparición deslizar",
-}
+# Escenas de RENDER_TEXT de una etapa siguiente, que el render aún no dibuja: si da Unsupported, el
+# test las salta; si ya las dibuja, las compara.
+RENDER_TEXT_PENDING: set[str] = set()

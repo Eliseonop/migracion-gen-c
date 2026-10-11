@@ -10,6 +10,7 @@
 #include <map>
 #include <mutex>
 #include <set>
+#include <tuple>
 #include <utility>
 
 #include <hb.h>
@@ -26,10 +27,14 @@
 #include "include/core/SkFont.h"
 #include "include/core/SkFontMgr.h"
 #include "include/core/SkImage.h"
+#include "include/core/SkMatrix.h"
 #include "include/core/SkPaint.h"
+#include "include/core/SkPath.h"
+#include "include/core/SkPathBuilder.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkTypeface.h"
+#include "include/effects/SkImageFilters.h"
 
 #ifdef _WIN32
 #include "include/ports/SkTypeface_win.h"
@@ -120,6 +125,7 @@ struct Shaped {
     std::vector<double> y;               // desplazamiento vertical (hacia abajo)
     std::vector<std::uint32_t> clusters; // byte del texto de cada glifo
     std::vector<double> advances;        // avance de cada glifo (sin el espaciado)
+    std::vector<double> x_offsets;       // desplazamiento horizontal de HarfBuzz de cada glifo
     double width = 0;                    // avance total
 };
 
@@ -145,6 +151,7 @@ Shaped shape(const FontFace& ff, std::string_view text, double em, double spacin
         out.y.push_back(-pos[i].y_offset / 64.0);
         out.clusters.push_back(info[i].cluster);
         out.advances.push_back(pos[i].x_advance / 64.0);
+        out.x_offsets.push_back(pos[i].x_offset / 64.0);
         pen += pos[i].x_advance / 64.0 + spacing;
     }
     out.width = pen;
@@ -292,12 +299,17 @@ struct TextParams {
     double asc = 0;     // px
     double desc = 0;    // px
     double spacing = 0; // \fsp, px tras cada glifo
-    double border = 0;  // Outline, px
+    double border = 0;  // Outline, px (entero, el de _style_line)
+    double border_float = 0; // float(border_width): el \bord del evento de la sombra
+    double size_factor = 1;  // ass_size_factor de la fuente (alto de la caja de Fondo dibujada)
     SkColor fill = SK_ColorWHITE;
     SkColor highlight = SK_ColorWHITE;
     SkColor outline = SK_ColorBLACK;
     int alpha_active = 0; // transparencia ASS de la palabra activa
     int alpha_idle = 0;
+    std::optional<SkColor> box; // color del Fondo (sin alfa), si hay
+    int box_alpha = 0;
+    bool box_drawn = false;     // Fondo como forma (box_rects) en vez de BorderStyle 4
 };
 
 int hex_alpha(const std::string& aa) {
@@ -376,13 +388,22 @@ void TextFonts::install_text_width() const {
 
 namespace {
 
-// Glifos de una palabra (lo que libass junta en un mismo mapa de bits) con sus colores.
+// σ de la gaussiana de \blurN en libass, en px por unidad de N: 0,85, el LIBASS_BLUR_SIGMA de
+// text_ass.py. Con la fixture del Brillo es el mejor (0,69: 40,6 dB perdonando 1 px; 0,85: 43,0;
+// 0,95: 40,3); medir la pendiente de un borde recto lo subestima (sale 0,69).
+constexpr double kBlurSigma = 0.85;
+
+// Glifos de una palabra (lo que libass junta en un mismo mapa de bits) con sus colores, su escala
+// (\fscx, \fscy) y su desenfoque (\blur).
 struct Run {
     std::vector<SkGlyphID> ids;
-    std::vector<SkPoint> pos;
+    std::vector<SkPoint> pos; // origen de cada glifo
+    float sx = 1;
+    float sy = 1;
     SkColor fill = SK_ColorWHITE;
     SkColor outline = SK_ColorBLACK;
-    int alpha = 0; // transparencia ASS final (con el fundido)
+    int alpha = 0;   // transparencia ASS final (con el fundido)
+    double blur = 0; // \blur N
 };
 
 struct Mask {
@@ -391,15 +412,25 @@ struct Mask {
     int top = 0;
 };
 
+// Contorno de un glifo de la palabra, escalado y en su sitio.
+std::optional<SkPath> glyph_path(const SkFont& font, const Run& run, std::size_t i) {
+    auto path = font.getPath(run.ids[i]);
+    if (!path) {
+        return std::nullopt;
+    }
+    return path->makeTransform(SkMatrix::Translate(run.pos[i].x(), run.pos[i].y()) * SkMatrix::Scale(run.sx, run.sy));
+}
+
 // Máscara A8 de los glifos: el relleno o, con `border`, la letra engordada `border` px (el mapa
-// de bits del contorno de libass, que incluye el interior).
+// de bits del contorno de libass, que incluye el interior). Los contornos van como rutas (como los
+// rasteriza libass): drawGlyphs pasaría por la caché de Skia, que retoca el antialias.
 std::optional<Mask> glyph_mask(const SkFont& font, const Run& run, double border, const SkIRect& area) {
-    std::vector<SkRect> bounds(run.ids.size());
-    font.getBounds(run.ids, bounds, nullptr);
+    std::vector<SkPath> paths;
     SkRect u = SkRect::MakeEmpty();
-    for (std::size_t i = 0; i < bounds.size(); ++i) {
-        if (!bounds[i].isEmpty()) {
-            u.join(bounds[i].makeOffset(run.pos[i]));
+    for (std::size_t i = 0; i < run.ids.size(); ++i) {
+        if (auto p = glyph_path(font, run, i)) {
+            u.join(p->getBounds());
+            paths.push_back(std::move(*p));
         }
     }
     if (u.isEmpty()) {
@@ -424,17 +455,27 @@ std::optional<Mask> glyph_mask(const SkFont& font, const Run& run, double border
         p.setStrokeWidth(static_cast<float>(2 * border));
         p.setStrokeJoin(SkPaint::kRound_Join);
     }
-    // El contorno de cada glifo como ruta (como lo rasteriza libass): drawGlyphs pasaría por la
-    // caché de glifos de Skia, que retoca el antialias de la letra (gamma y contraste).
-    for (std::size_t i = 0; i < run.ids.size(); ++i) {
-        if (const auto path = font.getPath(run.ids[i])) {
-            c.save();
-            c.translate(run.pos[i].x(), run.pos[i].y());
-            c.drawPath(*path, p);
-            c.restore();
-        }
+    for (const auto& path : paths) {
+        c.drawPath(path, p);
     }
     return m;
+}
+
+// La máscara desenfocada con la gaussiana de \blurN (con margen para el halo).
+Mask blurred(const Mask& m, double n) {
+    const double sigma = kBlurSigma * n;
+    const int margin = static_cast<int>(std::ceil(3 * sigma)) + 1;
+    Mask out;
+    out.left = m.left - margin;
+    out.top = m.top - margin;
+    out.bitmap.allocPixels(SkImageInfo::MakeA8(m.bitmap.width() + 2 * margin, m.bitmap.height() + 2 * margin));
+    out.bitmap.eraseColor(SK_ColorTRANSPARENT);
+    SkCanvas c(out.bitmap);
+    SkPaint p;
+    p.setImageFilter(SkImageFilters::Blur(static_cast<float>(sigma), static_cast<float>(sigma), nullptr));
+    c.drawImage(SkImages::RasterFromBitmap(m.bitmap), static_cast<float>(margin), static_cast<float>(margin),
+                SkSamplingOptions(), &p);
+    return out;
 }
 
 // ass_fix_outline de libass: donde hay relleno, el contorno se aclara (o > g ? o − g/2 : 0) para
@@ -453,24 +494,48 @@ void fix_outline(const Mask& g, Mask& o) {
     }
 }
 
+SkColor with_alpha(SkColor rgb, int ass_alpha) {
+    return SkColorSetA(rgb, static_cast<U8CPU>(255 - std::clamp(ass_alpha, 0, 255)));
+}
+
 void paint_mask(SkCanvas* canvas, const Mask& m, SkColor rgb, int ass_alpha) {
     SkPaint p;
-    p.setColor(SkColorSetA(rgb, static_cast<U8CPU>(255 - std::clamp(ass_alpha, 0, 255))));
+    p.setColor(with_alpha(rgb, ass_alpha));
     canvas->drawImage(SkImages::RasterFromBitmap(m.bitmap), static_cast<float>(m.left), static_cast<float>(m.top),
                       SkSamplingOptions(), &p);
 }
 
-// Un evento de libass (una línea): todos los contornos y después todos los rellenos.
+// Caja de BorderStyle 4 (Fondo por línea): detrás del contorno y del relleno.
+struct LineBox {
+    SkRect rect;
+    SkColor rgb = SK_ColorBLACK;
+    int alpha = 0;
+};
+
+// Un evento de libass (una línea): la caja, todos los contornos y después todos los rellenos. Con
+// \blur se desenfoca el contorno si hay trazo; si no, el relleno.
 void draw_line(SkCanvas* canvas, const SkFont& font, const std::vector<Run>& runs, double border,
-               const SkIRect& area) {
+               const std::optional<LineBox>& box, const SkIRect& area) {
     std::vector<std::optional<Mask>> fills;
     std::vector<std::optional<Mask>> outlines;
     for (const Run& r : runs) {
         fills.push_back(glyph_mask(font, r, 0.0, area));
         outlines.push_back(border > 0 ? glyph_mask(font, r, border, area) : std::nullopt);
+        if (r.blur > 0) {
+            auto& target = outlines.back() ? outlines.back() : fills.back();
+            if (target) {
+                target = blurred(*target, r.blur);
+            }
+        }
         if (fills.back() && outlines.back()) {
             fix_outline(*fills.back(), *outlines.back());
         }
+    }
+    if (box) {
+        SkPaint p;
+        p.setAntiAlias(true);
+        p.setColor(with_alpha(box->rgb, box->alpha));
+        canvas->drawRect(box->rect, p);
     }
     for (std::size_t i = 0; i < runs.size(); ++i) {
         if (outlines[i]) {
@@ -485,13 +550,7 @@ void draw_line(SkCanvas* canvas, const SkFont& font, const std::vector<Run>& run
 }
 
 // Por qué aún no se dibuja este texto quieto con su estilo con la pose (nullopt = se dibuja).
-std::optional<std::string> static_reason(const Json& st, double height) {
-    if (core::box_color(st)) {
-        return "Fondo";
-    }
-    if (core::text_shadow(st, core::text_font_px(st, height))) {
-        return "sombra o Brillo";
-    }
+std::optional<std::string> static_reason(const Json& st) {
     if (core::curve_of(st) != 0) {
         return "Curva";
     }
@@ -499,15 +558,9 @@ std::optional<std::string> static_reason(const Json& st, double height) {
     if ((rot && std::abs(*rot) > 0.05) || truthy(field(st, "flip_h")) || truthy(field(st, "flip_v"))) {
         return "giro o volteo";
     }
-    if (core::stretch_of(st) != std::pair{1.0, 1.0}) {
-        return "Escala X / Y";
-    }
-    const core::WordFx fx = core::word_fx_set(st);
-    if (fx.glow || fx.pop) {
-        return "efecto de palabra brillo o pop";
-    }
     const Json& appear = field(st, "block_appear");
-    if (truthy(appear) && !is_text(appear, "none") && !is_text(appear, "fade") && !is_text(appear, "typing")) {
+    if (truthy(appear) && !is_text(appear, "none") && !is_text(appear, "fade") && !is_text(appear, "typing") &&
+        !is_text(appear, "pop") && !is_text(appear, "slide_up")) {
         return "aparición " + appear.dump();
     }
     if (truthy(field(st, "italic")) || truthy(field(st, "underline"))) {
@@ -527,8 +580,8 @@ Result<TextParams> text_params(const Json& st, double height, const TextFonts& t
     const std::string font = font_of(st);
     const bool bold = bold_of(st);
     const double em_px = size.value_or(NAN) * height * core::text_style_scale(st);
-    const double factor = core::ass_size_factor(font, bold, fonts.dirs);
-    const double fs = std::nearbyint(em_px * factor);
+    tp.size_factor = core::ass_size_factor(font, bold, fonts.dirs);
+    const double fs = std::nearbyint(em_px * tp.size_factor);
     if (!std::isfinite(fs)) {
         return fail(ErrorCode::Unsupported, "tamaño de letra no válido");
     }
@@ -548,6 +601,8 @@ Result<TextParams> text_params(const Json& st, double height, const TextFonts& t
         return fail(ErrorCode::Unsupported, "grosor del trazo no válido");
     }
     tp.border = static_cast<double>(std::max<std::int64_t>(0, *border));
+    // El evento de la sombra lleva \bord{float(border_width)} (el del estilo es entero).
+    tp.border_float = truthy(bw) ? py_float(bw).value_or(0.0) : 0.0;
     const auto fill = ass_color(core::ass_bgr(core::style_color(st, "color", "#ffffff")));
     const auto hi = ass_color(core::ass_bgr(core::style_color(st, "highlight_color", "#ffffff")));
     const auto outline = ass_color(core::ass_bgr(core::style_color(st, "border_color", "#000000")));
@@ -559,6 +614,15 @@ Result<TextParams> text_params(const Json& st, double height, const TextFonts& t
     tp.outline = *outline;
     tp.alpha_active = hex_alpha(core::alpha_hex(core::word_opacity(st, true)));
     tp.alpha_idle = hex_alpha(core::alpha_hex(core::word_opacity(st, false)));
+    if (const auto box = core::box_color(st)) {
+        const auto rgb = ass_color(*box);
+        if (!rgb) {
+            return fail(ErrorCode::Unsupported, "color del Fondo no válido");
+        }
+        tp.box = *rgb;
+        tp.box_alpha = hex_alpha(box->substr(2, 2));
+        tp.box_drawn = core::box_drawn(st);
+    }
     return tp;
 }
 
@@ -574,66 +638,257 @@ int fade_alpha(std::int64_t rel) {
     return 0;
 }
 
-void draw_event(SkCanvas* canvas, const TextParams& tp, const Json& st, const core::TextEvent& e, std::int64_t now,
-                double width, double height) {
+// Avance de \move y de \t(0,180,…) en el instante `rel` del evento: 0 a 1 en 180 ms.
+double appear_progress(std::int64_t rel) {
+    return std::clamp(static_cast<double>(rel) / 180.0, 0.0, 1.0);
+}
+
+// Lo común a los tres tipos de evento de un texto en un instante: el estilo, la geometría de
+// _layout_prefix y la aparición de bloque del primer evento.
+struct EventFrame {
+    const TextParams* tp = nullptr;
+    const Json* st = nullptr;
+    double width = 0;
+    double height = 0;
+    std::int64_t px = 0;
+    std::int64_t py = 0;
+    double half = 0;
+    double inset = 0;
+    double lh = 0;
+    double sx = 1;
+    double sy = 1;
+    int fade = 0;           // transparencia del \fad
+    double slide = 0;       // px que aún baja la línea (\move de slide_up), sin _fmt
+    bool sliding = false;
+    double pop_scale = 1;   // \fscx de la aparición pop (solo lo nota la caja dibujada)
+    bool popping = false;
+};
+
+EventFrame event_frame(const TextParams& tp, const Json& st, const core::TextEvent& e, std::int64_t now,
+                       double width, double height) {
+    EventFrame f;
+    f.tp = &tp;
+    f.st = &st;
+    f.width = width;
+    f.height = height;
+    std::tie(f.px, f.py) = core::text_xy(st, width, height);
+    const auto wbox = py_float(has(st, "w") ? field(st, "w") : Json(0.88)).value_or(0.88);
+    f.half = py_max(0.2, py_min(1.0, wbox)) * width / 2.0 * core::text_style_scale(st);
+    const double font_px = core::text_font_px(st, height);
+    f.inset = 0.2 * font_px;
+    f.lh = font_px * core::text_line_height(st);
+    std::tie(f.sx, f.sy) = core::stretch_of(st);
+    const Json& appear = field(st, "block_appear");
+    const std::int64_t rel = now - e.start_ms;
+    if (e.first && is_text(appear, "fade")) {
+        f.fade = fade_alpha(rel);
+    }
+    if (e.first && is_text(appear, "slide_up")) {
+        f.sliding = true;
+        f.slide = std::max(12.0, std::nearbyint(height * 0.035)) * (1.0 - appear_progress(rel));
+    }
+    if (e.first && is_text(appear, "pop")) {
+        f.popping = true;
+        f.pop_scale = 0.8 + 0.2 * appear_progress(rel);
+    }
+    return f;
+}
+
+// \pos de una línea (o su \move en el instante): _layout_prefix con `off` (la sombra) y `row_dy`.
+SkPoint line_pos(const EventFrame& f, double ax_raw, double row_dy, double off_x, double off_y) {
+    const double ax = static_cast<double>(f.px) + (ax_raw - static_cast<double>(f.px)) * f.sx + off_x;
+    const double ry = static_cast<double>(f.py) + off_y + row_dy * f.sy;
+    double y = fmt2(ry);
+    if (f.sliding) {
+        // \move(ax, ry + dy, ax, ry, 0, 180): de fmt(ry + dy) a fmt(ry)
+        const double dy = std::max(12.0, std::nearbyint(f.height * 0.035));
+        const double y0 = fmt2(ry + dy);
+        y = y0 + (fmt2(ry) - y0) * (dy == 0 ? 1.0 : 1.0 - f.slide / dy);
+    }
+    return {static_cast<float>(fmt2(ax)), static_cast<float>(y)};
+}
+
+double anchor_x(const EventFrame& f) {
+    const Json& align = field(*f.st, "align");
+    return is_text(align, "left")    ? static_cast<double>(f.px) - f.half + f.inset
+           : is_text(align, "right") ? static_cast<double>(f.px) + f.half - f.inset
+                                     : static_cast<double>(f.px);
+}
+
+// Una línea colocada: los glifos de cada palabra con su escala y la caja de la línea (avance ×
+// asc + desc de la palabra más alta).
+struct PlacedLine {
+    std::vector<Run> runs;
+    SkRect box;
+};
+
+PlacedLine place_line(const EventFrame& f, const std::vector<std::string>& words, SkPoint pos,
+                      const std::vector<std::pair<float, float>>& scales) {
+    const TextParams& tp = *f.tp;
+    std::string line;
+    std::vector<std::size_t> word_end; // byte donde acaba cada palabra (con su espacio)
+    for (std::size_t w = 0; w < words.size(); ++w) {
+        line += (w == 0 ? "" : " ") + words[w];
+        word_end.push_back(line.size() + 1);
+    }
+    const Shaped sh = shape(*tp.face, line, tp.em, 0.0, false);
+    PlacedLine out;
+    out.runs.resize(words.size());
+    std::vector<std::size_t> owner(sh.ids.size());
+    std::vector<double> x(sh.ids.size());
+    double pen = 0;
+    for (std::size_t g = 0; g < sh.ids.size(); ++g) {
+        std::size_t w = 0;
+        while (w + 1 < word_end.size() && sh.clusters[g] >= word_end[w]) {
+            ++w;
+        }
+        owner[g] = w;
+        const double s = scales[w].first;
+        x[g] = pen + sh.x_offsets[g] * s;
+        pen += (sh.advances[g] + tp.spacing) * s; // libass escala también el \fsp con \fscx
+    }
+    double asc = 0;
+    double desc = 0;
+    for (const auto& [s_x, s_y] : scales) {
+        asc = std::max(asc, tp.asc * s_y);
+        desc = std::max(desc, tp.desc * s_y);
+    }
+    const Json& align = field(*f.st, "align");
+    const double left = is_text(align, "left")    ? pos.x()
+                        : is_text(align, "right") ? pos.x() - pen
+                                                  : pos.x() - pen / 2;
+    const double baseline = pos.y() + asc - (asc + desc) / 2;
+    for (std::size_t g = 0; g < sh.ids.size(); ++g) {
+        const std::size_t w = owner[g];
+        const auto [s_x, s_y] = scales[w];
+        out.runs[w].ids.push_back(sh.ids[g]);
+        out.runs[w].pos.push_back({static_cast<float>(left + x[g]), static_cast<float>(baseline + sh.y[g] * s_y)});
+        out.runs[w].sx = s_x;
+        out.runs[w].sy = s_y;
+    }
+    out.box = SkRect::MakeLTRB(static_cast<float>(left), static_cast<float>(baseline - asc),
+                               static_cast<float>(left + pen), static_cast<float>(baseline + desc));
+    return out;
+}
+
+SkFont make_font(const TextParams& tp) {
     SkFont font(tp.face->typeface, static_cast<float>(tp.em));
     font.setHinting(SkFontHinting::kNone);
     font.setSubpixel(true);
     font.setLinearMetrics(true);
     font.setEdging(SkFont::Edging::kAntiAlias);
-    const int fade = e.first && is_text(field(st, "block_appear"), "fade") ? fade_alpha(now - e.start_ms) : 0;
+    return font;
+}
 
-    // _layout_prefix: \pos de cada línea
-    const auto [px, py] = core::text_xy(st, width, height);
-    const auto wbox = py_float(has(st, "w") ? field(st, "w") : Json(0.88)).value_or(0.88);
-    const double half = py_max(0.2, py_min(1.0, wbox)) * width / 2.0 * core::text_style_scale(st);
-    const double font_px = core::text_font_px(st, height);
-    const double inset = 0.2 * font_px;
-    const double lh = font_px * core::text_line_height(st);
-    const Json& align = field(st, "align");
-    const auto rows = core::text_rows(st, width, height, e.content.text);
-    const SkIRect area = SkIRect::MakeWH(static_cast<int>(width), static_cast<int>(height));
-
+// Evento del texto (capa 2i+1): por línea, la caja de BorderStyle 4 si hay Fondo sin dibujar, y
+// cada palabra con su color, su opacidad, el pop (\fscx118) o el brillo (\blur3) de la activa.
+void draw_text_event(SkCanvas* canvas, const EventFrame& f, const core::TextEvent& e) {
+    const TextParams& tp = *f.tp;
+    const SkFont font = make_font(tp);
+    const core::WordFx fx = core::word_fx_set(*f.st);
+    const auto rows = core::text_rows(*f.st, f.width, f.height, e.content.text);
+    const SkIRect area = SkIRect::MakeWH(static_cast<int>(f.width), static_cast<int>(f.height));
     std::int64_t gi = 0;
     for (std::size_t i = 0; i < rows.size(); ++i) {
         if (rows[i].empty()) {
             continue;
         }
-        std::string line;
-        std::vector<std::size_t> word_end; // byte donde acaba cada palabra (con su espacio)
+        const double row_dy = (static_cast<double>(i) - static_cast<double>(rows.size() - 1) / 2.0) * f.lh;
+        std::vector<std::pair<float, float>> scales;
+        std::vector<bool> active;
         for (std::size_t w = 0; w < rows[i].size(); ++w) {
-            line += (w == 0 ? "" : " ") + rows[i][w];
-            word_end.push_back(line.size() + 1);
+            active.push_back(e.content.is_active(gi + static_cast<std::int64_t>(w)));
+            const double s = active.back() && fx.pop ? 1.18 : 1.0; // _fsc(st, 118) de la activa con pop
+            scales.emplace_back(static_cast<float>(s * f.sx), static_cast<float>(s * f.sy));
         }
-        const double row_dy = (static_cast<double>(i) - static_cast<double>(rows.size() - 1) / 2.0) * lh;
-        const double ax = is_text(align, "left")    ? static_cast<double>(px) - half + inset
-                          : is_text(align, "right") ? static_cast<double>(px) + half - inset
-                                                    : static_cast<double>(px);
-        const double pos_x = fmt2(ax);
-        const double pos_y = fmt2(static_cast<double>(py) + row_dy);
-        const Shaped sh = shape(*tp.face, line, tp.em, tp.spacing, false);
-        const double left = is_text(align, "left")    ? pos_x
-                            : is_text(align, "right") ? pos_x - sh.width
-                                                      : pos_x - sh.width / 2;
-        const double baseline = pos_y + tp.asc - (tp.asc + tp.desc) / 2;
-
-        std::vector<Run> runs(rows[i].size());
-        for (std::size_t w = 0; w < runs.size(); ++w) {
-            const bool active = e.content.is_active(gi + static_cast<std::int64_t>(w));
-            runs[w].fill = active ? tp.highlight : tp.fill;
-            runs[w].outline = tp.outline;
-            runs[w].alpha = mult_alpha(active ? tp.alpha_active : tp.alpha_idle, fade);
+        PlacedLine pl = place_line(f, rows[i], line_pos(f, anchor_x(f), row_dy, 0, 0), scales);
+        for (std::size_t w = 0; w < pl.runs.size(); ++w) {
+            pl.runs[w].fill = active[w] ? tp.highlight : tp.fill;
+            pl.runs[w].outline = tp.outline;
+            pl.runs[w].alpha = mult_alpha(active[w] ? tp.alpha_active : tp.alpha_idle, f.fade);
+            pl.runs[w].blur = active[w] && fx.glow ? 3.0 : 0.0;
         }
-        for (std::size_t g = 0; g < sh.ids.size(); ++g) {
-            std::size_t w = 0;
-            while (w + 1 < word_end.size() && sh.clusters[g] >= word_end[w]) {
-                ++w;
-            }
-            runs[w].ids.push_back(sh.ids[g]);
-            runs[w].pos.push_back({static_cast<float>(left + sh.x[g]), static_cast<float>(baseline + sh.y[g])});
+        std::optional<LineBox> box;
+        if (tp.box && !tp.box_drawn) {
+            box = LineBox{pl.box.makeOutset(static_cast<float>(tp.border), static_cast<float>(tp.border)), *tp.box,
+                          mult_alpha(tp.box_alpha, f.fade)};
         }
-        draw_line(canvas, font, runs, tp.border, area);
+        draw_line(canvas, font, pl.runs, tp.border, box, area);
         gi += static_cast<std::int64_t>(rows[i].size());
+    }
+}
+
+// Evento de la sombra paralela o del halo del Brillo (capa 2i): la silueta (relleno y trazo en su
+// color) desplazada, con su opacidad y \blur (shadow_dialogues y _shadow_override).
+void draw_shadow_event(SkCanvas* canvas, const EventFrame& f, const core::TextShadow& sh, const std::string& text) {
+    const TextParams& tp = *f.tp;
+    const auto rgb = ass_color(core::ass_bgr(sh.color));
+    if (!rgb) {
+        return;
+    }
+    const SkFont font = make_font(tp);
+    const int alpha = mult_alpha(hex_alpha(core::alpha_hex(sh.opacity * core::style_opacity(*f.st))), f.fade);
+    const double blur = fmt2(sh.sigma / 0.85); // \blur{_fmt(σ / LIBASS_BLUR_SIGMA)}
+    const double border = fmt2(tp.border_float + sh.spread);
+    const auto rows = core::text_rows(*f.st, f.width, f.height, text);
+    const SkIRect area = SkIRect::MakeWH(static_cast<int>(f.width), static_cast<int>(f.height));
+    for (std::size_t i = 0; i < rows.size(); ++i) {
+        if (rows[i].empty()) {
+            continue;
+        }
+        const double row_dy = (static_cast<double>(i) - static_cast<double>(rows.size() - 1) / 2.0) * f.lh;
+        const std::vector<std::pair<float, float>> scales(
+            rows[i].size(), {static_cast<float>(f.sx), static_cast<float>(f.sy)});
+        PlacedLine pl = place_line(f, rows[i], line_pos(f, anchor_x(f), row_dy, sh.dx, sh.dy), scales);
+        for (auto& r : pl.runs) {
+            r.fill = *rgb;
+            r.outline = *rgb;
+            r.alpha = alpha;
+            r.blur = blur;
+        }
+        draw_line(canvas, font, pl.runs, border, std::nullopt, area);
+    }
+}
+
+// Fondo dibujado (capa 2i, box_dialogues): un rectángulo redondeado por caja de box_rects, en su
+// \pos y con la aparición del texto (la pop sí escala la forma: sus etiquetas no reponen \fscx).
+void draw_box_event(SkCanvas* canvas, const EventFrame& f, const std::string& text) {
+    const TextParams& tp = *f.tp;
+    const auto rows = core::text_rows(*f.st, f.width, f.height, text);
+    const double radius = std::max(0.0, std::min(1.0, py_float(field(*f.st, "bg_radius")).value_or(0.0)));
+    const double scale_x = f.popping ? f.pop_scale * f.sx : 1.0;
+    const double scale_y = f.popping ? f.pop_scale * f.sy : 1.0;
+    SkPaint p;
+    p.setAntiAlias(true);
+    p.setColor(with_alpha(*tp.box, mult_alpha(tp.box_alpha, f.fade)));
+    for (const auto& b : core::box_rects(*f.st, f.width, f.height, rows, tp.size_factor)) {
+        // _rrect_path(w · sx, h · sy, radio) con las coordenadas a 2 decimales (_fmt)
+        const double w = fmt2(b.w * f.sx);
+        const double h = fmt2(b.h * f.sy);
+        const SkPoint pos = line_pos(f, static_cast<double>(f.px) + b.x, b.y, 0, 0);
+        const double r = radius * std::min(w, h) / 2;
+        const double k = r * (1 - 0.5523);
+        SkPathBuilder pb;
+        if (r <= 0) {
+            pb.addRect(SkRect::MakeWH(static_cast<float>(w), static_cast<float>(h)));
+        } else {
+            const auto F = [](double v) { return static_cast<float>(fmt2(v)); };
+            pb.moveTo(F(r), 0);
+            pb.lineTo(F(w - r), 0);
+            pb.cubicTo(F(w - k), 0, F(w), F(k), F(w), F(r));
+            pb.lineTo(F(w), F(h - r));
+            pb.cubicTo(F(w), F(h - k), F(w - k), F(h), F(w - r), F(h));
+            pb.lineTo(F(r), F(h));
+            pb.cubicTo(F(k), F(h), 0, F(h - k), 0, F(h - r));
+            pb.lineTo(0, F(r));
+            pb.cubicTo(0, F(k), F(k), 0, F(r), 0);
+            pb.close();
+        }
+        // \an5 de un dibujo: el centro de la forma (ya escalada) en el \pos
+        const SkPath path = pb.detach().makeTransform(
+            SkMatrix::Translate(pos.x() - static_cast<float>(w * scale_x / 2), pos.y() - static_cast<float>(h * scale_y / 2)) *
+            SkMatrix::Scale(static_cast<float>(scale_x), static_cast<float>(scale_y)));
+        canvas->drawPath(path, p);
     }
 }
 
@@ -658,6 +913,7 @@ Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline,
     const std::int64_t now = core::ass_frame_ms(k, fps);
     const double t = static_cast<double>(k) / fps;
     const auto buried = core::buried_text_track_ids(timeline.tracks);
+    const auto visible_at = [now](const core::TextEvent& e) { return e.start_ms <= now && now < e.end_ms; };
 
     for (const auto& cow : timeline.clips) {
         const core::TimelineClip& clip = *cow;
@@ -674,34 +930,47 @@ Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline,
             c.text = core::apply_text_case(c.text.value_or(""), base.at("text_case"));
         }
         const Json st = core::posed_text_style(c, base, 0.0);
-        std::optional<std::string> reason;
-        std::vector<core::TextEvent> visible;
         const double start = std::max(0.0, c.start);
+        const double dur = core::text_clip_duration(c);
         if (core::text_animates(c, fps)) {
-            if (t >= start && t < start + core::text_clip_duration(c)) {
-                reason = "texto animado";
-            }
-        } else {
-            for (auto& e : core::static_text_events(c, st)) {
-                if (e.start_ms <= now && now < e.end_ms) {
-                    visible.push_back(std::move(e));
+            if (t >= start && t < start + dur) {
+                const std::string msg = std::format("texto {}: texto animado aún no se dibuja", c.id);
+                if (!omit) {
+                    return fail(ErrorCode::Unsupported, msg);
+                }
+                if (warnings != nullptr) {
+                    warnings->push_back(msg);
                 }
             }
-            if (visible.empty()) {
-                continue;
-            }
-            const core::TextPose pose = core::text_pose_at(c, 0.0);
-            if (buried.contains(c.track_id)) {
-                reason = "pista de texto con vídeo encima";
-            } else if (core::has_mask(c) || core::clip_blend(c) != "normal" || std::abs(pose.rot_x) >= 0.05 ||
-                       std::abs(pose.rot_y) >= 0.05) {
-                reason = "máscara, fusión o giro 3D";
-            } else {
-                reason = static_reason(st, height);
-            }
-        }
-        if (!reason && visible.empty()) {
             continue;
+        }
+        // Los eventos del texto y, con sombra o Fondo dibujado, los de su capa de abajo: todo el
+        // clip (o los pasos de «escribir») con el texto entero.
+        const auto text_events = core::static_text_events(c, st);
+        std::vector<core::TextEvent> under_events;
+        if (is_text(field(st, "block_appear"), "typing")) {
+            under_events = text_events;
+        } else {
+            under_events.push_back({core::ass_time_ms(start), core::ass_time_ms(start + std::max(0.04, dur)),
+                                    core::TextContent{c.text.value_or("")}, true});
+        }
+        const double font_px = core::text_font_px(st, height);
+        const auto shadow = core::text_shadow(st, font_px);
+        const bool drawn_box = core::box_drawn(st);
+        const bool any_text = std::ranges::any_of(text_events, visible_at);
+        const bool any_under = (shadow || drawn_box) && std::ranges::any_of(under_events, visible_at);
+        if (!any_text && !any_under) {
+            continue;
+        }
+        std::optional<std::string> reason;
+        const core::TextPose pose = core::text_pose_at(c, 0.0);
+        if (buried.contains(c.track_id)) {
+            reason = "pista de texto con vídeo encima";
+        } else if (core::has_mask(c) || core::clip_blend(c) != "normal" || std::abs(pose.rot_x) >= 0.05 ||
+                   std::abs(pose.rot_y) >= 0.05) {
+            reason = "máscara, fusión o giro 3D";
+        } else {
+            reason = static_reason(st);
         }
         Result<TextParams> tp = reason ? Result<TextParams>(fail(ErrorCode::Unsupported, *reason))
                                        : text_params(st, height, fonts);
@@ -715,8 +984,21 @@ Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline,
             }
             continue;
         }
-        for (const auto& e : visible) {
-            draw_event(sk, *tp, st, e, now, width, height);
+        // Capa 2i: el Fondo dibujado y después la sombra; capa 2i+1: el texto.
+        for (const auto& e : under_events) {
+            if (drawn_box && visible_at(e)) {
+                draw_box_event(sk, event_frame(*tp, st, e, now, width, height), e.content.text);
+            }
+        }
+        for (const auto& e : under_events) {
+            if (shadow && visible_at(e)) {
+                draw_shadow_event(sk, event_frame(*tp, st, e, now, width, height), *shadow, e.content.text);
+            }
+        }
+        for (const auto& e : text_events) {
+            if (visible_at(e)) {
+                draw_text_event(sk, event_frame(*tp, st, e, now, width, height), e);
+            }
         }
     }
     return {};
