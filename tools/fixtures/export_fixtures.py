@@ -17,6 +17,7 @@ Salida (al repo):
   tests/fixtures/media/synthetic.json      cabeceras de imagen (images.probe_gif) y sondas de medios: media_cases.py
   tests/fixtures/export_input/synthetic.json  cómo lee el export el material (clip_kind.py): export_input_cases.py
   tests/fixtures/media/decode.json         decode como el export: media_cases.DECODE (MD5 por fotograma del ffmpeg del PATH)
+  tests/fixtures/media/seek.json           seek exacto de frame_grab.extract_frame: media_cases.SEEK
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
@@ -2101,6 +2102,8 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "export_input" / "synthetic.json", exi, len(exi["clips"]), 0)
     med = synthetic_media_fixtures()
     dec = synthetic_decode_fixtures(ctx)
+    seek = synthetic_seek_fixtures()
+    write(REPO / "tests" / "fixtures" / "media" / "seek.json", seek, len(seek), 0)
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)

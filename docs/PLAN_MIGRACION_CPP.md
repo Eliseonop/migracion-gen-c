@@ -1035,3 +1035,11 @@ Decisión de Edu (§6):
 - **Pendiente:** el seek exacto (`frame_grab.extract_frame`, `-ss t` antes de `-i`), el autogiro de los vídeos del móvil, el WebM VP9 con alfa (libvpx) y el hwaccel.
 
 **Revisión del subagente:** APROBADO, con dos diferencias de paridad con el CLI que ya están arregladas: el CLI desplaza las marcas de tiempo con `ts_offset = −start_time` del contenedor (con un MKV que empieza en 0,5 s, el CLI daba 24 fotogramas y el C++ 9) y salta los paquetes que no se pueden decodificar (con 300 bytes invertidos a mitad de un H.264, el CLI daba 49 fotogramas y el C++ abortaba). Hay 3 casos nuevos en la fixture (16 casos, 307 fotogramas) y se comprobó con dos mutantes a mano que, sin cada arreglo, el test falla. Menores: comprobación de memoria en `av_buffersrc_parameters_alloc` y de `-t` al leerlo. MSVC + vcpkg: 117 tests y 182 197 aserciones, 0 warnings.
+
+### 2026-10-11 — F3: el seek exacto (frame_grab.extract_frame)
+
+- **Hecho:** `frame_at(ruta, t)` en `gc_media`: los argumentos de `extract_frame` (`-ss {max(0, t):.3f}` antes de `-i`, `-frames:v 1`) y el decode con «-ss» como el CLI: `avformat_seek_file` al instante más el `start_time`, `ts_offset = −(ss + start_time)` y `trim=starti=0`, así que sale el primer fotograma con pts ≥ t; nada si `t` cae después del último. El escalado y el JPEG de `extract_frame` son presentación y no se comparan.
+- **Medido antes de portar:** la sincronización CFR de la salida no cambia el fotograma; testsrc2 repite contenido entre fotogramas, así que el índice por MD5 engaña y hay que contar fotogramas.
+- **Verificación:** 46 instantes en 8 medios (justo en un fotograma, entre dos, negativos, NaN, dentro del hueco del VFR, más allá del final, PNG y GIF), con el mismo MD5 que el ffmpeg del PATH. Sin el `trim=starti=0`, fallan 27 de 200 aserciones (mutante a mano). MSVC + vcpkg: 118 tests y 182 397 aserciones, 0 warnings; MinGW: 114/114.
+
+**Siguiente:** WebM VP9 con alfa (feature `vpx` de vcpkg) y autogiro.

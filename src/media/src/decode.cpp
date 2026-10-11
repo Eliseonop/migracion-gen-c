@@ -1,5 +1,6 @@
 #include "gc/media/decode.hpp"
 
+#include <algorithm>
 #include <array>
 #include <charconv>
 #include <cmath>
@@ -62,6 +63,7 @@ struct InputOptions {
     std::string path;
     std::string decoder;                   // -c:v
     std::optional<std::int64_t> duration_us; // -t, en µs (como av_parse_time del CLI)
+    std::optional<std::int64_t> seek_us;     // -ss antes de -i: seek exacto
     std::vector<std::pair<std::string, std::string>> demuxer; // -loop, -framerate…
 };
 
@@ -79,13 +81,13 @@ Result<InputOptions> parse_input_args(const std::vector<std::string>& args) {
             have_input = true;
         } else if (a == "-c:v") {
             out.decoder = v;
-        } else if (a == "-t") {
+        } else if (a == "-t" || a == "-ss") {
             double s = 0.0;
             const auto [end, ec] = std::from_chars(v.data(), v.data() + v.size(), s);
             if (ec != std::errc{} || end != v.data() + v.size() || !std::isfinite(s)) {
-                return fail(ErrorCode::InvalidArgument, "duración de entrada no válida: " + v);
+                return fail(ErrorCode::InvalidArgument, "instante o duración de entrada no válidos: " + v);
             }
-            out.duration_us = std::llround(s * 1e6);
+            (a == "-t" ? out.duration_us : out.seek_us) = std::llround(s * 1e6);
         } else {
             out.demuxer.emplace_back(a.substr(1), v);
         }
@@ -174,8 +176,16 @@ private:
         // El CLI desplaza las marcas de tiempo de cada paquete con `ts_offset = −start_time` del
         // contenedor (sin -copyts), así que el `trim` de la cadena cuenta desde el principio del
         // archivo aunque el contenedor no empiece en 0.
+        // Con -ss, el CLI salta a ese instante (más el start_time) y lo resta también: lo que
+        // queda antes sale con marcas negativas y el `trim=starti=0` de la cadena lo descarta.
         const std::int64_t start = fmt_->start_time != AV_NOPTS_VALUE ? fmt_->start_time : 0;
-        ts_offset_ = av_rescale_q(-start, AV_TIME_BASE_Q, st->time_base);
+        const std::int64_t seek = opts_.seek_us.value_or(0);
+        if (opts_.seek_us) {
+            const std::int64_t ts = seek + start;
+            // Si falla, el CLI solo avisa y sigue desde el principio (el trim hace el resto).
+            static_cast<void>(avformat_seek_file(fmt_.get(), -1, INT64_MIN, ts, ts, 0));
+        }
+        ts_offset_ = av_rescale_q(-(seek + start), AV_TIME_BASE_Q, st->time_base);
         dec_.reset(avcodec_alloc_context3(codec));
         if (!dec_ || avcodec_parameters_to_context(dec_.get(), st->codecpar) < 0) {
             return fail(ErrorCode::Internal, "no se pudo preparar el decodificador");
@@ -219,8 +229,13 @@ private:
         if (avfilter_init_str(sink_, nullptr) < 0) {
             return fail(ErrorCode::Internal, "no se pudo preparar la salida del grafo");
         }
-        std::string desc = (opts_.duration_us ? duration_trim(*opts_.duration_us) : std::string()) + spec_.chain;
-        desc += desc.empty() ? "format=rgba" : ",format=rgba";
+        // Lo que el CLI pone delante (seek exacto y -t), la cadena del export y el formato de salida.
+        std::string desc = (opts_.seek_us ? std::string("trim=starti=0,") : std::string()) +
+                           (opts_.duration_us ? duration_trim(*opts_.duration_us) : std::string()) + spec_.chain;
+        if (!desc.empty() && desc.back() != ',') {
+            desc += ',';
+        }
+        desc += "format=rgba";
         std::unique_ptr<AVFilterInOut, InOutFree> outputs(avfilter_inout_alloc());
         std::unique_ptr<AVFilterInOut, InOutFree> inputs(avfilter_inout_alloc());
         outputs->name = av_strdup("in");
@@ -336,6 +351,21 @@ DecodeSpec export_decode_spec(const core::TimelineClip& clip, const std::filesys
 
 Result<std::size_t> decode_frames(const DecodeSpec& spec, const std::function<bool(const RgbaFrame&)>& on_frame) {
     return Decoder(spec, on_frame).run();
+}
+
+Result<std::optional<RgbaFrame>> frame_at(const std::filesystem::path& path, double t) {
+    // extract_frame: `t = max(0.0, float(at_time))` (un NaN da 0) y `f"{t:.3f}"`.
+    const double ss = std::max(0.0, t);
+    const DecodeSpec spec{{"-ss", std::format("{:.3f}", ss), "-i", core::path_to_utf8(path)}, ""};
+    std::optional<RgbaFrame> out;
+    auto n = decode_frames(spec, [&](const RgbaFrame& f) {
+        out = f;
+        return false; // -frames:v 1
+    });
+    if (!n) {
+        return std::unexpected(n.error());
+    }
+    return out;
 }
 
 std::string md5_hex(std::span<const std::uint8_t> data) {

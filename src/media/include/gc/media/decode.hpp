@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <functional>
+#include <optional>
 #include <span>
 #include <string>
 #include <vector>
@@ -45,6 +46,11 @@ inline constexpr const char* kAssumeBt709Filter =
 // -start_number, -ignore_loop).
 [[nodiscard]] Result<std::size_t> decode_frames(const DecodeSpec& spec,
                                                       const std::function<bool(const RgbaFrame&)>& on_frame);
+
+// El fotograma del instante `t` como frame_grab.extract_frame (sin su escalado ni el JPEG):
+// `-ss {max(0, t):.3f}` antes de `-i` y `-frames:v 1`, es decir, el primer fotograma con
+// pts ≥ t (redondeado a ms). Nada (nullopt) si `t` queda después del último.
+[[nodiscard]] Result<std::optional<RgbaFrame>> frame_at(const std::filesystem::path& path, double t);
 
 // MD5 en hexadecimal (av_md5): para comparar fotogramas con las fixtures.
 [[nodiscard]] std::string md5_hex(std::span<const std::uint8_t> data);

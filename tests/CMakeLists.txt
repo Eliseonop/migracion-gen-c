@@ -42,7 +42,8 @@ target_compile_definitions(gc_tests PRIVATE
 gc_set_warnings(gc_tests)
 # Con FFmpeg (vcpkg), los tests de gc_media.
 if(TARGET gc_media)
-    target_sources(gc_tests PRIVATE parity/test_probe_parity.cpp parity/test_decode_parity.cpp)
+    target_sources(gc_tests PRIVATE parity/test_probe_parity.cpp parity/test_decode_parity.cpp
+                   parity/test_seek_parity.cpp)
     target_link_libraries(gc_tests PRIVATE gc::media)
 endif()
 # MSVC sabe que FAIL() lanza y da por inalcanzable el `return`/`throw` que GCC necesita detrás.
