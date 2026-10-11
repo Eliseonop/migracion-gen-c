@@ -1061,3 +1061,10 @@ Decisión de Edu (§6):
 - **Queda anotado:** la regla «0 fotogramas con errores de decode ⇒ error» también se aplica al export (`decode_frames`), donde un `trim` vacío sobre un archivo con paquetes rotos daría error y el CLI, nada. Es un caso marginal; revisarlo con la caché de fotogramas.
 
 **Siguiente:** Skia (compilándose con vcpkg en modo clásico) y el arranque de `gc_render`.
+
+### 2026-10-11 — F3: Skia y el arranque de `gc_render`
+
+- **Hecho:** Skia 148 con vcpkg (feature `render`, con sus features por defecto), compilado una vez en modo clásico (11 min) para dejarlo en la caché binaria; el build lo restaura en segundos. `gc_render` (`src/render`, solo si hay Skia) con su primera pieza: `Canvas`, un lienzo raster RGBA (premultiplicado por dentro y sin premultiplicar al leerlo, como `gc::media::RgbaFrame`), con `clear` y `fill_rect`; Skia queda detrás de un pimpl. También `tests/utf8.manifest`, para que el CI de Windows encuentre los tests con tildes.
+- **Verificación:** 3 tests del lienzo (dimensiones no válidas, relleno exacto por píxel y src-over semitransparente leído sin premultiplicar). MSVC + vcpkg: 122/122, 0 warnings; MinGW: 114/114 en Debug y Release.
+
+**Siguiente:** dibujar los blits de `frame.hpp` (imagen con transformación afín, recorte y opacidad) y la primera fixture de render contra `compose.py`/ffmpeg.

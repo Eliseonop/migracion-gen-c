@@ -31,6 +31,13 @@ if(FFMPEG_FOUND)
     message(STATUS "FFmpeg encontrado: se compila gc_media")
 endif()
 
+# Skia (gc_render): igual, solo con vcpkg (feature `render`). El paquete de vcpkg da el objetivo
+# unofficial::skia::skia, con las cabeceras en include/skia («include/core/SkCanvas.h»).
+find_package(unofficial-skia CONFIG QUIET)
+if(unofficial-skia_FOUND)
+    message(STATUS "Skia encontrado: se compila gc_render")
+endif()
+
 if(GC_BUILD_TESTS)
     FetchContent_Declare(Catch2
         URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.9.1.tar.gz

@@ -46,6 +46,11 @@ if(TARGET gc_media)
                    parity/test_seek_parity.cpp)
     target_link_libraries(gc_tests PRIVATE gc::media)
 endif()
+# Con Skia (vcpkg), los de gc_render.
+if(TARGET gc_render)
+    target_sources(gc_tests PRIVATE unit/test_render_canvas.cpp)
+    target_link_libraries(gc_tests PRIVATE gc::render)
+endif()
 # MSVC sabe que FAIL() lanza y da por inalcanzable el `return`/`throw` que GCC necesita detrás.
 # El manifiesto pone argv en UTF-8: si no, con una página de códigos ANSI que no lo sea (la del
 # CI), Catch2 no encuentra los tests con tildes que ctest le pide por nombre.

@@ -29,6 +29,12 @@
           ]
         }
       ]
+    },
+    "render": {
+      "description": "gc_render: Skia por CPU (con las features por defecto: harfbuzz, icu, jpeg, png, webp, gl)",
+      "dependencies": [
+        "skia"
+      ]
     }
   }
 }
