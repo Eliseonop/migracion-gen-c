@@ -1092,3 +1092,11 @@ Decisión de Edu (§6):
 - **Verificación:** 13 fotogramas nuevos de `compose.render_frame` con vídeos de ondas que cambian ~1 rad por fotograma: overlay con `in_point` e inicio, 25 fps sobre 30, velocidad 1,5, al revés y una imagen debajo con un vídeo encima. Vídeos: 66,8–67,6 dB de luma (la elección del fotograma coincide con el export en todos); dos clips: 51,5 dB. Mutante «un fotograma de más»: ~24 dB, falla. MSVC + vcpkg: 129/129, 0 warnings; MinGW: 114/114.
 
 **Siguiente:** PNG con alfa, cortinilla y fundidos (`fx.opacity`), y `genclip frame … --at t`.
+
+### 2026-10-11 — F3: alfa, fundidos y cortinilla en el render
+
+- **Hecho:** sin código nuevo en `gc_render`: la fixture de render cubre ahora un PNG con alfa sobre otra imagen (51,1 dB de luma), el fundido de entrada y de salida (52,2–66,9 dB) y la cortinilla (69,7 dB), todos frente a `compose.render_frame`.
+- **Divergencia nueva:** el zoom (y el pop) de aparición o salida en un overlay estático crece desde la esquina superior izquierda en el export (`scale=eval=frame` con el overlay fijo en `x=ox:y=oy`) y desde el centro en el preview: 20 dB. Afecta a 7 clips de Edu; queda como decisión suya y el caso, fuera de la fixture.
+- **Verificación:** 27 fotogramas de render. MSVC + vcpkg: 129/129, 0 warnings; MinGW: 114/114.
+
+**Siguiente:** `genclip frame <proyecto> <timeline> --at t` (un PNG del fotograma compuesto).

@@ -230,6 +230,10 @@ RENDER_MEDIA = [
     ("waves.png", ["-f", "lavfi", "-i",
                    "nullsrc=s=320x180,format=rgb24,geq=r='128+110*sin(Y*0.35)':"
                    "g='128+55*sin(X*0.35)+55*sin(Y*0.3)':b='128+110*sin((X+Y)*0.2)'", "-frames:v", "1"]),
+    # Un círculo con el borde semitransparente (alfa de 255 hasta 50 px del centro y 0 a 90 px).
+    ("alpha.png", ["-f", "lavfi", "-i",
+                   "nullsrc=s=320x180,format=rgba,geq=r='200':g='60+X/2':b='40+Y':"
+                   "a='255*max(0,min(1,(90-hypot(X-160,Y-90))/40))'", "-frames:v", "1"]),
 ]
 # Timelines de 360×640 a 30 fps con un clip de imagen en overlay: (nombre, archivo, campos del
 # clip, instantes). El fondo del export es negro. El reframe lleva crop_w/crop_h, como 218 de
@@ -302,4 +306,22 @@ RENDER_SCENES = [
       ("moving30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
                               "transform": {"x": 0.5, "y": 0.4015625, "scale": 0.5}})],  # y·640 − 45 = 212, par
      [0.5]),
+    ("png con alfa sobre ondas", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                           "transform": {"x": 0.5, "y": 0.3, "scale": 1.0}}),
+      ("alpha.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                           "transform": {"x": 0.5, "y": 0.3, "scale": 1.0}})],
+     [0.5]),
+    # Aparición y salida (FX_DUR = 0,4 s): a mitad del fundido y de la cortinilla.
+    ("fundido de entrada y de salida", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "appear": "fade",
+                               "exit": "fade", "transform": _CENTER})],
+     [0.2, 1.0, 1.8]),
+    ("cortinilla de entrada", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "appear": "wipe",
+                               "transform": _CENTER})],
+     [0.2]),
+    # Sin el zoom (ni el pop) de aparición o salida: en un overlay estático el export escala con
+    # `scale=eval=frame` pero el overlay se queda en x=ox:y=oy, así que crece desde la esquina
+    # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).
 ]
