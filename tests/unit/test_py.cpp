@@ -5,6 +5,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <limits>
 #include <utility>
 
 #include "json_reader.hpp"
@@ -29,7 +30,8 @@ TEST_CASE("py_round redondea como round() de Python", "[py]") {
     const double neg_zero = py_round(-0.0004, 3);
     CHECK(neg_zero == 0.0);
     CHECK(std::signbit(neg_zero)); // Python devuelve -0.0
-    CHECK(std::isinf(py_round(INFINITY, 3)));
+    // INFINITY es float: con Apple Clang, -Wdouble-promotion lo convierte en error.
+    CHECK(std::isinf(py_round(std::numeric_limits<double>::infinity(), 3)));
 }
 
 TEST_CASE("py_repr escribe los reales como Python", "[py]") {
@@ -37,7 +39,7 @@ TEST_CASE("py_repr escribe los reales como Python", "[py]") {
     CHECK(py_repr(0.1) == "0.1");
     CHECK(py_repr(1e-05) == "1e-05");
     CHECK(py_repr(-0.0) == "-0.0");
-    CHECK(py_repr(INFINITY) == "inf");
+    CHECK(py_repr(std::numeric_limits<double>::infinity()) == "inf");
 }
 
 TEST_CASE("py_strip y py_slice trabajan con caracteres, no con bytes", "[py]") {

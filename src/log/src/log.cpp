@@ -3,9 +3,11 @@
 #include <algorithm>
 #include <array>
 #include <cstdlib>
+#include <iterator>
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
@@ -57,8 +59,13 @@ Level level_from_env(Level fallback) {
 void init(Level level, std::vector<spdlog::sink_ptr> extra) {
     auto console = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
     console->set_pattern("%^%l%$: %v");
-    extra.insert(extra.begin(), std::move(console));
-    auto logger = std::make_shared<spdlog::logger>("genclip", extra.begin(), extra.end());
+    // Un vector nuevo con reserve en vez de insertar al principio de `extra`: el insert
+    // con realojo da un falso positivo de -Wnull-dereference en GCC 13 (el del CI de Linux).
+    std::vector<spdlog::sink_ptr> sinks;
+    sinks.reserve(extra.size() + 1);
+    sinks.push_back(std::move(console));
+    std::ranges::move(extra, std::back_inserter(sinks));
+    auto logger = std::make_shared<spdlog::logger>("genclip", sinks.begin(), sinks.end());
     logger->set_level(level);
     spdlog::set_default_logger(std::move(logger));
 }
