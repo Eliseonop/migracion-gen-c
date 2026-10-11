@@ -1015,3 +1015,5 @@ Decisión de Edu (§6):
 - **Verificación:** 17 medios sintéticos generados una vez con ffmpeg (`tests/fixtures/media/files`, en git-lfs) y 2 rutas que no existen, contra las funciones de Python con su ffprobe; 120 de tus medios en su sitio (MP4, WAV, WebM, PNG, GIF y JPEG). Exacto. `tools\dev\verificar_msvc.bat`: 114 tests y 176 481 aserciones, 0 warnings. Los mutantes aún no cubren `gc_media` (`mutantes.py` compila con MinGW).
 
 **Siguiente:** demux y decode con seek exacto en `gc_media`.
+
+**Revisión del subagente:** APROBADO, sin bloqueantes. Se aplicaron sus menores: `color_untagged` compara también con `AVCOL_SPC_UNSPECIFIED` (no solo con el nombre «unknown», que podría cambiar en otra versión), y hay 4 medios más con varios streams (un MP3 con carátula etiquetada, un MKV con el audio antes que el vídeo y dos MKV con dos vídeos, el primero con y sin etiqueta), que es justo la semántica de `-select_streams v:0` y de `has_audio`. Queda sin reproducir, a propósito, el `timeout=10` de `probe_duration` (un archivo que cuelgue ffprobe da 0.0 en Python); se decidirá al integrarlo.

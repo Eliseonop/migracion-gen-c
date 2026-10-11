@@ -116,6 +116,17 @@ PROBE_MEDIA = [
     ("still.png", _V + ["-frames:v", "1"]),
     ("anim.gif", _V + ["-t", "0.4"]),
     ("mjpeg_vbr.avi", _V + _A + ["-t", "0.36", "-c:v", "mjpeg", "-c:a", "pcm_s16le"]),
+    # Varios streams: `-select_streams v:0` toma el PRIMER vídeo (también una carátula) y
+    # `has_audio` cualquier audio, esté donde esté.
+    ("a_cover.mp3", _A + ["-f", "lavfi", "-i", "testsrc2=size=32x32:rate=1", "-map", "0:a", "-map", "1:v",
+                          "-t", "0.5", "-frames:v", "1", "-c:a", "libmp3lame", "-c:v", "mjpeg",
+                          "-disposition:v", "attached_pic"]),
+    ("av_audio_first.mkv", _A + _V + ["-map", "0:a", "-map", "1:v", "-t", "0.6", "-c:a", "libopus",
+                                      "-c:v", "libvpx"]),
+    ("vv_two.mkv", _V + ["-f", "lavfi", "-i", "testsrc=size=64x48:rate=25", "-map", "0:v", "-map", "1:v",
+                         "-t", "0.4", "-c:v", "mpeg4", "-colorspace:v:0", "bt709", "-colorspace:v:1", "smpte170m"]),
+    ("vv_two_untagged_first.mkv", _V + ["-f", "lavfi", "-i", "testsrc=size=64x48:rate=25", "-map", "0:v",
+                                        "-map", "1:v", "-t", "0.4", "-c:v", "mpeg4", "-colorspace:v:1", "bt709"]),
 ]
 # Archivos que no son medios (se escriben tal cual) y rutas que no existen.
 PROBE_RAW = [

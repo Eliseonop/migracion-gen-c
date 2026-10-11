@@ -79,7 +79,8 @@ MediaProbe probe_media(const std::filesystem::path& path) {
             // imprime el nombre de la matriz o «unknown»; Python da por sin etiqueta "" y «unknown».
             first_video = false;
             const char* name = av_color_space_name(par->color_space);
-            out.color_untagged = name == nullptr || std::string_view(name) == "unknown";
+            out.color_untagged = par->color_space == AVCOL_SPC_UNSPECIFIED || name == nullptr ||
+                                 std::string_view(name) == "unknown";
         }
     }
     return out;

@@ -4457,10 +4457,22 @@
    "has_audio": true
   },
   {
+   "file": "a_cover.mp3",
+   "duration": 0.5,
+   "color_untagged": false,
+   "has_audio": true
+  },
+  {
    "file": "anim.gif",
    "duration": 0.4,
    "color_untagged": true,
    "has_audio": false
+  },
+  {
+   "file": "av_audio_first.mkv",
+   "duration": 0.608,
+   "color_untagged": true,
+   "has_audio": true
   },
   {
    "file": "empty.mp4",
@@ -4527,6 +4539,18 @@
    "duration": 0.72,
    "color_untagged": true,
    "has_audio": true
+  },
+  {
+   "file": "vv_two.mkv",
+   "duration": 0.4,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
+   "file": "vv_two_untagged_first.mkv",
+   "duration": 0.4,
+   "color_untagged": true,
+   "has_audio": false
   },
   {
    "file": "no_existe.mp4",
