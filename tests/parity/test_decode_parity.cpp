@@ -53,14 +53,23 @@ TEST_CASE("paridad del decode: la entrada y la cadena del export", "[parity][dec
         CHECK(Json(args) == c.at("input_args"));
 
         std::vector<std::string> got;
+        std::size_t translucent = 0; // píxeles con alfa < 255 en todos los fotogramas
         const auto n = gc::media::decode_frames(spec, [&](const gc::media::RgbaFrame& f) {
             CHECK(f.width == c.at("width").get<int>());
             CHECK(f.height == c.at("height").get<int>());
             got.push_back(gc::media::md5_hex(f.pixels));
+            for (std::size_t i = 3; i < f.pixels.size(); i += 4) {
+                translucent += f.pixels[i] < 255 ? 1 : 0;
+            }
             return true;
         });
         REQUIRE(n);
         CHECK(Json(got) == c.at("frames"));
+        // El MD5 solo dice que coincide con el CLI: que el alfa del VP9 llega al RGBA (libvpx),
+        // se comprueba aparte.
+        if (c.at("file").get<std::string>() == "motion_alpha.webm") {
+            CHECK(translucent > 0);
+        }
         frames += got.size();
     }
     CHECK(frames > 150);

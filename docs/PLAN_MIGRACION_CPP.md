@@ -1052,3 +1052,12 @@ Decisión de Edu (§6):
 - **Verificación:** un WebM VP9 `yuva420p` (un círculo semitransparente que se mueve; 1937 píxeles transparentes en el primer fotograma), decodificado como vídeo y como motion, con el mismo MD5 por fotograma que el CLI (decode: 18 casos, 334 fotogramas). MSVC + vcpkg: 119 tests y 182 465 aserciones, 0 warnings; MinGW: 114/114.
 
 **Siguiente:** el autogiro (ninguno de tus vídeos lleva matriz de rotación) o pasar ya a la caché de fotogramas, el audio y el encode; y Skia para `gc_render`.
+
+### 2026-10-11 — F0/F3: el primer CI y la revisión del seek y el VP9
+
+- **CI de GitHub (primer push de Edu):** fallaba en los tres sistemas sin culpa de la lógica. Linux: GCC 13 daba un falso positivo de `-Wnull-dereference` al insertar al principio de un vector de `shared_ptr` (`log.cpp`; ahora un vector nuevo con `reserve`). macOS: `INFINITY` es `float` y Apple Clang con `-Wdouble-promotion` lo hacía error (`test_py.cpp`). Los dos comprobados con un `g++-13` en WSL sobre todo el proyecto. Windows: 49 tests con tildes en el nombre no se encuentran porque el runner usa cp1252 y no UTF-8 (pendiente: manifiesto `activeCodePage=UTF-8`). Por decisión de Edu, el CI solo se ejecuta a mano (`workflow_dispatch`).
+- **Revisión de `abab9f8..HEAD`** (la anterior se paró a medias): APROBADO, sin bloqueantes. Menores aplicados: el seek ahora también se prueba en contenedores que no empiezan en 0 (`v_offset.mkv`, `va_offset.mp4`: el `-ss` cuenta desde el `start_time`), con paquetes rotos (`v_corrupt.mp4`) y con el WebM alfa (74 instantes en 12 medios), y el test del decode comprueba que el alfa del VP9 llega al RGBA (hay píxeles con alfa < 255), no solo que el MD5 coincida con el CLI.
+- **Verificación:** MSVC + vcpkg: 119/119; MinGW: 114/114 en Debug y Release.
+- **Queda anotado:** la regla «0 fotogramas con errores de decode ⇒ error» también se aplica al export (`decode_frames`), donde un `trim` vacío sobre un archivo con paquetes rotos daría error y el CLI, nada. Es un caso marginal; revisarlo con la caché de fotogramas.
+
+**Siguiente:** Skia (compilándose con vcpkg en modo clásico) y el arranque de `gc_render`.

@@ -55,7 +55,7 @@ TEST_CASE("paridad del seek exacto: el fotograma de un instante", "[parity][deco
         }
         ++cases;
     }
-    CHECK(cases > 40);
+    CHECK(cases >= 74);
 }
 
 TEST_CASE("seek exacto: un instante que no cabe en µs es un error, no un seek con basura", "[decode][seek]") {

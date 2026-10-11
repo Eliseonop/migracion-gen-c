@@ -192,6 +192,12 @@ SEEK = [
     ("v_vfr_gap.mp4", [0.0, 0.36, 0.37, 0.8, 1.399, 1.4, 1.75, 1.8]),
     ("still.png", [0.0, 0.5]),
     ("anim.gif", [0.0, 0.15, 0.39, 2.0]),
+    # Contenedores que no empiezan en 0 (el seek va a ss + start_time), paquetes rotos y VP9
+    # con alfa (extract_frame no fuerza libvpx: decodificador nativo).
+    ("v_offset.mkv", [0.0, 0.02, 0.3, 0.5, 0.52, 1.0, 1.459, 1.46, 1.5, 2.5]),
+    ("va_offset.mp4", [0.0, 0.01, 0.03, 0.5, 1.2, 1.24, 1.3]),
+    ("v_corrupt.mp4", [0.0, 0.5, 0.9, 1.0, 1.1, 1.5, 1.96]),
+    ("motion_alpha.webm", [0.0, 0.3, 0.56, 0.6]),
 ]
 
 # Archivos que no son medios (se escriben tal cual) y rutas que no existen.
