@@ -84,7 +84,8 @@ Result<InputOptions> parse_input_args(const std::vector<std::string>& args) {
         } else if (a == "-t" || a == "-ss") {
             double s = 0.0;
             const auto [end, ec] = std::from_chars(v.data(), v.data() + v.size(), s);
-            if (ec != std::errc{} || end != v.data() + v.size() || !std::isfinite(s)) {
+            // Más allá de ±9,2·10¹² s el valor en µs no cabe en 64 bits (ffmpeg: «Invalid duration»).
+            if (ec != std::errc{} || end != v.data() + v.size() || !std::isfinite(s) || std::fabs(s) > 9.2e12) {
                 return fail(ErrorCode::InvalidArgument, "instante o duración de entrada no válidos: " + v);
             }
             (a == "-t" ? out.duration_us : out.seek_us) = std::llround(s * 1e6);
@@ -140,6 +141,11 @@ public:
             if (auto r = drain(); !r) {
                 return std::unexpected(r.error());
             }
+        }
+        // Los paquetes rotos se saltan, pero si no se pudo decodificar nada es un error (el CLI
+        // acaba sin salida y extract_frame lanza ValueError), no «no hay fotograma en ese instante».
+        if (count_ == 0 && decode_errors_ > 0) {
+            return fail(ErrorCode::Io, "no se pudo decodificar ningún fotograma", opts_.path);
         }
         return count_;
     }

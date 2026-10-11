@@ -1588,7 +1588,7 @@ def _ensure_probe_media() -> None:
     if ffmpeg is None:
         sys.exit("Hace falta ffmpeg en el PATH para generar tests/fixtures/media/files")
     PROBE_DIR.mkdir(parents=True, exist_ok=True)
-    for name, args in mc.PROBE_MEDIA + mc.PROBE_MEDIA_VFR + mc.PROBE_MEDIA_2S:
+    for name, args in mc.PROBE_MEDIA + mc.PROBE_MEDIA_VFR + mc.PROBE_MEDIA_2S + mc.PROBE_MEDIA_ALPHA:
         out = PROBE_DIR / name
         if not out.exists():
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args,
@@ -1652,6 +1652,29 @@ def synthetic_decode_fixtures(ctx: Ctx) -> list[dict]:
     return cases
 
 
+def _extract_frame_ss(path: Path, t: float) -> str:
+    """El `-ss` que pone el frame_grab.extract_frame REAL: se intercepta su subprocess.run y se
+    comprueba que el instante va antes de `-i` y con `-frames:v 1`."""
+    from types import SimpleNamespace
+    from unittest import mock
+    from app import frame_grab
+    seen: list[list[str]] = []
+
+    def fake_run(cmd, *_a, **_k):
+        seen.append(list(cmd))
+        return SimpleNamespace(returncode=1, stdout="", stderr="interceptado")
+
+    with mock.patch.object(subprocess, "run", fake_run):
+        try:
+            frame_grab.extract_frame(path, t)
+        except ValueError:
+            pass
+    cmd = seen[0]
+    i, ss = cmd.index("-ss"), cmd[cmd.index("-ss") + 1]
+    assert cmd[i + 2] == "-i" and cmd[i + 3] == str(path) and cmd[cmd.index("-frames:v") + 1] == "1", cmd
+    return ss
+
+
 def synthetic_seek_fixtures() -> list[dict]:
     """El fotograma de un instante como frame_grab.extract_frame: los argumentos que arma
     (`-ss {max(0, t):.3f}` antes de `-i`, `-frames:v 1`) con el ffmpeg del PATH, sin su escalado
@@ -1666,7 +1689,7 @@ def synthetic_seek_fixtures() -> list[dict]:
                                "-of", "csv=p=0", str(path)], capture_output=True, text=True, check=True).stdout
         w, h = (int(x) for x in dims.strip().split(",")[:2])
         for t in times:
-            ss = f"{max(0.0, float(t)):.3f}"  # como extract_frame
+            ss = _extract_frame_ss(path, t)
             out = subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", "-ss", ss, "-i", str(path),
                                   "-frames:v", "1", "-f", "rawvideo", "-pix_fmt", "rgba", "-"],
                                  capture_output=True, check=True).stdout

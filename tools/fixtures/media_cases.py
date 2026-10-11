@@ -142,6 +142,14 @@ PROBE_DERIVED = [
     ("v_offset.mkv", "v_untagged.mp4", ["-itsoffset", "0.5"], ["-c", "copy"]),
     ("va_offset.mp4", "va_bt709.mp4", ["-itsoffset", "0.3"], ["-c", "copy"]),
 ]
+# VP9 con alfa (motion graphics): ffmpeg_input_args fuerza `-c:v libvpx-vp9` en todo .webm,
+# porque el VP9 nativo no expone el plano alfa. Un círculo semitransparente que se mueve.
+PROBE_MEDIA_ALPHA = [
+    ("motion_alpha.webm", ["-f", "lavfi", "-i", "testsrc2=size=64x48:rate=25", "-t", "0.6", "-vf",
+                           "format=yuva420p,geq=lum='lum(X,Y)':cb='cb(X,Y)':cr='cr(X,Y)':"
+                           "a='if(lt(hypot(X-32-20*sin(T*6),Y-24),18),200,0)'",
+                           "-c:v", "libvpx-vp9", "-pix_fmt", "yuva420p", "-auto-alt-ref", "0"]),
+]
 PROBE_MEDIA_2S = [("v_2s.mp4", _V + ["-t", "2", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-g", "10"])]
 CORRUPT = ("v_corrupt.mp4", "v_2s.mp4", 300)  # (archivo, origen, bytes invertidos a mitad)
 
@@ -166,6 +174,9 @@ DECODE = [
     ("mkv que empieza en 0,5", "v_offset.mkv", {"kind": "video", "in_point": 0.0, "out_point": 0.8}, 30),
     ("mp4 que empieza en 0,3", "va_offset.mp4", {"kind": "video", "in_point": 0.1, "out_point": 0.9}, 25),
     ("h264 con paquetes rotos", "v_corrupt.mp4", {"kind": "video", "in_point": 0.0, "out_point": 2.0}, 25),
+    ("webm vp9 con alfa", "motion_alpha.webm", {"kind": "video", "in_point": 0.0, "out_point": 0.6}, 30),
+    ("motion vp9 con alfa", "motion_alpha.webm", {"kind": "motion", "asset_kind": "motion", "in_point": 0.1,
+                                                  "out_point": 0.5}, 25),
 ]
 
 # Fotograma de un instante como frame_grab.extract_frame (`-ss t` antes de `-i`, sin el escalado

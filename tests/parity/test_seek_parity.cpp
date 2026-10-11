@@ -57,3 +57,9 @@ TEST_CASE("paridad del seek exacto: el fotograma de un instante", "[parity][deco
     }
     CHECK(cases > 40);
 }
+
+TEST_CASE("seek exacto: un instante que no cabe en µs es un error, no un seek con basura", "[decode][seek]") {
+    gc::media::silence_ffmpeg_log();
+    // ffmpeg -ss 1e300 da «Invalid duration» y extract_frame lanza ValueError.
+    CHECK_FALSE(gc::media::frame_at(kFixtures / "media" / "files" / "v_untagged.mp4", 1e300));
+}

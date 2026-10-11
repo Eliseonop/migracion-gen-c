@@ -1043,3 +1043,5 @@ Decisión de Edu (§6):
 - **Verificación:** 46 instantes en 8 medios (justo en un fotograma, entre dos, negativos, NaN, dentro del hueco del VFR, más allá del final, PNG y GIF), con el mismo MD5 que el ffmpeg del PATH. Sin el `trim=starti=0`, fallan 27 de 200 aserciones (mutante a mano). MSVC + vcpkg: 118 tests y 182 397 aserciones, 0 warnings; MinGW: 114/114.
 
 **Siguiente:** WebM VP9 con alfa (feature `vpx` de vcpkg) y autogiro.
+
+**Revisión del subagente:** APROBADO. Menores aplicados: un instante que no cabe en µs (`frame_at(…, 1e300)`) es un error y no un seek con basura, como el «Invalid duration» de ffmpeg (hay test); si hubo errores de decodificación y no salió ningún fotograma, el decode devuelve error en vez de «nada en ese instante» (`extract_frame` lanza ValueError en los dos casos); la fixture del seek saca el `-ss` de una llamada al `extract_frame` REAL (se intercepta su `subprocess.run` y se comprueba que va antes de `-i` con `-frames:v 1`), y sale idéntica. MSVC + vcpkg: 119 tests y 182 398 aserciones, 0 warnings.
