@@ -16,6 +16,7 @@ Salida (al repo):
   tests/fixtures/motion/synthetic.json     envolvente de un sonido (clip_motion): motion_cases.py
   tests/fixtures/media/synthetic.json      cabeceras de imagen (images.probe_gif) y sondas de medios: media_cases.py
   tests/fixtures/export_input/synthetic.json  cómo lee el export el material (clip_kind.py): export_input_cases.py
+  tests/fixtures/media/decode.json         decode como el export: media_cases.DECODE (MD5 por fotograma del ffmpeg del PATH)
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
@@ -1586,7 +1587,7 @@ def _ensure_probe_media() -> None:
     if ffmpeg is None:
         sys.exit("Hace falta ffmpeg en el PATH para generar tests/fixtures/media/files")
     PROBE_DIR.mkdir(parents=True, exist_ok=True)
-    for name, args in mc.PROBE_MEDIA:
+    for name, args in mc.PROBE_MEDIA + mc.PROBE_MEDIA_VFR:
         out = PROBE_DIR / name
         if not out.exists():
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args,
@@ -1598,6 +1599,45 @@ def _ensure_probe_media() -> None:
     if not trunc.exists():
         whole = (PROBE_DIR / "va_bt709.mp4").read_bytes()
         trunc.write_bytes(whole[: len(whole) // 2])
+
+
+def _decode_chain(c, path: Path, fps: int) -> str:
+    """La cadena que el export aplica a la entrada de un clip antes del encuadre (compose.py:
+    `[k:v]{color_pre}{trim},setpts=PTS-STARTPTS`), con las funciones REALES."""
+    from app import clip_kind, compose
+    color_pre = f"{compose.ASSUME_BT709_FILTER}," if (not clip_kind.is_still_clip(c) and compose._color_untagged(path)) else ""
+    return color_pre + clip_kind.ffmpeg_trim_filter(c, fps) + ",setpts=PTS-STARTPTS"
+
+
+def synthetic_decode_fixtures(ctx: Ctx) -> list[dict]:
+    """Fotogramas que da el ffmpeg del PATH con la entrada y la cadena del export de cada caso de
+    media_cases.DECODE, en RGBA: dimensiones y un MD5 por fotograma."""
+    import hashlib
+    import media_cases as mc
+    from app import clip_kind
+    ffmpeg, ffprobe = shutil.which("ffmpeg"), shutil.which("ffprobe")
+    cases = []
+    for name, file, raw, fps in mc.DECODE:
+        path = PROBE_DIR / file
+        still = raw.get("asset_kind") == "images" or raw["kind"] in ("image", "shape")
+        clip = {"id": "c", "track_id": "V1", "asset_kind": "clips", "asset_id": "c", "filename": file, "start": 0.0,
+                "source_duration": 0.0 if still else _REAL_SFX["probe_duration"](path), **raw}
+        c = ctx.schemas.TimelineClip.model_validate(clip)
+        args = clip_kind.ffmpeg_input_args(c, path, fps)
+        chain = _decode_chain(c, path, fps)
+        dims = subprocess.run([ffprobe, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+                               "-of", "csv=p=0", str(path)], capture_output=True, text=True, check=True).stdout
+        w, h = (int(x) for x in dims.strip().split(",")[:2])
+        out = subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", *args, "-vf", chain + ",format=rgba",
+                              "-fps_mode", "passthrough", "-f", "rawvideo", "-pix_fmt", "rgba", "-"],
+                             capture_output=True, check=True).stdout
+        size = w * h * 4
+        assert len(out) % size == 0, (name, len(out), size)
+        cases.append({"name": name, "file": file, "fps": fps, "clip": c.model_dump(),
+                      "input_args": ["{PATH}" if a == str(path) else a for a in args], "chain": chain,
+                      "width": w, "height": h,
+                      "frames": [hashlib.md5(out[i:i + size]).hexdigest() for i in range(0, len(out), size)]})
+    return cases
 
 
 def _probe(path: Path) -> dict:
@@ -2025,6 +2065,8 @@ def main() -> None:
     exi = synthetic_export_input_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "export_input" / "synthetic.json", exi, len(exi["clips"]), 0)
     med = synthetic_media_fixtures()
+    dec = synthetic_decode_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)
     mot = synthetic_motion_fixtures(ctx)

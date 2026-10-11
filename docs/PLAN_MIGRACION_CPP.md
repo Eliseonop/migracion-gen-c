@@ -1025,3 +1025,11 @@ Decisión de Edu (§6):
 - **Verificación:** 21 clips sintéticos (la ventana y el filtro con 7 fps; la entrada con 11 rutas y 2 fps) y tus 979 clips (con el fps de su timeline y la ruta de `compose._clip_path`), contra el `clip_kind.py` real; exacto. 11/11 mutaciones. MinGW: 114 tests y 181 057 aserciones en Debug y Release, 0 warnings; tidy, 0 avisos.
 
 **Siguiente:** el decode de `gc_media` que reproduce `ffmpeg_input_args` + `fps=F,trim,setpts`.
+
+**Revisión del subagente:** APROBADO (11/11 mutaciones, 114/114). Solo ajustó cómo se cuentan los casos (commit aparte).
+
+### 2026-10-11 — F3: el decode de `gc_media`, como el export
+
+- **Hecho:** `decode.hpp`. `export_decode_spec(clip, ruta, fps)` arma la entrada (`ffmpeg_input_args`) y la cadena que el export aplica a cada material antes del encuadre (`{color_pre}{trim},setpts=PTS-STARTPTS`, con `color_pre` = `setparams` a BT.709 si no es un still y el material no declara matriz). `decode_frames` la ejecuta con libavformat, libavcodec y libavfilter como el CLI: opciones del demuxer, `-c:v`, `-t` como `trim=durationi`, `pts = best_effort_timestamp`, el grafo armado con el primer fotograma (formato, tamaño, SAR, matriz y rango), `flags=bicubic` y `format=rgba`. `md5_hex` (av_md5) para las fixtures.
+- **Verificación:** 13 casos (MP4 sin etiqueta y BT.709, MOV, MKV VP8, AVI MJPEG, un VFR con un hueco de 1 s antes, dentro y cruzándolo, un PNG en bucle y un GIF en bucle y una vez), 214 fotogramas: la misma entrada, la misma cadena y el mismo MD5 por fotograma que el ffmpeg del PATH (`-vf "<cadena>,format=rgba" -f rawvideo`), a la primera. MSVC + vcpkg: 117 tests y 181 984 aserciones, 0 warnings; MinGW (sin FFmpeg): 114 y 181 057.
+- **Pendiente:** el seek exacto (`frame_grab.extract_frame`, `-ss t` antes de `-i`), el autogiro de los vídeos del móvil, el WebM VP9 con alfa (libvpx) y el hwaccel.

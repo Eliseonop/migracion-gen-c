@@ -1,7 +1,7 @@
-# gc_media: lo que habla con FFmpeg (libav*): sondas, y más adelante demux, decode y encode.
+# gc_media: lo que habla con FFmpeg (libav*): sondas y decode; más adelante, encode.
 # Solo se compila si hay FFmpeg (presets msvc-vcpkg-*, feature `media` de vcpkg.json).
 
-add_library(gc_media src/probe.cpp)
+add_library(gc_media src/decode.cpp src/probe.cpp)
 add_library(gc::media ALIAS gc_media)
 
 target_include_directories(gc_media PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")

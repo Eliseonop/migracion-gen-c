@@ -128,6 +128,33 @@ PROBE_MEDIA = [
     ("vv_two_untagged_first.mkv", _V + ["-f", "lavfi", "-i", "testsrc=size=64x48:rate=25", "-map", "0:v",
                                         "-map", "1:v", "-t", "0.4", "-c:v", "mpeg4", "-colorspace:v:1", "bt709"]),
 ]
+# VFR con un hueco de 1 s (como una grabación de pantalla): fotogramas 0–9 a 25 fps, luego
+# nada hasta 1,4 s y otros 10. Se añade aparte para no cambiar los de arriba.
+PROBE_MEDIA_VFR = [
+    ("v_vfr_gap.mp4", _V + ["-frames:v", "20", "-vf", "setpts='if(lt(N,10),N,N+25)/25/TB'", "-fps_mode", "vfr",
+                            "-c:v", "libx264", "-pix_fmt", "yuv420p"]),
+]
+
+# Decode como el export (compose.py): (nombre, archivo, clip, fps). El clip se completa con
+# source_duration = la duración que da probe_duration; el exportador arma la cadena con las
+# funciones REALES (ffmpeg_input_args, ffmpeg_trim_filter, _color_untagged).
+DECODE = [
+    ("mp4 entero a 30", "v_untagged.mp4", {"kind": "video", "in_point": 0.0, "out_point": 1.0}, 30),
+    ("mp4 tramo a 24", "v_untagged.mp4", {"kind": "video", "in_point": 0.21, "out_point": 0.79}, 24),
+    ("mp4 bt709 a 25", "v_bt709.mp4", {"kind": "video", "in_point": 0.1, "out_point": 0.6}, 25),
+    ("mp4 hasta el final a 60", "va_bt709.mp4", {"kind": "video", "in_point": 0.9, "out_point": 1.24}, 60),
+    ("mov smpte170m", "v_smpte170m.mov", {"kind": "video", "in_point": 0.0, "out_point": 0.52}, 30),
+    ("mkv vp8", "va_untagged.mkv", {"kind": "video", "in_point": 0.2, "out_point": 0.5}, 30),
+    ("avi mjpeg", "mjpeg_vbr.avi", {"kind": "video", "in_point": 0.0, "out_point": 0.36}, 30),
+    ("vfr antes del hueco", "v_vfr_gap.mp4", {"kind": "video", "in_point": 0.0, "out_point": 0.3}, 30),
+    ("vfr dentro del hueco", "v_vfr_gap.mp4", {"kind": "video", "in_point": 0.5, "out_point": 1.2}, 30),
+    ("vfr cruzando el hueco", "v_vfr_gap.mp4", {"kind": "video", "in_point": 0.3, "out_point": 1.6}, 24),
+    ("png en bucle", "still.png", {"kind": "image", "asset_kind": "images", "in_point": 0.0, "out_point": 0.4}, 30),
+    ("gif en bucle", "anim.gif", {"kind": "image", "asset_kind": "images", "in_point": 0.0, "out_point": 1.0}, 25),
+    ("gif una vez", "anim.gif", {"kind": "image", "asset_kind": "images", "in_point": 0.0, "out_point": 1.0,
+                                 "loop": False}, 25),
+]
+
 # Archivos que no son medios (se escriben tal cual) y rutas que no existen.
 PROBE_RAW = [
     ("empty.mp4", b""),
