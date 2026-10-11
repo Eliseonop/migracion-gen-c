@@ -450,78 +450,114 @@ bool dump_string(std::string& out, std::string_view s) {
     return true;
 }
 
-// Más niveles que esto no se escriben (Python sí): la recursión agotaría la pila.
-constexpr int kMaxDumpDepth = 1500;
+// Más niveles que esto no se escriben (Python sí). Se escribe sin recursión (con 1 MB de pila,
+// la de MSVC, 1500 llamadas anidadas no caben en Debug), pero el límite se queda: es el
+// documentado y lo que prueban los tests.
+constexpr std::size_t kMaxDumpDepth = 1500;
 
-bool dump_value(std::string& out, const Json& v, int indent, int level, std::string& error) {
-    if (level > kMaxDumpDepth) {
-        error = "el JSON tiene más de " + std::to_string(kMaxDumpDepth) + " niveles";
-        return false;
-    }
-    const auto newline = [&](int lvl) {
-        out += '\n';
-        out.append(static_cast<std::size_t>(indent) * static_cast<std::size_t>(lvl), ' ');
-    };
-    switch (v.type()) {
-    case Json::value_t::null: out += "null"; return true;
-    case Json::value_t::boolean: out += v.get<bool>() ? "true" : "false"; return true;
-    case Json::value_t::number_integer: out += std::to_string(v.get<std::int64_t>()); return true;
-    case Json::value_t::number_unsigned: out += std::to_string(v.get<std::uint64_t>()); return true;
-    case Json::value_t::number_float: {
-        const double d = v.get<double>();
-        out += std::isnan(d) ? "NaN" : std::isinf(d) ? (d > 0 ? "Infinity" : "-Infinity") : detail::py_repr(d);
-        return true;
-    }
-    case Json::value_t::string:
-        if (!dump_string(out, v.get_ref<const std::string&>())) {
-            error = "un texto del JSON no es UTF-8 válido";
+// Un objeto o una lista abiertos: el siguiente elemento por escribir.
+struct DumpFrame {
+    const Json* value;
+    Json::const_iterator next;
+    bool object;
+};
+
+class Dumper {
+public:
+    Dumper(std::string& out, int indent, std::string& error) : out_(out), indent_(indent), error_(error) {}
+
+    bool run(const Json& root) {
+        if (!emit(root)) {
             return false;
         }
-        return true;
-    case Json::value_t::array:
-    case Json::value_t::object: {
-        const bool object = v.is_object();
-        if (v.empty()) {
-            out += object ? "{}" : "[]";
-            return true;
-        }
-        out += object ? '{' : '[';
-        bool first = true;
-        for (auto it = v.begin(); it != v.end(); ++it) {
-            if (!first) {
-                out += indent < 0 ? ", " : ",";
+        while (!stack_.empty()) {
+            DumpFrame& f = stack_.back();
+            if (f.next == f.value->end()) {
+                const bool object = f.object;
+                stack_.pop_back();
+                if (indent_ >= 0) {
+                    newline(stack_.size());
+                }
+                out_ += object ? '}' : ']';
+                continue;
             }
-            first = false;
-            if (indent >= 0) {
-                newline(level + 1);
+            if (f.next != f.value->begin()) {
+                out_ += indent_ < 0 ? ", " : ",";
             }
-            if (object) {
-                if (!dump_string(out, it.key())) {
-                    error = "una clave del JSON no es UTF-8 válido";
+            if (indent_ >= 0) {
+                newline(stack_.size());
+            }
+            if (f.object) {
+                if (!dump_string(out_, f.next.key())) {
+                    error_ = "una clave del JSON no es UTF-8 válido";
                     return false;
                 }
-                out += ": ";
+                out_ += ": ";
             }
-            if (!dump_value(out, *it, indent, level + 1, error)) {
+            const Json& child = *f.next;
+            ++f.next; // antes de emit: puede crecer la pila y mover `f`
+            if (!emit(child)) {
                 return false;
             }
         }
-        if (indent >= 0) {
-            newline(level);
-        }
-        out += object ? '}' : ']';
         return true;
     }
-    default: error = "un valor binario no es JSON"; return false; // no sale de un JSON leído
+
+private:
+    void newline(std::size_t level) {
+        out_ += '\n';
+        out_.append(static_cast<std::size_t>(indent_) * level, ' ');
     }
-}
+
+    // Escribe un valor simple o un contenedor vacío, o abre un contenedor (queda en la pila).
+    bool emit(const Json& v) {
+        if (stack_.size() > kMaxDumpDepth) {
+            error_ = "el JSON tiene más de " + std::to_string(kMaxDumpDepth) + " niveles";
+            return false;
+        }
+        switch (v.type()) {
+        case Json::value_t::null: out_ += "null"; return true;
+        case Json::value_t::boolean: out_ += v.get<bool>() ? "true" : "false"; return true;
+        case Json::value_t::number_integer: out_ += std::to_string(v.get<std::int64_t>()); return true;
+        case Json::value_t::number_unsigned: out_ += std::to_string(v.get<std::uint64_t>()); return true;
+        case Json::value_t::number_float: {
+            const double d = v.get<double>();
+            out_ += std::isnan(d) ? "NaN" : std::isinf(d) ? (d > 0 ? "Infinity" : "-Infinity") : detail::py_repr(d);
+            return true;
+        }
+        case Json::value_t::string:
+            if (!dump_string(out_, v.get_ref<const std::string&>())) {
+                error_ = "un texto del JSON no es UTF-8 válido";
+                return false;
+            }
+            return true;
+        case Json::value_t::array:
+        case Json::value_t::object: {
+            const bool object = v.is_object();
+            if (v.empty()) {
+                out_ += object ? "{}" : "[]";
+                return true;
+            }
+            out_ += object ? '{' : '[';
+            stack_.push_back(DumpFrame{&v, v.cbegin(), object});
+            return true;
+        }
+        default: error_ = "un valor binario no es JSON"; return false; // no sale de un JSON leído
+        }
+    }
+
+    std::string& out_;
+    int indent_;
+    std::string& error_;
+    std::vector<DumpFrame> stack_;
+};
 
 } // namespace
 
 Result<std::string> py_json_dumps(const Json& value, int indent) {
     std::string out;
     std::string error;
-    if (!dump_value(out, value, indent, 0, error)) {
+    if (!Dumper(out, indent, error).run(value)) {
         return fail(ErrorCode::InvalidArgument, error);
     }
     return out;

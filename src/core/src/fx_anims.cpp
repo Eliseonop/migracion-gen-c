@@ -177,7 +177,7 @@ ClipAnimations clip_animations(const TimelineClip& clip, double clip_dur) {
             continue;
         }
         const Json* anim = out.catalog->anim(field(entry, "id"));
-        if (anim == nullptr || field(*anim, "slot") != slot) {
+        if (anim == nullptr || field(*anim, "slot") != Json(slot)) {
             continue;
         }
         double dur = py_float(field(entry, "dur")).value_or(std::numeric_limits<double>::quiet_NaN());

@@ -37,6 +37,10 @@ target_compile_definitions(gc_tests PRIVATE
     GC_FIXTURES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fixtures"
     GC_RESOURCES_DIR="${PROJECT_SOURCE_DIR}/resources")
 gc_set_warnings(gc_tests)
+# MSVC sabe que FAIL() lanza y da por inalcanzable el `return`/`throw` que GCC necesita detrás.
+if(MSVC)
+    target_compile_options(gc_tests PRIVATE /wd4702)
+endif()
 
 if(catch2_SOURCE_DIR)
     list(APPEND CMAKE_MODULE_PATH "${catch2_SOURCE_DIR}/extras")

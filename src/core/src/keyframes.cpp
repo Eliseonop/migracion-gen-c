@@ -349,11 +349,12 @@ double ease_t(double u, Interp kind, const Json& bezier) {
 // --- Propiedades --------------------------------------------------------------------------
 
 std::optional<std::size_t> kf_prop_index(std::string_view key) {
-    const auto* const it = std::ranges::find(kKfPropKeys, key);
-    if (it == kKfPropKeys.end()) {
-        return std::nullopt;
+    for (std::size_t i = 0; i < kKfPropKeys.size(); ++i) {
+        if (kKfPropKeys[i] == key) {
+            return i;
+        }
     }
-    return static_cast<std::size_t>(it - kKfPropKeys.begin());
+    return std::nullopt;
 }
 
 double KfProps::get(std::string_view key) const { return values[*kf_prop_index(key)]; }

@@ -422,7 +422,7 @@ Json count_kinds(const std::vector<Json>& cards) {
     Json kinds = Json::object();
     for (const std::string_view k : {"video", "image"}) {
         kinds[std::string(k)] =
-            std::ranges::count_if(cards, [&](const Json& c) { return c.at("stick_kind") == k; });
+            std::ranges::count_if(cards, [&](const Json& c) { return c.at("stick_kind") == Json(k); });
     }
     return kinds;
 }
@@ -471,7 +471,7 @@ Json detail_of(const Stick& s) {
         std::vector<Json> keys;
         std::vector<Json> groups;
         for (const Json& c : cards) {
-            if (c.at("stick_kind") != kind) {
+            if (c.at("stick_kind") != Json(kind)) {
                 continue;
             }
             if (const auto i = key_index(keys, c.at("expression"))) {

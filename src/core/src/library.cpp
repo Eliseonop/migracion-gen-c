@@ -49,7 +49,7 @@ Result<std::optional<std::size_t>> find_item(const Json& data, std::string_view 
         if (!items[i].is_object()) {
             return invalid("library.json: cada material debe ser un objeto");
         }
-        if (field(items[i], "id") == item_id) {
+        if (field(items[i], "id") == Json(item_id)) {
             return std::optional<std::size_t>{i};
         }
     }
@@ -310,7 +310,7 @@ Result<Json> LibraryFile::unsave(std::string_view item_id, const ProjectsFile& p
             if (!x.is_object()) {
                 return invalid("library.json: cada material debe ser un objeto");
             }
-            if (field(x, "id") != item_id) {
+            if (field(x, "id") != Json(item_id)) {
                 kept.push_back(x);
             }
         }

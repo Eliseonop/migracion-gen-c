@@ -371,11 +371,15 @@ Result<EditResult> run(const Timeline& tl, const ops::SetProjectFormat& op, IdSo
     Timeline out = tl;
     const Aspect* aspect = nullptr;
     if (op.aspect) {
-        const auto* const it = std::ranges::find(kAspects, *op.aspect, &Aspect::id);
-        if (it == kAspects.end()) {
+        for (const Aspect& a : kAspects) {
+            if (a.id == *op.aspect) {
+                aspect = &a;
+                break;
+            }
+        }
+        if (aspect == nullptr) {
             return invalid("aspect inválido: " + *op.aspect + " (usa ['16:9', '9:16', '1:1', '4:3', '3:4', '4:5'])");
         }
-        aspect = &*it;
     }
     if (op.resolution && std::ranges::find(kResolutions, *op.resolution) == kResolutions.end()) {
         return invalid("resolution inválida: " + std::to_string(*op.resolution) + " (usa [480, 720, 1080, 2160])");

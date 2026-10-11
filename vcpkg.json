@@ -3,6 +3,7 @@
   "name": "genclippro",
   "version": "0.1.0",
   "description": "Motor C++ multiplataforma de GenClipPro (migración de video-yt)",
+  "builtin-baseline": "e456309491fd875487bf02b8a0dca76c1b1b00cc",
   "dependencies": [
     "nlohmann-json",
     "spdlog"
@@ -12,6 +13,21 @@
       "description": "Dependencias de los tests",
       "dependencies": [
         "catch2"
+      ]
+    },
+    "media": {
+      "description": "gc_media: FFmpeg LGPL (sin x264/x265) con los encoders por hardware",
+      "dependencies": [
+        {
+          "name": "ffmpeg",
+          "default-features": false,
+          "features": [
+            "avcodec", "avformat", "avfilter", "swresample", "swscale",
+            { "name": "nvcodec", "platform": "windows | linux" },
+            { "name": "amf", "platform": "windows" },
+            { "name": "qsv", "platform": "windows" }
+          ]
+        }
       ]
     }
   }

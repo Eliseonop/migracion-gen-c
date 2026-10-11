@@ -19,8 +19,12 @@ inline constexpr std::array<std::string_view, 12> kBlendModes{
 
 // El modo si es uno de los conocidos; si no, "normal".
 [[nodiscard]] inline std::string_view normalize_blend(std::string_view mode) {
-    const auto* const it = std::ranges::find(kBlendModes, mode);
-    return it == kBlendModes.end() ? "normal" : *it;
+    for (const std::string_view m : kBlendModes) {
+        if (m == mode) {
+            return m;
+        }
+    }
+    return "normal";
 }
 
 // Modo de fusión del clip ("normal" si no tiene o no es válido).

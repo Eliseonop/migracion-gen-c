@@ -19,6 +19,8 @@ function(gc_set_warnings target)
         target_compile_options(${target} PRIVATE
             /W4 /permissive- /utf-8 /Zc:__cplusplus /Zc:preprocessor
             /w14242 /w14254 /w14263 /w14265 /w14287 /w14296 /w14311 /w14826 /w14928)
+        # getenv, fopen…: la alternativa _s solo existe en MSVC.
+        target_compile_definitions(${target} PRIVATE _CRT_SECURE_NO_WARNINGS)
         if(GC_WARNINGS_AS_ERRORS)
             target_compile_options(${target} PRIVATE /WX)
         endif()

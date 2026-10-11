@@ -28,7 +28,7 @@
       "name": "vcpkg",
       "hidden": true,
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-      "cacheVariables": { "VCPKG_MANIFEST_FEATURES": "tests" }
+      "cacheVariables": { "VCPKG_MANIFEST_FEATURES": "tests;media" }
     },
 
     { "name": "mingw-debug", "displayName": "MinGW (CLion) · Debug", "inherits": ["base", "debug", "windows"] },
