@@ -45,6 +45,7 @@ add_library(gc_core
     src/pose.cpp
     src/projects_store.cpp
     src/shapes.cpp
+    src/text_events.cpp
     src/text_metrics.cpp
     src/text_style.cpp
     src/py.cpp

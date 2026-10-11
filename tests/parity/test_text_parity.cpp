@@ -11,6 +11,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -22,6 +23,7 @@
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/text_events.hpp"
 #include "gc/core/text_metrics.hpp"
 #include "gc/core/text_style.hpp"
 #include "json_diff.hpp"
@@ -124,6 +126,53 @@ void check_geometry(const Json& c, const std::string& rows_text) {
     }
 }
 
+// "h:mm:ss.cc" del .ass en ms, como lo lee libass.
+std::int64_t ass_ms(const std::string& s) {
+    int h = 0;
+    int m = 0;
+    int sec = 0;
+    int cs = 0;
+    REQUIRE(std::sscanf(s.c_str(), "%d:%d:%d.%d", &h, &m, &sec, &cs) == 4);
+    return ((static_cast<std::int64_t>(h) * 60 + m) * 60 + sec) * 1000 + cs * 10;
+}
+
+// Los eventos del .ass de un texto quieto (caption_dialogues): tiempos, primero, líneas y palabra activa.
+void check_events(TimelineClip clip, const Json& st, const Json& expected) {
+    if (st.is_object() && st.contains("text_case") && gc::core::detail::py_truthy(st.at("text_case"))) {
+        clip.text = apply_text_case(clip.text.value_or(""), st.at("text_case"));
+    }
+    const Json posed = posed_text_style(clip, st, 0.0);
+    const auto events = static_text_events(clip, posed);
+    REQUIRE(events.size() == expected.size());
+    for (std::size_t i = 0; i < events.size(); ++i) {
+        const TextEvent& e = events[i];
+        const Json& x = expected[i];
+        INFO("evento " << i);
+        CHECK(e.start_ms == ass_ms(x.at("start").get<std::string>()));
+        CHECK(e.end_ms == ass_ms(x.at("end").get<std::string>()));
+        CHECK(e.first == x.at("first").get<bool>());
+        std::string rows;
+        std::int64_t words = 0;
+        for (const auto& row : text_rows(posed, 1080, 1920, e.content.text)) {
+            std::string line;
+            for (const auto& w : row) {
+                line += (line.empty() ? "" : " ") + w;
+                ++words;
+            }
+            rows += line + "\n";
+        }
+        if (!rows.empty()) {
+            rows.pop_back();
+        }
+        CHECK(rows == x.at("rows").get<std::string>());
+        std::string flags;
+        for (std::int64_t w = 0; w < words; ++w) {
+            flags += e.content.is_active(w) ? 'A' : 'I';
+        }
+        CHECK(flags == x.at("flags").get<std::string>());
+    }
+}
+
 // Un clip de texto en sus instantes: pose, estilo con la pose, palabra activa y lo que se ve.
 void check_clip(const Json& c) {
     INFO(c.at("name").get<std::string>());
@@ -140,6 +189,8 @@ void check_clip(const Json& c) {
         windows.push_back({t0, t1});
     }
     check_json(c.at("windows"), windows);
+    CHECK(text_in_ass(clip) == c.at("in_ass").get<bool>());
+    check_events(clip, st, c.at("events"));
     const auto n = static_cast<std::int64_t>(split_words(clip.text.value_or("")).size());
     for (const Json& at : c.at("times")) {
         const double t = num(at.at("t"));

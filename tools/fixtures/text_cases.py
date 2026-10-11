@@ -170,6 +170,9 @@ TEXT_CLIPS: list[dict] = [
     {"name": "pico de 10 ms que solo ve el muestreo a 24 fps", "clip": text_clip(
         "pk", keyframes=_kf({"t": 0, "props": {"x": 0.5}}, {"t": 0.12, "props": {"x": 0.5}},
                             {"t": 0.125, "props": {"x": 0.6}}, {"t": 0.13, "props": {"x": 0.5}}))},
+    {"name": "escribir en 0,15 s (0,15 · 30 = 4,5: round al par da 4 pasos)", "clip": text_clip(
+        "t15", text="hola mundo", out_point=0.15, style={**_CLASSIC, "block_appear": "typing"})},
+    {"name": "clip de 0,03 s (el evento dura 0,04)", "clip": text_clip("c3", text="hola", out_point=0.03)},
     {"name": "estilo nulo", "clip": text_clip("sn", style=None)},
 ]
 TEXT_CLIPS[-1]["clip"]["style"] = None

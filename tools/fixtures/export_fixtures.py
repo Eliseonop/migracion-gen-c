@@ -2233,6 +2233,39 @@ def _font_layout_case(layout: dict, root: Path) -> dict:
         fm._line_height_em.cache_clear()
 
 
+def _caption_events(c, st: dict) -> list[dict]:
+    """Los eventos REALES de caption_dialogues (1080×1920) de un texto quieto: inicio y fin como
+    los escribe el .ass y, en vez del cuerpo, «F»/«N» (primer evento o no), las líneas y «A»/«I»
+    por palabra. Para eso se sustituyen las piezas que arman el cuerpo, no las que deciden."""
+    from app import text_ass as ta
+    saved = ta._row_bodies, ta._curve_bodies, ta._layout_prefix, ta._glyph_prefix, ta._active_override, ta._idle_override
+
+    def bodies(rows, override_for, prefix_for):
+        n = sum(len(r) for r in rows)
+        if not n:
+            return []
+        return [prefix_for(0) + "|" + "\n".join(" ".join(r) for r in rows) + "|"
+                + "".join(override_for(i) for i in range(n))]
+
+    ta._row_bodies = bodies
+    ta._curve_bodies = lambda st_, W, H, rows, override_for, prefix_for: bodies(
+        rows, override_for, lambda k: prefix_for(0.0, 0.0, 0.0))
+    ta._layout_prefix = lambda st_, W, H, is_first, *a, **k: "F" if is_first else "N"
+    ta._glyph_prefix = lambda st_, W, H, is_first, *a, **k: "F" if is_first else "N"
+    ta._active_override, ta._idle_override = (lambda s: "A"), (lambda s: "I")
+    try:
+        lines = ta.caption_dialogues(c, 1080, 1920, st)
+    finally:
+        ta._row_bodies, ta._curve_bodies, ta._layout_prefix, ta._glyph_prefix, ta._active_override, \
+            ta._idle_override = saved
+    out = []
+    for line in lines:
+        parts = line.split(",", 9)
+        first, rows, flags = parts[9].split("|")
+        out.append({"start": parts[1], "end": parts[2], "first": first == "F", "rows": rows, "flags": flags})
+    return out
+
+
 def _text_clip_case(ctx: Ctx, name: str, raw: dict, times, track_style=None) -> dict:
     """Un clip de texto con las funciones REALES: si se anima (a 30 y 24 fps), las ventanas de sus
     palabras y, en cada instante local, la pose, el estilo con la pose, la palabra activa y lo que
@@ -2242,9 +2275,13 @@ def _text_clip_case(ctx: Ctx, name: str, raw: dict, times, track_style=None) -> 
     st = ta.effective_text_style(track_style, c.style)
     dur = ta._clip_dur(c)
     n = len(ta.split_words(c.text or ""))
+    # Eventos del .ass: con el texto en May./min. y el estilo con la pose en 0, como build_ass.
+    cased = c.model_copy(update={"text": ta.apply_text_case(c.text, st.get("text_case"))}) if st.get("text_case") else c
     out = {"name": name, "clip": c.model_dump(), "style": st, "dur": dur,
            "animates": [ta.text_animates(c, f) for f in (30, 24)],
-           "windows": [list(w) for w in ta.word_windows(c)], "times": []}
+           "windows": [list(w) for w in ta.word_windows(c)],
+           "in_ass": ta._clip_dur(c) > 0.02 and bool(ta.split_words(c.text or "")) and not c.disabled,
+           "events": _caption_events(cased, ta._posed_style(cased, st)), "times": []}
     real = ta._active_override, ta._idle_override
     for t in times:
         posed = ta._posed_style(c, st, t)
