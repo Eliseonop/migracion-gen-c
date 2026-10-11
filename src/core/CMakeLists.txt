@@ -27,6 +27,7 @@ add_library(gc_core
     src/edit_ops_media.cpp
     src/edit_ops_props.cpp
     src/edit_ops_recipes.cpp
+    src/export_input.cpp
     src/follow.cpp
     src/frame.cpp
     src/fx_anims.cpp

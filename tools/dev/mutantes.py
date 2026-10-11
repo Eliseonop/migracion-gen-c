@@ -565,7 +565,24 @@ MEDIA = [
     ("firma: JPEG de 2 bytes", G, 'slice_is(data, 0, "\\xff\\xd8\\xff")', 'slice_is(data, 0, "\\xff\\xd8")'),
 ]
 
+X2 = "src/core/src/export_input.cpp"
+EXPORT_INPUT = [
+    ("still: images no cuenta", X2, ' || clip.asset_kind == "images"', ""),
+    ("ventana: still sin el mínimo de 0,1", X2, "return {0.0, std::max(out - inp, 0.1)};", "return {0.0, out - inp};"),
+    ("ventana: margen del final de 2e-4", X2, "out >= src - 1e-4", "out >= src - 2e-4"),
+    ("ventana: sin el fotograma como mínimo", X2, "const double pull = std::max(kLastFramePull, frame);",
+     "const double pull = kLastFramePull;"),
+    ("ventana: fps 0 vale 1", X2, "fps != 0 ? fps : 30", "fps != 0 ? fps : 1"),
+    ("ventana: sin el mínimo de entrada + 1 ms", X2, "out = std::max(inp + 1e-3, src - pull);", "out = src - pull;"),
+    ("filtro: nan con signo", X2, 'std::isnan(x) ? std::string("nan") : ', ""),
+    ("entrada: webm sin minúsculas", X2, 'ends_with(detail::py_lower(p), ".webm")', 'ends_with(p, ".webm")'),
+    ("entrada: gif con loop None = 1", X2, 'clip.loop == false ? "1" : "0"', '!clip.loop.value_or(false) ? "1" : "0"'),
+    ("entrada: still sin los 0,05 s", X2, "ffmpeg_trim_window(clip).second + 0.05", "ffmpeg_trim_window(clip).second"),
+    ("entrada: secuencia sin «%0»", X2, 'if (p.contains("%0")) {', 'if (p.contains("%")) {'),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
+          "export_input": (EXPORT_INPUT, "[export_input]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
           "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"),

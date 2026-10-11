@@ -14,7 +14,8 @@ Salida (al repo):
   tests/fixtures/edit/synthetic.json       edición: casos de ops_cases.py
   tests/fixtures/keyframes/synthetic.json  animación: casos de kf_cases.py
   tests/fixtures/motion/synthetic.json     envolvente de un sonido (clip_motion): motion_cases.py
-  tests/fixtures/media/synthetic.json      cabeceras de imagen (images.probe_gif): media_cases.py
+  tests/fixtures/media/synthetic.json      cabeceras de imagen (images.probe_gif) y sondas de medios: media_cases.py
+  tests/fixtures/export_input/synthetic.json  cómo lee el export el material (clip_kind.py): export_input_cases.py
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
@@ -1524,6 +1525,41 @@ def real_motion_fixtures(ctx: Ctx, data: dict, max_rms: int = 60) -> dict:
     return _pure({"downsample": [], "normalize": [], "timelines": timelines, "rms": rms})
 
 
+# --- Cómo lee el export el material (clip_kind.py) --------------------------------------------
+
+def _export_input_case(ctx: Ctx, name: str, raw_clip: dict, fps_list, paths) -> dict:
+    from app import clip_kind as ck
+    c = ctx.schemas.TimelineClip.model_validate(raw_clip)
+    return _pure(_nan_safe({
+        "name": name, "clip": c.model_dump(), "still": ck.is_still_clip(c),
+        "trim": [{"fps": f, "window": list(ck.ffmpeg_trim_window(c, f)), "filter": ck.ffmpeg_trim_filter(c, f)}
+                 for f in fps_list],
+        "input": [{"path": p, "fps": f, "args": ck.ffmpeg_input_args(c, p, f)} for p in paths for f in fps_list[:2]],
+    }))
+
+
+def synthetic_export_input_fixtures(ctx: Ctx) -> dict:
+    sys.path.insert(0, str(HERE))
+    import export_input_cases as ec
+    return {"clips": [_export_input_case(ctx, c["id"], c, ec.FPS, ec.PATHS) for c in ec.CLIPS]}
+
+
+def real_export_input_fixtures(ctx: Ctx, data: dict) -> dict:
+    """Tus clips, con el fps de su timeline y la ruta que les da compose._clip_path."""
+    from app import compose
+    cases = []
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        fps = int(proj.timeline.fps)
+        for c in proj.timeline.clips:
+            path = compose._clip_path(proj, c)
+            cases.append(_export_input_case(ctx, f"{proj.id} · {c.id}", c.model_dump(), [fps],
+                                            [] if path is None else [str(path)]))
+    return {"clips": cases}
+
+
 # --- Cabeceras de imagen (images.py: probe_gif y _ext_from_magic) -----------------------------
 
 def _gif_case(name: str, data: bytes) -> dict:
@@ -1986,6 +2022,8 @@ def main() -> None:
     kf = synthetic_keyframe_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "keyframes" / "synthetic.json", kf,
           len(kf["clips"]) + len(kf["ease"]) + len(kf["masks"]) + len(kf["styles"]), 0)
+    exi = synthetic_export_input_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "export_input" / "synthetic.json", exi, len(exi["clips"]), 0)
     med = synthetic_media_fixtures()
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)
@@ -2047,6 +2085,8 @@ def main() -> None:
               sum("error" in c for c in edit_real["cases"]))
         kf_real = real_keyframe_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "keyframes" / "real.json", kf_real, len(kf_real["clips"]), 0)
+        exi_real = real_export_input_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "export_input" / "real.json", exi_real, len(exi_real["clips"]), 0)
         med_real = real_media_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "media" / "real.json", med_real,
               len(med_real["gifs"]) + len(med_real["probe"]), 0)
