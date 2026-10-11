@@ -30,6 +30,7 @@ add_library(gc_core
     src/edit_ops_recipes.cpp
     src/export_input.cpp
     src/follow.cpp
+    src/font_metrics.cpp
     src/frame.cpp
     src/fx_anims.cpp
     src/fx_catalog.cpp
@@ -45,6 +46,7 @@ add_library(gc_core
     src/projects_store.cpp
     src/shapes.cpp
     src/text_metrics.cpp
+    src/text_style.cpp
     src/py.cpp
     src/session.cpp
     src/settings.cpp

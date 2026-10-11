@@ -1132,3 +1132,18 @@ Decisión de Edu (§6):
 - **Verificación:** 56 fotogramas de render. MSVC + vcpkg: 134/134, 0 warnings; MinGW: 118/118 (181 193 aserciones).
 
 **Siguiente:** el texto: portar `text_ass.build_ass` a `gc_core` con paridad exacta del `.ass` y dibujarlo después con Skia.
+
+### 2026-10-11 — F3: texto, etapa 1a: estilo y métricas de fuente
+
+- **Hecho:**
+  - `py_upper` (tabla generada) y `py_is_space` público.
+  - `gc_core/font_metrics`: espejo de `font_metrics.py`, con `resolve_font_path`, `font_line_height_em` y `ass_size_factor`. Las carpetas van en `FontDirs` y Anton (OFL) está en `resources/fonts`.
+  - `gc_core/text_style`: los cálculos puros de `text_ass.py`, es decir, estilo efectivo, efectos de palabra, opacidades, alfa y color ASS, escala X/Y, Fondo (color y si va dibujado), palabra activa, May./min., sombra y Brillo, posición y Curva.
+  - Donde Python lanza una excepción (un color que no es texto, un ángulo de sombra infinito), el C++ toma la salida segura y lo dice en la cabecera.
+- **Verificación:**
+  - Paridad exacta con las funciones reales en 155 estilos sintéticos y tus 11 estilos distintos. Los cos/sin de la sombra se comparan con margen de 1e-12.
+  - También coinciden 98 casos de May./min. y 128 de palabra activa, 20 TTF mínimos (rotos o no), 4 carpetas de fuentes falsas, Anton y las fuentes de `C:/Windows/Fonts`.
+  - 10 mutantes: fallan todos salvo uno, que era código muerto y se quitó.
+  - MSVC + vcpkg: 138/138; MinGW: 122/122. 0 warnings.
+
+**Siguiente:** etapa 1b, con `_posed_style`, las ventanas de palabra con `words`, `box_rects` y `curve_glyphs`; después, dibujar el texto en `gc_render`.

@@ -2153,6 +2153,125 @@ def _fits(clip_kind: str, track_kind: str) -> bool:
     return family.get(clip_kind) == track_kind
 
 
+# --- Texto (text_ass, font_metrics) -----------------------------------------------------------
+
+def _safe(fn, *args) -> dict:
+    """{"ok": valor} o {"error": tipo}, con NaN e infinito como texto."""
+    try:
+        return {"ok": _nan_safe(fn(*args))}
+    except Exception as e:  # noqa: BLE001 — basta con saber que Python falla
+        return {"error": type(e).__name__}
+
+
+def _text_style_case(st: dict) -> dict:
+    """Los cálculos de text_ass.py sobre un estilo efectivo, en 1080×1920 (y _xy también en 360×640)."""
+    from app import text_ass as ta
+    font_px = ta._font_px(st, 1920)
+    return _pure({
+        "style": st,
+        "fx": _safe(lambda: sorted(ta.word_fx_set(st))),
+        "opacity": _safe(ta.style_opacity, st),
+        "word_opacity": _safe(lambda: [ta.word_opacity(st, True), ta.word_opacity(st, False)]),
+        "alpha": _safe(lambda: [ta.alpha_hex(ta.word_opacity(st, a)) for a in (True, False)]),
+        "stretch": _safe(lambda: list(ta.stretch_of(st))),
+        "box_color": _safe(ta._box_color, st),
+        "box_drawn": _safe(ta.box_drawn, st),
+        "xy": _safe(lambda: [list(ta._xy(st, 1080, 1920)), list(ta._xy(st, 360, 640))]),
+        "font_px": _safe(ta._font_px, st, 1920),
+        "letter_spacing": _safe(ta._letter_spacing_px, st, font_px),
+        "line_height": _safe(ta._line_height, st),
+        "shadow": _safe(ta.text_shadow, st, font_px),
+        "curve": _safe(ta.curve_of, st),
+    })
+
+
+def _font_layout_case(layout: dict, root: Path) -> dict:
+    """resolve_font_path y ass_size_factor REALES con las carpetas de fuentes en `root`: cada
+    archivo de la disposición es un TTF mínimo con su propio alto de línea."""
+    import text_cases as tc
+    from app import font_metrics as fm
+    files = {}
+    for sub in ("system", "bundled"):
+        (root / sub).mkdir(parents=True)
+        for i, name in enumerate(layout[sub]):
+            asc = 1000 + 37 * i + (500 if sub == "bundled" else 0)
+            data = tc.font_bytes({b"head": tc._head(1000), b"OS/2": tc._os2(asc, 211)})
+            (root / sub / name).write_bytes(data)
+            files[f"{sub}/{name}"] = data.hex()
+    saved = fm.FONT_DIR, fm.BUNDLED_FONT_DIR
+    fm.FONT_DIR, fm.BUNDLED_FONT_DIR = root / "system", root / "bundled"
+    fm._line_height_em.cache_clear()
+    try:
+        out = []
+        for name in tc.FONT_NAMES:
+            for bold in (True, False):
+                p = fm.resolve_font_path(name, bold)
+                out.append({"name": name, "bold": bold, "path": p.relative_to(root).as_posix(),
+                            "factor": fm.ass_size_factor(name, bold)})
+        return {"files": files, "fonts": out}
+    finally:
+        fm.FONT_DIR, fm.BUNDLED_FONT_DIR = saved
+        fm._line_height_em.cache_clear()
+
+
+def synthetic_text_fixtures() -> dict:
+    """Los cálculos puros de text_ass.py (estilo, opacidad, alfa, colores, sombra, brillo, curva,
+    May./min., palabra activa) y las métricas de font_metrics.py, con las funciones REALES."""
+    import tempfile
+    import text_cases as tc
+    from app import font_metrics as fm
+    from app import text_ass as ta
+    alphas = [0.0, 1.0, 0.5, 1 / 3, float("nan"), float("inf"), float("-inf"), -0.5, 1.5, 1 - 0.5 / 255,
+              1 - 1.5 / 255, 0.25, 0.75, 0.998]
+    with tempfile.TemporaryDirectory() as tmp:
+        files = []
+        for i, (name, data) in enumerate(tc.FONT_FILES):
+            p = Path(tmp) / f"f{i}.ttf"
+            p.write_bytes(data)
+            files.append({"name": name, "hex": data.hex(), "line_height_em": fm._line_height_em.__wrapped__(str(p))})
+        files.append({"name": "no existe", "hex": None,
+                      "line_height_em": fm._line_height_em.__wrapped__(str(Path(tmp) / "no-existe.ttf"))})
+        layouts = [_font_layout_case(lay, Path(tmp) / f"l{i}") for i, lay in enumerate(tc.FONT_LAYOUTS)]
+    return _pure({
+        "styles": [_text_style_case(st) for st in tc.STYLES],
+        "effective": [{"track": t, "clip": c, "out": ta.effective_text_style(t, c)} for t, c in tc.EFFECTIVE],
+        "alpha": [{"op": _nan_safe(op), "out": ta.alpha_hex(op)} for op in alphas],
+        "case": [{"text": t, "mode": m, "out": ta.apply_text_case(t, m)} for t in tc.CASE_TEXTS for m in tc.CASE_MODES],
+        "active_word": [{"n": n, "t": t, "d": d, "out": _safe(ta.active_word_index, n, t, d)}
+                        for n, t, d in tc.ACTIVE_WORD],
+        "font_files": files,
+        "font_layouts": layouts,
+        # Anton va con la app (resources/fonts, copiada de backend/app/fonts).
+        "anton": fm._line_height_em.__wrapped__(str(fm.BUNDLED_FONT_DIR / "Anton-Regular.ttf")),
+    })
+
+
+def real_text_fixtures(ctx: Ctx, data: dict) -> dict:
+    """Tus textos: el estilo efectivo (pista + clip) de cada clip de texto, sin repetidos, con
+    sus cálculos; su texto en May./min.; y el factor de cada fuente instalada en C:/Windows/Fonts."""
+    from app import font_metrics as fm
+    from app import text_ass as ta
+    seen, styles, cases = set(), [], []
+    for p in data.get("projects", []):
+        tl = p.get("timeline") or {}
+        track_style = {t.get("id"): t.get("style") for t in tl.get("tracks", [])}
+        for c in tl.get("clips", []):
+            if c.get("kind") != "text":
+                continue
+            st = ta.effective_text_style(track_style.get(c.get("track_id")), c.get("style"))
+            key = json.dumps(st, sort_keys=True)
+            if key not in seen:
+                seen.add(key)
+                styles.append(_text_style_case(st))
+            mode = st.get("text_case")
+            for m in dict.fromkeys([mode, "upper", "title"]):
+                cases.append({"text": c.get("text") or "", "mode": m, "out": ta.apply_text_case(c.get("text") or "", m)})
+    fm._line_height_em.cache_clear()
+    fonts = [{"name": n, "bold": b, "factor": fm.ass_size_factor(n, b)}
+             for n in sorted({*fm.FONTS, *fm.FONTS_BOLD, *fm.BUNDLED_FONTS}) for b in (True, False)]
+    return _pure({"styles": styles, "case": cases, "system_dir": fm.FONT_DIR.as_posix(), "fonts": fonts})
+
+
 # --- Salida -----------------------------------------------------------------------------------
 
 def write(path: Path, payload, count: int, errors: int) -> None:
@@ -2199,6 +2318,10 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "media" / "seek.json", seek, len(seek), 0)
     chroma = synthetic_chroma_fixtures()
     write(REPO / "tests" / "fixtures" / "media" / "chroma.json", chroma, len(chroma), 0)
+    txt = synthetic_text_fixtures()
+    write(REPO / "tests" / "fixtures" / "text" / "synthetic.json", txt,
+          len(txt["styles"]) + len(txt["effective"]) + len(txt["alpha"]) + len(txt["case"]) + len(txt["active_word"])
+          + len(txt["font_files"]) + sum(len(lay["fonts"]) for lay in txt["font_layouts"]), 0)
     ren = synthetic_render_fixtures(ctx)
     write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
@@ -2299,6 +2422,9 @@ def main() -> None:
         write(REPO / "tests" / "fixtures" / "local" / "frame" / "real.json", frm_real,
               sum(len(c["heads"]) for c in frm_real["cases"]), 0)
         print(f"  fotograma: {sum(len(c['js_dur']) for c in frm_real['cases'])} clips con clipDur de JS ≠ Python")
+        txt_real = real_text_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "text" / "real.json", txt_real,
+              len(txt_real["styles"]) + len(txt_real["case"]) + len(txt_real["fonts"]), 0)
         ev_real = real_eval_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "eval" / "real.json", ev_real, len(ev_real["clips"]), 0)
     print(f"listo en {time.perf_counter() - t0:.1f} s")
