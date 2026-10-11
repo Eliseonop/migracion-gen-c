@@ -4,8 +4,8 @@ Motor C++ multiplataforma del editor de clips verticales. Es la migración de
 [video-yt](E:/proyectos/video-yt) (FastAPI + React). El plan completo está en
 [docs/PLAN_MIGRACION_CPP.md](docs/PLAN_MIGRACION_CPP.md).
 
-**Estado:** F0 hecha salvo MSVC y el CI en marcha (necesitan el Windows SDK y el remoto) · F1 hecha: modelo y formato (también NaN e Infinity como Python), ajustes, biblioteca con «Guardar en la biblioteca», SFX de disco, colecciones de material y el almacén de proyectos (dar de alta SFX llega con F5) · F2 hecha: motor de edición (45 comandos: las 42 ops de video-yt,
-animación por keyframes y máscaras, encuadre, pegar atributos, seguir objetos, sonorizar, animaciones de preset, recetas, subtítulos, figuras, efectos de catálogo, deshacer, grupos, historial en disco y autoguardado) · F3 en curso: la evaluación de un instante está hecha (animaciones, aparición y salida, fusión, ajustes de color, capas y el fotograma con la geometría de cada dibujo); `gc_media` y `gc_render` esperan al Windows SDK. Arquitectura: [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
+**Estado:** F0 hecha salvo el CI en marcha (falta el primer push); MSVC 14.50 compila y pasa los tests · F1 hecha: modelo y formato (también NaN e Infinity como Python), ajustes, biblioteca con «Guardar en la biblioteca», SFX de disco, colecciones de material y el almacén de proyectos (dar de alta SFX llega con F5) · F2 hecha: motor de edición (45 comandos: las 42 ops de video-yt,
+animación por keyframes y máscaras, encuadre, pegar atributos, seguir objetos, sonorizar, animaciones de preset, recetas, subtítulos, figuras, efectos de catálogo, deshacer, grupos, historial en disco, autoguardado y la envolvente de un sonido) · F3 en curso: la evaluación de un instante está hecha (animaciones, aparición y salida, fusión, ajustes de color, capas y el fotograma con la geometría de cada dibujo) y las cabeceras de imagen; vcpkg está listo y `gc_media` empieza con FFmpeg. Arquitectura: [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
 Lista de tareas de todas las fases: [docs/TODO.md](docs/TODO.md).
 
 ## Estructura
@@ -25,7 +25,7 @@ docs/          plan de migración
 ## Compilar
 
 Desde CLion: abre la carpeta, elige el perfil del preset **MinGW (CLion) · Debug**
-(o **MSVC · Debug** cuando esté instalado el Windows SDK) y compila `gc_tests`.
+(o **MSVC · Debug**) y compila `gc_tests`.
 
 Desde terminal:
 

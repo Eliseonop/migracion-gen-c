@@ -1,6 +1,6 @@
 # Plan de migración: video-yt → GenClipPro (C++)
 
-> Estado: **en marcha** desde 2026-10-06 · F0 hecha (salvo MSVC y CI) · F1 hecha (salvo `stick_library` y lo que escribe desde la interfaz) · F2 cerrada (salvo lo que falta de `clip_motion`) · F3 en curso (lo que no necesita MSVC). Ver §14, [ARQUITECTURA.md](ARQUITECTURA.md) y la lista de tareas [TODO.md](TODO.md).
+> Estado: **en marcha** desde 2026-10-06 · F0 hecha (salvo el CI en marcha) · F1 hecha (salvo lo que escribe desde la interfaz) · F2 cerrada · F3 en curso (evaluación hecha; MSVC y vcpkg en marcha para `gc_media`). Ver §14, [ARQUITECTURA.md](ARQUITECTURA.md) y la lista de tareas [TODO.md](TODO.md).
 > Origen: `E:\proyectos\video-yt` (FastAPI + React). Destino: `C:\Users\Edu\CLionProjects\GenClipPro`.
 
 ## 0. Resumen
@@ -976,3 +976,34 @@ Decisión de Edu (§6):
 - **Paper ya es un efecto** (`paper_cutout`, en el catálogo): el editor de Paper no se porta. Sus opciones de aparición (pliegue, vibración) son parámetros del efecto, y el efecto se porta en F4 con los demás.
 - **Pestaña Efectos en el inspector (F5):** aparece al añadir un efecto al clip, con una subpestaña por efecto (en el orden de `vfx` y reordenable) y sus propiedades generadas desde los `params` del catálogo.
 - Estimación total: de ≈ 56–81 a **≈ 50–71 semanas**.
+
+### 2026-10-08 — F1: personajes stick (stick_library.py)
+
+*(Entrada añadida el 2026-10-10: la tanda se cerró con su commit, `31eadb7`, sin entrada en este registro.)*
+- **Hecho:** `stick_library.hpp` con la lista, el detalle agrupado por expresión, crear, añadir archivos a una expresión y cambiar la expresión sin mover el archivo. En `py.hpp`: `py_title`, `py_isdecimal` y `py_nfkd_fold`, con tablas generadas desde el Python de video-yt (`tools/gen/gen_py_text.py`). `disk_scan` comparte ahora `sorted_subdirs`, `clean_name` y `resolved_inside` con las colecciones.
+- **Verificación:** 245 pasos sobre una carpeta temporal (54 de error) y tu `scientist_stick`; 57/58 mutaciones (la otra es equivalente). Detalles y divergencias en las notas de F1 del TODO.
+
+### 2026-10-10 — F2: la envolvente de un sonido (lo que faltaba de `clip_motion`)
+
+**Hecho:**
+- **`clip_motion.hpp`:** `downsample_envelope`, `normalize_amps`, `overlap_window`, `audio_src_at` y `rms_envelope`. Esta última es el núcleo de `sample_rms_envelope`: recibe las muestras mono a 400 Hz que da ffmpeg (`-ac 1 -ar 400 -f f32le`), y decodificarlas es de `gc_media`. Es lo que necesita la herramienta MCP `animate_clip` con `follow_audio_id` (F7); la op `animate_clip` ya recibía la envolvente hecha.
+- **El `sum()` de Python ≥ 3.12 es compensado** (Neumaier), no la suma ingenua: el RMS lo repite paso a paso, y así sale bit a bit.
+
+**Verificación:**
+- **Fixtures (`tests/fixtures/motion`, `motion_cases.py`):** 108 `downsample` (10 de error, `max_n` negativo, 0 y 1), 20 `normalize` (pico 0 y −0,0, NaN delante y detrás, infinitos), 85 pares visual/audio en 4 timelines sintéticas con 1228 instantes (velocidades, `in_point`, texto, imagen y figura, 0,02 s justos) y 30 RMS con el `sample_rms_envelope` REAL y un ffmpeg falso que devuelve las muestras del caso (11 473 muestras; rates 0, 1, 3, 7, 400 y 1000, NaN, infinitos y trozos que desbordan).
+- **Tus datos:** los 16 018 pares (visual, audio) de tus 18 timelines (2637 con solape, 34 673 instantes) y 60 RMS de tus audios con las muestras que da el ffmpeg real (192 079 muestras).
+- **Mutación:** 22/22 (`tools/dev/mutantes.py motion`). El de «compensación aunque no sea finita» se escapaba hasta que se añadió un caso con trozos finitos y luego uno infinito (si todos son infinitos, el resultado normalizado es el mismo).
+
+### 2026-10-10 — F0/F3: MSVC y vcpkg
+
+- **MSVC 14.50** (Visual Studio 2026, en `D:\visual`) compila con 0 warnings y pasa los 112 tests. Hizo falta: bucles en vez de `const auto* it = std::ranges::find(...)` sobre `std::array` (en MSVC el iterador no es un puntero); `Json(sv)` en las comparaciones con `string_view` (ambiguas en C++20 con el operador reescrito); `py_json_dumps` iterativo (recursivo, con 1 MB de pila, se caía en Debug antes de los 1500 niveles; el límite se queda); `_CRT_SECURE_NO_WARNINGS` y `/wd4702` en los tests.
+- **vcpkg** en `E:\vcpkg` (el de VS no trae los puertos), con la caché binaria en `E:\vcpkg-cache` y `builtin-baseline` fijado. `msvc-vcpkg-debug` configura y compila con nlohmann-json, spdlog 1.17 (fmt 12) y Catch2 de vcpkg. FFmpeg va en la feature `media` (LGPL, sin x264/x265; nvcodec, amf y qsv), activada en esos presets; falta construirla.
+- **Revisión del subagente** (tanda de stick): APROBADO, sin bloqueantes. Faltaba la entrada del §14 de stick (añadida arriba) y la cabecera del plan estaba atrasada.
+
+### 2026-10-10 — F3: cabeceras de imagen (images.probe_gif y _ext_from_magic)
+
+- **Hecho:** `image_probe.hpp` (en `gc_core`: lee bytes, sin dependencias). Cuenta fotogramas, suma retardos (0,1 s si no hay o son 0), lee dimensiones, transparencia y repetición (NETSCAPE2.0 con contador 0; sin él, un GIF animado repite) y saca la extensión por la firma. Un archivo cortado en mitad de un bloque devuelve solo las dimensiones, como el `except` de Python.
+- **Verificación:** 290 GIF sintéticos (a mano, de Pillow y todos los truncados de dos de ellos) y 21 firmas, contra el `images.py` real; tus 1606 imágenes (la firma de todas; el único GIF, entero). 14/14 mutaciones (`tools/dev/mutantes.py media`).
+- **Resultado:** 112 tests (110 de Catch2 y 2 de la CLI) y 176 065 aserciones en verde con MinGW (Debug y Release) y MSVC (Debug), 0 warnings; tidy, 0 avisos en lo tocado.
+
+**Siguiente:** construir FFmpeg con vcpkg y portar las sondas de ffprobe (`probe_duration`, `_color_untagged`, `_has_audio`) a `gc_media` con libavformat.

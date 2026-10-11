@@ -5,7 +5,7 @@
 `grupo`: eval (evaluación por clip), layers (capas de un instante), frame (fotograma), sfx
 (biblioteca de SFX en disco), collections (colecciones de material), projects (almacén de
 proyectos), json (JSON como Python), library («Guardar en la biblioteca»), stick (personajes
-stick) o motion (envolvente de un sonido, clip_motion). Cada uno pasa los
+stick), motion (envolvente de un sonido, clip_motion) o media (cabeceras de imagen). Cada uno pasa los
 tests de su etiqueta (GROUPS).
 `preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los mutantes cuyo
 nombre contiene ese texto.
@@ -544,8 +544,29 @@ MOTION = [
      "pts.emplace_back(static_cast<double>(i) / kRmsSampleRate, rms);"),
 ]
 
+G = "src/core/src/image_probe.cpp"
+MEDIA = [
+    ("gif: retardo 0 vale 0", G, "static_cast<double>(delay_cs) / 100.0 : 0.1;", "static_cast<double>(delay_cs) / 100.0 : 0.0;"),
+    ("gif: GCE con un byte menos", G, "if (label == 0xF9 && pos + 6 < n) {", "if (label == 0xF9 && pos + 5 < n) {"),
+    ("gif: transparencia con otro bit", G, "(data[pos + 3] & 0x01U)", "(data[pos + 3] & 0x02U)"),
+    ("gif: NETSCAPE con contador ≠ 0 repite", G, "loop = le(data, sb + 2, sb + 4) == 0;", "loop = le(data, sb + 2, sb + 4) != 0;"),
+    ("gif: sin NETSCAPE, un fotograma repite", G, "out.loop = netscape ? loop : frames > 1;", "out.loop = netscape ? loop : frames > 0;"),
+    ("gif: sin saltar la tabla local", G, "pos += color_table(img_packed);", "pos += 0;"),
+    ("gif: descriptor cortado un byte antes", G, "if (pos + 9 >= n) {", "if (pos + 10 >= n) {"),
+    ("gif: el retardo no se reinicia", G, "total_delay += pending_delay;\n            pending_delay = 0.1;",
+     "total_delay += pending_delay;"),
+    ("gif: sub-bloques terminan en 1", G, "if (size == 0) {", "if (size == 1) {"),
+    ("gif: GIF87a no vale", G, 'if (data.size() < 13 || !(slice_is(data, 0, "GIF87a") || slice_is(data, 0, "GIF89a"))) {',
+     'if (data.size() < 13 || !slice_is(data, 0, "GIF89a")) {'),
+    ("gif: fps sin redondear", G, "py_round(static_cast<double>(frames) / total_delay, 3)",
+     "static_cast<double>(frames) / total_delay"),
+    ("gif: tabla de 2^(bits)", G, "return std::size_t{3} << ((packed & 0x07U) + 1U);", "return std::size_t{3} << (packed & 0x07U);"),
+    ("firma: WEBP de 13 bytes", G, "data.size() >= 12 &&", "data.size() >= 13 &&"),
+    ("firma: JPEG de 2 bytes", G, 'slice_is(data, 0, "\\xff\\xd8\\xff")', 'slice_is(data, 0, "\\xff\\xd8")'),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
-          "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"),
+          "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
           "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}

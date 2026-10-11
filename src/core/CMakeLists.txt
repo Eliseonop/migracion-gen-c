@@ -33,6 +33,7 @@ add_library(gc_core
     src/fx_catalog.cpp
     src/history_store.cpp
     src/ids.cpp
+    src/image_probe.cpp
     src/keyframes.cpp
     src/layers.cpp
     src/library.cpp

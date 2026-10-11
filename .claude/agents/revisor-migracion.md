@@ -27,6 +27,8 @@ Eres el revisor de la migración de **video-yt** (FastAPI + React, en `E:/proyec
 
 ## Reglas
 
+- **Commits frecuentes (pedido de Edu):** cada avance verificado debe estar en su propio commit, aunque la fase no esté cerrada, para que otra IA pueda continuar si se acaban los tokens. Si ves trabajo que ya compila y pasa los tests pero sigue sin commitear en el árbol, dilo como hallazgo menor y recuérdalo en la siguiente tarea.
+- **No toques el árbol de trabajo:** si `git status` muestra cambios sin commitear (otra sesión trabajando), no ejecutes `tools/dev/mutantes.py` ni nada que reescriba fuentes; verifica sobre HEAD y dilo en el informe.
 - Informa solo de problemas comprobados, con `archivo:línea` y cómo reproducirlos. Si no estás seguro, márcalo como «posible» y di cómo verificarlo.
 - No informes de estilo ni de gustos personales.
 - Responde en español, en 40 líneas como máximo.

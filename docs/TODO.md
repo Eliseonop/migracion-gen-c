@@ -2,7 +2,7 @@
 
 > Lista de tareas con checks de **todas las fases** del [plan](PLAN_MIGRACION_CPP.md).
 > El detalle de cada tanda (qué se hizo, cómo se verificó, cifras) está en el §14 del plan.
-> Arquitectura: [ARQUITECTURA.md](ARQUITECTURA.md). Actualizado: **2026-10-08**.
+> Arquitectura: [ARQUITECTURA.md](ARQUITECTURA.md). Actualizado: **2026-10-10**.
 
 Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 
@@ -10,10 +10,10 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 
 | Fase | Contenido | Estado | Hito |
 |---|---|---|---|
-| **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo MSVC y CI en marcha | |
+| **F0** Cimientos | toolchain, CMake, CI, tests | ✅ hecha salvo el CI en marcha (MSVC ya compila y pasa los tests) | |
 | **F1** Modelo y formato | modelo, JSON, migraciones, fixtures | ✅ hecha: modelo, ajustes, biblioteca, SFX de disco, colecciones, personajes stick, almacén de proyectos y JSON como Python · dar de alta SFX llega con F5 | |
-| **F2** Lógica de edición | ops, sin solapes, keyframes, undo | ✅ hecha: las 42 ops, el historial en disco y el autoguardado · quedan cuatro funciones de `clip_motion` que usa el MCP | |
-| **F3** Media + export | gc_media, gc_render v1, `genclip render` | 🟡 evaluación hecha (por clip, capas y fotograma) · lo demás empieza con MSVC (el Windows SDK ya está) | **M1** |
+| **F2** Lógica de edición | ops, sin solapes, keyframes, undo | ✅ hecha: las 42 ops, el historial en disco, el autoguardado y la envolvente de un sonido (`clip_motion`) | |
+| **F3** Media + export | gc_media, gc_render v1, `genclip render` | 🟡 evaluación hecha (por clip, capas y fotograma) y cabeceras de imagen · MSVC y vcpkg listos; sigue FFmpeg y `gc_media` | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | ⬜ | |
 | **F5** Editor de escritorio | app Qt Quick | ⬜ | **M2** |
 | **F6** IA local | fondo, SAM, Whisper, TTS, tracking | ⬜ | |
@@ -22,10 +22,10 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F9** Empaquetado escritorio | instaladores, `.exe` | ⬜ | **M3** |
 | **F10** Móvil | Android + iOS | ⬜ | **M4** |
 
-**Cifras actuales:** 108 tests (106 de Catch2 y 2 de la CLI) y 118 914 aserciones en verde (Debug y Release, 0 warnings) y 0 avisos de clang-tidy.
+**Cifras actuales:** 112 tests (110 de Catch2 y 2 de la CLI) y 176 065 aserciones en verde con MinGW (Debug y Release) y con MSVC (Debug), con 0 warnings y 0 avisos de clang-tidy.
 Paridad con video-yt en modelo (18 proyectos), edición (378 casos sintéticos + 1919 ops reales),
 animación (236 casos + 733 clips reales), encuadre (2908 muestras sintéticas + 5875 de 235 clips reales)
-historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (67 pasos + los tuyos, con las claves redactadas) biblioteca (55 pasos + 23 materiales + la tuya; guardar desde un proyecto, 47 pasos + 3 de tus materiales) SFX en disco (207 pasos + tu carpeta de 626 sonidos), colecciones de material (256 pasos + tu carpeta, 46 medios), personajes stick (245 pasos + tu `scientist_stick`), almacén de proyectos (317 pasos + una copia de tu `projects.json`, con el mismo texto), JSON como Python (5175 `repr`, `dumps` y `loads`) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
+historial (69 pasos sintéticos + el de tus 14 proyectos) ajustes (67 pasos + los tuyos, con las claves redactadas) biblioteca (55 pasos + 23 materiales + la tuya; guardar desde un proyecto, 47 pasos + 3 de tus materiales) SFX en disco (207 pasos + tu carpeta de 626 sonidos), colecciones de material (256 pasos + tu carpeta, 46 medios), personajes stick (245 pasos + tu `scientist_stick`), almacén de proyectos (317 pasos + una copia de tu `projects.json`, con el mismo texto), JSON como Python (5175 `repr`, `dumps` y `loads`), envolvente de un sonido (244 casos sintéticos + 16 018 pares de tus timelines y 60 RMS de tus audios), cabeceras de imagen (311 casos sintéticos + 1606 de tus imágenes) y evaluación por clip (41 clips con 984 muestras + 434 casos sueltos; 914 clips reales con 7122 muestras) capas de un instante (81 instantes sintéticos + 6675 de tus timelines) y fotograma (95 instantes sintéticos con 203 dibujos + 831 de tus timelines con 1692 dibujos), estos dos contra el JS real con Node.
 Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la libm: tolerancia de 1e-12 (4e-15 en la evaluación).
 
 ---
@@ -34,9 +34,8 @@ Todo exacto bit a bit salvo lo que pasa por `pow()`, `sin()` o `cos()` de la lib
 
 F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La evaluación de F3 también está completa (por clip, capas y fotograma). El Windows SDK (10.0.26100) ya está instalado y el remoto de GitHub existe.
 
-1. **F3:** el toolchain MSVC (`msvc-debug` configura, compila y pasa los tests), luego vcpkg (FFmpeg, Skia, ONNX Runtime) y `gc_media`.
+1. **F3:** MSVC ya compila y pasa los tests, y vcpkg está en `E:\vcpkg` (notas de F3). Sigue construir FFmpeg con vcpkg (`msvc-vcpkg-debug`, feature `media`) y, con él, `gc_media`: primero las sondas de ffprobe de video-yt (`sound_design.probe_duration`, `compose._color_untagged` y `compose._has_audio`) con libavformat, con fixtures sobre medios pequeños generados con ffmpeg y una muestra de los tuyos.
 2. **El CI:** subir los commits al remoto y ver que pasa en Windows, Linux y macOS (con el push que haga Edu).
-3. Lo que falta de `clip_motion` (`normalize_amps`, `downsample_envelope`, `overlap_window`, `audio_src_at`), en un hueco.
 
 ## Pendiente por tu parte (Edu)
 
@@ -61,7 +60,7 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 - [x] `genclip --version` con argumentos y salida en UTF-8 en Windows
 - [x] CI de GitHub Actions escrito (Windows MSVC, Linux GCC, macOS Clang)
 - [ ] CI ejecutándose (el remoto ya existe: falta el primer push). Ojo: las fixtures de disco (SFX y colecciones) llevan la semántica de `WindowsPath` (sin distinguir mayúsculas, «\» como separador, «C:x»), y las de proyectos guardan el texto de `projects.json` con los CRLF de Windows (`write_json_file` escribe LF fuera de Windows, como Python); en Linux y macOS habrá que saltarlas o adaptarlas
-- [ ] Toolchain MSVC operativo (`msvc-debug`): el Windows SDK ya está; falta probarlo
+- [x] Toolchain MSVC operativo (`msvc-debug`): MSVC 14.50 de VS 2026 compila con 0 warnings y pasa todos los tests; `msvc-vcpkg-debug` configura con el vcpkg de `E:\vcpkg` (lo que hizo falta, en las notas de F3)
 - [ ] `GC_WARNINGS_AS_ERRORS` activado en el CI de Windows
 - [x] `.clang-tidy` y spdlog. `python tools/dev/tidy.py [--fix] [filtro]` pasa el clang-tidy de CLion por `src`, `apps` y `tests` y tiene que quedar en 0 avisos (lo que se desactiva y por qué está en el propio `.clang-tidy`). El registro es `gc_log` (`src/log`, spdlog 1.15.3 con hash verificado o el de vcpkg): `init`, el nivel de `GENCLIP_LOG` y salida a stderr. `genclip` lo usa para sus errores; `gc_core` no registra nada
 - [ ] clang-tidy en el CI (`tidy.py` usa el clang-tidy y la MinGW de CLion; en el CI, el `run-clang-tidy` de cada plataforma)
@@ -152,7 +151,7 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 - [x] `clip_layout`: `crop_window`, `source_point_to_output`, `source_crop_px`, `dest_rect[_even]` y volteo, con fixtures de layout (las funciones que solo usa la vista previa de `clipLayout.js` van con F5)
 - [x] `text_metrics` (tamaño de letra, interlineado y reparto en líneas como `text_ass._rows`; ancho de texto inyectable, estimado hasta F4), `sfx_library` (biblioteca inyectable, `norm`, `score_sfx` y `match_sounds`) y el motor de «Eliminar fondo» recomendado (`bg`)
 - [x] `clip_motion`: los 13 presets (y sus alias), envolvente de audio (corte tras el pico) y fusión con los keyframes que había
-- [ ] Lo que falta de `clip_motion`: `normalize_amps`, `downsample_envelope`, `overlap_window`, `audio_src_at` y el núcleo de `sample_rms_envelope` con las muestras inyectadas (decodificar es de F3)
+- [x] Lo que faltaba de `clip_motion` (la envolvente de un sonido que usa `animate_clip` con `follow_audio_id`): `downsample_envelope`, `normalize_amps`, `overlap_window`, `audio_src_at` y `rms_envelope`, el núcleo de `sample_rms_envelope` con las muestras mono a 400 Hz inyectadas (decodificarlas es de `gc_media`, F3). Paridad (`tests/fixtures/motion`): 108 `downsample` (10 de error), 20 `normalize`, 85 pares visual/audio sintéticos con 1228 instantes, 30 RMS con un ffmpeg falso (11 473 muestras); y tus 18 timelines (16 018 pares, 2637 con solape, y 34 673 instantes) y 60 RMS de tus audios con las muestras del ffmpeg real (192 079 muestras). Exacto, bit a bit; 22/22 mutaciones (`tools/dev/mutantes.py motion`)
 - [x] `follow`: `follow_keys` (del recorrido de un objeto a keyframes de pose del clip que lo acompaña); el seguimiento en sí es de F6
 - [x] `clip_attrs`: grupos de atributos, `paste_attributes` y la fusión de keyframes (`merge_keyframes`: restringir, constantes y remuestreo)
 
@@ -175,7 +174,12 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 - **`clip_attrs._constant_props`** recorre un `set` de Python, así que el orden de esas claves cambia en cada ejecución. El exportador sustituye esa función por la misma en orden de aparición (que es lo que hace el C++), así que la fixture es estable y se compara con orden.
 - **Orden de los uuid en `paste_attributes`:** los grupos van en el orden de `ATTR_GROUP_IDS`. Primero crop (un `k…` por keyframe de `keyframes` y de `keyframes2`; el id se descarta al validar, pero el uuid se gasta), luego vfx (`fx` + 10 hex), luego mask (`m…`) y al final un `k…` por item de `merge_keyframes`.
 - **`follow_object`:** `track`, `dims`, `box_w` y `anchor_t` se validan al empezar (si el recorrido no coincide, Python falla igual), pero `min_gap` y los `cx`/`cy`/`s`/`rot` de cada punto solo cuando se usan, como en Python. Los items del clip que acompaña se quitan en [primera t − 0,06, última t + 0,06], ambos incluidos.
-- **`clip_motion` sin portar todavía:** `sample_rms_envelope` (lee el audio con ffmpeg: F3), `normalize_amps`, `downsample_envelope`, `overlap_window` y `audio_src_at`. Los usa la herramienta MCP que calcula la envolvente de un sonido (F7); `animate_clip` recibe la envolvente ya hecha.
+- **Envolvente de un sonido (`clip_motion`, hecho):** la usa la herramienta MCP `animate_clip` con `follow_audio_id` (`_follow_audio_envelope` de `tools_edit.py`, que va con F7); la op `animate_clip` recibe la envolvente ya hecha.
+  - **`sum()` de Python ≥ 3.12 es compensado** (Neumaier): `sum(x * x for x in chunk)` NO es la suma ingenua. `rms_envelope` repite el algoritmo de CPython (`0 + x0`, compensación `c` y `f + c` solo si `c` es finita y distinta de 0); medido: 0 diferencias en 20 000 sumas aleatorias, y la suma ingenua cambia el último bit.
+  - **`downsample_envelope`:** índice `round(i·(n−1)/(max_n−1))` al par; con `max_n` negativo, vacío; con `max_n = 1` y más de un punto, ZeroDivisionError (en C++, error).
+  - **`normalize_amps`:** el `max()` de Python se queda el primero (un NaN delante es el pico y todo sale 0; uno detrás no gana); pico 0 o −0,0 → 1.
+  - **`audio_src_at` y `overlap_window`:** `_num` deja un NaN en 0; con `t` NaN, `max(0.0, NaN)` es 0.
+  - **RMS:** `hop = max(1, int(400 / max(1, rate)))`; con menos de 2 muestras, `[(0, 0), (round(dur, 3), 0)]` sin normalizar ni reducir; si el último punto queda antes de `dur − 0,02`, se repite su amplitud en `round(dur, 3)`.
 - **Mutantes equivalentes de `clip_attrs`:** fusionar con el destino ya pegado (ningún grupo toca `keyframes`) y `keep_pitch` con la verdad de Python (Pydantic ya lo deja en `bool`).
 - **Recetas (hechas):**
   - `text_reflection` mide texto (`text_ass._rows` → Pillow). Se inyecta: el exportador parchea `text_ass.text_width` con la estimación `len·em·0,55 + ls·len`, que es la que usa `gc_core` por defecto (`set_text_width`). La medida real llega en F4 (FreeType).
@@ -210,7 +214,13 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 
 ## F3 — Media + export C++ → **M1**
 
-- [ ] Prerrequisito: MSVC + vcpkg con FFmpeg, Skia y ONNX Runtime
+- [ ] Prerrequisito: MSVC + vcpkg con FFmpeg, Skia y ONNX Runtime *(parcial)*
+  - [x] MSVC 14.50 (`msvc-debug`): compila con 0 warnings y pasa todos los tests
+  - [x] vcpkg en `E:\vcpkg` con `builtin-baseline` fijado; `msvc-vcpkg-debug` configura y compila
+  - [ ] FFmpeg (feature `media` de `vcpkg.json`, LGPL con nvcodec, amf y qsv): declarado, falta construirlo
+  - [ ] Skia (para `gc_render`)
+  - [ ] ONNX Runtime (llega con F6)
+- [x] **Cabeceras de imagen** (`image_probe.hpp`, espejo de `images.probe_gif` y `_ext_from_magic`): fotogramas, retardos, dimensiones, transparencia y repetición de un GIF leyendo sus bloques, y la extensión por la firma. Paridad (`tests/fixtures/media`): 290 GIF sintéticos (a mano, de Pillow y todos los truncados de dos de ellos) y 21 firmas; y tus 1606 imágenes (la firma de todas; el único GIF, entero). 14/14 mutaciones (`tools/dev/mutantes.py media`)
 - [x] **Evaluación:** timeline en el instante *t* → lista de capas (usa keyframes, pose, máscaras y layout)
   - [x] Por clip: animaciones de catálogo (`fx_anims`: `clip_animations`, `animation_delta`, `render_pose`, `anim_opacity` y `animation_sample_times`), aparición y salida (`clip_fx`: `clip_fx_at`, `fx_windows`), modo de fusión (`blend`) y ajustes de color (`clip_adjust`: matriz 3×3, `has_color_adjust`, `strip_color` y las pasadas base + fantasma de la máscara de ajuste). Paridad: 41 clips sintéticos en 24 instantes (uno es NaN), 240 puntos de curva, 150 de pista, 10 ventanas, 16 efectos y 18 modos de fusión sueltos, y tus 914 clips en 7122 instantes; 34/35 mutaciones con `tools/dev/mutantes.py eval` (la otra es equivalente)
   - [x] Capas de un instante: `stack_layers` y `buried_text_track_ids` (`timeline_rules`) y `layers_at`/`videos_at` (`layers.hpp`) con dos reglas, `kRenderLayers` (la del render C++) y `kPreviewLayers` (el `layersAt` literal del preview). Paridad contra el JS real ejecutado con Node: 81 instantes en 13 timelines sintéticas y 6675 en tus 18 timelines, sin descartes (a Node le llega un gemelo de cada clip con la duración de Python); las reglas del render, con 10 tests propios. 20/20 mutaciones (`tools/dev/mutantes.py layers`)
@@ -232,6 +242,9 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 - [ ] Benchmark: export igual de rápido o más que el de Python
 
 ### Notas de F3
+- **Toolchain (2026-10-10):** MSVC 14.50 de Visual Studio 2026 (`D:\visual`; `vcvars64.bat` en `VC\Auxiliary\Build`). El vcpkg de VS no trae el árbol de puertos: hay un clon en `E:\vcpkg` (disco sano; `C:` tiene bloques defectuosos y poco sitio), con la caché binaria en `E:\vcpkg-cache` (`VCPKG_DEFAULT_BINARY_CACHE`) y `builtin-baseline` fijado en `vcpkg.json` a ese commit (`e456309`, 2026-10-10). Para compilar: `vcvars64`, `VCPKG_ROOT=E:\vcpkg` y `cmake --preset msvc-vcpkg-debug`.
+  - **Lo que MSVC destapó (GCC lo dejaba pasar):** el iterador de `std::array` no es un puntero (`const auto* it = std::ranges::find(...)` no compila; clang-tidy pide justo eso, así que se usa un bucle) y `Json == std::string_view` es ambiguo en C++20 con el operador reescrito (se compara con `Json(sv)`). `getenv` pide `_CRT_SECURE_NO_WARNINGS` y Catch2 da C4702 tras `FAIL()` (`/wd4702` en los tests).
+  - **Puertos previstos para `gc_media`/`gc_render`** (versiones del baseline): `ffmpeg` 9.0.2 con `avcodec`, `avformat`, `swresample`, `swscale`, `avfilter` y los encoders por hardware `nvcodec`, `amf` y `qsv`; sin `x264`/`x265`/`gpl` (pasarían todo a GPL, plan §10), con `openh264` como alternativa por software si hace falta. `skia` 148 (por defecto: `harfbuzz`, `icu`, `jpeg`, `png`, `webp`, `gl`). `onnxruntime` 1.23.2 llega con F6.
 - **Evaluación, dos referencias:** el preview (`canvas.js` → `drawComposite`) evalúa por fotograma y el export (`compose.py`) arma expresiones de FFmpeg muestreando la pose (`_pose_prop_points`: `pose_sample_times` + `animation_sample_times` a 30 fps). Las piezas por clip son las mismas en los dos (`render_pose`, `clip_fx_at`, `clip_masks_at`, `crop_window`, `dest_rect`), y son las que ya están portadas.
 - **Orden y visibilidad difieren** entre preview y export (la decisión, abajo):
   - preview (`layersAt`): visible si `start − 0,02 ≤ head < fin` (margen por el *seek* de `<video>`); orden por capa de la pila y después por índice en la lista; entran vídeo, imagen, figura, motion, ajuste y texto, salvo los desactivados o en pista oculta o inexistente;

@@ -14,6 +14,7 @@ Salida (al repo):
   tests/fixtures/edit/synthetic.json       edición: casos de ops_cases.py
   tests/fixtures/keyframes/synthetic.json  animación: casos de kf_cases.py
   tests/fixtures/motion/synthetic.json     envolvente de un sonido (clip_motion): motion_cases.py
+  tests/fixtures/media/synthetic.json      cabeceras de imagen (images.probe_gif): media_cases.py
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
@@ -1522,6 +1523,51 @@ def real_motion_fixtures(ctx: Ctx, data: dict, max_rms: int = 60) -> dict:
     return _pure({"downsample": [], "normalize": [], "timelines": timelines, "rms": rms})
 
 
+# --- Cabeceras de imagen (images.py: probe_gif y _ext_from_magic) -----------------------------
+
+def _gif_case(name: str, data: bytes) -> dict:
+    from app import images
+    return {"name": name, "hex": data.hex(), "gif": images.probe_gif(data), "ext": images._ext_from_magic(data)}
+
+
+def synthetic_media_fixtures() -> dict:
+    from app import images
+    sys.path.insert(0, str(HERE))
+    import media_cases as mc
+    return {"gifs": [_gif_case(n, d) for n, d in mc.gif_cases()],
+            "magic": [{"hex": m.hex(), "ext": images._ext_from_magic(m)} for m in mc.MAGIC]}
+
+
+def real_media_fixtures(ctx: Ctx) -> dict:
+    """Tus imágenes (biblioteca, proyectos y la carpeta de material): firma de todas y, de los
+    GIF, sus metadatos. Solo se guardan las cabeceras: los primeros 64 KB."""
+    roots = [ctx.root / "backend" / "data", ctx.root / "backend" / "clips"]
+    try:
+        from app import collections as col
+        if col.get_root() is not None:
+            roots.append(Path(col.get_root()))
+    except Exception:  # noqa: BLE001
+        pass
+    seen, cases = set(), []
+    for root in roots:
+        if not root.is_dir():
+            continue
+        for p in sorted(root.rglob("*")):
+            if not p.is_file() or p.suffix.lower() not in (".gif", ".png", ".jpg", ".jpeg", ".webp"):
+                continue
+            key = p.resolve()
+            if key in seen:
+                continue
+            seen.add(key)
+            data = p.read_bytes()
+            if p.suffix.lower() != ".gif":
+                data = data[:64]  # solo la firma
+            elif len(data) > 64 * 1024:
+                continue  # GIF grandes: no se suben a las fixtures locales
+            cases.append(_gif_case(str(p.relative_to(root)), data))
+    return {"gifs": cases, "magic": []}
+
+
 # --- Encuadre (clip_layout) -------------------------------------------------------------------
 
 def _floats(values) -> list[float]:
@@ -1873,6 +1919,8 @@ def main() -> None:
     kf = synthetic_keyframe_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "keyframes" / "synthetic.json", kf,
           len(kf["clips"]) + len(kf["ease"]) + len(kf["masks"]) + len(kf["styles"]), 0)
+    med = synthetic_media_fixtures()
+    write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med, len(med["gifs"]) + len(med["magic"]), 0)
     mot = synthetic_motion_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "motion" / "synthetic.json", mot,
           len(mot["downsample"]) + len(mot["normalize"]) + sum(len(t["pairs"]) for t in mot["timelines"])
@@ -1931,6 +1979,8 @@ def main() -> None:
               sum("error" in c for c in edit_real["cases"]))
         kf_real = real_keyframe_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "keyframes" / "real.json", kf_real, len(kf_real["clips"]), 0)
+        med_real = real_media_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "local" / "media" / "real.json", med_real, len(med_real["gifs"]), 0)
         mot_real = real_motion_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "motion" / "real.json", mot_real,
               sum(len(t["pairs"]) for t in mot_real["timelines"]) + len(mot_real["rms"]), 0)
