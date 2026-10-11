@@ -91,6 +91,7 @@ def _install_fakes() -> None:
     from app import sfx, sound_design, text_ass
     _REAL_SFX.setdefault("search", sfx.search)
     _REAL_SFX.setdefault("resolve", sfx.resolve)
+    _REAL_SFX.setdefault("probe_duration", sound_design.probe_duration)  # la usan las sondas de medios
     text_ass.text_width = _text_width_estimate
     sfx.search = lambda *a, **k: {"items": copy.deepcopy(_SFX["items"]), "total": len(_SFX["items"])}
     sfx.resolve = lambda relpath: relpath if relpath in _SFX["durations"] else None
@@ -1535,10 +1536,76 @@ def synthetic_media_fixtures() -> dict:
     sys.path.insert(0, str(HERE))
     import media_cases as mc
     return {"gifs": [_gif_case(n, d) for n, d in mc.gif_cases()],
-            "magic": [{"hex": m.hex(), "ext": images._ext_from_magic(m)} for m in mc.MAGIC]}
+            "magic": [{"hex": m.hex(), "ext": images._ext_from_magic(m)} for m in mc.MAGIC],
+            "probe": synthetic_probe_fixtures()}
 
 
-def real_media_fixtures(ctx: Ctx) -> dict:
+PROBE_DIR = REPO / "tests" / "fixtures" / "media" / "files"
+
+
+def _ensure_probe_media() -> None:
+    """Crea los medios de media_cases.PROBE_MEDIA que falten (una vez: van a git-lfs)."""
+    import media_cases as mc
+    ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg is None:
+        sys.exit("Hace falta ffmpeg en el PATH para generar tests/fixtures/media/files")
+    PROBE_DIR.mkdir(parents=True, exist_ok=True)
+    for name, args in mc.PROBE_MEDIA:
+        out = PROBE_DIR / name
+        if not out.exists():
+            subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args,
+                            "-map_metadata", "-1", "-fflags", "+bitexact", str(out)], check=True)
+    for name, data in mc.PROBE_RAW:
+        if not (PROBE_DIR / name).exists():
+            (PROBE_DIR / name).write_bytes(data)
+    trunc = PROBE_DIR / "va_trunc.mp4"  # el MP4 con audio, cortado por la mitad
+    if not trunc.exists():
+        whole = (PROBE_DIR / "va_bt709.mp4").read_bytes()
+        trunc.write_bytes(whole[: len(whole) // 2])
+
+
+def _probe(path: Path) -> dict:
+    """Las tres sondas REALES de video-yt (ffprobe del PATH; probe_duration, la original y no
+    la falsa de _install_fakes)."""
+    from app import compose
+    return {"duration": _REAL_SFX["probe_duration"](path), "color_untagged": compose._color_untagged(path),
+            "has_audio": compose._has_audio(path)}
+
+
+def synthetic_probe_fixtures() -> list[dict]:
+    sys.path.insert(0, str(HERE))
+    import media_cases as mc
+    _ensure_probe_media()
+    names = sorted(p.name for p in PROBE_DIR.iterdir()) + mc.PROBE_MISSING
+    return [{"file": n, **_probe(PROBE_DIR / n)} for n in names]
+
+
+def real_probe_fixtures(ctx: Ctx, data: dict, limit: int = 120) -> list[dict]:
+    """Una muestra de tus medios: los archivos de tus proyectos (clips, audios e imágenes) y de
+    tu carpeta de SFX, con la ruta absoluta (el test los sondea en su sitio)."""
+    from app import compose
+    paths: list[Path] = []
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        for c in proj.timeline.clips:
+            if c.kind in ("video", "audio", "image"):
+                path = compose._clip_path(proj, c)
+                if path is not None and path.exists() and path not in paths:
+                    paths.append(path)
+    try:
+        from app import sfx
+        folder = sfx.get_base()
+        if folder is not None:
+            paths += [p for p in sorted(folder.rglob("*")) if p.suffix.lower() in (".mp3", ".wav", ".m4a", ".ogg")][:40]
+    except Exception:  # noqa: BLE001
+        pass
+    step = max(1, len(paths) // limit)
+    return [{"file": str(p), **_probe(p)} for p in paths[::step][:limit]]
+
+
+def real_media_fixtures(ctx: Ctx, data: dict) -> dict:
     """Tus imágenes (biblioteca, proyectos y la carpeta de material): firma de todas y, de los
     GIF, sus metadatos. Solo se guardan las cabeceras: los primeros 64 KB."""
     roots = [ctx.root / "backend" / "data", ctx.root / "backend" / "clips"]
@@ -1559,13 +1626,13 @@ def real_media_fixtures(ctx: Ctx) -> dict:
             if key in seen:
                 continue
             seen.add(key)
-            data = p.read_bytes()
+            blob = p.read_bytes()
             if p.suffix.lower() != ".gif":
-                data = data[:64]  # solo la firma
-            elif len(data) > 64 * 1024:
+                blob = blob[:64]  # solo la firma
+            elif len(blob) > 64 * 1024:
                 continue  # GIF grandes: no se suben a las fixtures locales
-            cases.append(_gif_case(str(p.relative_to(root)), data))
-    return {"gifs": cases, "magic": []}
+            cases.append(_gif_case(str(p.relative_to(root)), blob))
+    return {"gifs": cases, "magic": [], "probe": real_probe_fixtures(ctx, data)}
 
 
 # --- Encuadre (clip_layout) -------------------------------------------------------------------
@@ -1920,7 +1987,8 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "keyframes" / "synthetic.json", kf,
           len(kf["clips"]) + len(kf["ease"]) + len(kf["masks"]) + len(kf["styles"]), 0)
     med = synthetic_media_fixtures()
-    write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med, len(med["gifs"]) + len(med["magic"]), 0)
+    write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
+          len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)
     mot = synthetic_motion_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "motion" / "synthetic.json", mot,
           len(mot["downsample"]) + len(mot["normalize"]) + sum(len(t["pairs"]) for t in mot["timelines"])
@@ -1979,8 +2047,9 @@ def main() -> None:
               sum("error" in c for c in edit_real["cases"]))
         kf_real = real_keyframe_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "keyframes" / "real.json", kf_real, len(kf_real["clips"]), 0)
-        med_real = real_media_fixtures(ctx)
-        write(REPO / "tests" / "fixtures" / "local" / "media" / "real.json", med_real, len(med_real["gifs"]), 0)
+        med_real = real_media_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "media" / "real.json", med_real,
+              len(med_real["gifs"]) + len(med_real["probe"]), 0)
         mot_real = real_motion_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "motion" / "real.json", mot_real,
               sum(len(t["pairs"]) for t in mot_real["timelines"]) + len(mot_real["rms"]), 0)

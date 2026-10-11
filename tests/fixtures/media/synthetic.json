@@ -4436,5 +4436,109 @@
    "hex": "47494638396189504e47",
    "ext": ".gif"
   }
+ ],
+ "probe": [
+  {
+   "file": "a.m4a",
+   "duration": 2.0,
+   "color_untagged": true,
+   "has_audio": true
+  },
+  {
+   "file": "a.mp3",
+   "duration": 0.5,
+   "color_untagged": true,
+   "has_audio": true
+  },
+  {
+   "file": "a.wav",
+   "duration": 0.333,
+   "color_untagged": true,
+   "has_audio": true
+  },
+  {
+   "file": "anim.gif",
+   "duration": 0.4,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "empty.mp4",
+   "duration": 0.0,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "garbage.mp4",
+   "duration": 0.0,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "mjpeg_vbr.avi",
+   "duration": 0.36,
+   "color_untagged": false,
+   "has_audio": true
+  },
+  {
+   "file": "still.png",
+   "duration": 0.0,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
+   "file": "text.mp3",
+   "duration": 0.0,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "v_bt709.mp4",
+   "duration": 1.0,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
+   "file": "v_smpte170m.mov",
+   "duration": 0.52,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "v_untagged.mp4",
+   "duration": 1.0,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "va_bt709.mp4",
+   "duration": 1.24,
+   "color_untagged": false,
+   "has_audio": true
+  },
+  {
+   "file": "va_trunc.mp4",
+   "duration": 0.0,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "va_untagged.mkv",
+   "duration": 0.72,
+   "color_untagged": true,
+   "has_audio": true
+  },
+  {
+   "file": "no_existe.mp4",
+   "duration": 0.0,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "carpeta_que_no_existe/x.wav",
+   "duration": 0.0,
+   "color_untagged": true,
+   "has_audio": false
+  }
  ]
 }

@@ -7,3 +7,9 @@ tests/fixtures/**/*.png filter=lfs diff=lfs merge=lfs -text
 tests/fixtures/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
 tests/fixtures/**/*.webm filter=lfs diff=lfs merge=lfs -text
 tests/fixtures/**/*.wav filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/**/*.mov filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/**/*.mkv filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/**/*.mp3 filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/**/*.m4a filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/**/*.avi filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/**/*.gif filter=lfs diff=lfs merge=lfs -text

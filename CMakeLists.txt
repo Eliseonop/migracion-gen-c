@@ -24,6 +24,9 @@ include(GcDependencies)
 
 add_subdirectory(src/core)
 add_subdirectory(src/log)
+if(FFMPEG_FOUND)
+    add_subdirectory(src/media)
+endif()
 
 if(GC_BUILD_CLI)
     add_subdirectory(apps/cli)

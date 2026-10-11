@@ -1007,3 +1007,11 @@ Decisión de Edu (§6):
 - **Resultado:** 112 tests (110 de Catch2 y 2 de la CLI) y 176 065 aserciones en verde con MinGW (Debug y Release) y MSVC (Debug), 0 warnings; tidy, 0 avisos en lo tocado.
 
 **Siguiente:** construir FFmpeg con vcpkg y portar las sondas de ffprobe (`probe_duration`, `_color_untagged`, `_has_audio`) a `gc_media` con libavformat.
+
+### 2026-10-10 — F3: FFmpeg y las sondas de medios (`gc_media`)
+
+- **Hecho:** FFmpeg 9.0.2 construido por vcpkg (feature `media`: LGPL con zlib, nvcodec, amf y qsv; unos 10 minutos). Nace `gc_media` (`src/media`), que solo se compila si `find_package(FFMPEG)` lo encuentra (presets `msvc-vcpkg-*`); la MinGW de CLion sigue sin él. `probe_media` sustituye a las tres llamadas a ffprobe de video-yt: `sound_design.probe_duration` (la duración del formato, por el mismo texto `%f` y el mismo `round`), `compose._color_untagged` y `compose._has_audio`.
+- **Trampas:** ffprobe imprime «N/A» cuando la duración es `AV_NOPTS_VALUE` (no cuando es 0); el puerto de vcpkg desactiva zlib si no se pide, y sin zlib no hay decodificador de PNG (su `color_space` salía «unknown» en vez de «gbr»). Las dos salieron en las fixtures, con PNG sintéticos y tuyos.
+- **Verificación:** 17 medios sintéticos generados una vez con ffmpeg (`tests/fixtures/media/files`, en git-lfs) y 2 rutas que no existen, contra las funciones de Python con su ffprobe; 120 de tus medios en su sitio (MP4, WAV, WebM, PNG, GIF y JPEG). Exacto. `tools\dev\verificar_msvc.bat`: 114 tests y 176 481 aserciones, 0 warnings. Los mutantes aún no cubren `gc_media` (`mutantes.py` compila con MinGW).
+
+**Siguiente:** demux y decode con seek exacto en `gc_media`.

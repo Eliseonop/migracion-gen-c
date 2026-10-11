@@ -97,6 +97,35 @@ def gif_cases() -> list[tuple[str, bytes]]:
     return cases
 
 
+# Medios pequeños para las sondas de ffprobe (sound_design.probe_duration, compose._color_untagged
+# y compose._has_audio). Se generan UNA vez con el ffmpeg del PATH en tests/fixtures/media/files
+# (git-lfs) y luego se reutilizan: regenerarlos cambiaría los bytes (versión del encoder).
+_V = ["-f", "lavfi", "-i", "testsrc2=size=64x48:rate=25"]
+_A = ["-f", "lavfi", "-i", "sine=frequency=440:sample_rate=44100"]
+_TAG709 = ["-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709"]
+PROBE_MEDIA = [
+    # (archivo, argumentos de ffmpeg entre las entradas y el archivo de salida)
+    ("v_untagged.mp4", _V + ["-t", "1", "-c:v", "libx264", "-pix_fmt", "yuv420p"]),
+    ("v_bt709.mp4", _V + ["-t", "1", "-c:v", "libx264", "-pix_fmt", "yuv420p"] + _TAG709),
+    ("v_smpte170m.mov", _V + ["-t", "0.52", "-c:v", "mpeg4", "-colorspace", "smpte170m"]),
+    ("va_bt709.mp4", _V + _A + ["-t", "1.2345", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac"] + _TAG709),
+    ("va_untagged.mkv", _V + _A + ["-t", "0.7", "-c:v", "libvpx", "-c:a", "libopus"]),
+    ("a.wav", _A + ["-t", "0.3333", "-c:a", "pcm_s16le"]),
+    ("a.mp3", _A + ["-t", "0.5", "-c:a", "libmp3lame"]),
+    ("a.m4a", _A + ["-t", "2.0005", "-c:a", "aac"]),
+    ("still.png", _V + ["-frames:v", "1"]),
+    ("anim.gif", _V + ["-t", "0.4"]),
+    ("mjpeg_vbr.avi", _V + _A + ["-t", "0.36", "-c:v", "mjpeg", "-c:a", "pcm_s16le"]),
+]
+# Archivos que no son medios (se escriben tal cual) y rutas que no existen.
+PROBE_RAW = [
+    ("empty.mp4", b""),
+    ("garbage.mp4", bytes((i * 73 + 41) % 256 for i in range(4096))),
+    ("text.mp3", "esto no es audio\n".encode()),
+]
+PROBE_MISSING = ["no_existe.mp4", "carpeta_que_no_existe/x.wav"]
+
+
 # _ext_from_magic: firmas completas, cortadas y casi iguales.
 MAGIC = [
     b"", b"\x89PNG\r\n\x1a\n", b"\x89PNG\r\n\x1a", b"\x89PNG\r\n\x1a\nresto", b"\xff\xd8\xff", b"\xff\xd8\xffe0",

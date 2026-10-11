@@ -39,6 +39,11 @@ target_compile_definitions(gc_tests PRIVATE
     GC_FIXTURES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fixtures"
     GC_RESOURCES_DIR="${PROJECT_SOURCE_DIR}/resources")
 gc_set_warnings(gc_tests)
+# Con FFmpeg (vcpkg), los tests de gc_media.
+if(TARGET gc_media)
+    target_sources(gc_tests PRIVATE parity/test_probe_parity.cpp)
+    target_link_libraries(gc_tests PRIVATE gc::media)
+endif()
 # MSVC sabe que FAIL() lanza y da por inalcanzable el `return`/`throw` que GCC necesita detrás.
 if(MSVC)
     target_compile_options(gc_tests PRIVATE /wd4702)

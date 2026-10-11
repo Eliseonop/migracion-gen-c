@@ -24,6 +24,13 @@ FetchContent_Declare(spdlog
     FIND_PACKAGE_ARGS 1.12 CONFIG)
 FetchContent_MakeAvailable(spdlog)
 
+# FFmpeg (gc_media): solo con vcpkg (feature `media`), sin FetchContent. Sin él no se compila
+# gc_media y el resto sigue igual (la MinGW de CLion no lo tiene).
+find_package(FFMPEG QUIET)
+if(FFMPEG_FOUND)
+    message(STATUS "FFmpeg encontrado: se compila gc_media")
+endif()
+
 if(GC_BUILD_TESTS)
     FetchContent_Declare(Catch2
         URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.9.1.tar.gz
