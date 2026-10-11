@@ -4493,6 +4493,12 @@
    "has_audio": true
   },
   {
+   "file": "motion_alpha.webm",
+   "duration": 0.6,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
    "file": "still.png",
    "duration": 0.0,
    "color_untagged": false,

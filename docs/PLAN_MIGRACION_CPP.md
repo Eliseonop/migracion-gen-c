@@ -1045,3 +1045,10 @@ Decisión de Edu (§6):
 **Siguiente:** WebM VP9 con alfa (feature `vpx` de vcpkg) y autogiro.
 
 **Revisión del subagente:** APROBADO. Menores aplicados: un instante que no cabe en µs (`frame_at(…, 1e300)`) es un error y no un seek con basura, como el «Invalid duration» de ffmpeg (hay test); si hubo errores de decodificación y no salió ningún fotograma, el decode devuelve error en vez de «nada en ese instante» (`extract_frame` lanza ValueError en los dos casos); la fixture del seek saca el `-ss` de una llamada al `extract_frame` REAL (se intercepta su `subprocess.run` y se comprueba que va antes de `-i` con `-frames:v 1`), y sale idéntica. MSVC + vcpkg: 119 tests y 182 398 aserciones, 0 warnings.
+
+### 2026-10-11 — F3: WebM VP9 con alfa (libvpx)
+
+- **Hecho:** la feature `vpx` del FFmpeg de vcpkg (libvpx 1.16, BSD; la recompilación de FFmpeg con ella tarda unos 25 minutos). El export de video-yt fuerza `-c:v libvpx-vp9` para todo `.webm` y los clips `motion` porque el VP9 nativo no expone el alfa; ahora `decode_frames` también lo tiene y el alfa llega al RGBA.
+- **Verificación:** un WebM VP9 `yuva420p` (un círculo semitransparente que se mueve; 1937 píxeles transparentes en el primer fotograma), decodificado como vídeo y como motion, con el mismo MD5 por fotograma que el CLI (decode: 18 casos, 334 fotogramas). MSVC + vcpkg: 119 tests y 182 465 aserciones, 0 warnings; MinGW: 114/114.
+
+**Siguiente:** el autogiro (ninguno de tus vídeos lleva matriz de rotación) o pasar ya a la caché de fotogramas, el audio y el encode; y Skia para `gc_render`.

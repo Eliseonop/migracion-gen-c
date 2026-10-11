@@ -22,7 +22,7 @@
           "name": "ffmpeg",
           "default-features": false,
           "features": [
-            "avcodec", "avformat", "avfilter", "swresample", "swscale", "zlib",
+            "avcodec", "avformat", "avfilter", "swresample", "swscale", "zlib", "vpx",
             { "name": "nvcodec", "platform": "windows | linux" },
             { "name": "amf", "platform": "windows" },
             { "name": "qsv", "platform": "windows" }
