@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "gc/core/json.hpp"
+#include "gc/core/model.hpp"
 
 namespace gc::core {
 
@@ -81,5 +82,79 @@ struct TextShadow {
 
 // Fuerza de la Curva que se dibuja, −1 a 1 (0 = recto; con Fondo no hay curva).
 [[nodiscard]] double curve_of(const Json& style);
+
+// --- Geometría (con text_width de text_metrics) ----------------------------------------------
+
+// Caja de Fondo: centro relativo al del bloque (en el eje del texto, sin girar) y tamaño, en px.
+struct BoxRect {
+    double x = 0;
+    double y = 0;
+    double w = 0;
+    double h = 0;
+};
+// Una por línea con palabras (ancho del texto × alto de línea de la fuente) o una para todo el
+// bloque, más el contorno, el margen de Alto / Ancho y el desplazamiento. `size_factor` es el
+// ass_size_factor de la fuente del estilo.
+[[nodiscard]] std::vector<BoxRect> box_rects(const Json& style, double width, double height,
+                                             const std::vector<std::vector<std::string>>& rows, double size_factor);
+
+// Una letra del texto curvo: su palabra (índice global), la letra, su centro relativo al del
+// bloque (en el eje del texto) y su giro en radianes.
+struct CurveGlyph {
+    std::int64_t word = 0;
+    std::string ch;
+    double x = 0;
+    double y = 0;
+    double angle = 0;
+};
+[[nodiscard]] std::vector<CurveGlyph> curve_glyphs(const Json& style, double width, double height,
+                                                   const std::vector<std::vector<std::string>>& rows);
+
+// --- Un clip de texto en el tiempo ------------------------------------------------------------
+
+// Duración del clip de texto: out_point − in_point (≥ 0).
+[[nodiscard]] double text_clip_duration(const TimelineClip& clip);
+
+// Pose del texto en `local_t`: la del render (keyframes, pistas anim y animaciones) más el giro
+// 3D (rot_x, rot_y; de los keyframes o del estilo propio del clip).
+struct TextPose {
+    double x = 0.5;
+    double y = 0.5;
+    double scale = 1.0;
+    double rotation = 0.0;
+    double opacity = 1.0;
+    double rot_x = 0.0;
+    double rot_y = 0.0;
+};
+[[nodiscard]] TextPose text_pose_at(const TimelineClip& clip, double local_t);
+
+// Estilo con la pose del clip en `local_t` (_posed_style): keyframes de estilo, x, y, escala,
+// giros, volteo y la opacidad (la de los keyframes o la del estilo por las animaciones).
+[[nodiscard]] Json posed_text_style(const TimelineClip& clip, const Json& style, double local_t);
+
+// ¿Cambia la pose (o el estilo) del texto durante el clip? Muestrea a `fps` como el export.
+[[nodiscard]] bool text_animates(const TimelineClip& clip, double fps);
+
+// Ventana absoluta (t0, t1) de cada palabra: la de `words` si cuadran con el texto (activa hasta
+// la siguiente) o la duración repartida a partes iguales.
+[[nodiscard]] std::vector<std::pair<double, double>> word_windows(const TimelineClip& clip);
+// Palabra activa en `local_t` de `word_count` palabras: la última de `words` que ya empezó, o
+// repartiendo la duración si no cuadran.
+[[nodiscard]] std::int64_t active_word_at(const TimelineClip& clip, std::int64_t word_count, double local_t,
+                                          double duration);
+
+// Lo que deja ver la aparición «escribir» con progreso 0–1 (los primeros caracteres).
+[[nodiscard]] std::string typing_text(std::string_view text, double progress);
+
+// Lo que se ve de un texto en `local_t` con su estilo con la pose: el texto (todo, o lo escrito
+// con «escribir») y qué palabra va resaltada. Nada si «escribir» aún no muestra nada.
+struct TextContent {
+    std::string text;
+    std::int64_t active = -1; // palabra activa (-1: ninguna)
+    bool all_active = false;  // una sola palabra con efecto: activa todo el clip
+    [[nodiscard]] bool is_active(std::int64_t word) const { return all_active || word == active; }
+};
+[[nodiscard]] std::optional<TextContent> text_content_at(const TimelineClip& clip, const Json& posed_style,
+                                                         double local_t, double duration);
 
 } // namespace gc::core

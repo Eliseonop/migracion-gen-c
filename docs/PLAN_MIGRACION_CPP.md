@@ -1147,3 +1147,17 @@ Decisión de Edu (§6):
   - MSVC + vcpkg: 138/138; MinGW: 122/122. 0 warnings.
 
 **Siguiente:** etapa 1b, con `_posed_style`, las ventanas de palabra con `words`, `box_rects` y `curve_glyphs`; después, dibujar el texto en `gc_render`.
+
+### 2026-10-11 — F3: texto, etapa 1b: pose, palabras y geometría
+
+- **Hecho:** en `gc_core/text_style` están ahora:
+  - la pose del texto con el giro 3D, el estilo con la pose y si el texto se anima (muestreando a los fps de la timeline);
+  - las ventanas y la palabra activa con `words`, lo que deja ver «escribir» y qué se ve en cada instante;
+  - las cajas de Fondo y las letras de la Curva.
+- **Verificación:**
+  - Paridad con las funciones reales en 24 clips sintéticos × 12 instantes, más las filas, cajas y letras de los 155 estilos, con un margen de 1e-12 donde intervienen sin y cos.
+  - Local: tus 679 clips de texto (48 940 aserciones).
+  - 16 mutantes: fallan todos. Tres necesitaron un caso nuevo: el giro 3D del estilo, el umbral de movimiento y un pico que solo se ve a 24 fps.
+  - MSVC + vcpkg: 139/139; MinGW: 123/123. 0 warnings.
+
+**Siguiente:** etapa 2, dibujar el texto en `gc_render` y compararlo con `compose.render_frame` (libass).

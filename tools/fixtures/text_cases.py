@@ -104,6 +104,79 @@ ACTIVE_WORD = [(n, t, d) for n in (0, 1, 3, 7) for t in (-1.0, -0.0, 0.0, 0.5, 1
                for d in (0.0, -1.0, 2.0, 1e-9)]
 
 
+# Texto de las filas, cajas de Fondo y letras de la Curva de cada estilo (en 1080×1920).
+ROWS_TEXT = "uno dos tres cuatro cinco seis siete ocho\nnueve\n\ndiez ñú"
+
+
+# --- Clips de texto (pose, palabras, contenido) -----------------------------------------------
+
+def text_clip(cid, text="hola mundo que tal", style=None, **kw):
+    c = {"id": cid, "track_id": "T1", "kind": "text", "asset_kind": "text", "asset_id": cid, "filename": "",
+         "text": text, "style": dict(_CLASSIC) if style is None else style,
+         "start": 1, "in_point": 0, "out_point": 4, "source_duration": 4}
+    c.update(kw)
+    return c
+
+
+def _kf(*specs):
+    return {"enabled": True, "items": list(specs)}
+
+
+def _words(text, starts):
+    return [{"text": w, "start": s, "end": s + 0.3} for w, s in zip(text.split(), starts)]
+
+
+TEXT_CLIPS: list[dict] = [
+    {"name": "quieto, sin words", "clip": text_clip("q")},
+    {"name": "words que cuadran (repetida, fuera del clip, negativa)", "clip": text_clip(
+        "w", words=_words("hola mundo que tal", [-0.5, 0.5, 0.5, 7]))},
+    {"name": "words que no cuadran", "clip": text_clip("wn", words=_words("hola mundo", [0, 1]))},
+    {"name": "words ordenadas", "clip": text_clip("wo", words=_words("hola mundo que tal", [0, 0.8, 1.6, 3.1]))},
+    {"name": "keyframes de pose y de estilo", "clip": text_clip(
+        "k", keyframes=_kf({"t": 0, "props": {"x": 0.2, "y": 0.3, "scale": 0.5, "rotation": -20, "opacity": 0.4,
+                                               "rot_x": 0, "color": "#ff0000", "border_width": 2}},
+                           {"t": 2, "interpolation": "ease-out", "props": {"x": 0.8, "scale": 1.5, "rot_x": 40,
+                                                                           "rot_y": "15", "color": "#00f"}},
+                           {"t": 3, "interpolation": "hold", "props": {"opacity": 1, "bg_opacity": 0.2}}))},
+    {"name": "keyframes quietos", "clip": text_clip(
+        "kq", keyframes=_kf({"t": 0, "props": {"x": 0.3}}, {"t": 2, "props": {"x": 0.3}}))},
+    {"name": "keyframes de estilo solo", "clip": text_clip(
+        "ks", keyframes=_kf({"t": 0, "props": {"color": "#ffffff"}}, {"t": 2, "props": {"color": "#000000"}}))},
+    {"name": "pistas anim (legado) que mueven", "clip": text_clip(
+        "a", anim={"x": [{"t": 0, "v": 0.2}, {"t": 2, "v": 0.8}], "opacity": [{"t": 1, "v": 0.5}]})},
+    {"name": "pistas anim quietas", "clip": text_clip("aq", anim={"x": [{"t": 0, "v": 0.5}], "y": []})},
+    {"name": "pistas anim vacías", "clip": text_clip("av", anim={"x": [], "y": None})},
+    {"name": "animaciones de entrada y salida", "clip": text_clip(
+        "an", animations={"in": {"id": "fade_in"}, "out": {"id": "pop_out"}})},
+    {"name": "animaciones sin opacidad en el estilo", "clip": text_clip(
+        "ano", style={"x": 0.4, "word_fx": "pop"}, animations={"in": {"id": "zoom_in", "dur": 0.6}})},
+    {"name": "animaciones y keyframes", "clip": text_clip(
+        "ak", animations={"loop": {"id": "pulse"}},
+        keyframes=_kf({"t": 0, "props": {"opacity": 0.5}}, {"t": 4, "props": {"opacity": 1}}))},
+    {"name": "escribir (typing) con espacios delante", "clip": text_clip(
+        "ty", text="   hola  mundo", style={**_CLASSIC, "block_appear": "typing"})},
+    {"name": "una palabra con efecto", "clip": text_clip("u", text="hola")},
+    {"name": "sin efecto de palabra", "clip": text_clip("se", style={**_CLASSIC, "word_fx": "none"})},
+    {"name": "volteado y giro 3D del estilo", "clip": text_clip(
+        "f", flip_h=True, flip_v=True, style={**_CLASSIC, "rot_x": "nan", "rot_y": "15"})},
+    {"name": "inicio negativo y duración 0", "clip": text_clip("z", start=-1, in_point=2, out_point=2)},
+    {"name": "saltos de línea y Unicode", "clip": text_clip(
+        "nl", text="línea uno\nñandú ΟΔΟΣ\n\nfin", words=_words("línea uno ñandú ΟΔΟΣ fin", [0, 0.2, 0.4, 0.6, 0.8]))},
+    {"name": "transform estático", "clip": text_clip(
+        "t", transform={"x": 0.3, "y": 0.7, "scale": 2, "rotation": 15}, opacity=0.5)},
+    {"name": "giro 3D del estilo sin keyframes", "clip": text_clip("g3", style={**_CLASSIC, "rot_x": 25, "rot_y": -10})},
+    {"name": "keyframes que mueven poco (por encima del umbral)", "clip": text_clip(
+        "kp", keyframes=_kf({"t": 0, "props": {"x": 0.5}}, {"t": 2, "props": {"x": 0.51}}))},
+    {"name": "pico de 10 ms que solo ve el muestreo a 24 fps", "clip": text_clip(
+        "pk", keyframes=_kf({"t": 0, "props": {"x": 0.5}}, {"t": 0.12, "props": {"x": 0.5}},
+                            {"t": 0.125, "props": {"x": 0.6}}, {"t": 0.13, "props": {"x": 0.5}}))},
+    {"name": "estilo nulo", "clip": text_clip("sn", style=None)},
+]
+TEXT_CLIPS[-1]["clip"]["style"] = None
+
+TEXT_TIMES = [-0.5, 0, 0.1, 0.5, 1, 1.5, 2, 2.5, 3.2, 3.99, 4, 5]
+
+
 # --- Fuentes ----------------------------------------------------------------------------------
 
 def font_bytes(tables: dict[bytes, bytes], num: int | None = None, cut: int | None = None,

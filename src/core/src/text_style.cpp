@@ -5,6 +5,11 @@
 #include <cstdio>
 #include <numbers>
 
+#include "gc/core/clip_layout.hpp"
+#include "gc/core/fx_anims.hpp"
+#include "gc/core/keyframes.hpp"
+#include "gc/core/pose.hpp"
+#include "gc/core/text_metrics.hpp"
 #include "json_reader.hpp"
 #include "py.hpp"
 
@@ -300,6 +305,314 @@ double curve_of(const Json& style) {
     }
     const double k = py_clamp(py_num(field(style, "curve"), 0.0), -1.0, 1.0);
     return std::abs(k) < 0.005 ? 0.0 : k;
+}
+
+// --- Geometría ------------------------------------------------------------------------------
+
+namespace {
+
+// min(a, b) y max(a, b) de Python: el primero salvo que el segundo sea menor (mayor).
+double py_min(double a, double b) {
+    return b < a ? b : a;
+}
+double py_max(double a, double b) {
+    return b > a ? b : a;
+}
+
+// st.get("font") or "Arial" y bool(st.get("bold", True)), como text_metrics.
+std::string font_of(const Json& style) {
+    const Json& raw = field(style, "font");
+    return py_truthy(raw) ? detail::py_str(raw) : std::string("Arial");
+}
+bool bold_of(const Json& style) {
+    return !style.is_object() || !style.contains("bold") || py_truthy(style.at("bold"));
+}
+
+// Media anchura de la caja del texto en px: max(0.2, min(1.0, w)) · W / 2 · escala.
+double half_box(const Json& style, double width) {
+    return py_max(0.2, py_min(1.0, py_num(field(style, "w"), 0.88))) * width / 2.0 * text_style_scale(style);
+}
+
+std::string join_words(const std::vector<std::string>& row) {
+    std::string out;
+    for (std::size_t i = 0; i < row.size(); ++i) {
+        out += (i == 0 ? "" : " ") + row[i];
+    }
+    return out;
+}
+
+// Desplazamiento de la línea i de n respecto al centro del bloque, en líneas: i − (n − 1) / 2.
+double row_offset(std::size_t i, std::size_t n) {
+    return static_cast<double>(i) - static_cast<double>(n - 1) / 2.0;
+}
+
+std::vector<std::string> code_points(std::string_view text) {
+    std::vector<std::string> out;
+    for (std::size_t i = 0; i < text.size();) {
+        const std::size_t from = i;
+        (void)utf8_next(text, i);
+        out.emplace_back(text.substr(from, i - from));
+    }
+    return out;
+}
+
+} // namespace
+
+std::vector<BoxRect> box_rects(const Json& style, double width, double height,
+                               const std::vector<std::vector<std::string>>& rows, double size_factor) {
+    const double em = text_font_px(style, height);
+    const std::string font = font_of(style);
+    const bool bold = bold_of(style);
+    const double ls = text_letter_spacing_px(style, em);
+    const double lh = em * text_line_height(style);
+    const double box_h = em * size_factor;
+    const double half = half_box(style, width);
+    const double inset = 0.2 * em;
+    const Json& align = field(style, "align");
+    std::vector<BoxRect> rects;
+    for (std::size_t i = 0; i < rows.size(); ++i) {
+        if (rows[i].empty()) {
+            continue;
+        }
+        const double w = text_width(font, bold, em, join_words(rows[i]), ls);
+        const double x = is_text(align, "left") ? -half + inset + w / 2 : is_text(align, "right") ? half - inset - w / 2 : 0.0;
+        rects.push_back({x, row_offset(i, rows.size()) * lh, w, box_h});
+    }
+    if (rects.empty()) {
+        return rects;
+    }
+    if (is_text(field(style, "bg_style"), "block")) {
+        double x0 = rects[0].x - rects[0].w / 2;
+        double x1 = rects[0].x + rects[0].w / 2;
+        double y0 = rects[0].y - rects[0].h / 2;
+        double y1 = rects[0].y + rects[0].h / 2;
+        for (const auto& r : rects) {
+            x0 = py_min(x0, r.x - r.w / 2);
+            x1 = py_max(x1, r.x + r.w / 2);
+            y0 = py_min(y0, r.y - r.h / 2);
+            y1 = py_max(y1, r.y + r.h / 2);
+        }
+        rects = {{(x0 + x1) / 2, (y0 + y1) / 2, x1 - x0, y1 - y0}};
+    }
+    const double pad0 = py_max(0.0, py_num(field(style, "border_width"), 0.0));
+    const double pad_x = pad0 + py_min(1.0, py_max(0.0, py_num(field(style, "bg_pad_x"), 0.0))) * em;
+    const double pad_y = pad0 + py_min(1.0, py_max(0.0, py_num(field(style, "bg_pad_y"), 0.0))) * em;
+    const double dx = py_min(1.0, py_max(-1.0, py_num(field(style, "bg_dx"), 0.0))) * em;
+    const double dy = -py_min(1.0, py_max(-1.0, py_num(field(style, "bg_dy"), 0.0))) * em;
+    for (auto& r : rects) {
+        r = {r.x + dx, r.y + dy, r.w + 2 * pad_x, r.h + 2 * pad_y};
+    }
+    return rects;
+}
+
+std::vector<CurveGlyph> curve_glyphs(const Json& style, double width, double height,
+                                     const std::vector<std::vector<std::string>>& rows) {
+    const double k = curve_of(style);
+    const double em = text_font_px(style, height);
+    const std::string font = font_of(style);
+    const bool bold = bold_of(style);
+    const double ls = text_letter_spacing_px(style, em);
+    const double lh = em * text_line_height(style);
+    const double half = half_box(style, width);
+    const double inset = 0.2 * em;
+    const Json& align = field(style, "align");
+    const double space = text_width(font, bold, em, " ", ls);
+    std::vector<std::vector<double>> widths;
+    std::vector<double> totals;
+    for (const auto& row : rows) {
+        auto& ws = widths.emplace_back();
+        double sum = 0.0;
+        for (const auto& w : row) {
+            ws.push_back(text_width(font, bold, em, w, ls));
+            sum += ws.back();
+        }
+        totals.push_back(sum + space * static_cast<double>(row.empty() ? 0 : row.size() - 1));
+    }
+    double widest = totals.empty() ? 0.0 : totals[0];
+    for (const double t : totals) {
+        widest = py_max(widest, t);
+    }
+    const double radius = py_max(1.0, widest) / (py_max(std::abs(k), 0.005) * std::numbers::pi);
+    const double sign = k >= 0 ? 1.0 : -1.0;
+    std::vector<CurveGlyph> out;
+    std::int64_t gi = 0;
+    for (std::size_t i = 0; i < rows.size(); ++i) {
+        const double y0 = row_offset(i, rows.size()) * lh;
+        const double tot = totals[i];
+        double x = is_text(align, "left") ? -half + inset : is_text(align, "right") ? half - inset - tot : -tot / 2;
+        const double mid = x + tot / 2;
+        const double r = py_max(1.0, radius - sign * y0);
+        for (std::size_t j = 0; j < rows[i].size(); ++j) {
+            double cur = x;
+            for (auto& ch : code_points(rows[i][j])) {
+                const double a = text_width(font, bold, em, ch, ls);
+                const double phi = (cur + a / 2 - mid) / r;
+                out.push_back({gi, std::move(ch), mid + r * std::sin(phi), sign * radius - sign * r * std::cos(phi),
+                               sign * phi});
+                cur += a;
+            }
+            x += widths[i][j] + space;
+            ++gi;
+        }
+    }
+    return out;
+}
+
+// --- Un clip de texto en el tiempo ----------------------------------------------------------
+
+double text_clip_duration(const TimelineClip& clip) {
+    return py_max(0.0, clip.out_point - clip.in_point);
+}
+
+TextPose text_pose_at(const TimelineClip& clip, double local_t) {
+    const Pose p = render_pose(clip, local_t);
+    TextPose out{p.x, p.y, p.scale, p.rotation, p.opacity};
+    if (keyframes_enabled(clip)) {
+        const KfProps props = clip_props_at(clip, local_t);
+        out.rot_x = props.get("rot_x");
+        out.rot_y = props.get("rot_y");
+    } else {
+        const Json& st = clip.style ? *clip.style : Json();
+        out.rot_x = py_num(field(st, "rot_x"), 0.0);
+        out.rot_y = py_num(field(st, "rot_y"), 0.0);
+    }
+    return out;
+}
+
+Json posed_text_style(const TimelineClip& clip, const Json& style, double local_t) {
+    Json out = with_text_style_kf(style.is_object() ? style : Json::object(), text_style_at(clip, local_t));
+    const TextPose pose = text_pose_at(clip, local_t);
+    out["x"] = pose.x;
+    out["y"] = pose.y;
+    out["scale"] = pose.scale;
+    out["rotation"] = pose.rotation;
+    out["rot_x"] = pose.rot_x;
+    out["rot_y"] = pose.rot_y;
+    const Flip flip = clip_flip(clip);
+    out["flip_h"] = flip.h;
+    out["flip_v"] = flip.v;
+    if (keyframes_enabled(clip)) {
+        out["opacity"] = pose.opacity;
+    } else if (has_animations(clip)) {
+        // sin keyframes manda la opacidad del estilo; las animaciones la multiplican
+        out["opacity"] = text_clamp01(field(out, "opacity"), 1.0) * anim_opacity(clip, local_t);
+    }
+    return out;
+}
+
+bool text_animates(const TimelineClip& clip, double fps) {
+    if (has_animations(clip)) {
+        return true;
+    }
+    bool anim_any = false;
+    if (clip.anim && clip.anim->is_object()) {
+        for (const auto& [k, v] : clip.anim->items()) {
+            anim_any = anim_any || py_truthy(v);
+        }
+    }
+    if (!keyframes_enabled(clip) && !anim_any) {
+        return false;
+    }
+    const double dur = text_clip_duration(clip);
+    if (dur <= 0) {
+        return false;
+    }
+    if (text_style_animates(clip)) {
+        return true;
+    }
+    // max(2, min(2000, ceil(dur · max(1, fps or 30)) + 1)); un producto infinito hace fallar a
+    // video-yt (OverflowError) y aquí vale 2000
+    const double f = py_max(1.0, fps == 0 ? 30.0 : fps);
+    const double steps = std::ceil(dur * f);
+    const auto n = static_cast<std::int64_t>(std::isfinite(steps) ? std::max(2.0, std::min(2000.0, steps + 1)) : 2000.0);
+    const TextPose first = text_pose_at(clip, 0.0);
+    const auto moved = [&first](const TextPose& p) {
+        return std::abs(p.x - first.x) > 5e-4 || std::abs(p.y - first.y) > 5e-4 ||
+               std::abs(p.scale - first.scale) > 1e-3 || std::abs(p.rotation - first.rotation) > 0.05 ||
+               std::abs(p.opacity - first.opacity) > 2e-3 || std::abs(p.rot_x - first.rot_x) > 0.05 ||
+               std::abs(p.rot_y - first.rot_y) > 0.05;
+    };
+    for (std::int64_t i = 1; i < n; ++i) {
+        if (moved(text_pose_at(clip, dur * static_cast<double>(i) / static_cast<double>(n - 1)))) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<std::pair<double, double>> word_windows(const TimelineClip& clip) {
+    const std::size_t n = split_words(clip.text.value_or("")).size();
+    std::vector<std::pair<double, double>> wins;
+    if (n == 0) {
+        return wins;
+    }
+    const double start = py_max(0.0, clip.start);
+    const double dur = text_clip_duration(clip);
+    if (clip.words.size() == n) {
+        std::vector<double> rels;
+        for (const Word& w : clip.words) {
+            rels.push_back(py_min(py_max(0.0, w.start), dur));
+        }
+        for (std::size_t i = 0; i < n; ++i) {
+            const double t0 = start + rels[i];
+            double t1 = start + (i + 1 < n ? rels[i + 1] : dur);
+            if (t1 <= t0) {
+                t1 = t0 + 0.04;
+            }
+            wins.emplace_back(t0, t1);
+        }
+        return wins;
+    }
+    const double slot = dur / static_cast<double>(n);
+    for (std::size_t i = 0; i < n; ++i) {
+        wins.emplace_back(start + static_cast<double>(i) * slot, start + static_cast<double>(i + 1) * slot);
+    }
+    return wins;
+}
+
+std::int64_t active_word_at(const TimelineClip& clip, std::int64_t word_count, double local_t, double duration) {
+    if (word_count != 0 && clip.words.size() == static_cast<std::size_t>(word_count)) {
+        std::int64_t idx = 0;
+        for (std::size_t i = 0; i < clip.words.size(); ++i) {
+            if (!(clip.words[i].start <= local_t)) {
+                break;
+            }
+            idx = static_cast<std::int64_t>(i);
+        }
+        return idx;
+    }
+    return active_word_index(word_count, local_t, duration);
+}
+
+std::string typing_text(std::string_view text, double progress) {
+    const auto chars = code_points(text);
+    const auto k = static_cast<std::size_t>(std::ceil(text_clamp01(Json(progress), 0.0) * static_cast<double>(chars.size())));
+    std::string out;
+    for (std::size_t i = 0; i < k && i < chars.size(); ++i) {
+        out += chars[i];
+    }
+    return out;
+}
+
+std::optional<TextContent> text_content_at(const TimelineClip& clip, const Json& posed_style, double local_t,
+                                           double duration) {
+    const std::string text = clip.text.value_or("");
+    const Json& appear = field(posed_style, "block_appear");
+    if (is_text(appear, "typing")) {
+        std::string shown = typing_text(text, duration > 0 ? local_t / duration : 1.0);
+        if (py_strip(shown).empty()) {
+            return std::nullopt;
+        }
+        return TextContent{std::move(shown)};
+    }
+    const auto words = split_words(text);
+    if (!word_fx_set(posed_style).any()) {
+        return TextContent{text};
+    }
+    if (words.size() == 1) {
+        return TextContent{text, -1, true};
+    }
+    return TextContent{text, active_word_at(clip, static_cast<std::int64_t>(words.size()), local_t, duration)};
 }
 
 } // namespace gc::core

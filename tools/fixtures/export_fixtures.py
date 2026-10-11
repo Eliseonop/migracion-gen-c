@@ -2163,11 +2163,30 @@ def _safe(fn, *args) -> dict:
         return {"error": type(e).__name__}
 
 
+def _fake_size_factor(name, bold=True) -> float:
+    """ass_size_factor falso para las cajas de Fondo: no depende de las fuentes instaladas."""
+    return 1.2 + 0.01 * len(name or "") + (0.05 if bold else 0.0)
+
+
 def _text_style_case(st: dict) -> dict:
-    """Los cálculos de text_ass.py sobre un estilo efectivo, en 1080×1920 (y _xy también en 360×640)."""
+    """Los cálculos de text_ass.py sobre un estilo efectivo, en 1080×1920 (y _xy también en 360×640).
+    Las cajas de Fondo usan _fake_size_factor (y el ancho de texto estimado de _install_fakes)."""
+    import text_cases as tc
     from app import text_ass as ta
     font_px = ta._font_px(st, 1920)
+    real_factor = ta.ass_size_factor
+    ta.ass_size_factor = _fake_size_factor
+    try:
+        rows = ta._rows(st, 1080, 1920, tc.ROWS_TEXT)
+        geometry = {
+            "rows": rows,
+            "box_rects": _safe(lambda: [list(r) for r in ta.box_rects(st, 1080, 1920, rows)]),
+            "curve_glyphs": _safe(lambda: [list(g) for g in ta.curve_glyphs(st, 1080, 1920, rows)]),
+        }
+    finally:
+        ta.ass_size_factor = real_factor
     return _pure({
+        **geometry,
         "style": st,
         "fx": _safe(lambda: sorted(ta.word_fx_set(st))),
         "opacity": _safe(ta.style_opacity, st),
@@ -2214,9 +2233,39 @@ def _font_layout_case(layout: dict, root: Path) -> dict:
         fm._line_height_em.cache_clear()
 
 
-def synthetic_text_fixtures() -> dict:
+def _text_clip_case(ctx: Ctx, name: str, raw: dict, times, track_style=None) -> dict:
+    """Un clip de texto con las funciones REALES: si se anima (a 30 y 24 fps), las ventanas de sus
+    palabras y, en cada instante local, la pose, el estilo con la pose, la palabra activa y lo que
+    se ve (texto y, por palabra, «A» activa o «I» inactiva)."""
+    from app import text_ass as ta
+    c = ctx.schemas.TimelineClip.model_validate(raw)
+    st = ta.effective_text_style(track_style, c.style)
+    dur = ta._clip_dur(c)
+    n = len(ta.split_words(c.text or ""))
+    out = {"name": name, "clip": c.model_dump(), "style": st, "dur": dur,
+           "animates": [ta.text_animates(c, f) for f in (30, 24)],
+           "windows": [list(w) for w in ta.word_windows(c)], "times": []}
+    real = ta._active_override, ta._idle_override
+    for t in times:
+        posed = ta._posed_style(c, st, t)
+        ta._active_override, ta._idle_override = (lambda s: "A"), (lambda s: "I")
+        try:
+            seen = ta._content_at(c, posed, t, dur)
+        finally:
+            ta._active_override, ta._idle_override = real
+        content = None
+        if seen is not None:
+            shown, override_for = seen
+            content = {"text": shown, "flags": "".join(override_for(i) for i in range(len(ta.split_words(shown))))}
+        out["times"].append({"t": t, "pose": ta._pose_at(c, t), "posed": posed,
+                             "active": ta._active_word_at(c, n, t, dur), "content": content})
+    return _pure(_nan_safe(out))
+
+
+def synthetic_text_fixtures(ctx: Ctx) -> dict:
     """Los cálculos puros de text_ass.py (estilo, opacidad, alfa, colores, sombra, brillo, curva,
-    May./min., palabra activa) y las métricas de font_metrics.py, con las funciones REALES."""
+    May./min., palabra activa, pose y palabras de un clip) y las métricas de font_metrics.py, con
+    las funciones REALES."""
     import tempfile
     import text_cases as tc
     from app import font_metrics as fm
@@ -2233,7 +2282,9 @@ def synthetic_text_fixtures() -> dict:
                       "line_height_em": fm._line_height_em.__wrapped__(str(Path(tmp) / "no-existe.ttf"))})
         layouts = [_font_layout_case(lay, Path(tmp) / f"l{i}") for i, lay in enumerate(tc.FONT_LAYOUTS)]
     return _pure({
+        "rows_text": tc.ROWS_TEXT,
         "styles": [_text_style_case(st) for st in tc.STYLES],
+        "clips": [_text_clip_case(ctx, c["name"], c["clip"], tc.TEXT_TIMES) for c in tc.TEXT_CLIPS],
         "effective": [{"track": t, "clip": c, "out": ta.effective_text_style(t, c)} for t, c in tc.EFFECTIVE],
         "alpha": [{"op": _nan_safe(op), "out": ta.alpha_hex(op)} for op in alphas],
         "case": [{"text": t, "mode": m, "out": ta.apply_text_case(t, m)} for t in tc.CASE_TEXTS for m in tc.CASE_MODES],
@@ -2266,10 +2317,24 @@ def real_text_fixtures(ctx: Ctx, data: dict) -> dict:
             mode = st.get("text_case")
             for m in dict.fromkeys([mode, "upper", "title"]):
                 cases.append({"text": c.get("text") or "", "mode": m, "out": ta.apply_text_case(c.get("text") or "", m)})
+    clips = []
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        track_style = {t.id: t.style for t in proj.timeline.tracks}
+        for c in proj.timeline.clips:
+            if c.kind == "text":
+                dur = ta._clip_dur(c)
+                times = [dur * k / 6 for k in range(7)] + [w.start + 0.001 for w in c.words[:6]]
+                clips.append(_text_clip_case(ctx, f"{proj.id} · {c.id}", c.model_dump(), times,
+                                             track_style.get(c.track_id)))
     fm._line_height_em.cache_clear()
     fonts = [{"name": n, "bold": b, "factor": fm.ass_size_factor(n, b)}
              for n in sorted({*fm.FONTS, *fm.FONTS_BOLD, *fm.BUNDLED_FONTS}) for b in (True, False)]
-    return _pure({"styles": styles, "case": cases, "system_dir": fm.FONT_DIR.as_posix(), "fonts": fonts})
+    import text_cases as tc
+    return _pure({"rows_text": tc.ROWS_TEXT, "styles": styles, "case": cases, "clips": clips, "system_dir": fm.FONT_DIR.as_posix(),
+                  "fonts": fonts})
 
 
 # --- Salida -----------------------------------------------------------------------------------
@@ -2318,9 +2383,9 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "media" / "seek.json", seek, len(seek), 0)
     chroma = synthetic_chroma_fixtures()
     write(REPO / "tests" / "fixtures" / "media" / "chroma.json", chroma, len(chroma), 0)
-    txt = synthetic_text_fixtures()
+    txt = synthetic_text_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "text" / "synthetic.json", txt,
-          len(txt["styles"]) + len(txt["effective"]) + len(txt["alpha"]) + len(txt["case"]) + len(txt["active_word"])
+          len(txt["styles"]) + len(txt["clips"]) + len(txt["effective"]) + len(txt["alpha"]) + len(txt["case"]) + len(txt["active_word"])
           + len(txt["font_files"]) + sum(len(lay["fonts"]) for lay in txt["font_layouts"]), 0)
     ren = synthetic_render_fixtures(ctx)
     write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
@@ -2424,7 +2489,7 @@ def main() -> None:
         print(f"  fotograma: {sum(len(c['js_dur']) for c in frm_real['cases'])} clips con clipDur de JS ≠ Python")
         txt_real = real_text_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "text" / "real.json", txt_real,
-              len(txt_real["styles"]) + len(txt_real["case"]) + len(txt_real["fonts"]), 0)
+              len(txt_real["styles"]) + len(txt_real["case"]) + len(txt_real["clips"]) + len(txt_real["fonts"]), 0)
         ev_real = real_eval_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "eval" / "real.json", ev_real, len(ev_real["clips"]), 0)
     print(f"listo en {time.perf_counter() - t0:.1f} s")
