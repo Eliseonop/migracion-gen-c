@@ -359,3 +359,25 @@ RENDER_SCENES = [
     # `scale=eval=frame` pero el overlay se queda en x=ox:y=oy, así que crece desde la esquina
     # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).
 ]
+
+# Croma: los dict crudos de bg_removal.chroma que se normalizan y se pasan a chroma_filters,
+# chroma_alpha_ffmpeg y la cadena de _bg_source_chain, con varios altos de material.
+CHROMA = [
+    {"enabled": True},
+    {"enabled": True, "color": "#00FF00", "similarity": 0.2, "blend": 0.1},
+    {"enabled": True, "color": "#0000ff", "similarity": 0.35, "blend": 0.0, "spill": 0.5},
+    {"enabled": True, "color": "0x1aB", "similarity": 0.123456789, "blend": 0.3333333, "spill": 0.00005},
+    {"enabled": True, "color": "nada", "similarity": 0, "blend": 2, "spill": 1.5},
+    {"enabled": True, "edge": 0.3},
+    {"enabled": True, "shrink": -0.4},
+    {"enabled": True, "shrink": 0.25, "edge": 0.1},
+    {"enabled": True, "edge": 0.00005, "shrink": 0.00005},
+    {"enabled": True, "edge": 0.002},
+    {"enabled": True, "shrink": 0.001},
+    {"enabled": True, "shrink": 0.0035},
+    {"enabled": True, "color": "#22CC33", "spill": 0.2, "edge": 1, "shrink": -1},
+    {"enabled": False, "edge": 0.3},
+    {"enabled": "sí", "similarity": "0.4"},
+    {},
+]
+CHROMA_HEIGHTS = [0, 180, 512, 1080, 2160]

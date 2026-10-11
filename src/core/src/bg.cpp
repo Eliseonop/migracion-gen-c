@@ -4,6 +4,8 @@
 #include <array>
 #include <cctype>
 #include <cmath>
+#include <format>
+#include <string>
 #include <limits>
 
 #include "json_reader.hpp"
@@ -183,6 +185,103 @@ Json normalize_bg(const Json& raw) {
     out["chroma"] = normalize_chroma(field(raw, "chroma"));
     out["outline"] = normalize_outline(field(raw, "outline"));
     return out;
+}
+
+namespace {
+
+std::array<int, 3> hex_rgb(const std::string& color) {
+    const std::string h = normalize_hex(Json(color)).substr(1);
+    return {std::stoi(h.substr(0, 2), nullptr, 16), std::stoi(h.substr(2, 2), nullptr, 16),
+            std::stoi(h.substr(4, 2), nullptr, 16)};
+}
+
+double num(const Json& obj, std::string_view key) {
+    const Json& v = field(obj, key);
+    return v.is_number() ? v.get<double>() : 0.0;
+}
+
+constexpr double kChromaEdgeMax = 0.03; // CHROMA_EDGE_MAX (unidades de alto)
+constexpr double kMatteExpandMax = 0.06; // MATTE_EXPAND_MAX
+constexpr double kDespillMix = 0.5;      // DESPILL_MIX
+
+} // namespace
+
+bool bg_chroma_active(const Json& bg) {
+    return bg.is_object() && py_truthy(field(bg, "enabled")) && py_truthy(field(field(bg, "chroma"), "enabled"));
+}
+
+bool bg_auto_active(const Json& bg) {
+    if (!bg.is_object() || !py_truthy(field(bg, "enabled"))) {
+        return false;
+    }
+    const Json& a = field(bg, "auto");
+    return py_truthy(field(a, "enabled")) && py_truthy(field(a, "base_key")) && field(a, "status") == "ready";
+}
+
+std::vector<std::string> chroma_filters(const Json& chroma) {
+    if (!py_truthy(field(chroma, "enabled"))) {
+        return {};
+    }
+    const std::string color = field(chroma, "color").is_string() ? field(chroma, "color").get<std::string>() : "";
+    const auto [r, g, b] = hex_rgb(color);
+    std::vector<std::string> parts{
+        "format=yuva444p",
+        std::format("chromakey=color=0x{:02X}{:02X}{:02X}:similarity={:.6f}:blend={:.6f}", r, g, b,
+                    num(chroma, "similarity"), num(chroma, "blend"))};
+    const double spill = num(chroma, "spill");
+    if (spill > 1e-4) {
+        const std::string_view kind = b > g ? "blue" : "green"; // despill_type
+        parts.push_back(std::format("despill=type={}:mix={:.3f}:expand=0:{}={:.6f}:brightness=0", kind, kDespillMix,
+                                    kind, -spill));
+    }
+    return parts;
+}
+
+std::string chroma_alpha_ffmpeg(const Json& chroma, std::int64_t height) {
+    // chroma_morph_params
+    const double edge = num(chroma, "edge");
+    const double shrink = num(chroma, "shrink");
+    if (edge < 1e-4 && std::abs(shrink) < 1e-4) {
+        return "";
+    }
+    const double sigma_frac = std::max(edge * kChromaEdgeMax, std::abs(shrink) * kMatteExpandMax);
+    const double bias = shrink * 0.5 - edge * 0.5;
+    if (sigma_frac <= 0.0 && std::abs(bias) < 1e-4) {
+        return "";
+    }
+    std::vector<std::string> parts;
+    const double sigma = sigma_frac * static_cast<double>(height);
+    if (sigma > 0.3) {
+        parts.push_back(std::format("gblur=sigma={:.4f}", sigma));
+    }
+    if (std::abs(bias) > 1e-4) {
+        const auto k = static_cast<std::int64_t>(py_round(bias * 255.0, 0));
+        parts.push_back(std::format("lutyuv=y=clip(val+{}\\,0\\,255)", k));
+    }
+    std::string out;
+    for (const auto& p : parts) {
+        out += (out.empty() ? "" : ",") + p;
+    }
+    return out;
+}
+
+std::string chroma_source_chain(const Json& chroma, std::int64_t height) {
+    const auto filters = chroma_filters(chroma);
+    if (filters.empty()) {
+        return "";
+    }
+    std::string chain;
+    for (const auto& f : filters) {
+        chain += (chain.empty() ? "" : ",") + f;
+    }
+    const std::string amorph = chroma_alpha_ffmpeg(chroma, height);
+    if (amorph.empty()) {
+        return chain; // solo croma: cabe en la propia cadena del clip
+    }
+    // Con limpieza/expansión del borde: separar el alfa, procesarlo y volver a unirlo.
+    return std::format("{},format=gbrap,split=2[bgcka][bgckb];[bgcka]alphaextract,{}[bgckalpha];"
+                       "[bgckb][bgckalpha]alphamerge",
+                       chain, amorph);
 }
 
 bool bg_capable(const TimelineClip& clip) { return clip.kind == "video" || clip.kind == "image"; }

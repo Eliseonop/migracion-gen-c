@@ -18,6 +18,7 @@ Salida (al repo):
   tests/fixtures/export_input/synthetic.json  cómo lee el export el material (clip_kind.py): export_input_cases.py
   tests/fixtures/media/decode.json         decode como el export: media_cases.DECODE (MD5 por fotograma del ffmpeg del PATH)
   tests/fixtures/media/seek.json           seek exacto de frame_grab.extract_frame: media_cases.SEEK
+  tests/fixtures/media/chroma.json         cadenas de FFmpeg del croma (clip_bg.py): media_cases.CHROMA
   tests/fixtures/render/synthetic.json     fotogramas del compuesto real (compose.render_frame): media_cases.RENDER
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
@@ -1752,6 +1753,22 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
         compose._clip_path = real_clip_path
 
 
+def synthetic_chroma_fixtures() -> list[dict]:
+    """Las cadenas de FFmpeg del croma con las funciones REALES de clip_bg.py y la parte del
+    croma de compose._bg_source_chain (sin matte), para media_cases.CHROMA."""
+    import media_cases as mc
+    from app import clip_bg
+    cases = []
+    for raw in mc.CHROMA:
+        chroma = clip_bg.normalize_chroma(raw)
+        by_height = []
+        for h in mc.CHROMA_HEIGHTS:
+            amorph = clip_bg.chroma_alpha_ffmpeg(chroma, h if h > 0 else 512)
+            by_height.append({"height": h, "alpha": amorph})
+        cases.append({"raw": raw, "chroma": chroma, "filters": clip_bg.chroma_filters(chroma), "heights": by_height})
+    return cases
+
+
 def _probe(path: Path) -> dict:
     """Las tres sondas REALES de video-yt (ffprobe del PATH; probe_duration, la original y no
     la falsa de _install_fakes)."""
@@ -2180,6 +2197,8 @@ def main() -> None:
     dec = synthetic_decode_fixtures(ctx)
     seek = synthetic_seek_fixtures()
     write(REPO / "tests" / "fixtures" / "media" / "seek.json", seek, len(seek), 0)
+    chroma = synthetic_chroma_fixtures()
+    write(REPO / "tests" / "fixtures" / "media" / "chroma.json", chroma, len(chroma), 0)
     ren = synthetic_render_fixtures(ctx)
     write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
