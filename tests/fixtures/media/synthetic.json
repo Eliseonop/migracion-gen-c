@@ -4505,9 +4505,27 @@
    "has_audio": false
   },
   {
+   "file": "v_2s.mp4",
+   "duration": 2.0,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
    "file": "v_bt709.mp4",
    "duration": 1.0,
    "color_untagged": false,
+   "has_audio": false
+  },
+  {
+   "file": "v_corrupt.mp4",
+   "duration": 2.0,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "v_offset.mkv",
+   "duration": 1.5,
+   "color_untagged": true,
    "has_audio": false
   },
   {
@@ -4531,6 +4549,12 @@
   {
    "file": "va_bt709.mp4",
    "duration": 1.24,
+   "color_untagged": false,
+   "has_audio": true
+  },
+  {
+   "file": "va_offset.mp4",
+   "duration": 1.263,
    "color_untagged": false,
    "has_audio": true
   },

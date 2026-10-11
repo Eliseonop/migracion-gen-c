@@ -61,7 +61,7 @@ std::string av_err(int code) {
 struct InputOptions {
     std::string path;
     std::string decoder;                   // -c:v
-    std::optional<std::string> duration;   // -t
+    std::optional<std::int64_t> duration_us; // -t, en µs (como av_parse_time del CLI)
     std::vector<std::pair<std::string, std::string>> demuxer; // -loop, -framerate…
 };
 
@@ -80,7 +80,12 @@ Result<InputOptions> parse_input_args(const std::vector<std::string>& args) {
         } else if (a == "-c:v") {
             out.decoder = v;
         } else if (a == "-t") {
-            out.duration = v;
+            double s = 0.0;
+            const auto [end, ec] = std::from_chars(v.data(), v.data() + v.size(), s);
+            if (ec != std::errc{} || end != v.data() + v.size() || !std::isfinite(s)) {
+                return fail(ErrorCode::InvalidArgument, "duración de entrada no válida: " + v);
+            }
+            out.duration_us = std::llround(s * 1e6);
         } else {
             out.demuxer.emplace_back(a.substr(1), v);
         }
@@ -92,11 +97,7 @@ Result<InputOptions> parse_input_args(const std::vector<std::string>& args) {
 }
 
 // `-t` de una entrada: el CLI le pone a su salida un `trim` con la duración en µs.
-std::string duration_trim(const std::string& seconds) {
-    double s = 0.0;
-    std::from_chars(seconds.data(), seconds.data() + seconds.size(), s);
-    return std::format("trim=durationi={},", static_cast<std::int64_t>(std::llround(s * 1e6)));
-}
+std::string duration_trim(std::int64_t us) { return std::format("trim=durationi={},", us); }
 
 class Decoder {
 public:
@@ -170,6 +171,11 @@ private:
             }
         }
         AVStream* st = fmt_->streams[stream_];
+        // El CLI desplaza las marcas de tiempo de cada paquete con `ts_offset = −start_time` del
+        // contenedor (sin -copyts), así que el `trim` de la cadena cuenta desde el principio del
+        // archivo aunque el contenedor no empiece en 0.
+        const std::int64_t start = fmt_->start_time != AV_NOPTS_VALUE ? fmt_->start_time : 0;
+        ts_offset_ = av_rescale_q(-start, AV_TIME_BASE_Q, st->time_base);
         dec_.reset(avcodec_alloc_context3(codec));
         if (!dec_ || avcodec_parameters_to_context(dec_.get(), st->codecpar) < 0) {
             return fail(ErrorCode::Internal, "no se pudo preparar el decodificador");
@@ -195,6 +201,9 @@ private:
             return fail(ErrorCode::Internal, "faltan los filtros buffer/buffersink");
         }
         AVBufferSrcParameters* par = av_buffersrc_parameters_alloc();
+        if (par == nullptr) {
+            return fail(ErrorCode::Internal, "sin memoria para la entrada del grafo");
+        }
         par->format = first.format;
         par->width = first.width;
         par->height = first.height;
@@ -210,7 +219,7 @@ private:
         if (avfilter_init_str(sink_, nullptr) < 0) {
             return fail(ErrorCode::Internal, "no se pudo preparar la salida del grafo");
         }
-        std::string desc = (opts_.duration ? duration_trim(*opts_.duration) : std::string()) + spec_.chain;
+        std::string desc = (opts_.duration_us ? duration_trim(*opts_.duration_us) : std::string()) + spec_.chain;
         desc += desc.empty() ? "format=rgba" : ",format=rgba";
         std::unique_ptr<AVFilterInOut, InOutFree> outputs(avfilter_inout_alloc());
         std::unique_ptr<AVFilterInOut, InOutFree> inputs(avfilter_inout_alloc());
@@ -233,8 +242,10 @@ private:
     }
 
     Result<void> send(const AVPacket* pkt, AVFrame* frame) {
+        // Como el CLI, un paquete que no se puede decodificar se salta y se sigue con el resto.
         if (const int r = avcodec_send_packet(dec_.get(), pkt); r < 0 && r != AVERROR_EOF) {
-            return fail(ErrorCode::Io, "error al decodificar: " + av_err(r), opts_.path);
+            ++decode_errors_;
+            return {};
         }
         while (!done_) {
             const int r = avcodec_receive_frame(dec_.get(), frame);
@@ -242,9 +253,12 @@ private:
                 return {};
             }
             if (r < 0) {
-                return fail(ErrorCode::Io, "error al decodificar: " + av_err(r), opts_.path);
+                ++decode_errors_;
+                return {};
             }
-            frame->pts = frame->best_effort_timestamp; // lo que hace el CLI
+            // Lo que hace el CLI: la marca «mejor estimada», ya desplazada con ts_offset.
+            frame->pts = frame->best_effort_timestamp == AV_NOPTS_VALUE ? AV_NOPTS_VALUE
+                                                                         : frame->best_effort_timestamp + ts_offset_;
             if (!graph_) {
                 if (auto g = build_graph(*frame); !g) {
                     return g;
@@ -302,6 +316,8 @@ private:
     AVFilterContext* src_ = nullptr;
     AVFilterContext* sink_ = nullptr;
     int stream_ = -1;
+    std::int64_t ts_offset_ = 0; // en la base de tiempos del stream
+    std::size_t decode_errors_ = 0;
     std::size_t count_ = 0;
     bool done_ = false;
 };

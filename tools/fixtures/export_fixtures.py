@@ -1587,7 +1587,7 @@ def _ensure_probe_media() -> None:
     if ffmpeg is None:
         sys.exit("Hace falta ffmpeg en el PATH para generar tests/fixtures/media/files")
     PROBE_DIR.mkdir(parents=True, exist_ok=True)
-    for name, args in mc.PROBE_MEDIA + mc.PROBE_MEDIA_VFR:
+    for name, args in mc.PROBE_MEDIA + mc.PROBE_MEDIA_VFR + mc.PROBE_MEDIA_2S:
         out = PROBE_DIR / name
         if not out.exists():
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args,
@@ -1595,6 +1595,17 @@ def _ensure_probe_media() -> None:
     for name, data in mc.PROBE_RAW:
         if not (PROBE_DIR / name).exists():
             (PROBE_DIR / name).write_bytes(data)
+    for name, src, pre, post in mc.PROBE_DERIVED:
+        out = PROBE_DIR / name
+        if not out.exists():
+            subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *pre, "-i", str(PROBE_DIR / src), *post,
+                            str(out)], check=True)
+    name, src, n = mc.CORRUPT
+    if not (PROBE_DIR / name).exists():
+        data = bytearray((PROBE_DIR / src).read_bytes())
+        mid = len(data) // 2
+        data[mid:mid + n] = bytes(b ^ 0xFF for b in data[mid:mid + n])
+        (PROBE_DIR / name).write_bytes(bytes(data))
     trunc = PROBE_DIR / "va_trunc.mp4"  # el MP4 con audio, cortado por la mitad
     if not trunc.exists():
         whole = (PROBE_DIR / "va_bt709.mp4").read_bytes()
@@ -1637,6 +1648,30 @@ def synthetic_decode_fixtures(ctx: Ctx) -> list[dict]:
                       "input_args": ["{PATH}" if a == str(path) else a for a in args], "chain": chain,
                       "width": w, "height": h,
                       "frames": [hashlib.md5(out[i:i + size]).hexdigest() for i in range(0, len(out), size)]})
+    return cases
+
+
+def synthetic_seek_fixtures() -> list[dict]:
+    """El fotograma de un instante como frame_grab.extract_frame: los argumentos que arma
+    (`-ss {max(0, t):.3f}` antes de `-i`, `-frames:v 1`) con el ffmpeg del PATH, sin su escalado
+    ni el JPEG, en RGBA. MD5 del fotograma o null si no sale ninguno."""
+    import hashlib
+    import media_cases as mc
+    ffmpeg, ffprobe = shutil.which("ffmpeg"), shutil.which("ffprobe")
+    cases = []
+    for file, times in mc.SEEK:
+        path = PROBE_DIR / file
+        dims = subprocess.run([ffprobe, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+                               "-of", "csv=p=0", str(path)], capture_output=True, text=True, check=True).stdout
+        w, h = (int(x) for x in dims.strip().split(",")[:2])
+        for t in times:
+            ss = f"{max(0.0, float(t)):.3f}"  # como extract_frame
+            out = subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", "-ss", ss, "-i", str(path),
+                                  "-frames:v", "1", "-f", "rawvideo", "-pix_fmt", "rgba", "-"],
+                                 capture_output=True, check=True).stdout
+            assert len(out) in (0, w * h * 4), (file, t, len(out))
+            cases.append(_nan_safe({"file": file, "t": t, "ss": ss, "width": w, "height": h,
+                                    "frame": hashlib.md5(out).hexdigest() if out else None}))
     return cases
 
 

@@ -135,6 +135,16 @@ PROBE_MEDIA_VFR = [
                             "-c:v", "libx264", "-pix_fmt", "yuv420p"]),
 ]
 
+# Derivados de otros medios de PROBE_DIR (revisión del decode): contenedores que no empiezan en 0
+# (el CLI resta su start_time) y un H.264 de 2 s con 300 bytes invertidos a mitad (el CLI salta
+# los paquetes rotos y sigue). (archivo, origen, argumentos entre `-i origen` y la salida.)
+PROBE_DERIVED = [
+    ("v_offset.mkv", "v_untagged.mp4", ["-itsoffset", "0.5"], ["-c", "copy"]),
+    ("va_offset.mp4", "va_bt709.mp4", ["-itsoffset", "0.3"], ["-c", "copy"]),
+]
+PROBE_MEDIA_2S = [("v_2s.mp4", _V + ["-t", "2", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-g", "10"])]
+CORRUPT = ("v_corrupt.mp4", "v_2s.mp4", 300)  # (archivo, origen, bytes invertidos a mitad)
+
 # Decode como el export (compose.py): (nombre, archivo, clip, fps). El clip se completa con
 # source_duration = la duración que da probe_duration; el exportador arma la cadena con las
 # funciones REALES (ffmpeg_input_args, ffmpeg_trim_filter, _color_untagged).
@@ -153,6 +163,24 @@ DECODE = [
     ("gif en bucle", "anim.gif", {"kind": "image", "asset_kind": "images", "in_point": 0.0, "out_point": 1.0}, 25),
     ("gif una vez", "anim.gif", {"kind": "image", "asset_kind": "images", "in_point": 0.0, "out_point": 1.0,
                                  "loop": False}, 25),
+    ("mkv que empieza en 0,5", "v_offset.mkv", {"kind": "video", "in_point": 0.0, "out_point": 0.8}, 30),
+    ("mp4 que empieza en 0,3", "va_offset.mp4", {"kind": "video", "in_point": 0.1, "out_point": 0.9}, 25),
+    ("h264 con paquetes rotos", "v_corrupt.mp4", {"kind": "video", "in_point": 0.0, "out_point": 2.0}, 25),
+]
+
+# Fotograma de un instante como frame_grab.extract_frame (`-ss t` antes de `-i`, sin el escalado
+# ni el JPEG): (archivo, instantes). Justo en un fotograma, entre dos, negativos, NaN, más allá
+# del final y dentro del hueco del VFR.
+SEEK = [
+    ("v_untagged.mp4", [0.0, 0.02, 0.04, 0.0400001, 0.0404, 0.0405, 0.079, 0.08, 0.081, 0.5, 0.96, 0.961, 0.999, 1.0, 5.0,
+                        -1.0, float("nan")]),
+    ("va_bt709.mp4", [0.0, 0.333, 1.2, 1.23, 1.24]),
+    ("v_smpte170m.mov", [0.0, 0.1, 0.26, 0.5]),
+    ("va_untagged.mkv", [0.0, 0.25, 0.6]),
+    ("mjpeg_vbr.avi", [0.0, 0.17, 0.33]),
+    ("v_vfr_gap.mp4", [0.0, 0.36, 0.37, 0.8, 1.399, 1.4, 1.75, 1.8]),
+    ("still.png", [0.0, 0.5]),
+    ("anim.gif", [0.0, 0.15, 0.39, 2.0]),
 ]
 
 # Archivos que no son medios (se escriben tal cual) y rutas que no existen.
