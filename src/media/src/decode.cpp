@@ -4,6 +4,7 @@
 #include <array>
 #include <charconv>
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 #include <format>
 #include <memory>
@@ -376,52 +377,100 @@ Result<std::optional<RgbaFrame>> frame_at(const std::filesystem::path& path, dou
     return out;
 }
 
+namespace {
+
+double parse_double(const std::string& text) {
+    double v = 0.0;
+    std::from_chars(text.data(), text.data() + text.size(), v);
+    return v;
+}
+
+} // namespace
+
+std::int64_t export_frame_tick(double at, int fps) {
+    // render_frame: `-ss {max(0.0, float(at)):.3f}` a la SALIDA del grafo da el fotograma
+    // compuesto más cercano (medido con el ffmpeg del PATH; un empate va al siguiente).
+    const double ss = parse_double(std::format("{:.3f}", std::isnan(at) ? 0.0 : std::max(0.0, at)));
+    return static_cast<std::int64_t>(std::floor(ss * fps + 0.5));
+}
+
 Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip, const std::filesystem::path& path,
-                                                 int fps, double t) {
-    // compose.py: `[k:v]…{trim},setpts=PTS-STARTPTS,{cropscale},fps=F{spd},setpts=PTS-STARTPTS+start/TB`,
-    // con spd = video_speed_filters (vacío en un still): «reverse» y `setpts=PTS/{sp:.6f}`.
-    const double start = std::max(0.0, clip.start);
+                                                 int fps, std::int64_t tick) {
+    // compose.py, la cadena de cada clip:
+    //   [k:v]{color_pre}{trim},setpts=PTS-STARTPTS,{cropscale},fps=F{spd},…,setpts=PTS-STARTPTS+{start:.3f}/TB
+    // con spd = video_speed_filters (vacío en un still): «reverse» y `setpts=PTS/{sp:.6f}`. Las
+    // setpts evalúan en doble y truncan a entero (D2TS de vf_setpts.c), en ticks de 1/F.
     const bool still = core::is_still_clip(clip);
     const bool reverse = !still && clip.reverse;
-    double speed = 1.0;
+    std::optional<double> speed;
     if (const double sp = core::clip_speed(clip); !still && std::abs(sp - 1.0) > 1e-3) {
-        const std::string text = std::format("{:.6f}", sp);
-        std::from_chars(text.data(), text.data() + text.size(), speed);
+        speed = parse_double(std::format("{:.6f}", sp));
     }
-    // El overlay toma el último fotograma del clip con pts ≤ t; el margen absorbe el redondeo
-    // de un t que cae justo en la rejilla.
-    const double pos = std::floor((t - start) * fps * speed + 1e-6);
-    if (!std::isfinite(pos) || pos < 0) {
-        return std::optional<RgbaFrame>{};
-    }
-    const auto n = static_cast<std::size_t>(std::min(pos, 1e15));
-    const DecodeSpec spec = export_decode_spec(clip, path, fps);
+    const double start = parse_double(std::format("{:.3f}", std::max(0.0, clip.start)));
+    const double offset = start / (1.0 / static_cast<double>(fps)); // `{start:.3f}/TB`, con TB = 1/F
+    // pts (en ticks) del m-ésimo fotograma que sale de la cadena; el primero tiene 0 antes del
+    // desplazamiento, así que STARTPTS no resta nada.
+    const auto pts_of = [&](std::int64_t m) {
+        const std::int64_t scaled =
+            speed ? static_cast<std::int64_t>(static_cast<double>(m) / *speed) : m; // setpts=PTS/sp
+        return static_cast<std::int64_t>(static_cast<double>(scaled) + offset);     // +start/TB
+    };
+
+    DecodeSpec spec = export_decode_spec(clip, path, fps);
+    spec.chain += std::format(",fps={}", fps); // el fps=F que va tras el cropscale (un GIF a 10 fps → F)
+
+    // El overlay, en el tick `tick` del fondo, toma el primer fotograma con ese pts o, si no hay,
+    // el último anterior; pasado el final, el último (`eof_action=repeat`).
     std::optional<RgbaFrame> out;
     if (!reverse) {
-        // Pasado el último, `eof_action=repeat` repite el último.
-        std::size_t i = 0;
+        std::int64_t m = 0;
         auto count = decode_frames(spec, [&](const RgbaFrame& f) {
+            const std::int64_t p = pts_of(m++);
+            if (p > tick) {
+                if (!out) {
+                    out = f; // empieza después del tick: no se vería (el clip aún no está)
+                }
+                return false;
+            }
             out = f;
-            return i++ < n;
+            return p < tick;
         });
         if (!count) {
             return std::unexpected(count.error());
         }
         return out;
     }
-    // Al revés: el filtro reverse los guarda todos y los suelta del último al primero.
-    std::vector<RgbaFrame> frames;
-    auto count = decode_frames(spec, [&](const RgbaFrame& f) {
-        frames.push_back(f);
-        return true;
-    });
-    if (!count) {
-        return std::unexpected(count.error());
+    // Al revés, el filtro reverse suelta los fotogramas del último al primero con los pts de
+    // siempre: el m-ésimo que sale es el (N−1−m)-ésimo del tramo. Dos pasadas (contar y tomar
+    // uno) en vez de guardarlos todos, que en 4K no caben en memoria.
+    auto total = decode_frames(spec, [](const RgbaFrame&) { return true; });
+    if (!total) {
+        return std::unexpected(total.error());
     }
-    if (frames.empty()) {
+    const auto n = static_cast<std::int64_t>(*total);
+    if (n == 0) {
         return out;
     }
-    out = std::move(frames[frames.size() - 1 - std::min(n, frames.size() - 1)]);
+    std::int64_t chosen = n - 1;
+    for (std::int64_t m = 0; m < n; ++m) {
+        const std::int64_t p = pts_of(m);
+        if (p >= tick) {
+            chosen = p == tick || m == 0 ? m : m - 1;
+            break;
+        }
+    }
+    const std::int64_t wanted = n - 1 - chosen;
+    std::int64_t i = 0;
+    auto again = decode_frames(spec, [&](const RgbaFrame& f) {
+        if (i++ == wanted) {
+            out = f;
+            return false;
+        }
+        return true;
+    });
+    if (!again) {
+        return std::unexpected(again.error());
+    }
     return out;
 }
 

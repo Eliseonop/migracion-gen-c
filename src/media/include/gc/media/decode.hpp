@@ -52,13 +52,20 @@ inline constexpr const char* kAssumeBt709Filter =
 // pts ≥ t (redondeado a ms). Nada (nullopt) si `t` queda después del último.
 [[nodiscard]] Result<std::optional<RgbaFrame>> frame_at(const std::filesystem::path& path, double t);
 
-// El fotograma de un clip que el export compone en el instante `t` de la timeline: el n-ésimo
-// de su cadena (export_decode_spec) con n = ⌊(t − max(0, start))·fps·velocidad⌋, contado desde
-// el final si va al revés, y el último si la cadena se acaba antes (`eof_action=repeat` del
-// overlay). La velocidad y el revés no cuentan en un still, como en compose.py. Nada (nullopt)
-// si `t` es anterior al inicio o la cadena no da ningún fotograma.
+// El fotograma compuesto que da `compose.render_frame(…, at)`: `-ss {max(0, at):.3f}` a la salida
+// del grafo toma el más cercano de la rejilla de 1/fps (un empate, el siguiente). Devuelve su
+// índice k (el instante es k/fps).
+[[nodiscard]] std::int64_t export_frame_tick(double at, int fps);
+
+// El fotograma de un clip que el export compone en el fotograma k de la timeline (k/fps s),
+// como compose.py: la cadena de export_decode_spec más el `fps=F` que va tras el encuadre,
+// `reverse` y `setpts=PTS/{velocidad:.6f}` (nada de eso en un still) y
+// `setpts=PTS-STARTPTS+{max(0, start):.3f}/TB`, con el truncado a ticks enteros de las setpts;
+// el overlay toma el primer fotograma con pts = k o, si no hay, el último anterior, y pasado el
+// final el último (`eof_action=repeat`). Nada (nullopt) si la cadena no da ningún fotograma.
 [[nodiscard]] Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip,
-                                                               const std::filesystem::path& path, int fps, double t);
+                                                               const std::filesystem::path& path, int fps,
+                                                               std::int64_t tick);
 
 // MD5 en hexadecimal (av_md5): para comparar fotogramas con las fixtures.
 [[nodiscard]] std::string md5_hex(std::span<const std::uint8_t> data);

@@ -1,6 +1,7 @@
 #include "frame_cmd.hpp"
 
 #include <charconv>
+#include <cstdint>
 #include <cstdlib>
 #include <cmath>
 #include <filesystem>
@@ -17,6 +18,7 @@
 #include "gc/core/frame.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/projects_store.hpp"
+#include "gc/core/timeline_rules.hpp"
 #include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
 #include "gc/render/compose.hpp"
@@ -34,9 +36,9 @@ int fail_with(std::string_view message) {
     return 1;
 }
 
-bool has_media(const TimelineClip& clip) {
-    return clip.kind == "video" || clip.kind == "image" || clip.kind == "motion" || clip.kind == "shape";
-}
+// Los clips cuyo material se busca en el disco. Las figuras pasan tal cual (unsupported_reason
+// las rechaza) y los motion graphics, sin clip_media_path aún, van aparte.
+bool has_media(const TimelineClip& clip) { return clip.kind == "video" || clip.kind == "image"; }
 
 } // namespace
 
@@ -88,10 +90,26 @@ int cmd_frame(std::span<const std::string> args) {
     }
     Timeline timeline = *(*project)->timeline;
 
-    // Como el export: solo los clips con material que existe (media_exists de compose.py).
+    // compose.py: W y H pares; `-ss T` a la salida da el fotograma compuesto más cercano a T.
+    const int w = static_cast<int>(timeline.width - timeline.width % 2);
+    const int h = static_cast<int>(timeline.height - timeline.height % 2);
+    const int fps = timeline.fps > 0 ? static_cast<int>(timeline.fps) : 30;
+    const std::int64_t tick = gc::media::export_frame_tick(*at, fps);
+    const double t = static_cast<double>(tick) / fps;
+
+    // Como el export: solo los clips con material que existe (media_exists de compose.py). Los
+    // motion graphics aún no: si alguno se ve en t, error (o, con --omitir, aviso).
     std::map<std::string, fs::path> paths;
+    std::optional<std::string> motion;
     std::erase_if(timeline.clips, [&](const gc::Cow<TimelineClip>& c) {
         const TimelineClip& clip = *c;
+        if (clip.kind == "motion") {
+            const double start = std::max(0.0, clip.start);
+            if (!clip.disabled && t >= start && t < start + clip_timeline_duration(clip)) {
+                motion = clip.id;
+            }
+            return true;
+        }
         if (!has_media(clip)) {
             return false;
         }
@@ -103,12 +121,12 @@ int cmd_frame(std::span<const std::string> args) {
         paths[clip.id] = *path;
         return false;
     });
-
-    // compose.py: W y H pares; `-ss T` a la salida da el primer fotograma compuesto con pts ≥ T.
-    const int w = static_cast<int>(timeline.width - timeline.width % 2);
-    const int h = static_cast<int>(timeline.height - timeline.height % 2);
-    const int fps = timeline.fps > 0 ? static_cast<int>(timeline.fps) : 30;
-    const double t = std::ceil(std::max(0.0, *at) * fps - 1e-6) / fps;
+    if (motion && !skip) {
+        return fail_with(std::format("el render aún no dibuja motion graphics (clip {})", *motion));
+    }
+    if (motion) {
+        std::cerr << std::format("aviso: el render aún no dibuja motion graphics (clip {}): se omite\n", *motion);
+    }
 
     // El fotograma de cada clip en t, decodificado una vez (también da sus dimensiones). Las
     // pasadas fantasma (kGhostSuffix) usan el material de su clip.
@@ -124,7 +142,7 @@ int cmd_frame(std::span<const std::string> args) {
         if (p == paths.end()) {
             return nullptr;
         }
-        auto got = gc::media::export_frame_at(clip, p->second, fps, t);
+        auto got = gc::media::export_frame_at(clip, p->second, fps, tick);
         if (!got || !got->has_value()) {
             media_error = got ? gc::Error{gc::ErrorCode::Io, std::format("el clip {} no da fotograma en {}", id, t)}
                               : got.error();

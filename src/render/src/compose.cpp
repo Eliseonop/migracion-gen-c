@@ -1,5 +1,6 @@
 #include "gc/render/compose.hpp"
 
+#include <charconv>
 #include <format>
 #include <string>
 
@@ -13,8 +14,24 @@ bool is_media(const core::TimelineClip& clip) {
     return clip.kind == "video" || clip.kind == "image" || clip.kind == "motion";
 }
 
-// Un valor que activa algo: true o un número distinto de 0 (como _fx_on de clip_fx.py).
-bool truthy(const Json& v) { return v.is_boolean() ? v.get<bool>() : v.is_number() && v.get<double>() != 0.0; }
+// Un valor que activa algo: true o un número distinto de 0, también escrito como texto («2»), como
+// el float(val) de _fx_on/_fx_num en clip_fx.py. Por prudencia, un negativo también cuenta (el
+// brillo o el contraste negativos sí cambian la imagen).
+bool truthy(const Json& v) {
+    if (v.is_boolean()) {
+        return v.get<bool>();
+    }
+    if (v.is_number()) {
+        return v.get<double>() != 0.0;
+    }
+    if (v.is_string()) {
+        const auto& s = v.get_ref<const std::string&>();
+        double d = 0.0;
+        const auto [end, ec] = std::from_chars(s.data(), s.data() + s.size(), d);
+        return ec == std::errc{} && end == s.data() + s.size() && d != 0.0;
+    }
+    return false;
+}
 
 // bg_active de clip_bg.py: croma activo, o matte automático listo.
 bool bg_active(const core::TimelineClip& clip) {

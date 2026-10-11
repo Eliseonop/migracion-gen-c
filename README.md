@@ -71,6 +71,7 @@ Si cambia `schemas.py` o `migrations.py` en video-yt, regenera las fixtures; el 
 ```bash
 genclip projects E:/proyectos/video-yt/backend/data/projects.json   # valida todos los proyectos
 genclip normalize <projects.json> <salida.json> [--preserve]          # reescribe normalizado
+genclip frame E:/proyectos/video-yt/backend <proyecto> --at 5 -o f.png [--omitir]  # fotograma compuesto (con FFmpeg y Skia)
 ```
 
 Los errores van a stderr («error: …»). `GENCLIP_LOG=debug` (o `trace`, `info`, `warn`, `error`,

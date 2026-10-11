@@ -67,6 +67,10 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
     CHECK_FALSE(unsupported_reason(layer(effects)));
     effects.effects = Json{{"blur", 2.5}};
     CHECK(unsupported_reason(layer(effects)));
+    effects.effects = Json{{"blur", "2"}}; // como texto, float("2") en Python
+    CHECK(unsupported_reason(layer(effects)));
+    effects.effects = Json{{"blur", "0"}};
+    CHECK_FALSE(unsupported_reason(layer(effects)));
     TimelineClip vfx = video();
     vfx.vfx = Json::array({Json{{"id", "glitch"}}});
     CHECK(unsupported_reason(layer(vfx)));

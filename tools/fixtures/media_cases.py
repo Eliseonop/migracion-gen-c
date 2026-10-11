@@ -275,6 +275,8 @@ _MOVING = ("nullsrc=s=320x180:r={r}:d=2,format=rgb24,geq=r='128+110*sin(Y*0.35-T
 RENDER_VIDEO_MEDIA = [
     ("moving30.mp4", ["-f", "lavfi", "-i", _MOVING.format(r=30), "-c:v", "libx264", "-crf", "8", "-pix_fmt", "yuv420p"]),
     ("moving25.mp4", ["-f", "lavfi", "-i", _MOVING.format(r=25), "-c:v", "libx264", "-crf", "8", "-pix_fmt", "yuv420p"]),
+    # Un GIF animado a 10 fps: el export lo pasa a la rejilla de la timeline con su fps=F final.
+    ("anim10.gif", ["-f", "lavfi", "-i", _MOVING.format(r=10)]),
 ]
 # Escenas con varios clips o con vídeo: (nombre, fps de la timeline, pistas de vídeo, clips,
 # instantes en la rejilla de 1/fps). Cada clip: archivo, pista y los campos del clip. Posiciones
@@ -321,6 +323,38 @@ RENDER_SCENES = [
      [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "appear": "wipe",
                                "transform": _CENTER})],
      [0.2]),
+    # El fotograma elegido (revisión): las setpts del export truncan a ticks enteros, así que con
+    # un inicio fuera de la rejilla o una velocidad fraccionaria importa en qué tick cae cada uno.
+    ("vídeo que empieza en 0,29", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.29, "in_point": 0.0, "out_point": 1.5, "transform": _CENTER})],
+     [0.3, 0.5, 1.0]),
+    ("vídeo que empieza en 0,717", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.717, "in_point": 0.1, "out_point": 1.5, "transform": _CENTER})],
+     [0.7333, 1.0]),
+    ("vídeo a velocidad 0,75", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 1.0, "speed": 0.75,
+                               "transform": _CENTER})],
+     [0.0667, 0.1667, 0.2]),
+    ("vídeo a velocidad 1,5 en fotogramas impares", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 1.8, "speed": 1.5,
+                               "transform": _CENTER})],
+     [0.3, 0.3667]),
+    ("vídeo a velocidad 2,5", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 1.9, "speed": 2.5,
+                               "transform": _CENTER})],
+     [0.5]),
+    ("vídeo al revés a velocidad 1,5", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 1.5, "speed": 1.5, "reverse": True,
+                               "transform": _CENTER})],
+     [0.3]),
+    ("gif de 10 fps en una timeline de 30", 30, ["V1"],
+     [("anim10.gif", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER})],
+     [0.0333, 0.5, 1.7]),
+    # El instante (revisión): `-ss` a la salida da el fotograma más cercano (un empate, el
+    # siguiente), y el último fotograma de un clip de 1 s es el 29.
+    ("instantes fuera de la rejilla", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 1.0, "transform": _CENTER})],
+     [0.3335, 0.35, 0.36, 0.45, 0.967]),
     # Sin el zoom (ni el pop) de aparición o salida: en un overlay estático el export escala con
     # `scale=eval=frame` pero el overlay se queda en x=ox:y=oy, así que crece desde la esquina
     # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).

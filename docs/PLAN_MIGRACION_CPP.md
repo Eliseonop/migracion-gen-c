@@ -1088,7 +1088,7 @@ Decisión de Edu (§6):
 
 ### 2026-10-11 — F3: vídeo en el render
 
-- **Hecho:** `gc::media::export_frame_at(clip, ruta, fps, t)`, el fotograma de un clip que el export compone en el instante `t`: el n-ésimo de su cadena (`fps`, `trim`, `setpts`), con n = ⌊(t − max(0, start))·fps·velocidad⌋ (la velocidad como `setpts=PTS/{sp:.6f}` de `video_speed_filters`), contado desde el final si va al revés y el último si la cadena se acaba (`eof_action=repeat`). En un still no cuentan ni la velocidad ni el revés, como en `compose.py`. El test de render toma de ahí el material de cada capa, imágenes incluidas.
+- **Hecho** (la fórmula de abajo era incompleta: corregida en «F3, revisión: el fotograma que elige el export»): `gc::media::export_frame_at(clip, ruta, fps, t)`, el fotograma de un clip que el export compone en el instante `t`: el n-ésimo de su cadena (`fps`, `trim`, `setpts`), con n = ⌊(t − max(0, start))·fps·velocidad⌋ (la velocidad como `setpts=PTS/{sp:.6f}` de `video_speed_filters`), contado desde el final si va al revés y el último si la cadena se acaba (`eof_action=repeat`). En un still no cuentan ni la velocidad ni el revés, como en `compose.py`. El test de render toma de ahí el material de cada capa, imágenes incluidas.
 - **Verificación:** 13 fotogramas nuevos de `compose.render_frame` con vídeos de ondas que cambian ~1 rad por fotograma: overlay con `in_point` e inicio, 25 fps sobre 30, velocidad 1,5, al revés y una imagen debajo con un vídeo encima. Vídeos: 66,8–67,6 dB de luma (la elección del fotograma coincide con el export en todos); dos clips: 51,5 dB. Mutante «un fotograma de más»: ~24 dB, falla. MSVC + vcpkg: 129/129, 0 warnings; MinGW: 114/114.
 
 **Siguiente:** PNG con alfa, cortinilla y fundidos (`fx.opacity`), y `genclip frame … --at t`.
@@ -1107,3 +1107,14 @@ Decisión de Edu (§6):
 - **Verificación:** tests de `clip_media_path` (proyecto, biblioteca, colección, still sin tipo, rutas que salen de la carpeta; destapó un `string_view` colgando de un ternario con `std::string`) y de `unsupported_reason`; un fotograma real de «l filo del mañana» (2160×3840). MSVC + vcpkg: 131/131, 0 warnings; MinGW: 115/115.
 
 **Siguiente:** lo que el render aún no dibuja, por orden de uso en las timelines de Edu (texto y croma primero).
+
+### 2026-10-11 — F3, revisión: el fotograma que elige el export
+
+- **Revisión de `dbafcda..HEAD`:** CORREGIR, con tres bloqueantes reproducidos contra el `compose.render_frame` real, ya arreglados:
+  1. `export_frame_at` (n = ⌊(t − start)·fps·velocidad⌋) fallaba con un inicio fuera de la rejilla (163 de los 195 vídeos de Edu) y con velocidades fraccionarias: las dos `setpts` del export truncan a ticks enteros (`D2TS`). Ahora recibe el tick k, calcula el pts de cada fotograma como el export (⌊⌊m/sp⌋ + start/(1/F)⌋) y elige como el overlay (el primero con pts = k o el último anterior; el último pasado el final). El revés cuenta en una pasada y toma uno en otra, en vez de guardar todos los fotogramas en memoria.
+  2. El instante de `genclip frame` y del test: el `-ss` de salida de `render_frame` da el fotograma más cercano, no el primero con pts ≥ T (`export_frame_tick`: k = ⌊at·F + 0,5⌋).
+  3. A la cadena le faltaba el `fps=F` que el export pone tras el encuadre: un GIF animado avanzaba sus fotogramas crudos.
+  Menores aplicados: los motion graphics solo dan error (o aviso con `--omitir`) si se ven en ese instante y las figuras ya no salen como «sin material»; `unsupported_reason` lee también los efectos escritos como texto.
+- **Verificación:** 47 fotogramas de render frente al export (vídeos 66,7–67,7 dB, GIF 51,1 dB); mutante «redondear el inicio en vez de truncarlo»: ~24 dB, falla. MSVC + vcpkg: 131/131, 0 warnings; MinGW: 115/115.
+
+**Siguiente:** el croma (eliminar fondo por color), que el export hace con FFmpeg antes del encuadre; después el texto básico y `genclip render` a MP4.

@@ -110,8 +110,8 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
     std::size_t cases = 0;
     for (const Json& c : *file) {
         const auto name = c.at("name").get<std::string>();
-        const double t = c.at("t").get<double>();
-        INFO(name << " en " << t);
+        const double at = c.at("t").get<double>(); // el `at` que recibió compose.render_frame
+        INFO(name << " en " << at);
         auto timeline = timeline_from_json(c.at("timeline"));
         REQUIRE(timeline);
         const auto media_path = [](const TimelineClip& clip) {
@@ -129,6 +129,8 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         std::vector<gc::render::Image> frames;
         frames.reserve(timeline->clips.size() * 2);
         const int fps = static_cast<int>(timeline->fps);
+        const std::int64_t tick = gc::media::export_frame_tick(at, fps);
+        const double t = static_cast<double>(tick) / fps;
         // Pares, como el export (W -= W % 2): las de la fixture ya lo son.
         const auto out_w = static_cast<double>(timeline->width - timeline->width % 2);
         const auto out_h = static_cast<double>(timeline->height - timeline->height % 2);
@@ -142,7 +144,7 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         const int h = static_cast<int>(out_h);
         auto frame = gc::render::compose_frame(
             *layers, w, h, [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
-                auto got = gc::media::export_frame_at(*layer.clip, media_path(*layer.clip), fps, t);
+                auto got = gc::media::export_frame_at(*layer.clip, media_path(*layer.clip), fps, tick);
                 if (!got) {
                     return std::unexpected(got.error());
                 }
@@ -167,7 +169,7 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         const auto band = edge_band(*coverage);
         const double whole = psnr_luma(*frame, expected);
         const double psnr = psnr_luma(*frame, expected, &band);
-        UNSCOPED_INFO(name << ": PSNR de luma " << psnr << " dB sin la banda del borde (" << whole
+        UNSCOPED_INFO(name << " en " << at << ": PSNR de luma " << psnr << " dB sin la banda del borde (" << whole
                            << " dB con ella)");
         CHECK(psnr >= 35.0);
         ++cases;
