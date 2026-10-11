@@ -47,8 +47,11 @@ if(TARGET gc_media)
     target_link_libraries(gc_tests PRIVATE gc::media)
 endif()
 # MSVC sabe que FAIL() lanza y da por inalcanzable el `return`/`throw` que GCC necesita detrás.
+# El manifiesto pone argv en UTF-8: si no, con una página de códigos ANSI que no lo sea (la del
+# CI), Catch2 no encuentra los tests con tildes que ctest le pide por nombre.
 if(MSVC)
     target_compile_options(gc_tests PRIVATE /wd4702)
+    target_sources(gc_tests PRIVATE utf8.manifest)
 endif()
 
 if(catch2_SOURCE_DIR)
