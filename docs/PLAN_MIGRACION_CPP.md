@@ -990,7 +990,7 @@ Decisión de Edu (§6):
 - **El `sum()` de Python ≥ 3.12 es compensado** (Neumaier), no la suma ingenua: el RMS lo repite paso a paso, y así sale bit a bit.
 
 **Verificación:**
-- **Fixtures (`tests/fixtures/motion`, `motion_cases.py`):** 108 `downsample` (10 de error, `max_n` negativo, 0 y 1), 20 `normalize` (pico 0 y −0,0, NaN delante y detrás, infinitos), 85 pares visual/audio en 4 timelines sintéticas con 1228 instantes (velocidades, `in_point`, texto, imagen y figura, 0,02 s justos) y 30 RMS con el `sample_rms_envelope` REAL y un ffmpeg falso que devuelve las muestras del caso (11 473 muestras; rates 0, 1, 3, 7, 400 y 1000, NaN, infinitos y trozos que desbordan).
+- **Fixtures (`tests/fixtures/motion`, `motion_cases.py`):** 108 `downsample` (10 de error, `max_n` negativo, 0 y 1), 20 `normalize` (pico 0 y −0,0, NaN delante y detrás, infinitos), 85 pares visual/audio en 4 timelines sintéticas con 1228 instantes (velocidades, `in_point`, texto, imagen y figura, 0,02 s justos) y 31 RMS con el `sample_rms_envelope` REAL y un ffmpeg falso que devuelve las muestras del caso (11 553 muestras; rates 0, 1, 3, 7, 400 y 1000, NaN, infinitos y trozos que desbordan).
 - **Tus datos:** los 16 018 pares (visual, audio) de tus 18 timelines (2637 con solape, 34 673 instantes) y 60 RMS de tus audios con las muestras que da el ffmpeg real (192 079 muestras).
 - **Mutación:** 22/22 (`tools/dev/mutantes.py motion`). El de «compensación aunque no sea finita» se escapaba hasta que se añadió un caso con trozos finitos y luego uno infinito (si todos son infinitos, el resultado normalizado es el mismo).
 

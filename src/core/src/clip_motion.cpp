@@ -370,7 +370,7 @@ Result<Envelope> downsample_envelope(const Envelope& points, int max_n) {
         return points;
     }
     if (max_n == 1) {
-        return invalid("float division by zero"); // round(i * (n - 1) / 0)
+        return invalid("division by zero"); // round(i * (n - 1) / 0): int / int
     }
     Envelope out;
     out.reserve(static_cast<std::size_t>(max_n));
