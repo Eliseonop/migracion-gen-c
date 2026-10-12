@@ -1242,3 +1242,14 @@ Decisión de Edu (§6):
   - MSVC + vcpkg: 144/144; MinGW: 126/126. 0 warnings y 0 avisos de clang-tidy.
 
 **Siguiente:** ejecutar ese grafo con libavfilter en gc_media (y medir la sonoridad contra el export, ±0,5 LU), y después el encode y `genclip render`.
+
+### 2026-10-11 — F3: el audio del export, ejecutado con libavfilter
+
+- **Hecho:** `gc_media/audio` (`mix_audio`) ejecuta el grafo de `export_audio_graph` como el CLI: una fuente por cada entrada de audio, con las marcas de tiempo tratadas como en `ffmpeg_dec.c`, y a la salida el formato del AAC del export y el `-t` de salida.
+- **Lo que destapó:** una duración escrita como texto en un filtro sin unidad son segundos (`durationi=6050000` no recorta nada); el CLI la pone en µs por la API. Arreglado también en el `-t` de entrada del decode de vídeo, donde estaba latente.
+- **Verificación:**
+  - Frente al CLI con las entradas y el grafo del `build_command` real: el mismo PCM (mismo MD5) en tus 16 timelines con audio y en 2 de las 5 mezclas sintéticas; las otras 3 (con MP3) a menos de 1e-7 dB.
+  - 4 mutantes: fallan todos.
+  - MSVC + vcpkg: 146/146; MinGW: 126/126. 0 warnings.
+
+**Siguiente:** el encode (vídeo H.264 por hardware o software y AAC) y `genclip render`.

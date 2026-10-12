@@ -1,0 +1,1953 @@
+[
+ {
+  "name": "un tono",
+  "timeline": {
+   "version": 2,
+   "schema_version": 5,
+   "fps": 30,
+   "width": 360,
+   "height": 640,
+   "audio_target_db": -14.0,
+   "tracks": [
+    {
+     "id": "V1",
+     "kind": "video",
+     "name": "V1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A1",
+     "kind": "audio",
+     "name": "A1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A2",
+     "kind": "audio",
+     "name": "A2",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    }
+   ],
+   "clips": [
+    {
+     "id": "c1",
+     "track_id": "A1",
+     "kind": "audio",
+     "asset_kind": "audio",
+     "asset_id": "a1",
+     "filename": "tones44.wav",
+     "name": null,
+     "start": 0.0,
+     "in_point": 0.5,
+     "out_point": 4.0,
+     "source_duration": 8.0,
+     "ref_segment": null,
+     "volume": 1.0,
+     "media_version": null,
+     "reframe": null,
+     "text": null,
+     "style": null,
+     "layout": "fill",
+     "transform": null,
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": null,
+     "filters": null,
+     "audio_fx": null,
+     "muted": false,
+     "speed": 1.0,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "opacity": null,
+     "flip_h": false,
+     "flip_v": false,
+     "blend_mode": null,
+     "disabled": false,
+     "beats": null,
+     "loop": null,
+     "words": [],
+     "origin": null,
+     "text_role": null,
+     "shape": null,
+     "masks": [],
+     "bg_removal": null,
+     "anim": null,
+     "vfx": null,
+     "animations": null,
+     "keyframes": null,
+     "asset_scope": "project",
+     "description": null,
+     "note": null,
+     "note_source": null,
+     "dup_of": null,
+     "composition_id": null
+    }
+   ],
+   "markers": []
+  },
+  "inputs": [
+   [
+    "-i",
+    "tones44.wav"
+   ]
+  ],
+  "graph": [
+   "[0:a]atrim=0.500:4.000,asetpts=PTS-STARTPTS,aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo[ain0]",
+   "[ain0]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=1.000[a0]",
+   "[a0]apad=whole_dur=3.500,loudnorm=I=-14.0:TP=-1.5:LRA=11[aout]"
+  ],
+  "total": 3.5,
+  "samples": 168000,
+  "md5": "a546ed58c458d6fba9d8eb4e42f1392f",
+  "block": 4800,
+  "rms": [
+   [
+    0.2147537579983729,
+    0.15419613065123147
+   ],
+   [
+    0.22530271625625153,
+    0.15238330629604588
+   ],
+   [
+    0.23441037354860353,
+    0.1502909596562816
+   ],
+   [
+    0.24192198057842806,
+    0.14792974337969328
+   ],
+   [
+    0.24771118193396496,
+    0.14531064975507196
+   ],
+   [
+    0.25168073633287774,
+    0.14244686275840399
+   ],
+   [
+    0.2537630243132622,
+    0.13935222108144485
+   ],
+   [
+    0.2539229135645269,
+    0.13604175870731824
+   ],
+   [
+    0.25215850822556535,
+    0.13253193677681402
+   ],
+   [
+    0.24849878565171574,
+    0.12883981402326516
+   ],
+   [
+    0.24300591543343011,
+    0.12498342707043338
+   ],
+   [
+    0.23577201424439861,
+    0.12098207054798879
+   ],
+   [
+    0.2269197727051579,
+    0.11685496093743845
+   ],
+   [
+    0.2165982486570021,
+    0.11262231039282326
+   ],
+   [
+    0.2049815581059883,
+    0.10830490233942928
+   ],
+   [
+    0.19226603248197102,
+    0.10392371045158359
+   ],
+   [
+    0.17866577799054711,
+    0.09950059723851279
+   ],
+   [
+    0.16441054620793843,
+    0.09505676118523428
+   ],
+   [
+    0.14974020121391682,
+    0.09061431160146108
+   ],
+   [
+    0.13490272188826505,
+    0.08619497186980508
+   ],
+   [
+    0.12014803288314134,
+    0.08182024030452685
+   ],
+   [
+    0.10572490166283341,
+    0.0775112958950519
+   ],
+   [
+    0.09187630620535392,
+    0.07329019364980922
+   ],
+   [
+    0.07883534763999886,
+    0.06917633789011607
+   ],
+   [
+    0.06682171455459626,
+    0.06519068811179324
+   ],
+   [
+    0.05603746809739766,
+    0.061352295451623434
+   ],
+   [
+    0.04666374219500579,
+    0.05768047261306363
+   ],
+   [
+    0.03885846247091969,
+    0.05419266160818093
+   ],
+   [
+    0.032754203214284745,
+    0.050906392307773905
+   ],
+   [
+    0.028456443029422792,
+    0.047837464823467145
+   ],
+   [
+    0.026042633615256397,
+    0.04500107318169413
+   ],
+   [
+    0.02555907178366397,
+    0.042411136212929974
+   ],
+   [
+    0.027014304987896556,
+    0.040080131019791944
+   ],
+   [
+    0.030381041048451192,
+    0.03801955942191714
+   ],
+   [
+    0.035597214335365376,
+    0.03623965384818383
+   ]
+  ]
+ },
+ {
+  "name": "vídeo con su audio y música más baja",
+  "timeline": {
+   "version": 2,
+   "schema_version": 5,
+   "fps": 30,
+   "width": 360,
+   "height": 640,
+   "audio_target_db": -14.0,
+   "tracks": [
+    {
+     "id": "V1",
+     "kind": "video",
+     "name": "V1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A1",
+     "kind": "audio",
+     "name": "A1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A2",
+     "kind": "audio",
+     "name": "A2",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    }
+   ],
+   "clips": [
+    {
+     "id": "c1",
+     "track_id": "V1",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "a1",
+     "filename": "va8.mp4",
+     "name": null,
+     "start": 0.0,
+     "in_point": 1.0,
+     "out_point": 5.0,
+     "source_duration": 8.0,
+     "ref_segment": null,
+     "volume": 1.0,
+     "media_version": null,
+     "reframe": {
+      "zoom": 1.0,
+      "keyframes": [],
+      "pan_mode": "smooth",
+      "dual_crop": false,
+      "split_orientation": "vertical",
+      "zoom2": null,
+      "keyframes2": [],
+      "crop_w": 1.0,
+      "crop_h": 1.0,
+      "master": false,
+      "split_layout": "auto",
+      "face_track_mode": null
+     },
+     "text": null,
+     "style": null,
+     "layout": "overlay",
+     "transform": {
+      "x": 0.5,
+      "y": 0.5,
+      "scale": 1.0
+     },
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": null,
+     "filters": null,
+     "audio_fx": null,
+     "muted": false,
+     "speed": 1.0,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "opacity": null,
+     "flip_h": false,
+     "flip_v": false,
+     "blend_mode": null,
+     "disabled": false,
+     "beats": null,
+     "loop": null,
+     "words": [],
+     "origin": null,
+     "text_role": null,
+     "shape": null,
+     "masks": [],
+     "bg_removal": null,
+     "anim": null,
+     "vfx": null,
+     "animations": null,
+     "keyframes": null,
+     "asset_scope": "project",
+     "description": null,
+     "note": null,
+     "note_source": null,
+     "dup_of": null,
+     "composition_id": null
+    },
+    {
+     "id": "c2",
+     "track_id": "A1",
+     "kind": "audio",
+     "asset_kind": "audio",
+     "asset_id": "a2",
+     "filename": "tones44.wav",
+     "name": null,
+     "start": 0.5,
+     "in_point": 0.0,
+     "out_point": 6.0,
+     "source_duration": 8.0,
+     "ref_segment": null,
+     "volume": 0.3,
+     "media_version": null,
+     "reframe": null,
+     "text": null,
+     "style": null,
+     "layout": "fill",
+     "transform": null,
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": null,
+     "filters": null,
+     "audio_fx": null,
+     "muted": false,
+     "speed": 1.0,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "opacity": null,
+     "flip_h": false,
+     "flip_v": false,
+     "blend_mode": null,
+     "disabled": false,
+     "beats": null,
+     "loop": null,
+     "words": [],
+     "origin": null,
+     "text_role": null,
+     "shape": null,
+     "masks": [],
+     "bg_removal": null,
+     "anim": null,
+     "vfx": null,
+     "animations": null,
+     "keyframes": null,
+     "asset_scope": "project",
+     "description": null,
+     "note": null,
+     "note_source": null,
+     "dup_of": null,
+     "composition_id": null
+    }
+   ],
+   "markers": []
+  },
+  "inputs": [
+   [
+    "-i",
+    "va8.mp4"
+   ],
+   [
+    "-i",
+    "tones44.wav"
+   ]
+  ],
+  "graph": [
+   "[0:a]atrim=1.000:5.000,asetpts=PTS-STARTPTS,aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo[ain0]",
+   "[ain0]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=1.000[a0]",
+   "[1:a]atrim=0.000:6.000,asetpts=PTS-STARTPTS,aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo[ain1]",
+   "[ain1]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=0.300,adelay=500:all=1[a1]",
+   "[a0][a1]amix=inputs=2:normalize=0:dropout_transition=0,apad=whole_dur=6.500,loudnorm=I=-14.0:TP=-1.5:LRA=11[aout]"
+  ],
+  "total": 6.5,
+  "samples": 312000,
+  "md5": "d58c58501e70716abc560533cf6d0a47",
+  "block": 4800,
+  "rms": [
+   [
+    0.14653172042469104,
+    0.16152083239767062
+   ],
+   [
+    0.1523518084830912,
+    0.1595428740684832
+   ],
+   [
+    0.15806682914150236,
+    0.16164289450024355
+   ],
+   [
+    0.1545751544533813,
+    0.16122502838855432
+   ],
+   [
+    0.1523632546473134,
+    0.1612804468036164
+   ],
+   [
+    0.16531023916399526,
+    0.16684571172131843
+   ],
+   [
+    0.16464913927031188,
+    0.16673005127218438
+   ],
+   [
+    0.1653887206602938,
+    0.16641997615809354
+   ],
+   [
+    0.16826912151678672,
+    0.166466708486919
+   ],
+   [
+    0.16940641392431055,
+    0.16598129858249674
+   ],
+   [
+    0.16195723932416664,
+    0.1665380653355996
+   ],
+   [
+    0.16605927949776905,
+    0.1659715760787059
+   ],
+   [
+    0.16532192262529097,
+    0.16639782020816105
+   ],
+   [
+    0.158558409157487,
+    0.16541265912000425
+   ],
+   [
+    0.1606320711050405,
+    0.1661951320589925
+   ],
+   [
+    0.1670854154161611,
+    0.16455232916246298
+   ],
+   [
+    0.15007535673087366,
+    0.16532472354501987
+   ],
+   [
+    0.14605350567749956,
+    0.1651934919336486
+   ],
+   [
+    0.15039618679542435,
+    0.1649221377637539
+   ],
+   [
+    0.13377344674478236,
+    0.16522287392408005
+   ],
+   [
+    0.12817850502593003,
+    0.1659141945043086
+   ],
+   [
+    0.12123944498040355,
+    0.16518447400321506
+   ],
+   [
+    0.11530217054810975,
+    0.16493700491627372
+   ],
+   [
+    0.10690176304989178,
+    0.16650775619506533
+   ],
+   [
+    0.09952350327527501,
+    0.1665060735958904
+   ],
+   [
+    0.09231434750843974,
+    0.1671711801602676
+   ],
+   [
+    0.08449280032354141,
+    0.1681900547785841
+   ],
+   [
+    0.07664824775636218,
+    0.16821195198130112
+   ],
+   [
+    0.06908967262746135,
+    0.16872717680421162
+   ],
+   [
+    0.061406695653365886,
+    0.1695202224757176
+   ],
+   [
+    0.05414732463537904,
+    0.17140168792122734
+   ],
+   [
+    0.047035572334829925,
+    0.1708569132264318
+   ],
+   [
+    0.039975880162447144,
+    0.17087792164127313
+   ],
+   [
+    0.03349147922591851,
+    0.17272276026431074
+   ],
+   [
+    0.027522565129845987,
+    0.17178038072787155
+   ],
+   [
+    0.022050836075620594,
+    0.1739024661506546
+   ],
+   [
+    0.01739241260640521,
+    0.1738950050923349
+   ],
+   [
+    0.013398371248182701,
+    0.17346916730235232
+   ],
+   [
+    0.010351401918120272,
+    0.1737563076698147
+   ],
+   [
+    0.008290000775870643,
+    0.1735225251300036
+   ],
+   [
+    0.007096203971680221,
+    0.012262083063240172
+   ],
+   [
+    0.006964441026233504,
+    0.011556360891928774
+   ],
+   [
+    0.007360968989469098,
+    0.010921199020519258
+   ],
+   [
+    0.008278351062027161,
+    0.01035972598904135
+   ],
+   [
+    0.009699675236846396,
+    0.00987472954568853
+   ],
+   [
+    0.011599604436929868,
+    0.00946869732251985
+   ],
+   [
+    0.013945741560988184,
+    0.009143470899732664
+   ],
+   [
+    0.01669852218310306,
+    0.008900659790776342
+   ],
+   [
+    0.019811659125818695,
+    0.008741580303813905
+   ],
+   [
+    0.023232848083139322,
+    0.008667021658413827
+   ],
+   [
+    0.026904419875622726,
+    0.008677126288704845
+   ],
+   [
+    0.030764586646671074,
+    0.00877211146345459
+   ],
+   [
+    0.03474839516151844,
+    0.008951490046568837
+   ],
+   [
+    0.03878865134592668,
+    0.009214133462987903
+   ],
+   [
+    0.04281738214721798,
+    0.009558830003456573
+   ],
+   [
+    0.0467663125281455,
+    0.009984142709244932
+   ],
+   [
+    0.050569139234443436,
+    0.010487725573761236
+   ],
+   [
+    0.0541616045058319,
+    0.01106712043755711
+   ],
+   [
+    0.057483215334945485,
+    0.011719488632246632
+   ],
+   [
+    0.060477861125802716,
+    0.012441678795054974
+   ],
+   [
+    0.06309500811139872,
+    0.013230080111148889
+   ],
+   [
+    0.06529040105834628,
+    0.01408102054917216
+   ],
+   [
+    0.06702723264492824,
+    0.01499007088216932
+   ],
+   [
+    0.0682759690112225,
+    0.015952899066847208
+   ],
+   [
+    0.06901565652739798,
+    0.016964771698513296
+   ]
+  ]
+ },
+ {
+  "name": "voz con fundidos de volumen y eco",
+  "timeline": {
+   "version": 2,
+   "schema_version": 5,
+   "fps": 30,
+   "width": 360,
+   "height": 640,
+   "audio_target_db": -14.0,
+   "tracks": [
+    {
+     "id": "V1",
+     "kind": "video",
+     "name": "V1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A1",
+     "kind": "audio",
+     "name": "A1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A2",
+     "kind": "audio",
+     "name": "A2",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    }
+   ],
+   "clips": [
+    {
+     "id": "c1",
+     "track_id": "A1",
+     "kind": "audio",
+     "asset_kind": "audio",
+     "asset_id": "a1",
+     "filename": "voice22.mp3",
+     "name": null,
+     "start": 0.25,
+     "in_point": 1.0,
+     "out_point": 6.5,
+     "source_duration": 8.0,
+     "ref_segment": null,
+     "volume": 1.0,
+     "media_version": null,
+     "reframe": null,
+     "text": null,
+     "style": null,
+     "layout": "fill",
+     "transform": null,
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": null,
+     "filters": null,
+     "audio_fx": {
+      "echo": 0.5
+     },
+     "muted": false,
+     "speed": 1.0,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "opacity": null,
+     "flip_h": false,
+     "flip_v": false,
+     "blend_mode": null,
+     "disabled": false,
+     "beats": null,
+     "loop": null,
+     "words": [],
+     "origin": null,
+     "text_role": null,
+     "shape": null,
+     "masks": [],
+     "bg_removal": null,
+     "anim": null,
+     "vfx": null,
+     "animations": null,
+     "keyframes": {
+      "enabled": true,
+      "items": [
+       {
+        "t": 0,
+        "props": {
+         "volume": 0
+        }
+       },
+       {
+        "t": 1,
+        "interpolation": "ease-in",
+        "props": {
+         "volume": 1
+        }
+       },
+       {
+        "t": 4.5,
+        "props": {
+         "volume": 1
+        }
+       },
+       {
+        "t": 5.25,
+        "interpolation": "bezier",
+        "props": {
+         "volume": 0
+        }
+       }
+      ]
+     },
+     "asset_scope": "project",
+     "description": null,
+     "note": null,
+     "note_source": null,
+     "dup_of": null,
+     "composition_id": null
+    }
+   ],
+   "markers": []
+  },
+  "inputs": [
+   [
+    "-i",
+    "voice22.mp3"
+   ]
+  ],
+  "graph": [
+   "[0:a]atrim=1.000:6.500,asetpts=PTS-STARTPTS,aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo[ain0]",
+   "[ain0]asplit=2[ax0f3s0][ax0f3s1]",
+   "[ax0f3s0]volume=0.5000[ax0f3m0]",
+   "[ax0f3s1]aecho=0.8:0.9:1000:0.3,volume=0.5000[ax0f3m1]",
+   "[ax0f3m0][ax0f3m1]amix=inputs=2:normalize=0:duration=first[ax0f3]",
+   "[ax0f3]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume='if(lte(t\\,0.000000)\\,0.000000\\,if(lt(t\\,1.000000)\\,(0.000000+((1.000000)-(0.000000))*((min(1\\,max(0\\,(t-0.000000)/1.000000)))*(min(1\\,max(0\\,(t-0.000000)/1.000000)))))\\,if(lt(t\\,4.500000)\\,(1.000000+((1.000000)-(1.000000))*(min(1\\,max(0\\,(t-1.000000)/3.500000))))\\,if(lt(t\\,4.532609)\\,(1.000000+((0.996358)-(1.000000))*(min(1\\,max(0\\,(t-4.500000)/0.032609))))\\,if(lt(t\\,4.565217)\\,(0.996358+((0.985165)-(0.996358))*(min(1\\,max(0\\,(t-4.532609)/0.032609))))\\,if(lt(t\\,4.597826)\\,(0.985165+((0.966053)-(0.985165))*(min(1\\,max(0\\,(t-4.565217)/0.032609))))\\,if(lt(t\\,4.630435)\\,(0.966053+((0.938738)-(0.966053))*(min(1\\,max(0\\,(t-4.597826)/0.032609))))\\,if(lt(t\\,4.663043)\\,(0.938738+((0.903065)-(0.938738))*(min(1\\,max(0\\,(t-4.630435)/0.032609))))\\,if(lt(t\\,4.695652)\\,(0.903065+((0.859071)-(0.903065))*(min(1\\,max(0\\,(t-4.663043)/0.032609))))\\,if(lt(t\\,4.728261)\\,(0.859071+((0.807057)-(0.859071))*(min(1\\,max(0\\,(t-4.695652)/0.032609))))\\,if(lt(t\\,4.760870)\\,(0.807057+((0.747661)-(0.807057))*(min(1\\,max(0\\,(t-4.728261)/0.032609))))\\,if(lt(t\\,4.793478)\\,(0.747661+((0.681910)-(0.747661))*(min(1\\,max(0\\,(t-4.760870)/0.032609))))\\,if(lt(t\\,4.826087)\\,(0.681910+((0.611236)-(0.681910))*(min(1\\,max(0\\,(t-4.793478)/0.032609))))\\,if(lt(t\\,4.858696)\\,(0.611236+((0.537436)-(0.611236))*(min(1\\,max(0\\,(t-4.826087)/0.032609))))\\,if(lt(t\\,4.891304)\\,(0.537436+((0.462564)-(0.537436))*(min(1\\,max(0\\,(t-4.858696)/0.032609))))\\,if(lt(t\\,4.923913)\\,(0.462564+((0.388764)-(0.462564))*(min(1\\,max(0\\,(t-4.891304)/0.032609))))\\,if(lt(t\\,4.956522)\\,(0.388764+((0.318090)-(0.388764))*(min(1\\,max(0\\,(t-4.923913)/0.032609))))\\,if(lt(t\\,4.989130)\\,(0.318090+((0.252339)-(0.318090))*(min(1\\,max(0\\,(t-4.956522)/0.032609))))\\,if(lt(t\\,5.021739)\\,(0.252339+((0.192943)-(0.252339))*(min(1\\,max(0\\,(t-4.989130)/0.032609))))\\,if(lt(t\\,5.054348)\\,(0.192943+((0.140929)-(0.192943))*(min(1\\,max(0\\,(t-5.021739)/0.032609))))\\,if(lt(t\\,5.086957)\\,(0.140929+((0.096935)-(0.140929))*(min(1\\,max(0\\,(t-5.054348)/0.032609))))\\,if(lt(t\\,5.119565)\\,(0.096935+((0.061262)-(0.096935))*(min(1\\,max(0\\,(t-5.086957)/0.032609))))\\,if(lt(t\\,5.152174)\\,(0.061262+((0.033947)-(0.061262))*(min(1\\,max(0\\,(t-5.119565)/0.032609))))\\,if(lt(t\\,5.184783)\\,(0.033947+((0.014835)-(0.033947))*(min(1\\,max(0\\,(t-5.152174)/0.032609))))\\,if(lt(t\\,5.217391)\\,(0.014835+((0.003642)-(0.014835))*(min(1\\,max(0\\,(t-5.184783)/0.032609))))\\,if(lt(t\\,5.250000)\\,(0.003642+((0.000000)-(0.003642))*(min(1\\,max(0\\,(t-5.217391)/0.032609))))\\,0.000000))))))))))))))))))))))))))':eval=frame,adelay=250:all=1[a0]",
+   "[a0]apad=whole_dur=5.750,loudnorm=I=-14.0:TP=-1.5:LRA=11[aout]"
+  ],
+  "total": 5.75,
+  "samples": 276000,
+  "md5": "b83a8d2a716446aa199ecf1aea796252",
+  "block": 4800,
+  "rms": [
+   [
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0
+   ],
+   [
+    9.094971541410606e-05,
+    9.094971541410606e-05
+   ],
+   [
+    0.0017866646457124038,
+    0.0017866646457124038
+   ],
+   [
+    0.005419402906852651,
+    0.005419402906852651
+   ],
+   [
+    0.00850428779831669,
+    0.00850428779831669
+   ],
+   [
+    0.007591981686326739,
+    0.007591981686326739
+   ],
+   [
+    0.003883330100639928,
+    0.003883330100639928
+   ],
+   [
+    0.02127777474006914,
+    0.02127777474006914
+   ],
+   [
+    0.05298635375896383,
+    0.05298635375896383
+   ],
+   [
+    0.09838172430386366,
+    0.09838172430386366
+   ],
+   [
+    0.1559155895585013,
+    0.1559155895585013
+   ],
+   [
+    0.2204228437503083,
+    0.2204228437503083
+   ],
+   [
+    0.25090258681037536,
+    0.25090258681037536
+   ],
+   [
+    0.2603376329739898,
+    0.2603376329739898
+   ],
+   [
+    0.25817289740766247,
+    0.25817289740766247
+   ],
+   [
+    0.2443245253646029,
+    0.2443245253646029
+   ],
+   [
+    0.22023731162468557,
+    0.22023731162468557
+   ],
+   [
+    0.18636333189249601,
+    0.18636333189249601
+   ],
+   [
+    0.14551058513518678,
+    0.14551058513518678
+   ],
+   [
+    0.08810850136427312,
+    0.08810850136427312
+   ],
+   [
+    0.05591829332599852,
+    0.05591829332599852
+   ],
+   [
+    0.03493381632871836,
+    0.03493381632871836
+   ],
+   [
+    0.06275283888876654,
+    0.06275283888876654
+   ],
+   [
+    0.1019969113615469,
+    0.1019969113615469
+   ],
+   [
+    0.13790481293837648,
+    0.13790481293837648
+   ],
+   [
+    0.1678664207115371,
+    0.1678664207115371
+   ],
+   [
+    0.19218638081292574,
+    0.19218638081292574
+   ],
+   [
+    0.20811414766814026,
+    0.20811414766814026
+   ],
+   [
+    0.21550690211159,
+    0.21550690211159
+   ],
+   [
+    0.21580864245956005,
+    0.21580864245956005
+   ],
+   [
+    0.20527333091697456,
+    0.20527333091697456
+   ],
+   [
+    0.18565710721924827,
+    0.18565710721924827
+   ],
+   [
+    0.15838254198114404,
+    0.15838254198114404
+   ],
+   [
+    0.12472896178766853,
+    0.12472896178766853
+   ],
+   [
+    0.08688301435706772,
+    0.08688301435706772
+   ],
+   [
+    0.049231604719171665,
+    0.049231604719171665
+   ],
+   [
+    0.032942405019740134,
+    0.032942405019740134
+   ],
+   [
+    0.061790474177984674,
+    0.061790474177984674
+   ],
+   [
+    0.10395298930054545,
+    0.10395298930054545
+   ],
+   [
+    0.1414255306220484,
+    0.1414255306220484
+   ],
+   [
+    0.16889320630720783,
+    0.16889320630720783
+   ],
+   [
+    0.19327571312468378,
+    0.19327571312468378
+   ],
+   [
+    0.20993135860538015,
+    0.20993135860538015
+   ],
+   [
+    0.21701734835565376,
+    0.21701734835565376
+   ],
+   [
+    0.21552849213911165,
+    0.21552849213911165
+   ],
+   [
+    0.20455055708464215,
+    0.20455055708464215
+   ],
+   [
+    0.18458375355968437,
+    0.18458375355968437
+   ],
+   [
+    0.15297011297978266,
+    0.15297011297978266
+   ],
+   [
+    0.10384796889123439,
+    0.10384796889123439
+   ],
+   [
+    0.059071860502628734,
+    0.059071860502628734
+   ],
+   [
+    0.02413946817393076,
+    0.02413946817393076
+   ],
+   [
+    0.008551601791667092,
+    0.008551601791667092
+   ],
+   [
+    0.006034922980309199,
+    0.006034922980309199
+   ],
+   [
+    0.0020532130006296976,
+    0.0020532130006296976
+   ],
+   [
+    3.361544203742589e-05,
+    3.361544203742589e-05
+   ],
+   [
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0
+   ]
+  ]
+ },
+ {
+  "name": "tres a la vez con velocidad, revés y filtros",
+  "timeline": {
+   "version": 2,
+   "schema_version": 5,
+   "fps": 30,
+   "width": 360,
+   "height": 640,
+   "audio_target_db": -14.0,
+   "tracks": [
+    {
+     "id": "V1",
+     "kind": "video",
+     "name": "V1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A1",
+     "kind": "audio",
+     "name": "A1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A2",
+     "kind": "audio",
+     "name": "A2",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    }
+   ],
+   "clips": [
+    {
+     "id": "c1",
+     "track_id": "V1",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "a1",
+     "filename": "va8.mp4",
+     "name": null,
+     "start": 0.0,
+     "in_point": 0.0,
+     "out_point": 3.0,
+     "source_duration": 8.0,
+     "ref_segment": null,
+     "volume": 1.0,
+     "media_version": null,
+     "reframe": {
+      "zoom": 1.0,
+      "keyframes": [],
+      "pan_mode": "smooth",
+      "dual_crop": false,
+      "split_orientation": "vertical",
+      "zoom2": null,
+      "keyframes2": [],
+      "crop_w": 1.0,
+      "crop_h": 1.0,
+      "master": false,
+      "split_layout": "auto",
+      "face_track_mode": null
+     },
+     "text": null,
+     "style": null,
+     "layout": "overlay",
+     "transform": {
+      "x": 0.5,
+      "y": 0.5,
+      "scale": 1.0
+     },
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": null,
+     "filters": null,
+     "audio_fx": null,
+     "muted": false,
+     "speed": 1.5,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "opacity": null,
+     "flip_h": false,
+     "flip_v": false,
+     "blend_mode": null,
+     "disabled": false,
+     "beats": null,
+     "loop": null,
+     "words": [],
+     "origin": null,
+     "text_role": null,
+     "shape": null,
+     "masks": [],
+     "bg_removal": null,
+     "anim": null,
+     "vfx": null,
+     "animations": null,
+     "keyframes": null,
+     "asset_scope": "project",
+     "description": null,
+     "note": null,
+     "note_source": null,
+     "dup_of": null,
+     "composition_id": null
+    },
+    {
+     "id": "c2",
+     "track_id": "A1",
+     "kind": "audio",
+     "asset_kind": "audio",
+     "asset_id": "a2",
+     "filename": "tones44.wav",
+     "name": null,
+     "start": 1.0,
+     "in_point": 2.0,
+     "out_point": 6.0,
+     "source_duration": 8.0,
+     "ref_segment": null,
+     "volume": 1.0,
+     "media_version": null,
+     "reframe": null,
+     "text": null,
+     "style": null,
+     "layout": "fill",
+     "transform": null,
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": null,
+     "filters": null,
+     "audio_fx": {
+      "underwater": 0.6,
+      "compressor": 1
+     },
+     "muted": false,
+     "speed": 1.0,
+     "keep_pitch": true,
+     "reverse": true,
+     "speed_curve": null,
+     "opacity": null,
+     "flip_h": false,
+     "flip_v": false,
+     "blend_mode": null,
+     "disabled": false,
+     "beats": null,
+     "loop": null,
+     "words": [],
+     "origin": null,
+     "text_role": null,
+     "shape": null,
+     "masks": [],
+     "bg_removal": null,
+     "anim": null,
+     "vfx": null,
+     "animations": null,
+     "keyframes": null,
+     "asset_scope": "project",
+     "description": null,
+     "note": null,
+     "note_source": null,
+     "dup_of": null,
+     "composition_id": null
+    },
+    {
+     "id": "c3",
+     "track_id": "A2",
+     "kind": "audio",
+     "asset_kind": "audio",
+     "asset_id": "a3",
+     "filename": "voice22.mp3",
+     "name": null,
+     "start": 2.3,
+     "in_point": 0.0,
+     "out_point": 3.0,
+     "source_duration": 8.0,
+     "ref_segment": null,
+     "volume": 1.6,
+     "media_version": null,
+     "reframe": null,
+     "text": null,
+     "style": null,
+     "layout": "fill",
+     "transform": null,
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": null,
+     "filters": null,
+     "audio_fx": {
+      "radio": 1,
+      "eq": true
+     },
+     "muted": false,
+     "speed": 0.8,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "opacity": null,
+     "flip_h": false,
+     "flip_v": false,
+     "blend_mode": null,
+     "disabled": false,
+     "beats": null,
+     "loop": null,
+     "words": [],
+     "origin": null,
+     "text_role": null,
+     "shape": null,
+     "masks": [],
+     "bg_removal": null,
+     "anim": null,
+     "vfx": null,
+     "animations": null,
+     "keyframes": null,
+     "asset_scope": "project",
+     "description": null,
+     "note": null,
+     "note_source": null,
+     "dup_of": null,
+     "composition_id": null
+    }
+   ],
+   "markers": []
+  },
+  "inputs": [
+   [
+    "-i",
+    "va8.mp4"
+   ],
+   [
+    "-i",
+    "tones44.wav"
+   ],
+   [
+    "-i",
+    "voice22.mp3"
+   ]
+  ],
+  "graph": [
+   "[0:a]atrim=0.000:3.000,asetpts=PTS-STARTPTS,aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,atempo=1.50000[ain0]",
+   "[ain0]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=1.000[a0]",
+   "[1:a]atrim=2.000:6.000,asetpts=PTS-STARTPTS,aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,areverse[ain1]",
+   "[ain1]acompressor=threshold=0.10000:ratio=8:attack=20:release=200:knee=1.9953:makeup=3.3497[ax1f1]",
+   "[ax1f1]asplit=2[ax1f6s1][ax1f6s2]",
+   "[ax1f6s1]lowpass=f=2500:t=q:w=0.8,lowshelf=f=160:t=s:w=1:g=2,volume=0.2000[ax1f6m1]",
+   "[ax1f6s2]lowpass=f=900:t=q:w=0.85,lowshelf=f=160:t=s:w=1:g=3.5,volume=0.8000[ax1f6m2]",
+   "[ax1f6m1][ax1f6m2]amix=inputs=2:normalize=0:duration=first[ax1f6]",
+   "[ax1f6]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=1.000,adelay=1000:all=1[a1]",
+   "[2:a]atrim=0.000:3.000,asetpts=PTS-STARTPTS,aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,atempo=0.80000[ain2]",
+   "[ain2]equalizer=f=3000:t=q:w=1:g=4[ax2f0]",
+   "[ax2f0]highpass=f=300:t=q:w=0.7071,lowpass=f=4500:t=q:w=0.7071,equalizer=f=1200:t=q:w=0.8:g=5,aeval=exprs=tanh(1.5*val(0))/0.905148|tanh(1.5*val(1))/0.905148[ax2f8]",
+   "[ax2f8]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=1.600,adelay=2300:all=1[a2]",
+   "[a0][a1][a2]amix=inputs=3:normalize=0:dropout_transition=0,apad=whole_dur=6.050,loudnorm=I=-14.0:TP=-1.5:LRA=11[aout]"
+  ],
+  "total": 6.05,
+  "samples": 288000,
+  "md5": "bd78641bd1bf224cb9f8ba65cbcaabd0",
+  "block": 4800,
+  "rms": [
+   [
+    0.05494129708641305,
+    0.0968036974445845
+   ],
+   [
+    0.05986827697152628,
+    0.09919416337257622
+   ],
+   [
+    0.06797467180465366,
+    0.09864637599065701
+   ],
+   [
+    0.0718414747807148,
+    0.09828026365579531
+   ],
+   [
+    0.08249482042998031,
+    0.09866301809007115
+   ],
+   [
+    0.08280361412379583,
+    0.09882038928819945
+   ],
+   [
+    0.09162104902134867,
+    0.09867481965195257
+   ],
+   [
+    0.09108781859084081,
+    0.09805547935361995
+   ],
+   [
+    0.09590515272421854,
+    0.09908044436615407
+   ],
+   [
+    0.09350365300015433,
+    0.09838923398594637
+   ],
+   [
+    0.2697798634913766,
+    0.11449705052370106
+   ],
+   [
+    0.2511700277595529,
+    0.11126764329735161
+   ],
+   [
+    0.25260829281143427,
+    0.11018272102724387
+   ],
+   [
+    0.25094458412009557,
+    0.10985071674258502
+   ],
+   [
+    0.2508621840104917,
+    0.10918762751248205
+   ],
+   [
+    0.24894752991842778,
+    0.10848979902789735
+   ],
+   [
+    0.2491953904908274,
+    0.10843033154807855
+   ],
+   [
+    0.2422269509848231,
+    0.10768187749117394
+   ],
+   [
+    0.23960252219665026,
+    0.10787007925127433
+   ],
+   [
+    0.23306037527390344,
+    0.10804438114066998
+   ],
+   [
+    0.21690929465260297,
+    0.045881839193432264
+   ],
+   [
+    0.20963425097107594,
+    0.04720768420675355
+   ],
+   [
+    0.19939646934016123,
+    0.04869951079409142
+   ],
+   [
+    0.18683642647750334,
+    0.0527456275476833
+   ],
+   [
+    0.17667702253995293,
+    0.07059949823013711
+   ],
+   [
+    0.17338311885582905,
+    0.10134679236963465
+   ],
+   [
+    0.18220327823246152,
+    0.13734427531444537
+   ],
+   [
+    0.19375944811453535,
+    0.16781016361179027
+   ],
+   [
+    0.20212781911809757,
+    0.18807337192481988
+   ],
+   [
+    0.1982763183670115,
+    0.1921491980346412
+   ],
+   [
+    0.17490586762207716,
+    0.17463357803106905
+   ],
+   [
+    0.13648161153125574,
+    0.14087090981040357
+   ],
+   [
+    0.0865913713664017,
+    0.10019401120165307
+   ],
+   [
+    0.054116223967721526,
+    0.07953517646087288
+   ],
+   [
+    0.0490740069852996,
+    0.08021177827280973
+   ],
+   [
+    0.053559695833619116,
+    0.08523728216898348
+   ],
+   [
+    0.06273453433912415,
+    0.09145316670518765
+   ],
+   [
+    0.0751662973047863,
+    0.09810151539059138
+   ],
+   [
+    0.08887760525151601,
+    0.10371849909459531
+   ],
+   [
+    0.10504710050695991,
+    0.10894900928807
+   ],
+   [
+    0.12235165846539037,
+    0.1131291661397722
+   ],
+   [
+    0.1389990831672129,
+    0.11562654230444398
+   ],
+   [
+    0.1540302412058758,
+    0.11661782480984699
+   ],
+   [
+    0.17137689754399357,
+    0.1234892601402793
+   ],
+   [
+    0.2060344792282498,
+    0.1587696198133078
+   ],
+   [
+    0.23728407067940596,
+    0.21398642954591146
+   ],
+   [
+    0.31391511787449256,
+    0.26920274747780265
+   ],
+   [
+    0.35635577093026294,
+    0.32590696702139427
+   ],
+   [
+    0.39778697438129484,
+    0.3183575484821325
+   ],
+   [
+    0.42722030195190797,
+    0.3943818335288989
+   ],
+   [
+    0.3885956074963027,
+    0.38859545885400404
+   ],
+   [
+    0.38273605541500694,
+    0.38273605541500694
+   ],
+   [
+    0.35825549200644013,
+    0.35825549200644013
+   ],
+   [
+    0.3155282321858208,
+    0.3155282321858208
+   ],
+   [
+    0.256668598991075,
+    0.256668598991075
+   ],
+   [
+    0.16901145864924513,
+    0.16901145864924513
+   ],
+   [
+    0.05672304238043231,
+    0.05672304238043231
+   ],
+   [
+    0.005266934735950452,
+    0.005266934735950452
+   ],
+   [
+    0.02859149118163071,
+    0.02859149118163071
+   ],
+   [
+    0.032637590586666154,
+    0.032637590586666154
+   ]
+  ]
+ },
+ {
+  "name": "objetivo de −23 LUFS",
+  "timeline": {
+   "version": 2,
+   "schema_version": 5,
+   "fps": 30,
+   "width": 360,
+   "height": 640,
+   "audio_target_db": -23.0,
+   "tracks": [
+    {
+     "id": "V1",
+     "kind": "video",
+     "name": "V1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A1",
+     "kind": "audio",
+     "name": "A1",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    },
+    {
+     "id": "A2",
+     "kind": "audio",
+     "name": "A2",
+     "hidden": false,
+     "muted": false,
+     "locked": false,
+     "style": null,
+     "linked_track_id": null,
+     "magnetic": false
+    }
+   ],
+   "clips": [
+    {
+     "id": "c1",
+     "track_id": "A1",
+     "kind": "audio",
+     "asset_kind": "audio",
+     "asset_id": "a1",
+     "filename": "voice22.mp3",
+     "name": null,
+     "start": 0.0,
+     "in_point": 0.0,
+     "out_point": 5.0,
+     "source_duration": 8.0,
+     "ref_segment": null,
+     "volume": 1.0,
+     "media_version": null,
+     "reframe": null,
+     "text": null,
+     "style": null,
+     "layout": "fill",
+     "transform": null,
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": null,
+     "filters": null,
+     "audio_fx": null,
+     "muted": false,
+     "speed": 1.0,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "opacity": null,
+     "flip_h": false,
+     "flip_v": false,
+     "blend_mode": null,
+     "disabled": false,
+     "beats": null,
+     "loop": null,
+     "words": [],
+     "origin": null,
+     "text_role": null,
+     "shape": null,
+     "masks": [],
+     "bg_removal": null,
+     "anim": null,
+     "vfx": null,
+     "animations": null,
+     "keyframes": null,
+     "asset_scope": "project",
+     "description": null,
+     "note": null,
+     "note_source": null,
+     "dup_of": null,
+     "composition_id": null
+    }
+   ],
+   "markers": []
+  },
+  "inputs": [
+   [
+    "-i",
+    "voice22.mp3"
+   ]
+  ],
+  "graph": [
+   "[0:a]atrim=0.000:5.000,asetpts=PTS-STARTPTS,aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo[ain0]",
+   "[ain0]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=1.000[a0]",
+   "[a0]apad=whole_dur=5.000,loudnorm=I=-23.0:TP=-1.5:LRA=11[aout]"
+  ],
+  "total": 5.0,
+  "samples": 240000,
+  "md5": "13e1ef3e5c9511b4fcc781c22f368a6e",
+  "block": 4800,
+  "rms": [
+   [
+    0.010035397918314868,
+    0.010035397918314868
+   ],
+   [
+    0.02599190582615086,
+    0.02599190582615086
+   ],
+   [
+    0.04168456741927633,
+    0.04168456741927633
+   ],
+   [
+    0.055555981856212695,
+    0.055555981856212695
+   ],
+   [
+    0.06706441993602755,
+    0.06706441993602755
+   ],
+   [
+    0.07549502261121267,
+    0.07549502261121267
+   ],
+   [
+    0.08104539804686811,
+    0.08104539804686811
+   ],
+   [
+    0.08237278665516654,
+    0.08237278665516654
+   ],
+   [
+    0.08103585054187314,
+    0.08103585054187314
+   ],
+   [
+    0.08239993961058208,
+    0.08239993961058208
+   ],
+   [
+    0.06753023855829289,
+    0.06753023855829289
+   ],
+   [
+    0.05468104916443362,
+    0.05468104916443362
+   ],
+   [
+    0.04092581066983481,
+    0.04092581066983481
+   ],
+   [
+    0.025324593809215347,
+    0.025324593809215347
+   ],
+   [
+    0.009423421676196843,
+    0.009423421676196843
+   ],
+   [
+    0.010584411437109593,
+    0.010584411437109593
+   ],
+   [
+    0.026556239410777147,
+    0.026556239410777147
+   ],
+   [
+    0.042084857220286744,
+    0.042084857220286744
+   ],
+   [
+    0.055782398119535316,
+    0.055782398119535316
+   ],
+   [
+    0.06695021194868435,
+    0.06695021194868435
+   ],
+   [
+    0.07520826357319102,
+    0.07520826357319102
+   ],
+   [
+    0.08004423645094273,
+    0.08004423645094273
+   ],
+   [
+    0.08160905702362567,
+    0.08160905702362567
+   ],
+   [
+    0.07963070666137965,
+    0.07963070666137965
+   ],
+   [
+    0.0740313124611412,
+    0.0740313124611412
+   ],
+   [
+    0.06542166277032611,
+    0.06542166277032611
+   ],
+   [
+    0.05390225955697059,
+    0.05390225955697059
+   ],
+   [
+    0.036821991483617776,
+    0.036821991483617776
+   ],
+   [
+    0.024586995890599716,
+    0.024586995890599716
+   ],
+   [
+    0.008749003561504994,
+    0.008749003561504994
+   ],
+   [
+    0.01104468670373354,
+    0.01104468670373354
+   ],
+   [
+    0.026975248586318314,
+    0.026975248586318314
+   ],
+   [
+    0.04234083875516358,
+    0.04234083875516358
+   ],
+   [
+    0.055907040893203475,
+    0.055907040893203475
+   ],
+   [
+    0.06703683741171629,
+    0.06703683741171629
+   ],
+   [
+    0.0750250540069702,
+    0.0750250540069702
+   ],
+   [
+    0.07964440023294135,
+    0.07964440023294135
+   ],
+   [
+    0.08173838636973303,
+    0.08173838636973303
+   ],
+   [
+    0.0794801429718785,
+    0.0794801429718785
+   ],
+   [
+    0.07385523990147601,
+    0.07385523990147601
+   ],
+   [
+    0.06496822225103764,
+    0.06496822225103764
+   ],
+   [
+    0.0533525364881145,
+    0.0533525364881145
+   ],
+   [
+    0.03934049754076179,
+    0.03934049754076179
+   ],
+   [
+    0.0238195397008585,
+    0.0238195397008585
+   ],
+   [
+    0.0081575989851868,
+    0.0081575989851868
+   ],
+   [
+    0.011684686402025194,
+    0.011684686402025194
+   ],
+   [
+    0.02762128553140803,
+    0.02762128553140803
+   ],
+   [
+    0.04423733182571124,
+    0.04423733182571124
+   ],
+   [
+    0.056966221036101966,
+    0.056966221036101966
+   ],
+   [
+    0.06741559505491192,
+    0.06741559505491192
+   ]
+  ]
+ }
+]

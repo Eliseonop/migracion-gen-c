@@ -188,6 +188,54 @@ DECODE = [
     ("mp4 hevc", "v_hevc.mp4", {"kind": "video", "in_point": 0.0, "out_point": 0.5}, 24),
 ]
 
+# Audio del export ejecutado (gc_media/audio.hpp): material con sonido que cambia de nivel, para que
+# el volumen, los fundidos, la mezcla y loudnorm se noten. Se generan UNA vez (git-lfs).
+AUDIO_MEDIA = [
+    # Estéreo a 44,1 kHz (el grafo lo pasa a 48 kHz): 440 Hz a la izquierda y 660 a la derecha,
+    # con el nivel subiendo y bajando.
+    ("tones44.wav", ["-f", "lavfi", "-i",
+                     "aevalsrc=0.4*sin(2*PI*440*t)*(0.55+0.45*sin(1.3*t))|0.25*sin(2*PI*660*t)*(0.6+0.4*cos(0.7*t)):"
+                     "s=44100:d=8", "-c:a", "pcm_s16le"]),
+    # MP3 mono a 22,05 kHz (cambio de canales y frecuencia; el MP3 lleva relleno al principio).
+    ("voice22.mp3", ["-f", "lavfi", "-i", "aevalsrc=0.5*sin(2*PI*(200+80*sin(3*t))*t)*abs(sin(2.1*t)):s=22050:d=8",
+                     "-c:a", "libmp3lame", "-b:a", "96k"]),
+    # Vídeo con AAC estéreo a 48 kHz (el audio de un clip de vídeo).
+    ("va8.mp4", ["-f", "lavfi", "-i", "testsrc2=size=64x48:rate=25", "-f", "lavfi", "-i",
+                 "aevalsrc=0.3*sin(2*PI*330*t)*(1+sin(0.9*t))/2|0.3*sin(2*PI*550*t):s=48000:d=8", "-t", "8",
+                 "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k"]),
+]
+_AT = [{"id": "V1", "kind": "video", "name": "V1"}, {"id": "A1", "kind": "audio", "name": "A1"},
+       {"id": "A2", "kind": "audio", "name": "A2"}]
+_AV = {"kind": "video", "asset_kind": "clips", "filename": "va8.mp4", "layout": "overlay",
+       "reframe": {"crop_w": 1.0, "crop_h": 1.0}, "transform": {"x": 0.5, "y": 0.5, "scale": 1.0}}
+_AA = {"kind": "audio", "asset_kind": "audio"}
+# (nombre, clips, objetivo de sonoridad o None). Las timelines son de 360×640 a 30 fps.
+AUDIO_MIX = [
+    ("un tono", [{**_AA, "track_id": "A1", "filename": "tones44.wav", "start": 0, "in_point": 0.5, "out_point": 4}],
+     None),
+    ("vídeo con su audio y música más baja", [
+        {**_AV, "track_id": "V1", "start": 0, "in_point": 1, "out_point": 5},
+        {**_AA, "track_id": "A1", "filename": "tones44.wav", "start": 0.5, "in_point": 0, "out_point": 6, "volume": 0.3}],
+     None),
+    ("voz con fundidos de volumen y eco", [
+        {**_AA, "track_id": "A1", "filename": "voice22.mp3", "start": 0.25, "in_point": 1, "out_point": 6.5,
+         "audio_fx": {"echo": 0.5},
+         "keyframes": {"enabled": True, "items": [{"t": 0, "props": {"volume": 0}},
+                                                  {"t": 1, "interpolation": "ease-in", "props": {"volume": 1}},
+                                                  {"t": 4.5, "props": {"volume": 1}},
+                                                  {"t": 5.25, "interpolation": "bezier", "props": {"volume": 0}}]}}],
+     None),
+    ("tres a la vez con velocidad, revés y filtros", [
+        {**_AV, "track_id": "V1", "start": 0, "in_point": 0, "out_point": 3, "speed": 1.5},
+        {**_AA, "track_id": "A1", "filename": "tones44.wav", "start": 1, "in_point": 2, "out_point": 6, "reverse": True,
+         "audio_fx": {"underwater": 0.6, "compressor": 1}},
+        {**_AA, "track_id": "A2", "filename": "voice22.mp3", "start": 2.3, "in_point": 0, "out_point": 3,
+         "speed": 0.8, "keep_pitch": False, "audio_fx": {"radio": 1, "eq": True}, "volume": 1.6}],
+     None),
+    ("objetivo de −23 LUFS", [
+        {**_AA, "track_id": "A1", "filename": "voice22.mp3", "start": 0, "in_point": 0, "out_point": 5}], -23.0),
+]
+
 # Fotograma de un instante como frame_grab.extract_frame (`-ss t` antes de `-i`, sin el escalado
 # ni el JPEG): (archivo, instantes). Justo en un fotograma, entre dos, negativos, NaN, más allá
 # del final y dentro del hueco del VFR.

@@ -1590,7 +1590,8 @@ def _ensure_probe_media() -> None:
     if ffmpeg is None:
         sys.exit("Hace falta ffmpeg en el PATH para generar tests/fixtures/media/files")
     PROBE_DIR.mkdir(parents=True, exist_ok=True)
-    for name, args in mc.PROBE_MEDIA + mc.PROBE_MEDIA_VFR + mc.PROBE_MEDIA_2S + mc.PROBE_MEDIA_ALPHA + mc.PROBE_MEDIA_CODECS:
+    for name, args in (mc.PROBE_MEDIA + mc.PROBE_MEDIA_VFR + mc.PROBE_MEDIA_2S + mc.PROBE_MEDIA_ALPHA
+                       + mc.PROBE_MEDIA_CODECS + mc.AUDIO_MEDIA):
         out = PROBE_DIR / name
         if not out.exists():
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args,
@@ -2058,6 +2059,103 @@ def real_audio_fixtures(ctx: Ctx, data: dict) -> dict:
                           "exists": exists, "has_audio": has_audio, "graph": graph})
     return {"clips": clips, "catalog": [], "nodes": [], "atempo": [], "intensity": [], "weights": [],
             "timelines": timelines}
+
+
+def _command_inputs(cmd: list[str]) -> list[list[str]]:
+    """Los argumentos de cada entrada de un comando de build_command («ffmpeg -y <entradas>
+    -filter_complex …»): cada grupo acaba en «-i ruta»."""
+    toks = cmd[2:cmd.index("-filter_complex")]
+    groups, cur, j = [], [], 0
+    while j < len(toks):
+        if toks[j] == "-i":
+            groups.append([*cur, "-i", toks[j + 1]])
+            cur, j = [], j + 2
+            continue
+        cur.append(toks[j])
+        j += 1
+    return groups
+
+
+def _audio_reference(inputs: list[list[str]], graph: list[str], total: str, block: int) -> dict:
+    """El audio que da el CLI con esas entradas y ese grafo, como lo saca el export (`-map [aout]
+    -t total -ar 48000`), en float32: muestras por canal, MD5 y RMS de cada canal por bloques."""
+    import array
+    import hashlib
+    import math
+    import tempfile
+    ffmpeg = shutil.which("ffmpeg")
+    with tempfile.TemporaryDirectory() as td:
+        raw = Path(td) / "mix.f32"
+        subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *[t for g in inputs for t in g],
+                        "-filter_complex", ";".join(graph), "-map", "[aout]", "-t", total, "-ar", "48000",
+                        "-c:a", "pcm_f32le", "-f", "f32le", str(raw)], check=True)
+        data = raw.read_bytes()
+    pcm = array.array("f")
+    pcm.frombytes(data)
+    n = len(pcm) // 2
+    rms = []
+    for b in range(0, n, block):
+        e = min(n, b + block)
+        rms.append([math.sqrt(sum(pcm[2 * i + c] ** 2 for i in range(b, e)) / (e - b)) for c in (0, 1)])
+    return {"samples": n, "md5": hashlib.md5(data).hexdigest(), "block": block, "rms": rms}
+
+
+def synthetic_audio_mix_fixtures(ctx: Ctx) -> list[dict]:
+    """media_cases.AUDIO_MIX: las entradas y el grafo de audio del build_command REAL (con el
+    material de tests/fixtures/media/files) y el audio que da el CLI con ellos."""
+    import media_cases as mc
+    from types import SimpleNamespace
+    from app import compose
+    _ensure_probe_media()
+    real_clip_path = compose._clip_path
+    compose._clip_path = lambda project, clip, shape_files=None: PROBE_DIR / clip.filename
+    try:
+        cases = []
+        for name, clips, target in mc.AUDIO_MIX:
+            raw = {"version": 2, "width": 360, "height": 640, "fps": 30, "tracks": mc._AT,
+                   "clips": [{"id": f"c{i + 1}", "asset_id": f"a{i + 1}",
+                              "source_duration": _REAL_SFX["probe_duration"](PROBE_DIR / c["filename"]), **c}
+                             for i, c in enumerate(clips)]}
+            if target is not None:
+                raw["audio_target_db"] = target
+            tl = ctx.schemas.Timeline.model_validate(ctx.migrations.migrate_timeline(raw))
+            cmd = compose.build_command(SimpleNamespace(id="audio-mix"), tl, Path("out.mp4"))
+            inputs = _command_inputs(cmd)
+            graph = cmd[cmd.index("-filter_complex") + 1].split(";")
+            graph = graph[next(i for i, st in enumerate(graph) if st.endswith("[vout]")) + 1:]
+            total = cmd[len(cmd) - 1 - cmd[::-1].index("-t") + 1]
+            ref = _audio_reference(inputs, graph, total, 4800)
+            # Las rutas, relativas a tests/fixtures/media/files.
+            portable = [[Path(t).name if k > 0 and g[k - 1] == "-i" else t for k, t in enumerate(g)] for g in inputs]
+            cases.append({"name": name, "timeline": _pure(tl.model_dump()), "inputs": portable, "graph": graph,
+                          "total": float(total), **ref})
+        return cases
+    finally:
+        compose._clip_path = real_clip_path
+
+
+def real_audio_mix_fixtures(ctx: Ctx, data: dict) -> list[dict]:
+    """Tus timelines con audio: las entradas y el grafo del build_command REAL y el audio del CLI
+    (RMS por segundo)."""
+    from app import compose
+    cases = []
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        try:
+            cmd = compose.build_command(proj, proj.timeline, Path("out.mp4"))
+        except RuntimeError:  # «La timeline está vacía»
+            continue
+        graph = cmd[cmd.index("-filter_complex") + 1].split(";")
+        graph = graph[next(i for i, st in enumerate(graph) if st.endswith("[vout]")) + 1:]
+        if not graph:
+            continue
+        inputs = _command_inputs(cmd)
+        total = cmd[len(cmd) - 1 - cmd[::-1].index("-t") + 1]
+        cases.append({"name": f"{proj.id} · {proj.name}", "inputs": inputs, "graph": graph, "total": float(total),
+                      **_audio_reference(inputs, graph, total, 48000)})
+    return cases
 
 
 # --- Evaluación por clip (fx_anims, clip_fx, clip_blend, clip_adjust) ------------------------
@@ -2627,6 +2725,8 @@ def main() -> None:
     frm = synthetic_frame_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "frame" / "synthetic.json", frm,
           sum(len(c["heads"]) for c in frm["cases"]), 0)
+    mix = synthetic_audio_mix_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "audio" / "mix.json", mix, len(mix), 0)
     aud = synthetic_audio_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "audio" / "synthetic.json", aud,
           len(aud["clips"]) + len(aud["nodes"]) + len(aud["atempo"]) + len(aud["intensity"]) + len(aud["weights"])
@@ -2691,6 +2791,8 @@ def main() -> None:
         txt_real = real_text_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "text" / "real.json", txt_real,
               len(txt_real["styles"]) + len(txt_real["case"]) + len(txt_real["clips"]) + len(txt_real["fonts"]), 0)
+        mix_real = real_audio_mix_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "audio" / "mix.json", mix_real, len(mix_real), 0)
         aud_real = real_audio_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "audio" / "real.json", aud_real,
               len(aud_real["clips"]) + len(aud_real["timelines"]), 0)
