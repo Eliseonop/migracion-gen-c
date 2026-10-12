@@ -528,6 +528,9 @@ RENDER_TEXT = [
     ("Fondo por línea con fundido", None,
      [(_HOLA, {**_PLAIN, "bg": "#a02020", "bg_opacity": 0.7, "border_width": 3, "block_appear": "fade"}, {})],
      [0.1]),
+    # Números escritos como texto, con espacios (revisión): float()/int() de Python los aceptan.
+    ("estilo con números como texto", None,
+     [(_HOLA, {**_PLAIN, "size": " 0.06 ", "border_width": " 4 ", "w": "0.8 "}, {})], [0.5]),
 ]
 
 # Croma: los dict crudos de bg_removal.chroma que se normalizan y se pasan a chroma_filters,

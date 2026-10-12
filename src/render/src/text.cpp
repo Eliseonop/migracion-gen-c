@@ -41,6 +41,7 @@
 #endif
 
 #include "canvas_impl.hpp"
+#include "py.hpp"
 
 namespace gc::render {
 
@@ -199,48 +200,9 @@ bool is_text(const Json& v, std::string_view s) {
     return v.is_string() && v.get_ref<const std::string&>() == s;
 }
 
-// float(x) de Python para un número, un bool o un texto numérico.
-std::optional<double> py_float(const Json& v) {
-    if (v.is_number()) {
-        return v.get<double>();
-    }
-    if (v.is_boolean()) {
-        return v.get<bool>() ? 1.0 : 0.0;
-    }
-    if (v.is_string()) {
-        const std::string& s = v.get_ref<const std::string&>();
-        char* end = nullptr;
-        const double d = std::strtod(s.c_str(), &end);
-        if (end != s.c_str() && *end == '\0') {
-            return d;
-        }
-    }
-    return std::nullopt;
-}
-
-// int(x) de Python: enteros, bool, reales (truncando) y texto entero.
-std::optional<std::int64_t> py_int(const Json& v) {
-    if (v.is_number_integer()) {
-        return v.get<std::int64_t>();
-    }
-    if (v.is_boolean()) {
-        return v.get<bool>() ? 1 : 0;
-    }
-    if (v.is_number_float()) {
-        const double d = v.get<double>();
-        return std::isfinite(d) && std::abs(d) < 9e18 ? std::optional<std::int64_t>(static_cast<std::int64_t>(d))
-                                                      : std::nullopt;
-    }
-    if (v.is_string()) {
-        const std::string& s = v.get_ref<const std::string&>();
-        char* end = nullptr;
-        const long long i = std::strtoll(s.c_str(), &end, 10);
-        if (end != s.c_str() && *end == '\0') {
-            return i;
-        }
-    }
-    return std::nullopt;
-}
+// float() e int() de Python, los del núcleo (espacios alrededor, «_», «inf», sin hexadecimales).
+using core::detail::py_float;
+using core::detail::py_int;
 
 // _fmt de text_ass.py: el número con 2 decimales que lee libass.
 double fmt2(double v) {
@@ -465,7 +427,11 @@ std::optional<Mask> glyph_mask(const SkFont& font, const Run& run, double border
 // La máscara desenfocada con la gaussiana de \blurN (con margen para el halo).
 Mask blurred(const Mask& m, double n) {
     const double sigma = kBlurSigma * n;
-    const int margin = static_cast<int>(std::ceil(3 * sigma)) + 1;
+    // El margen cubre 3σ, acotado: un \blur absurdo no puede desbordar el int ni pedir un mapa
+    // enorme (con σ de cientos de px el halo ya se ha repartido por todo el cuadro).
+    constexpr double kMaxBlurMargin = 1024.0;
+    const double want = std::ceil(3 * sigma) + 1;
+    const int margin = static_cast<int>(std::isfinite(want) ? std::clamp(want, 1.0, kMaxBlurMargin) : 1.0);
     Mask out;
     out.left = m.left - margin;
     out.top = m.top - margin;
