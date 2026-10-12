@@ -9,6 +9,7 @@
 // La app puede poner la medida real con set_text_width.
 
 #include <functional>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -25,6 +26,23 @@ using TextWidthFn = std::function<double(std::string_view font, bool bold, doubl
 void set_text_width(TextWidthFn fn);
 [[nodiscard]] double text_width(std::string_view font, bool bold, double em, std::string_view text,
                                 double letter_spacing);
+
+// Pone `fn` como medida mientras vive y, al destruirse, repone la que hubiera antes (también la
+// estimación). Así quien dibuja con la medida real no la deja puesta para el resto del proceso.
+// La medida sigue siendo una sola para todo el proceso: dos guardas a la vez en hilos distintos
+// se pisan.
+class ScopedTextWidth {
+public:
+    explicit ScopedTextWidth(TextWidthFn fn);
+    ~ScopedTextWidth();
+    ScopedTextWidth(const ScopedTextWidth&) = delete;
+    ScopedTextWidth& operator=(const ScopedTextWidth&) = delete;
+    ScopedTextWidth(ScopedTextWidth&&) = delete;
+    ScopedTextWidth& operator=(ScopedTextWidth&&) = delete;
+
+private:
+    std::shared_ptr<const TextWidthFn> previous_;
+};
 
 // Valores del estilo de un texto ({size, scale, letter_spacing, line_height, w, font, bold}).
 [[nodiscard]] double text_style_scale(const Json& style);                  // escala (> 0; si no, 1)

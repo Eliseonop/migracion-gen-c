@@ -379,9 +379,10 @@ double TextFonts::text_width(std::string_view font, bool bold, double em, std::s
     return impl_->width(font, bold, em, text, letter_spacing);
 }
 
-void TextFonts::install_text_width() const {
-    core::set_text_width([impl = impl_](std::string_view font, bool bold, double em, std::string_view text,
-                                        double ls) { return impl->width(font, bold, em, text, ls); });
+core::TextWidthFn TextFonts::width_fn() const {
+    return [impl = impl_](std::string_view font, bool bold, double em, std::string_view text, double ls) {
+        return impl->width(font, bold, em, text, ls);
+    };
 }
 
 // --- Dibujo ----------------------------------------------------------------------------------
@@ -905,7 +906,7 @@ const core::TimelineTrack* find_track(const core::Timeline& tl, const std::strin
 
 Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline, std::int64_t k,
                                  const TextFonts& fonts, bool omit, std::vector<std::string>* warnings) {
-    fonts.install_text_width();
+    const core::ScopedTextWidth measure(fonts.width_fn()); // la de Pillow, solo mientras dibuja
     SkCanvas* sk = CanvasAccess::sk(canvas);
     const double width = static_cast<double>(timeline.width - timeline.width % 2);
     const double height = static_cast<double>(timeline.height - timeline.height % 2);

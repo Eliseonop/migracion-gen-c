@@ -1209,3 +1209,9 @@ Decisión de Edu (§6):
   - MSVC + vcpkg: 141/141; MinGW: 123/123. 0 warnings y 0 avisos de clang-tidy.
 
 **Siguiente:** arreglar el hallazgo de la revisión del texto (la medida de Pillow que `draw_timeline_texts` deja puesta para todo el proceso) y después las máscaras (2 de tus vídeos) o la mezcla de audio.
+
+### 2026-10-11 — F3, revisión: el texto (etapas 1a–2b)
+
+- **Veredicto:** aprobado. Se arregla el hallazgo 1: la medida de Pillow que `draw_timeline_texts` dejaba puesta para todo el proceso ahora solo vale mientras dibuja (`core::ScopedTextWidth`), con test; antes, los tests del texto fallaban si corrían después del render en el mismo proceso. También salen los 2 avisos de clang-tidy de `test_text_parity.cpp`.
+- **Quedan anotados (menores):** el `py_float` propio de `text.cpp` y el margen sin acotar del desenfoque (notas de F3).
+- **Verificación:** MSVC + vcpkg: 142/142; MinGW: 124/124. 0 warnings y 0 avisos de clang-tidy en lo tocado.

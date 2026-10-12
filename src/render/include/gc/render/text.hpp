@@ -20,6 +20,7 @@
 #include "gc/core/font_metrics.hpp"
 #include "gc/core/json.hpp"
 #include "gc/core/model.hpp"
+#include "gc/core/text_metrics.hpp"
 #include "gc/render/canvas.hpp"
 
 namespace gc::render {
@@ -42,8 +43,9 @@ public:
     [[nodiscard]] double text_width(std::string_view font, bool bold, double em, std::string_view text,
                                     double letter_spacing) const;
 
-    // Pone esta medida en core::set_text_width (con ella se reparten las líneas, como en el export).
-    void install_text_width() const;
+    // Esta medida como core::TextWidthFn (con ella se reparten las líneas, como en el export).
+    // draw_timeline_texts la pone solo mientras dibuja (core::ScopedTextWidth).
+    [[nodiscard]] core::TextWidthFn width_fn() const;
 
 private:
     struct Impl;

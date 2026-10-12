@@ -4,6 +4,7 @@
 #include <cmath>
 #include <memory>
 #include <mutex>
+#include <utility>
 
 #include "json_reader.hpp"
 #include "py.hpp"
@@ -41,6 +42,17 @@ double estimate_width(double em, std::string_view text, double ls) {
 void set_text_width(TextWidthFn fn) {
     const std::scoped_lock lock(g_mutex);
     g_width = fn ? std::make_shared<const TextWidthFn>(std::move(fn)) : nullptr;
+}
+
+ScopedTextWidth::ScopedTextWidth(TextWidthFn fn) {
+    auto next = fn ? std::make_shared<const TextWidthFn>(std::move(fn)) : nullptr;
+    const std::scoped_lock lock(g_mutex);
+    previous_ = std::exchange(g_width, std::move(next));
+}
+
+ScopedTextWidth::~ScopedTextWidth() {
+    const std::scoped_lock lock(g_mutex);
+    g_width = std::move(previous_);
 }
 
 double text_width(std::string_view font, bool bold, double em, std::string_view text, double letter_spacing) {

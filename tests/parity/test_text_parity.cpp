@@ -9,9 +9,11 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+#include <charconv>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <system_error>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -128,12 +130,17 @@ void check_geometry(const Json& c, const std::string& rows_text) {
 
 // "h:mm:ss.cc" del .ass en ms, como lo lee libass.
 std::int64_t ass_ms(const std::string& s) {
-    int h = 0;
-    int m = 0;
-    int sec = 0;
-    int cs = 0;
-    REQUIRE(std::sscanf(s.c_str(), "%d:%d:%d.%d", &h, &m, &sec, &cs) == 4);
-    return ((static_cast<std::int64_t>(h) * 60 + m) * 60 + sec) * 1000 + cs * 10;
+    std::int64_t parts[4] = {};
+    const char* p = s.data();
+    const char* const end = s.data() + s.size();
+    const char seps[4] = {':', ':', '.', '\0'};
+    for (std::size_t i = 0; i < 4; ++i) {
+        const auto [next, ec] = std::from_chars(p, end, parts[i]);
+        REQUIRE(ec == std::errc{});
+        REQUIRE((i == 3 ? next == end : next != end && *next == seps[i]));
+        p = next + (i == 3 ? 0 : 1);
+    }
+    return ((parts[0] * 60 + parts[1]) * 60 + parts[2]) * 1000 + parts[3] * 10;
 }
 
 // Los eventos del .ass de un texto quieto (caption_dialogues): tiempos, primero, líneas y palabra activa.
@@ -420,4 +427,25 @@ TEST_CASE("paridad del texto: tus estilos y tus fuentes", "[parity][text][local]
         INFO(name << (f.at("bold").get<bool>() ? " negrita" : ""));
         CHECK(ass_size_factor(name, f.at("bold").get<bool>(), dirs) == f.at("factor").get<double>());
     }
+}
+
+TEST_CASE("ScopedTextWidth pone la medida mientras vive y repone la anterior", "[text]") {
+    // La estimación: 0,55 em por carácter más el espaciado.
+    const double estimate = text_width("Arial", false, 10.0, "hola", 1.0);
+    CHECK(estimate == 4 * 10.0 * 0.55 + 4.0);
+    {
+        const ScopedTextWidth outer([](std::string_view, bool, double, std::string_view, double) { return 7.0; });
+        CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == 7.0);
+        {
+            const ScopedTextWidth inner([](std::string_view, bool, double, std::string_view, double) { return 9.0; });
+            CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == 9.0);
+        }
+        CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == 7.0);
+        {
+            const ScopedTextWidth none(nullptr); // nullptr: la estimación mientras vive
+            CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == estimate);
+        }
+        CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == 7.0);
+    }
+    CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == estimate);
 }
