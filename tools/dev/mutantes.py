@@ -581,8 +581,38 @@ EXPORT_INPUT = [
     ("entrada: secuencia sin «%0»", X2, 'if (p.contains("%0")) {', 'if (p.contains("%")) {'),
 ]
 
+AU = "src/core/src/audio_export.cpp"
+AUDIO = [
+    ("envolvente: span mínimo de 1e-5", AU, "1e-6 > d ? 1e-6 : d", "1e-5 > d ? 1e-5 : d"),
+    ("envolvente: tope de 119 tramos", AU, "std::min(120.0, std::max(2.0, steps))", "std::min(119.0, std::max(2.0, steps))"),
+    ("envolvente: constante sin redondear a 4", AU, "values.insert(py_round(p.v, 4) + 0.0);", "values.insert(p.v + 0.0);"),
+    ("envolvente: efecto sin max(0)", AU, "return n > 0.0 ? n : 0.0; // max(0.0, n) de Python", "return n;"),
+    ("envolvente: hold vale 1", AU, 'case Interp::Hold: return "0";', 'case Interp::Hold: return "1";'),
+    ("intensidad: el texto no cuenta", AU, "const auto n = py_float(value);",
+     "const auto n = value.is_number() ? py_float(value) : std::nullopt;"),
+    ("etapas: umbral de 1e-3", AU, "weights[static_cast<std::size_t>(j)] > 1e-4", "weights[static_cast<std::size_t>(j)] > 1e-3"),
+    ("compresor: compensación ^−0,5", AU, "std::pow(full, -0.6)", "std::pow(full, -0.5)"),
+    ("atempo: sin el margen de 1e-9", AU, "while (s > 2.0 + 1e-9) {", "while (s > 2.0) {"),
+    ("adelay también en 0", AU, "if (start_ms > 0) {", "if (start_ms >= 0) {"),
+    ("loudnorm: tope de −4", AU, "target_db < -5.0 ? target_db : -5.0", "target_db < -4.0 ? target_db : -4.0"),
+    ("pistas: manda la primera", AU, "track_by_id[t.id] = &t;", "track_by_id.try_emplace(t.id, &t);"),
+    ("los fijos también suenan", AU, "if (!is_still_clip(c) && clip_mixes_audio(c, track) && has_audio(c)) {",
+     "if (clip_mixes_audio(c, track) && has_audio(c)) {"),
+]
+CF = "src/core/src/clip_filters.cpp"
+FILTERS = [
+    ("pila: orden al revés", CF, "m = m ? compose_color(fm, *m) : fm;", "m = m ? compose_color(*m, fm) : fm;"),
+    ("pila: umbral de 1e-3", CF, "if (!(f.amount > 1e-4)) {", "if (!(f.amount > 1e-3)) {"),
+    ("intensidad que falta vale 0,5", CF, "amount == f.end() ? 1.0 : clamp01(*amount)", "amount == f.end() ? 0.5 : clamp01(*amount)"),
+    ("una lista vacía no manda", CF, "if (clip.filters && clip.filters->is_array()) {",
+     "if (clip.filters && clip.filters->is_array() && !clip.filters->empty()) {"),
+    ("ajuste: NaN vale 0", CF, "const double above = n > lo ? n : lo;", "const double above = std::isnan(n) ? 0.0 : (n > lo ? n : lo);"),
+    ("ffmpeg: desplazamiento desde 1e-4", CF, "std::abs(row[3]) > 1e-5", "std::abs(row[3]) > 1e-4"),
+    ("ajuste: sin la intensidad", CF, "const double k = clip.opacity ? clamp01(*clip.opacity) : 1.0;", "const double k = 1.0;"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
-          "export_input": (EXPORT_INPUT, "[export_input]"),
+          "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
           "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"),

@@ -189,4 +189,4 @@ FILTER_CLIPS = [
 ]
 # Intensidades sueltas de filter_matrix (con un id desconocido también).
 FILTER_MATRIX_IDS = [*_FILTER_IDS, "raro", ""]
-FILTER_K = [float("nan"), float("-inf"), -1, 0, 1e-5, 0.3, 0.5, 0.75, 1, 2, float("inf")]
+FILTER_K = [float("nan"), float("-inf"), -1, 0, 1e-5, 0.0005, 0.3, 0.5, 0.75, 1, 2, float("inf")]

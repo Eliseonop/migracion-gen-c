@@ -15,6 +15,7 @@ add_executable(gc_tests
     unit/test_session.cpp
     unit/test_sfx.cpp
     parity/bench_edit.cpp
+    parity/test_audio_parity.cpp
     parity/test_chroma_parity.cpp
     parity/test_collections_parity.cpp
     parity/test_edit_parity.cpp

@@ -1231,3 +1231,14 @@ Decisión de Edu (§6):
 
 - **Hecho:** la feature `dav1d` del FFmpeg de vcpkg (libdav1d, BSD-2). El FFmpeg de vcpkg no traía decodificador de AV1 (el nativo solo funciona con hwaccel) y tu único vídeo AV1, el de Snowpiercer con la máscara, no se podía decodificar.
 - **Verificación:** un MP4 AV1 y uno HEVC nuevos en las fixtures de decode (20 casos) y de seek (80 instantes), con el mismo MD5 por fotograma que el ffmpeg del PATH. `genclip frame` de Snowpiercer en 0,5 s: 35,2 dB frente a `compose.render_frame`. MSVC + vcpkg: 142/142.
+
+### 2026-10-11 — F3: las cadenas de audio del export
+
+- **Hecho:** `gc_core/audio_export` arma el grafo de audio del export como `compose.build_command`: la cadena de cada clip que suena (tramo, formato, velocidad, efectos de sonido por etapas, volumen con su envolvente de keyframes y retraso) y la mezcla con `amix`, `apad` y `loudnorm`. `export_inputs` decide qué clips entran y en qué orden, así que los índices de entrada coinciden.
+- **Verificación:**
+  - Paridad exacta con el `build_command` real (la parte tras «[vout]», con el material simulado): 12 timelines sintéticas y tus 17; y las piezas sueltas en 27 clips sintéticos y tus 300.
+  - 13/13 mutantes del audio y 7/7 de los filtros de color (`tools/dev/mutantes.py`).
+  - El barrido de `genclip frame --omitir` por 65 fotogramas de tus 17 timelines no omite ni falla ninguna capa.
+  - MSVC + vcpkg: 144/144; MinGW: 126/126. 0 warnings y 0 avisos de clang-tidy.
+
+**Siguiente:** ejecutar ese grafo con libavfilter en gc_media (y medir la sonoridad contra el export, ±0,5 LU), y después el encode y `genclip render`.

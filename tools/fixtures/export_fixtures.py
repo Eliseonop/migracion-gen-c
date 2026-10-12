@@ -1967,6 +1967,99 @@ def real_layout_fixtures(ctx: Ctx, data: dict) -> dict:
     return _pure({"clips": clips, "dest": dests, "crop_px": []})
 
 
+# --- Audio del export (audio_fx, volume_filter, audio_speed_filters, build_command) ----------
+
+def audio_clip_case(ctx: Ctx, name: str, raw_clip: dict) -> dict:
+    """Envolventes, volumen, efectos (desde «ain0» con «ax0») y velocidad de un clip."""
+    from app import audio_fx, clip_speed
+    from app import clip_keyframes as ck
+    c = ctx.schemas.TimelineClip.model_validate(raw_clip)
+    steps, out = audio_fx.audio_fx_graph(c, "ain0", "ax0")
+    return _pure(_nan_safe({
+        "name": name, "clip": c.model_dump(),
+        "envelopes": {k: ck.ffmpeg_envelope(c, k, 1.0 if k == "volume" else 0.25)
+                      for k in ("volume", *audio_fx.AUDIO_FX_IDS)},
+        "volume_filter": ck.volume_filter(c), "fx": {"steps": steps, "out": out},
+        "speed": clip_speed.audio_speed_filters(c),
+    }))
+
+
+def audio_graph(project, timeline, exists: dict, has_audio: dict) -> list[str]:
+    """La parte de audio (lo que va tras «[vout]») del filter_complex REAL de build_command, con
+    el material simulado: un archivo por id de clip que existe y tiene audio según los dicts."""
+    from app import compose, detect
+    saved = (compose._clip_path, compose.media_exists, compose._has_audio, compose._color_untagged, detect.dims)
+    compose._clip_path = lambda project, clip, shape_files=None: Path("C:/fake") / clip.id
+    compose.media_exists = lambda p: p is not None and exists.get(Path(p).name, True)
+    compose._has_audio = lambda p: has_audio.get(Path(p).name, True)
+    compose._color_untagged = lambda p: False
+    detect.dims = lambda p: (1920, 1080)
+    try:
+        cmd = compose.build_command(project, timeline, Path("out.mp4"))
+    finally:
+        compose._clip_path, compose.media_exists, compose._has_audio, compose._color_untagged, detect.dims = saved
+    graph = cmd[cmd.index("-filter_complex") + 1].split(";")
+    vout = next(i for i, step in enumerate(graph) if step.endswith("[vout]"))
+    return graph[vout + 1:]
+
+
+def synthetic_audio_fixtures(ctx: Ctx) -> dict:
+    from types import SimpleNamespace
+    from app import audio_fx, clip_speed
+    sys.path.insert(0, str(HERE))
+    import audio_cases as ac
+    timelines = []
+    for name, tracks, clips, missing, silent in ac.TIMELINES:
+        for target in ac.TARGETS.get(name, [None]):
+            raw = {"version": 2, "width": 1080, "height": 1920, "fps": 30, "tracks": tracks,
+                   "clips": [{"asset_id": c["id"], **c} for c in clips]}
+            if target is not None:
+                raw["audio_target_db"] = target
+            tl = ctx.schemas.Timeline.model_validate(ctx.migrations.migrate_timeline(raw))
+            exists = {c["id"]: c["id"] not in missing for c in clips}
+            has_audio = {c["id"]: c["id"] not in silent for c in clips}
+            timelines.append({"name": name, "timeline": _pure(tl.model_dump()), "exists": exists,
+                              "has_audio": has_audio,
+                              "graph": audio_graph(SimpleNamespace(id="audio-fixture"), tl, exists, has_audio)})
+    nodes = [audio_fx.ffmpeg_node(nd) for fx in audio_fx.AUDIO_FX for stage in fx["stages"] for nd in stage]
+    return _pure(_nan_safe({
+        "clips": [audio_clip_case(ctx, c["name"], c["clip"]) for c in ac.CLIPS],
+        "catalog": [{"id": f["id"], "label": f["label"], "group": f["group"]} for f in audio_fx.AUDIO_FX],
+        "nodes": nodes,
+        "atempo": [{"speed": s, "chain": clip_speed.atempo_chain(s)} for s in ac.ATEMPO],
+        "intensity": [{"value": v, "k": audio_fx.fx_intensity(v)} for v in ac.INTENSITY],
+        "weights": [{"k": float(k), "n": n, "w": audio_fx.stage_weights(float(k), n)} for k in ac.WEIGHTS_K
+                    for n in (1, 3)],
+        "timelines": timelines,
+    }))
+
+
+def real_audio_fixtures(ctx: Ctx, data: dict) -> dict:
+    """Tus clips (los que no son texto) y el grafo de audio de tus timelines, con lo que el export
+    REAL ve de cada material: si existe (_clip_path + media_exists) y si tiene audio (_has_audio)."""
+    from app import compose
+    clips, timelines = [], []
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        exists, has_audio = {}, {}
+        for c in proj.timeline.clips:
+            path = compose._clip_path(proj, c)
+            exists[c.id] = bool(compose.media_exists(path))
+            has_audio[c.id] = bool(exists[c.id] and c.kind != "text" and compose._has_audio(path))
+            if c.kind != "text":
+                clips.append(audio_clip_case(ctx, f"{proj.id} · {c.id}", c.model_dump()))
+        try:
+            graph = audio_graph(proj, proj.timeline, exists, has_audio)
+        except RuntimeError:  # «La timeline está vacía»: el export no la acepta
+            continue
+        timelines.append({"name": f"{proj.id} · {proj.name}", "timeline": _pure(proj.timeline.model_dump()),
+                          "exists": exists, "has_audio": has_audio, "graph": graph})
+    return {"clips": clips, "catalog": [], "nodes": [], "atempo": [], "intensity": [], "weights": [],
+            "timelines": timelines}
+
+
 # --- Evaluación por clip (fx_anims, clip_fx, clip_blend, clip_adjust) ------------------------
 
 def _nan_safe(value):
@@ -2534,6 +2627,10 @@ def main() -> None:
     frm = synthetic_frame_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "frame" / "synthetic.json", frm,
           sum(len(c["heads"]) for c in frm["cases"]), 0)
+    aud = synthetic_audio_fixtures(ctx)
+    write(REPO / "tests" / "fixtures" / "audio" / "synthetic.json", aud,
+          len(aud["clips"]) + len(aud["nodes"]) + len(aud["atempo"]) + len(aud["intensity"]) + len(aud["weights"])
+          + len(aud["timelines"]), 0)
     ev = synthetic_eval_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "eval" / "synthetic.json", ev,
           len(ev["clips"]) + len(ev["ease"]) + len(ev["tracks"]) + len(ev["fx_windows"]) + len(ev["effects"])
@@ -2594,6 +2691,9 @@ def main() -> None:
         txt_real = real_text_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "text" / "real.json", txt_real,
               len(txt_real["styles"]) + len(txt_real["case"]) + len(txt_real["clips"]) + len(txt_real["fonts"]), 0)
+        aud_real = real_audio_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "audio" / "real.json", aud_real,
+              len(aud_real["clips"]) + len(aud_real["timelines"]), 0)
         ev_real = real_eval_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "eval" / "real.json", ev_real,
               len(ev_real["clips"]) + len(ev_real["filters"]), 0)
