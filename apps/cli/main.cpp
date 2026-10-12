@@ -4,7 +4,8 @@
 //   genclip projects <projects.json>                     valida todos los proyectos
 //   genclip normalize <projects.json> <salida> [--preserve]
 //   genclip frame <raíz de video-yt> <proyecto> --at <s> -o <salida.png> [--omitir]
-//                                                        (solo con FFmpeg y Skia)
+//   genclip render <raíz de video-yt> <proyecto> -o <salida.mp4> [--progress] [--omitir]
+//                  [--codificador <nombre>]              (frame y render, solo con FFmpeg y Skia)
 //
 // Los argumentos y la salida van en UTF-8 en todos los SO (rutas con tildes). Los errores van
 // siempre a stderr («error: …»), con cualquier GENCLIP_LOG; GENCLIP_LOG=debug añade la traza.
@@ -26,6 +27,7 @@
 
 #ifdef GC_WITH_RENDER
 #include "frame_cmd.hpp"
+#include "render_cmd.hpp"
 #endif
 
 #ifdef _WIN32
@@ -178,6 +180,9 @@ int run(int argc, char* const* argv) {
 #ifdef GC_WITH_RENDER
     if (cmd == "frame") {
         return genclip::cmd_frame(rest);
+    }
+    if (cmd == "render") {
+        return genclip::cmd_render(rest);
     }
 #endif
     usage();

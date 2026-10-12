@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <functional>
+#include <memory>
 #include <optional>
 #include <span>
 #include <string>
@@ -66,6 +67,30 @@ inline constexpr const char* kAssumeBt709Filter =
 [[nodiscard]] Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip,
                                                                const std::filesystem::path& path, int fps,
                                                                std::int64_t tick);
+
+// Los fotogramas de un clip que compone el export, en orden de ticks: los mismos que
+// export_frame_at, pero sin volver a decodificar desde el principio en cada fotograma (el
+// decodificador avanza con los ticks). Pedir un tick anterior al último empieza de nuevo. Al revés
+// (`reverse`), de momento, cada tick es un export_frame_at.
+class ClipFrames {
+public:
+    [[nodiscard]] static Result<ClipFrames> open(const core::TimelineClip& clip, const std::filesystem::path& path,
+                                                 int fps);
+
+    ClipFrames(ClipFrames&&) noexcept;
+    ClipFrames& operator=(ClipFrames&&) noexcept;
+    ClipFrames(const ClipFrames&) = delete;
+    ClipFrames& operator=(const ClipFrames&) = delete;
+    ~ClipFrames();
+
+    // El fotograma del tick (nullptr si la cadena no da ninguno). Vale hasta la siguiente llamada.
+    [[nodiscard]] Result<const RgbaFrame*> at(std::int64_t tick);
+
+private:
+    struct Impl;
+    explicit ClipFrames(std::unique_ptr<Impl> impl);
+    std::unique_ptr<Impl> impl_;
+};
 
 // MD5 en hexadecimal (av_md5): para comparar fotogramas con las fixtures.
 [[nodiscard]] std::string md5_hex(std::span<const std::uint8_t> data);

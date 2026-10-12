@@ -1253,3 +1253,9 @@ Decisión de Edu (§6):
   - MSVC + vcpkg: 146/146; MinGW: 126/126. 0 warnings.
 
 **Siguiente:** el encode (vídeo H.264 por hardware o software y AAC) y `genclip render`.
+
+### 2026-10-12 — F3: encode MP4, lector por clip y `genclip render` (empezado)
+
+- **Hecho:** OpenH264 en el FFmpeg de vcpkg; `Mp4Writer` (H.264 con la elección y la sonda de `gpu.py`, BT.709 de rango TV, AAC y `+faststart`); el decode en modo «tirar» y `ClipFrames`, igual que `export_frame_at` tick a tick sin redecodificar; y `genclip render`, escrito y compilando.
+- **Verificación:** tests nuevos del encode y de `ClipFrames`. MSVC + vcpkg: 148/148; MinGW: 126/126. 0 warnings.
+- **Sin probar aún:** `genclip render` de punta a punta (en Debug, un proyecto de 15 s pasó de 10 min). Pausa pedida por Edu: lo pendiente está en las notas de F3.
