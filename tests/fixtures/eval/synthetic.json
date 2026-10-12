@@ -1,4 +1,8491 @@
 {
+ "filters": [
+  {
+   "name": "filtro bw",
+   "clip": {
+    "id": "f_bw",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_bw",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "bw"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "bw",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.21299999999999997,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.07199999999999995,
+     0.0
+    ]
+   ],
+   "adjustment": [
+    [
+     0.21299999999999997,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.07199999999999995,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.21300:rg=0.71500:rb=0.07200:gr=0.21300:gg=0.71500:gb=0.07200:br=0.21300:bg=0.71500:bb=0.07200"
+  },
+  {
+   "name": "filtro noir",
+   "clip": {
+    "id": "f_noir",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_noir",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "noir"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "noir",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.28755,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.09719999999999995,
+     -0.225
+    ]
+   ],
+   "adjustment": [
+    [
+     0.28755,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.09719999999999995,
+     -0.225
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.28755:rg=0.96525:rb=0.09720:ra=-0.22500:gr=0.28755:gg=0.96525:gb=0.09720:ga=-0.22500:br=0.28755:bg=0.96525:bb=0.09720:ba=-0.22500"
+  },
+  {
+   "name": "filtro sepia",
+   "clip": {
+    "id": "f_sepia",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_sepia",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "sepia"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "sepia",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.393,
+     0.769,
+     0.189,
+     0.0
+    ],
+    [
+     0.349,
+     0.686,
+     0.168,
+     0.0
+    ],
+    [
+     0.272,
+     0.534,
+     0.131,
+     0.0
+    ]
+   ],
+   "adjustment": [
+    [
+     0.393,
+     0.769,
+     0.189,
+     0.0
+    ],
+    [
+     0.349,
+     0.686,
+     0.168,
+     0.0
+    ],
+    [
+     0.272,
+     0.534,
+     0.131,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.39300:rg=0.76900:rb=0.18900:gr=0.34900:gg=0.68600:gb=0.16800:br=0.27200:bg=0.53400:bb=0.13100"
+  },
+  {
+   "name": "filtro vintage",
+   "clip": {
+    "id": "f_vintage",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_vintage",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "vintage"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "vintage",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.7003309720000002,
+     0.4596197650000001,
+     0.100367091,
+     -0.050000000000000044
+    ],
+    [
+     0.19890697200000002,
+     0.9107517650000001,
+     0.09205109100000002,
+     -0.05000000000000004
+    ],
+    [
+     0.16841497200000002,
+     0.36655976500000004,
+     0.5613990910000001,
+     -0.050000000000000044
+    ]
+   ],
+   "adjustment": [
+    [
+     0.7003309720000002,
+     0.4596197650000001,
+     0.100367091,
+     -0.050000000000000044
+    ],
+    [
+     0.19890697200000002,
+     0.9107517650000001,
+     0.09205109100000002,
+     -0.05000000000000004
+    ],
+    [
+     0.16841497200000002,
+     0.36655976500000004,
+     0.5613990910000001,
+     -0.050000000000000044
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.70033:rg=0.45962:rb=0.10037:ra=-0.05000:gr=0.19891:gg=0.91075:gb=0.09205:ga=-0.05000:br=0.16841:bg=0.36656:bb=0.56140:ba=-0.05000"
+  },
+  {
+   "name": "filtro faded",
+   "clip": {
+    "id": "f_faded",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_faded",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "faded"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "faded",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.6673392,
+     0.11325600000000001,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.746856,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.11325600000000001,
+     0.6450048,
+     0.16399999999999998
+    ]
+   ],
+   "adjustment": [
+    [
+     0.6673392,
+     0.11325600000000001,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.746856,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.11325600000000001,
+     0.6450048,
+     0.16399999999999998
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.66734:rg=0.11326:rb=0.01140:ra=0.16400:gr=0.03374:gg=0.74686:gb=0.01140:ga=0.16400:br=0.03374:bg=0.11326:bb=0.64500:ba=0.16400"
+  },
+  {
+   "name": "filtro matte",
+   "clip": {
+    "id": "f_matte",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_matte",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "matte"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "matte",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.874,
+     0.0,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.874,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.0,
+     0.874,
+     0.10300000000000002
+    ]
+   ],
+   "adjustment": [
+    [
+     0.874,
+     0.0,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.874,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.0,
+     0.874,
+     0.10300000000000002
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.87400:rg=0.00000:rb=0.00000:ra=0.10300:gr=0.00000:gg=0.87400:gb=0.00000:ga=0.10300:br=0.00000:bg=0.00000:bb=0.87400:ba=0.10300"
+  },
+  {
+   "name": "filtro cinematic",
+   "clip": {
+    "id": "f_cinematic",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_cinematic",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "cinematic"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "cinematic",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.9331031,
+     0.11347049999999996,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     1.0127705,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     0.11347049999999996,
+     0.9107263999999999,
+     -0.06899999999999996
+    ]
+   ],
+   "adjustment": [
+    [
+     0.9331031,
+     0.11347049999999996,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     1.0127705,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     0.11347049999999996,
+     0.9107263999999999,
+     -0.06899999999999996
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.93310:rg=0.11347:rb=0.01143:ra=-0.06900:gr=0.03380:gg=1.01277:gb=0.01143:ga=-0.06900:br=0.03380:bg=0.11347:bb=0.91073:ba=-0.06900"
+  },
+  {
+   "name": "filtro teal_orange",
+   "clip": {
+    "id": "f_teal_orange",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_teal_orange",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "teal_orange"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "teal_orange",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     1.2096000000000002,
+     -0.0864,
+     -0.0432,
+     -0.040000000000000036
+    ],
+    [
+     -0.0432,
+     1.1232000000000002,
+     0.0,
+     -0.040000000000000036
+    ],
+    [
+     -0.15120000000000003,
+     0.0648,
+     1.1664,
+     -0.040000000000000036
+    ]
+   ],
+   "adjustment": [
+    [
+     1.2096000000000002,
+     -0.0864,
+     -0.0432,
+     -0.040000000000000036
+    ],
+    [
+     -0.0432,
+     1.1232000000000002,
+     0.0,
+     -0.040000000000000036
+    ],
+    [
+     -0.15120000000000003,
+     0.0648,
+     1.1664,
+     -0.040000000000000036
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.20960:rg=-0.08640:rb=-0.04320:ra=-0.04000:gr=-0.04320:gg=1.12320:gb=0.00000:ga=-0.04000:br=-0.15120:bg=0.06480:bb=1.16640:ba=-0.04000"
+  },
+  {
+   "name": "filtro night",
+   "clip": {
+    "id": "f_night",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_night",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "night"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "night",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.48698624999999995,
+     0.15497625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.66072625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.15497625,
+     0.674696,
+     0.0
+    ]
+   ],
+   "adjustment": [
+    [
+     0.48698624999999995,
+     0.15497625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.66072625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.15497625,
+     0.674696,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.48699:rg=0.15498:rb=0.02020:gr=0.04074:gg=0.66073:gb=0.02020:br=0.04074:bg=0.15498:bb=0.67470"
+  },
+  {
+   "name": "filtro matrix",
+   "clip": {
+    "id": "f_matrix",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_matrix",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "matrix"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "matrix",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.935,
+     0.0,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     1.2100000000000002,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     0.0,
+     0.935,
+     -0.050000000000000044
+    ]
+   ],
+   "adjustment": [
+    [
+     0.935,
+     0.0,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     1.2100000000000002,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     0.0,
+     0.935,
+     -0.050000000000000044
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.93500:rg=0.00000:rb=0.00000:ra=-0.05000:gr=0.00000:gg=1.21000:gb=0.00000:ga=-0.05000:br=0.00000:bg=0.00000:bb=0.93500:ba=-0.05000"
+  },
+  {
+   "name": "filtro contrast",
+   "clip": {
+    "id": "f_contrast",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_contrast",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "contrast"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "contrast",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     1.4562450000000005,
+     -0.09652500000000001,
+     -0.009720000000000017,
+     -0.17500000000000007
+    ],
+    [
+     -0.02875500000000002,
+     1.3884750000000001,
+     -0.009720000000000017,
+     -0.17500000000000004
+    ],
+    [
+     -0.02875500000000002,
+     -0.09652500000000001,
+     1.4752800000000004,
+     -0.17500000000000007
+    ]
+   ],
+   "adjustment": [
+    [
+     1.4562450000000005,
+     -0.09652500000000001,
+     -0.009720000000000017,
+     -0.17500000000000007
+    ],
+    [
+     -0.02875500000000002,
+     1.3884750000000001,
+     -0.009720000000000017,
+     -0.17500000000000004
+    ],
+    [
+     -0.02875500000000002,
+     -0.09652500000000001,
+     1.4752800000000004,
+     -0.17500000000000007
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.45625:rg=-0.09653:rb=-0.00972:ra=-0.17500:gr=-0.02876:gg=1.38848:gb=-0.00972:ga=-0.17500:br=-0.02876:bg=-0.09653:bb=1.47528:ba=-0.17500"
+  },
+  {
+   "name": "filtro saturated",
+   "clip": {
+    "id": "f_saturated",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_saturated",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "saturated"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "saturated",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     1.5474780000000004,
+     -0.42471000000000003,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     1.24929,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     -0.42471000000000003,
+     1.6312320000000002,
+     -0.040000000000000036
+    ]
+   ],
+   "adjustment": [
+    [
+     1.5474780000000004,
+     -0.42471000000000003,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     1.24929,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     -0.42471000000000003,
+     1.6312320000000002,
+     -0.040000000000000036
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.54748:rg=-0.42471:rb=-0.04277:ra=-0.04000:gr=-0.12652:gg=1.24929:gb=-0.04277:ga=-0.04000:br=-0.12652:bg=-0.42471:bb=1.63123:ba=-0.04000"
+  },
+  {
+   "name": "filtro warm",
+   "clip": {
+    "id": "f_warm",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_warm",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "warm"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "warm",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     1.1649960000000004,
+     -0.07150000000000001,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     1.0285,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     -0.07150000000000001,
+     0.9616640000000002,
+     0.0
+    ]
+   ],
+   "adjustment": [
+    [
+     1.1649960000000004,
+     -0.07150000000000001,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     1.0285,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     -0.07150000000000001,
+     0.9616640000000002,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.16500:rg=-0.07150:rb=-0.00634:gr=-0.02300:gg=1.02850:gb=-0.00634:br=-0.02300:bg=-0.07150:bb=0.96166"
+  },
+  {
+   "name": "filtro golden",
+   "clip": {
+    "id": "f_golden",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_golden",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "golden"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "golden",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     1.296288,
+     -0.14300000000000002,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     1.057,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     -0.14300000000000002,
+     0.94848,
+     0.0
+    ]
+   ],
+   "adjustment": [
+    [
+     1.296288,
+     -0.14300000000000002,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     1.057,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     -0.14300000000000002,
+     0.94848,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.29629:rg=-0.14300:rb=-0.01152:gr=-0.04771:gg=1.05700:gb=-0.01152:br=-0.04771:bg=-0.14300:bb=0.94848"
+  },
+  {
+   "name": "filtro cool",
+   "clip": {
+    "id": "f_cool",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "f_cool",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "cool"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "cool",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.8291700000000001,
+     0.07150000000000001,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.9715,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.07150000000000001,
+     0.9979200000000001,
+     0.0
+    ]
+   ],
+   "adjustment": [
+    [
+     0.8291700000000001,
+     0.07150000000000001,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.9715,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.07150000000000001,
+     0.9979200000000001,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.82917:rg=0.07150:rb=0.00792:gr=0.01917:gg=0.97150:gb=0.00792:br=0.01917:bg=0.07150:bb=0.99792"
+  },
+  {
+   "name": "look antiguo",
+   "clip": {
+    "id": "l1",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "l1",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "vintage",
+    "effects": null,
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "vintage",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.7003309720000002,
+     0.4596197650000001,
+     0.100367091,
+     -0.050000000000000044
+    ],
+    [
+     0.19890697200000002,
+     0.9107517650000001,
+     0.09205109100000002,
+     -0.05000000000000004
+    ],
+    [
+     0.16841497200000002,
+     0.36655976500000004,
+     0.5613990910000001,
+     -0.050000000000000044
+    ]
+   ],
+   "adjustment": [
+    [
+     0.7003309720000002,
+     0.4596197650000001,
+     0.100367091,
+     -0.050000000000000044
+    ],
+    [
+     0.19890697200000002,
+     0.9107517650000001,
+     0.09205109100000002,
+     -0.05000000000000004
+    ],
+    [
+     0.16841497200000002,
+     0.36655976500000004,
+     0.5613990910000001,
+     -0.050000000000000044
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.70033:rg=0.45962:rb=0.10037:ra=-0.05000:gr=0.19891:gg=0.91075:gb=0.09205:ga=-0.05000:br=0.16841:bg=0.36656:bb=0.56140:ba=-0.05000"
+  },
+  {
+   "name": "look none, vacío y desconocido",
+   "clip": {
+    "id": "l2",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "l2",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [],
+   "stack": null,
+   "adjustment": null,
+   "ffmpeg": ""
+  },
+  {
+   "name": "look vacío",
+   "clip": {
+    "id": "l3",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "l3",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "",
+    "effects": null,
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [],
+   "stack": null,
+   "adjustment": null,
+   "ffmpeg": ""
+  },
+  {
+   "name": "look desconocido",
+   "clip": {
+    "id": "l4",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "l4",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "sepiaa",
+    "effects": null,
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [],
+   "stack": null,
+   "adjustment": null,
+   "ffmpeg": ""
+  },
+  {
+   "name": "lista vacía manda sobre el look",
+   "clip": {
+    "id": "l5",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "l5",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "noir",
+    "effects": null,
+    "filters": [],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [],
+   "stack": null,
+   "adjustment": null,
+   "ffmpeg": ""
+  },
+  {
+   "name": "lista y look: manda la lista",
+   "clip": {
+    "id": "l6",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "l6",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "noir",
+    "effects": null,
+    "filters": [
+     {
+      "id": "warm",
+      "amount": 0.5
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "warm",
+     "amount": 0.5
+    }
+   ],
+   "stack": [
+    [
+     1.0824980000000002,
+     -0.035750000000000004,
+     -0.0031680000000000054,
+     0.0
+    ],
+    [
+     -0.011502000000000009,
+     1.01425,
+     -0.0031680000000000054,
+     0.0
+    ],
+    [
+     -0.011502000000000009,
+     -0.035750000000000004,
+     0.9808320000000001,
+     0.0
+    ]
+   ],
+   "adjustment": [
+    [
+     1.0824980000000002,
+     -0.035750000000000004,
+     -0.0031680000000000054,
+     0.0
+    ],
+    [
+     -0.011502000000000009,
+     1.01425,
+     -0.0031680000000000054,
+     0.0
+    ],
+    [
+     -0.011502000000000009,
+     -0.035750000000000004,
+     0.9808320000000001,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.08250:rg=-0.03575:rb=-0.00317:gr=-0.01150:gg=1.01425:gb=-0.00317:br=-0.01150:bg=-0.03575:bb=0.98083"
+  },
+  {
+   "name": "el desvaído de Edu",
+   "clip": {
+    "id": "l7",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "l7",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "faded",
+      "amount": 1
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "faded",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.6673392,
+     0.11325600000000001,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.746856,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.11325600000000001,
+     0.6450048,
+     0.16399999999999998
+    ]
+   ],
+   "adjustment": [
+    [
+     0.6673392,
+     0.11325600000000001,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.746856,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.11325600000000001,
+     0.6450048,
+     0.16399999999999998
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.66734:rg=0.11326:rb=0.01140:ra=0.16400:gr=0.03374:gg=0.74686:gb=0.01140:ga=0.16400:br=0.03374:bg=0.11326:bb=0.64500:ba=0.16400"
+  },
+  {
+   "name": "pila con intensidades raras",
+   "clip": {
+    "id": "p1",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "p1",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "noir",
+      "amount": 0.5
+     },
+     {
+      "id": "warm"
+     },
+     {
+      "id": "raro"
+     },
+     {
+      "id": 5
+     },
+     "x",
+     {
+      "amount": 0.4
+     },
+     {
+      "id": "cool",
+      "amount": "0.25"
+     },
+     {
+      "id": "bw",
+      "amount": null
+     },
+     {
+      "id": "sepia",
+      "amount": "nan"
+     },
+     {
+      "id": "matrix",
+      "amount": true
+     },
+     {
+      "id": "golden",
+      "amount": 2
+     },
+     {
+      "id": "teal_orange",
+      "amount": -1
+     },
+     {
+      "id": "night",
+      "amount": 5e-05
+     },
+     {
+      "id": "matte",
+      "amount": "abc"
+     },
+     {
+      "id": "contrast",
+      "amount": " 1e-3 "
+     },
+     {
+      "id": "saturated",
+      "amount": "inf"
+     },
+     {
+      "id": null
+     },
+     {
+      "id": "BW"
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "noir",
+     "amount": 0.5
+    },
+    {
+     "id": "warm",
+     "amount": 1.0
+    },
+    {
+     "id": "cool",
+     "amount": 0.25
+    },
+    {
+     "id": "bw",
+     "amount": 1.0
+    },
+    {
+     "id": "sepia",
+     "amount": 0.0
+    },
+    {
+     "id": "matrix",
+     "amount": 1.0
+    },
+    {
+     "id": "golden",
+     "amount": 1.0
+    },
+    {
+     "id": "teal_orange",
+     "amount": 0.0
+    },
+    {
+     "id": "night",
+     "amount": 5e-05
+    },
+    {
+     "id": "matte",
+     "amount": 1.0
+    },
+    {
+     "id": "contrast",
+     "amount": 0.001
+    },
+    {
+     "id": "saturated",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.233660171493793,
+     0.7679474359971907,
+     0.07418588530262732,
+     -0.08921008636583408
+    ],
+    [
+     0.30694511602468333,
+     1.0088057084614321,
+     0.09745347281923776,
+     -0.11097611989811962
+    ],
+    [
+     0.09897432749107538,
+     0.32528898930614986,
+     0.03142383256939725,
+     -0.001733519056984878
+    ]
+   ],
+   "adjustment": [
+    [
+     0.23366017149379303,
+     0.7679474359971907,
+     0.07418588530262732,
+     -0.08921008636583408
+    ],
+    [
+     0.30694511602468333,
+     1.0088057084614321,
+     0.09745347281923776,
+     -0.11097611989811962
+    ],
+    [
+     0.09897432749107538,
+     0.32528898930614986,
+     0.03142383256939729,
+     -0.001733519056984878
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.23366:rg=0.76795:rb=0.07419:ra=-0.08921:gr=0.30695:gg=1.00881:gb=0.09745:ga=-0.11098:br=0.09897:bg=0.32529:bb=0.03142:ba=-0.00173"
+  },
+  {
+   "name": "pila sin intensidad",
+   "clip": {
+    "id": "p2",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "p2",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "noir",
+      "amount": 0
+     },
+     {
+      "id": "warm",
+      "amount": 0.0001
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "noir",
+     "amount": 0.0
+    },
+    {
+     "id": "warm",
+     "amount": 0.0001
+    }
+   ],
+   "stack": null,
+   "adjustment": null,
+   "ffmpeg": ""
+  },
+  {
+   "name": "pila de dos al revés",
+   "clip": {
+    "id": "p3",
+    "track_id": "V1",
+    "kind": "video",
+    "asset_kind": "clips",
+    "asset_id": "p3",
+    "filename": "a.mp4",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "warm",
+      "amount": 0.7
+     },
+     {
+      "id": "noir",
+      "amount": 0.3
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "warm",
+     "amount": 0.7
+    },
+    {
+     "id": "noir",
+     "amount": 0.3
+    }
+   ],
+   "stack": [
+    [
+     0.8719438800000001,
+     0.25454,
+     0.023605919999999996,
+     -0.0675
+    ],
+    [
+     0.07982388000000003,
+     1.0035399999999999,
+     0.023605919999999996,
+     -0.0675
+    ],
+    [
+     0.07982388000000003,
+     0.25454,
+     0.7079259200000002,
+     -0.0675
+    ]
+   ],
+   "adjustment": [
+    [
+     0.8719438800000001,
+     0.25454,
+     0.023605919999999996,
+     -0.0675
+    ],
+    [
+     0.07982388000000003,
+     1.0035399999999999,
+     0.023605919999999996,
+     -0.0675
+    ],
+    [
+     0.07982388000000003,
+     0.25454,
+     0.7079259200000002,
+     -0.0675
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.87194:rg=0.25454:rb=0.02361:ra=-0.06750:gr=0.07982:gg=1.00354:gb=0.02361:ga=-0.06750:br=0.07982:bg=0.25454:bb=0.70793:ba=-0.06750"
+  },
+  {
+   "name": "ajuste: brillo, contraste y saturación",
+   "clip": {
+    "id": "a1",
+    "track_id": "V1",
+    "kind": "adjustment",
+    "asset_kind": "shape",
+    "asset_id": "a1",
+    "filename": "",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": {
+     "brightness": 0.2,
+     "contrast": -0.3,
+     "saturation": 0.5
+    },
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [],
+   "stack": null,
+   "adjustment": [
+    [
+     1.1705400000000001,
+     -0.3003,
+     -0.03023999999999999,
+     0.15000000000000008
+    ],
+    [
+     -0.08946000000000001,
+     0.9597,
+     -0.03023999999999999,
+     0.15000000000000005
+    ],
+    [
+     -0.08946000000000001,
+     -0.3003,
+     1.2297600000000002,
+     0.15000000000000005
+    ]
+   ],
+   "ffmpeg": ""
+  },
+  {
+   "name": "ajuste: fuera de rango, texto, NaN y bool",
+   "clip": {
+    "id": "a2",
+    "track_id": "V1",
+    "kind": "adjustment",
+    "asset_kind": "shape",
+    "asset_id": "a2",
+    "filename": "",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": {
+     "brightness": "nan",
+     "contrast": 9,
+     "saturation": true
+    },
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [],
+   "stack": null,
+   "adjustment": [
+    [
+     1.3402500000000002,
+     -0.53625,
+     -0.05399999999999999,
+     -0.25
+    ],
+    [
+     -0.15975,
+     0.9637499999999999,
+     -0.05399999999999999,
+     -0.24999999999999997
+    ],
+    [
+     -0.15975,
+     -0.53625,
+     1.4460000000000002,
+     -0.25000000000000006
+    ]
+   ],
+   "ffmpeg": ""
+  },
+  {
+   "name": "ajuste: inf, vacío, lista y texto no numérico",
+   "clip": {
+    "id": "a3",
+    "track_id": "V1",
+    "kind": "adjustment",
+    "asset_kind": "shape",
+    "asset_id": "a3",
+    "filename": "",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": {
+     "brightness": "-inf",
+     "contrast": "",
+     "saturation": [
+      1
+     ],
+     "exposure": "x"
+    },
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [],
+   "stack": null,
+   "adjustment": [
+    [
+     0.5,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.5,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.5,
+     0.0
+    ]
+   ],
+   "ffmpeg": ""
+  },
+  {
+   "name": "ajuste: filtros, ajustes de color y opacidad 0,5",
+   "clip": {
+    "id": "a4",
+    "track_id": "V1",
+    "kind": "adjustment",
+    "asset_kind": "shape",
+    "asset_id": "a4",
+    "filename": "",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": {
+     "brightness": -0.1,
+     "exposure": 0.3,
+     "hue": 10,
+     "temperature": -0.4
+    },
+    "filters": [
+     {
+      "id": "cinematic",
+      "amount": 0.8
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": 0.5,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "cinematic",
+     "amount": 0.8
+    }
+   ],
+   "stack": [
+    [
+     0.94648248,
+     0.09077639999999998,
+     0.009141120000000004,
+     -0.05519999999999997
+    ],
+    [
+     0.027042480000000004,
+     1.0102164,
+     0.009141120000000004,
+     -0.05519999999999997
+    ],
+    [
+     0.027042480000000004,
+     0.09077639999999998,
+     0.9285811199999999,
+     -0.05519999999999997
+    ]
+   ],
+   "adjustment": [
+    [
+     0.9637030520103294,
+     -0.010275923698273539,
+     0.0933689728323092,
+     -0.028844748454863275
+    ],
+    [
+     0.028167627525722237,
+     1.0695773781290279,
+     -0.02120081060414705,
+     -0.030414028637990517
+    ],
+    [
+     -0.04686829063964994,
+     0.12316725131268802,
+     1.0506648044517084,
+     -0.03307377660061734
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.94648:rg=0.09078:rb=0.00914:ra=-0.05520:gr=0.02704:gg=1.01022:gb=0.00914:ga=-0.05520:br=0.02704:bg=0.09078:bb=0.92858:ba=-0.05520"
+  },
+  {
+   "name": "ajuste: opacidad 0 (identidad)",
+   "clip": {
+    "id": "a5",
+    "track_id": "V1",
+    "kind": "adjustment",
+    "asset_kind": "shape",
+    "asset_id": "a5",
+    "filename": "",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": {
+     "contrast": 0.4
+    },
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": 0.0,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [],
+   "stack": null,
+   "adjustment": null,
+   "ffmpeg": ""
+  },
+  {
+   "name": "ajuste: opacidad fuera de rango",
+   "clip": {
+    "id": "a6",
+    "track_id": "V1",
+    "kind": "adjustment",
+    "asset_kind": "shape",
+    "asset_id": "a6",
+    "filename": "",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "bw",
+    "effects": null,
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": 3.0,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "bw",
+     "amount": 1.0
+    }
+   ],
+   "stack": [
+    [
+     0.21299999999999997,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.07199999999999995,
+     0.0
+    ]
+   ],
+   "adjustment": [
+    [
+     0.21299999999999997,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.07199999999999995,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.21300:rg=0.71500:rb=0.07200:gr=0.21300:gg=0.71500:gb=0.07200:br=0.21300:bg=0.71500:bb=0.07200"
+  },
+  {
+   "name": "ajuste: sin nada",
+   "clip": {
+    "id": "a7",
+    "track_id": "V1",
+    "kind": "adjustment",
+    "asset_kind": "shape",
+    "asset_id": "a7",
+    "filename": "",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [],
+   "stack": null,
+   "adjustment": null,
+   "ffmpeg": ""
+  },
+  {
+   "name": "ajuste: casi la identidad",
+   "clip": {
+    "id": "a8",
+    "track_id": "V1",
+    "kind": "adjustment",
+    "asset_kind": "shape",
+    "asset_id": "a8",
+    "filename": "",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": {
+     "brightness": 1e-12
+    },
+    "filters": null,
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [],
+   "stack": null,
+   "adjustment": null,
+   "ffmpeg": ""
+  },
+  {
+   "name": "ajuste: efectos nulos",
+   "clip": {
+    "id": "a9",
+    "track_id": "V1",
+    "kind": "adjustment",
+    "asset_kind": "shape",
+    "asset_id": "a9",
+    "filename": "",
+    "name": null,
+    "start": 0.0,
+    "in_point": 0.0,
+    "out_point": 4.0,
+    "source_duration": 10.0,
+    "ref_segment": null,
+    "volume": 1.0,
+    "media_version": null,
+    "reframe": null,
+    "text": null,
+    "style": null,
+    "layout": "fill",
+    "transform": null,
+    "frame": "full",
+    "appear": "none",
+    "exit": "none",
+    "look": "none",
+    "effects": null,
+    "filters": [
+     {
+      "id": "bw",
+      "amount": 0.4
+     }
+    ],
+    "audio_fx": null,
+    "muted": false,
+    "speed": 1.0,
+    "keep_pitch": true,
+    "reverse": false,
+    "speed_curve": null,
+    "opacity": null,
+    "flip_h": false,
+    "flip_v": false,
+    "blend_mode": null,
+    "disabled": false,
+    "beats": null,
+    "loop": null,
+    "words": [],
+    "origin": null,
+    "text_role": null,
+    "shape": null,
+    "masks": [],
+    "bg_removal": null,
+    "anim": null,
+    "vfx": null,
+    "animations": null,
+    "keyframes": null,
+    "asset_scope": "project",
+    "description": null,
+    "note": null,
+    "note_source": null,
+    "dup_of": null,
+    "composition_id": null
+   },
+   "filters": [
+    {
+     "id": "bw",
+     "amount": 0.4
+    }
+   ],
+   "stack": [
+    [
+     0.6852,
+     0.286,
+     0.0288,
+     0.0
+    ],
+    [
+     0.0852,
+     0.886,
+     0.0288,
+     0.0
+    ],
+    [
+     0.0852,
+     0.286,
+     0.6288,
+     0.0
+    ]
+   ],
+   "adjustment": [
+    [
+     0.6852,
+     0.286,
+     0.0288,
+     0.0
+    ],
+    [
+     0.0852,
+     0.886,
+     0.0288,
+     0.0
+    ],
+    [
+     0.0852,
+     0.286,
+     0.6288,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.68520:rg=0.28600:rb=0.02880:gr=0.08520:gg=0.88600:gb=0.02880:br=0.08520:bg=0.28600:bb=0.62880"
+  }
+ ],
+ "filter_matrix": [
+  {
+   "id": "bw",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "bw",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "bw",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "bw",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "bw",
+   "k": 1e-05,
+   "matrix": [
+    [
+     0.99999213,
+     7.15e-06,
+     7.2e-07,
+     0.0
+    ],
+    [
+     2.13e-06,
+     0.99999715,
+     7.2e-07,
+     0.0
+    ],
+    [
+     2.13e-06,
+     7.15e-06,
+     0.99999072,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.99999:rg=0.00001:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00001:bb=0.99999"
+  },
+  {
+   "id": "bw",
+   "k": 0.3,
+   "matrix": [
+    [
+     0.7639,
+     0.2145,
+     0.021599999999999998,
+     0.0
+    ],
+    [
+     0.0639,
+     0.9145,
+     0.021599999999999998,
+     0.0
+    ],
+    [
+     0.0639,
+     0.2145,
+     0.7216,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.76390:rg=0.21450:rb=0.02160:gr=0.06390:gg=0.91450:gb=0.02160:br=0.06390:bg=0.21450:bb=0.72160"
+  },
+  {
+   "id": "bw",
+   "k": 0.5,
+   "matrix": [
+    [
+     0.6065,
+     0.3575,
+     0.036,
+     0.0
+    ],
+    [
+     0.1065,
+     0.8574999999999999,
+     0.036,
+     0.0
+    ],
+    [
+     0.1065,
+     0.3575,
+     0.536,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.60650:rg=0.35750:rb=0.03600:gr=0.10650:gg=0.85750:gb=0.03600:br=0.10650:bg=0.35750:bb=0.53600"
+  },
+  {
+   "id": "bw",
+   "k": 0.75,
+   "matrix": [
+    [
+     0.40974999999999995,
+     0.53625,
+     0.05399999999999999,
+     0.0
+    ],
+    [
+     0.15975,
+     0.78625,
+     0.05399999999999999,
+     0.0
+    ],
+    [
+     0.15975,
+     0.53625,
+     0.30399999999999994,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.40975:rg=0.53625:rb=0.05400:gr=0.15975:gg=0.78625:gb=0.05400:br=0.15975:bg=0.53625:bb=0.30400"
+  },
+  {
+   "id": "bw",
+   "k": 1.0,
+   "matrix": [
+    [
+     0.21299999999999997,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.07199999999999995,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.21300:rg=0.71500:rb=0.07200:gr=0.21300:gg=0.71500:gb=0.07200:br=0.21300:bg=0.71500:bb=0.07200"
+  },
+  {
+   "id": "bw",
+   "k": 2.0,
+   "matrix": [
+    [
+     0.21299999999999997,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.07199999999999995,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.21300:rg=0.71500:rb=0.07200:gr=0.21300:gg=0.71500:gb=0.07200:br=0.21300:bg=0.71500:bb=0.07200"
+  },
+  {
+   "id": "bw",
+   "k": "inf",
+   "matrix": [
+    [
+     0.21299999999999997,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.07199999999999995,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.21300:rg=0.71500:rb=0.07200:gr=0.21300:gg=0.71500:gb=0.07200:br=0.21300:bg=0.71500:bb=0.07200"
+  },
+  {
+   "id": "noir",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "noir",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "noir",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "noir",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "noir",
+   "k": 1e-05,
+   "matrix": [
+    [
+     0.9999928755,
+     9.652500000000001e-06,
+     9.72e-07,
+     -2.25e-06
+    ],
+    [
+     2.8755000000000007e-06,
+     0.9999996525,
+     9.72e-07,
+     -2.25e-06
+    ],
+    [
+     2.8755000000000007e-06,
+     9.652500000000001e-06,
+     0.999990972,
+     -2.25e-06
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.99999:rg=0.00001:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00001:bb=0.99999"
+  },
+  {
+   "id": "noir",
+   "k": 0.3,
+   "matrix": [
+    [
+     0.786265,
+     0.289575,
+     0.02916,
+     -0.0675
+    ],
+    [
+     0.08626500000000001,
+     0.989575,
+     0.02916,
+     -0.0675
+    ],
+    [
+     0.08626500000000001,
+     0.289575,
+     0.72916,
+     -0.0675
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.78626:rg=0.28958:rb=0.02916:ra=-0.06750:gr=0.08627:gg=0.98957:gb=0.02916:ga=-0.06750:br=0.08627:bg=0.28958:bb=0.72916:ba=-0.06750"
+  },
+  {
+   "id": "noir",
+   "k": 0.5,
+   "matrix": [
+    [
+     0.643775,
+     0.482625,
+     0.0486,
+     -0.1125
+    ],
+    [
+     0.14377500000000001,
+     0.9826250000000001,
+     0.0486,
+     -0.1125
+    ],
+    [
+     0.14377500000000001,
+     0.482625,
+     0.5486,
+     -0.1125
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.64377:rg=0.48263:rb=0.04860:ra=-0.11250:gr=0.14378:gg=0.98263:gb=0.04860:ga=-0.11250:br=0.14378:bg=0.48263:bb=0.54860:ba=-0.11250"
+  },
+  {
+   "id": "noir",
+   "k": 0.75,
+   "matrix": [
+    [
+     0.4656625,
+     0.7239375,
+     0.07289999999999999,
+     -0.16875
+    ],
+    [
+     0.21566250000000003,
+     0.9739375,
+     0.07289999999999999,
+     -0.16875
+    ],
+    [
+     0.21566250000000003,
+     0.7239375,
+     0.32289999999999996,
+     -0.16875
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.46566:rg=0.72394:rb=0.07290:ra=-0.16875:gr=0.21566:gg=0.97394:gb=0.07290:ga=-0.16875:br=0.21566:bg=0.72394:bb=0.32290:ba=-0.16875"
+  },
+  {
+   "id": "noir",
+   "k": 1.0,
+   "matrix": [
+    [
+     0.28755,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.09719999999999995,
+     -0.225
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.28755:rg=0.96525:rb=0.09720:ra=-0.22500:gr=0.28755:gg=0.96525:gb=0.09720:ga=-0.22500:br=0.28755:bg=0.96525:bb=0.09720:ba=-0.22500"
+  },
+  {
+   "id": "noir",
+   "k": 2.0,
+   "matrix": [
+    [
+     0.28755,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.09719999999999995,
+     -0.225
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.28755:rg=0.96525:rb=0.09720:ra=-0.22500:gr=0.28755:gg=0.96525:gb=0.09720:ga=-0.22500:br=0.28755:bg=0.96525:bb=0.09720:ba=-0.22500"
+  },
+  {
+   "id": "noir",
+   "k": "inf",
+   "matrix": [
+    [
+     0.28755,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.09719999999999995,
+     -0.225
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.28755:rg=0.96525:rb=0.09720:ra=-0.22500:gr=0.28755:gg=0.96525:gb=0.09720:ga=-0.22500:br=0.28755:bg=0.96525:bb=0.09720:ba=-0.22500"
+  },
+  {
+   "id": "sepia",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "sepia",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "sepia",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "sepia",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "sepia",
+   "k": 1e-05,
+   "matrix": [
+    [
+     0.99999393,
+     7.690000000000001e-06,
+     1.8900000000000001e-06,
+     0.0
+    ],
+    [
+     3.49e-06,
+     0.99999686,
+     1.6800000000000002e-06,
+     0.0
+    ],
+    [
+     2.7200000000000002e-06,
+     5.3400000000000005e-06,
+     0.99999131,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.99999:rg=0.00001:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00001:bb=0.99999"
+  },
+  {
+   "id": "sepia",
+   "k": 0.3,
+   "matrix": [
+    [
+     0.8179000000000001,
+     0.2307,
+     0.0567,
+     0.0
+    ],
+    [
+     0.10469999999999999,
+     0.9058,
+     0.0504,
+     0.0
+    ],
+    [
+     0.0816,
+     0.1602,
+     0.7393000000000001,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.81790:rg=0.23070:rb=0.05670:gr=0.10470:gg=0.90580:gb=0.05040:br=0.08160:bg=0.16020:bb=0.73930"
+  },
+  {
+   "id": "sepia",
+   "k": 0.5,
+   "matrix": [
+    [
+     0.6965,
+     0.3845,
+     0.0945,
+     0.0
+    ],
+    [
+     0.1745,
+     0.843,
+     0.084,
+     0.0
+    ],
+    [
+     0.136,
+     0.267,
+     0.5655,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.69650:rg=0.38450:rb=0.09450:gr=0.17450:gg=0.84300:gb=0.08400:br=0.13600:bg=0.26700:bb=0.56550"
+  },
+  {
+   "id": "sepia",
+   "k": 0.75,
+   "matrix": [
+    [
+     0.5447500000000001,
+     0.57675,
+     0.14175,
+     0.0
+    ],
+    [
+     0.26175,
+     0.7645000000000001,
+     0.126,
+     0.0
+    ],
+    [
+     0.20400000000000001,
+     0.4005,
+     0.34824999999999995,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.54475:rg=0.57675:rb=0.14175:gr=0.26175:gg=0.76450:gb=0.12600:br=0.20400:bg=0.40050:bb=0.34825"
+  },
+  {
+   "id": "sepia",
+   "k": 1.0,
+   "matrix": [
+    [
+     0.393,
+     0.769,
+     0.189,
+     0.0
+    ],
+    [
+     0.349,
+     0.686,
+     0.168,
+     0.0
+    ],
+    [
+     0.272,
+     0.534,
+     0.131,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.39300:rg=0.76900:rb=0.18900:gr=0.34900:gg=0.68600:gb=0.16800:br=0.27200:bg=0.53400:bb=0.13100"
+  },
+  {
+   "id": "sepia",
+   "k": 2.0,
+   "matrix": [
+    [
+     0.393,
+     0.769,
+     0.189,
+     0.0
+    ],
+    [
+     0.349,
+     0.686,
+     0.168,
+     0.0
+    ],
+    [
+     0.272,
+     0.534,
+     0.131,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.39300:rg=0.76900:rb=0.18900:gr=0.34900:gg=0.68600:gb=0.16800:br=0.27200:bg=0.53400:bb=0.13100"
+  },
+  {
+   "id": "sepia",
+   "k": "inf",
+   "matrix": [
+    [
+     0.393,
+     0.769,
+     0.189,
+     0.0
+    ],
+    [
+     0.349,
+     0.686,
+     0.168,
+     0.0
+    ],
+    [
+     0.272,
+     0.534,
+     0.131,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.39300:rg=0.76900:rb=0.18900:gr=0.34900:gg=0.68600:gb=0.16800:br=0.27200:bg=0.53400:bb=0.13100"
+  },
+  {
+   "id": "vintage",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "vintage",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "vintage",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "vintage",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "vintage",
+   "k": 1e-05,
+   "matrix": [
+    [
+     0.99999700330972,
+     4.5961976500000016e-06,
+     1.0036709100000002e-06,
+     -5.000000000000005e-07
+    ],
+    [
+     1.9890697200000004e-06,
+     0.99999910751765,
+     9.205109100000002e-07,
+     -5.000000000000004e-07
+    ],
+    [
+     1.6841497200000005e-06,
+     3.6655976500000007e-06,
+     0.99999561399091,
+     -5.000000000000005e-07
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "vintage",
+   "k": 0.3,
+   "matrix": [
+    [
+     0.9100992916,
+     0.13788592950000003,
+     0.0301101273,
+     -0.015000000000000013
+    ],
+    [
+     0.059672091600000005,
+     0.9732255295000001,
+     0.027615327300000003,
+     -0.01500000000000001
+    ],
+    [
+     0.050524491600000006,
+     0.1099679295,
+     0.8684197273,
+     -0.015000000000000013
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.91010:rg=0.13789:rb=0.03011:ra=-0.01500:gr=0.05967:gg=0.97323:gb=0.02762:ga=-0.01500:br=0.05052:bg=0.10997:bb=0.86842:ba=-0.01500"
+  },
+  {
+   "id": "vintage",
+   "k": 0.5,
+   "matrix": [
+    [
+     0.8501654860000001,
+     0.22980988250000006,
+     0.0501835455,
+     -0.025000000000000022
+    ],
+    [
+     0.09945348600000001,
+     0.9553758825,
+     0.04602554550000001,
+     -0.02500000000000002
+    ],
+    [
+     0.08420748600000001,
+     0.18327988250000002,
+     0.7806995455000001,
+     -0.025000000000000022
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.85017:rg=0.22981:rb=0.05018:ra=-0.02500:gr=0.09945:gg=0.95538:gb=0.04603:ga=-0.02500:br=0.08421:bg=0.18328:bb=0.78070:ba=-0.02500"
+  },
+  {
+   "id": "vintage",
+   "k": 0.75,
+   "matrix": [
+    [
+     0.7752482290000001,
+     0.34471482375000007,
+     0.07527531825,
+     -0.03750000000000003
+    ],
+    [
+     0.149180229,
+     0.9330638237500001,
+     0.06903831825000001,
+     -0.037500000000000026
+    ],
+    [
+     0.12631122900000002,
+     0.27491982375,
+     0.67104931825,
+     -0.03750000000000003
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.77525:rg=0.34471:rb=0.07528:ra=-0.03750:gr=0.14918:gg=0.93306:gb=0.06904:ga=-0.03750:br=0.12631:bg=0.27492:bb=0.67105:ba=-0.03750"
+  },
+  {
+   "id": "vintage",
+   "k": 1.0,
+   "matrix": [
+    [
+     0.7003309720000002,
+     0.4596197650000001,
+     0.100367091,
+     -0.050000000000000044
+    ],
+    [
+     0.19890697200000002,
+     0.9107517650000001,
+     0.09205109100000002,
+     -0.05000000000000004
+    ],
+    [
+     0.16841497200000002,
+     0.36655976500000004,
+     0.5613990910000001,
+     -0.050000000000000044
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.70033:rg=0.45962:rb=0.10037:ra=-0.05000:gr=0.19891:gg=0.91075:gb=0.09205:ga=-0.05000:br=0.16841:bg=0.36656:bb=0.56140:ba=-0.05000"
+  },
+  {
+   "id": "vintage",
+   "k": 2.0,
+   "matrix": [
+    [
+     0.7003309720000002,
+     0.4596197650000001,
+     0.100367091,
+     -0.050000000000000044
+    ],
+    [
+     0.19890697200000002,
+     0.9107517650000001,
+     0.09205109100000002,
+     -0.05000000000000004
+    ],
+    [
+     0.16841497200000002,
+     0.36655976500000004,
+     0.5613990910000001,
+     -0.050000000000000044
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.70033:rg=0.45962:rb=0.10037:ra=-0.05000:gr=0.19891:gg=0.91075:gb=0.09205:ga=-0.05000:br=0.16841:bg=0.36656:bb=0.56140:ba=-0.05000"
+  },
+  {
+   "id": "vintage",
+   "k": "inf",
+   "matrix": [
+    [
+     0.7003309720000002,
+     0.4596197650000001,
+     0.100367091,
+     -0.050000000000000044
+    ],
+    [
+     0.19890697200000002,
+     0.9107517650000001,
+     0.09205109100000002,
+     -0.05000000000000004
+    ],
+    [
+     0.16841497200000002,
+     0.36655976500000004,
+     0.5613990910000001,
+     -0.050000000000000044
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.70033:rg=0.45962:rb=0.10037:ra=-0.05000:gr=0.19891:gg=0.91075:gb=0.09205:ga=-0.05000:br=0.16841:bg=0.36656:bb=0.56140:ba=-0.05000"
+  },
+  {
+   "id": "faded",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "faded",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "faded",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "faded",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "faded",
+   "k": 1e-05,
+   "matrix": [
+    [
+     0.999996673392,
+     1.1325600000000001e-06,
+     1.1404799999999999e-07,
+     1.64e-06
+    ],
+    [
+     3.37392e-07,
+     0.99999746856,
+     1.1404799999999999e-07,
+     1.64e-06
+    ],
+    [
+     3.37392e-07,
+     1.1325600000000001e-06,
+     0.999996450048,
+     1.64e-06
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "faded",
+   "k": 0.3,
+   "matrix": [
+    [
+     0.90020176,
+     0.0339768,
+     0.003421439999999999,
+     0.049199999999999994
+    ],
+    [
+     0.010121759999999999,
+     0.9240568,
+     0.003421439999999999,
+     0.049199999999999994
+    ],
+    [
+     0.010121759999999999,
+     0.0339768,
+     0.89350144,
+     0.049199999999999994
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.90020:rg=0.03398:rb=0.00342:ra=0.04920:gr=0.01012:gg=0.92406:gb=0.00342:ga=0.04920:br=0.01012:bg=0.03398:bb=0.89350:ba=0.04920"
+  },
+  {
+   "id": "faded",
+   "k": 0.5,
+   "matrix": [
+    [
+     0.8336696,
+     0.056628000000000005,
+     0.005702399999999999,
+     0.08199999999999999
+    ],
+    [
+     0.0168696,
+     0.873428,
+     0.005702399999999999,
+     0.08199999999999999
+    ],
+    [
+     0.0168696,
+     0.056628000000000005,
+     0.8225024000000001,
+     0.08199999999999999
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.83367:rg=0.05663:rb=0.00570:ra=0.08200:gr=0.01687:gg=0.87343:gb=0.00570:ga=0.08200:br=0.01687:bg=0.05663:bb=0.82250:ba=0.08200"
+  },
+  {
+   "id": "faded",
+   "k": 0.75,
+   "matrix": [
+    [
+     0.7505044000000001,
+     0.084942,
+     0.008553599999999998,
+     0.12299999999999998
+    ],
+    [
+     0.025304399999999998,
+     0.8101419999999999,
+     0.008553599999999998,
+     0.12299999999999998
+    ],
+    [
+     0.025304399999999998,
+     0.084942,
+     0.7337536,
+     0.12299999999999998
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.75050:rg=0.08494:rb=0.00855:ra=0.12300:gr=0.02530:gg=0.81014:gb=0.00855:ga=0.12300:br=0.02530:bg=0.08494:bb=0.73375:ba=0.12300"
+  },
+  {
+   "id": "faded",
+   "k": 1.0,
+   "matrix": [
+    [
+     0.6673392,
+     0.11325600000000001,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.746856,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.11325600000000001,
+     0.6450048,
+     0.16399999999999998
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.66734:rg=0.11326:rb=0.01140:ra=0.16400:gr=0.03374:gg=0.74686:gb=0.01140:ga=0.16400:br=0.03374:bg=0.11326:bb=0.64500:ba=0.16400"
+  },
+  {
+   "id": "faded",
+   "k": 2.0,
+   "matrix": [
+    [
+     0.6673392,
+     0.11325600000000001,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.746856,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.11325600000000001,
+     0.6450048,
+     0.16399999999999998
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.66734:rg=0.11326:rb=0.01140:ra=0.16400:gr=0.03374:gg=0.74686:gb=0.01140:ga=0.16400:br=0.03374:bg=0.11326:bb=0.64500:ba=0.16400"
+  },
+  {
+   "id": "faded",
+   "k": "inf",
+   "matrix": [
+    [
+     0.6673392,
+     0.11325600000000001,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.746856,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.11325600000000001,
+     0.6450048,
+     0.16399999999999998
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.66734:rg=0.11326:rb=0.01140:ra=0.16400:gr=0.03374:gg=0.74686:gb=0.01140:ga=0.16400:br=0.03374:bg=0.11326:bb=0.64500:ba=0.16400"
+  },
+  {
+   "id": "matte",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "matte",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "matte",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "matte",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "matte",
+   "k": 1e-05,
+   "matrix": [
+    [
+     0.99999874,
+     0.0,
+     0.0,
+     1.0300000000000003e-06
+    ],
+    [
+     0.0,
+     0.99999874,
+     0.0,
+     1.0300000000000003e-06
+    ],
+    [
+     0.0,
+     0.0,
+     0.99999874,
+     1.0300000000000003e-06
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "matte",
+   "k": 0.3,
+   "matrix": [
+    [
+     0.9621999999999999,
+     0.0,
+     0.0,
+     0.030900000000000004
+    ],
+    [
+     0.0,
+     0.9621999999999999,
+     0.0,
+     0.030900000000000004
+    ],
+    [
+     0.0,
+     0.0,
+     0.9621999999999999,
+     0.030900000000000004
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.96220:rg=0.00000:rb=0.00000:ra=0.03090:gr=0.00000:gg=0.96220:gb=0.00000:ga=0.03090:br=0.00000:bg=0.00000:bb=0.96220:ba=0.03090"
+  },
+  {
+   "id": "matte",
+   "k": 0.5,
+   "matrix": [
+    [
+     0.937,
+     0.0,
+     0.0,
+     0.05150000000000001
+    ],
+    [
+     0.0,
+     0.937,
+     0.0,
+     0.05150000000000001
+    ],
+    [
+     0.0,
+     0.0,
+     0.937,
+     0.05150000000000001
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.93700:rg=0.00000:rb=0.00000:ra=0.05150:gr=0.00000:gg=0.93700:gb=0.00000:ga=0.05150:br=0.00000:bg=0.00000:bb=0.93700:ba=0.05150"
+  },
+  {
+   "id": "matte",
+   "k": 0.75,
+   "matrix": [
+    [
+     0.9055,
+     0.0,
+     0.0,
+     0.07725000000000001
+    ],
+    [
+     0.0,
+     0.9055,
+     0.0,
+     0.07725000000000001
+    ],
+    [
+     0.0,
+     0.0,
+     0.9055,
+     0.07725000000000001
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.90550:rg=0.00000:rb=0.00000:ra=0.07725:gr=0.00000:gg=0.90550:gb=0.00000:ga=0.07725:br=0.00000:bg=0.00000:bb=0.90550:ba=0.07725"
+  },
+  {
+   "id": "matte",
+   "k": 1.0,
+   "matrix": [
+    [
+     0.874,
+     0.0,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.874,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.0,
+     0.874,
+     0.10300000000000002
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.87400:rg=0.00000:rb=0.00000:ra=0.10300:gr=0.00000:gg=0.87400:gb=0.00000:ga=0.10300:br=0.00000:bg=0.00000:bb=0.87400:ba=0.10300"
+  },
+  {
+   "id": "matte",
+   "k": 2.0,
+   "matrix": [
+    [
+     0.874,
+     0.0,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.874,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.0,
+     0.874,
+     0.10300000000000002
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.87400:rg=0.00000:rb=0.00000:ra=0.10300:gr=0.00000:gg=0.87400:gb=0.00000:ga=0.10300:br=0.00000:bg=0.00000:bb=0.87400:ba=0.10300"
+  },
+  {
+   "id": "matte",
+   "k": "inf",
+   "matrix": [
+    [
+     0.874,
+     0.0,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.874,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.0,
+     0.874,
+     0.10300000000000002
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.87400:rg=0.00000:rb=0.00000:ra=0.10300:gr=0.00000:gg=0.87400:gb=0.00000:ga=0.10300:br=0.00000:bg=0.00000:bb=0.87400:ba=0.10300"
+  },
+  {
+   "id": "cinematic",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "cinematic",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "cinematic",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "cinematic",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "cinematic",
+   "k": 1e-05,
+   "matrix": [
+    [
+     0.999999331031,
+     1.1347049999999996e-06,
+     1.1426400000000006e-07,
+     -6.899999999999997e-07
+    ],
+    [
+     3.3803100000000004e-07,
+     1.000000127705,
+     1.1426400000000006e-07,
+     -6.899999999999997e-07
+    ],
+    [
+     3.3803100000000004e-07,
+     1.1347049999999996e-06,
+     0.999999107264,
+     -6.899999999999997e-07
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "cinematic",
+   "k": 0.3,
+   "matrix": [
+    [
+     0.97993093,
+     0.034041149999999985,
+     0.0034279200000000014,
+     -0.02069999999999999
+    ],
+    [
+     0.010140930000000001,
+     1.00383115,
+     0.0034279200000000014,
+     -0.02069999999999999
+    ],
+    [
+     0.010140930000000001,
+     0.034041149999999985,
+     0.97321792,
+     -0.02069999999999999
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.97993:rg=0.03404:rb=0.00343:ra=-0.02070:gr=0.01014:gg=1.00383:gb=0.00343:ga=-0.02070:br=0.01014:bg=0.03404:bb=0.97322:ba=-0.02070"
+  },
+  {
+   "id": "cinematic",
+   "k": 0.5,
+   "matrix": [
+    [
+     0.9665515499999999,
+     0.05673524999999998,
+     0.0057132000000000025,
+     -0.03449999999999998
+    ],
+    [
+     0.01690155,
+     1.0063852500000001,
+     0.0057132000000000025,
+     -0.03449999999999998
+    ],
+    [
+     0.01690155,
+     0.05673524999999998,
+     0.9553632,
+     -0.03449999999999998
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.96655:rg=0.05674:rb=0.00571:ra=-0.03450:gr=0.01690:gg=1.00639:gb=0.00571:ga=-0.03450:br=0.01690:bg=0.05674:bb=0.95536:ba=-0.03450"
+  },
+  {
+   "id": "cinematic",
+   "k": 0.75,
+   "matrix": [
+    [
+     0.949827325,
+     0.08510287499999997,
+     0.008569800000000004,
+     -0.05174999999999998
+    ],
+    [
+     0.025352325000000002,
+     1.009577875,
+     0.008569800000000004,
+     -0.05174999999999998
+    ],
+    [
+     0.025352325000000002,
+     0.08510287499999997,
+     0.9330448,
+     -0.05174999999999998
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.94983:rg=0.08510:rb=0.00857:ra=-0.05175:gr=0.02535:gg=1.00958:gb=0.00857:ga=-0.05175:br=0.02535:bg=0.08510:bb=0.93304:ba=-0.05175"
+  },
+  {
+   "id": "cinematic",
+   "k": 1.0,
+   "matrix": [
+    [
+     0.9331031,
+     0.11347049999999996,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     1.0127705,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     0.11347049999999996,
+     0.9107263999999999,
+     -0.06899999999999996
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.93310:rg=0.11347:rb=0.01143:ra=-0.06900:gr=0.03380:gg=1.01277:gb=0.01143:ga=-0.06900:br=0.03380:bg=0.11347:bb=0.91073:ba=-0.06900"
+  },
+  {
+   "id": "cinematic",
+   "k": 2.0,
+   "matrix": [
+    [
+     0.9331031,
+     0.11347049999999996,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     1.0127705,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     0.11347049999999996,
+     0.9107263999999999,
+     -0.06899999999999996
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.93310:rg=0.11347:rb=0.01143:ra=-0.06900:gr=0.03380:gg=1.01277:gb=0.01143:ga=-0.06900:br=0.03380:bg=0.11347:bb=0.91073:ba=-0.06900"
+  },
+  {
+   "id": "cinematic",
+   "k": "inf",
+   "matrix": [
+    [
+     0.9331031,
+     0.11347049999999996,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     1.0127705,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     0.11347049999999996,
+     0.9107263999999999,
+     -0.06899999999999996
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.93310:rg=0.11347:rb=0.01143:ra=-0.06900:gr=0.03380:gg=1.01277:gb=0.01143:ga=-0.06900:br=0.03380:bg=0.11347:bb=0.91073:ba=-0.06900"
+  },
+  {
+   "id": "teal_orange",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "teal_orange",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "teal_orange",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "teal_orange",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "teal_orange",
+   "k": 1e-05,
+   "matrix": [
+    [
+     1.000002096,
+     -8.640000000000001e-07,
+     -4.3200000000000006e-07,
+     -4.000000000000004e-07
+    ],
+    [
+     -4.3200000000000006e-07,
+     1.000001232,
+     0.0,
+     -4.000000000000004e-07
+    ],
+    [
+     -1.5120000000000005e-06,
+     6.48e-07,
+     1.000001664,
+     -4.000000000000004e-07
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=-0.00000:rb=-0.00000:gr=-0.00000:gg=1.00000:gb=0.00000:br=-0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "teal_orange",
+   "k": 0.3,
+   "matrix": [
+    [
+     1.06288,
+     -0.025920000000000002,
+     -0.012960000000000001,
+     -0.01200000000000001
+    ],
+    [
+     -0.012960000000000001,
+     1.03696,
+     0.0,
+     -0.01200000000000001
+    ],
+    [
+     -0.045360000000000004,
+     0.01944,
+     1.04992,
+     -0.01200000000000001
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.06288:rg=-0.02592:rb=-0.01296:ra=-0.01200:gr=-0.01296:gg=1.03696:gb=0.00000:ga=-0.01200:br=-0.04536:bg=0.01944:bb=1.04992:ba=-0.01200"
+  },
+  {
+   "id": "teal_orange",
+   "k": 0.5,
+   "matrix": [
+    [
+     1.1048,
+     -0.0432,
+     -0.0216,
+     -0.020000000000000018
+    ],
+    [
+     -0.0216,
+     1.0616,
+     0.0,
+     -0.020000000000000018
+    ],
+    [
+     -0.07560000000000001,
+     0.0324,
+     1.0832000000000002,
+     -0.020000000000000018
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.10480:rg=-0.04320:rb=-0.02160:ra=-0.02000:gr=-0.02160:gg=1.06160:gb=0.00000:ga=-0.02000:br=-0.07560:bg=0.03240:bb=1.08320:ba=-0.02000"
+  },
+  {
+   "id": "teal_orange",
+   "k": 0.75,
+   "matrix": [
+    [
+     1.1572000000000002,
+     -0.0648,
+     -0.0324,
+     -0.030000000000000027
+    ],
+    [
+     -0.0324,
+     1.0924,
+     0.0,
+     -0.030000000000000027
+    ],
+    [
+     -0.11340000000000003,
+     0.0486,
+     1.1248,
+     -0.030000000000000027
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.15720:rg=-0.06480:rb=-0.03240:ra=-0.03000:gr=-0.03240:gg=1.09240:gb=0.00000:ga=-0.03000:br=-0.11340:bg=0.04860:bb=1.12480:ba=-0.03000"
+  },
+  {
+   "id": "teal_orange",
+   "k": 1.0,
+   "matrix": [
+    [
+     1.2096000000000002,
+     -0.0864,
+     -0.0432,
+     -0.040000000000000036
+    ],
+    [
+     -0.0432,
+     1.1232000000000002,
+     0.0,
+     -0.040000000000000036
+    ],
+    [
+     -0.15120000000000003,
+     0.0648,
+     1.1664,
+     -0.040000000000000036
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.20960:rg=-0.08640:rb=-0.04320:ra=-0.04000:gr=-0.04320:gg=1.12320:gb=0.00000:ga=-0.04000:br=-0.15120:bg=0.06480:bb=1.16640:ba=-0.04000"
+  },
+  {
+   "id": "teal_orange",
+   "k": 2.0,
+   "matrix": [
+    [
+     1.2096000000000002,
+     -0.0864,
+     -0.0432,
+     -0.040000000000000036
+    ],
+    [
+     -0.0432,
+     1.1232000000000002,
+     0.0,
+     -0.040000000000000036
+    ],
+    [
+     -0.15120000000000003,
+     0.0648,
+     1.1664,
+     -0.040000000000000036
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.20960:rg=-0.08640:rb=-0.04320:ra=-0.04000:gr=-0.04320:gg=1.12320:gb=0.00000:ga=-0.04000:br=-0.15120:bg=0.06480:bb=1.16640:ba=-0.04000"
+  },
+  {
+   "id": "teal_orange",
+   "k": "inf",
+   "matrix": [
+    [
+     1.2096000000000002,
+     -0.0864,
+     -0.0432,
+     -0.040000000000000036
+    ],
+    [
+     -0.0432,
+     1.1232000000000002,
+     0.0,
+     -0.040000000000000036
+    ],
+    [
+     -0.15120000000000003,
+     0.0648,
+     1.1664,
+     -0.040000000000000036
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.20960:rg=-0.08640:rb=-0.04320:ra=-0.04000:gr=-0.04320:gg=1.12320:gb=0.00000:ga=-0.04000:br=-0.15120:bg=0.06480:bb=1.16640:ba=-0.04000"
+  },
+  {
+   "id": "night",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "night",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "night",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "night",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "night",
+   "k": 1e-05,
+   "matrix": [
+    [
+     0.9999948698625,
+     1.5497625000000003e-06,
+     2.0196000000000004e-07,
+     0.0
+    ],
+    [
+     4.0736250000000003e-07,
+     0.9999966072625,
+     2.0196000000000004e-07,
+     0.0
+    ],
+    [
+     4.0736250000000003e-07,
+     1.5497625000000003e-06,
+     0.99999674696,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.99999:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "night",
+   "k": 0.3,
+   "matrix": [
+    [
+     0.846095875,
+     0.046492875,
+     0.0060588000000000005,
+     0.0
+    ],
+    [
+     0.012220875,
+     0.8982178749999999,
+     0.0060588000000000005,
+     0.0
+    ],
+    [
+     0.012220875,
+     0.046492875,
+     0.9024088,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.84610:rg=0.04649:rb=0.00606:gr=0.01222:gg=0.89822:gb=0.00606:br=0.01222:bg=0.04649:bb=0.90241"
+  },
+  {
+   "id": "night",
+   "k": 0.5,
+   "matrix": [
+    [
+     0.743493125,
+     0.077488125,
+     0.010098000000000001,
+     0.0
+    ],
+    [
+     0.020368125,
+     0.830363125,
+     0.010098000000000001,
+     0.0
+    ],
+    [
+     0.020368125,
+     0.077488125,
+     0.837348,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.74349:rg=0.07749:rb=0.01010:gr=0.02037:gg=0.83036:gb=0.01010:br=0.02037:bg=0.07749:bb=0.83735"
+  },
+  {
+   "id": "night",
+   "k": 0.75,
+   "matrix": [
+    [
+     0.6152396874999999,
+     0.1162321875,
+     0.015147,
+     0.0
+    ],
+    [
+     0.0305521875,
+     0.7455446875,
+     0.015147,
+     0.0
+    ],
+    [
+     0.0305521875,
+     0.1162321875,
+     0.756022,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.61524:rg=0.11623:rb=0.01515:gr=0.03055:gg=0.74554:gb=0.01515:br=0.03055:bg=0.11623:bb=0.75602"
+  },
+  {
+   "id": "night",
+   "k": 1.0,
+   "matrix": [
+    [
+     0.48698624999999995,
+     0.15497625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.66072625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.15497625,
+     0.674696,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.48699:rg=0.15498:rb=0.02020:gr=0.04074:gg=0.66073:gb=0.02020:br=0.04074:bg=0.15498:bb=0.67470"
+  },
+  {
+   "id": "night",
+   "k": 2.0,
+   "matrix": [
+    [
+     0.48698624999999995,
+     0.15497625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.66072625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.15497625,
+     0.674696,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.48699:rg=0.15498:rb=0.02020:gr=0.04074:gg=0.66073:gb=0.02020:br=0.04074:bg=0.15498:bb=0.67470"
+  },
+  {
+   "id": "night",
+   "k": "inf",
+   "matrix": [
+    [
+     0.48698624999999995,
+     0.15497625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.66072625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.15497625,
+     0.674696,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.48699:rg=0.15498:rb=0.02020:gr=0.04074:gg=0.66073:gb=0.02020:br=0.04074:bg=0.15498:bb=0.67470"
+  },
+  {
+   "id": "matrix",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "matrix",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "matrix",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "matrix",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "matrix",
+   "k": 1e-05,
+   "matrix": [
+    [
+     0.99999935,
+     0.0,
+     0.0,
+     -5.000000000000005e-07
+    ],
+    [
+     0.0,
+     1.0000021,
+     0.0,
+     -5.000000000000005e-07
+    ],
+    [
+     0.0,
+     0.0,
+     0.99999935,
+     -5.000000000000005e-07
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "matrix",
+   "k": 0.3,
+   "matrix": [
+    [
+     0.9805,
+     0.0,
+     0.0,
+     -0.015000000000000013
+    ],
+    [
+     0.0,
+     1.0630000000000002,
+     0.0,
+     -0.015000000000000013
+    ],
+    [
+     0.0,
+     0.0,
+     0.9805,
+     -0.015000000000000013
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.98050:rg=0.00000:rb=0.00000:ra=-0.01500:gr=0.00000:gg=1.06300:gb=0.00000:ga=-0.01500:br=0.00000:bg=0.00000:bb=0.98050:ba=-0.01500"
+  },
+  {
+   "id": "matrix",
+   "k": 0.5,
+   "matrix": [
+    [
+     0.9675,
+     0.0,
+     0.0,
+     -0.025000000000000022
+    ],
+    [
+     0.0,
+     1.105,
+     0.0,
+     -0.025000000000000022
+    ],
+    [
+     0.0,
+     0.0,
+     0.9675,
+     -0.025000000000000022
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.96750:rg=0.00000:rb=0.00000:ra=-0.02500:gr=0.00000:gg=1.10500:gb=0.00000:ga=-0.02500:br=0.00000:bg=0.00000:bb=0.96750:ba=-0.02500"
+  },
+  {
+   "id": "matrix",
+   "k": 0.75,
+   "matrix": [
+    [
+     0.95125,
+     0.0,
+     0.0,
+     -0.03750000000000003
+    ],
+    [
+     0.0,
+     1.1575000000000002,
+     0.0,
+     -0.03750000000000003
+    ],
+    [
+     0.0,
+     0.0,
+     0.95125,
+     -0.03750000000000003
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.95125:rg=0.00000:rb=0.00000:ra=-0.03750:gr=0.00000:gg=1.15750:gb=0.00000:ga=-0.03750:br=0.00000:bg=0.00000:bb=0.95125:ba=-0.03750"
+  },
+  {
+   "id": "matrix",
+   "k": 1.0,
+   "matrix": [
+    [
+     0.935,
+     0.0,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     1.2100000000000002,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     0.0,
+     0.935,
+     -0.050000000000000044
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.93500:rg=0.00000:rb=0.00000:ra=-0.05000:gr=0.00000:gg=1.21000:gb=0.00000:ga=-0.05000:br=0.00000:bg=0.00000:bb=0.93500:ba=-0.05000"
+  },
+  {
+   "id": "matrix",
+   "k": 2.0,
+   "matrix": [
+    [
+     0.935,
+     0.0,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     1.2100000000000002,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     0.0,
+     0.935,
+     -0.050000000000000044
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.93500:rg=0.00000:rb=0.00000:ra=-0.05000:gr=0.00000:gg=1.21000:gb=0.00000:ga=-0.05000:br=0.00000:bg=0.00000:bb=0.93500:ba=-0.05000"
+  },
+  {
+   "id": "matrix",
+   "k": "inf",
+   "matrix": [
+    [
+     0.935,
+     0.0,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     1.2100000000000002,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     0.0,
+     0.935,
+     -0.050000000000000044
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=0.93500:rg=0.00000:rb=0.00000:ra=-0.05000:gr=0.00000:gg=1.21000:gb=0.00000:ga=-0.05000:br=0.00000:bg=0.00000:bb=0.93500:ba=-0.05000"
+  },
+  {
+   "id": "contrast",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "contrast",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "contrast",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "contrast",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "contrast",
+   "k": 1e-05,
+   "matrix": [
+    [
+     1.00000456245,
+     -9.652500000000002e-07,
+     -9.720000000000018e-08,
+     -1.7500000000000008e-06
+    ],
+    [
+     -2.875500000000002e-07,
+     1.00000388475,
+     -9.720000000000018e-08,
+     -1.7500000000000006e-06
+    ],
+    [
+     -2.875500000000002e-07,
+     -9.652500000000002e-07,
+     1.0000047528,
+     -1.7500000000000008e-06
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=-0.00000:rb=-0.00000:gr=-0.00000:gg=1.00000:gb=-0.00000:br=-0.00000:bg=-0.00000:bb=1.00000"
+  },
+  {
+   "id": "contrast",
+   "k": 0.3,
+   "matrix": [
+    [
+     1.1368735,
+     -0.028957500000000004,
+     -0.002916000000000005,
+     -0.05250000000000002
+    ],
+    [
+     -0.008626500000000006,
+     1.1165425,
+     -0.002916000000000005,
+     -0.05250000000000001
+    ],
+    [
+     -0.008626500000000006,
+     -0.028957500000000004,
+     1.142584,
+     -0.05250000000000002
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.13687:rg=-0.02896:rb=-0.00292:ra=-0.05250:gr=-0.00863:gg=1.11654:gb=-0.00292:ga=-0.05250:br=-0.00863:bg=-0.02896:bb=1.14258:ba=-0.05250"
+  },
+  {
+   "id": "contrast",
+   "k": 0.5,
+   "matrix": [
+    [
+     1.2281225000000002,
+     -0.04826250000000001,
+     -0.004860000000000008,
+     -0.08750000000000004
+    ],
+    [
+     -0.01437750000000001,
+     1.1942375,
+     -0.004860000000000008,
+     -0.08750000000000002
+    ],
+    [
+     -0.01437750000000001,
+     -0.04826250000000001,
+     1.2376400000000003,
+     -0.08750000000000004
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.22812:rg=-0.04826:rb=-0.00486:ra=-0.08750:gr=-0.01438:gg=1.19424:gb=-0.00486:ga=-0.08750:br=-0.01438:bg=-0.04826:bb=1.23764:ba=-0.08750"
+  },
+  {
+   "id": "contrast",
+   "k": 0.75,
+   "matrix": [
+    [
+     1.3421837500000002,
+     -0.07239375,
+     -0.007290000000000013,
+     -0.13125000000000006
+    ],
+    [
+     -0.021566250000000016,
+     1.2913562500000002,
+     -0.007290000000000013,
+     -0.13125000000000003
+    ],
+    [
+     -0.021566250000000016,
+     -0.07239375,
+     1.3564600000000002,
+     -0.13125000000000006
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.34218:rg=-0.07239:rb=-0.00729:ra=-0.13125:gr=-0.02157:gg=1.29136:gb=-0.00729:ga=-0.13125:br=-0.02157:bg=-0.07239:bb=1.35646:ba=-0.13125"
+  },
+  {
+   "id": "contrast",
+   "k": 1.0,
+   "matrix": [
+    [
+     1.4562450000000005,
+     -0.09652500000000001,
+     -0.009720000000000017,
+     -0.17500000000000007
+    ],
+    [
+     -0.02875500000000002,
+     1.3884750000000001,
+     -0.009720000000000017,
+     -0.17500000000000004
+    ],
+    [
+     -0.02875500000000002,
+     -0.09652500000000001,
+     1.4752800000000004,
+     -0.17500000000000007
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.45625:rg=-0.09653:rb=-0.00972:ra=-0.17500:gr=-0.02876:gg=1.38848:gb=-0.00972:ga=-0.17500:br=-0.02876:bg=-0.09653:bb=1.47528:ba=-0.17500"
+  },
+  {
+   "id": "contrast",
+   "k": 2.0,
+   "matrix": [
+    [
+     1.4562450000000005,
+     -0.09652500000000001,
+     -0.009720000000000017,
+     -0.17500000000000007
+    ],
+    [
+     -0.02875500000000002,
+     1.3884750000000001,
+     -0.009720000000000017,
+     -0.17500000000000004
+    ],
+    [
+     -0.02875500000000002,
+     -0.09652500000000001,
+     1.4752800000000004,
+     -0.17500000000000007
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.45625:rg=-0.09653:rb=-0.00972:ra=-0.17500:gr=-0.02876:gg=1.38848:gb=-0.00972:ga=-0.17500:br=-0.02876:bg=-0.09653:bb=1.47528:ba=-0.17500"
+  },
+  {
+   "id": "contrast",
+   "k": "inf",
+   "matrix": [
+    [
+     1.4562450000000005,
+     -0.09652500000000001,
+     -0.009720000000000017,
+     -0.17500000000000007
+    ],
+    [
+     -0.02875500000000002,
+     1.3884750000000001,
+     -0.009720000000000017,
+     -0.17500000000000004
+    ],
+    [
+     -0.02875500000000002,
+     -0.09652500000000001,
+     1.4752800000000004,
+     -0.17500000000000007
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.45625:rg=-0.09653:rb=-0.00972:ra=-0.17500:gr=-0.02876:gg=1.38848:gb=-0.00972:ga=-0.17500:br=-0.02876:bg=-0.09653:bb=1.47528:ba=-0.17500"
+  },
+  {
+   "id": "saturated",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "saturated",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "saturated",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "saturated",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "saturated",
+   "k": 1e-05,
+   "matrix": [
+    [
+     1.00000547478,
+     -4.2471e-06,
+     -4.2768000000000003e-07,
+     -4.000000000000004e-07
+    ],
+    [
+     -1.2652200000000003e-06,
+     1.0000024929,
+     -4.2768000000000003e-07,
+     -4.000000000000004e-07
+    ],
+    [
+     -1.2652200000000003e-06,
+     -4.2471e-06,
+     1.00000631232,
+     -4.000000000000004e-07
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00001:rg=-0.00000:rb=-0.00000:gr=-0.00000:gg=1.00000:gb=-0.00000:br=-0.00000:bg=-0.00000:bb=1.00001"
+  },
+  {
+   "id": "saturated",
+   "k": 0.3,
+   "matrix": [
+    [
+     1.1642434000000002,
+     -0.127413,
+     -0.0128304,
+     -0.01200000000000001
+    ],
+    [
+     -0.03795660000000001,
+     1.074787,
+     -0.0128304,
+     -0.01200000000000001
+    ],
+    [
+     -0.03795660000000001,
+     -0.127413,
+     1.1893696,
+     -0.01200000000000001
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.16424:rg=-0.12741:rb=-0.01283:ra=-0.01200:gr=-0.03796:gg=1.07479:gb=-0.01283:ga=-0.01200:br=-0.03796:bg=-0.12741:bb=1.18937:ba=-0.01200"
+  },
+  {
+   "id": "saturated",
+   "k": 0.5,
+   "matrix": [
+    [
+     1.2737390000000002,
+     -0.21235500000000002,
+     -0.021384,
+     -0.020000000000000018
+    ],
+    [
+     -0.06326100000000001,
+     1.1246450000000001,
+     -0.021384,
+     -0.020000000000000018
+    ],
+    [
+     -0.06326100000000001,
+     -0.21235500000000002,
+     1.3156160000000001,
+     -0.020000000000000018
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.27374:rg=-0.21236:rb=-0.02138:ra=-0.02000:gr=-0.06326:gg=1.12465:gb=-0.02138:ga=-0.02000:br=-0.06326:bg=-0.21236:bb=1.31562:ba=-0.02000"
+  },
+  {
+   "id": "saturated",
+   "k": 0.75,
+   "matrix": [
+    [
+     1.4106085000000004,
+     -0.3185325,
+     -0.032076,
+     -0.030000000000000027
+    ],
+    [
+     -0.09489150000000002,
+     1.1869675,
+     -0.032076,
+     -0.030000000000000027
+    ],
+    [
+     -0.09489150000000002,
+     -0.3185325,
+     1.473424,
+     -0.030000000000000027
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.41061:rg=-0.31853:rb=-0.03208:ra=-0.03000:gr=-0.09489:gg=1.18697:gb=-0.03208:ga=-0.03000:br=-0.09489:bg=-0.31853:bb=1.47342:ba=-0.03000"
+  },
+  {
+   "id": "saturated",
+   "k": 1.0,
+   "matrix": [
+    [
+     1.5474780000000004,
+     -0.42471000000000003,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     1.24929,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     -0.42471000000000003,
+     1.6312320000000002,
+     -0.040000000000000036
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.54748:rg=-0.42471:rb=-0.04277:ra=-0.04000:gr=-0.12652:gg=1.24929:gb=-0.04277:ga=-0.04000:br=-0.12652:bg=-0.42471:bb=1.63123:ba=-0.04000"
+  },
+  {
+   "id": "saturated",
+   "k": 2.0,
+   "matrix": [
+    [
+     1.5474780000000004,
+     -0.42471000000000003,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     1.24929,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     -0.42471000000000003,
+     1.6312320000000002,
+     -0.040000000000000036
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.54748:rg=-0.42471:rb=-0.04277:ra=-0.04000:gr=-0.12652:gg=1.24929:gb=-0.04277:ga=-0.04000:br=-0.12652:bg=-0.42471:bb=1.63123:ba=-0.04000"
+  },
+  {
+   "id": "saturated",
+   "k": "inf",
+   "matrix": [
+    [
+     1.5474780000000004,
+     -0.42471000000000003,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     1.24929,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     -0.42471000000000003,
+     1.6312320000000002,
+     -0.040000000000000036
+    ]
+   ],
+   "ffmpeg": "format=gbrap,colorchannelmixer=rr=1.54748:rg=-0.42471:rb=-0.04277:ra=-0.04000:gr=-0.12652:gg=1.24929:gb=-0.04277:ga=-0.04000:br=-0.12652:bg=-0.42471:bb=1.63123:ba=-0.04000"
+  },
+  {
+   "id": "warm",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "warm",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "warm",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "warm",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "warm",
+   "k": 1e-05,
+   "matrix": [
+    [
+     1.00000164996,
+     -7.150000000000001e-07,
+     -6.336000000000011e-08,
+     0.0
+    ],
+    [
+     -2.300400000000002e-07,
+     1.000000285,
+     -6.336000000000011e-08,
+     0.0
+    ],
+    [
+     -2.300400000000002e-07,
+     -7.150000000000001e-07,
+     0.99999961664,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=-0.00000:rb=-0.00000:gr=-0.00000:gg=1.00000:gb=-0.00000:br=-0.00000:bg=-0.00000:bb=1.00000"
+  },
+  {
+   "id": "warm",
+   "k": 0.3,
+   "matrix": [
+    [
+     1.0494988,
+     -0.02145,
+     -0.0019008000000000033,
+     0.0
+    ],
+    [
+     -0.006901200000000005,
+     1.00855,
+     -0.0019008000000000033,
+     0.0
+    ],
+    [
+     -0.006901200000000005,
+     -0.02145,
+     0.9884992,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.04950:rg=-0.02145:rb=-0.00190:gr=-0.00690:gg=1.00855:gb=-0.00190:br=-0.00690:bg=-0.02145:bb=0.98850"
+  },
+  {
+   "id": "warm",
+   "k": 0.5,
+   "matrix": [
+    [
+     1.0824980000000002,
+     -0.035750000000000004,
+     -0.0031680000000000054,
+     0.0
+    ],
+    [
+     -0.011502000000000009,
+     1.01425,
+     -0.0031680000000000054,
+     0.0
+    ],
+    [
+     -0.011502000000000009,
+     -0.035750000000000004,
+     0.9808320000000001,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.08250:rg=-0.03575:rb=-0.00317:gr=-0.01150:gg=1.01425:gb=-0.00317:br=-0.01150:bg=-0.03575:bb=0.98083"
+  },
+  {
+   "id": "warm",
+   "k": 0.75,
+   "matrix": [
+    [
+     1.1237470000000003,
+     -0.053625000000000006,
+     -0.004752000000000008,
+     0.0
+    ],
+    [
+     -0.01725300000000001,
+     1.021375,
+     -0.004752000000000008,
+     0.0
+    ],
+    [
+     -0.01725300000000001,
+     -0.053625000000000006,
+     0.9712480000000001,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.12375:rg=-0.05363:rb=-0.00475:gr=-0.01725:gg=1.02137:gb=-0.00475:br=-0.01725:bg=-0.05363:bb=0.97125"
+  },
+  {
+   "id": "warm",
+   "k": 1.0,
+   "matrix": [
+    [
+     1.1649960000000004,
+     -0.07150000000000001,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     1.0285,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     -0.07150000000000001,
+     0.9616640000000002,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.16500:rg=-0.07150:rb=-0.00634:gr=-0.02300:gg=1.02850:gb=-0.00634:br=-0.02300:bg=-0.07150:bb=0.96166"
+  },
+  {
+   "id": "warm",
+   "k": 2.0,
+   "matrix": [
+    [
+     1.1649960000000004,
+     -0.07150000000000001,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     1.0285,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     -0.07150000000000001,
+     0.9616640000000002,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.16500:rg=-0.07150:rb=-0.00634:gr=-0.02300:gg=1.02850:gb=-0.00634:br=-0.02300:bg=-0.07150:bb=0.96166"
+  },
+  {
+   "id": "warm",
+   "k": "inf",
+   "matrix": [
+    [
+     1.1649960000000004,
+     -0.07150000000000001,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     1.0285,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     -0.07150000000000001,
+     0.9616640000000002,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.16500:rg=-0.07150:rb=-0.00634:gr=-0.02300:gg=1.02850:gb=-0.00634:br=-0.02300:bg=-0.07150:bb=0.96166"
+  },
+  {
+   "id": "golden",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "golden",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "golden",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "golden",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "golden",
+   "k": 1e-05,
+   "matrix": [
+    [
+     1.00000296288,
+     -1.4300000000000003e-06,
+     -1.1519999999999999e-07,
+     0.0
+    ],
+    [
+     -4.771200000000001e-07,
+     1.00000057,
+     -1.1519999999999999e-07,
+     0.0
+    ],
+    [
+     -4.771200000000001e-07,
+     -1.4300000000000003e-06,
+     0.9999994848,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=-0.00000:rb=-0.00000:gr=-0.00000:gg=1.00000:gb=-0.00000:br=-0.00000:bg=-0.00000:bb=1.00000"
+  },
+  {
+   "id": "golden",
+   "k": 0.3,
+   "matrix": [
+    [
+     1.0888864,
+     -0.0429,
+     -0.003455999999999999,
+     0.0
+    ],
+    [
+     -0.014313600000000001,
+     1.0171,
+     -0.003455999999999999,
+     0.0
+    ],
+    [
+     -0.014313600000000001,
+     -0.0429,
+     0.984544,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.08889:rg=-0.04290:rb=-0.00346:gr=-0.01431:gg=1.01710:gb=-0.00346:br=-0.01431:bg=-0.04290:bb=0.98454"
+  },
+  {
+   "id": "golden",
+   "k": 0.5,
+   "matrix": [
+    [
+     1.148144,
+     -0.07150000000000001,
+     -0.005759999999999999,
+     0.0
+    ],
+    [
+     -0.023856000000000002,
+     1.0285,
+     -0.005759999999999999,
+     0.0
+    ],
+    [
+     -0.023856000000000002,
+     -0.07150000000000001,
+     0.97424,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.14814:rg=-0.07150:rb=-0.00576:gr=-0.02386:gg=1.02850:gb=-0.00576:br=-0.02386:bg=-0.07150:bb=0.97424"
+  },
+  {
+   "id": "golden",
+   "k": 0.75,
+   "matrix": [
+    [
+     1.222216,
+     -0.10725000000000001,
+     -0.008639999999999998,
+     0.0
+    ],
+    [
+     -0.035784,
+     1.0427499999999998,
+     -0.008639999999999998,
+     0.0
+    ],
+    [
+     -0.035784,
+     -0.10725000000000001,
+     0.96136,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.22222:rg=-0.10725:rb=-0.00864:gr=-0.03578:gg=1.04275:gb=-0.00864:br=-0.03578:bg=-0.10725:bb=0.96136"
+  },
+  {
+   "id": "golden",
+   "k": 1.0,
+   "matrix": [
+    [
+     1.296288,
+     -0.14300000000000002,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     1.057,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     -0.14300000000000002,
+     0.94848,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.29629:rg=-0.14300:rb=-0.01152:gr=-0.04771:gg=1.05700:gb=-0.01152:br=-0.04771:bg=-0.14300:bb=0.94848"
+  },
+  {
+   "id": "golden",
+   "k": 2.0,
+   "matrix": [
+    [
+     1.296288,
+     -0.14300000000000002,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     1.057,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     -0.14300000000000002,
+     0.94848,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.29629:rg=-0.14300:rb=-0.01152:gr=-0.04771:gg=1.05700:gb=-0.01152:br=-0.04771:bg=-0.14300:bb=0.94848"
+  },
+  {
+   "id": "golden",
+   "k": "inf",
+   "matrix": [
+    [
+     1.296288,
+     -0.14300000000000002,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     1.057,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     -0.14300000000000002,
+     0.94848,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.29629:rg=-0.14300:rb=-0.01152:gr=-0.04771:gg=1.05700:gb=-0.01152:br=-0.04771:bg=-0.14300:bb=0.94848"
+  },
+  {
+   "id": "cool",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "cool",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "cool",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "cool",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "cool",
+   "k": 1e-05,
+   "matrix": [
+    [
+     0.9999982917,
+     7.150000000000001e-07,
+     7.92e-08,
+     0.0
+    ],
+    [
+     1.916999999999999e-07,
+     0.999999715,
+     7.92e-08,
+     0.0
+    ],
+    [
+     1.916999999999999e-07,
+     7.150000000000001e-07,
+     0.9999999792,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "cool",
+   "k": 0.3,
+   "matrix": [
+    [
+     0.948751,
+     0.02145,
+     0.002375999999999999,
+     0.0
+    ],
+    [
+     0.0057509999999999966,
+     0.99145,
+     0.002375999999999999,
+     0.0
+    ],
+    [
+     0.0057509999999999966,
+     0.02145,
+     0.999376,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.94875:rg=0.02145:rb=0.00238:gr=0.00575:gg=0.99145:gb=0.00238:br=0.00575:bg=0.02145:bb=0.99938"
+  },
+  {
+   "id": "cool",
+   "k": 0.5,
+   "matrix": [
+    [
+     0.914585,
+     0.035750000000000004,
+     0.003959999999999999,
+     0.0
+    ],
+    [
+     0.009584999999999995,
+     0.98575,
+     0.003959999999999999,
+     0.0
+    ],
+    [
+     0.009584999999999995,
+     0.035750000000000004,
+     0.9989600000000001,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.91458:rg=0.03575:rb=0.00396:gr=0.00958:gg=0.98575:gb=0.00396:br=0.00958:bg=0.03575:bb=0.99896"
+  },
+  {
+   "id": "cool",
+   "k": 0.75,
+   "matrix": [
+    [
+     0.8718775000000001,
+     0.053625000000000006,
+     0.005939999999999999,
+     0.0
+    ],
+    [
+     0.014377499999999991,
+     0.9786250000000001,
+     0.005939999999999999,
+     0.0
+    ],
+    [
+     0.014377499999999991,
+     0.053625000000000006,
+     0.9984400000000001,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.87188:rg=0.05363:rb=0.00594:gr=0.01438:gg=0.97863:gb=0.00594:br=0.01438:bg=0.05363:bb=0.99844"
+  },
+  {
+   "id": "cool",
+   "k": 1.0,
+   "matrix": [
+    [
+     0.8291700000000001,
+     0.07150000000000001,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.9715,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.07150000000000001,
+     0.9979200000000001,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.82917:rg=0.07150:rb=0.00792:gr=0.01917:gg=0.97150:gb=0.00792:br=0.01917:bg=0.07150:bb=0.99792"
+  },
+  {
+   "id": "cool",
+   "k": 2.0,
+   "matrix": [
+    [
+     0.8291700000000001,
+     0.07150000000000001,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.9715,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.07150000000000001,
+     0.9979200000000001,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.82917:rg=0.07150:rb=0.00792:gr=0.01917:gg=0.97150:gb=0.00792:br=0.01917:bg=0.07150:bb=0.99792"
+  },
+  {
+   "id": "cool",
+   "k": "inf",
+   "matrix": [
+    [
+     0.8291700000000001,
+     0.07150000000000001,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.9715,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.07150000000000001,
+     0.9979200000000001,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=0.82917:rg=0.07150:rb=0.00792:gr=0.01917:gg=0.97150:gb=0.00792:br=0.01917:bg=0.07150:bb=0.99792"
+  },
+  {
+   "id": "raro",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "raro",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "raro",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "raro",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "raro",
+   "k": 1e-05,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "raro",
+   "k": 0.3,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "raro",
+   "k": 0.5,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "raro",
+   "k": 0.75,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "raro",
+   "k": 1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "raro",
+   "k": 2.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "raro",
+   "k": "inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": "nan",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": "-inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": -1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": 0.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": 1e-05,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": 0.3,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": 0.5,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": 0.75,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": 1.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": 2.0,
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  },
+  {
+   "id": "",
+   "k": "inf",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "ffmpeg": "colorchannelmixer=rr=1.00000:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.00000:gb=0.00000:br=0.00000:bg=0.00000:bb=1.00000"
+  }
+ ],
+ "filter_catalog": [
+  {
+   "id": "bw",
+   "label": "Blanco y negro",
+   "group": "bn",
+   "matrix": [
+    [
+     0.213,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.072,
+     0.0
+    ],
+    [
+     0.213,
+     0.715,
+     0.072,
+     0.0
+    ]
+   ]
+  },
+  {
+   "id": "noir",
+   "label": "Noir",
+   "group": "bn",
+   "matrix": [
+    [
+     0.28755000000000003,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.0972,
+     -0.225
+    ],
+    [
+     0.28755000000000003,
+     0.96525,
+     0.0972,
+     -0.225
+    ]
+   ]
+  },
+  {
+   "id": "sepia",
+   "label": "Sepia",
+   "group": "retro",
+   "matrix": [
+    [
+     0.393,
+     0.769,
+     0.189,
+     0.0
+    ],
+    [
+     0.349,
+     0.686,
+     0.168,
+     0.0
+    ],
+    [
+     0.272,
+     0.534,
+     0.131,
+     0.0
+    ]
+   ]
+  },
+  {
+   "id": "vintage",
+   "label": "Vintage",
+   "group": "retro",
+   "matrix": [
+    [
+     0.7003309720000002,
+     0.4596197650000001,
+     0.100367091,
+     -0.050000000000000044
+    ],
+    [
+     0.19890697200000002,
+     0.9107517650000001,
+     0.09205109100000002,
+     -0.05000000000000004
+    ],
+    [
+     0.16841497200000002,
+     0.36655976500000004,
+     0.5613990910000001,
+     -0.050000000000000044
+    ]
+   ]
+  },
+  {
+   "id": "faded",
+   "label": "Desvaído",
+   "group": "retro",
+   "matrix": [
+    [
+     0.6673392,
+     0.11325600000000001,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.746856,
+     0.011404799999999998,
+     0.16399999999999998
+    ],
+    [
+     0.0337392,
+     0.11325600000000001,
+     0.6450048,
+     0.16399999999999998
+    ]
+   ]
+  },
+  {
+   "id": "matte",
+   "label": "Mate",
+   "group": "retro",
+   "matrix": [
+    [
+     0.874,
+     0.0,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.874,
+     0.0,
+     0.10300000000000002
+    ],
+    [
+     0.0,
+     0.0,
+     0.874,
+     0.10300000000000002
+    ]
+   ]
+  },
+  {
+   "id": "cinematic",
+   "label": "Cine",
+   "group": "cine",
+   "matrix": [
+    [
+     0.9331031,
+     0.11347049999999996,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     1.0127705,
+     0.011426400000000005,
+     -0.06899999999999996
+    ],
+    [
+     0.0338031,
+     0.11347049999999996,
+     0.9107263999999999,
+     -0.06899999999999996
+    ]
+   ]
+  },
+  {
+   "id": "teal_orange",
+   "label": "Naranja y turquesa",
+   "group": "cine",
+   "matrix": [
+    [
+     1.2096000000000002,
+     -0.0864,
+     -0.0432,
+     -0.040000000000000036
+    ],
+    [
+     -0.0432,
+     1.1232000000000002,
+     0.0,
+     -0.040000000000000036
+    ],
+    [
+     -0.15120000000000003,
+     0.0648,
+     1.1664,
+     -0.040000000000000036
+    ]
+   ]
+  },
+  {
+   "id": "night",
+   "label": "Noche",
+   "group": "cine",
+   "matrix": [
+    [
+     0.4869862499999999,
+     0.15497625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.66072625,
+     0.020196000000000002,
+     0.0
+    ],
+    [
+     0.04073625,
+     0.15497625,
+     0.674696,
+     0.0
+    ]
+   ]
+  },
+  {
+   "id": "matrix",
+   "label": "Verde Matrix",
+   "group": "cine",
+   "matrix": [
+    [
+     0.935,
+     0.0,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     1.2100000000000002,
+     0.0,
+     -0.050000000000000044
+    ],
+    [
+     0.0,
+     0.0,
+     0.935,
+     -0.050000000000000044
+    ]
+   ]
+  },
+  {
+   "id": "contrast",
+   "label": "Alto contraste",
+   "group": "color",
+   "matrix": [
+    [
+     1.4562450000000005,
+     -0.09652500000000001,
+     -0.009720000000000017,
+     -0.17500000000000007
+    ],
+    [
+     -0.02875500000000002,
+     1.3884750000000001,
+     -0.009720000000000017,
+     -0.17500000000000004
+    ],
+    [
+     -0.02875500000000002,
+     -0.09652500000000001,
+     1.4752800000000004,
+     -0.17500000000000007
+    ]
+   ]
+  },
+  {
+   "id": "saturated",
+   "label": "Vivo",
+   "group": "color",
+   "matrix": [
+    [
+     1.5474780000000004,
+     -0.42471000000000003,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     1.24929,
+     -0.042768,
+     -0.040000000000000036
+    ],
+    [
+     -0.12652200000000002,
+     -0.42471000000000003,
+     1.6312320000000002,
+     -0.040000000000000036
+    ]
+   ]
+  },
+  {
+   "id": "warm",
+   "label": "Cálido",
+   "group": "color",
+   "matrix": [
+    [
+     1.1649960000000004,
+     -0.07150000000000001,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     1.0285,
+     -0.006336000000000011,
+     0.0
+    ],
+    [
+     -0.023004000000000017,
+     -0.07150000000000001,
+     0.9616640000000002,
+     0.0
+    ]
+   ]
+  },
+  {
+   "id": "golden",
+   "label": "Hora dorada",
+   "group": "color",
+   "matrix": [
+    [
+     1.296288,
+     -0.14300000000000002,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     1.057,
+     -0.011519999999999997,
+     0.0
+    ],
+    [
+     -0.047712000000000004,
+     -0.14300000000000002,
+     0.94848,
+     0.0
+    ]
+   ]
+  },
+  {
+   "id": "cool",
+   "label": "Frío",
+   "group": "color",
+   "matrix": [
+    [
+     0.8291700000000001,
+     0.07150000000000001,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.9715,
+     0.007919999999999998,
+     0.0
+    ],
+    [
+     0.01916999999999999,
+     0.07150000000000001,
+     0.9979200000000001,
+     0.0
+    ]
+   ]
+  }
+ ],
  "clips": [
   {
    "name": "sin nada",

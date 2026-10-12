@@ -64,10 +64,11 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
     matte.bg_removal = Json{{"enabled", true}, {"auto", {{"enabled", true}, {"base_key", "k"}, {"status", "ready"}}}};
     CHECK(unsupported_reason(layer(matte)));
 
-    // Filtros, efectos (solo los activos) y efectos de vídeo.
+    // Los filtros de color ya se dibujan; los efectos (solo los activos) y los efectos de vídeo, aún no.
     TimelineClip look = video();
     look.look = "vintage";
-    CHECK(unsupported_reason(layer(look)));
+    look.filters = Json::array({Json{{"id", "noir"}, {"amount", 0.5}}});
+    CHECK_FALSE(unsupported_reason(layer(look)));
     TimelineClip effects = video();
     effects.effects = Json{{"blur", 0}, {"grayscale", false}};
     CHECK_FALSE(unsupported_reason(layer(effects)));

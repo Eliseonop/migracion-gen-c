@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <limits>
 #include <numbers>
+#include <optional>
 
 #include "gc/render/canvas.hpp"
 
@@ -182,6 +183,32 @@ TEST_CASE("lienzo: un blit girado 90° (el orden de a, b, c, d del contexto 2D)"
     CHECK(same(pixel(img, 0, 1), {0, 255, 0, 255}));
     CHECK(pixel(img, 1, 0).a == 0);
     CHECK(pixel(img, 1, 1).a == 0);
+}
+
+TEST_CASE("lienzo: la matriz de color de los filtros, sin premultiplicar y acotada", "[render]") {
+    // R' = 0,5·G + 0,2 (el desplazamiento en 0–1); G' = 2·G, que se sale y se acota; B' = B.
+    const gc::core::AffineColorMatrix m{{{0.0, 0.5, 0.0, 0.2}, {0.0, 2.0, 0.0, 0.0}, {0.0, 0.0, 1.0, 0.0}}};
+    // ±2: el lienzo guarda el color premultiplicado en 8 bits.
+    const auto near = [](int got, int want) { return got >= want - 2 && got <= want + 2; };
+
+    Image src{2, 1, {10, 100, 30, 255, 10, 200, 30, 128}};
+    auto canvas = Canvas::make(2, 1);
+    REQUIRE(canvas);
+    canvas->clear({0, 0, 0, 0});
+    REQUIRE(canvas->draw_image(src, {0, 0, 2, 1}, gc::core::Affine{}, 1.0, std::nullopt, m));
+    const Image img = canvas->snapshot();
+    const Rgba8 opaque = pixel(img, 0, 0);
+    CHECK(near(opaque.r, 101)); // 0,5·100 + 0,2·255
+    CHECK(near(opaque.g, 200));
+    CHECK(near(opaque.b, 30));
+    CHECK(opaque.a == 255);
+    // Semitransparente: la matriz va sobre el color sin premultiplicar y el alfa no cambia
+    // (el desplazamiento entero, como el feColorMatrix del preview).
+    const Rgba8 half = pixel(img, 1, 0);
+    CHECK(near(half.r, 151)); // 0,5·200 + 51
+    CHECK(near(half.g, 255));
+    CHECK(near(half.b, 30));
+    CHECK(half.a == 128);
 }
 
 TEST_CASE("lienzo: un alfa NaN dibuja opaco, como globalAlpha = NaN del contexto 2D", "[render]") {

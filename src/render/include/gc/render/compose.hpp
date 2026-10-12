@@ -4,8 +4,9 @@
 // fondo negro opaco del export (`color=c=black`, compose.py).
 //
 // Por ahora solo las capas con material (vídeo, imagen y motion: las que traen blits), en
-// fusión normal, sin máscaras, sin eliminar fondo ni croma, sin filtros de color, efectos
-// (`effects`) ni efectos de vídeo (`vfx`). Lo demás es un error Unsupported hasta que llegue,
+// fusión normal, sin máscaras, con el croma (lo hace el decode) pero sin el matte automático ni
+// el contorno, con los filtros de color (`filters` y `look`) y sin efectos (`effects`) ni
+// efectos de vídeo (`vfx`). Lo demás es un error Unsupported hasta que llegue,
 // para no dar un fotograma incompleto o mal dibujado como bueno (unsupported_reason).
 
 #include <functional>

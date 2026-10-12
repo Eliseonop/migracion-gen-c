@@ -12,6 +12,7 @@
 #include <optional>
 #include <vector>
 
+#include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_layout.hpp"
 #include "gc/core/error.hpp"
 #include "gc/core/frame.hpp"
@@ -58,12 +59,16 @@ public:
     // cuadro por `m` (px de la fuente → px del cuadro), con opacidad `alpha` (0–1; NaN = 1, como
     // `globalAlpha` del contexto 2D) y src-over.
     // Si hay `clip` (la cortinilla, en px del cuadro), solo se dibuja dentro de ese
-    // cuadrilátero. Muestreo bicúbico B = 0, C = 0,6, el `flags=bicubic` de swscale que usa el
+    // cuadrilátero. Con `color` (la matriz de los filtros de color, clip_filters.hpp), cada
+    // píxel ya muestreado pasa por ella sin premultiplicar y se acota a 0–1, como el
+    // `feColorMatrix` del preview y el `colorchannelmixer` del export (que la aplica tras escalar).
+    // Muestreo bicúbico B = 0, C = 0,6, el `flags=bicubic` de swscale que usa el
     // export; como B = 0 interpola, sin escala ni giro copia los píxeles tal cual. Error si el
     // recorte no cabe en la imagen o está vacío.
     [[nodiscard]] Result<void> draw_image(const Image& image, const core::SourceCrop& src, const core::Affine& m,
                                           double alpha = 1.0,
-                                          const std::optional<std::array<core::Point, 4>>& clip = std::nullopt);
+                                          const std::optional<std::array<core::Point, 4>>& clip = std::nullopt,
+                                          const std::optional<core::AffineColorMatrix>& color = std::nullopt);
 
     [[nodiscard]] Image snapshot() const;
 

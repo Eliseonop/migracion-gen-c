@@ -1,6 +1,7 @@
 #include "gc/render/canvas.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstddef>
 #include <format>
@@ -8,6 +9,7 @@
 
 #include "include/core/SkCanvas.h"
 #include "include/core/SkColor.h"
+#include "include/core/SkColorFilter.h"
 #include "include/core/SkImage.h"
 #include "include/core/SkImageInfo.h"
 #include "include/core/SkMatrix.h"
@@ -25,6 +27,20 @@ namespace gc::render {
 namespace {
 
 SkColor to_sk(Rgba8 c) { return SkColorSetARGB(c.a, c.r, c.g, c.b); }
+
+// La matriz afín 3×4 de los filtros como la 4×5 de Skia (filas R, G, B y A; el desplazamiento,
+// en 0–1). Skia la aplica sin premultiplicar y acota el resultado a 0–1. El alfa no cambia.
+sk_sp<SkColorFilter> color_filter(const core::AffineColorMatrix& m) {
+    std::array<float, 20> row_major{};
+    for (std::size_t r = 0; r < 3; ++r) {
+        for (std::size_t c = 0; c < 3; ++c) {
+            row_major[(r * 5) + c] = static_cast<float>(m[r][c]);
+        }
+        row_major[(r * 5) + 4] = static_cast<float>(m[r][3]);
+    }
+    row_major[18] = 1.0F; // A' = A
+    return SkColorFilters::Matrix(row_major.data());
+}
 
 } // namespace
 
@@ -65,7 +81,8 @@ void Canvas::fill_rect(double x, double y, double w, double h, Rgba8 color) {
 }
 
 Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src, const core::Affine& m, double alpha,
-                                const std::optional<std::array<core::Point, 4>>& clip) {
+                                const std::optional<std::array<core::Point, 4>>& clip,
+                                const std::optional<core::AffineColorMatrix>& color) {
     const auto row = static_cast<std::size_t>(image.width) * 4;
     if (image.width <= 0 || image.height <= 0 || image.pixels.size() != row * static_cast<std::size_t>(image.height)) {
         return fail(ErrorCode::InvalidArgument,
@@ -106,6 +123,9 @@ Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src,
     SkPaint paint;
     // Un alfa que no es un número no cambia nada, como `globalAlpha = NaN` en el contexto 2D.
     paint.setAlphaf(static_cast<float>(std::isnan(alpha) ? 1.0 : std::clamp(alpha, 0.0, 1.0)));
+    if (color) {
+        paint.setColorFilter(color_filter(*color));
+    }
     const SkRect rect = SkRect::MakeXYWH(static_cast<float>(src.sx), static_cast<float>(src.sy),
                                          static_cast<float>(src.sw), static_cast<float>(src.sh));
     // Bicúbico de swscale (libswscale/utils.c: B = 0 y C = 0,6 por defecto). Strict: no muestrea

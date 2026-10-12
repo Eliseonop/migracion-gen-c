@@ -1196,3 +1196,16 @@ Decisión de Edu (§6):
   - MSVC + vcpkg: 140/140; MinGW: 123/123. 0 warnings.
 
 **Siguiente:** etapa 2c, con el texto animado, el giro y el volteo, y la Curva.
+
+### 2026-10-11 — F3: filtros de color (clip_filters.py) en el núcleo y en el render
+
+- **Hecho:**
+  - `gc_core/clip_filters`: el catálogo de 15 filtros, la pila del clip (con el `look` antiguo), `filter_matrix`, `stack_matrix`, `adjustment_matrix` (la de la capa de ajuste) y el `colorchannelmixer` del export.
+  - `gc_render`: la matriz de la pila va en el `SkPaint` de cada blit, sin premultiplicar y acotada, como el `feColorMatrix` del preview. `unsupported_reason` ya no rechaza `filters` ni `look`.
+- **Lo que destapó:** el export pone el desplazamiento del filtro en la columna del alfa (`ra = o`), así que en un píxel semitransparente o en un clip con opacidad fija < 1 el desplazamiento se queda en `o·alfa`. El C++ sigue al preview; tus 3 clips con filtro son opacos (notas de F3).
+- **Verificación:**
+  - Paridad exacta con el Python real: 34 clips sintéticos, 187 matrices sueltas, el catálogo y tus 914 clips que se dibujan.
+  - Render frente a `compose.render_frame`: 9 fotogramas nuevos, 41–57 dB. Los mutantes «sin desplazamiento» y «sin matriz» fallan.
+  - MSVC + vcpkg: 141/141; MinGW: 123/123. 0 warnings y 0 avisos de clang-tidy.
+
+**Siguiente:** arreglar el hallazgo de la revisión del texto (la medida de Pillow que `draw_timeline_texts` deja puesta para todo el proceso) y después las máscaras (2 de tus vídeos) o la mezcla de audio.

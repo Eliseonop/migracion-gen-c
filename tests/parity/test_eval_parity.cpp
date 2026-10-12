@@ -25,6 +25,7 @@
 
 #include "gc/core/blend.hpp"
 #include "gc/core/clip_adjust.hpp"
+#include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_fx.hpp"
 #include "gc/core/fx_anims.hpp"
 #include "gc/core/fx_catalog.hpp"
@@ -131,6 +132,61 @@ Json matrix_json(const std::optional<ColorMatrix>& m) {
     return out;
 }
 
+Json affine_json(const std::optional<AffineColorMatrix>& m) {
+    if (!m) {
+        return nullptr;
+    }
+    Json out = Json::array();
+    for (const auto& row : *m) {
+        out.push_back(Json::array({row[0], row[1], row[2], row[3]}));
+    }
+    return out;
+}
+
+// Filtros de color (clip_filters.py): exactos, sin libm salvo la matriz de una capa de ajuste
+// con exposición o tono (color_matrix).
+std::size_t check_filters(const Json& file, const std::string& fname) {
+    std::size_t n = 0;
+    for (const Json& c : file.at("filters")) {
+        INFO(fname << " :: filtros de " << c.at("name").get<std::string>());
+        auto parsed = clip_from_json(c.at("clip"));
+        REQUIRE(parsed);
+        const TimelineClip& clip = *parsed;
+        Json got = Json::array();
+        for (const ClipFilter& f : clip_filters(clip)) {
+            got.push_back(Json{{"id", f.id}, {"amount", f.amount}});
+        }
+        check_same("clip_filters", c.at("filters"), got);
+        check_same("stack_matrix", c.at("stack"), affine_json(stack_matrix(clip_filters(clip))));
+        const Json& effects = clip.effects && clip.effects->is_object() ? *clip.effects : Json::object();
+        check_same("adjustment_matrix", c.at("adjustment"), affine_json(adjustment_matrix(clip)), matrix_tol(effects));
+        CHECK(filters_ffmpeg(clip) == c.at("ffmpeg").get<std::string>());
+        ++n;
+    }
+    for (const Json& f : file.at("filter_matrix")) {
+        const std::string id = f.at("id").get<std::string>();
+        const double k = num(f.at("k"));
+        INFO("filter_matrix(" << id << ", " << k << ")");
+        const AffineColorMatrix m = filter_matrix(id, k);
+        check_same("filter_matrix", f.at("matrix"), affine_json(m));
+        CHECK(matrix_ffmpeg(m) == f.at("ffmpeg").get<std::string>());
+        ++n;
+    }
+    const auto catalog = color_filters();
+    CHECK((file.at("filter_catalog").empty() || file.at("filter_catalog").size() == catalog.size()));
+    for (std::size_t i = 0; i < file.at("filter_catalog").size() && i < catalog.size(); ++i) {
+        const Json& want = file.at("filter_catalog")[i];
+        const ColorFilterDef& f = catalog[i];
+        INFO("catálogo de filtros, " << f.id);
+        CHECK(std::string(f.id) == want.at("id").get<std::string>());
+        CHECK(std::string(f.label) == want.at("label").get<std::string>());
+        CHECK(std::string(f.group) == want.at("group").get<std::string>());
+        check_same("matriz del catálogo", want.at("matrix"), affine_json(f.matrix));
+        ++n;
+    }
+    return n;
+}
+
 std::size_t check_clips(const Json& file, const std::string& fname) {
     std::size_t samples = 0;
     for (const Json& c : file.at("clips")) {
@@ -184,6 +240,7 @@ TEST_CASE("paridad de la evaluación: casos sintéticos", "[parity][eval]") {
     REQUIRE(file);
 
     CHECK(check_clips(*file, "synthetic.json") > 800);
+    CHECK(check_filters(*file, "synthetic.json") > 200);
 
     for (const Json& e : file->at("ease")) {
         const std::string name = e.at("name").get<std::string>();
@@ -229,4 +286,5 @@ TEST_CASE("paridad de la evaluación: tus clips reales", "[parity][eval][local]"
     auto file = read_json_file(path);
     REQUIRE(file);
     CHECK(check_clips(*file, "real.json") > 5000);
+    CHECK(check_filters(*file, "real.json") > 900);
 }

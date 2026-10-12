@@ -5,6 +5,7 @@
 #include <string>
 
 #include "gc/core/bg.hpp"
+#include "gc/core/clip_filters.hpp"
 
 namespace gc::render {
 
@@ -69,10 +70,6 @@ std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
     if (auto reason = bg_unsupported(clip)) {
         return reason;
     }
-    if ((!clip.look.empty() && clip.look != "none") ||
-        (clip.filters && clip.filters->is_array() && !clip.filters->empty())) {
-        return std::string("el render aún no aplica filtros de color");
-    }
     if (clip.effects && clip.effects->is_object()) {
         for (const auto& [key, value] : clip.effects->items()) {
             if (truthy(value)) {
@@ -109,8 +106,10 @@ Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int wid
         if (*image == nullptr) {
             return fail(ErrorCode::Internal, std::format("no hay fotograma del material del clip {}", id));
         }
+        // Filtros de color (o el `look` antiguo): una matriz por clip, sobre lo ya escalado.
+        const auto color = core::stack_matrix(core::clip_filters(*layer.clip));
         for (const core::Blit& blit : layer.blits) {
-            if (auto drawn = canvas->draw_image(**image, blit.src, blit.m, layer.alpha, layer.wipe); !drawn) {
+            if (auto drawn = canvas->draw_image(**image, blit.src, blit.m, layer.alpha, layer.wipe, color); !drawn) {
                 return std::unexpected(drawn.error());
             }
         }

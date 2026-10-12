@@ -140,3 +140,53 @@ EFFECTS = [
     {"exposure": -0.0, "hue": 0.0},
     {"exposure": False, "hue": None, "whites": ""},
 ]
+
+# Filtros de color (clip_filters.py): cada id solo, el `look` antiguo, pilas con intensidades
+# raras (texto, None, bool, NaN, fuera de rango, casi 0), ids que no valen y capas de ajuste.
+_FILTER_IDS = ["bw", "noir", "sepia", "vintage", "faded", "matte", "cinematic", "teal_orange", "night", "matrix",
+               "contrast", "saturated", "warm", "golden", "cool"]
+FILTER_CLIPS = [
+    *[{"name": f"filtro {fid}", "clip": clip(f"f_{fid}", filters=[{"id": fid}])} for fid in _FILTER_IDS],
+    {"name": "look antiguo", "clip": clip("l1", look="vintage")},
+    {"name": "look none, vacío y desconocido", "clip": clip("l2", look="none")},
+    {"name": "look vacío", "clip": clip("l3", look="")},
+    {"name": "look desconocido", "clip": clip("l4", look="sepiaa")},
+    {"name": "lista vacía manda sobre el look", "clip": clip("l5", look="noir", filters=[])},
+    {"name": "lista y look: manda la lista", "clip": clip("l6", look="noir", filters=[{"id": "warm", "amount": 0.5}])},
+    {"name": "el desvaído de Edu", "clip": clip("l7", filters=[{"id": "faded", "amount": 1}])},
+    {"name": "pila con intensidades raras", "clip": clip("p1", filters=[
+        {"id": "noir", "amount": 0.5}, {"id": "warm"}, {"id": "raro"}, {"id": 5}, "x", {"amount": 0.4},
+        {"id": "cool", "amount": "0.25"}, {"id": "bw", "amount": None}, {"id": "sepia", "amount": "nan"},
+        {"id": "matrix", "amount": True}, {"id": "golden", "amount": 2}, {"id": "teal_orange", "amount": -1},
+        {"id": "night", "amount": 5e-5}, {"id": "matte", "amount": "abc"}, {"id": "contrast", "amount": " 1e-3 "},
+        {"id": "saturated", "amount": "inf"}, {"id": None}, {"id": "BW"}])},
+    {"name": "pila sin intensidad", "clip": clip("p2", filters=[{"id": "noir", "amount": 0}, {"id": "warm", "amount": 1e-4}])},
+    {"name": "pila de dos al revés", "clip": clip("p3", filters=[{"id": "warm", "amount": 0.7}, {"id": "noir", "amount": 0.3}])},
+    # Capas de ajuste (adjustment_matrix): filtros, brillo/contraste/saturación, ajustes de color
+    # e intensidad (opacity).
+    {"name": "ajuste: brillo, contraste y saturación", "clip": clip(
+        "a1", kind="adjustment", asset_kind="shape", filename="",
+        effects={"brightness": 0.2, "contrast": -0.3, "saturation": 0.5})},
+    {"name": "ajuste: fuera de rango, texto, NaN y bool", "clip": clip(
+        "a2", kind="adjustment", asset_kind="shape", filename="",
+        effects={"brightness": "nan", "contrast": 9, "saturation": True})},
+    {"name": "ajuste: inf, vacío, lista y texto no numérico", "clip": clip(
+        "a3", kind="adjustment", asset_kind="shape", filename="",
+        effects={"brightness": "-inf", "contrast": "", "saturation": [1], "exposure": "x"})},
+    {"name": "ajuste: filtros, ajustes de color y opacidad 0,5", "clip": clip(
+        "a4", kind="adjustment", asset_kind="shape", filename="", opacity=0.5,
+        filters=[{"id": "cinematic", "amount": 0.8}],
+        effects={"brightness": -0.1, "exposure": 0.3, "hue": 10, "temperature": -0.4})},
+    {"name": "ajuste: opacidad 0 (identidad)", "clip": clip(
+        "a5", kind="adjustment", asset_kind="shape", filename="", opacity=0, effects={"contrast": 0.4})},
+    {"name": "ajuste: opacidad fuera de rango", "clip": clip(
+        "a6", kind="adjustment", asset_kind="shape", filename="", opacity=3, look="bw")},
+    {"name": "ajuste: sin nada", "clip": clip("a7", kind="adjustment", asset_kind="shape", filename="")},
+    {"name": "ajuste: casi la identidad", "clip": clip(
+        "a8", kind="adjustment", asset_kind="shape", filename="", effects={"brightness": 1e-12})},
+    {"name": "ajuste: efectos nulos", "clip": clip(
+        "a9", kind="adjustment", asset_kind="shape", filename="", effects=None, filters=[{"id": "bw", "amount": 0.4}])},
+]
+# Intensidades sueltas de filter_matrix (con un id desconocido también).
+FILTER_MATRIX_IDS = [*_FILTER_IDS, "raro", ""]
+FILTER_K = [float("nan"), float("-inf"), -1, 0, 1e-5, 0.3, 0.5, 0.75, 1, 2, float("inf")]

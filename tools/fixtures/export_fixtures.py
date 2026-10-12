@@ -2007,14 +2007,33 @@ def eval_case(ctx: Ctx, name: str, raw_clip: dict, times: list[float]) -> dict:
     }))
 
 
+def filter_case(ctx: Ctx, name: str, raw_clip: dict) -> dict:
+    """Filtros de color de un clip (clip_filters.py): la pila, su matriz, la de capa de ajuste
+    y el colorchannelmixer del export."""
+    from app import clip_filters as cf
+    c = ctx.schemas.TimelineClip.model_validate(raw_clip)
+    return _pure(_nan_safe({
+        "name": name, "clip": c.model_dump(), "filters": cf.clip_filters(c),
+        "stack": _matrix(cf.stack_matrix(cf.clip_filters(c))), "adjustment": _matrix(cf.adjustment_matrix(c)),
+        "ffmpeg": cf.filters_ffmpeg(c),
+    }))
+
+
 def synthetic_eval_fixtures(ctx: Ctx) -> dict:
     from app import clip_adjust as ca
     from app import clip_blend
+    from app import clip_filters as cf
     from app import clip_fx
     from app import fx_anims as fa
     sys.path.insert(0, str(HERE))
     import eval_cases as ec
     return _pure(_nan_safe({
+        "filters": [filter_case(ctx, c["name"], c["clip"]) for c in ec.FILTER_CLIPS],
+        "filter_matrix": [{"id": fid, "k": float(k), "matrix": _matrix(cf.filter_matrix(fid, float(k))),
+                           "ffmpeg": cf.matrix_ffmpeg(cf.filter_matrix(fid, float(k)))}
+                          for fid in ec.FILTER_MATRIX_IDS for k in ec.FILTER_K],
+        "filter_catalog": [{"id": f["id"], "label": f["label"], "group": f["group"], "matrix": _matrix(f["matrix"])}
+                           for f in cf.FILTERS],
         "clips": [eval_case(ctx, c["name"], c["clip"], ec.TIMES) for c in ec.CLIPS],
         # x siempre es real en fx_anims (una fracción): con un int, las curvas devolverían int.
         "ease": [{"name": n, "x": float(x), "y": fa.EASES.get(n, fa.EASES["linear"])(float(x))}
@@ -2033,7 +2052,7 @@ def synthetic_eval_fixtures(ctx: Ctx) -> dict:
 def real_eval_fixtures(ctx: Ctx, data: dict) -> dict:
     """Tus clips que se dibujan (todo menos el audio), en el inicio, las ventanas de
     aparición y salida, la mitad y el final."""
-    cases = []
+    cases, filters = [], []
     for p in data.get("projects", []):
         proj = ctx.projects._project_from_dict(p)
         if proj.timeline is None:
@@ -2044,7 +2063,9 @@ def real_eval_fixtures(ctx: Ctx, data: dict) -> dict:
             dur = ctx.clip_speed.clip_timeline_duration(c)
             times = sorted({0.0, 0.1, 0.2, 0.4, dur / 2, max(0.0, dur - 0.4), max(0.0, dur - 0.1), dur})
             cases.append(eval_case(ctx, f"{proj.id} · {c.id}", c.model_dump(), times))
-    return {"clips": cases, "ease": [], "tracks": [], "fx_windows": [], "effects": [], "blend": []}
+            filters.append(filter_case(ctx, f"{proj.id} · {c.id}", c.model_dump()))
+    return {"clips": cases, "ease": [], "tracks": [], "fx_windows": [], "effects": [], "blend": [],
+            "filters": filters, "filter_matrix": [], "filter_catalog": []}
 
 
 # --- Capas de un instante (layersAt del preview con Node; pila de track_stack.py) ------------
@@ -2516,7 +2537,7 @@ def main() -> None:
     ev = synthetic_eval_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "eval" / "synthetic.json", ev,
           len(ev["clips"]) + len(ev["ease"]) + len(ev["tracks"]) + len(ev["fx_windows"]) + len(ev["effects"])
-          + len(ev["blend"]), 0)
+          + len(ev["blend"]) + len(ev["filters"]) + len(ev["filter_matrix"]) + len(ev["filter_catalog"]), 0)
 
     if args.real:
         data_file = args.video_yt / "backend" / "data" / "projects.json"
@@ -2574,7 +2595,8 @@ def main() -> None:
         write(REPO / "tests" / "fixtures" / "local" / "text" / "real.json", txt_real,
               len(txt_real["styles"]) + len(txt_real["case"]) + len(txt_real["clips"]) + len(txt_real["fonts"]), 0)
         ev_real = real_eval_fixtures(ctx, data)
-        write(REPO / "tests" / "fixtures" / "local" / "eval" / "real.json", ev_real, len(ev_real["clips"]), 0)
+        write(REPO / "tests" / "fixtures" / "local" / "eval" / "real.json", ev_real,
+              len(ev_real["clips"]) + len(ev_real["filters"]), 0)
     print(f"listo en {time.perf_counter() - t0:.1f} s")
 
 
