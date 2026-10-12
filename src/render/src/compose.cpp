@@ -8,6 +8,7 @@
 
 #include "gc/core/bg.hpp"
 #include "gc/core/clip_filters.hpp"
+#include "gc/core/masks.hpp"
 
 namespace gc::render {
 
@@ -66,7 +67,7 @@ std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
     if (layer.blend != "normal") {
         return std::format("el render aún no hace el modo de fusión «{}»", layer.blend);
     }
-    if (auto reason = mask_unsupported(layer.masks); !reason.empty()) {
+    if (auto reason = core::maskable(clip) ? mask_unsupported(layer.masks) : std::string(); !reason.empty()) {
         return reason;
     }
     if (auto reason = bg_unsupported(clip)) {
@@ -111,7 +112,9 @@ Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int wid
         // Máscaras (en coordenadas del cuadro): el clip va a una capa que después se recorta con
         // su alfa, como el maskedmerge del export tras componer el clip.
         std::optional<MaskAlpha> mask;
-        if (!layer.masks.empty()) {
+        // Solo en los tipos que el export enmascara (clip_mask.maskable: vídeo, imagen, figura y
+        // texto); un motion con máscara sale entero, como allí.
+        if (!layer.masks.empty() && core::maskable(*layer.clip)) {
             auto alpha = mask_alpha(layer.masks, width, height);
             if (!alpha) {
                 return std::unexpected(alpha.error());

@@ -114,6 +114,8 @@ TIMELINES = [
         {"id": "A1", "kind": "audio", "name": "A1"}], [
         {"id": "v1", "track_id": "V1", **_V, "start": 0, "in_point": 0, "out_point": 2},
         {"id": "m1", "track_id": "A1", **_A, "start": 0, "in_point": 0, "out_point": 2}], [], []),
+    ("inicio enorme (adelay sin límite de 64 bits, como el int de Python)", _T, [
+        {"id": "m1", "track_id": "A1", **_A, "start": 1e16, "in_point": 0, "out_point": 2}], [], []),
     ("sin nada que suene", _T, [{"id": "i1", "track_id": "V1", **_I, "start": 0, "in_point": 0, "out_point": 2}],
      [], []),
 ]

@@ -388,7 +388,9 @@ bool clip_mixes_audio(const TimelineClip& clip, const TimelineTrack& track) { re
 std::vector<std::string> export_audio_steps(const TimelineClip& clip, int input, int m) {
     constexpr std::string_view kFormat = "aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo";
     const double start = clip.start > 0.0 ? clip.start : 0.0; // max(0.0, start)
-    const auto start_ms = static_cast<long long>(std::nearbyint(start * 1000));
+    // int(round(start · 1000)) de Python: un entero sin límite, así que se queda en doble y se
+    // escribe con todas sus cifras (sin pasar por un entero de 64 bits).
+    const double start_ms = std::nearbyint(start * 1000);
     const std::string asp = audio_speed_filters(clip);
     std::vector<std::string> steps;
     steps.push_back(std::format("[{}:a]atrim={:.3f}:{:.3f},asetpts=PTS-STARTPTS,{}{}[ain{}]", input, clip.in_point,
@@ -397,7 +399,7 @@ std::vector<std::string> export_audio_steps(const TimelineClip& clip, int input,
     steps.insert(steps.end(), std::make_move_iterator(fx.steps.begin()), std::make_move_iterator(fx.steps.end()));
     std::string chain = std::format("[{}]{},{}", fx.out, kFormat, volume_filter(clip));
     if (start_ms > 0) {
-        chain += std::format(",adelay={}:all=1", start_ms);
+        chain += std::format(",adelay={:.0f}:all=1", start_ms);
     }
     steps.push_back(chain + std::format("[a{}]", m));
     return steps;

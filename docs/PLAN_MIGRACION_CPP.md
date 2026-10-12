@@ -1204,7 +1204,7 @@ Decisión de Edu (§6):
   - `gc_render`: la matriz de la pila va en el `SkPaint` de cada blit, sin premultiplicar y acotada, como el `feColorMatrix` del preview. `unsupported_reason` ya no rechaza `filters` ni `look`.
 - **Lo que destapó:** el export pone el desplazamiento del filtro en la columna del alfa (`ra = o`), así que en un píxel semitransparente o en un clip con opacidad fija < 1 el desplazamiento se queda en `o·alfa`. El C++ sigue al preview; tus 3 clips con filtro son opacos (notas de F3).
 - **Verificación:**
-  - Paridad exacta con el Python real: 34 clips sintéticos, 187 matrices sueltas, el catálogo y tus 914 clips que se dibujan.
+  - Paridad exacta con el Python real: 34 clips sintéticos, 204 matrices sueltas, el catálogo y tus 914 clips que se dibujan.
   - Render frente a `compose.render_frame`: 9 fotogramas nuevos, 41–57 dB. Los mutantes «sin desplazamiento» y «sin matriz» fallan.
   - MSVC + vcpkg: 141/141; MinGW: 123/123. 0 warnings y 0 avisos de clang-tidy.
 
