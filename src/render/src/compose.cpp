@@ -2,7 +2,9 @@
 
 #include <charconv>
 #include <format>
+#include <optional>
 #include <string>
+#include <utility>
 
 #include "gc/core/bg.hpp"
 #include "gc/core/clip_filters.hpp"
@@ -64,8 +66,8 @@ std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
     if (layer.blend != "normal") {
         return std::format("el render aún no hace el modo de fusión «{}»", layer.blend);
     }
-    if (!layer.masks.empty()) {
-        return std::string("el render aún no aplica máscaras");
+    if (auto reason = mask_unsupported(layer.masks); !reason.empty()) {
+        return reason;
     }
     if (auto reason = bg_unsupported(clip)) {
         return reason;
@@ -106,11 +108,30 @@ Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int wid
         if (*image == nullptr) {
             return fail(ErrorCode::Internal, std::format("no hay fotograma del material del clip {}", id));
         }
+        // Máscaras (en coordenadas del cuadro): el clip va a una capa que después se recorta con
+        // su alfa, como el maskedmerge del export tras componer el clip.
+        std::optional<MaskAlpha> mask;
+        if (!layer.masks.empty()) {
+            auto alpha = mask_alpha(layer.masks, width, height);
+            if (!alpha) {
+                return std::unexpected(alpha.error());
+            }
+            mask = std::move(*alpha);
+            canvas->begin_layer();
+        }
         // Filtros de color (o el `look` antiguo): una matriz por clip, sobre lo ya escalado.
         const auto color = core::stack_matrix(core::clip_filters(*layer.clip));
         for (const core::Blit& blit : layer.blits) {
             if (auto drawn = canvas->draw_image(**image, blit.src, blit.m, layer.alpha, layer.wipe, color); !drawn) {
+                if (mask) {
+                    (void)canvas->end_layer(MaskAlpha{}); // cierra la capa sin dibujarla
+                }
                 return std::unexpected(drawn.error());
+            }
+        }
+        if (mask) {
+            if (auto merged = canvas->end_layer(*mask); !merged) {
+                return std::unexpected(merged.error());
             }
         }
     }

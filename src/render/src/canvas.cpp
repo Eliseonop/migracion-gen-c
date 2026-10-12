@@ -7,6 +7,7 @@
 #include <format>
 #include <utility>
 
+#include "include/core/SkBlendMode.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkColor.h"
 #include "include/core/SkColorFilter.h"
@@ -132,6 +133,27 @@ Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src,
     // fuera del recorte.
     canvas->drawImageRect(sk_image, rect, rect, SkSamplingOptions(SkCubicResampler{0.0F, 0.6F}), &paint,
                           SkCanvas::kStrict_SrcRectConstraint);
+    canvas->restore();
+    return {};
+}
+
+void Canvas::begin_layer() { impl_->surface->getCanvas()->saveLayer(nullptr, nullptr); }
+
+Result<void> Canvas::end_layer(const MaskAlpha& mask) {
+    SkCanvas* canvas = impl_->surface->getCanvas();
+    const auto row = static_cast<std::size_t>(mask.width);
+    if (mask.width != impl_->width || mask.height != impl_->height ||
+        mask.alpha.size() != row * static_cast<std::size_t>(mask.height)) {
+        // Sin la máscara no se dibuja nada de la capa: se vacía antes de cerrarla.
+        canvas->clear(SK_ColorTRANSPARENT);
+        canvas->restore();
+        return fail(ErrorCode::InvalidArgument, std::format("máscara de {}x{} para un lienzo de {}x{}", mask.width,
+                                                            mask.height, impl_->width, impl_->height));
+    }
+    const SkPixmap pixmap(SkImageInfo::MakeA8(mask.width, mask.height), mask.alpha.data(), row);
+    SkPaint paint;
+    paint.setBlendMode(SkBlendMode::kDstIn);
+    canvas->drawImage(SkImages::RasterFromPixmapCopy(pixmap), 0, 0, SkSamplingOptions(), &paint);
     canvas->restore();
     return {};
 }

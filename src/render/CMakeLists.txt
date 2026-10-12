@@ -3,7 +3,7 @@
 
 find_package(harfbuzz CONFIG REQUIRED)
 
-add_library(gc_render src/canvas.cpp src/compose.cpp src/png.cpp src/text.cpp)
+add_library(gc_render src/canvas.cpp src/compose.cpp src/mask.cpp src/png.cpp src/text.cpp)
 add_library(gc::render ALIAS gc_render)
 
 target_include_directories(gc_render PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")

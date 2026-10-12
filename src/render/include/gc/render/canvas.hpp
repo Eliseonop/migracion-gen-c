@@ -16,6 +16,7 @@
 #include "gc/core/clip_layout.hpp"
 #include "gc/core/error.hpp"
 #include "gc/core/frame.hpp"
+#include "gc/render/mask.hpp"
 
 namespace gc::render {
 
@@ -69,6 +70,13 @@ public:
                                           double alpha = 1.0,
                                           const std::optional<std::array<core::Point, 4>>& clip = std::nullopt,
                                           const std::optional<core::AffineColorMatrix>& color = std::nullopt);
+
+    // Capa aparte: lo que se dibuje hasta end_layer va a ella. end_layer la recorta con el alfa
+    // de la máscara (cada píxel de la capa por alfa/255) y la funde con lo de debajo (src-over):
+    // lo mismo que el `maskedmerge` del export entre el fondo sin el clip y el fondo con él.
+    // Error si la máscara no es del tamaño del lienzo (la capa se descarta).
+    void begin_layer();
+    [[nodiscard]] Result<void> end_layer(const MaskAlpha& mask);
 
     [[nodiscard]] Image snapshot() const;
 

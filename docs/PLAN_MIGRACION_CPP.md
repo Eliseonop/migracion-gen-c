@@ -1215,3 +1215,14 @@ Decisión de Edu (§6):
 - **Veredicto:** aprobado. Se arregla el hallazgo 1: la medida de Pillow que `draw_timeline_texts` dejaba puesta para todo el proceso ahora solo vale mientras dibuja (`core::ScopedTextWidth`), con test; antes, los tests del texto fallaban si corrían después del render en el mismo proceso. También salen los 2 avisos de clang-tidy de `test_text_parity.cpp`.
 - **Los otros dos (menores), también:** `text.cpp` lee el estilo con el `float()`/`int()` de Python del núcleo (un `size` como « 0.06 » ya no da Unsupported; escena nueva en la fixture del texto, 52 fotogramas) y el margen del desenfoque queda acotado a 1024 px.
 - **Verificación:** MSVC + vcpkg: 142/142; MinGW: 124/124. 0 warnings y 0 avisos de clang-tidy en lo tocado.
+
+### 2026-10-11 — F3: máscaras de clip en el render
+
+- **Hecho:** `gc_render/mask` rasteriza las máscaras como `clip_mask.py` (en coordenadas del cuadro: lineal, rollo, rectángulo redondeado, círculo, estrella, corazón y pincel, con difuminado, invertir, opacidad e intersección) y `compose_frame` dibuja el clip en una capa que recorta con ese alfa, como el `maskedmerge` del export. La máscara de texto sigue en Unsupported.
+- **Lo que destapó:**
+  - El antialias de OpenCV ensancha las formas ~0,7 px por lado (cubre del todo los píxeles cuyo centro cae en el borde). Skia las dibuja con ese margen: de 42 a 45 dB.
+  - El difuminado reproduce `cv2.GaussianBlur` (borde `REFLECT_101`) y, con σ ≥ 32, la reducción de `_feather` (INTER_AREA + INTER_LINEAR).
+- **Verificación:**
+  - 10 fotogramas nuevos frente a `compose.render_frame`: 44,7–45,3 dB. 6 mutantes (sin máscara, sin invertir, sin difuminado, sin opacidad, sin giro en x y en y): fallan todos.
+  - MSVC + vcpkg: 142/142; MinGW: 124/124. 0 warnings.
+- **Pendiente:** tu clip con máscara (Snowpiercer) es el único vídeo AV1 de tus proyectos y el FFmpeg de vcpkg no trae decodificador de AV1: siguiente paso, la feature `dav1d`.

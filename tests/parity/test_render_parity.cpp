@@ -19,6 +19,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <filesystem>
 #include <limits>
 #include <map>
@@ -31,6 +32,7 @@
 #include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
 #include "gc/render/compose.hpp"
+#include "gc/render/png.hpp"
 
 using gc::Json;
 using namespace gc::core;
@@ -107,6 +109,7 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
     gc::media::silence_ffmpeg_log();
     std::map<std::string, gc::render::Image> sources;
     std::map<std::string, gc::render::Image> blanks; // el material en blanco opaco, para la banda
+    const char* dump = std::getenv("GC_RENDER_DUMP"); // carpeta donde dejar los PNG del C++ (para mirarlos)
     std::size_t cases = 0;
     for (const Json& c : *file) {
         const auto name = c.at("name").get<std::string>();
@@ -166,6 +169,9 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         const auto expected = load(kFixtures / "render" / path_from_utf8(c.at("frame").get<std::string>()));
         REQUIRE(frame->width == expected.width);
         REQUIRE(frame->height == expected.height);
+        if (dump != nullptr) {
+            (void)gc::render::write_png(*frame, path_from_utf8(dump) / path_from_utf8(c.at("frame").get<std::string>()));
+        }
         const auto band = edge_band(*coverage);
         const double whole = psnr_luma(*frame, expected);
         const double psnr = psnr_luma(*frame, expected, &band);

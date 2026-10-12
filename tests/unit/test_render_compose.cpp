@@ -41,8 +41,13 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
     blend.blend = "multiply";
     CHECK(unsupported_reason(blend));
 
+    // Las máscaras ya se dibujan, salvo la de texto (y solo si está activa).
     FrameLayer masked = layer(video());
-    masked.masks.push_back(Json::object());
+    masked.masks.push_back(Json{{"type", "linear"}, {"enabled", true}});
+    CHECK_FALSE(unsupported_reason(masked));
+    masked.masks.push_back(Json{{"type", "text"}, {"enabled", false}});
+    CHECK_FALSE(unsupported_reason(masked));
+    masked.masks.back()["enabled"] = true;
     CHECK(unsupported_reason(masked));
 
     // Eliminar fondo: el croma solo ya lo hace el decode; con contorno, aún no.

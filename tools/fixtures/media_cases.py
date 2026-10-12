@@ -299,6 +299,32 @@ RENDER_VIDEO_MEDIA = [
 _V = {"kind": "video", "asset_kind": "clips", "layout": "overlay", "reframe": _FULL}
 _I = {"kind": "image", "asset_kind": "images", "layout": "overlay", "reframe": _FULL}
 _CENTER = {"x": 0.5, "y": 0.5, "scale": 1.0}
+# Máscaras (clip_mask.py): el clip de ondas cubre todo el cuadro (320×180 a escala 3,2 sobre
+# 360×640) encima del degradado, así se ve la forma entera. (nombre, máscaras, campos, instantes).
+_COVER = {"x": 0.5, "y": 0.5, "scale": 3.2}
+_MASK_SCENES = [
+    ("lineal girada y difuminada (como la de Snowpiercer)",
+     [{"type": "linear", "x": 0.4958, "y": 0.5951, "w": 2.4, "h": 0.0534, "rotation": 0.44, "feather": 0.0153}], {},
+     [0.5]),
+    ("lineal girada 30° sin difuminar", [{"type": "linear", "x": 0.5, "y": 0.4, "rotation": 30}], {}, [0.5]),
+    ("círculo girado e invertido", [{"type": "circle", "x": 0.45, "y": 0.55, "w": 0.4, "h": 0.25, "rotation": 20,
+                                     "invert": True, "feather": 0.02}], {}, [0.5]),
+    ("rectángulo redondeado al 60 %", [{"type": "rectangle", "x": 0.5, "y": 0.5, "w": 0.4, "h": 0.5, "radius": 0.3,
+                                        "opacity": 0.6}], {}, [0.5]),
+    ("estrella y corazón (intersección)",
+     [{"type": "star", "x": 0.5, "y": 0.45, "w": 0.6, "h": 0.6},
+      {"type": "heart", "x": 0.55, "y": 0.5, "w": 0.5, "h": 0.45, "feather": 0.01}], {}, [0.5]),
+    ("rollo de película muy difuminado (a resolución reducida)",
+     [{"type": "film", "x": 0.5, "y": 0.5, "h": 0.3, "rotation": -10, "feather": 0.1}], {}, [0.5]),
+    ("pincel", [{"type": "brush", "x": 0.5, "y": 0.5, "brush": {"size": 0.05, "points": [
+        {"x": -0.2, "y": -0.2}, {"x": 0.0, "y": -0.05}, {"x": 0.15, "y": 0.1}, {"x": -0.1, "y": 0.2, "m": 1},
+        {"x": 0.1, "y": 0.25}, {"x": 0.2, "y": -0.3, "m": 1}]}}], {}, [0.5]),
+    ("una desactivada y otra activa", [{"type": "rectangle", "enabled": False, "w": 0.1, "h": 0.1},
+                                       {"type": "circle", "x": 0.5, "y": 0.5, "w": 0.5, "h": 0.5}], {}, [0.5]),
+    ("círculo animado con keyframes", [{"type": "circle", "x": 0.3, "y": 0.5, "w": 0.4, "h": 0.4}],
+     {"keyframes": {"enabled": True, "items": [{"t": 0, "props": {"mx": 0.3}}, {"t": 2, "props": {"mx": 0.7}}]}},
+     [0.0, 1.0]),
+]
 RENDER_SCENES = [
     ("vídeo centrado", 30, ["V1"],
      [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER})],
@@ -444,6 +470,11 @@ RENDER_SCENES = [
       ("alpha.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
                            "transform": {"x": 0.5, "y": 0.3, "scale": 1.0}, "filters": [{"id": "night"}]})],
      [0.5]),
+    *[(f"máscara: {name}", 30, ["V1", "V2"],
+       [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+        ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER,
+                             "masks": masks, **extra})],
+       times) for name, masks, extra, times in _MASK_SCENES],
     # Sin el zoom (ni el pop) de aparición o salida: en un overlay estático el export escala con
     # `scale=eval=frame` pero el overlay se queda en x=ox:y=oy, así que crece desde la esquina
     # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).
