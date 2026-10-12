@@ -16,13 +16,13 @@
       ]
     },
     "media": {
-      "description": "gc_media: FFmpeg LGPL (sin x264/x265) con los encoders por hardware",
+      "description": "gc_media: FFmpeg LGPL (sin x264/x265) con los encoders por hardware, libvpx (VP9 con alfa) y dav1d (AV1)",
       "dependencies": [
         {
           "name": "ffmpeg",
           "default-features": false,
           "features": [
-            "avcodec", "avformat", "avfilter", "swresample", "swscale", "zlib", "vpx",
+            "avcodec", "avformat", "avfilter", "swresample", "swscale", "zlib", "vpx", "dav1d",
             { "name": "nvcodec", "platform": "windows | linux" },
             { "name": "amf", "platform": "windows" },
             { "name": "qsv", "platform": "windows" }

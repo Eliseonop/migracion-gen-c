@@ -4517,6 +4517,12 @@
    "has_audio": false
   },
   {
+   "file": "v_av1.mp4",
+   "duration": 0.6,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
    "file": "v_bt709.mp4",
    "duration": 1.0,
    "color_untagged": false,
@@ -4525,6 +4531,12 @@
   {
    "file": "v_corrupt.mp4",
    "duration": 2.0,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "v_hevc.mp4",
+   "duration": 0.6,
    "color_untagged": true,
    "has_audio": false
   },

@@ -1590,7 +1590,7 @@ def _ensure_probe_media() -> None:
     if ffmpeg is None:
         sys.exit("Hace falta ffmpeg en el PATH para generar tests/fixtures/media/files")
     PROBE_DIR.mkdir(parents=True, exist_ok=True)
-    for name, args in mc.PROBE_MEDIA + mc.PROBE_MEDIA_VFR + mc.PROBE_MEDIA_2S + mc.PROBE_MEDIA_ALPHA:
+    for name, args in mc.PROBE_MEDIA + mc.PROBE_MEDIA_VFR + mc.PROBE_MEDIA_2S + mc.PROBE_MEDIA_ALPHA + mc.PROBE_MEDIA_CODECS:
         out = PROBE_DIR / name
         if not out.exists():
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args,

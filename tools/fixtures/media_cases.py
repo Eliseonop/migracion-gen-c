@@ -151,6 +151,13 @@ PROBE_MEDIA_ALPHA = [
                            "-c:v", "libvpx-vp9", "-pix_fmt", "yuva420p", "-auto-alt-ref", "0"]),
 ]
 PROBE_MEDIA_2S = [("v_2s.mp4", _V + ["-t", "2", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-g", "10"])]
+# Otros códecs de tus vídeos: AV1 (uno de Snowpiercer; el FFmpeg de vcpkg lo decodifica con
+# dav1d, como el del PATH) y HEVC (4 vídeos).
+PROBE_MEDIA_CODECS = [
+    ("v_av1.mp4", _V + ["-t", "0.6", "-c:v", "libaom-av1", "-cpu-used", "8", "-crf", "30", "-pix_fmt", "yuv420p"]),
+    ("v_hevc.mp4", _V + ["-t", "0.6", "-c:v", "libx265", "-x265-params", "log-level=error", "-pix_fmt", "yuv420p",
+                         "-tag:v", "hvc1"]),
+]
 CORRUPT = ("v_corrupt.mp4", "v_2s.mp4", 300)  # (archivo, origen, bytes invertidos a mitad)
 
 # Decode como el export (compose.py): (nombre, archivo, clip, fps). El clip se completa con
@@ -177,6 +184,8 @@ DECODE = [
     ("webm vp9 con alfa", "motion_alpha.webm", {"kind": "video", "in_point": 0.0, "out_point": 0.6}, 30),
     ("motion vp9 con alfa", "motion_alpha.webm", {"kind": "motion", "asset_kind": "motion", "in_point": 0.1,
                                                   "out_point": 0.5}, 25),
+    ("mp4 av1", "v_av1.mp4", {"kind": "video", "in_point": 0.1, "out_point": 0.6}, 30),
+    ("mp4 hevc", "v_hevc.mp4", {"kind": "video", "in_point": 0.0, "out_point": 0.5}, 24),
 ]
 
 # Fotograma de un instante como frame_grab.extract_frame (`-ss t` antes de `-i`, sin el escalado
@@ -198,6 +207,8 @@ SEEK = [
     ("va_offset.mp4", [0.0, 0.01, 0.03, 0.5, 1.2, 1.24, 1.3]),
     ("v_corrupt.mp4", [0.0, 0.5, 0.9, 1.0, 1.1, 1.5, 1.96]),
     ("motion_alpha.webm", [0.0, 0.3, 0.56, 0.6]),
+    ("v_av1.mp4", [0.0, 0.25, 0.58]),
+    ("v_hevc.mp4", [0.0, 0.3, 0.56]),
 ]
 
 # Archivos que no son medios (se escriben tal cual) y rutas que no existen.

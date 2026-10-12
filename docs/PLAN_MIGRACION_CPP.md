@@ -312,7 +312,7 @@ Las estimaciones suponen 1 persona con Claude, a dedicación alta.
 - **Qt:** LGPLv3. Enlazado dinámico en escritorio sin problema. **iOS obliga a enlazar estático**, lo que exige cumplir la LGPL (entregar los objetos para re-enlazar) o pagar licencia comercial.
 - **FFmpeg:** LGPL. Pasa a **GPL** si se incluyen x264 o x265 (alternativas: OpenH264 y los encoders por hardware).
 - **espeak-ng (Kokoro, Piper):** **GPLv3**, lo que arrastra a GPL toda la app distribuida. Alternativas: un G2P propio, misaki o voces en la nube.
-- **Sin problema:** Skia (BSD), ONNX Runtime (MIT), whisper.cpp (MIT), OpenCV (Apache 2) y miniaudio (dominio público o MIT-0).
+- **Sin problema:** Skia (BSD), libvpx y dav1d (BSD, decodificadores de VP9 con alfa y de AV1 dentro de FFmpeg), ONNX Runtime (MIT), whisper.cpp (MIT), OpenCV (Apache 2) y miniaudio (dominio público o MIT-0).
 - Para uso personal da igual. Si algún día se publica, hay que elegir entre GPL y evitar esos componentes.
 
 ---
@@ -1226,3 +1226,8 @@ Decisión de Edu (§6):
   - 10 fotogramas nuevos frente a `compose.render_frame`: 44,7–45,3 dB. 6 mutantes (sin máscara, sin invertir, sin difuminado, sin opacidad, sin giro en x y en y): fallan todos.
   - MSVC + vcpkg: 142/142; MinGW: 124/124. 0 warnings.
 - **Pendiente:** tu clip con máscara (Snowpiercer) es el único vídeo AV1 de tus proyectos y el FFmpeg de vcpkg no trae decodificador de AV1: siguiente paso, la feature `dav1d`.
+
+### 2026-10-11 — F3: AV1 en gc_media (dav1d)
+
+- **Hecho:** la feature `dav1d` del FFmpeg de vcpkg (libdav1d, BSD-2). El FFmpeg de vcpkg no traía decodificador de AV1 (el nativo solo funciona con hwaccel) y tu único vídeo AV1, el de Snowpiercer con la máscara, no se podía decodificar.
+- **Verificación:** un MP4 AV1 y uno HEVC nuevos en las fixtures de decode (20 casos) y de seek (80 instantes), con el mismo MD5 por fotograma que el ffmpeg del PATH. `genclip frame` de Snowpiercer en 0,5 s: 35,2 dB frente a `compose.render_frame`. MSVC + vcpkg: 142/142.

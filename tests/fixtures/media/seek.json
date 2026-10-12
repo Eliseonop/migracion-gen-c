@@ -590,5 +590,53 @@
   "width": 64,
   "height": 48,
   "frame": null
+ },
+ {
+  "file": "v_av1.mp4",
+  "t": 0.0,
+  "ss": "0.000",
+  "width": 64,
+  "height": 48,
+  "frame": "6bf620db26f6c1027d9657076ba49e61"
+ },
+ {
+  "file": "v_av1.mp4",
+  "t": 0.25,
+  "ss": "0.250",
+  "width": 64,
+  "height": 48,
+  "frame": "af9a8ff81e286ab48fb0bb993aa78c75"
+ },
+ {
+  "file": "v_av1.mp4",
+  "t": 0.58,
+  "ss": "0.580",
+  "width": 64,
+  "height": 48,
+  "frame": null
+ },
+ {
+  "file": "v_hevc.mp4",
+  "t": 0.0,
+  "ss": "0.000",
+  "width": 64,
+  "height": 48,
+  "frame": "1cf8b102372014270714aa1080374b4a"
+ },
+ {
+  "file": "v_hevc.mp4",
+  "t": 0.3,
+  "ss": "0.300",
+  "width": 64,
+  "height": 48,
+  "frame": "740a9149f1c799eacc49a9e2d2cb74c7"
+ },
+ {
+  "file": "v_hevc.mp4",
+  "t": 0.56,
+  "ss": "0.560",
+  "width": 64,
+  "height": 48,
+  "frame": "08017f39e3100ea9ace073f578168888"
  }
 ]
