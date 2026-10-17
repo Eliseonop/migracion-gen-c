@@ -57,6 +57,29 @@ std::pair<int, std::string> encoder_quality(const gc::Json& settings) {
     return {23, "fast"};
 }
 
+// Segundos acumulados por fase (--tiempos): dónde se va el render.
+struct Phases {
+    double audio = 0;
+    double decode = 0; // abrir los lectores y sacar fotogramas (dentro de evaluate)
+    double evaluate = 0;
+    double compose = 0;
+    double text = 0;
+    double encode = 0;
+};
+
+// Suma a `slot` lo que tarda su ámbito.
+class Lap {
+public:
+    explicit Lap(double& slot) : slot_(slot) {}
+    Lap(const Lap&) = delete;
+    Lap& operator=(const Lap&) = delete;
+    ~Lap() { slot_ += std::chrono::duration<double>(std::chrono::steady_clock::now() - t0_).count(); }
+
+private:
+    double& slot_;
+    std::chrono::steady_clock::time_point t0_ = std::chrono::steady_clock::now();
+};
+
 } // namespace
 
 int cmd_render(std::span<const std::string> args) {
@@ -65,6 +88,7 @@ int cmd_render(std::span<const std::string> args) {
     std::string encoder;
     bool skip = false;
     bool progress = false;
+    bool times = false;
     for (std::size_t i = 0; i < args.size(); ++i) {
         const std::string& a = args[i];
         if (a == "-o" && i + 1 < args.size()) {
@@ -75,13 +99,15 @@ int cmd_render(std::span<const std::string> args) {
             skip = true;
         } else if (a == "--progress") {
             progress = true;
+        } else if (a == "--tiempos") {
+            times = true;
         } else {
             pos.push_back(a);
         }
     }
     if (pos.size() != 2 || !out) {
         std::cerr << "uso: genclip render <raíz de video-yt> <proyecto> -o <salida.mp4> [--progress] [--omitir] "
-                     "[--codificador <nombre>]\n";
+                     "[--codificador <nombre>] [--tiempos]\n";
         return 2;
     }
     gc::media::silence_ffmpeg_log();
@@ -120,9 +146,12 @@ int cmd_render(std::span<const std::string> args) {
         return it->second;
     };
 
+    Phases ph;
+    const auto started = std::chrono::steady_clock::now();
     // El audio entero, como el export (el mismo PCM que el CLI con el grafo de build_command).
     std::vector<float> pcm;
     {
+        const Lap lap(ph.audio);
         auto plan = export_inputs(full, exists, has_audio);
         auto graph = export_audio_graph(full, exists, has_audio);
         if (!plan || !graph) {
@@ -180,6 +209,7 @@ int cmd_render(std::span<const std::string> args) {
     std::optional<gc::Error> media_error;
     std::int64_t tick = 0;
     const auto frame_of = [&](const TimelineClip& clip) -> const gc::render::Image* {
+        const Lap lap(ph.decode);
         const std::string id =
             clip.id.ends_with(kGhostSuffix) ? clip.id.substr(0, clip.id.size() - kGhostSuffix.size()) : clip.id;
         if (auto it = images.find(id); it != images.end()) {
@@ -216,11 +246,16 @@ int cmd_render(std::span<const std::string> args) {
             std::cerr << "aviso: " << message << ": se omite\n";
         }
     };
-    const auto started = std::chrono::steady_clock::now();
+    // Un lienzo para todos los fotogramas: compose_into lo borra cada vez.
+    auto canvas = gc::render::Canvas::make(w, h);
+    if (!canvas) {
+        return fail_with(canvas.error().to_string());
+    }
     int last_pct = -1;
     for (tick = 0; tick < frames; ++tick) {
         images.clear();
         const double t = static_cast<double>(tick) / fps;
+        std::optional<Lap> lap(std::in_place, ph.evaluate);
         auto layers = evaluate(timeline, t, FrameSpec{static_cast<double>(w), static_cast<double>(h), kRenderLayers},
                                [&](const TimelineClip& clip) -> std::optional<MediaSize> {
                                    const auto* img = frame_of(clip);
@@ -235,6 +270,7 @@ int cmd_render(std::span<const std::string> args) {
         if (!layers) {
             return fail_with(layers.error().to_string());
         }
+        lap.emplace(ph.compose);
         std::erase_if(*layers, [](const FrameLayer& layer) { return layer.clip->kind == "text"; });
         if (skip) {
             std::erase_if(*layers, [&](const FrameLayer& layer) {
@@ -245,28 +281,19 @@ int cmd_render(std::span<const std::string> args) {
                 return reason.has_value();
             });
         }
-        auto image = gc::render::compose_frame(*layers, w, h,
-                                               [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
-                                                   const auto* img = frame_of(*layer.clip);
-                                                   if (img == nullptr) {
-                                                       return gc::fail(gc::ErrorCode::NotFound,
-                                                                       std::format("sin material para el clip {}",
-                                                                                   layer.clip->id));
-                                                   }
-                                                   return img;
-                                               });
-        if (!image) {
-            return fail_with(image.error().to_string());
-        }
-        auto canvas = gc::render::Canvas::make(w, h);
-        if (!canvas) {
-            return fail_with(canvas.error().to_string());
-        }
-        if (auto ok = canvas->draw_image(*image, SourceCrop{0, 0, static_cast<double>(w), static_cast<double>(h)},
-                                         Affine{});
+        if (auto ok = gc::render::compose_into(
+                *canvas, *layers,
+                [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
+                    const auto* img = frame_of(*layer.clip);
+                    if (img == nullptr) {
+                        return gc::fail(gc::ErrorCode::NotFound, std::format("sin material para el clip {}", layer.clip->id));
+                    }
+                    return img;
+                });
             !ok) {
             return fail_with(ok.error().to_string());
         }
+        lap.emplace(ph.text);
         std::vector<std::string> warnings;
         if (auto ok = gc::render::draw_timeline_texts(*canvas, timeline, tick, fonts, skip, &warnings); !ok) {
             return fail_with(ok.error().to_string());
@@ -274,8 +301,9 @@ int cmd_render(std::span<const std::string> args) {
         for (const auto& message : warnings) {
             warn(message);
         }
-        const auto frame = canvas->snapshot();
-        if (auto ok = writer->video(frame.pixels); !ok) {
+        lap.emplace(ph.encode);
+        // El fotograma es opaco: los píxeles del lienzo tal cual, sin copiarlos.
+        if (auto ok = writer->video(canvas->opaque_pixels()); !ok) {
             return fail_with(ok.error().to_string());
         }
         // El audio que corresponde a este fotograma.
@@ -295,6 +323,7 @@ int cmd_render(std::span<const std::string> args) {
         }
     }
     // Lo que quede de audio (si dura más que el último fotograma).
+    std::optional<Lap> lap(std::in_place, ph.encode);
     if (!pcm.empty()) {
         const auto from = static_cast<std::size_t>((frames * 48000) / fps) * 2;
         if (from < pcm.size()) {
@@ -306,9 +335,16 @@ int cmd_render(std::span<const std::string> args) {
     if (auto ok = writer->finish(); !ok) {
         return fail_with(ok.error().to_string());
     }
+    lap.reset();
     const double secs = std::chrono::duration<double>(std::chrono::steady_clock::now() - started).count();
     std::cout << std::format("{} ({}x{}, {} fps, {:.3f} s, {} fotogramas, {}, {:.1f} s de render)\n", *out, w, h, fps,
                              total, frames, writer->video_encoder(), secs);
+    if (times) {
+        // El decode va dentro de evaluate (y de compose, si un clip solo se pide al componer).
+        std::cout << std::format("tiempos: audio {:.2f} s · decode {:.2f} s · evaluate {:.2f} s · compose {:.2f} s · "
+                                 "texto {:.2f} s · encode {:.2f} s\n",
+                                 ph.audio, ph.decode, ph.evaluate, ph.compose, ph.text, ph.encode);
+    }
     return 0;
 }
 

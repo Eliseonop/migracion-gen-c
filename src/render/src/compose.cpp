@@ -92,7 +92,16 @@ Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int wid
     if (!canvas) {
         return std::unexpected(canvas.error());
     }
-    canvas->clear({0, 0, 0, 255});
+    if (auto ok = compose_into(*canvas, layers, source); !ok) {
+        return std::unexpected(ok.error());
+    }
+    return canvas->snapshot();
+}
+
+Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers, const SourceFn& source) {
+    const int width = canvas.width();
+    const int height = canvas.height();
+    canvas.clear({0, 0, 0, 255});
     for (const core::FrameLayer& layer : layers) {
         const std::string& id = layer.clip->id;
         if (auto reason = unsupported_reason(layer)) {
@@ -120,25 +129,25 @@ Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int wid
                 return std::unexpected(alpha.error());
             }
             mask = std::move(*alpha);
-            canvas->begin_layer();
+            canvas.begin_layer();
         }
         // Filtros de color (o el `look` antiguo): una matriz por clip, sobre lo ya escalado.
         const auto color = core::stack_matrix(core::clip_filters(*layer.clip));
         for (const core::Blit& blit : layer.blits) {
-            if (auto drawn = canvas->draw_image(**image, blit.src, blit.m, layer.alpha, layer.wipe, color); !drawn) {
+            if (auto drawn = canvas.draw_image(**image, blit.src, blit.m, layer.alpha, layer.wipe, color); !drawn) {
                 if (mask) {
-                    (void)canvas->end_layer(MaskAlpha{}); // cierra la capa sin dibujarla
+                    (void)canvas.end_layer(MaskAlpha{}); // cierra la capa sin dibujarla
                 }
                 return std::unexpected(drawn.error());
             }
         }
         if (mask) {
-            if (auto merged = canvas->end_layer(*mask); !merged) {
+            if (auto merged = canvas.end_layer(*mask); !merged) {
                 return std::unexpected(merged.error());
             }
         }
     }
-    return canvas->snapshot();
+    return {};
 }
 
 } // namespace gc::render

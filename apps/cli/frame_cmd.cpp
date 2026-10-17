@@ -194,29 +194,23 @@ int cmd_frame(std::span<const std::string> args) {
             return reason.has_value();
         });
     }
-    auto image = gc::render::compose_frame(*layers, w, h,
-                                           [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
-                                               const auto* img = frame_of(*layer.clip);
-                                               if (img == nullptr) {
-                                                   return gc::fail(gc::ErrorCode::NotFound,
-                                                                   std::format("sin material para el clip {}",
-                                                                               layer.clip->id));
-                                               }
-                                               return img;
-                                           });
-    if (!image) {
-        return fail_with(image.error().to_string());
-    }
-    // Los textos, con las fuentes del sistema y las de video-yt (backend/app/fonts: Anton).
     auto canvas = gc::render::Canvas::make(w, h);
     if (!canvas) {
         return fail_with(canvas.error().to_string());
     }
-    if (auto ok = canvas->draw_image(*image, SourceCrop{0, 0, static_cast<double>(w), static_cast<double>(h)},
-                                     Affine{});
+    if (auto ok = gc::render::compose_into(
+            *canvas, *layers,
+            [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
+                const auto* img = frame_of(*layer.clip);
+                if (img == nullptr) {
+                    return gc::fail(gc::ErrorCode::NotFound, std::format("sin material para el clip {}", layer.clip->id));
+                }
+                return img;
+            });
         !ok) {
         return fail_with(ok.error().to_string());
     }
+    // Los textos encima, con las fuentes del sistema y las de video-yt (backend/app/fonts: Anton).
     const gc::render::TextFonts fonts(FontDirs{default_system_font_dir(), root / "app" / "fonts"});
     std::vector<std::string> warnings;
     if (auto ok = gc::render::draw_timeline_texts(*canvas, timeline, tick, fonts, skip, &warnings); !ok) {
@@ -225,8 +219,7 @@ int cmd_frame(std::span<const std::string> args) {
     for (const auto& wmsg : warnings) {
         std::cerr << "aviso: " << wmsg << ": se omite\n";
     }
-    image = canvas->snapshot();
-    if (auto ok = gc::render::write_png(*image, path_from_utf8(*out)); !ok) {
+    if (auto ok = gc::render::write_png(canvas->snapshot(), path_from_utf8(*out)); !ok) {
         return fail_with(ok.error().to_string());
     }
     std::cout << std::format("{} ({}x{}, t = {:.3f} s, {} capas)\n", *out, w, h, t, layers->size());

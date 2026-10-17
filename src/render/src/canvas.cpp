@@ -101,9 +101,10 @@ Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src,
     }
     const SkPixmap pixmap(SkImageInfo::Make(image.width, image.height, kRGBA_8888_SkColorType, kUnpremul_SkAlphaType),
                           image.pixels.data(), row);
-    const sk_sp<SkImage> sk_image = SkImages::RasterFromPixmapCopy(pixmap);
+    // Sin copiar los píxeles: el lienzo raster dibuja al momento y la imagen no sale de aquí.
+    const sk_sp<SkImage> sk_image = SkImages::RasterFromPixmap(pixmap, nullptr, nullptr);
     if (!sk_image) {
-        return fail(ErrorCode::Internal, "Skia no pudo copiar la imagen");
+        return fail(ErrorCode::Internal, "Skia no pudo leer la imagen");
     }
 
     SkCanvas* canvas = impl_->surface->getCanvas();
@@ -166,6 +167,15 @@ Image Canvas::snapshot() const {
     // Mismas dimensiones que el lienzo y formato soportado: no puede fallar.
     [[maybe_unused]] const bool ok = impl_->surface->readPixels(info, img.pixels.data(), row, 0, 0);
     return img;
+}
+
+std::span<const std::uint8_t> Canvas::opaque_pixels() const {
+    SkPixmap pm;
+    // Un lienzo raster de make() siempre se deja ver, con filas de width · 4 bytes.
+    if (!impl_->surface->peekPixels(&pm) || pm.rowBytes() != static_cast<std::size_t>(impl_->width) * 4) {
+        return {};
+    }
+    return {static_cast<const std::uint8_t*>(pm.addr()), pm.computeByteSize()};
 }
 
 } // namespace gc::render

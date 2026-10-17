@@ -1259,3 +1259,11 @@ Decisión de Edu (§6):
 - **Hecho:** OpenH264 en el FFmpeg de vcpkg; `Mp4Writer` (H.264 con la elección y la sonda de `gpu.py`, BT.709 de rango TV, AAC y `+faststart`); el decode en modo «tirar» y `ClipFrames`, igual que `export_frame_at` tick a tick sin redecodificar; y `genclip render`, escrito y compilando.
 - **Verificación:** tests nuevos del encode y de `ClipFrames`. MSVC + vcpkg: 148/148; MinGW: 126/126. 0 warnings.
 - **Sin probar aún:** `genclip render` de punta a punta (en Debug, un proyecto de 15 s pasó de 10 min). Pausa pedida por Edu: lo pendiente está en las notas de F3.
+
+### 2026-10-16 — F3: `genclip render` de punta a punta, y por qué el render va lento
+
+- **Hecho:** primera prueba completa con «app launcher» (15 s, un vídeo en overlay): el MP4 tiene la misma duración, el mismo número de fotogramas y el mismo formato que el del export real. `compose_into` compone sobre un lienzo que se reutiliza y los textos van en el mismo, sin la segunda pasada bicúbica de todo el cuadro; el codificador lee los píxeles del lienzo sin copiarlos (`opaque_pixels`). `--tiempos` da el desglose por fase. De 354 s a 83 s (el export de Python, 5,1 s).
+- **Lo que destapó:** Skia compilado con MSVC usa su *raster pipeline* escalar (`SKRP_CPU_SCALAR`: SSE/AVX solo con Clang o GCC). Es casi todo lo que queda del tiempo (171 ms por fotograma).
+- **Verificación:** frente a `compose.render_frame`, 31 dB de luma por la geometría par del export (580 px en vez de 581,2); con geometría entera igual en los dos, 58,7 dB. MSVC + vcpkg: 148/148 (Debug y Release); MinGW: 126/126. 0 warnings.
+
+**Siguiente:** Skia con clang-cl (overlay del puerto) y volver a medir; luego repartir el trabajo en hilos.

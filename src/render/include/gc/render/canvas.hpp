@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
 #include "gc/core/clip_filters.hpp"
@@ -79,6 +80,11 @@ public:
     [[nodiscard]] Result<void> end_layer(const MaskAlpha& mask);
 
     [[nodiscard]] Image snapshot() const;
+
+    // Los píxeles del lienzo sin copiarlos: RGBA premultiplicado, width · height · 4, sin
+    // relleno entre filas. En un lienzo opaco (el que deja compose_into, con los textos encima)
+    // son los mismos bytes que snapshot(), sin su conversión. Valen hasta el siguiente dibujo.
+    [[nodiscard]] std::span<const std::uint8_t> opaque_pixels() const;
 
 private:
     struct Impl;

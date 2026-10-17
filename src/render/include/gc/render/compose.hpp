@@ -32,4 +32,9 @@ using SourceFn = std::function<Result<const Image*>(const core::FrameLayer&)>;
 [[nodiscard]] Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int width, int height,
                                           const SourceFn& source);
 
+// Lo mismo, pero sobre un lienzo que ya existe (se borra a negro opaco): para poner encima los
+// textos y reutilizar el lienzo de un fotograma al siguiente. El resultado es opaco.
+[[nodiscard]] Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers,
+                                        const SourceFn& source);
+
 } // namespace gc::render
