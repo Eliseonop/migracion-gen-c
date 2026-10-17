@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <format>
+#include <optional>
 #include <string_view>
 #include <utility>
 
@@ -14,6 +15,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libavutil/audio_fifo.h>
 #include <libavutil/channel_layout.h>
+#include <libavutil/cpu.h>
 #include <libavutil/opt.h>
 #include <libswscale/swscale.h>
 }
@@ -47,6 +49,10 @@ using CodecPtr = std::unique_ptr<AVCodecContext, CodecFree>;
 
 constexpr std::array<std::string_view, 3> kHwPreference{"h264_nvenc", "h264_qsv", "h264_amf"};
 
+// Hilos (y slices) de OpenH264: con `threads=0` no reparte el trabajo (iMultipleThreadIdc = 0 y
+// una sola slice); con N de cada, sí. Más de 4 apenas acelera (medido en 720×1280).
+int openh264_threads() { return std::clamp(av_cpu_count(), 1, 4); }
+
 // _encoder_args_for de gpu.py: la calidad del CRF en las opciones de cada codificador.
 AVDictionary* encoder_options(std::string_view name, int crf, const std::string& preset) {
     AVDictionary* d = nullptr;
@@ -66,6 +72,7 @@ AVDictionary* encoder_options(std::string_view name, int crf, const std::string&
         // Sin CRF: el cuantificador fijo en el del CRF.
         av_dict_set(&d, "qmin", q.c_str(), 0);
         av_dict_set(&d, "qmax", q.c_str(), 0);
+        av_dict_set(&d, "slices", std::to_string(openh264_threads()).c_str(), 0);
     } else {
         av_dict_set(&d, "crf", q.c_str(), 0); // libx264, si algún día se compila con él
         av_dict_set(&d, "preset", preset.c_str(), 0);
@@ -109,7 +116,8 @@ Result<CodecPtr> open_video(std::string_view name, int width, int height, int fp
     ctx->color_primaries = AVCOL_PRI_BT709;
     ctx->color_trc = AVCOL_TRC_BT709;
     ctx->color_range = AVCOL_RANGE_MPEG;
-    ctx->thread_count = 0; // `-threads auto`, como el CLI (OpenH264 usa entonces un hilo por núcleo)
+    // `-threads auto`, como el CLI; OpenH264, con un número explícito (openh264_threads).
+    ctx->thread_count = name == "libopenh264" ? openh264_threads() : 0;
     if (global_header) {
         ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
@@ -172,6 +180,56 @@ std::string pick_h264_encoder() {
     return hw.empty() ? std::string("libopenh264") : hw.front();
 }
 
+struct VideoFrame::Impl {
+    std::unique_ptr<AVFrame, FrameFree> frame;
+};
+
+VideoFrame::VideoFrame(std::unique_ptr<Impl> impl) : impl_(std::move(impl)) {}
+VideoFrame::VideoFrame(VideoFrame&&) noexcept = default;
+VideoFrame& VideoFrame::operator=(VideoFrame&&) noexcept = default;
+VideoFrame::~VideoFrame() = default;
+
+struct FrameConverter::Impl {
+    int width = 0;
+    int height = 0;
+    AVPixelFormat format = AV_PIX_FMT_YUV420P;
+    std::unique_ptr<SwsContext, SwsFree> sws;
+};
+
+FrameConverter::FrameConverter(std::unique_ptr<Impl> impl) : impl_(std::move(impl)) {}
+FrameConverter::FrameConverter(FrameConverter&&) noexcept = default;
+FrameConverter& FrameConverter::operator=(FrameConverter&&) noexcept = default;
+FrameConverter::~FrameConverter() = default;
+
+Result<VideoFrame> FrameConverter::convert(std::span<const std::uint8_t> rgba) {
+    const Impl& s = *impl_;
+    const auto row = static_cast<std::size_t>(s.width) * 4;
+    if (rgba.size() != row * static_cast<std::size_t>(s.height)) {
+        return fail(ErrorCode::InvalidArgument,
+                    std::format("fotograma de {} bytes para una salida de {}x{}", rgba.size(), s.width, s.height));
+    }
+    auto out = std::make_unique<VideoFrame::Impl>();
+    out->frame.reset(av_frame_alloc());
+    AVFrame* f = out->frame.get();
+    if (f == nullptr) {
+        return fail(ErrorCode::Internal, "sin memoria para el vídeo");
+    }
+    f->format = s.format;
+    f->width = s.width;
+    f->height = s.height;
+    f->colorspace = AVCOL_SPC_BT709;
+    f->color_primaries = AVCOL_PRI_BT709;
+    f->color_trc = AVCOL_TRC_BT709;
+    f->color_range = AVCOL_RANGE_MPEG;
+    if (av_frame_get_buffer(f, 0) < 0) {
+        return fail(ErrorCode::Internal, "sin memoria para el vídeo");
+    }
+    const std::uint8_t* src[] = {rgba.data()};
+    const int stride[] = {static_cast<int>(row)};
+    sws_scale(s.sws.get(), src, stride, 0, s.height, f->data, f->linesize);
+    return VideoFrame(std::move(out));
+}
+
 struct Mp4Writer::Impl {
     EncodeSettings settings;
     std::string encoder;
@@ -181,8 +239,7 @@ struct Mp4Writer::Impl {
     CodecPtr actx;
     AVStream* vst = nullptr;
     AVStream* ast = nullptr;
-    std::unique_ptr<SwsContext, SwsFree> sws;
-    std::unique_ptr<AVFrame, FrameFree> vframe;
+    std::optional<FrameConverter> converter; // el de video(rgba)
     std::unique_ptr<AVFrame, FrameFree> aframe;
     std::unique_ptr<AVPacket, PacketFree> pkt;
     std::unique_ptr<AVAudioFifo, FifoFree> fifo;
@@ -318,45 +375,50 @@ Result<Mp4Writer> Mp4Writer::open(const std::filesystem::path& path, const Encod
     }
     impl->header = true;
 
-    // RGBA → yuv420p con la matriz BT.709 y rango TV (BT709_FINAL_FILTER), con los flags de
-    // swscale por defecto del CLI (bicúbico).
-    impl->sws.reset(sws_getContext(settings.width, settings.height, AV_PIX_FMT_RGBA, settings.width, settings.height,
-                                   impl->vctx->pix_fmt, SWS_BICUBIC, nullptr, nullptr, nullptr));
+    impl->pkt.reset(av_packet_alloc());
+    Mp4Writer writer(std::move(impl));
+    auto conv = writer.converter();
+    if (!conv) {
+        return std::unexpected(conv.error());
+    }
+    writer.impl_->converter.emplace(std::move(*conv));
+    return writer;
+}
+
+Result<FrameConverter> Mp4Writer::converter() const {
+    // RGBA → el formato del codificador con la matriz BT.709 y rango TV (BT709_FINAL_FILTER), con
+    // los flags de swscale por defecto del CLI (bicúbico).
+    const Impl& s = *impl_;
+    auto impl = std::make_unique<FrameConverter::Impl>();
+    impl->width = s.settings.width;
+    impl->height = s.settings.height;
+    impl->format = s.vctx->pix_fmt;
+    impl->sws.reset(sws_getContext(impl->width, impl->height, AV_PIX_FMT_RGBA, impl->width, impl->height, impl->format,
+                                   SWS_BICUBIC, nullptr, nullptr, nullptr));
     if (!impl->sws) {
         return fail(ErrorCode::Internal, "no se pudo preparar la conversión a YUV");
     }
     const int* bt709 = sws_getCoefficients(SWS_CS_ITU709);
     sws_setColorspaceDetails(impl->sws.get(), sws_getCoefficients(SWS_CS_DEFAULT), 1, bt709, 0, 0, 1 << 16, 1 << 16);
-    impl->vframe.reset(av_frame_alloc());
-    impl->vframe->format = impl->vctx->pix_fmt;
-    impl->vframe->width = settings.width;
-    impl->vframe->height = settings.height;
-    impl->vframe->colorspace = AVCOL_SPC_BT709;
-    impl->vframe->color_primaries = AVCOL_PRI_BT709;
-    impl->vframe->color_trc = AVCOL_TRC_BT709;
-    impl->vframe->color_range = AVCOL_RANGE_MPEG;
-    if (av_frame_get_buffer(impl->vframe.get(), 0) < 0) {
-        return fail(ErrorCode::Internal, "sin memoria para el vídeo");
-    }
-    impl->pkt.reset(av_packet_alloc());
-    return Mp4Writer(std::move(impl));
+    return FrameConverter(std::move(impl));
 }
 
 Result<void> Mp4Writer::video(std::span<const std::uint8_t> rgba) {
+    auto frame = impl_->converter->convert(rgba);
+    if (!frame) {
+        return std::unexpected(frame.error());
+    }
+    return video(std::move(*frame));
+}
+
+Result<void> Mp4Writer::video(VideoFrame frame) {
     Impl& s = *impl_;
-    const auto row = static_cast<std::size_t>(s.settings.width) * 4;
-    if (rgba.size() != row * static_cast<std::size_t>(s.settings.height)) {
-        return fail(ErrorCode::InvalidArgument, std::format("fotograma de {} bytes para una salida de {}x{}",
-                                                            rgba.size(), s.settings.width, s.settings.height));
+    AVFrame* f = frame.impl_->frame.get();
+    if (f->width != s.settings.width || f->height != s.settings.height || f->format != s.vctx->pix_fmt) {
+        return fail(ErrorCode::InvalidArgument, "fotograma de otro tamaño o formato que el del codificador");
     }
-    if (av_frame_make_writable(s.vframe.get()) < 0) {
-        return fail(ErrorCode::Internal, "sin memoria para el vídeo");
-    }
-    const std::uint8_t* src[] = {rgba.data()};
-    const int stride[] = {static_cast<int>(row)};
-    sws_scale(s.sws.get(), src, stride, 0, s.settings.height, s.vframe->data, s.vframe->linesize);
-    s.vframe->pts = s.vcount++;
-    if (const int r = avcodec_send_frame(s.vctx.get(), s.vframe.get()); r < 0) {
+    f->pts = s.vcount++;
+    if (const int r = avcodec_send_frame(s.vctx.get(), f); r < 0) {
         return fail(ErrorCode::Io, "error al codificar el vídeo: " + av_err(r));
     }
     return s.drain(s.vctx.get(), s.vst);

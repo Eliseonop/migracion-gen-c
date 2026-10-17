@@ -29,6 +29,12 @@ struct RgbaFrame {
 struct DecodeSpec {
     std::vector<std::string> input_args; // como ffmpeg_input_args: opciones, "-i" y la ruta (UTF-8)
     std::string chain;                   // filtros de libavfilter tras el decode (sin el format=rgba)
+    // Para no decodificar lo que la cadena va a tirar: antes de empezar, saltar a un fotograma clave
+    // en o antes de este instante (µs desde el principio del archivo). Solo vale si la cadena
+    // descarta todo lo anterior (el trim del export, con margen): los fotogramas que salen son los
+    // mismos. Si el salto cae después del instante (un contenedor sin índice), se decodifica desde
+    // el principio.
+    std::optional<std::int64_t> preroll_us;
 };
 
 // `ASSUME_BT709_FILTER` de compose.py: un vídeo sin etiqueta de color se lee como BT.709.
@@ -71,7 +77,9 @@ inline constexpr const char* kAssumeBt709Filter =
 // Los fotogramas de un clip que compone el export, en orden de ticks: los mismos que
 // export_frame_at, pero sin volver a decodificar desde el principio en cada fotograma (el
 // decodificador avanza con los ticks). Pedir un tick anterior al último empieza de nuevo. Al revés
-// (`reverse`), de momento, cada tick es un export_frame_at.
+// (`reverse`), de momento, cada tick es un export_frame_at. Un vídeo que no empieza cerca del
+// principio del archivo no se decodifica desde 0: salta antes a un fotograma clave (preroll_us),
+// 1 s antes del tramo. Cada uno decodifica por adelantado en su propio hilo (unos pocos fotogramas).
 class ClipFrames {
 public:
     [[nodiscard]] static Result<ClipFrames> open(const core::TimelineClip& clip, const std::filesystem::path& path,

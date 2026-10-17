@@ -331,6 +331,7 @@ RENDER = [
 # en H.264 de alta calidad. Se generan UNA vez (van a git-lfs).
 _MOVING = ("nullsrc=s=320x180:r={r}:d=2,format=rgb24,geq=r='128+110*sin(Y*0.35-T*20)':"
            "g='128+55*sin(X*0.35+T*30)+55*sin(Y*0.3-T*25)':b='128+110*sin((X+Y)*0.2+T*15)'")
+_MOVING6 = _MOVING.replace(":d=2,", ":d=6,")
 _INSIDE = "lt(hypot(X-160-40*sin(T*3),Y-90),60)"
 _KEYED = ("nullsrc=s=320x180:r={r}:d={d},format=rgb24,geq="
           "r='if(" + _INSIDE + ",128+110*sin(Y*0.35-T*20),0)':"
@@ -351,6 +352,17 @@ RENDER_VIDEO_MEDIA = [
     # Barras magenta de 12 px sobre verde: bordes por todo el clip, para que la limpieza del borde
     # (desenfoque en px del alto del material) se note sobre las ondas del fondo.
     ("keyedbars.png", ["-f", "lavfi", "-i", _KEYED_BARS, "-frames:v", "1"]),
+    # Para el salto previo de ClipFrames (seek a un fotograma clave antes del in_point): 6 s con un
+    # fotograma clave cada 0,5 s. H.264 con B-frames, H.264 de GOP abierto a 25 fps, VP9 en WebM
+    # (libvpx-vp9, como el export) y un MKV que no empieza en 0.
+    ("keys30.mp4", ["-f", "lavfi", "-i", _MOVING6.format(r=30), "-c:v", "libx264", "-crf", "18", "-g", "15",
+                    "-pix_fmt", "yuv420p"]),
+    ("keys25_open.mp4", ["-f", "lavfi", "-i", _MOVING6.format(r=25), "-c:v", "libx264", "-crf", "18", "-g", "10",
+                         "-x264-params", "open-gop=1", "-pix_fmt", "yuv420p"]),
+    ("keys30.webm", ["-f", "lavfi", "-i", _MOVING6.format(r=30), "-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0",
+                     "-g", "15", "-deadline", "realtime", "-cpu-used", "8"]),
+    ("keys30_offset.mkv", ["-f", "lavfi", "-i", _MOVING6.format(r=30), "-c:v", "libx264", "-crf", "18", "-g", "15",
+                           "-pix_fmt", "yuv420p", "-output_ts_offset", "1.5"]),
 ]
 # Escenas con varios clips o con vídeo: (nombre, fps de la timeline, pistas de vídeo, clips,
 # instantes en la rejilla de 1/fps). Cada clip: archivo, pista y los campos del clip. Posiciones

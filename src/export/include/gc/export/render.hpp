@@ -28,7 +28,8 @@ struct RenderOptions {
 };
 
 // Segundos por fase, sumados entre hilos (componer va en varios a la vez, así que la suma puede
-// pasar del total). El decode va dentro de evaluate (allí se piden los fotogramas).
+// pasar del total). El decode va dentro de evaluate (allí se piden los fotogramas) y la
+// conversión a YUV, que hacen los hilos que componen, dentro de encode.
 struct RenderTimes {
     double audio = 0;
     double decode = 0;

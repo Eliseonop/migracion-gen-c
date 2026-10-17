@@ -197,7 +197,7 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
     std::mutex mutex;              // protege todo lo de abajo
     std::condition_variable wake;  // cualquier cambio de estado
     std::deque<Job> jobs;          // evaluados, por componer
-    std::map<std::int64_t, std::vector<std::uint8_t>> done; // compuestos, por codificar
+    std::map<std::int64_t, media::VideoFrame> done; // compuestos y ya en YUV, por codificar
     std::int64_t queued = 0;       // fotogramas en vuelo (de evaluar a codificar)
     std::optional<Error> failure;  // el primer error de cualquier hilo: todos paran
     bool producing = true;
@@ -215,7 +215,16 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
     };
 
     const render::TextFonts fonts(FontDirs{default_system_font_dir(), project.root / "app" / "fonts"});
-    const auto compose_worker = [&] {
+    // Cada hilo que compone pasa su fotograma a YUV con su conversor: el que codifica solo codifica.
+    std::vector<media::FrameConverter> converters;
+    for (int i = 0; i < workers; ++i) {
+        auto conv = writer->converter();
+        if (!conv) {
+            return std::unexpected(conv.error());
+        }
+        converters.push_back(std::move(*conv));
+    }
+    const auto compose_worker = [&](media::FrameConverter& converter) {
         auto canvas = render::Canvas::make(w, h);
         if (!canvas) {
             fail_all(canvas.error());
@@ -265,23 +274,28 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             for (const auto& message : warnings) {
                 warn_locked(message + ": se omite");
             }
-            // El fotograma es opaco: los píxeles del lienzo tal cual.
-            const auto px = canvas->opaque_pixels();
-            std::vector<std::uint8_t> rgba(px.begin(), px.end());
+            // El fotograma es opaco: los píxeles del lienzo tal cual, a YUV.
+            lap.emplace(mine.encode);
+            auto frame = converter.convert(canvas->opaque_pixels());
             lap.reset();
+            if (!frame) {
+                fail_all(frame.error());
+                break;
+            }
             const std::scoped_lock lock(mutex);
-            done.emplace(job.tick, std::move(rgba));
+            done.emplace(job.tick, std::move(*frame));
             wake.notify_all();
         }
         const std::scoped_lock lock(mutex);
         worker_times.compose += mine.compose;
         worker_times.text += mine.text;
+        worker_times.encode += mine.encode;
     };
 
     // El codificador: los fotogramas en orden, con el audio que les corresponde.
     const auto encode_worker = [&] {
         for (std::int64_t k = 0; k < frames; ++k) {
-            std::vector<std::uint8_t> rgba;
+            std::optional<media::VideoFrame> frame;
             {
                 std::unique_lock lock(mutex);
                 wake.wait(lock, [&] { return failure || done.contains(k); });
@@ -289,10 +303,10 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
                     return;
                 }
                 auto node = done.extract(k);
-                rgba = std::move(node.mapped());
+                frame.emplace(std::move(node.mapped()));
             }
             const Lap lap(ph.encode);
-            if (auto ok = writer->video(rgba); !ok) {
+            if (auto ok = writer->video(std::move(*frame)); !ok) {
                 fail_all(ok.error());
                 return;
             }
@@ -318,8 +332,8 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
     };
 
     // Una excepción en un hilo (memoria) es un error del render, no un cierre del proceso.
-    const auto guarded = [&](const auto& body) {
-        return [&fail_all, &body] {
+    const auto guarded = [&](auto body) {
+        return [&fail_all, body = std::move(body)] {
             try {
                 body();
             } catch (const std::exception& e) {
@@ -329,8 +343,8 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
     };
     std::vector<std::thread> threads;
     threads.reserve(static_cast<std::size_t>(workers) + 1);
-    for (int i = 0; i < workers; ++i) {
-        threads.emplace_back(guarded(compose_worker));
+    for (auto& converter : converters) {
+        threads.emplace_back(guarded([&compose_worker, &converter] { compose_worker(converter); }));
     }
     threads.emplace_back(guarded(encode_worker));
 
@@ -437,6 +451,7 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
     }
     ph.compose = worker_times.compose;
     ph.text = worker_times.text;
+    ph.encode += worker_times.encode; // la conversión a YUV, en los hilos que componen
     if (failure) {
         return std::unexpected(*failure);
     }

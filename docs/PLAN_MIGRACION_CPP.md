@@ -1267,3 +1267,17 @@ Decisión de Edu (§6):
 - **Verificación:** frente a `compose.render_frame`, 31 dB de luma por la geometría par del export (580 px en vez de 581,2); con geometría entera igual en los dos, 58,7 dB. MSVC + vcpkg: 148/148 (Debug y Release); MinGW: 126/126. 0 warnings.
 
 **Siguiente:** Skia con clang-cl (overlay del puerto) y volver a medir; luego repartir el trabajo en hilos.
+
+### 2026-10-16 — F3: Skia con clang-cl, `gc_export` en tubería y el export más rápido que el de Python
+
+- **Hecho:**
+  - Skia como overlay de vcpkg compilado con clang-cl (con MSVC su dibujo raster iba píxel a píxel): componer pasa de 171 a 21 ms por fotograma.
+  - `gc_export`: la carga del proyecto y `render_project`, en tubería (un hilo evalúa y decodifica en orden, varios componen y pasan a YUV, otro codifica). `genclip render --hilos`.
+  - `ClipFrames` salta a un fotograma clave antes del tramo (en vez de decodificar desde el principio del archivo, como el export) y decodifica por adelantado en su propio hilo. OpenH264 con hasta 4 hilos y *slices*.
+  - La medida de texto de `ScopedTextWidth` es por hilo.
+- **Verificación:**
+  - Paridad del export entero frente al MP4 de `compose.render` (2 timelines sintéticas): cada fotograma ≥ 35 dB de luma (peor 40,5 y 45,0) y el audio por bloques de 100 ms (±0,5 dB). El salto previo, tick a tick frente a decodificar desde 0, con 4 vídeos nuevos (B-frames, GOP abierto, VP9, MKV que no empieza en 0). Mutantes: audio +1 dB, un fotograma de desfase y saltar después del tramo; fallan los tres.
+  - «App launcher»: 2,6 s frente a 5,1 del export. Snowpiercer: 32–34 s frente a 100, con la misma sonoridad (−15,7 LUFS); lo que difiere en la imagen son divergencias del export ya apuntadas y una nueva (el tiempo de los efectos con un inicio fuera de la rejilla).
+  - MSVC + vcpkg: 151/151 (Debug y Release); MinGW: 127/127. 0 warnings.
+
+**Siguiente:** medir con el PC tranquilo y con los proyectos de 4K; ver por qué componer Snowpiercer cuesta 87 ms por fotograma. Pendiente de Edu: las decisiones de las divergencias (TODO).

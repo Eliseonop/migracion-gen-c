@@ -8,7 +8,8 @@
 // que pasa una sonda real (codificar un fotograma); si ninguno, OpenH264 por software (el export usa
 // libx264, que pasaría todo a GPL; plan §10). La calidad es la del CRF de los ajustes del export:
 // `-cq` en NVENC, `-global_quality` en QSV, `-qp_*` en AMF y qmin = qmax en OpenH264, que no tiene
-// CRF (de ahí que el tamaño del archivo no coincida con el de x264).
+// CRF (de ahí que el tamaño del archivo no coincida con el de x264). OpenH264 solo usa varios hilos
+// con un número de hilos y de *slices* explícito: hasta 4 de cada.
 
 #include <cstdint>
 #include <filesystem>
@@ -38,6 +39,45 @@ struct EncodeSettings {
 // El que usará el export: el primero de los de arriba o «libopenh264».
 [[nodiscard]] std::string pick_h264_encoder();
 
+// Un fotograma de vídeo ya en el formato del codificador (lo que da FrameConverter): Mp4Writer lo
+// codifica tal cual.
+class VideoFrame {
+public:
+    VideoFrame(VideoFrame&&) noexcept;
+    VideoFrame& operator=(VideoFrame&&) noexcept;
+    VideoFrame(const VideoFrame&) = delete;
+    VideoFrame& operator=(const VideoFrame&) = delete;
+    ~VideoFrame();
+
+private:
+    friend class FrameConverter;
+    friend class Mp4Writer;
+    struct Impl;
+    explicit VideoFrame(std::unique_ptr<Impl> impl);
+    std::unique_ptr<Impl> impl_;
+};
+
+// RGBA sin premultiplicar (width · height · 4, sin relleno entre filas) → el formato del
+// codificador de un Mp4Writer: yuv420p (o el primero que admita) BT.709 de rango TV, con el swscale
+// bicúbico del CLI (BT709_FINAL_FILTER). Cada hilo usa el suyo (Mp4Writer::converter), así la
+// conversión no ocupa el hilo que codifica.
+class FrameConverter {
+public:
+    FrameConverter(FrameConverter&&) noexcept;
+    FrameConverter& operator=(FrameConverter&&) noexcept;
+    FrameConverter(const FrameConverter&) = delete;
+    FrameConverter& operator=(const FrameConverter&) = delete;
+    ~FrameConverter();
+
+    [[nodiscard]] Result<VideoFrame> convert(std::span<const std::uint8_t> rgba);
+
+private:
+    friend class Mp4Writer;
+    struct Impl;
+    explicit FrameConverter(std::unique_ptr<Impl> impl);
+    std::unique_ptr<Impl> impl_;
+};
+
 class Mp4Writer {
 public:
     [[nodiscard]] static Result<Mp4Writer> open(const std::filesystem::path& path, const EncodeSettings& settings);
@@ -50,6 +90,10 @@ public:
 
     // El siguiente fotograma (RGBA sin premultiplicar, width · height · 4 del tamaño de salida).
     [[nodiscard]] Result<void> video(std::span<const std::uint8_t> rgba);
+    // El siguiente fotograma, ya convertido por un conversor de este Mp4Writer.
+    [[nodiscard]] Result<void> video(VideoFrame frame);
+    // Un conversor nuevo al formato de este codificador, para usarlo en otro hilo.
+    [[nodiscard]] Result<FrameConverter> converter() const;
     // Más audio (estéreo entrelazado a 48 kHz).
     [[nodiscard]] Result<void> audio(std::span<const float> interleaved);
     // Vacía los codificadores y cierra el archivo.

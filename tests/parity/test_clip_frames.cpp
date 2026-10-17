@@ -52,6 +52,14 @@ TEST_CASE("ClipFrames da los mismos fotogramas que export_frame_at", "[media][de
         {"velocidad 2,5", clip("moving30.mp4", 0.0, 0.0, 1.9, 2.5)},
         {"gif de 10 fps", clip("anim10.gif", 0.0, 0.0, 1.5, 1.0, true)},
         {"imagen", clip("waves.png", 0.2, 0.0, 1.0, 1.0, true)},
+        // Con el salto previo a un fotograma clave (in_point a más de 1 s del principio): los
+        // mismos fotogramas que decodificando desde 0, como export_frame_at.
+        {"salto previo: H.264 con B-frames", clip("keys30.mp4", 0.0, 3.3, 4.6)},
+        {"salto previo: GOP abierto a 25 fps en 30", clip("keys25_open.mp4", 0.4, 2.45, 4.0)},
+        {"salto previo: VP9 en WebM", clip("keys30.webm", 0.0, 4.1, 5.5)},
+        {"salto previo: MKV que empieza en 1,5 s", clip("keys30_offset.mkv", 0.0, 3.0, 4.2)},
+        {"salto previo a velocidad 1,5", clip("keys30.mp4", 0.2, 2.2, 4.0, 1.5)},
+        {"salto previo hasta el final del archivo", clip("keys30.mp4", 0.0, 4.5, 6.0)},
     };
     // Ticks crecientes (con repeticiones) y un salto hacia atrás al final.
     std::vector<std::int64_t> ticks;

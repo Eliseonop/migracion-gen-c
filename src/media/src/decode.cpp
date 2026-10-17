@@ -5,11 +5,16 @@
 #include <charconv>
 #include <cmath>
 #include <cstdint>
+#include <condition_variable>
 #include <cstring>
+#include <deque>
+#include <exception>
 #include <format>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <string_view>
+#include <thread>
 #include <vector>
 
 #include "gc/core/bg.hpp"
@@ -114,6 +119,12 @@ public:
             if (auto r = feed(); !r) {
                 return std::unexpected(r.error());
             }
+            if (overshoot_) {
+                // El salto previo cayó después de su instante: desde el principio, sin saltar.
+                if (auto r = reopen_without_preroll(); !r) {
+                    return std::unexpected(r.error());
+                }
+            }
         }
         // Los paquetes rotos se saltan, pero si no se pudo decodificar nada es un error (el CLI
         // acaba sin salida y extract_frame lanza ValueError), no «no hay fotograma en ese instante».
@@ -180,6 +191,15 @@ private:
             static_cast<void>(avformat_seek_file(fmt_.get(), -1, INT64_MIN, ts, ts, 0));
         }
         ts_offset_ = av_rescale_q(-(seek + start), AV_TIME_BASE_Q, st->time_base);
+        // El salto previo (DecodeSpec::preroll_us): a un fotograma clave en o antes de ese instante,
+        // sin tocar las marcas (la cadena ve los mismos tiempos que decodificando desde 0).
+        preroll_pts_.reset();
+        if (!opts_.seek_us && spec_.preroll_us && *spec_.preroll_us > 0 && !preroll_failed_) {
+            const std::int64_t ts = *spec_.preroll_us + start;
+            if (avformat_seek_file(fmt_.get(), -1, INT64_MIN, ts, ts, 0) >= 0) {
+                preroll_pts_ = av_rescale_q(*spec_.preroll_us, AV_TIME_BASE_Q, st->time_base);
+            }
+        }
         dec_.reset(avcodec_alloc_context3(codec));
         if (!dec_ || avcodec_parameters_to_context(dec_.get(), st->codecpar) < 0) {
             return fail(ErrorCode::Internal, "no se pudo preparar el decodificador");
@@ -269,6 +289,16 @@ private:
             frame_->pts = frame_->best_effort_timestamp == AV_NOPTS_VALUE
                               ? AV_NOPTS_VALUE
                               : frame_->best_effort_timestamp + ts_offset_;
+            // Tras el salto previo, el primer fotograma tiene que quedar en o antes de su instante;
+            // si no, faltaría lo de en medio: se vuelve a empezar sin saltar (next()).
+            if (preroll_pts_) {
+                if (frame_->pts == AV_NOPTS_VALUE || frame_->pts > *preroll_pts_) {
+                    av_frame_unref(frame_.get());
+                    overshoot_ = true;
+                    return {};
+                }
+                preroll_pts_.reset();
+            }
             if (!graph_) {
                 if (auto g = build_graph(*frame_); !g) {
                     return g;
@@ -279,6 +309,20 @@ private:
             }
             av_frame_unref(frame_.get());
         }
+    }
+
+    Result<void> reopen_without_preroll() {
+        overshoot_ = false;
+        preroll_failed_ = true;
+        graph_.reset();
+        src_ = nullptr;
+        sink_ = nullptr;
+        dec_.reset();
+        fmt_.reset();
+        decode_errors_ = 0;
+        input_done_ = false;
+        eof_sent_ = false;
+        return open();
     }
 
     RgbaFrame take() {
@@ -309,6 +353,9 @@ private:
     std::int64_t ts_offset_ = 0; // en la base de tiempos del stream
     std::size_t decode_errors_ = 0;
     std::size_t count_ = 0;
+    std::optional<std::int64_t> preroll_pts_; // el instante del salto previo, en la base del stream
+    bool overshoot_ = false;                  // el salto previo se pasó: hay que reabrir sin él
+    bool preroll_failed_ = false;
     bool input_done_ = false;
     bool eof_sent_ = false;
     bool finished_ = false;
@@ -398,7 +445,9 @@ struct ClipChain {
     }
 };
 
-Result<ClipChain> clip_chain(const core::TimelineClip& clip, const std::filesystem::path& path, int fps) {
+// `preroll`: con el salto previo (ClipFrames); export_frame_at, la referencia, decodifica desde 0.
+Result<ClipChain> clip_chain(const core::TimelineClip& clip, const std::filesystem::path& path, int fps,
+                             bool preroll) {
     // compose.py, la cadena de cada clip:
     //   [k:v]{color_pre}{trim},setpts=PTS-STARTPTS,{cropscale},fps=F{spd},…,setpts=PTS-STARTPTS+{start:.3f}/TB
     // con spd = video_speed_filters (vacío en un still): «reverse» y `setpts=PTS/{sp:.6f}`. Las
@@ -415,6 +464,15 @@ Result<ClipChain> clip_chain(const core::TimelineClip& clip, const std::filesyst
         return fail(ErrorCode::InvalidArgument, std::format("el inicio del clip {} está fuera de rango", clip.id));
     }
     c.spec = export_decode_spec(clip, path, fps);
+    // El salto previo: 1 s antes del tramo (el fps=F de la cadena mira los fotogramas de alrededor
+    // de cada tick y el trim tira todo lo anterior). No en stills, GIF ni secuencias de imágenes.
+    if (preroll && !still && !std::ranges::contains(c.spec.input_args, std::string("-ignore_loop")) &&
+        !std::ranges::contains(c.spec.input_args, std::string("-start_number"))) {
+        const double in = core::ffmpeg_trim_window(clip, fps).first;
+        if (const double at = parse_double(std::format("{:.3f}", in)) - 1.0; at > 0 && at < 1e9) {
+            c.spec.preroll_us = static_cast<std::int64_t>(std::llround(at * 1e6));
+        }
+    }
     // «Eliminar fondo» por croma: en el espacio del material, antes del encuadre
     // (_bg_source_chain). El matte automático aún no.
     if (clip.bg_removal && core::bg_capable(clip)) {
@@ -442,7 +500,7 @@ Result<ClipChain> clip_chain(const core::TimelineClip& clip, const std::filesyst
 
 Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip, const std::filesystem::path& path,
                                                  int fps, std::int64_t tick) {
-    auto chain = clip_chain(clip, path, fps);
+    auto chain = clip_chain(clip, path, fps, false);
     if (!chain) {
         return std::unexpected(chain.error());
     }
@@ -504,12 +562,104 @@ Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip,
 
 // --- ClipFrames ------------------------------------------------------------------------------
 
+namespace {
+
+// Un Decoder que va por delante en su propio hilo, con unos pocos fotogramas en cola: así el decode
+// de cada clip corre a la vez que lo que hace quien los pide (y que los demás clips).
+class Prefetch {
+public:
+    explicit Prefetch(DecodeSpec spec) : decoder_(std::move(spec)) {}
+    Prefetch(const Prefetch&) = delete;
+    Prefetch& operator=(const Prefetch&) = delete;
+    Prefetch(Prefetch&&) = delete;
+    Prefetch& operator=(Prefetch&&) = delete;
+    ~Prefetch() {
+        {
+            const std::scoped_lock lock(mutex_);
+            stop_ = true;
+        }
+        wake_.notify_all();
+        if (thread_.joinable()) {
+            thread_.join();
+        }
+    }
+
+    // Abre el material aquí (los errores de apertura, al momento) y arranca el hilo.
+    Result<void> start() {
+        if (auto r = decoder_.start(); !r) {
+            return r;
+        }
+        thread_ = std::thread([this] { run(); });
+        return {};
+    }
+
+    // Como Decoder::next: el siguiente fotograma de la cadena (espera a que esté) o nada al final.
+    // Un error llega después de los fotogramas que salieron antes que él.
+    Result<std::optional<RgbaFrame>> next() {
+        std::unique_lock lock(mutex_);
+        wake_.wait(lock, [&] { return !queue_.empty() || done_; });
+        if (!queue_.empty()) {
+            std::optional<RgbaFrame> f(std::move(queue_.front()));
+            queue_.pop_front();
+            wake_.notify_all();
+            return f;
+        }
+        if (error_) {
+            return std::unexpected(*error_);
+        }
+        return std::optional<RgbaFrame>{};
+    }
+
+private:
+    static constexpr std::size_t kAhead = 3;
+
+    void run() {
+        while (true) {
+            {
+                std::unique_lock lock(mutex_);
+                wake_.wait(lock, [&] { return stop_ || queue_.size() < kAhead; });
+                if (stop_) {
+                    return;
+                }
+            }
+            Result<std::optional<RgbaFrame>> f = std::optional<RgbaFrame>{};
+            try {
+                f = decoder_.next();
+            } catch (const std::exception& e) { // memoria: un error, no un cierre del proceso
+                f = fail(ErrorCode::Internal, std::format("error inesperado al decodificar: {}", e.what()));
+            }
+            const std::scoped_lock lock(mutex_);
+            if (!f || !*f) {
+                if (!f) {
+                    error_ = f.error();
+                }
+                done_ = true;
+                wake_.notify_all();
+                return;
+            }
+            queue_.push_back(std::move(**f));
+            wake_.notify_all();
+        }
+    }
+
+    Decoder decoder_; // tras start(), solo lo usa el hilo
+    std::thread thread_;
+    std::mutex mutex_;
+    std::condition_variable wake_;
+    std::deque<RgbaFrame> queue_;
+    std::optional<Error> error_;
+    bool done_ = false;
+    bool stop_ = false;
+};
+
+} // namespace
+
 struct ClipFrames::Impl {
     core::TimelineClip clip;
     std::filesystem::path path;
     int fps = 30;
     ClipChain chain;
-    std::unique_ptr<Decoder> decoder;
+    std::unique_ptr<Prefetch> decoder;
     std::int64_t m = 0;                 // fotogramas sacados de la cadena
     std::int64_t last = -1;             // el último tick pedido
     std::optional<RgbaFrame> current;   // el último con pts < tick
@@ -519,7 +669,8 @@ struct ClipFrames::Impl {
     std::optional<RgbaFrame> reversed; // al revés: el del último tick (export_frame_at)
 
     Result<void> restart() {
-        decoder = std::make_unique<Decoder>(chain.spec);
+        decoder.reset(); // el anterior termina su hilo antes de abrir otro
+        decoder = std::make_unique<Prefetch>(chain.spec);
         m = 0;
         current.reset();
         lookahead.reset();
@@ -549,7 +700,7 @@ ClipFrames& ClipFrames::operator=(ClipFrames&&) noexcept = default;
 ClipFrames::~ClipFrames() = default;
 
 Result<ClipFrames> ClipFrames::open(const core::TimelineClip& clip, const std::filesystem::path& path, int fps) {
-    auto chain = clip_chain(clip, path, fps);
+    auto chain = clip_chain(clip, path, fps, true);
     if (!chain) {
         return std::unexpected(chain.error());
     }
