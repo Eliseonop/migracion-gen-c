@@ -1740,7 +1740,7 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
         for i, (name, fps, tracks, clips, times) in enumerate(mc.RENDER_SCENES):
             raw_clips = []
             for j, (file, track, fields) in enumerate(clips):
-                still = fields["kind"] == "image"
+                still = fields["kind"] != "video"  # imágenes y capas de ajuste (sin archivo)
                 raw_clips.append({"id": f"c{j + 1}", "track_id": track, "asset_id": f"a{j + 1}", "filename": file,
                                   "source_duration": 0.0 if still else _REAL_SFX["probe_duration"](files / file),
                                   **fields})
@@ -2691,7 +2691,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
-    ap.add_argument("--solo", choices=["export"], help="solo ese grupo de fixtures (export: tests/fixtures/export)")
+    ap.add_argument("--solo", choices=["export", "render"],
+                    help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
     ctx = Ctx(args.video_yt)
@@ -2704,6 +2705,10 @@ def main() -> None:
 
     if args.solo == "export":
         export_group()
+        return
+    if args.solo == "render":
+        ren = synthetic_render_fixtures(ctx)
+        write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
         return
 
     # Catálogo de efectos: recurso de la app, lo genera el frontend de video-yt.

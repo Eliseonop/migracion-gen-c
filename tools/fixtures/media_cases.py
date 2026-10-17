@@ -369,10 +369,13 @@ RENDER_VIDEO_MEDIA = [
 # donde el redondeo del export no mueve nada (ver RENDER).
 _V = {"kind": "video", "asset_kind": "clips", "layout": "overlay", "reframe": _FULL}
 _I = {"kind": "image", "asset_kind": "images", "layout": "overlay", "reframe": _FULL}
+_ADJ = {"kind": "adjustment", "asset_kind": "adjustment"}
 _CENTER = {"x": 0.5, "y": 0.5, "scale": 1.0}
 # Máscaras (clip_mask.py): el clip de ondas cubre todo el cuadro (320×180 a escala 3,2 sobre
 # 360×640) encima del degradado, así se ve la forma entera. (nombre, máscaras, campos, instantes).
 _COVER = {"x": 0.5, "y": 0.5, "scale": 3.2}
+_BLEND_MODES = ["darken", "multiply", "color_burn", "lighten", "screen", "color_dodge", "overlay", "soft_light",
+                "hard_light", "difference", "exclusion"]
 _MASK_SCENES = [
     ("lineal girada y difuminada (como la de Snowpiercer)",
      [{"type": "linear", "x": 0.4958, "y": 0.5951, "w": 2.4, "h": 0.0534, "rotation": 0.44, "feather": 0.0153}], {},
@@ -546,6 +549,58 @@ RENDER_SCENES = [
         ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER,
                              "masks": masks, **extra})],
        times) for name, masks, extra, times in _MASK_SCENES],
+    # Modos de fusión (clip_blend.py): las ondas fundidas con el degradado de debajo. El export las
+    # pone en una capa transparente del tamaño del cuadro y las funde con blend (o lut2 en la luz
+    # suave); el render, con una capa de Skia con su modo (fórmulas W3C en los dos).
+    *[(f"fusión: {mode}", 30, ["V1", "V2"],
+       [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+        ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                             "blend_mode": mode})],
+       [0.5]) for mode in _BLEND_MODES],
+    ("fusión superponer al 60 %", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "blend_mode": "overlay", "opacity": 0.6})],
+     [0.5]),
+    ("fusión multiplicar con un png con alfa", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("alpha.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "blend_mode": "multiply"})],
+     [0.5]),
+    ("fusión trama con una máscara", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER,
+                           "blend_mode": "screen",
+                           "masks": [{"type": "circle", "x": 0.5, "y": 0.5, "w": 0.6, "h": 0.4, "feather": 0.02}]})],
+     [0.5]),
+    ("fusión diferencia en un vídeo con fundido", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("moving30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                              "blend_mode": "difference", "appear": "fade"})],
+     [0.2, 1.0]),
+    # Capa de ajuste (compose.py, #19): adjustment_matrix con colorchannelmixer sobre lo compuesto
+    # debajo durante su tramo; el render, la misma matriz sobre lo ya dibujado.
+    ("capa de ajuste: noir sobre dos clips", 30, ["V1", "V2", "V3"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("moving30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("", "V3", {**_ADJ, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "filters": [{"id": "noir"}]})],
+     [0.5]),
+    ("capa de ajuste: brillo, contraste, saturación y color", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("", "V2", {**_ADJ, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                  "effects": {"brightness": 0.1, "contrast": 0.25, "saturation": -0.4, "exposure": 0.3,
+                              "temperature": 0.5, "hue": 25}})],
+     [0.5]),
+    ("capa de ajuste al 50 % entre dos clips", 30, ["V1", "V2", "V3"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("", "V2", {**_ADJ, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "opacity": 0.5,
+                  "filters": [{"id": "teal_orange"}, {"id": "faded", "amount": 0.7}]}),
+      ("grad.png", "V3", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER})],
+     [0.5]),
+    ("capa de ajuste en un tramo", 30, ["V1", "V2"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("", "V2", {**_ADJ, "start": 0.5, "in_point": 0.0, "out_point": 1.0, "filters": [{"id": "night"}]})],
+     [0.2, 1.0, 1.8]),
     # Sin el zoom (ni el pop) de aparición o salida: en un overlay estático el export escala con
     # `scale=eval=frame` pero el overlay se queda en x=ox:y=oy, así que crece desde la esquina
     # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).

@@ -138,7 +138,45 @@ Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src,
     return {};
 }
 
-void Canvas::begin_layer() { impl_->surface->getCanvas()->saveLayer(nullptr, nullptr); }
+namespace {
+
+// Los modos de core::kBlendModes en Skia (sus fórmulas son las W3C de Compositing and Blending).
+std::optional<SkBlendMode> sk_blend(std::string_view mode) {
+    static constexpr std::array<std::pair<std::string_view, SkBlendMode>, 11> kModes{{
+        {"darken", SkBlendMode::kDarken},
+        {"multiply", SkBlendMode::kMultiply},
+        {"color_burn", SkBlendMode::kColorBurn},
+        {"lighten", SkBlendMode::kLighten},
+        {"screen", SkBlendMode::kScreen},
+        {"color_dodge", SkBlendMode::kColorDodge},
+        {"overlay", SkBlendMode::kOverlay},
+        {"soft_light", SkBlendMode::kSoftLight},
+        {"hard_light", SkBlendMode::kHardLight},
+        {"difference", SkBlendMode::kDifference},
+        {"exclusion", SkBlendMode::kExclusion},
+    }};
+    for (const auto& [name, sk] : kModes) {
+        if (name == mode) {
+            return sk;
+        }
+    }
+    return std::nullopt;
+}
+
+} // namespace
+
+void Canvas::begin_layer(std::string_view blend) {
+    SkCanvas* canvas = impl_->surface->getCanvas();
+    if (const auto mode = sk_blend(blend)) {
+        SkPaint paint;
+        paint.setBlendMode(*mode);
+        canvas->saveLayer(nullptr, &paint);
+    } else {
+        canvas->saveLayer(nullptr, nullptr);
+    }
+}
+
+void Canvas::end_layer() { impl_->surface->getCanvas()->restore(); }
 
 Result<void> Canvas::end_layer(const MaskAlpha& mask) {
     SkCanvas* canvas = impl_->surface->getCanvas();
@@ -157,6 +195,15 @@ Result<void> Canvas::end_layer(const MaskAlpha& mask) {
     canvas->drawImage(SkImages::RasterFromPixmapCopy(pixmap), 0, 0, SkSamplingOptions(), &paint);
     canvas->restore();
     return {};
+}
+
+void Canvas::apply_color_matrix(const core::AffineColorMatrix& m) {
+    SkSurface* surface = impl_->surface.get();
+    const sk_sp<SkImage> below = surface->makeImageSnapshot();
+    SkPaint paint;
+    paint.setBlendMode(SkBlendMode::kSrc);
+    paint.setColorFilter(color_filter(m));
+    surface->getCanvas()->drawImage(below, 0, 0, SkSamplingOptions(), &paint);
 }
 
 Image Canvas::snapshot() const {

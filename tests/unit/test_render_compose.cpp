@@ -37,9 +37,13 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
     text.kind = "text";
     CHECK(unsupported_reason(layer(text)));
 
+    // Los modos de fusión y la capa de ajuste ya se dibujan.
     FrameLayer blend = layer(video());
     blend.blend = "multiply";
-    CHECK(unsupported_reason(blend));
+    CHECK_FALSE(unsupported_reason(blend));
+    TimelineClip adjustment = video();
+    adjustment.kind = "adjustment";
+    CHECK_FALSE(unsupported_reason(layer(adjustment)));
 
     // Las máscaras ya se dibujan, salvo la de texto (y solo si está activa).
     FrameLayer masked = layer(video());

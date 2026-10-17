@@ -18,6 +18,8 @@ bool is_media(const core::TimelineClip& clip) {
     return clip.kind == "video" || clip.kind == "image" || clip.kind == "motion";
 }
 
+bool is_adjustment(const core::TimelineClip& clip) { return clip.kind == "adjustment"; }
+
 // Un valor que activa algo: true o un número distinto de 0, también escrito como texto («2»), como
 // el float(val) de _fx_on/_fx_num en clip_fx.py. Por prudencia, un negativo también cuenta (el
 // brillo o el contraste negativos sí cambian la imagen).
@@ -61,11 +63,11 @@ std::optional<std::string> bg_unsupported(const core::TimelineClip& clip) {
 
 std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
     const core::TimelineClip& clip = *layer.clip;
+    if (is_adjustment(clip)) {
+        return std::nullopt;
+    }
     if (!is_media(clip)) {
         return std::format("el render aún no dibuja capas de tipo «{}»", clip.kind);
-    }
-    if (layer.blend != "normal") {
-        return std::format("el render aún no hace el modo de fusión «{}»", layer.blend);
     }
     if (auto reason = core::maskable(clip) ? mask_unsupported(layer.masks) : std::string(); !reason.empty()) {
         return reason;
@@ -107,6 +109,14 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
         if (auto reason = unsupported_reason(layer)) {
             return fail(ErrorCode::Unsupported, std::format("{} (clip {})", *reason, id));
         }
+        // Capa de ajuste (compose.py, #19): su matriz de color sobre todo lo compuesto debajo
+        // durante su tramo, sin material ni máscaras (el export no las aplica).
+        if (is_adjustment(*layer.clip)) {
+            if (const auto m = core::adjustment_matrix(*layer.clip)) {
+                canvas.apply_color_matrix(*m);
+            }
+            continue;
+        }
         if (layer.blits.empty()) {
             // Con las reglas del preview, evaluate deja sin blits el material sin tamaño.
             return fail(ErrorCode::InvalidArgument, std::format("el clip {} no tiene las dimensiones de su material", id));
@@ -119,7 +129,10 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
             return fail(ErrorCode::Internal, std::format("no hay fotograma del material del clip {}", id));
         }
         // Máscaras (en coordenadas del cuadro): el clip va a una capa que después se recorta con
-        // su alfa, como el maskedmerge del export tras componer el clip.
+        // su alfa, como el maskedmerge del export tras componer el clip. Con un modo de fusión, la
+        // capa se funde con lo de debajo en vez de ir encima (clip_blend.py: el clip en una capa
+        // transparente del tamaño del cuadro y blend_steps; la máscara mezcla después, que con el
+        // fondo opaco es lo mismo que recortar la capa antes de fundirla).
         std::optional<MaskAlpha> mask;
         // Solo en los tipos que el export enmascara (clip_mask.maskable: vídeo, imagen, figura y
         // texto); un motion con máscara sale entero, como allí.
@@ -129,13 +142,16 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
                 return std::unexpected(alpha.error());
             }
             mask = std::move(*alpha);
-            canvas.begin_layer();
+        }
+        const bool blended = layer.blend != "normal";
+        if (mask || blended) {
+            canvas.begin_layer(layer.blend);
         }
         // Filtros de color (o el `look` antiguo): una matriz por clip, sobre lo ya escalado.
         const auto color = core::stack_matrix(core::clip_filters(*layer.clip));
         for (const core::Blit& blit : layer.blits) {
             if (auto drawn = canvas.draw_image(**image, blit.src, blit.m, layer.alpha, layer.wipe, color); !drawn) {
-                if (mask) {
+                if (mask || blended) {
                     (void)canvas.end_layer(MaskAlpha{}); // cierra la capa sin dibujarla
                 }
                 return std::unexpected(drawn.error());
@@ -145,6 +161,8 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
             if (auto merged = canvas.end_layer(*mask); !merged) {
                 return std::unexpected(merged.error());
             }
+        } else if (blended) {
+            canvas.end_layer();
         }
     }
     return {};

@@ -86,6 +86,35 @@ TEST_CASE("lienzo: src-over de un color semitransparente, sin premultiplicar al 
     CHECK(alone.b <= 51);
 }
 
+TEST_CASE("lienzo: una capa con modo de fusión se funde con lo de debajo (W3C)", "[render]") {
+    auto canvas = Canvas::make(3, 1);
+    REQUIRE(canvas);
+    const auto near = [](std::uint8_t got, int want) { return got >= want - 1 && got <= want + 1; };
+    canvas->clear({200, 100, 50, 255});
+    // Multiplicar: fondo × capa / 255 → (100, 50, 25).
+    canvas->begin_layer("multiply");
+    canvas->fill_rect(0, 0, 1, 1, {128, 128, 128, 255});
+    canvas->end_layer();
+    // Diferencia al 50 %: fondo + (|fondo − capa| − fondo) · 0,5 → (100 + 0, 50 + 25, 25 + 75) aprox.
+    canvas->begin_layer("difference");
+    canvas->fill_rect(1, 0, 1, 1, {200, 200, 200, 128});
+    canvas->end_layer();
+    // Un modo desconocido es src-over.
+    canvas->begin_layer("no_existe");
+    canvas->fill_rect(2, 0, 1, 1, {10, 20, 30, 255});
+    canvas->end_layer();
+    const Image img = canvas->snapshot();
+    const Rgba8 mul = pixel(img, 0, 0);
+    CHECK(near(mul.r, 100));
+    CHECK(near(mul.g, 50));
+    CHECK(near(mul.b, 25));
+    const Rgba8 diff = pixel(img, 1, 0);
+    CHECK(near(diff.r, 100)); // |200 − 200| = 0: 200 + (0 − 200) · 0,5
+    CHECK(near(diff.g, 100)); // |100 − 200| = 100: igual que el fondo
+    CHECK(near(diff.b, 100)); // |50 − 200| = 150: 50 + (150 − 50) · 0,5
+    CHECK(same(pixel(img, 2, 0), {10, 20, 30, 255}));
+}
+
 namespace {
 
 // 3×2 con un color distinto por píxel, opaco.

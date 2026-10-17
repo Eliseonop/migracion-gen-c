@@ -11,6 +11,7 @@
 #include <memory>
 #include <optional>
 #include <span>
+#include <string_view>
 #include <vector>
 
 #include "gc/core/clip_filters.hpp"
@@ -72,12 +73,22 @@ public:
                                           const std::optional<std::array<core::Point, 4>>& clip = std::nullopt,
                                           const std::optional<core::AffineColorMatrix>& color = std::nullopt);
 
-    // Capa aparte: lo que se dibuje hasta end_layer va a ella. end_layer la recorta con el alfa
-    // de la máscara (cada píxel de la capa por alfa/255) y la funde con lo de debajo (src-over):
-    // lo mismo que el `maskedmerge` del export entre el fondo sin el clip y el fondo con él.
-    // Error si la máscara no es del tamaño del lienzo (la capa se descarta).
-    void begin_layer();
+    // Capa aparte: lo que se dibuje hasta end_layer va a ella y, al cerrarla, se funde con lo de
+    // debajo con `blend`: "normal" (src-over) o un modo de core::kBlendModes, con las fórmulas W3C
+    // de Compositing and Blending (las de globalCompositeOperation en el preview y las del
+    // blend/lut2 del export, clip_blend.py); con el fondo opaco, fondo + (B(fondo, capa) − fondo)
+    // · alfa de la capa, como el maskedmerge del export. Un modo desconocido es "normal".
+    // end_layer(máscara) recorta antes la capa con el alfa de la máscara (cada píxel por alfa/255):
+    // lo mismo que el `maskedmerge` del export entre el fondo sin el clip y el fondo con él. Error
+    // si la máscara no es del tamaño del lienzo (la capa se descarta).
+    void begin_layer(std::string_view blend = "normal");
     [[nodiscard]] Result<void> end_layer(const MaskAlpha& mask);
+    void end_layer();
+
+    // Pasa todo lo dibujado hasta ahora por la matriz de color (la de clip_filters.hpp: sin
+    // premultiplicar, acotada a 0–1): la capa de ajuste, que el export aplica con colorchannelmixer
+    // a lo compuesto debajo.
+    void apply_color_matrix(const core::AffineColorMatrix& m);
 
     [[nodiscard]] Image snapshot() const;
 
