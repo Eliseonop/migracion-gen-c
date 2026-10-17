@@ -39,7 +39,7 @@ export y una UI que nunca se bloquea. El plan por fases está en
 │ Media (gc_media, FFmpeg)   decodificar con caché y proxies, audio,     │
 │                            codificar                                   │
 │ Reproducción               reloj de audio, lectura anticipada          │
-│ Export                     evaluar → render → encode, en tubería       │
+│ Export (gc_export)         evaluar → render → encode, en tubería       │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -212,7 +212,7 @@ C++ produce ejecutables nativos. No hay que instalar ni Python, ni Node, ni un n
 |---|---|
 | `GenClipPro.exe` | La app (Qt Quick). |
 | `genclip.exe` | La herramienta de línea de órdenes (ya existe hoy). |
-| DLL junto al .exe | Qt (`windeployqt` las copia), FFmpeg y ONNX Runtime. Skia y `gc_core` van enlazados dentro. |
+| DLL junto al .exe | Qt (`windeployqt` las copia), FFmpeg, Skia y ONNX Runtime. `gc_core` va enlazado dentro. Skia se compila con clang-cl (overlay de vcpkg en `cmake/vcpkg-ports/skia`): con MSVC su dibujo raster no usa SSE ni AVX. |
 | Instalador | CPack: **NSIS/WiX** (`GenClipPro-Setup.exe` / `.msi`) o **MSIX**. También un **ZIP portátil**. |
 | Modelos de IA | No van en el instalador: se descargan la primera vez que se usan (RVM, BiRefNet, SAM, Kokoro, Whisper: 1–3 GB). |
 

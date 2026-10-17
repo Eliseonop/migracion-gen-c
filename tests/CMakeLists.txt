@@ -61,6 +61,11 @@ if(TARGET gc_render)
         target_sources(gc_tests PRIVATE parity/test_render_parity.cpp parity/test_text_render_parity.cpp)
     endif()
 endif()
+# Con los dos, el export entero (gc_export) frente al MP4 de compose.render.
+if(TARGET gc_export)
+    target_sources(gc_tests PRIVATE parity/test_export_parity.cpp)
+    target_link_libraries(gc_tests PRIVATE gc::export)
+endif()
 # MSVC sabe que FAIL() lanza y da por inalcanzable el `return`/`throw` que GCC necesita detrás.
 # El manifiesto pone argv en UTF-8: si no, con una página de códigos ANSI que no lo sea (la del
 # CI), Catch2 no encuentra los tests con tildes que ctest le pide por nombre.

@@ -2,7 +2,6 @@
 
 #include <charconv>
 #include <cstdint>
-#include <cstdlib>
 #include <cmath>
 #include <filesystem>
 #include <format>
@@ -13,12 +12,9 @@
 #include <vector>
 
 #include "gc/core/clip_adjust.hpp"
-#include "gc/core/clip_media.hpp"
-#include "gc/core/collections.hpp"
 #include "gc/core/export_input.hpp"
 #include "gc/core/frame.hpp"
 #include "gc/core/io.hpp"
-#include "gc/core/projects_store.hpp"
 #include "gc/core/timeline_rules.hpp"
 #include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
@@ -27,6 +23,7 @@
 #include "gc/render/compose.hpp"
 #include "gc/render/png.hpp"
 #include "gc/render/text.hpp"
+#include "gc/export/project.hpp"
 
 namespace genclip {
 
@@ -34,6 +31,9 @@ namespace {
 
 namespace fs = std::filesystem;
 using namespace gc::core;
+using gc::exporter::clip_path;
+using gc::exporter::load_project;
+using gc::exporter::LoadedProject;
 
 int fail_with(std::string_view message) {
     std::cerr << "error: " << message << '\n';
@@ -76,26 +76,12 @@ int cmd_frame(std::span<const std::string> args) {
         std::cerr << "uso: genclip frame <raíz de video-yt> <proyecto> --at <s> -o <salida.png> [--omitir]\n";
         return 2;
     }
-    const fs::path root = path_from_utf8(pos[0]);
-    // config.py: OUTPUT_DIR = <raíz>/clips, DATA_DIR = <raíz>/data y ASSETS_DIR = VIDEO_YT_ASSETS o
-    // <raíz>/../assets; las colecciones, en `material_root` de los ajustes o <assets>/material.
-    const char* assets_env = std::getenv("VIDEO_YT_ASSETS"); // NOLINT(concurrency-mt-unsafe): al arrancar
-    const fs::path assets = assets_env != nullptr && *assets_env != '\0' ? path_from_utf8(assets_env)
-                                                                         : root.parent_path() / "assets";
-    const SettingsFile settings(root / "data" / "settings.json");
-    const MediaDirs dirs{root / "clips", root / "data", collections_root(settings.load(), assets / "material")};
-    const ProjectsStore store(dirs.data_dir / "projects.json", dirs.clips_dir);
-    auto project = store.get_project(pos[1]);
-    if (!project) {
-        return fail_with(project.error().to_string());
+    auto loaded = load_project(path_from_utf8(pos[0]), pos[1]);
+    if (!loaded) {
+        return fail_with(loaded.error().to_string());
     }
-    if (!*project) {
-        return fail_with(std::format("no existe el proyecto «{}»", pos[1]));
-    }
-    if (!(*project)->timeline) {
-        return fail_with(std::format("el proyecto «{}» no tiene timeline", pos[1]));
-    }
-    Timeline timeline = *(*project)->timeline;
+    const LoadedProject& lp = *loaded;
+    Timeline timeline = lp.timeline;
 
     // compose.py: W y H pares; `-ss T` a la salida da el fotograma compuesto más cercano a T.
     const int w = static_cast<int>(timeline.width - timeline.width % 2);
@@ -129,7 +115,7 @@ int cmd_frame(std::span<const std::string> args) {
         if (!has_media(clip)) {
             return false;
         }
-        const auto path = clip_media_path(**project, clip, dirs);
+        const auto path = clip_path(lp, clip);
         if (!path || !fs::is_regular_file(*path)) {
             std::cerr << std::format("aviso: sin material para el clip {} ({}): no se dibuja\n", clip.id, clip.filename);
             return true;
@@ -211,7 +197,7 @@ int cmd_frame(std::span<const std::string> args) {
         return fail_with(ok.error().to_string());
     }
     // Los textos encima, con las fuentes del sistema y las de video-yt (backend/app/fonts: Anton).
-    const gc::render::TextFonts fonts(FontDirs{default_system_font_dir(), root / "app" / "fonts"});
+    const gc::render::TextFonts fonts(FontDirs{default_system_font_dir(), lp.root / "app" / "fonts"});
     std::vector<std::string> warnings;
     if (auto ok = gc::render::draw_timeline_texts(*canvas, timeline, tick, fonts, skip, &warnings); !ok) {
         return fail_with(ok.error().to_string());

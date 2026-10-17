@@ -1,4 +1,4 @@
-#include "project_media.hpp"
+#include "gc/export/project.hpp"
 
 #include <cstdlib>
 #include <format>
@@ -9,7 +9,7 @@
 #include "gc/core/settings.hpp"
 #include "gc/core/sfx_disk.hpp"
 
-namespace genclip {
+namespace gc::exporter {
 
 namespace fs = std::filesystem;
 using namespace gc::core;
@@ -47,4 +47,4 @@ std::optional<fs::path> clip_path(const LoadedProject& p, const TimelineClip& cl
     return clip_media_path(p.project, clip, p.dirs);
 }
 
-} // namespace genclip
+} // namespace gc::exporter

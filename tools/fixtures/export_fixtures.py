@@ -8,6 +8,7 @@ Uso, con el Python de video-yt (tiene pydantic y el resto de dependencias):
 
     E:\\proyectos\\video-yt\\.venv\\Scripts\\python.exe tools\\fixtures\\export_fixtures.py
     E:\\proyectos\\video-yt\\.venv\\Scripts\\python.exe tools\\fixtures\\export_fixtures.py --real
+    E:\\proyectos\\video-yt\\.venv\\Scripts\\python.exe tools\\fixtures\\export_fixtures.py --solo export
 
 Salida (al repo):
   tests/fixtures/model/synthetic.json      modelo: casos de model_cases.py
@@ -20,6 +21,7 @@ Salida (al repo):
   tests/fixtures/media/seek.json           seek exacto de frame_grab.extract_frame: media_cases.SEEK
   tests/fixtures/media/chroma.json         cadenas de FFmpeg del croma (clip_bg.py): media_cases.CHROMA
   tests/fixtures/render/synthetic.json     fotogramas del compuesto real (compose.render_frame): media_cases.RENDER
+  tests/fixtures/export/synthetic.json     el export entero (compose.render, MP4 con audio): media_cases.EXPORT
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
@@ -1798,6 +1800,52 @@ def synthetic_text_render_fixtures(ctx: Ctx) -> list[dict]:
         compose._clip_path, text_ass.text_width = real_clip_path, fake_width
 
 
+EXPORT_DIR = REPO / "tests" / "fixtures" / "export"
+
+
+def synthetic_export_fixtures(ctx: Ctx) -> list[dict]:
+    """El export ENTERO (compose.render: vídeo y audio en un MP4, con el codificador que elija
+    gpu.py) de media_cases.EXPORT. El material se lee en su sitio: clips de colección con la raíz
+    de colecciones (collections.get_root) en tests/fixtures. Los MP4 van a tests/fixtures/export
+    (git-lfs) y solo se rehacen si cambia su timeline (la huella va en la fixture): el codificador
+    no da los mismos bytes en cada ejecución."""
+    import hashlib
+    import media_cases as mc
+    from types import SimpleNamespace
+    from app import collections, compose
+    fixtures = REPO / "tests" / "fixtures"
+    old = {}
+    if (EXPORT_DIR / "synthetic.json").exists():
+        old = {c["file"]: c.get("hash") for c in json.loads((EXPORT_DIR / "synthetic.json").read_text(encoding="utf-8"))}
+    EXPORT_DIR.mkdir(parents=True, exist_ok=True)
+    real_root = collections.get_root
+    collections.get_root = lambda: fixtures
+    try:
+        cases = []
+        for i, (name, fps, tracks, clips) in enumerate(mc.EXPORT):
+            raw_clips = []
+            for j, (file, track, fields) in enumerate(clips):
+                still = fields["kind"] == "image"
+                raw_clips.append({"id": f"c{j + 1}", "track_id": track, "asset_id": f"a{j + 1}",
+                                  "asset_scope": "collection", "filename": file,
+                                  "source_duration": 0.0 if still else _REAL_SFX["probe_duration"](fixtures / file),
+                                  **fields})
+            raw = {"version": 2, "width": 360, "height": 640, "fps": fps,
+                   "tracks": [{"id": tid, "kind": "audio" if tid.startswith("A") else "video", "name": tid}
+                              for tid in tracks],
+                   "clips": raw_clips}
+            timeline = ctx.schemas.Timeline.model_validate(ctx.migrations.migrate_timeline(raw))
+            dump = _pure(timeline.model_dump())
+            digest = hashlib.sha256(json.dumps(dump, sort_keys=True).encode()).hexdigest()[:16]
+            mp4 = f"e{i:02d}.mp4"
+            if old.get(mp4) != digest or not (EXPORT_DIR / mp4).exists():
+                compose.render(SimpleNamespace(id="export-fixture"), timeline, EXPORT_DIR / mp4, lambda f, m: None)
+            cases.append({"name": name, "file": mp4, "hash": digest, "timeline": dump})
+        return cases
+    finally:
+        collections.get_root = real_root
+
+
 def synthetic_chroma_fixtures() -> list[dict]:
     """Las cadenas de FFmpeg del croma con las funciones REALES de clip_bg.py y la parte del
     croma de compose._bg_source_chain (sin matte), para media_cases.CHROMA."""
@@ -2643,11 +2691,20 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
+    ap.add_argument("--solo", choices=["export"], help="solo ese grupo de fixtures (export: tests/fixtures/export)")
     args = ap.parse_args()
 
     ctx = Ctx(args.video_yt)
     sys.path.insert(0, str(HERE))
     from model_cases import CASES
+
+    def export_group() -> None:
+        exp = synthetic_export_fixtures(ctx)
+        write(EXPORT_DIR / "synthetic.json", exp, len(exp), 0)
+
+    if args.solo == "export":
+        export_group()
+        return
 
     # Catálogo de efectos: recurso de la app, lo genera el frontend de video-yt.
     src_catalog = args.video_yt / "backend" / "app" / "fx_assets" / "catalog.json"
@@ -2684,6 +2741,7 @@ def main() -> None:
     write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
     ren_txt = synthetic_text_render_fixtures(ctx)
     write(RENDER_DIR / "text.json", ren_txt, len(ren_txt), 0)
+    export_group()
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)

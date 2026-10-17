@@ -5,7 +5,8 @@
 //   genclip normalize <projects.json> <salida> [--preserve]
 //   genclip frame <raíz de video-yt> <proyecto> --at <s> -o <salida.png> [--omitir]
 //   genclip render <raíz de video-yt> <proyecto> -o <salida.mp4> [--progress] [--omitir]
-//                  [--codificador <nombre>]              (frame y render, solo con FFmpeg y Skia)
+//                  [--codificador <nombre>] [--hilos <n>] [--tiempos]
+//                                                        (frame y render, solo con FFmpeg y Skia)
 //
 // Los argumentos y la salida van en UTF-8 en todos los SO (rutas con tildes). Los errores van
 // siempre a stderr («error: …»), con cualquier GENCLIP_LOG; GENCLIP_LOG=debug añade la traza.

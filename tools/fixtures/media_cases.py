@@ -655,3 +655,33 @@ RENDER_TEXT_DIVERGENCES = {
 # Escenas de RENDER_TEXT de una etapa siguiente, que el render aún no dibuja: si da Unsupported, el
 # test las salta; si ya las dibuja, las compara.
 RENDER_TEXT_PENDING: set[str] = set()
+
+
+# --- Export entero (compose.render): vídeo y audio en un MP4 ----------------------------------
+# El material se lee en su sitio: clips de colección con la raíz de colecciones en tests/fixtures
+# (filename = ruta relativa a esa carpeta). Timelines de 360×640. Geometría entera y par en
+# todos los overlays (x·W − ancho/2 y y·H − alto/2 pares), para no mezclar la divergencia del
+# redondeo a pares del export (dest_rect_even) con lo que se compara.
+_EV = {"kind": "video", "asset_kind": "clips", "layout": "overlay", "reframe": _FULL}
+_EI = {"kind": "image", "asset_kind": "images", "layout": "overlay", "reframe": _FULL}
+_EA = {"kind": "audio", "asset_kind": "audio"}
+# (nombre, fps, pistas, [(archivo, pista, campos)]).
+EXPORT = [
+    ("vídeo, vídeo con sonido, imagen con fundido y voz", 30, ["V1", "V2", "V3", "A1"], [
+        ("render/files/moving30.mp4", "V1", {**_EV, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                                             "transform": _CENTER}),
+        # 64×48 a escala 2: 128×96 en (116, 112).
+        ("media/files/va8.mp4", "V2", {**_EV, "start": 0.4, "in_point": 1.0, "out_point": 2.4,
+                                       "transform": {"x": 0.5, "y": 0.25, "scale": 2.0}}),
+        # 320×180 a escala 0,6: 192×108 en (84, 426).
+        ("render/files/waves.png", "V3", {**_EI, "start": 1.0, "in_point": 0.0, "out_point": 0.8, "appear": "fade",
+                                          "transform": {"x": 0.5, "y": 0.75, "scale": 0.6}}),
+        ("media/files/voice22.mp3", "A1", {**_EA, "start": 0.2, "in_point": 0.5, "out_point": 2.0, "volume": 0.7}),
+    ]),
+    ("25 fps, vídeo con sonido a velocidad 1,5 y un tono", 25, ["V1", "A1"], [
+        # 64×48 a escala 4: 256×192 en (52, 224).
+        ("media/files/va8.mp4", "V1", {**_EV, "start": 0.0, "in_point": 0.0, "out_point": 3.0, "speed": 1.5,
+                                       "transform": {"x": 0.5, "y": 0.5, "scale": 4.0}}),
+        ("media/files/tones44.wav", "A1", {**_EA, "start": 0.5, "in_point": 0.0, "out_point": 1.5, "volume": 0.5}),
+    ]),
+]

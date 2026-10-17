@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "description": "Motor C++ multiplataforma de GenClipPro (migración de video-yt)",
   "builtin-baseline": "e456309491fd875487bf02b8a0dca76c1b1b00cc",
+  "vcpkg-configuration": {
+    "overlay-ports": [ "./cmake/vcpkg-ports" ]
+  },
   "dependencies": [
     "nlohmann-json",
     "spdlog"

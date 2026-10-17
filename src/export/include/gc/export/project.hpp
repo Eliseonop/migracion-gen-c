@@ -1,8 +1,8 @@
 #pragma once
 
-// genclip: un proyecto de video-yt cargado desde su raíz (la de config.BASE_DIR, es decir
+// Un proyecto de video-yt cargado desde su raíz (la de config.BASE_DIR, es decir
 // <video-yt>/backend) con las carpetas de donde sale su material, y la ruta del material de cada
-// clip como compose._clip_path. Lo comparten `genclip frame` y `genclip render`.
+// clip como compose._clip_path. Lo usan `genclip frame`, `genclip render` y el export.
 
 #include <filesystem>
 #include <optional>
@@ -13,7 +13,7 @@
 #include "gc/core/json.hpp"
 #include "gc/core/model.hpp"
 
-namespace genclip {
+namespace gc::exporter {
 
 struct LoadedProject {
     std::filesystem::path root;
@@ -33,4 +33,4 @@ struct LoadedProject {
 // figuras, los motion graphics ni los textos).
 [[nodiscard]] std::optional<std::filesystem::path> clip_path(const LoadedProject& p, const gc::core::TimelineClip& clip);
 
-} // namespace genclip
+} // namespace gc::exporter

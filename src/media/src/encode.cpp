@@ -109,6 +109,7 @@ Result<CodecPtr> open_video(std::string_view name, int width, int height, int fp
     ctx->color_primaries = AVCOL_PRI_BT709;
     ctx->color_trc = AVCOL_TRC_BT709;
     ctx->color_range = AVCOL_RANGE_MPEG;
+    ctx->thread_count = 0; // `-threads auto`, como el CLI (OpenH264 usa entonces un hilo por núcleo)
     if (global_header) {
         ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
