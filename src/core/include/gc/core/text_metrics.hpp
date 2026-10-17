@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -29,8 +30,8 @@ void set_text_width(TextWidthFn fn);
 
 // Pone `fn` como medida mientras vive y, al destruirse, repone la que hubiera antes (también la
 // estimación). Así quien dibuja con la medida real no la deja puesta para el resto del proceso.
-// La medida sigue siendo una sola para todo el proceso: dos guardas a la vez en hilos distintos
-// se pisan.
+// Vale solo en el hilo que la pone, y ahí manda sobre la de set_text_width: dos renders en hilos
+// distintos, cada uno con su guarda, no se pisan.
 class ScopedTextWidth {
 public:
     explicit ScopedTextWidth(TextWidthFn fn);
@@ -41,7 +42,7 @@ public:
     ScopedTextWidth& operator=(ScopedTextWidth&&) = delete;
 
 private:
-    std::shared_ptr<const TextWidthFn> previous_;
+    std::optional<std::shared_ptr<const TextWidthFn>> previous_;
 };
 
 // Valores del estilo de un texto ({size, scale, letter_spacing, line_height, w, font, bold}).

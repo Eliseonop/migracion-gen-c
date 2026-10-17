@@ -4,6 +4,7 @@
 #include <cmath>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <utility>
 
 #include "json_reader.hpp"
@@ -22,6 +23,8 @@ namespace {
 
 std::mutex g_mutex;
 std::shared_ptr<const TextWidthFn> g_width;
+// La de ScopedTextWidth en este hilo: si está puesta, manda sobre g_width (nullptr = la estimación).
+thread_local std::optional<std::shared_ptr<const TextWidthFn>> t_width;
 
 const Json& field(const Json& obj, std::string_view key) {
     static const Json kNull;
@@ -46,18 +49,16 @@ void set_text_width(TextWidthFn fn) {
 
 ScopedTextWidth::ScopedTextWidth(TextWidthFn fn) {
     auto next = fn ? std::make_shared<const TextWidthFn>(std::move(fn)) : nullptr;
-    const std::scoped_lock lock(g_mutex);
-    previous_ = std::exchange(g_width, std::move(next));
+    previous_ = std::exchange(t_width, std::move(next));
 }
 
-ScopedTextWidth::~ScopedTextWidth() {
-    const std::scoped_lock lock(g_mutex);
-    g_width = std::move(previous_);
-}
+ScopedTextWidth::~ScopedTextWidth() { t_width = std::move(previous_); }
 
 double text_width(std::string_view font, bool bold, double em, std::string_view text, double letter_spacing) {
     std::shared_ptr<const TextWidthFn> fn;
-    {
+    if (t_width) {
+        fn = *t_width;
+    } else {
         const std::scoped_lock lock(g_mutex);
         fn = g_width;
     }

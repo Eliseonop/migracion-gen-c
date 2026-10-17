@@ -16,9 +16,11 @@
 #include <system_error>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <limits>
 #include <memory>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "gc/core/font_metrics.hpp"
@@ -447,5 +449,34 @@ TEST_CASE("ScopedTextWidth pone la medida mientras vive y repone la anterior", "
         }
         CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == 7.0);
     }
+    CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == estimate);
+}
+
+TEST_CASE("ScopedTextWidth vale solo en su hilo y manda sobre set_text_width", "[text]") {
+    const double estimate = text_width("Arial", false, 10.0, "hola", 1.0);
+    set_text_width([](std::string_view, bool, double, std::string_view, double) { return 5.0; });
+    CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == 5.0);
+    {
+        const ScopedTextWidth none(nullptr); // en este hilo, la estimación aunque haya una global
+        CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == estimate);
+    }
+    // Dos hilos, cada uno con su guarda, a la vez: ninguno ve la del otro.
+    const auto measure = [](double own, bool& ok) {
+        const ScopedTextWidth guard([own](std::string_view, bool, double, std::string_view, double) { return own; });
+        ok = true;
+        for (int i = 0; i < 20000; ++i) {
+            ok = ok && text_width("Arial", false, 10.0, "hola", 1.0) == own;
+        }
+    };
+    bool ok1 = false;
+    bool ok2 = false;
+    std::thread t1(measure, 11.0, std::ref(ok1));
+    std::thread t2(measure, 13.0, std::ref(ok2));
+    t1.join();
+    t2.join();
+    CHECK(ok1);
+    CHECK(ok2);
+    CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == 5.0); // la global sigue aquí
+    set_text_width(nullptr);
     CHECK(text_width("Arial", false, 10.0, "hola", 1.0) == estimate);
 }
