@@ -666,6 +666,10 @@ _PLAIN = {"size": 0.048, "bold": True, "align": "center", "x": 0.5, "y": 0.5, "w
 _CLASSIC_TXT = {**_PLAIN, "y": 0.86, "inactive_opacity": 0.55, "active_opacity": 1, "highlight_color": "#ffe566",
                 "word_fx": "highlight", "block_appear": "fade"}
 _HOLA = "Hola mundo que tal"
+# Keyframes de texto: posición, escala y giro; y opacidad.
+_KF_MOVE = {"enabled": True, "items": [{"t": 0, "props": {"x": 0.3, "y": 0.4, "scale": 1, "rotation": 0}},
+                                       {"t": 1.5, "props": {"x": 0.7, "y": 0.6, "scale": 1.4, "rotation": 30}}]}
+_KF_FADE = {"enabled": True, "items": [{"t": 0, "props": {"opacity": 0}}, {"t": 1, "props": {"opacity": 1}}]}
 RENDER_TEXT = [
     ("texto blanco con trazo", None, [(_HOLA, _PLAIN, {})], [0.5]),
     ("dos líneas", None, [(_HOLA + "\nsegunda línea", _PLAIN, {})], [0.5]),
@@ -740,6 +744,60 @@ RENDER_TEXT = [
     # Números escritos como texto, con espacios (revisión): float()/int() de Python los aceptan.
     ("estilo con números como texto", None,
      [(_HOLA, {**_PLAIN, "size": " 0.06 ", "border_width": " 4 ", "w": "0.8 "}, {})], [0.5]),
+    # Etapa 2c: giro y volteo (\org en el centro de la caja, \frz, \frx180 / \fry180).
+    ("girado 15°", None, [(_HOLA, {**_PLAIN, "rotation": 15}, {})], [0.5]),
+    ("girado −30° y alineado a la izquierda (gira sobre el centro de la caja)", None,
+     [(_HOLA + "\nuna más", {**_PLAIN, "align": "left", "w": 0.7, "rotation": -30}, {})], [0.5]),
+    ("volteo horizontal", None, [(_HOLA, _PLAIN, {"flip_h": True})], [0.5]),
+    ("volteo vertical y girado 10°", None, [(_HOLA, {**_PLAIN, "rotation": 10}, {"flip_v": True})], [0.5]),
+    ("los dos volteos", None, [(_HOLA, _PLAIN, {"flip_h": True, "flip_v": True})], [0.5]),
+    ("girado con sombra", None,
+     [(_HOLA, {**_PLAIN, "rotation": 20, "shadow": True, "shadow_distance": 0.08}, {})], [0.5]),
+    ("girado con Fondo por línea", None,
+     [(_HOLA, {**_PLAIN, "rotation": 12, "bg": "#2040a0", "bg_opacity": 0.9, "border_width": 3}, {})], [0.5]),
+    ("girado con Fondo dibujado", None,
+     [(_HOLA, {**_PLAIN, "rotation": 12, "bg": "#303030", "bg_opacity": 0.85, "bg_style": "block", "bg_radius": 0.3,
+               "border_width": 0}, {})], [0.5]),
+    ("aparición deslizar volteada en vertical", None,
+     [(_HOLA, {**_PLAIN, "block_appear": "slide_up"}, {"flip_v": True})], [0.1]),
+    # Texto animado: un evento por fotograma con su pose y la aparición horneada (animated_dialogues).
+    ("animado: posición, escala y giro por keyframes", None, [(_HOLA, _PLAIN, {"keyframes": _KF_MOVE})],
+     [0.0, 0.5, 1.0, 1.9]),
+    ("animado: opacidad por keyframes", None, [(_HOLA, _PLAIN, {"keyframes": _KF_FADE})], [0.7]),
+    ("animado: opacidad por keyframes, por debajo de 0,5", None, [(_HOLA, _PLAIN, {"keyframes": _KF_FADE})], [0.3]),
+    ("animado con aparición pop", None, [(_HOLA, {**_PLAIN, "block_appear": "pop"}, {"keyframes": _KF_MOVE})],
+     [0.3]),
+    ("animado con aparición pop, al principio (opacidad 0,25)", None,
+     [(_HOLA, {**_PLAIN, "block_appear": "pop"}, {"keyframes": _KF_MOVE})], [0.1]),
+    ("animado con aparición deslizar", None,
+     [(_HOLA, {**_PLAIN, "block_appear": "slide_up"}, {"keyframes": _KF_MOVE})], [0.1]),
+    ("animado con aparición fundida y karaoke", None, [(_HOLA, _CLASSIC_TXT, {"keyframes": _KF_MOVE})], [0.7]),
+    ("animado con aparición fundida, al principio (opacidad 0,25)", None,
+     [(_HOLA, _CLASSIC_TXT, {"keyframes": _KF_MOVE})], [0.1]),
+    ("animado con sombra", None,
+     [(_HOLA, {**_PLAIN, "shadow": True, "shadow_color": "#ff0000", "shadow_distance": 0.08},
+       {"keyframes": _KF_MOVE})], [0.5]),
+    ("animado con Fondo (dibujado como forma)", None,
+     [(_HOLA, {**_PLAIN, "bg": "#2040a0", "bg_opacity": 0.9, "border_width": 3}, {"keyframes": _KF_MOVE})], [0.5]),
+    ("animado con «escribir»", None, [(_HOLA, {**_PLAIN, "block_appear": "typing"}, {"keyframes": _KF_MOVE})],
+     [0.5, 1.0]),
+    ("animado y volteado", None, [(_HOLA, _PLAIN, {"keyframes": _KF_MOVE, "flip_h": True})], [0.5]),
+    # La Curva: una letra por evento, centrada en su punto del arco y girada sobre sí misma.
+    ("Curva hacia arriba", None, [(_HOLA, {**_PLAIN, "curve_on": True, "curve": 0.6}, {})], [0.5]),
+    ("Curva hacia abajo en dos líneas", None,
+     [(_HOLA + "\nsegunda línea", {**_PLAIN, "curve_on": True, "curve": -0.5}, {})], [0.5]),
+    ("Curva girada 15° con sombra", None,
+     [(_HOLA, {**_PLAIN, "curve_on": True, "curve": 0.5, "rotation": 15, "shadow": True, "shadow_distance": 0.08},
+       {})], [0.5]),
+    ("Curva con karaoke", None,
+     [(_HOLA, {**_CLASSIC_TXT, "curve_on": True, "curve": 0.7, "block_appear": "none"}, {})], [0.7]),
+    ("Curva con aparición deslizar", None,
+     [(_HOLA, {**_PLAIN, "curve_on": True, "curve": 0.6, "block_appear": "slide_up"}, {})], [0.1]),
+    ("Curva animada", None, [(_HOLA, {**_PLAIN, "curve_on": True, "curve": 0.6}, {"keyframes": _KF_MOVE})],
+     [0.5, 1.0]),
+    ("Curva animada con sombra", None,
+     [(_HOLA, {**_PLAIN, "curve_on": True, "curve": -0.6, "shadow": True, "shadow_color": "#ff0000",
+               "shadow_distance": 0.08}, {"keyframes": _KF_MOVE})], [0.5]),
 ]
 
 # Croma: los dict crudos de bg_removal.chroma que se normalizan y se pasan a chroma_filters,
@@ -766,9 +824,16 @@ CHROMA_HEIGHTS = [0, 180, 512, 1080, 2160]
 
 # Escenas de RENDER_TEXT en las que el export se aparta de lo que pide el texto (decisión de Edu):
 # el test las dibuja pero no compara.
+_FORCED_WHITE = ("libass lee el color de \\c y \\3c como un entero con signo y saturado: con una opacidad de "
+                 "0,5 o menos (alfa ≥ 0x80), relleno y trazo salen blancos; el C++ pinta el color pedido")
 RENDER_TEXT_DIVERGENCES = {
     "sobre una imagen": "con una imagen PNG debajo, libass escribe el blanco como 235 (rango de TV) en un "
                         "fotograma de rango completo: el texto sale gris (sobre vídeo o negro sale 255)",
+    "girado con Fondo por línea": "libass dibuja la caja de BorderStyle 4 sin girar, en el sitio de la línea sin "
+                                  "giro, mientras gira el texto; el preview y el C++ la giran con él",
+    "animado con aparición pop, al principio (opacidad 0,25)": _FORCED_WHITE,
+    "animado: opacidad por keyframes, por debajo de 0,5": _FORCED_WHITE,
+    "animado con aparición fundida, al principio (opacidad 0,25)": _FORCED_WHITE,
 }
 
 # Escenas de RENDER_TEXT de una etapa siguiente, que el render aún no dibuja: si da Unsupported, el

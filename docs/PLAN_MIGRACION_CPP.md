@@ -1281,3 +1281,15 @@ Decisión de Edu (§6):
   - MSVC + vcpkg: 151/151 (Debug y Release); MinGW: 127/127. 0 warnings.
 
 **Siguiente:** medir con el PC tranquilo y con los proyectos de 4K; ver por qué componer Snowpiercer cuesta 87 ms por fotograma. Pendiente de Edu: las decisiones de las divergencias (TODO).
+
+### 2026-10-17 — F3: fusión, capa de ajuste, figuras, texto animado, giro y Curva en el render
+
+- **Hecho:**
+  - Los 12 modos de fusión (una capa de Skia con su `SkBlendMode`, fórmulas W3C como el export y el preview) y la capa de ajuste (su matriz sobre lo compuesto debajo).
+  - Figuras: la geometría de `shapes.py` en `gc_core/shape_geometry` (exacta) y el dibujo con Skia, con el ensanchamiento del antialias de OpenCV medido.
+  - Texto: giro y volteo (la matriz de `\org`/`\frz`/`\frx180`/`\fry180` de libass), texto animado (un evento por fotograma con su pose y la aparición horneada) y la Curva (una letra por evento).
+  - `export_fixtures.py --solo render | shapes | texto` regenera solo ese grupo.
+- **Verificación:** fixtures de render nuevas (fusión 40,7–46,3 dB; ajuste 44,1–46,3; figuras 37,9–46,5), geometría de figuras (92 casos, exacta), texto (35 escenas nuevas dentro de los umbrales). Mutantes en cada pieza: fallan todos. MSVC + vcpkg: 154/154 (Debug y Release); MinGW: 129/129. 0 warnings.
+- **Divergencias nuevas para Edu (TODO):** opacidad y aparición de las figuras, relleno a medio aparecer oscurecido por el export, el blanco forzado de libass en las apariciones de texto animado y la caja del Fondo por línea sin girar.
+
+**Siguiente:** los efectos (`effects`), que el preview y el export hacen distinto (decisión de Edu); la máscara de texto y el texto 3D.

@@ -2732,7 +2732,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
-    ap.add_argument("--solo", choices=["export", "render", "shapes"],
+    ap.add_argument("--solo", choices=["export", "render", "shapes", "texto"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -2752,6 +2752,10 @@ def main() -> None:
         write(REPO / "tests" / "fixtures" / "shapes" / "geometry.json", shp,
               sum(len(v) for v in shp.values()), 0)
 
+    if args.solo == "texto":
+        ren_txt = synthetic_text_render_fixtures(ctx)
+        write(RENDER_DIR / "text.json", ren_txt, len(ren_txt), 0)
+        return
     if args.solo == "shapes":
         shapes_group()
         return
