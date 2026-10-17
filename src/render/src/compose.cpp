@@ -9,6 +9,7 @@
 #include "gc/core/bg.hpp"
 #include "gc/core/clip_filters.hpp"
 #include "gc/core/masks.hpp"
+#include "gc/render/shape.hpp"
 
 namespace gc::render {
 
@@ -19,6 +20,8 @@ bool is_media(const core::TimelineClip& clip) {
 }
 
 bool is_adjustment(const core::TimelineClip& clip) { return clip.kind == "adjustment"; }
+
+bool is_shape(const core::TimelineClip& clip) { return clip.kind == "shape"; }
 
 // Un valor que activa algo: true o un número distinto de 0, también escrito como texto («2»), como
 // el float(val) de _fx_on/_fx_num en clip_fx.py. Por prudencia, un negativo también cuenta (el
@@ -66,7 +69,7 @@ std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
     if (is_adjustment(clip)) {
         return std::nullopt;
     }
-    if (!is_media(clip)) {
+    if (!is_media(clip) && !is_shape(clip)) {
         return std::format("el render aún no dibuja capas de tipo «{}»", clip.kind);
     }
     if (auto reason = core::maskable(clip) ? mask_unsupported(layer.masks) : std::string(); !reason.empty()) {
@@ -117,16 +120,23 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
             }
             continue;
         }
-        if (layer.blits.empty()) {
-            // Con las reglas del preview, evaluate deja sin blits el material sin tamaño.
-            return fail(ErrorCode::InvalidArgument, std::format("el clip {} no tiene las dimensiones de su material", id));
-        }
-        auto image = source(layer);
-        if (!image) {
-            return std::unexpected(image.error());
-        }
-        if (*image == nullptr) {
-            return fail(ErrorCode::Internal, std::format("no hay fotograma del material del clip {}", id));
+        // Una figura no tiene material: se dibuja su geometría (shape.hpp).
+        const bool shape = is_shape(*layer.clip);
+        const Image* image = nullptr;
+        if (!shape) {
+            if (layer.blits.empty()) {
+                // Con las reglas del preview, evaluate deja sin blits el material sin tamaño.
+                return fail(ErrorCode::InvalidArgument,
+                            std::format("el clip {} no tiene las dimensiones de su material", id));
+            }
+            auto got = source(layer);
+            if (!got) {
+                return std::unexpected(got.error());
+            }
+            if (*got == nullptr) {
+                return fail(ErrorCode::Internal, std::format("no hay fotograma del material del clip {}", id));
+            }
+            image = *got;
         }
         // Máscaras (en coordenadas del cuadro): el clip va a una capa que después se recorta con
         // su alfa, como el maskedmerge del export tras componer el clip. Con un modo de fusión, la
@@ -149,12 +159,22 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
         }
         // Filtros de color (o el `look` antiguo): una matriz por clip, sobre lo ya escalado.
         const auto color = core::stack_matrix(core::clip_filters(*layer.clip));
-        for (const core::Blit& blit : layer.blits) {
-            if (auto drawn = canvas.draw_image(**image, blit.src, blit.m, layer.alpha, layer.wipe, color); !drawn) {
-                if (mask || blended) {
-                    (void)canvas.end_layer(MaskAlpha{}); // cierra la capa sin dibujarla
-                }
+        const auto close_on_error = [&] {
+            if (mask || blended) {
+                (void)canvas.end_layer(MaskAlpha{}); // cierra la capa sin dibujarla
+            }
+        };
+        if (shape) {
+            if (auto drawn = draw_shape(canvas, layer, color); !drawn) {
+                close_on_error();
                 return std::unexpected(drawn.error());
+            }
+        } else {
+            for (const core::Blit& blit : layer.blits) {
+                if (auto drawn = canvas.draw_image(*image, blit.src, blit.m, layer.alpha, layer.wipe, color); !drawn) {
+                    close_on_error();
+                    return std::unexpected(drawn.error());
+                }
             }
         }
         if (mask) {

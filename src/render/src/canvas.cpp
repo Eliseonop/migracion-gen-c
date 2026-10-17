@@ -29,8 +29,8 @@ namespace {
 
 SkColor to_sk(Rgba8 c) { return SkColorSetARGB(c.a, c.r, c.g, c.b); }
 
-// La matriz afín 3×4 de los filtros como la 4×5 de Skia (filas R, G, B y A; el desplazamiento,
-// en 0–1). Skia la aplica sin premultiplicar y acota el resultado a 0–1. El alfa no cambia.
+} // namespace
+
 sk_sp<SkColorFilter> color_filter(const core::AffineColorMatrix& m) {
     std::array<float, 20> row_major{};
     for (std::size_t r = 0; r < 3; ++r) {
@@ -42,8 +42,6 @@ sk_sp<SkColorFilter> color_filter(const core::AffineColorMatrix& m) {
     row_major[18] = 1.0F; // A' = A
     return SkColorFilters::Matrix(row_major.data());
 }
-
-} // namespace
 
 Result<Canvas> Canvas::make(int width, int height) {
     if (width <= 0 || height <= 0) {

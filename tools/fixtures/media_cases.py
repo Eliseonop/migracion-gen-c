@@ -374,6 +374,52 @@ _CENTER = {"x": 0.5, "y": 0.5, "scale": 1.0}
 # Máscaras (clip_mask.py): el clip de ondas cubre todo el cuadro (320×180 a escala 3,2 sobre
 # 360×640) encima del degradado, así se ve la forma entera. (nombre, máscaras, campos, instantes).
 _COVER = {"x": 0.5, "y": 0.5, "scale": 3.2}
+_SHP = {"kind": "shape", "asset_kind": "shape"}
+_SHAPE_SCENES = [
+    ("rectángulo redondeado con trazo", {"shape": {"type": "rect", "cornerRadius": 0.2, "x": 0.5, "y": 0.4, "w": 0.6,
+                                                   "h": 0.2, "fill": "#e53935", "stroke": "#ffffff", "strokeWidth": 6}},
+     [0.5]),
+    ("círculo sin trazo", {"shape": {"type": "circle", "x": 0.4, "y": 0.6, "w": 0.5, "h": 0.3, "fill": "#22c55e",
+                                     "strokeWidth": 0}}, [0.5]),
+    ("estrella girada", {"shape": {"type": "star", "sides": 5, "x": 0.5, "y": 0.5, "w": 0.6, "h": 0.35,
+                                   "rotation": 15, "fill": "#ffd400", "stroke": "#202020", "strokeWidth": 5}}, [0.5]),
+    ("flecha rellena girada", {"shape": {"type": "arrow", "x": 0.5, "y": 0.45, "w": 0.7, "h": 0.15, "rotation": -30,
+                                         "fill": "#3b82f6", "stroke": "#ffffff", "strokeWidth": 4}}, [0.5]),
+    ("flecha curva solo contorno", {"shape": {"type": "arrow_curve", "arrowHead": "line", "x": 0.5, "y": 0.4,
+                                              "w": 0.6, "h": 0.3, "stroke": "#ffffff", "strokeWidth": 5}}, [0.5]),
+    ("corazón al 60 % con trazo", {"shape": {"type": "heart", "x": 0.5, "y": 0.5, "w": 0.5, "h": 0.3, "opacity": 0.6,
+                                             "fill": "#e11d48", "stroke": "#ffffff", "strokeWidth": 8}}, [0.5]),
+    ("check a medio dibujar", {"shape": {"type": "check", "x": 0.5, "y": 0.5, "w": 0.5, "h": 0.3, "draw": 0.6,
+                                         "stroke": "#22c55e", "strokeWidth": 10}}, [0.5]),
+    # Solo trazo: con relleno, el export lo oscurece al medio aparecer (mezcla con negro y baja el
+    # alfa a la vez; divergencia apuntada en las notas de F3).
+    ("contorno grueso a medio dibujar", {"shape": {"type": "rect", "x": 0.5, "y": 0.5, "w": 0.7, "h": 0.3, "draw": 0.4,
+                                                   "fill": "none", "stroke": "#ffffff", "strokeWidth": 20}}, [0.5]),
+    ("x con guiones", {"shape": {"type": "x", "x": 0.5, "y": 0.5, "w": 0.5, "h": 0.3, "dash": "dash",
+                                 "stroke": "#ef4444", "strokeWidth": 6}}, [0.5]),
+    ("línea de puntos", {"shape": {"type": "line", "x": 0.5, "y": 0.5, "w": 0.8, "h": 0.06, "dash": "dot",
+                                   "stroke": "#ffffff", "strokeWidth": 8}}, [0.5]),
+    ("trazado cerrado y suave", {"shape": {"type": "path", "x": 0.5, "y": 0.5, "w": 0.7, "h": 0.4, "closed": True,
+                                           "points": [[0, 50], [30, 0], [100, 30], [70, 100], [10, 90]],
+                                           "fill": "#a855f7", "stroke": "#ffffff", "strokeWidth": 4}}, [0.5]),
+    ("barras de cine", {"shape": {"type": "letterbox", "bar": 0.15}}, [0.5]),
+    ("bocadillo volteado", {"shape": {"type": "speech", "x": 0.5, "y": 0.4, "w": 0.6, "h": 0.3, "fill": "#ffffff",
+                                      "stroke": "#111111", "strokeWidth": 4}, "flip_h": True}, [0.5]),
+    ("polígono con keyframes de posición y giro",
+     {"shape": {"type": "polygon", "sides": 6, "w": 0.4, "h": 0.22, "fill": "#f97316", "stroke": "#ffffff",
+                "strokeWidth": 4},
+      "keyframes": {"enabled": True, "items": [{"t": 0, "props": {"x": 0.3, "y": 0.4, "rotation": 0}},
+                                               {"t": 1, "props": {"x": 0.7, "y": 0.6, "rotation": 90}}]}},
+     [0.0, 0.5, 1.0]),
+    ("rectángulo con fundido de entrada", {"shape": {"type": "rect", "x": 0.5, "y": 0.5, "w": 0.6, "h": 0.2,
+                                                     "fill": "#0ea5e9", "stroke": "#ffffff", "strokeWidth": 4},
+                                           "appear": "fade"}, [0.2]),
+    ("figura multiplicada", {"shape": {"type": "circle", "x": 0.5, "y": 0.5, "w": 0.6, "h": 0.35, "fill": "#808080",
+                                       "strokeWidth": 0}, "blend_mode": "multiply"}, [0.5]),
+    ("figura con máscara", {"shape": {"type": "rect", "x": 0.5, "y": 0.5, "w": 0.8, "h": 0.4, "fill": "#fde047",
+                                      "strokeWidth": 0},
+                            "masks": [{"type": "circle", "x": 0.5, "y": 0.5, "w": 0.5, "h": 0.3}]}, [0.5]),
+]
 _BLEND_MODES = ["darken", "multiply", "color_burn", "lighten", "screen", "color_dodge", "overlay", "soft_light",
                 "hard_light", "difference", "exclusion"]
 _MASK_SCENES = [
@@ -601,6 +647,12 @@ RENDER_SCENES = [
      [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
       ("", "V2", {**_ADJ, "start": 0.5, "in_point": 0.0, "out_point": 1.0, "filters": [{"id": "night"}]})],
      [0.2, 1.0, 1.8]),
+    # Figuras (shapes.py): el export las rasteriza a un PNG del cuadro con OpenCV (al doble y con
+    # INTER_AREA); el render las dibuja con Skia en la caja de su pose.
+    *[(f"figura: {name}", 30, ["V1", "V2"],
+       [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+        ("", "V2", {**_SHP, "start": 0.0, "in_point": 0.0, "out_point": 2.0, **fields})],
+       times) for name, fields, times in _SHAPE_SCENES],
     # Sin el zoom (ni el pop) de aparición o salida: en un overlay estático el export escala con
     # `scale=eval=frame` pero el overlay se queda en x=ox:y=oy, así que crece desde la esquina
     # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).

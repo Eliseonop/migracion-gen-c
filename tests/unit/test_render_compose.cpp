@@ -44,6 +44,9 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
     TimelineClip adjustment = video();
     adjustment.kind = "adjustment";
     CHECK_FALSE(unsupported_reason(layer(adjustment)));
+    TimelineClip shape = video();
+    shape.kind = "shape";
+    CHECK_FALSE(unsupported_reason(layer(shape)));
 
     // Las máscaras ya se dibujan, salvo la de texto (y solo si está activa).
     FrameLayer masked = layer(video());

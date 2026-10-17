@@ -3,8 +3,8 @@
 // El fotograma compuesto: las capas de core::evaluate dibujadas, de fondo a frente, sobre el
 // fondo negro opaco del export (`color=c=black`, compose.py).
 //
-// Por ahora las capas con material (vídeo, imagen y motion: las que traen blits) y las capas de
-// ajuste (su matriz sobre lo de debajo), con los 12 modos de fusión, con máscaras (salvo la de texto; mask.hpp), con el croma (lo hace el decode) pero sin el matte automático ni
+// Por ahora las capas con material (vídeo, imagen y motion: las que traen blits), las figuras
+// (shape.hpp) y las capas de ajuste (su matriz sobre lo de debajo), con los 12 modos de fusión, con máscaras (salvo la de texto; mask.hpp), con el croma (lo hace el decode) pero sin el matte automático ni
 // el contorno, con los filtros de color (`filters` y `look`) y sin efectos (`effects`) ni
 // efectos de vídeo (`vfx`). Lo demás es un error Unsupported hasta que llegue,
 // para no dar un fotograma incompleto o mal dibujado como bueno (unsupported_reason).

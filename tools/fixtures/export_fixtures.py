@@ -22,6 +22,7 @@ Salida (al repo):
   tests/fixtures/media/chroma.json         cadenas de FFmpeg del croma (clip_bg.py): media_cases.CHROMA
   tests/fixtures/render/synthetic.json     fotogramas del compuesto real (compose.render_frame): media_cases.RENDER
   tests/fixtures/export/synthetic.json     el export entero (compose.render, MP4 con audio): media_cases.EXPORT
+  tests/fixtures/shapes/geometry.json      geometría de las figuras (shapes.py): shape_cases.py
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
@@ -1722,7 +1723,9 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args, "-map_metadata", "-1",
                             "-fflags", "+bitexact", str(files / name)], check=True)
     real_clip_path = compose._clip_path
-    compose._clip_path = lambda project, clip, shape_files=None: files / clip.filename
+    # El material de las fixtures; las figuras, su PNG rasterizado (shape_files), como el real.
+    compose._clip_path = lambda project, clip, shape_files=None: (
+        (shape_files or {}).get(clip.id) if clip.kind == "shape" else files / clip.filename)
     try:
         cases = []
         for i, (name, file, fields, times) in enumerate(mc.RENDER):
@@ -1798,6 +1801,44 @@ def synthetic_text_render_fixtures(ctx: Ctx) -> list[dict]:
         return cases
     finally:
         compose._clip_path, text_ass.text_width = real_clip_path, fake_width
+
+
+def synthetic_shape_fixtures(ctx: Ctx) -> dict:
+    """Geometría de las figuras con las funciones REALES de shapes.py: shape_geometry (todos los
+    tipos y sus variantes), path_points, trim_polyline, dash_runs, dash_pattern, flip_geometry y
+    shape_draw_at (con y sin keyframes)."""
+    import shape_cases as sc
+    from app import shapes
+
+    def pts(seq):
+        return [[float(x), float(y)] for x, y in seq]
+
+    def geo_json(g):
+        return {"fills": [pts(r) for r in g["fills"]], "strokes": [pts(r) for r in g["strokes"]]}
+
+    geometry = [{"type": t, "opts": o, "out": geo_json(shapes.shape_geometry(t, o))} for t, o in sc.GEOMETRY]
+    paths = [{"points": p, "closed": c, "smooth": sm, "out": pts(shapes.path_points(p, c, sm))}
+             for p, c, sm in sc.PATHS]
+    trims = [{"pts": l, "frac": f, "out": pts(shapes.trim_polyline([tuple(x) for x in l], f))} for l, f in sc.TRIMS]
+    dashes = []
+    for l, pat in sc.DASHES:
+        runs, dots = shapes.dash_runs([tuple(x) for x in l], tuple(pat))
+        dashes.append({"pts": l, "pattern": pat, "runs": [pts(r) for r in runs], "dots": pts(dots)})
+    patterns = [{"dash": d, "lw": lw, "out": list(shapes.dash_pattern(d, lw)) if shapes.dash_pattern(d, lw) else None}
+                for d, lw in sc.PATTERNS]
+    flips = [{"type": t, "flip": f, "out": geo_json(shapes.flip_geometry(shapes.shape_geometry(t, {}), tuple(f)))}
+             for t, f in sc.FLIPS]
+    draws = []
+    for clip_fields, times in sc.DRAWS:
+        raw = {"version": 2, "width": 360, "height": 640, "fps": 30,
+               "tracks": [{"id": "V1", "kind": "video", "name": "V1"}],
+               "clips": [{"id": "c1", "track_id": "V1", "kind": "shape", "asset_kind": "shape", "asset_id": "rect",
+                          "filename": "", "start": 0.0, "in_point": 0.0, "out_point": 2.0, **clip_fields}]}
+        timeline = ctx.schemas.Timeline.model_validate(ctx.migrations.migrate_timeline(raw))
+        draws.append({"timeline": _pure(timeline.model_dump()),
+                      "samples": [[t, shapes.shape_draw_at(timeline.clips[0], t)] for t in times]})
+    return {"geometry": geometry, "paths": paths, "trims": trims, "dashes": dashes, "patterns": patterns,
+            "flips": flips, "draws": draws}
 
 
 EXPORT_DIR = REPO / "tests" / "fixtures" / "export"
@@ -2691,7 +2732,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
-    ap.add_argument("--solo", choices=["export", "render"],
+    ap.add_argument("--solo", choices=["export", "render", "shapes"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -2705,6 +2746,14 @@ def main() -> None:
 
     if args.solo == "export":
         export_group()
+        return
+    def shapes_group() -> None:
+        shp = synthetic_shape_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "shapes" / "geometry.json", shp,
+              sum(len(v) for v in shp.values()), 0)
+
+    if args.solo == "shapes":
+        shapes_group()
         return
     if args.solo == "render":
         ren = synthetic_render_fixtures(ctx)
@@ -2747,6 +2796,7 @@ def main() -> None:
     ren_txt = synthetic_text_render_fixtures(ctx)
     write(RENDER_DIR / "text.json", ren_txt, len(ren_txt), 0)
     export_group()
+    shapes_group()
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)
