@@ -53,6 +53,22 @@ private:
     std::shared_ptr<Impl> impl_;
 };
 
+// Lo que mide Pillow de `text` en `font` a `size` px (ImageFont.truetype con su maquetación básica
+// de FreeType, la de video-yt; la usa la máscara de tipo texto): getmetrics(), getlength() y dónde
+// queda el origen de la línea (izquierda de la línea base) respecto al ancla de ImageDraw.text
+// («ls», «mm», «lm» o «rm»). Las métricas y las anclas verticales, exactas (la aritmética de 26.6
+// de FreeType); el ancho, con los avances redondeados de HarfBuzz en vez de los del hinting, que
+// pueden diferir en 1 px. Nada si la fuente no se puede leer.
+struct PillowText {
+    int ascent = 0;
+    int descent = 0;
+    double length = 0;
+    double origin_x = 0;
+    double origin_y = 0;
+};
+[[nodiscard]] std::optional<PillowText> pillow_text(const TextFonts& fonts, std::string_view font, bool bold,
+                                                    int size, std::string_view text, std::string_view anchor);
+
 // Dibuja encima de lo que haya en el lienzo los textos del .ass global en el fotograma `k` de la
 // timeline (a sus fps): los que libass dibujaría en ese instante, en el orden del .ass. Un texto
 // visible que aún no se sabe dibujar da Unsupported; con `omit`, se salta y su motivo va a

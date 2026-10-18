@@ -4,8 +4,11 @@
 
 #include <string>
 
+#include "gc/core/font_metrics.hpp"
 #include "gc/core/frame.hpp"
+#include "gc/core/io.hpp"
 #include "gc/render/compose.hpp"
+#include "gc/render/text.hpp"
 
 using gc::Json;
 using gc::core::FrameLayer;
@@ -48,7 +51,7 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
     shape.kind = "shape";
     CHECK_FALSE(unsupported_reason(layer(shape)));
 
-    // Las máscaras ya se dibujan, salvo la de texto (y solo si está activa).
+    // Las máscaras ya se dibujan; la de texto (si está activa), solo con las fuentes.
     FrameLayer masked = layer(video());
     masked.masks.push_back(Json{{"type", "linear"}, {"enabled", true}});
     CHECK_FALSE(unsupported_reason(masked));
@@ -56,6 +59,9 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
     CHECK_FALSE(unsupported_reason(masked));
     masked.masks.back()["enabled"] = true;
     CHECK(unsupported_reason(masked));
+    const gc::render::TextFonts fonts(gc::core::FontDirs{gc::core::default_system_font_dir(),
+                                                         gc::core::path_from_utf8(GC_RESOURCES_DIR) / "fonts"});
+    CHECK_FALSE(unsupported_reason(masked, &fonts));
 
     // Eliminar fondo: el croma solo ya lo hace el decode; con contorno, aún no.
     TimelineClip chroma = video();

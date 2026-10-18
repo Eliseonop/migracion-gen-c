@@ -44,6 +44,7 @@
 #endif
 
 #include "canvas_impl.hpp"
+#include "text_mask.hpp"
 #include "py.hpp"
 
 namespace gc::render {
@@ -62,6 +63,10 @@ struct FontFace {
     double upem = 1000;
     double asc = 0;  // unidades de la fuente
     double desc = 0; // unidades de la fuente, positivo hacia abajo
+    // Los de FreeType (face->ascender y face->descender, los que mide Pillow): los de hhea; si los
+    // dos son 0, los tipográficos de la OS/2 y, si no, los de Windows. El descendente, negativo.
+    std::int64_t ft_asc = 0;
+    std::int64_t ft_desc = 0;
 
     FontFace() = default;
     FontFace(const FontFace&) = delete;
@@ -102,18 +107,34 @@ std::shared_ptr<FontFace> load_face(SkFontMgr& mgr, const std::filesystem::path&
     const int win_asc = len >= 78 ? static_cast<std::int16_t>(be16(d + 74)) : 0;
     const int win_desc = len >= 78 ? static_cast<std::int16_t>(be16(d + 76)) : 0;
     const bool has_os2 = len >= 78;
+    const int typo_asc = len >= 72 ? static_cast<std::int16_t>(be16(d + 68)) : 0;
+    const int typo_desc = len >= 72 ? static_cast<std::int16_t>(be16(d + 70)) : 0;
     hb_blob_destroy(os2);
+    int hhea_asc = 0;
+    int hhea_desc = 0;
+    hb_blob_t* hhea = hb_face_reference_table(ff->face, HB_TAG('h', 'h', 'e', 'a'));
+    const char* h = hb_blob_get_data(hhea, &len);
+    if (len >= 8) {
+        hhea_asc = static_cast<std::int16_t>(be16(h + 4));
+        hhea_desc = static_cast<std::int16_t>(be16(h + 6));
+    }
+    hb_blob_destroy(hhea);
     if (has_os2 && win_asc + win_desc != 0) {
         ff->asc = win_asc;
         ff->desc = win_desc;
     } else {
-        hb_blob_t* hhea = hb_face_reference_table(ff->face, HB_TAG('h', 'h', 'e', 'a'));
-        const char* h = hb_blob_get_data(hhea, &len);
-        if (len >= 8) {
-            ff->asc = static_cast<std::int16_t>(be16(h + 4));
-            ff->desc = -static_cast<std::int16_t>(be16(h + 6));
-        }
-        hb_blob_destroy(hhea);
+        ff->asc = hhea_asc;
+        ff->desc = -hhea_desc;
+    }
+    if (hhea_asc != 0 || hhea_desc != 0) {
+        ff->ft_asc = hhea_asc;
+        ff->ft_desc = hhea_desc;
+    } else if (typo_asc != 0 || typo_desc != 0) {
+        ff->ft_asc = typo_asc;
+        ff->ft_desc = typo_desc;
+    } else {
+        ff->ft_asc = win_asc;
+        ff->ft_desc = -win_desc;
     }
     if (ff->upem <= 0 || ff->asc + ff->desc <= 0) {
         return nullptr;
@@ -348,6 +369,136 @@ core::TextWidthFn TextFonts::width_fn() const {
     return [impl = impl_](std::string_view font, bool bold, double em, std::string_view text, double ls) {
         return impl->width(font, bold, em, text, ls);
     };
+}
+
+// --- Medidas de Pillow y máscara de tipo texto -----------------------------------------------
+
+namespace {
+
+// FT_DivFix y FT_MulFix de FreeType (16.16, redondeando), en enteros de 64 bits.
+std::int64_t ft_divfix(std::int64_t a, std::int64_t b) {
+    const bool neg = (a < 0) != (b < 0);
+    const std::int64_t q = ((std::abs(a) << 16) + (std::abs(b) >> 1)) / std::abs(b);
+    return neg ? -q : q;
+}
+
+std::int64_t ft_mulfix(std::int64_t a, std::int64_t b) {
+    const bool neg = (a < 0) != (b < 0);
+    const std::int64_t p = ((std::abs(a) * std::abs(b)) + 0x8000) >> 16;
+    return neg ? -p : p;
+}
+
+// PIXEL de _imagingft.c: de 26.6 a px enteros, con las mitades hacia arriba.
+std::int64_t ft_pixel(std::int64_t v) { return (v + 32) >> 6; }
+
+// Una línea como la maquetación básica de Pillow: los glifos de HarfBuzz sin kerning y cada avance
+// redondeado al px (los del hinting), con el origen de cada glifo.
+struct PillowLine {
+    std::vector<SkGlyphID> ids;
+    std::vector<double> x;
+    std::int64_t width = 0; // px
+};
+
+PillowLine pillow_line(const FontFace& ff, std::string_view text, int size) {
+    const Shaped sh = shape(ff, text, size, 0.0, false);
+    PillowLine out;
+    double pen = 0;
+    for (std::size_t i = 0; i < sh.ids.size(); ++i) {
+        out.ids.push_back(sh.ids[i]);
+        out.x.push_back(pen);
+        pen += std::round(sh.advances[i]);
+    }
+    out.width = static_cast<std::int64_t>(pen);
+    return out;
+}
+
+} // namespace
+
+std::optional<PillowText> pillow_text(const TextFonts& fonts, std::string_view font, bool bold, int size,
+                                      std::string_view text, std::string_view anchor) {
+    const auto ff = TextFontsAccess::impl(fonts).face(font, bold);
+    if (!ff || size <= 0 || anchor.size() != 2) {
+        return std::nullopt;
+    }
+    // tt_size_reset de FreeType: ascendente al techo y descendente al suelo del px, en 26.6.
+    const std::int64_t y_scale = ft_divfix(static_cast<std::int64_t>(size) * 64, static_cast<std::int64_t>(ff->upem));
+    const std::int64_t asc = (ft_mulfix(ff->ft_asc, y_scale) + 63) & -64;
+    const std::int64_t desc = ft_mulfix(ff->ft_desc, y_scale) & -64;
+    const PillowLine line = pillow_line(*ff, text, size);
+    const std::int64_t width = line.width * 64;
+    PillowText out;
+    out.ascent = static_cast<int>(asc / 64);
+    out.descent = static_cast<int>(-desc / 64);
+    out.length = static_cast<double>(line.width);
+    // bounding_box_and_anchors de _imagingft.c (con la división entera de C).
+    const char h = anchor[0];
+    const char v = anchor[1];
+    const std::int64_t x_anchor = h == 'm' ? ft_pixel(width / 2) : (h == 'r' ? ft_pixel(width) : 0);
+    const std::int64_t y_anchor = v == 'm' ? ft_pixel((asc + desc) / 2) : 0;
+    out.origin_x = -static_cast<double>(x_anchor);
+    out.origin_y = static_cast<double>(y_anchor);
+    return out;
+}
+
+bool paint_text_mask(SkCanvas& canvas, const SkPaint& paint, const Json& m, double cx, double cy, double hw,
+                     double ref, const TextFonts& fonts) {
+    static const Json kEmpty = Json::object();
+    const Json& t = m.contains("text") && m.at("text").is_object() ? m.at("text") : kEmpty;
+    const auto num = [&t](const char* key, double fallback) {
+        return core::detail::py_num(t.contains(key) ? t.at(key) : Json(), fallback);
+    };
+    // size = max(2, int(round(size · ref))); el peso decide la negrita, como resolve_font_path.
+    const auto size = static_cast<int>(std::max(2.0, std::nearbyint(num("size", 0.22) * ref)));
+    const bool bold = num("weight", 700) >= 600;
+    std::string font = "Anton";
+    if (t.contains("font") && t.at("font").is_string() && !t.at("font").get_ref<const std::string&>().empty()) {
+        font = t.at("font").get<std::string>();
+    }
+    const std::string align = t.contains("align") && t.at("align").is_string() ? t.at("align").get<std::string>()
+                                                                                 : std::string("center");
+    const std::string content =
+        t.contains("content") && t.at("content").is_string() ? t.at("content").get<std::string>() : std::string();
+    const auto ff = TextFontsAccess::impl(fonts).face(font, bold);
+    if (!ff) {
+        return false;
+    }
+    std::vector<std::string_view> lines;
+    for (std::size_t pos = 0;;) {
+        const std::size_t nl = content.find('\n', pos);
+        lines.push_back(std::string_view(content).substr(pos, nl == std::string::npos ? std::string::npos : nl - pos));
+        if (nl == std::string::npos) {
+            break;
+        }
+        pos = nl + 1;
+    }
+    const double lh = size * 1.12;
+    const double y0 = cy - (static_cast<double>(lines.size() - 1) * lh / 2.0);
+    const double ax = cx + (align == "left" ? -hw : (align == "right" ? hw : 0.0));
+    const std::string anchor = align == "left" ? "lm" : (align == "right" ? "rm" : "mm");
+    // El warpAffine de OpenCV gira alrededor del centro del píxel (cx, cy); en Skia, +0,5.
+    const double rotation = core::detail::py_num(m.contains("rotation") ? m.at("rotation") : Json(), 0.0);
+    canvas.save();
+    if (std::abs(rotation) > 0.01) {
+        canvas.rotate(static_cast<SkScalar>(rotation), static_cast<SkScalar>(cx + 0.5), static_cast<SkScalar>(cy + 0.5));
+    }
+    SkFont sk_font(ff->typeface, static_cast<SkScalar>(size));
+    for (std::size_t i = 0; i < lines.size(); ++i) {
+        const auto p = pillow_text(fonts, font, bold, size, lines[i], anchor);
+        if (!p) {
+            continue;
+        }
+        const double ox = ax + p->origin_x;
+        const double oy = y0 + (static_cast<double>(i) * lh) + p->origin_y;
+        const PillowLine line = pillow_line(*ff, lines[i], size);
+        for (std::size_t g = 0; g < line.ids.size(); ++g) {
+            if (auto path = sk_font.getPath(line.ids[g])) {
+                canvas.drawPath(path->makeOffset(static_cast<SkScalar>(ox + line.x[g]), static_cast<SkScalar>(oy)),
+                                paint);
+            }
+        }
+    }
+    canvas.restore();
+    return true;
 }
 
 // --- Dibujo ----------------------------------------------------------------------------------
@@ -1292,10 +1443,13 @@ Result<void> draw_own_layer(Canvas& canvas, const core::TimelineClip& c, const c
         const double local = std::min(core::text_clip_duration(c),
                                       std::max(0.0, (static_cast<double>(fr.k) / fr.fps) - std::max(0.0, c.start)));
         const auto masks = core::clip_masks_at(c, local);
-        if (const std::string why = mask_unsupported(masks); !why.empty()) {
+        if (const std::string why = mask_unsupported(masks, fr.fonts); !why.empty()) {
             return fr.unsupported(std::format("texto {}: {}", c.id, why));
         }
-        auto alpha = mask_alpha(masks, canvas.width(), canvas.height());
+        auto alpha = mask_alpha(masks, canvas.width(), canvas.height(), fr.fonts);
+        if (!alpha && alpha.error().code == ErrorCode::Unsupported) {
+            return fr.unsupported(std::format("texto {}: {}", c.id, alpha.error().message));
+        }
         if (!alpha) {
             return std::unexpected(alpha.error());
         }

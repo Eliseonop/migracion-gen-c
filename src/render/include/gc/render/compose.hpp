@@ -28,15 +28,17 @@ using SourceFn = std::function<Result<const Image*>(const core::FrameLayer&)>;
 
 // Por qué el render aún no puede dibujar esta capa, o nada si puede. Una capa de material sin
 // blits (evaluate no supo sus dimensiones) no cuenta aquí: compose_frame la da como error de
-// argumento.
-[[nodiscard]] std::optional<std::string> unsupported_reason(const core::FrameLayer& layer);
+// argumento. Sin `fonts`, una máscara de texto no se puede dibujar.
+[[nodiscard]] std::optional<std::string> unsupported_reason(const core::FrameLayer& layer,
+                                                            const TextFonts* fonts = nullptr);
 
+// `fonts`: las de las máscaras de texto (text.hpp).
 [[nodiscard]] Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int width, int height,
-                                          const SourceFn& source);
+                                          const SourceFn& source, const TextFonts* fonts = nullptr);
 
 // Lo mismo, pero sobre un lienzo que ya existe (se borra a negro opaco): para poner encima los
 // textos y reutilizar el lienzo de un fotograma al siguiente. El resultado es opaco.
 [[nodiscard]] Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers,
-                                        const SourceFn& source);
+                                        const SourceFn& source, const TextFonts* fonts = nullptr);
 
 } // namespace gc::render

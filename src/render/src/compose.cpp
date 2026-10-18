@@ -125,7 +125,7 @@ Result<void> draw_shape_with_effects(Canvas& canvas, const core::FrameLayer& lay
 
 } // namespace
 
-std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
+std::optional<std::string> unsupported_reason(const core::FrameLayer& layer, const TextFonts* fonts) {
     const core::TimelineClip& clip = *layer.clip;
     if (is_adjustment(clip)) {
         return std::nullopt;
@@ -133,7 +133,7 @@ std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
     if (!is_media(clip) && !is_shape(clip)) {
         return std::format("el render aún no dibuja capas de tipo «{}»", clip.kind);
     }
-    if (auto reason = core::maskable(clip) ? mask_unsupported(layer.masks) : std::string(); !reason.empty()) {
+    if (auto reason = core::maskable(clip) ? mask_unsupported(layer.masks, fonts) : std::string(); !reason.empty()) {
         return reason;
     }
     if (auto reason = bg_unsupported(clip)) {
@@ -146,24 +146,25 @@ std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
 }
 
 Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int width, int height,
-                            const SourceFn& source) {
+                            const SourceFn& source, const TextFonts* fonts) {
     auto canvas = Canvas::make(width, height);
     if (!canvas) {
         return std::unexpected(canvas.error());
     }
-    if (auto ok = compose_into(*canvas, layers, source); !ok) {
+    if (auto ok = compose_into(*canvas, layers, source, fonts); !ok) {
         return std::unexpected(ok.error());
     }
     return canvas->snapshot();
 }
 
-Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers, const SourceFn& source) {
+Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers, const SourceFn& source,
+                          const TextFonts* fonts) {
     const int width = canvas.width();
     const int height = canvas.height();
     canvas.clear({0, 0, 0, 255});
     for (const core::FrameLayer& layer : layers) {
         const std::string& id = layer.clip->id;
-        if (auto reason = unsupported_reason(layer)) {
+        if (auto reason = unsupported_reason(layer, fonts)) {
             return fail(ErrorCode::Unsupported, std::format("{} (clip {})", *reason, id));
         }
         // Capa de ajuste (compose.py, #19): su matriz de color sobre todo lo compuesto debajo
@@ -201,7 +202,7 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
         // Solo en los tipos que el export enmascara (clip_mask.maskable: vídeo, imagen, figura y
         // texto); un motion con máscara sale entero, como allí.
         if (!layer.masks.empty() && core::maskable(*layer.clip)) {
-            auto alpha = mask_alpha(layer.masks, width, height);
+            auto alpha = mask_alpha(layer.masks, width, height, fonts);
             if (!alpha) {
                 return std::unexpected(alpha.error());
             }

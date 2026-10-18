@@ -17,6 +17,7 @@
 #include "include/core/SkPathBuilder.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkSurface.h"
+#include "text_mask.hpp"
 
 namespace gc::render {
 
@@ -395,12 +396,16 @@ Plane feather(Plane a, int w, int h, double sigma) {
     return gaussian(a, w, h, sigma);
 }
 
-// mask_alpha de clip_mask.py: el alfa (0–1) de UNA máscara.
-Plane one_mask(const Json& m, int w, int h) {
+// mask_alpha de clip_mask.py: el alfa (0–1) de UNA máscara. nullopt si es de texto y su fuente no
+// se puede leer.
+std::optional<Plane> one_mask(const Json& m, int w, int h, const TextFonts* fonts) {
     const Geometry g = geometry(m, w, h);
     const std::string kind = type_of(m);
+    bool drawn = true;
     Plane a = raster(w, h, [&](SkCanvas& canvas, const SkPaint& paint) {
-        if (kind == "circle") {
+        if (kind == "text") {
+            drawn = fonts != nullptr && paint_text_mask(canvas, paint, m, g.cx, g.cy, g.hw, g.ref, *fonts);
+        } else if (kind == "circle") {
             // cv2.ellipse con centro y semiejes enteros, girada `rotation` grados.
             const double cx = py_round(g.cx) + 0.5;
             const double cy = py_round(g.cy) + 0.5;
@@ -434,6 +439,9 @@ Plane one_mask(const Json& m, int w, int h) {
             canvas.drawPath(polygon(to_canvas(local, g)), outset);
         }
     });
+    if (!drawn) {
+        return std::nullopt;
+    }
     a = feather(std::move(a), w, h, g.feather);
     const bool invert = m.contains("invert") && m.at("invert").is_boolean() && m.at("invert").get<bool>();
     const auto op = static_cast<float>(num(m, "opacity", 1.0));
@@ -451,17 +459,17 @@ Plane one_mask(const Json& m, int w, int h) {
 
 } // namespace
 
-std::string mask_unsupported(const std::vector<Json>& masks) {
+std::string mask_unsupported(const std::vector<Json>& masks, const TextFonts* fonts) {
     for (const Json& m : masks) {
-        if (enabled(m) && type_of(m) == "text") {
-            return "el render aún no dibuja máscaras de texto";
+        if (fonts == nullptr && enabled(m) && type_of(m) == "text") {
+            return "una máscara de texto necesita las fuentes";
         }
     }
     return {};
 }
 
-Result<MaskAlpha> mask_alpha(const std::vector<Json>& masks, int width, int height) {
-    if (auto reason = mask_unsupported(masks); !reason.empty()) {
+Result<MaskAlpha> mask_alpha(const std::vector<Json>& masks, int width, int height, const TextFonts* fonts) {
+    if (auto reason = mask_unsupported(masks, fonts); !reason.empty()) {
         return fail(ErrorCode::Unsupported, reason);
     }
     const int w = std::max(2, width);
@@ -471,7 +479,11 @@ Result<MaskAlpha> mask_alpha(const std::vector<Json>& masks, int width, int heig
         if (!m.is_object() || !enabled(m)) {
             continue;
         }
-        Plane a = one_mask(m, w, h);
+        std::optional<Plane> one = one_mask(m, w, h, fonts);
+        if (!one) {
+            return fail(ErrorCode::Unsupported, "no se puede leer la fuente de la máscara de texto");
+        }
+        Plane a = std::move(*one);
         if (!total) {
             total = std::move(a);
         } else {

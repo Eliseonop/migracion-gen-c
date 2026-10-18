@@ -765,6 +765,21 @@ RENDER_SCENES = [
     # Sin el zoom (ni el pop) de aparición o salida: en un overlay estático el export escala con
     # `scale=eval=frame` pero el overlay se queda en x=ox:y=oy, así que crece desde la esquina
     # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).
+    # Máscara de tipo texto (_paint_text, Pillow): sobre una imagen y sobre una figura.
+    ("máscara: texto en Anton sobre una imagen", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER,
+                           "masks": [{"type": "text", "x": 0.5, "y": 0.45, "rotation": -12,
+                                      "text": {"content": "ONDAS\nde texto", "size": 0.12}}]})],
+     [0.5]),
+    ("máscara: texto invertido y difuminado sobre una figura", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("", "V2", {**_SHP, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                  "shape": {"type": "rect", "x": 0.5, "y": 0.5, "w": 0.8, "h": 0.4, "fill": "#2050ff",
+                            "strokeWidth": 0},
+                  "masks": [{"type": "text", "invert": True, "feather": 0.005,
+                             "text": {"content": "HUECO", "font": "Arial Black", "size": 0.1}}]})],
+     [0.5]),
 ]
 
 # Texto (el .ass global de text_ass.py, dibujado por libass): escenas de 540×960 a 30 fps.

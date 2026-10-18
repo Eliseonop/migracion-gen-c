@@ -62,7 +62,8 @@ if(TARGET gc_render)
     target_link_libraries(gc_tests PRIVATE gc::render)
     # La paridad del render lee el material y los fotogramas del export con gc_media.
     if(TARGET gc_media)
-        target_sources(gc_tests PRIVATE parity/test_render_parity.cpp parity/test_text_render_parity.cpp)
+        target_sources(gc_tests PRIVATE parity/test_render_parity.cpp parity/test_text_render_parity.cpp
+                       parity/test_text_mask_parity.cpp)
     endif()
 endif()
 # Con los dos, el export entero (gc_export) frente al MP4 de compose.render.

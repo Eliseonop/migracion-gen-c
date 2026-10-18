@@ -171,9 +171,12 @@ int cmd_frame(std::span<const std::string> args) {
     }
     // Los textos no son capas del compuesto: van encima, como el .ass global del export.
     std::erase_if(*layers, [](const FrameLayer& layer) { return layer.clip->kind == "text"; });
+    // Las fuentes del sistema y las de video-yt (backend/app/fonts: Anton), para las máscaras de
+    // texto y los textos.
+    const gc::render::TextFonts fonts(FontDirs{default_system_font_dir(), lp.root / "app" / "fonts"});
     if (skip) {
-        std::erase_if(*layers, [](const FrameLayer& layer) {
-            const auto reason = gc::render::unsupported_reason(layer);
+        std::erase_if(*layers, [&fonts](const FrameLayer& layer) {
+            const auto reason = gc::render::unsupported_reason(layer, &fonts);
             if (reason) {
                 std::cerr << std::format("aviso: {} (clip {}): se omite\n", *reason, layer.clip->id);
             }
@@ -192,12 +195,12 @@ int cmd_frame(std::span<const std::string> args) {
                     return gc::fail(gc::ErrorCode::NotFound, std::format("sin material para el clip {}", layer.clip->id));
                 }
                 return img;
-            });
+            },
+            &fonts);
         !ok) {
         return fail_with(ok.error().to_string());
     }
-    // Los textos encima, con las fuentes del sistema y las de video-yt (backend/app/fonts: Anton).
-    const gc::render::TextFonts fonts(FontDirs{default_system_font_dir(), lp.root / "app" / "fonts"});
+    // Los textos encima.
     std::vector<std::string> warnings;
     if (auto ok = gc::render::draw_timeline_texts(*canvas, timeline, tick, fonts, skip, &warnings); !ok) {
         return fail_with(ok.error().to_string());

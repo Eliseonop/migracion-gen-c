@@ -29,6 +29,7 @@
 #include <string>
 #include <vector>
 
+#include "gc/core/font_metrics.hpp"
 #include "gc/core/frame.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
@@ -36,6 +37,7 @@
 #include "gc/media/probe.hpp"
 #include "gc/render/compose.hpp"
 #include "gc/render/png.hpp"
+#include "gc/render/text.hpp"
 
 using gc::Json;
 using namespace gc::core;
@@ -225,6 +227,9 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
     std::map<std::string, gc::render::Image> sources;
     std::map<std::string, gc::render::Image> blanks; // el material en blanco opaco, para la banda
     const char* dump = std::getenv("GC_RENDER_DUMP"); // carpeta donde dejar los PNG del C++ (para mirarlos)
+    // Las fuentes de las máscaras de texto.
+    const gc::render::TextFonts fonts(
+        FontDirs{default_system_font_dir(), path_from_utf8(GC_RESOURCES_DIR) / "fonts"});
     std::size_t cases = 0;
     for (const Json& c : *file) {
         const auto name = c.at("name").get<std::string>();
@@ -269,7 +274,8 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
                 REQUIRE(got->has_value());
                 frames.push_back({(*got)->width, (*got)->height, std::move((*got)->pixels)});
                 return &frames.back();
-            });
+            },
+            &fonts);
         REQUIRE(frame);
         auto coverage = gc::render::compose_frame(
             *layers, w, h, [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
@@ -279,7 +285,8 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
                     it->second = {src.width, src.height, std::vector<std::uint8_t>(src.pixels.size(), 255)};
                 }
                 return &it->second;
-            });
+            },
+            &fonts);
         REQUIRE(coverage);
         const auto expected = load(kFixtures / "render" / path_from_utf8(c.at("frame").get<std::string>()));
         REQUIRE(frame->width == expected.width);

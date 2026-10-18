@@ -245,7 +245,7 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             std::optional<Lap> lap(std::in_place, mine.compose);
             if (skip) {
                 std::erase_if(job.layers, [&](const FrameLayer& layer) {
-                    const auto reason = render::unsupported_reason(layer);
+                    const auto reason = render::unsupported_reason(layer, &fonts);
                     if (reason) {
                         warn_locked(std::format("{} (clip {}): se omite", *reason, layer.clip->id));
                     }
@@ -261,7 +261,7 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
                 }
                 return &it->second;
             };
-            if (auto ok = render::compose_into(*canvas, job.layers, source); !ok) {
+            if (auto ok = render::compose_into(*canvas, job.layers, source, &fonts); !ok) {
                 fail_all(ok.error());
                 break;
             }

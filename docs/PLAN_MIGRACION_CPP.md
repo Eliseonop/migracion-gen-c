@@ -1314,3 +1314,10 @@ Decisión de Edu (§6):
 - **Divergencias nuevas para Edu (TODO):** lo semitransparente de un texto en capa propia sale como c·α³ en el export; el 3D animado va un fotograma adelantado; y el rango de TV del filtro `ass` sobre RGB también afecta a la capa propia y al .ass que va detrás (la fixture lo corrige para comparar lo demás).
 
 **Siguiente:** la máscara de tipo texto (`_paint_text`, Pillow); después, los efectos de vídeo (`vfx`).
+
+### 2026-10-17 — F3: máscara de tipo texto en el render (como Pillow)
+
+- **Hecho:** `pillow_text` (las medidas de Pillow: métricas y anclas con la aritmética de 26.6 de FreeType, ancho con los avances redondeados) y `paint_text_mask`, que `mask_alpha` usa para las máscaras de tipo texto; las fuentes llegan como parámetro opcional a `mask_alpha`, `compose_frame`/`compose_into` y `unsupported_reason`, y `gc_export` y `genclip frame` las pasan.
+- **Verificación:** 180 medidas de Pillow (métricas y ancla vertical exactas), 15 máscaras frente al alfa de `combined_alpha` (29,8–58,5 dB) y 2 escenas de render compuesto (43–44 dB); 5/6 mutantes fallan (el otro mueve 0,3 px). MSVC + vcpkg 166/166 (Debug y Release), MinGW 133/133. 0 warnings.
+
+**Siguiente:** los efectos de vídeo (`vfx`), los textos de una pista con vídeo encima y medir con los proyectos de 4K.
