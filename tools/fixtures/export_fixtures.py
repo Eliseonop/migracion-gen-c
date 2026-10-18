@@ -2690,6 +2690,76 @@ def synthetic_text_fixtures(ctx: Ctx) -> dict:
     })
 
 
+def _text_warp_case(ctx: Ctx, name: str, raw: dict, frames, track_style=None) -> dict:
+    """Texto 3D de un clip con las funciones REALES, en cada cuadro (ancho, alto, fps): si va en
+    capa propia (_prepare_texts), si es 3D, sus fotogramas y la deformación de text_warp_spec, más
+    las piezas sueltas de text3d.py en su primer fotograma."""
+    from app import text3d
+    from app import text_ass as ta
+    from app.clip_blend import clip_blend
+    from app.clip_mask import has_mask
+    c = ctx.schemas.TimelineClip.model_validate(raw)
+    st = ta.effective_text_style(track_style, c.style)
+    out = {"name": name, "clip": c.model_dump(), "style": st, "frames": []}
+    for w, h, fps in frames:
+        warp = ta.text_warp_spec(c, st, w, h, fps)
+        posed = ta._posed_style(c, st, 0.0)
+        font_px = ta._font_px(posed, h)
+        shown = ta.apply_text_case(c.text or "", st.get("text_case"))
+        out["frames"].append({
+            "w": w, "h": h, "fps": fps,
+            "own_layer": has_mask(c) or ta.text_is_3d(c, fps) or clip_blend(c) != "normal",
+            "is_3d": ta.text_is_3d(c, fps),
+            "text_frames": [list(f) for f in ta._text_frames(c, fps)],
+            "focal": text3d.focal_of(h, st.get("perspective")),
+            "angles": text3d.angles(posed),
+            "half": list(text3d.text_half_extents(posed, shown, w, h, font_px, ta.text_shadow(posed, font_px))),
+            "warp": None if warp is None else {
+                "region": list(warp["region"]), "frames": warp["frames"],
+                "corners": [[[float(clipper_fnum(v)) for v in pt] for pt in cs] for cs in warp["corners"]]},
+        })
+    return _pure(_nan_safe(out))
+
+
+def clipper_fnum(v: float) -> str:
+    from app import clipper
+    return clipper._fnum(v)
+
+
+def synthetic_text_warp_fixtures(ctx: Ctx) -> dict:
+    """Texto 3D (text3d.py y text_warp_spec): los clips de text_cases (TEXT_CLIPS y WARP_CLIPS) en
+    los cuadros de WARP_FRAMES, y text3d.plane_project suelto."""
+    import text_cases as tc
+    from app import text3d
+    clips = [_text_warp_case(ctx, c["name"], c["clip"], tc.WARP_FRAMES) for c in tc.TEXT_CLIPS + tc.WARP_CLIPS]
+    pts = []
+    for rx, ry in [(0, 0), (30, 0), (0, -45), (60, 70), (-75, 75), (90, 0)]:
+        for f in (100.0, 640.0, 1e-3):
+            for x, y in [(0, 0), (150, -80), (-300, 400), (1e6, 1e6)]:
+                pts.append({"cx": 180.0, "cy": 320.0, "rx": rx, "ry": ry, "f": f, "x": x, "y": y,
+                            "out": list(text3d.plane_project(180.0, 320.0, rx, ry, f, x, y))})
+    return _pure(_nan_safe({"clips": clips, "project": pts}))
+
+
+def real_text_warp_fixtures(ctx: Ctx, data: dict) -> dict:
+    """Tus textos: la deformación 3D (y si van en capa propia) con el tamaño y los fps de su
+    timeline."""
+    clips = []
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        tl = proj.timeline
+        w, h = int(tl.width or 1080), int(tl.height or 1920)
+        frames = [(w - w % 2, h - h % 2, tl.fps or 30)]
+        track_style = {t.id: t.style for t in tl.tracks}
+        for c in tl.clips:
+            if c.kind == "text":
+                clips.append(_text_warp_case(ctx, f"{proj.id} · {c.id}", c.model_dump(), frames,
+                                             track_style.get(c.track_id)))
+    return {"clips": clips}
+
+
 def real_text_fixtures(ctx: Ctx, data: dict) -> dict:
     """Tus textos: el estilo efectivo (pista + clip) de cada clip de texto, sin repetidos, con
     sus cálculos; su texto en May./min.; y el factor de cada fuente instalada en C:/Windows/Fonts."""
@@ -2743,7 +2813,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
-    ap.add_argument("--solo", choices=["export", "render", "shapes", "texto"],
+    ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -2763,6 +2833,17 @@ def main() -> None:
         write(REPO / "tests" / "fixtures" / "shapes" / "geometry.json", shp,
               sum(len(v) for v in shp.values()), 0)
 
+    def warp_group() -> None:
+        warp = synthetic_text_warp_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "text" / "warp.json", warp, len(warp["clips"]) + len(warp["project"]), 0)
+
+    if args.solo == "texto3d":
+        warp_group()
+        if args.real:
+            data = json.loads((args.video_yt / "backend" / "data" / "projects.json").read_text(encoding="utf-8"))
+            warp_real = real_text_warp_fixtures(ctx, data)
+            write(REPO / "tests" / "fixtures" / "local" / "text" / "warp.json", warp_real, len(warp_real["clips"]), 0)
+        return
     if args.solo == "texto":
         ren_txt = synthetic_text_render_fixtures(ctx)
         write(RENDER_DIR / "text.json", ren_txt, len(ren_txt), 0)
@@ -2811,6 +2892,7 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "text" / "synthetic.json", txt,
           len(txt["styles"]) + len(txt["clips"]) + len(txt["effective"]) + len(txt["alpha"]) + len(txt["case"]) + len(txt["active_word"])
           + len(txt["font_files"]) + sum(len(lay["fonts"]) for lay in txt["font_layouts"]), 0)
+    warp_group()
     render_group()
     ren_txt = synthetic_text_render_fixtures(ctx)
     write(RENDER_DIR / "text.json", ren_txt, len(ren_txt), 0)
@@ -2923,6 +3005,8 @@ def main() -> None:
         txt_real = real_text_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "text" / "real.json", txt_real,
               len(txt_real["styles"]) + len(txt_real["case"]) + len(txt_real["clips"]) + len(txt_real["fonts"]), 0)
+        warp_real = real_text_warp_fixtures(ctx, data)
+        write(REPO / "tests" / "fixtures" / "local" / "text" / "warp.json", warp_real, len(warp_real["clips"]), 0)
         mix_real = real_audio_mix_fixtures(ctx, data)
         write(REPO / "tests" / "fixtures" / "local" / "audio" / "mix.json", mix_real, len(mix_real), 0)
         aud_real = real_audio_fixtures(ctx, data)

@@ -179,6 +179,54 @@ TEXT_CLIPS[-1]["clip"]["style"] = None
 
 TEXT_TIMES = [-0.5, 0, 0.1, 0.5, 1, 1.5, 2, 2.5, 3.2, 3.99, 4, 5]
 
+# Texto 3D y capa propia (text3d.py, text_warp_spec y _prepare_texts): además de TEXT_CLIPS, que ya
+# traen giros 3D en el estilo y en keyframes.
+_SHADOWED = {**_CLASSIC, "shadow": True, "shadow_blur": 0.2, "shadow_distance": 0.3, "shadow_angle": 30}
+WARP_CLIPS: list[dict] = [
+    {"name": "girado en Y 30°", "clip": text_clip("w1", style={**_CLASSIC, "rot_y": 30})},
+    {"name": "inclinado en X −40° con perspectiva 1", "clip": text_clip(
+        "w2", style={**_CLASSIC, "rot_x": -40, "perspective": 1})},
+    {"name": "perspectiva 0 y de texto", "clip": text_clip("w3", style={**_CLASSIC, "rot_y": 20, "perspective": "abc"})},
+    {"name": "perspectiva fuera de rango", "clip": text_clip("w4", style={**_CLASSIC, "rot_x": 10, "perspective": 7})},
+    {"name": "ángulos más allá de 75°", "clip": text_clip("w5", style={**_CLASSIC, "rot_x": 120, "rot_y": -200})},
+    {"name": "por debajo del umbral (0,04°)", "clip": text_clip("w6", style={**_CLASSIC, "rot_x": 0.04, "rot_y": -0.04})},
+    {"name": "justo en el umbral (0,05°)", "clip": text_clip("w7", style={**_CLASSIC, "rot_y": 0.05})},
+    {"name": "varias líneas, Unicode y May.", "clip": text_clip(
+        "w8", text="línea uno muy larga que no cabe en una sola\nñandú\n\nfin",
+        style={**_CLASSIC, "rot_y": 25, "text_case": "upper", "size": 0.09})},
+    {"name": "con sombra y trazo", "clip": text_clip("w9", style={**_SHADOWED, "rot_x": 30, "border_width": 6})},
+    {"name": "con brillo", "clip": text_clip("w10", style={**_NEON, "rot_y": -35})},
+    {"name": "deslizar hacia arriba", "clip": text_clip("w11", style={**_CLASSIC, "rot_y": 15, "block_appear": "slide_up"})},
+    {"name": "girado en el plano 20°", "clip": text_clip("w12", style={**_CLASSIC, "rot_x": 20, "rotation": 20})},
+    {"name": "fuera del cuadro (la región se acota)", "clip": text_clip(
+        "w13", style={**_CLASSIC, "rot_y": 70, "x": 3.5, "y": -2, "size": 0.4, "w": 1})},
+    {"name": "casi de canto, letra enorme (w cerca de 0)", "clip": text_clip(
+        "w14", style={**_CLASSIC, "rot_y": 75, "rot_x": 75, "size": 0.6, "perspective": 1, "w": 1, "scale": 3})},
+    {"name": "escala 0 y negativa", "clip": text_clip("w15", style={**_CLASSIC, "rot_y": 30, "scale": -1})},
+    {"name": "keyframes de rot_x de 0 a 60 (animado)", "clip": text_clip(
+        "w16", keyframes=_kf({"t": 0, "props": {"rot_x": 0, "x": 0.4}}, {"t": 2, "props": {"rot_x": 60, "x": 0.6}}))},
+    {"name": "3D solo a mitad de clip (keyframes)", "clip": text_clip(
+        "w17", out_point=1, keyframes=_kf({"t": 0, "props": {"rot_y": 0}}, {"t": 0.5, "props": {"rot_y": 0}},
+                                          {"t": 1, "props": {"rot_y": 45}}))},
+    {"name": "keyframes que no giran (no es 3D)", "clip": text_clip(
+        "w18", keyframes=_kf({"t": 0, "props": {"x": 0.2}}, {"t": 1, "props": {"x": 0.8}}))},
+    {"name": "inicio fuera de la rejilla y negativo", "clip": text_clip(
+        "w19", start=-0.37, out_point=1.2, keyframes=_kf({"t": 0, "props": {"rot_y": -30}}, {"t": 1, "props": {"rot_y": 30}}))},
+    {"name": "con máscara (capa propia, no 3D)", "clip": text_clip(
+        "w20", masks=[{"type": "circle", "x": 0.5, "y": 0.86, "w": 0.3, "h": 0.1}])},
+    {"name": "con máscara desactivada", "clip": text_clip(
+        "w21", masks=[{"type": "circle", "enabled": False}])},
+    {"name": "con máscara de ajuste solo", "clip": text_clip("w22", masks=[{"type": "circle", "target": "adjust"}])},
+    {"name": "fusión multiplicar (capa propia, no 3D)", "clip": text_clip("w23", blend_mode="multiply")},
+    {"name": "3D, máscara y fusión", "clip": text_clip(
+        "w24", blend_mode="screen", style={**_CLASSIC, "rot_y": 40},
+        masks=[{"type": "rectangle", "x": 0.5, "y": 0.86, "w": 0.4, "h": 0.2}])},
+    {"name": "3D con un texto vacío", "clip": text_clip("w25", text="", style={**_CLASSIC, "rot_y": 30})},
+    {"name": "3D de 0,05 s", "clip": text_clip("w26", out_point=0.05, style={**_CLASSIC, "rot_x": 30})},
+]
+# Cuadros en que se calcula la deformación (ancho, alto, fps).
+WARP_FRAMES = [(360, 640, 30), (1080, 1920, 24), (1280, 720, 25)]
+
 
 # --- Fuentes ----------------------------------------------------------------------------------
 

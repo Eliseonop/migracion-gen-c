@@ -49,6 +49,7 @@ add_library(gc_core
     src/projects_store.cpp
     src/shape_geometry.cpp
     src/shapes.cpp
+    src/text3d.cpp
     src/text_events.cpp
     src/text_metrics.cpp
     src/text_style.cpp

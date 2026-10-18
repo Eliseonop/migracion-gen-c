@@ -34,6 +34,7 @@ add_executable(gc_tests
     parity/test_shape_parity.cpp
     parity/test_sfx_disk_parity.cpp
     parity/test_stick_parity.cpp
+    parity/test_text3d_parity.cpp
     parity/test_text_parity.cpp
     parity/test_motion_parity.cpp
     parity/test_media_parity.cpp
