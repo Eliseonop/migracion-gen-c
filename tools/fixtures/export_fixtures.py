@@ -1753,10 +1753,21 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
             for t in times:
                 png = f"s{i:02d}_{int(round(t * 1000)):05d}.png"
                 compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
-                cases.append({"name": name, "t": t, "frame": png, "timeline": _pure(timeline.model_dump())})
+                case = {"name": name, "t": t, "frame": png, "timeline": _pure(timeline.model_dump())}
+                if name in mc.RENDER_NOISY:
+                    case["noise"] = True
+                cases.append(case)
         return cases
     finally:
         compose._clip_path = real_clip_path
+
+
+def synthetic_effect_chains() -> list[dict]:
+    """La cadena de FFmpeg de effects_ffmpeg (clip_fx.py) para media_cases.EFFECT_CHAINS, en un
+    cuadro de 360×640: el C++ comprueba que lee de cada `effects` lo mismo que FFmpeg."""
+    import media_cases as mc
+    from app.clip_fx import effects_ffmpeg
+    return [{"effects": e, "chain": effects_ffmpeg({"effects": e}, 360, 640)} for e in mc.EFFECT_CHAINS]
 
 
 def synthetic_text_render_fixtures(ctx: Ctx) -> list[dict]:
@@ -2759,9 +2770,14 @@ def main() -> None:
     if args.solo == "shapes":
         shapes_group()
         return
-    if args.solo == "render":
+    def render_group() -> None:
         ren = synthetic_render_fixtures(ctx)
         write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
+        chains = synthetic_effect_chains()
+        write(RENDER_DIR / "effects.json", chains, len(chains), 0)
+
+    if args.solo == "render":
+        render_group()
         return
 
     # Catálogo de efectos: recurso de la app, lo genera el frontend de video-yt.
@@ -2795,8 +2811,7 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "text" / "synthetic.json", txt,
           len(txt["styles"]) + len(txt["clips"]) + len(txt["effective"]) + len(txt["alpha"]) + len(txt["case"]) + len(txt["active_word"])
           + len(txt["font_files"]) + sum(len(lay["fonts"]) for lay in txt["font_layouts"]), 0)
-    ren = synthetic_render_fixtures(ctx)
-    write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
+    render_group()
     ren_txt = synthetic_text_render_fixtures(ctx)
     write(RENDER_DIR / "text.json", ren_txt, len(ren_txt), 0)
     export_group()

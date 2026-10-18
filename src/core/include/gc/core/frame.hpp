@@ -58,11 +58,25 @@ struct Affine {
 [[nodiscard]] Affine scaled(const Affine& m, double x, double y);
 [[nodiscard]] Point apply(const Affine& m, double x, double y);
 
+// Un rectángulo en px: origen (x, y) arriba a la izquierda, ancho y alto.
+struct Box {
+    double x = 0.0;
+    double y = 0.0;
+    double w = 0.0;
+    double h = 0.0;
+};
+
 // Un dibujo del material: el rectángulo `src` (px de la fuente) llevado al cuadro de
-// salida por `m` (px de la fuente → px del cuadro).
+// salida por `m` (px de la fuente → px del cuadro). `m` es `place` · (`src` → `dst`): `dst`
+// es el destino del clip antes de su giro, su volteo y el zoom de aparición (en overlay, el
+// recorte por la escala de la pose, centrado en 0; en relleno, el cuadro o su mitad, antes de
+// la pose), y `place` lo lleva al cuadro. Los efectos de clip trabajan a ese tamaño, como el
+// export (que los aplica tras escalar el clip y antes de girarlo).
 struct Blit {
     SourceCrop src;
     Affine m;
+    Box dst;
+    Affine place;
 };
 
 struct FrameLayer {

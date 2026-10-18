@@ -16,6 +16,7 @@ add_library(gc_core
     src/captions.cpp
     src/clip_adjust.cpp
     src/clip_attrs.cpp
+    src/clip_effects.cpp
     src/clip_filters.cpp
     src/clip_fx.cpp
     src/clip_layout.cpp

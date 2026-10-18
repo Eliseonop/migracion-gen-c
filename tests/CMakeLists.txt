@@ -19,6 +19,7 @@ add_executable(gc_tests
     parity/test_chroma_parity.cpp
     parity/test_collections_parity.cpp
     parity/test_edit_parity.cpp
+    parity/test_effects_parity.cpp
     parity/test_eval_parity.cpp
     parity/test_frame_parity.cpp
     parity/test_history_parity.cpp
@@ -55,7 +56,8 @@ if(TARGET gc_media)
 endif()
 # Con Skia (vcpkg), los de gc_render.
 if(TARGET gc_render)
-    target_sources(gc_tests PRIVATE unit/test_render_canvas.cpp unit/test_render_compose.cpp)
+    target_sources(gc_tests PRIVATE unit/test_render_canvas.cpp unit/test_render_compose.cpp
+                   unit/test_render_effects.cpp)
     target_link_libraries(gc_tests PRIVATE gc::render)
     # La paridad del render lee el material y los fotogramas del export con gc_media.
     if(TARGET gc_media)

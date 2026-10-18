@@ -34,7 +34,7 @@ struct Draw {
 // drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh) con la transformación `m` del contexto.
 Blit blit(const Affine& m, const SourceCrop& s, const Rect& d) {
     const Affine k{d.dw / s.sw, 0.0, 0.0, d.dh / s.sh, d.dx - s.sx * d.dw / s.sw, d.dy - s.sy * d.dh / s.sh};
-    return {s, m * k};
+    return {s, m * k, {d.dx, d.dy, d.dw, d.dh}, m};
 }
 
 std::array<Point, 4> quad(const Affine& m, double x, double y, double w, double h) {

@@ -1293,3 +1293,14 @@ Decisión de Edu (§6):
 - **Divergencias nuevas para Edu (TODO):** opacidad y aparición de las figuras, relleno a medio aparecer oscurecido por el export, el blanco forzado de libass en las apariciones de texto animado y la caja del Fondo por línea sin girar.
 
 **Siguiente:** los efectos (`effects`), que el preview y el export hacen distinto (decisión de Edu); la máscara de texto y el texto 3D.
+
+### 2026-10-17 — F3: efectos de clip en el render (como el export)
+
+- **Hecho:**
+  - `gc_core/clip_effects`: lo que FFmpeg lee de cada `effects` en la cadena de `effects_ffmpeg` (límites y redondeos al escribir los números).
+  - `gc_render/effects`: desenfoque (`gblur`), nitidez (`unsharp`), blanco y negro, sepia, VHS, brillo/contraste/saturación (`eq`), ajustes de color, grano (`noise`) y pixelado, con las cuentas de esos filtros, sobre el clip escalado a su destino y antes de girarlo (`Blit::dst` y `Blit::place`), también en las figuras. El pixelado se queda en el tamaño del clip (el export lo estira al cuadro en overlay).
+  - `unsupported_reason` ya no rechaza los efectos; los de vídeo (`vfx`) siguen dando error.
+- **Verificación:** paridad exacta de 59 `effects` frente a la cadena real; 17 escenas de render frente a `compose.render_frame` (42,6–46,4 dB de luma), con un suelo propio de luma y de crominancia por escena, que hace fallar los 7 mutantes probados (con solo los 35 dB de luma sobrevivían 3). MSVC + vcpkg: 161/161; MinGW: 130/130 (Debug y Release). 0 warnings y 0 avisos de clang-tidy.
+- **Pendiente de Edu:** confirmar que los efectos siguen al export y no al preview (TODO).
+
+**Siguiente:** la máscara de texto y el texto 3D; los efectos de vídeo (`vfx`); medir con los proyectos de 4K.

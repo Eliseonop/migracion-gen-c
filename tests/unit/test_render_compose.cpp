@@ -76,19 +76,16 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
     matte.bg_removal = Json{{"enabled", true}, {"auto", {{"enabled", true}, {"base_key", "k"}, {"status", "ready"}}}};
     CHECK(unsupported_reason(layer(matte)));
 
-    // Los filtros de color ya se dibujan; los efectos (solo los activos) y los efectos de vídeo, aún no.
+    // Los filtros de color y los efectos de clip ya se dibujan (también en una figura); los efectos
+    // de vídeo, aún no.
     TimelineClip look = video();
     look.look = "vintage";
     look.filters = Json::array({Json{{"id", "noir"}, {"amount", 0.5}}});
     CHECK_FALSE(unsupported_reason(layer(look)));
     TimelineClip effects = video();
-    effects.effects = Json{{"blur", 0}, {"grayscale", false}};
+    effects.effects = Json{{"blur", 2.5}, {"grain", 12}, {"pixelate", 8}, {"vhs", true}, {"glow", 6}};
     CHECK_FALSE(unsupported_reason(layer(effects)));
-    effects.effects = Json{{"blur", 2.5}};
-    CHECK(unsupported_reason(layer(effects)));
-    effects.effects = Json{{"blur", "2"}}; // como texto, float("2") en Python
-    CHECK(unsupported_reason(layer(effects)));
-    effects.effects = Json{{"blur", "0"}};
+    effects.kind = "shape";
     CHECK_FALSE(unsupported_reason(layer(effects)));
     TimelineClip vfx = video();
     vfx.vfx = Json::array({Json{{"id", "glitch"}}});

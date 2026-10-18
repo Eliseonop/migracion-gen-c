@@ -1,14 +1,21 @@
 #include "gc/render/compose.hpp"
 
-#include <charconv>
+#include <algorithm>
+#include <bit>
+#include <cmath>
+#include <cstdint>
 #include <format>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <utility>
 
 #include "gc/core/bg.hpp"
+#include "gc/core/clip_adjust.hpp"
+#include "gc/core/clip_effects.hpp"
 #include "gc/core/clip_filters.hpp"
 #include "gc/core/masks.hpp"
+#include "gc/render/effects.hpp"
 #include "gc/render/shape.hpp"
 
 namespace gc::render {
@@ -22,25 +29,6 @@ bool is_media(const core::TimelineClip& clip) {
 bool is_adjustment(const core::TimelineClip& clip) { return clip.kind == "adjustment"; }
 
 bool is_shape(const core::TimelineClip& clip) { return clip.kind == "shape"; }
-
-// Un valor que activa algo: true o un número distinto de 0, también escrito como texto («2»), como
-// el float(val) de _fx_on/_fx_num en clip_fx.py. Por prudencia, un negativo también cuenta (el
-// brillo o el contraste negativos sí cambian la imagen).
-bool truthy(const Json& v) {
-    if (v.is_boolean()) {
-        return v.get<bool>();
-    }
-    if (v.is_number()) {
-        return v.get<double>() != 0.0;
-    }
-    if (v.is_string()) {
-        const auto& s = v.get_ref<const std::string&>();
-        double d = 0.0;
-        const auto [end, ec] = std::from_chars(s.data(), s.data() + s.size(), d);
-        return ec == std::errc{} && end == s.data() + s.size() && d != 0.0;
-    }
-    return false;
-}
 
 // Lo de «Eliminar fondo» que el render aún no hace: el matte automático listo (auto_active) y,
 // con el croma activo, el contorno (outline_params: ancho y opacidad mayores que 0). El croma
@@ -62,6 +50,79 @@ std::optional<std::string> bg_unsupported(const core::TimelineClip& clip) {
     return std::nullopt;
 }
 
+// El grano de un fotograma: cambia con el instante del clip y no con la pasada (la base y el
+// fantasma de la máscara de ajuste llevan el mismo, como las dos cadenas del export, que
+// empiezan con la misma semilla). FNV-1a del id, que no depende de la plataforma.
+std::uint64_t grain_seed(const core::FrameLayer& layer, std::size_t blit) {
+    std::string_view id = layer.clip->id;
+    if (layer.ghost && id.ends_with(core::kGhostSuffix)) {
+        id.remove_suffix(core::kGhostSuffix.size());
+    }
+    std::uint64_t h = 0xCBF29CE484222325ULL;
+    for (const char c : id) {
+        h = (h ^ static_cast<unsigned char>(c)) * 0x100000001B3ULL;
+    }
+    return h ^ std::bit_cast<std::uint64_t>(layer.local_t) ^ (blit * 0x9E3779B97F4A7C15ULL);
+}
+
+// Un blit con efectos de clip (effects.hpp): el recorte se dibuja primero en una imagen del
+// tamaño de su destino (blit.dst: antes del giro, del volteo y del zoom de aparición), con los
+// filtros de color, como el export, que escala el clip, le pasa el `look` y los efectos y
+// después lo gira. Después, los efectos, y esa imagen va al cuadro con el resto de la
+// colocación (blit.place), la opacidad y la cortinilla. Un destino enorme (más de 4 veces el
+// cuadro) se reduce a esa área para no reservar memoria sin límite.
+Result<void> draw_with_effects(Canvas& canvas, const Image& image, const core::Blit& blit,
+                               const core::FrameLayer& layer, const std::optional<core::AffineColorMatrix>& color,
+                               const core::ClipEffects& fx, std::size_t index) {
+    const core::Box& dst = blit.dst;
+    if (!(std::isfinite(dst.w) && std::isfinite(dst.h) && dst.w > 0 && dst.h > 0)) {
+        return {};
+    }
+    double w = std::max(1.0, std::round(dst.w));
+    double h = std::max(1.0, std::round(dst.h));
+    const double cap = 4.0 * canvas.width() * canvas.height();
+    if (w * h > cap) {
+        const double k = std::sqrt(cap / (w * h));
+        w = std::max(1.0, std::round(w * k));
+        h = std::max(1.0, std::round(h * k));
+    }
+    auto clip = Canvas::make(static_cast<int>(w), static_cast<int>(h));
+    if (!clip) {
+        return std::unexpected(clip.error());
+    }
+    clip->clear({0, 0, 0, 0});
+    const core::SourceCrop& src = blit.src;
+    const core::Affine to_clip{w / src.sw, 0.0, 0.0, h / src.sh, -src.sx * w / src.sw, -src.sy * h / src.sh};
+    if (auto drawn = clip->draw_image(image, src, to_clip, 1.0, std::nullopt, color); !drawn) {
+        return drawn;
+    }
+    Image pixels = clip->snapshot();
+    apply_effects(pixels, fx, grain_seed(layer, index));
+    const core::Affine to_dst{dst.w / w, 0.0, 0.0, dst.h / h, dst.x, dst.y};
+    return canvas.draw_image(pixels, {0.0, 0.0, w, h}, blit.place * to_dst, layer.alpha, layer.wipe);
+}
+
+// Una figura con efectos: el export la rasteriza en un PNG del cuadro (con su opacidad) y le
+// pasa la cadena del clip; aquí, dibujada en una capa transparente del tamaño del cuadro, que
+// después va encima.
+Result<void> draw_shape_with_effects(Canvas& canvas, const core::FrameLayer& layer,
+                                     const std::optional<core::AffineColorMatrix>& color,
+                                     const core::ClipEffects& fx) {
+    auto shape = Canvas::make(canvas.width(), canvas.height());
+    if (!shape) {
+        return std::unexpected(shape.error());
+    }
+    shape->clear({0, 0, 0, 0});
+    if (auto drawn = draw_shape(*shape, layer, color); !drawn) {
+        return drawn;
+    }
+    Image pixels = shape->snapshot();
+    apply_effects(pixels, fx, grain_seed(layer, 0));
+    const double w = canvas.width();
+    const double h = canvas.height();
+    return canvas.draw_image(pixels, {0.0, 0.0, w, h}, core::Affine{});
+}
+
 } // namespace
 
 std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
@@ -77,13 +138,6 @@ std::optional<std::string> unsupported_reason(const core::FrameLayer& layer) {
     }
     if (auto reason = bg_unsupported(clip)) {
         return reason;
-    }
-    if (clip.effects && clip.effects->is_object()) {
-        for (const auto& [key, value] : clip.effects->items()) {
-            if (truthy(value)) {
-                return std::format("el render aún no aplica el efecto «{}»", key);
-            }
-        }
     }
     if (clip.vfx && clip.vfx->is_array() && !clip.vfx->empty()) {
         return std::string("el render aún no aplica efectos de vídeo");
@@ -165,13 +219,21 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
             }
         };
         if (shape) {
-            if (auto drawn = draw_shape(canvas, layer, color); !drawn) {
+            const core::ClipEffects fx = core::clip_effects(*layer.clip);
+            if (auto drawn = fx.any() ? draw_shape_with_effects(canvas, layer, color, fx)
+                                      : draw_shape(canvas, layer, color);
+                !drawn) {
                 close_on_error();
                 return std::unexpected(drawn.error());
             }
         } else {
-            for (const core::Blit& blit : layer.blits) {
-                if (auto drawn = canvas.draw_image(*image, blit.src, blit.m, layer.alpha, layer.wipe, color); !drawn) {
+            const core::ClipEffects fx = core::clip_effects(*layer.clip);
+            const bool effects = fx.any();
+            for (std::size_t i = 0; i < layer.blits.size(); ++i) {
+                const core::Blit& blit = layer.blits[i];
+                auto drawn = effects ? draw_with_effects(canvas, *image, blit, layer, color, fx, i)
+                                     : canvas.draw_image(*image, blit.src, blit.m, layer.alpha, layer.wipe, color);
+                if (!drawn) {
                     close_on_error();
                     return std::unexpected(drawn.error());
                 }

@@ -1,0 +1,371 @@
+[
+ {
+  "effects": {},
+  "chain": ""
+ },
+ {
+  "effects": {
+   "blur": 0
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "blur": 2.5
+  },
+  "chain": "gblur=sigma=2.50"
+ },
+ {
+  "effects": {
+   "blur": "2"
+  },
+  "chain": "gblur=sigma=2.00"
+ },
+ {
+  "effects": {
+   "blur": true
+  },
+  "chain": "gblur=sigma=1.00"
+ },
+ {
+  "effects": {
+   "blur": 25
+  },
+  "chain": "gblur=sigma=20.00"
+ },
+ {
+  "effects": {
+   "blur": "abc"
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "blur": null
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "blur": -1
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "blur": 1.005
+  },
+  "chain": "gblur=sigma=1.00"
+ },
+ {
+  "effects": {
+   "blur": 2.675
+  },
+  "chain": "gblur=sigma=2.67"
+ },
+ {
+  "effects": {
+   "blur": " 3 "
+  },
+  "chain": "gblur=sigma=3.00"
+ },
+ {
+  "effects": {
+   "blur": [
+    1
+   ]
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "sharpen": 1.5
+  },
+  "chain": "unsharp=5:5:1.50:5:5:0"
+ },
+ {
+  "effects": {
+   "sharpen": 7
+  },
+  "chain": "unsharp=5:5:5.00:5:5:0"
+ },
+ {
+  "effects": {
+   "sharpen": 0.125
+  },
+  "chain": "unsharp=5:5:0.12:5:5:0"
+ },
+ {
+  "effects": {
+   "grayscale": true
+  },
+  "chain": "hue=s=0"
+ },
+ {
+  "effects": {
+   "grayscale": 0.5
+  },
+  "chain": "hue=s=0"
+ },
+ {
+  "effects": {
+   "grayscale": "1"
+  },
+  "chain": "hue=s=0"
+ },
+ {
+  "effects": {
+   "grayscale": "x"
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "grayscale": 0
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "grayscale": false
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "grayscale": -1
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "sepia": true
+  },
+  "chain": "colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131"
+ },
+ {
+  "effects": {
+   "vhs": 1
+  },
+  "chain": "eq=contrast=1.35:saturation=0.65,hue=h=-8"
+ },
+ {
+  "effects": {
+   "vhs": "0"
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "grain": 12
+  },
+  "chain": "noise=alls=12:allf=t"
+ },
+ {
+  "effects": {
+   "grain": 12.5
+  },
+  "chain": "noise=alls=12:allf=t"
+ },
+ {
+  "effects": {
+   "grain": 13.5
+  },
+  "chain": "noise=alls=14:allf=t"
+ },
+ {
+  "effects": {
+   "grain": 0.4
+  },
+  "chain": "noise=alls=0:allf=t"
+ },
+ {
+  "effects": {
+   "grain": 80
+  },
+  "chain": "noise=alls=60:allf=t"
+ },
+ {
+  "effects": {
+   "grain": true
+  },
+  "chain": "noise=alls=1:allf=t"
+ },
+ {
+  "effects": {
+   "pixelate": 1
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "pixelate": 1.99
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "pixelate": 2
+  },
+  "chain": "scale=iw/2:ih/2:flags=neighbor,scale=360:640:flags=neighbor"
+ },
+ {
+  "effects": {
+   "pixelate": 2.5
+  },
+  "chain": "scale=iw/2:ih/2:flags=neighbor,scale=360:640:flags=neighbor"
+ },
+ {
+  "effects": {
+   "pixelate": 3.5
+  },
+  "chain": "scale=iw/4:ih/4:flags=neighbor,scale=360:640:flags=neighbor"
+ },
+ {
+  "effects": {
+   "pixelate": 50
+  },
+  "chain": "scale=iw/32:ih/32:flags=neighbor,scale=360:640:flags=neighbor"
+ },
+ {
+  "effects": {
+   "pixelate": "8"
+  },
+  "chain": "scale=iw/8:ih/8:flags=neighbor,scale=360:640:flags=neighbor"
+ },
+ {
+  "effects": {
+   "brightness": 0.1
+  },
+  "chain": "eq=brightness=0.100"
+ },
+ {
+  "effects": {
+   "brightness": -0.25
+  },
+  "chain": "eq=brightness=-0.250"
+ },
+ {
+  "effects": {
+   "brightness": 0.0004
+  },
+  "chain": "eq=brightness=0.000"
+ },
+ {
+  "effects": {
+   "brightness": 0.0005
+  },
+  "chain": "eq=brightness=0.001"
+ },
+ {
+  "effects": {
+   "brightness": 2
+  },
+  "chain": "eq=brightness=2.000"
+ },
+ {
+  "effects": {
+   "contrast": 0.2
+  },
+  "chain": "eq=contrast=1.200"
+ },
+ {
+  "effects": {
+   "contrast": -0.5
+  },
+  "chain": "eq=contrast=0.500"
+ },
+ {
+  "effects": {
+   "contrast": 2000
+  },
+  "chain": "eq=contrast=2001.000"
+ },
+ {
+  "effects": {
+   "contrast": -3
+  },
+  "chain": "eq=contrast=-2.000"
+ },
+ {
+  "effects": {
+   "saturation": -1
+  },
+  "chain": "eq=saturation=0.000"
+ },
+ {
+  "effects": {
+   "saturation": -1.5
+  },
+  "chain": "eq=saturation=0.000"
+ },
+ {
+  "effects": {
+   "saturation": 0.3
+  },
+  "chain": "eq=saturation=1.300"
+ },
+ {
+  "effects": {
+   "saturation": 5
+  },
+  "chain": "eq=saturation=6.000"
+ },
+ {
+  "effects": {
+   "exposure": 0.5
+  },
+  "chain": "colorchannelmixer=rr=1.41421:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.41421:gb=0.00000:br=0.00000:bg=0.00000:bb=1.41421"
+ },
+ {
+  "effects": {
+   "temperature": -0.3,
+   "hue": 45
+  },
+  "chain": "colorchannelmixer=rr=0.58546:rg=-0.29616:rb=0.71386:gr=0.15467:gg=1.01552:gb=-0.18869:br=-0.46743:bg=0.71500:bb=0.82118"
+ },
+ {
+  "effects": {
+   "whites": 0.4
+  },
+  "chain": "colorchannelmixer=rr=1.31579:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.31579:gb=0.00000:br=0.00000:bg=0.00000:bb=1.31579"
+ },
+ {
+  "effects": {
+   "whites": -0.7,
+   "exposure": -2
+  },
+  "chain": "colorchannelmixer=rr=0.36000:rg=0.00000:rb=0.00000:gr=0.00000:gg=0.36000:gb=0.00000:br=0.00000:bg=0.00000:bb=0.36000"
+ },
+ {
+  "effects": {
+   "blur": 1,
+   "sharpen": 1,
+   "grayscale": true,
+   "sepia": true,
+   "vhs": true,
+   "grain": 5,
+   "pixelate": 4,
+   "brightness": 0.1,
+   "contrast": 0.1,
+   "saturation": 0.1,
+   "exposure": 0.2
+  },
+  "chain": "gblur=sigma=1.00,unsharp=5:5:1.00:5:5:0,hue=s=0,colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131,eq=contrast=1.35:saturation=0.65,hue=h=-8,noise=alls=5:allf=t,scale=iw/4:ih/4:flags=neighbor,scale=360:640:flags=neighbor,eq=brightness=0.100:contrast=1.100:saturation=1.100,colorchannelmixer=rr=1.14870:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.14870:gb=0.00000:br=0.00000:bg=0.00000:bb=1.14870"
+ },
+ {
+  "effects": {
+   "glow": 6
+  },
+  "chain": ""
+ },
+ {
+  "effects": {
+   "effects": {
+    "exposure": 0.5
+   },
+   "blur": 1
+  },
+  "chain": "gblur=sigma=1.00,colorchannelmixer=rr=1.41421:rg=0.00000:rb=0.00000:gr=0.00000:gg=1.41421:gb=0.00000:br=0.00000:bg=0.00000:bb=1.41421"
+ }
+]

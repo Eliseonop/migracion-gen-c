@@ -289,6 +289,10 @@ RENDER_MEDIA = [
     ("waves.png", ["-f", "lavfi", "-i",
                    "nullsrc=s=320x180,format=rgb24,geq=r='128+110*sin(Y*0.35)':"
                    "g='128+55*sin(X*0.35)+55*sin(Y*0.3)':b='128+110*sin((X+Y)*0.2)'", "-frames:v", "1"]),
+    # Las ondas en vertical (9:16): en relleno cubren el cuadro de 360×640 sin recorte (al doble).
+    ("waves_tall.png", ["-f", "lavfi", "-i",
+                        "nullsrc=s=180x320,format=rgb24,geq=r='128+110*sin(Y*0.35)':"
+                        "g='128+55*sin(X*0.35)+55*sin(Y*0.3)':b='128+110*sin((X+Y)*0.2)'", "-frames:v", "1"]),
     # Un círculo con el borde semitransparente (alfa de 255 hasta 50 px del centro y 0 a 90 px).
     ("alpha.png", ["-f", "lavfi", "-i",
                    "nullsrc=s=320x180,format=rgba,geq=r='200':g='60+X/2':b='40+Y':"
@@ -419,6 +423,56 @@ _SHAPE_SCENES = [
     ("figura con máscara", {"shape": {"type": "rect", "x": 0.5, "y": 0.5, "w": 0.8, "h": 0.4, "fill": "#fde047",
                                       "strokeWidth": 0},
                             "masks": [{"type": "circle", "x": 0.5, "y": 0.5, "w": 0.5, "h": 0.3}]}, [0.5]),
+]
+# Efectos de clip sobre un clip de 320×180 en el centro del cuadro: (nombre, archivo, campos, instantes).
+_EFFECT_SCENES = [
+    ("desenfoque 2", "waves.png", {"effects": {"blur": 2}}, [0.5]),
+    ("desenfoque 6,5 en un png con alfa (también se desenfoca el alfa)", "alpha.png", {"effects": {"blur": 6.5}},
+     [0.5]),
+    ("nitidez 1,5", "waves.png", {"effects": {"sharpen": 1.5}}, [0.5]),
+    ("blanco y negro", "waves.png", {"effects": {"grayscale": True}}, [0.5]),
+    ("sepia", "waves.png", {"effects": {"sepia": True}}, [0.5]),
+    ("VHS", "waves.png", {"effects": {"vhs": True}}, [0.5]),
+    ("brillo, contraste y saturación", "waves.png",
+     {"effects": {"brightness": 0.15, "contrast": -0.2, "saturation": 0.4}}, [0.5]),
+    ("contraste 10 (la tabla de eq)", "waves.png", {"effects": {"contrast": 9}}, [0.5]),
+    ("exposición, temperatura y tono", "waves.png", {"effects": {"exposure": 0.3, "temperature": 0.5, "hue": 20}},
+     [0.5]),
+    ("desenfoque, nitidez, sepia, brillo y blancos (el orden de la cadena)", "waves.png",
+     {"effects": {"blur": 1.5, "sharpen": 2, "sepia": True, "brightness": 0.1, "whites": 0.3}}, [0.5]),
+    ("efectos con un filtro de color", "waves.png",
+     {"filters": [{"id": "noir", "amount": 0.6}], "effects": {"blur": 3, "contrast": 0.3}}, [0.5]),
+    ("desenfoque y saturación en un vídeo con fundido de entrada", "moving30.mp4",
+     {"appear": "fade", "effects": {"blur": 3, "saturation": -0.5}}, [0.2, 1.0]),
+    ("VHS y desenfoque en un clip al 60 %", "waves.png", {"opacity": 0.6, "effects": {"vhs": True, "blur": 1}}, [0.5]),
+    ("desenfoque y brillo con máscara de ajuste", "waves.png",
+     {"effects": {"blur": 2, "brightness": 0.3},
+      "masks": [{"type": "rectangle", "target": "adjust", "x": 0.5, "y": 0.5, "w": 0.4, "h": 0.2}]}, [0.5]),
+    ("grano 12", "grad.png", {"effects": {"grain": 12}}, [0.5]),
+]
+# Escenas con grano (aleatorio: no es el mismo que el del export): se comparan las medias por
+# bloques de 8×8 y la fuerza del ruido, no los píxeles.
+RENDER_NOISY = {"efecto: grano 12"}
+# La cadena de FFmpeg de effects_ffmpeg (clip_fx.py) para estos `effects`, en un cuadro de 360×640:
+# qué lee el export de cada valor (texto, True, límites, redondeos).
+EFFECT_CHAINS = [
+    {}, {"blur": 0}, {"blur": 2.5}, {"blur": "2"}, {"blur": True}, {"blur": 25}, {"blur": "abc"}, {"blur": None},
+    {"blur": -1}, {"blur": 1.005}, {"blur": 2.675}, {"blur": " 3 "}, {"blur": [1]},
+    {"sharpen": 1.5}, {"sharpen": 7}, {"sharpen": 0.125},
+    {"grayscale": True}, {"grayscale": 0.5}, {"grayscale": "1"}, {"grayscale": "x"}, {"grayscale": 0},
+    {"grayscale": False}, {"grayscale": -1},
+    {"sepia": True}, {"vhs": 1}, {"vhs": "0"},
+    {"grain": 12}, {"grain": 12.5}, {"grain": 13.5}, {"grain": 0.4}, {"grain": 80}, {"grain": True},
+    {"pixelate": 1}, {"pixelate": 1.99}, {"pixelate": 2}, {"pixelate": 2.5}, {"pixelate": 3.5}, {"pixelate": 50},
+    {"pixelate": "8"},
+    {"brightness": 0.1}, {"brightness": -0.25}, {"brightness": 0.0004}, {"brightness": 0.0005}, {"brightness": 2},
+    {"contrast": 0.2}, {"contrast": -0.5}, {"contrast": 2000}, {"contrast": -3},
+    {"saturation": -1}, {"saturation": -1.5}, {"saturation": 0.3}, {"saturation": 5},
+    {"exposure": 0.5}, {"temperature": -0.3, "hue": 45}, {"whites": 0.4}, {"whites": -0.7, "exposure": -2},
+    {"blur": 1, "sharpen": 1, "grayscale": True, "sepia": True, "vhs": True, "grain": 5, "pixelate": 4,
+     "brightness": 0.1, "contrast": 0.1, "saturation": 0.1, "exposure": 0.2},
+    {"glow": 6},
+    {"effects": {"exposure": 0.5}, "blur": 1},
 ]
 _BLEND_MODES = ["darken", "multiply", "color_burn", "lighten", "screen", "color_dodge", "overlay", "soft_light",
                 "hard_light", "difference", "exclusion"]
@@ -653,6 +707,29 @@ RENDER_SCENES = [
        [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
         ("", "V2", {**_SHP, "start": 0.0, "in_point": 0.0, "out_point": 2.0, **fields})],
        times) for name, fields, times in _SHAPE_SCENES],
+    # Efectos de clip (effects_ffmpeg de clip_fx.py): el export los aplica al clip ya escalado (en
+    # overlay, a su destino; en relleno, al cuadro), tras el `look` y antes del fundido de
+    # aparición; el render, sobre una imagen del tamaño del destino (effects.hpp).
+    *[(f"efecto: {name}", 30, ["V1", "V2"],
+       [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+        (file, "V2", {**(_V if file.endswith(".mp4") else _I), "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                      "transform": _CENTER, **fields})],
+       times) for name, file, fields, times in _EFFECT_SCENES],
+    # El pixelado, en relleno: en overlay el export lo estira al cuadro entero (scale=W:H; un fallo
+    # suyo, el render vuelve al tamaño del clip). Con las ondas en vertical, que cubren el cuadro
+    # sin recortar: con un recorte, el export lo redondea a píxeles pares (de 320×180, 100 px de
+    # ancho en vez de 101,25) y el pixelado, que toma un solo píxel por bloque, lo agranda (36 dB).
+    ("efecto: pixelado 8 en relleno", 30, ["V1"],
+     [("waves_tall.png", "V1", {"kind": "image", "asset_kind": "images", "layout": "fill", "start": 0.0, "in_point": 0.0,
+                           "out_point": 2.0, "effects": {"pixelate": 8}})],
+     [0.5]),
+    ("efecto: figura con desenfoque", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _COVER}),
+      ("", "V2", {**_SHP, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                  "shape": {"type": "star", "sides": 5, "x": 0.5, "y": 0.5, "w": 0.6, "h": 0.35, "fill": "#ffd400",
+                            "stroke": "#202020", "strokeWidth": 5},
+                  "effects": {"blur": 3, "saturation": 0.5}})],
+     [0.5]),
     # Sin el zoom (ni el pop) de aparición o salida: en un overlay estático el export escala con
     # `scale=eval=frame` pero el overlay se queda en x=ox:y=oy, así que crece desde la esquina
     # superior izquierda; el preview, desde el centro (20 dB; decisión de Edu, notas de F3).
