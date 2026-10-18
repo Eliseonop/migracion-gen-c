@@ -1,6 +1,7 @@
 #include "gc/render/text.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
@@ -18,6 +19,7 @@
 
 #include "gc/core/blend.hpp"
 #include "gc/core/masks.hpp"
+#include "gc/core/text3d.hpp"
 #include "gc/core/text_events.hpp"
 #include "gc/core/text_metrics.hpp"
 #include "gc/core/text_style.hpp"
@@ -1040,13 +1042,10 @@ Result<void> draw_animated_text(SkCanvas* sk, const core::TimelineClip& c, Json 
     if (!content) {
         return {};
     }
-    const core::TextPose pose = core::text_pose_at(c, local_of(k));
+    // La máscara, la fusión y el giro 3D los pone quien llama (capa propia): aquí, el texto plano.
     std::optional<std::string> reason;
     if (buried) {
         reason = "pista de texto con vídeo encima";
-    } else if (core::has_mask(c) || core::clip_blend(c) != "normal" || std::abs(pose.rot_x) >= 0.05 ||
-               std::abs(pose.rot_y) >= 0.05) {
-        reason = "máscara, fusión o giro 3D";
     } else {
         reason = common_reason(st);
     }
@@ -1151,19 +1150,217 @@ const core::TimelineTrack* find_track(const core::Timeline& tl, const std::strin
     return nullptr;
 }
 
+// Lo común a todos los textos de un fotograma.
+struct TextFrame {
+    std::int64_t k = 0;
+    std::int64_t now = 0;
+    double fps = 30;
+    double width = 0;
+    double height = 0;
+    const TextFonts* fonts = nullptr;
+    bool omit = false;
+    std::vector<std::string>* warnings = nullptr;
+
+    [[nodiscard]] bool visible_at(const core::TextEvent& e) const { return e.start_ms <= now && now < e.end_ms; }
+
+    // Un texto que aún no se sabe dibujar: error o, con `omit`, un aviso.
+    [[nodiscard]] Result<void> unsupported(const std::string& msg) const {
+        if (!omit) {
+            return fail(ErrorCode::Unsupported, msg);
+        }
+        if (warnings != nullptr) {
+            warnings->push_back(msg);
+        }
+        return {};
+    }
+};
+
+// Los eventos de un texto (quieto o animado) en `sk`, como los dibujaría libass con su .ass.
+Result<void> draw_clip_text(SkCanvas* sk, const core::TimelineClip& clip, const core::TimelineTrack& track,
+                            const TextFrame& fr, bool buried) {
+    const double width = fr.width;
+    const double height = fr.height;
+    const std::int64_t now = fr.now;
+    const auto visible_at = [&fr](const core::TextEvent& e) { return fr.visible_at(e); };
+    core::TimelineClip c = clip;
+    const Json base = core::effective_text_style(track.style.value_or(Json()), clip.style.value_or(Json()));
+    if (has(base, "text_case") && truthy(base.at("text_case"))) {
+        c.text = core::apply_text_case(c.text.value_or(""), base.at("text_case"));
+    }
+    if (core::text_animates(c, fr.fps)) {
+        return draw_animated_text(sk, c, base, fr.k, now, fr.fps, width, height, *fr.fonts, buried, fr.omit,
+                                  fr.warnings);
+    }
+    const Json st = core::posed_text_style(c, base, 0.0);
+    const double start = std::max(0.0, c.start);
+    const double dur = core::text_clip_duration(c);
+    // Los eventos del texto y, con sombra o Fondo dibujado, los de su capa de abajo: todo el
+    // clip (o los pasos de «escribir») con el texto entero.
+    const auto text_events = core::static_text_events(c, st);
+    std::vector<core::TextEvent> under_events;
+    if (is_text(field(st, "block_appear"), "typing")) {
+        under_events = text_events;
+    } else {
+        under_events.push_back({core::ass_time_ms(start), core::ass_time_ms(start + std::max(0.04, dur)),
+                                core::TextContent{c.text.value_or("")}, true});
+    }
+    const double font_px = core::text_font_px(st, height);
+    const auto shadow = core::text_shadow(st, font_px);
+    const bool drawn_box = core::box_drawn(st);
+    const bool any_text = std::ranges::any_of(text_events, visible_at);
+    const bool any_under = (shadow || drawn_box) && std::ranges::any_of(under_events, visible_at);
+    if (!any_text && !any_under) {
+        return {};
+    }
+    std::optional<std::string> reason;
+    if (buried) {
+        reason = "pista de texto con vídeo encima";
+    } else {
+        reason = static_reason(st);
+    }
+    Result<TextParams> tp = reason ? Result<TextParams>(fail(ErrorCode::Unsupported, *reason))
+                                   : text_params(st, height, *fr.fonts);
+    if (!tp) {
+        return fr.unsupported(std::format("texto {}: {} aún no se dibuja", c.id, tp.error().message));
+    }
+    // Capa 2i: el Fondo dibujado y después la sombra; capa 2i+1: el texto.
+    const auto rows_of = [&](const std::string& text) { return core::text_rows(st, width, height, text); };
+    for (const auto& e : under_events) {
+        if (drawn_box && visible_at(e)) {
+            draw_box_event(sk, event_frame(*tp, st, e, now, width, height),
+                           core::box_rects(st, width, height, rows_of(e.content.text), tp->size_factor), 1.0);
+        }
+    }
+    const bool curved = core::curve_of(st) != 0;
+    for (const auto& e : under_events) {
+        if (shadow && visible_at(e)) {
+            const auto rows = rows_of(e.content.text);
+            if (curved) {
+                draw_curve_event(sk, event_frame(*tp, st, e, now, width, height),
+                                 core::curve_glyphs(st, width, height, rows), nullptr, &*shadow);
+            } else {
+                draw_shadow_event(sk, event_frame(*tp, st, e, now, width, height), *shadow, rows);
+            }
+        }
+    }
+    for (const auto& e : text_events) {
+        if (visible_at(e)) {
+            const auto rows = rows_of(e.content.text);
+            if (curved) {
+                draw_curve_event(sk, event_frame(*tp, st, e, now, width, height),
+                                 core::curve_glyphs(st, width, height, rows), &e.content, nullptr);
+            } else {
+                draw_text_event(sk, event_frame(*tp, st, e, now, width, height), e.content, rows);
+            }
+        }
+    }
+    return {};
+}
+
+// La homografía de `perspective` (sense=destination): las esquinas de la región (arriba-izq,
+// arriba-der, abajo-izq, abajo-der) a `corners`, relativas a su origen, y de vuelta al cuadro.
+// FFmpeg la aplica a índices de píxel (el píxel (x, y) de la salida toma la fuente en H⁻¹(x, y)),
+// y Skia a coordenadas con el centro del píxel en +0,5: de ahí el medio píxel a cada lado.
+SkMatrix warp_matrix(const core::WarpRegion& r, const core::Corners& corners) {
+    const auto rw = static_cast<SkScalar>(r.x1 - r.x0);
+    const auto rh = static_cast<SkScalar>(r.y1 - r.y0);
+    const std::array<SkPoint, 4> src{{{0, 0}, {rw, 0}, {rw, rh}, {0, rh}}};
+    const auto pt = [&](std::size_t i) {
+        return SkPoint{static_cast<SkScalar>(corners[i].first), static_cast<SkScalar>(corners[i].second)};
+    };
+    const std::array<SkPoint, 4> dst{pt(0), pt(1), pt(3), pt(2)};
+    SkMatrix h;
+    if (!h.setPolyToPoly(src, dst)) {
+        h.reset();
+    }
+    const auto x0 = static_cast<SkScalar>(r.x0);
+    const auto y0 = static_cast<SkScalar>(r.y0);
+    return SkMatrix::Translate(x0 + 0.5F, y0 + 0.5F) * h * SkMatrix::Translate(-x0 - 0.5F, -y0 - 0.5F);
+}
+
+// Un texto en capa propia (text_layer de compose.py): su .ass en una capa transparente del cuadro;
+// si es 3D, la región de text_warp_spec deformada con `perspective`; con máscara, su alfa por el
+// de la máscara; y fundida con lo de debajo con su modo (o encima).
+Result<void> draw_own_layer(Canvas& canvas, const core::TimelineClip& c, const core::TimelineTrack& track,
+                            const TextFrame& fr) {
+    const Json base = core::effective_text_style(track.style.value_or(Json()), c.style.value_or(Json()));
+    const auto warp = core::text_warp_spec(c, base, fr.width, fr.height, fr.fps);
+    const std::string blend(core::clip_blend(c));
+    std::optional<MaskAlpha> mask;
+    if (core::has_mask(c)) {
+        // La máscara del instante del clip (build_clip_mask: la de 0 si no se anima).
+        const double local = std::min(core::text_clip_duration(c),
+                                      std::max(0.0, (static_cast<double>(fr.k) / fr.fps) - std::max(0.0, c.start)));
+        const auto masks = core::clip_masks_at(c, local);
+        if (const std::string why = mask_unsupported(masks); !why.empty()) {
+            return fr.unsupported(std::format("texto {}: {}", c.id, why));
+        }
+        auto alpha = mask_alpha(masks, canvas.width(), canvas.height());
+        if (!alpha) {
+            return std::unexpected(alpha.error());
+        }
+        mask = std::move(*alpha);
+    }
+    if (!mask && !warp && blend == "normal") {
+        return {}; // como el export, que no la compone (no pasa con un texto de capa propia)
+    }
+    auto layer = Canvas::make(canvas.width(), canvas.height());
+    if (!layer) {
+        return std::unexpected(layer.error());
+    }
+    layer->clear({0, 0, 0, 0});
+    if (auto ok = draw_clip_text(CanvasAccess::sk(*layer), c, track, fr, false); !ok) {
+        return ok;
+    }
+    const sk_sp<SkImage> image = CanvasAccess::image(*layer);
+    const bool own = mask.has_value() || blend != "normal";
+    if (own) {
+        canvas.begin_layer(blend);
+    }
+    SkCanvas* sk = CanvasAccess::sk(canvas);
+    if (warp) {
+        const core::WarpRegion& r = warp->region;
+        sk->save();
+        sk->clipRect(SkRect::MakeLTRB(static_cast<SkScalar>(r.x0), static_cast<SkScalar>(r.y0),
+                                      static_cast<SkScalar>(r.x1), static_cast<SkScalar>(r.y1)));
+        sk->concat(warp_matrix(r, warp->corners_at(fr.k)));
+        sk->drawImage(image, 0, 0, SkSamplingOptions(SkFilterMode::kLinear), nullptr);
+        sk->restore();
+    } else {
+        sk->drawImage(image, 0, 0);
+    }
+    if (mask) {
+        return canvas.end_layer(*mask);
+    }
+    if (own) {
+        canvas.end_layer();
+    }
+    return {};
+}
+
 } // namespace
 
 Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline, std::int64_t k,
                                  const TextFonts& fonts, bool omit, std::vector<std::string>* warnings) {
     const core::ScopedTextWidth measure(fonts.width_fn()); // la de Pillow, solo mientras dibuja
-    SkCanvas* sk = CanvasAccess::sk(canvas);
-    const double width = static_cast<double>(timeline.width - timeline.width % 2);
-    const double height = static_cast<double>(timeline.height - timeline.height % 2);
-    const double fps = timeline.fps > 0 ? static_cast<double>(timeline.fps) : 30.0;
-    const std::int64_t now = core::ass_frame_ms(k, fps);
+    TextFrame fr;
+    fr.k = k;
+    fr.width = static_cast<double>(timeline.width - timeline.width % 2);
+    fr.height = static_cast<double>(timeline.height - timeline.height % 2);
+    fr.fps = timeline.fps > 0 ? static_cast<double>(timeline.fps) : 30.0;
+    fr.now = core::ass_frame_ms(k, fr.fps);
+    fr.fonts = &fonts;
+    fr.omit = omit;
+    fr.warnings = warnings;
     const auto buried = core::buried_text_track_ids(timeline.tracks);
-    const auto visible_at = [now](const core::TextEvent& e) { return e.start_ms <= now && now < e.end_ms; };
 
+    // Los textos que van al .ass (con su pista visible) y si van en capa propia.
+    struct Entry {
+        const core::TimelineClip* clip;
+        const core::TimelineTrack* track;
+        bool own;
+    };
+    std::vector<Entry> texts;
     for (const auto& cow : timeline.clips) {
         const core::TimelineClip& clip = *cow;
         if (clip.kind != "text" || !core::text_in_ass(clip)) {
@@ -1173,92 +1370,30 @@ Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline,
         if (track == nullptr || track->hidden) {
             continue;
         }
-        core::TimelineClip c = clip;
-        const Json base = core::effective_text_style(track->style.value_or(Json()), clip.style.value_or(Json()));
-        if (has(base, "text_case") && truthy(base.at("text_case"))) {
-            c.text = core::apply_text_case(c.text.value_or(""), base.at("text_case"));
+        texts.push_back({&clip, track, core::text_own_layer(clip, fr.fps)});
+    }
+    // Primero los de capa propia sin vídeo encima, por orden de inicio (encima de todo el vídeo y
+    // por debajo del .ass global); después, el .ass global en el orden de la lista.
+    std::vector<const Entry*> own;
+    for (const Entry& e : texts) {
+        if (e.own && !buried.contains(e.clip->track_id)) {
+            own.push_back(&e);
         }
-        if (core::text_animates(c, fps)) {
-            if (auto ok = draw_animated_text(sk, c, base, k, now, fps, width, height, fonts,
-                                             buried.contains(c.track_id), omit, warnings);
-                !ok) {
-                return ok;
-            }
+    }
+    std::ranges::stable_sort(own, {}, [](const Entry* e) { return e->clip->start; });
+    for (const Entry* e : own) {
+        if (auto ok = draw_own_layer(canvas, *e->clip, *e->track, fr); !ok) {
+            return ok;
+        }
+    }
+    SkCanvas* sk = CanvasAccess::sk(canvas);
+    for (const Entry& e : texts) {
+        const bool is_buried = buried.contains(e.clip->track_id);
+        if (e.own && !is_buried) {
             continue;
         }
-        const Json st = core::posed_text_style(c, base, 0.0);
-        const double start = std::max(0.0, c.start);
-        const double dur = core::text_clip_duration(c);
-        // Los eventos del texto y, con sombra o Fondo dibujado, los de su capa de abajo: todo el
-        // clip (o los pasos de «escribir») con el texto entero.
-        const auto text_events = core::static_text_events(c, st);
-        std::vector<core::TextEvent> under_events;
-        if (is_text(field(st, "block_appear"), "typing")) {
-            under_events = text_events;
-        } else {
-            under_events.push_back({core::ass_time_ms(start), core::ass_time_ms(start + std::max(0.04, dur)),
-                                    core::TextContent{c.text.value_or("")}, true});
-        }
-        const double font_px = core::text_font_px(st, height);
-        const auto shadow = core::text_shadow(st, font_px);
-        const bool drawn_box = core::box_drawn(st);
-        const bool any_text = std::ranges::any_of(text_events, visible_at);
-        const bool any_under = (shadow || drawn_box) && std::ranges::any_of(under_events, visible_at);
-        if (!any_text && !any_under) {
-            continue;
-        }
-        std::optional<std::string> reason;
-        const core::TextPose pose = core::text_pose_at(c, 0.0);
-        if (buried.contains(c.track_id)) {
-            reason = "pista de texto con vídeo encima";
-        } else if (core::has_mask(c) || core::clip_blend(c) != "normal" || std::abs(pose.rot_x) >= 0.05 ||
-                   std::abs(pose.rot_y) >= 0.05) {
-            reason = "máscara, fusión o giro 3D";
-        } else {
-            reason = static_reason(st);
-        }
-        Result<TextParams> tp = reason ? Result<TextParams>(fail(ErrorCode::Unsupported, *reason))
-                                       : text_params(st, height, fonts);
-        if (!tp) {
-            const std::string msg = std::format("texto {}: {} aún no se dibuja", c.id, tp.error().message);
-            if (!omit) {
-                return fail(ErrorCode::Unsupported, msg);
-            }
-            if (warnings != nullptr) {
-                warnings->push_back(msg);
-            }
-            continue;
-        }
-        // Capa 2i: el Fondo dibujado y después la sombra; capa 2i+1: el texto.
-        const auto rows_of = [&](const std::string& text) { return core::text_rows(st, width, height, text); };
-        for (const auto& e : under_events) {
-            if (drawn_box && visible_at(e)) {
-                draw_box_event(sk, event_frame(*tp, st, e, now, width, height),
-                               core::box_rects(st, width, height, rows_of(e.content.text), tp->size_factor), 1.0);
-            }
-        }
-        const bool curved = core::curve_of(st) != 0;
-        for (const auto& e : under_events) {
-            if (shadow && visible_at(e)) {
-                const auto rows = rows_of(e.content.text);
-                if (curved) {
-                    draw_curve_event(sk, event_frame(*tp, st, e, now, width, height),
-                                     core::curve_glyphs(st, width, height, rows), nullptr, &*shadow);
-                } else {
-                    draw_shadow_event(sk, event_frame(*tp, st, e, now, width, height), *shadow, rows);
-                }
-            }
-        }
-        for (const auto& e : text_events) {
-            if (visible_at(e)) {
-                const auto rows = rows_of(e.content.text);
-                if (curved) {
-                    draw_curve_event(sk, event_frame(*tp, st, e, now, width, height),
-                                     core::curve_glyphs(st, width, height, rows), &e.content, nullptr);
-                } else {
-                    draw_text_event(sk, event_frame(*tp, st, e, now, width, height), e.content, rows);
-                }
-            }
+        if (auto ok = draw_clip_text(sk, *e.clip, *e.track, fr, is_buried); !ok) {
+            return ok;
         }
     }
     return {};

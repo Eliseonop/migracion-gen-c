@@ -48,6 +48,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -1762,6 +1763,30 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
         compose._clip_path = real_clip_path
 
 
+def synthetic_text_mask_fixtures() -> dict:
+    """Máscaras de tipo texto (clip_mask._paint_text, con Pillow): el alfa REAL de combined_alpha
+    de cada media_cases.TEXT_MASKS en un PNG gris (tm<i>.png), y las medidas de Pillow que usa
+    (getmetrics, getlength y la caja con cada ancla) para TEXT_MASK_METRICS."""
+    import media_cases as mc
+    from PIL import ImageFont
+    from app import clip_mask
+    from app.compose import resolve_font_path
+    masks = []
+    for i, (name, raw, w, h) in enumerate(mc.TEXT_MASKS):
+        m = clip_mask.normalize_mask(raw)
+        png = f"tm{i:02d}.png"
+        clip_mask.write_mask_png([m], w, h, RENDER_DIR / png)
+        font = resolve_font_path(m["text"]["font"], m["text"]["weight"] >= 600)
+        masks.append({"name": name, "mask": m, "w": w, "h": h, "png": png, "font_file": Path(font).name})
+    metrics = []
+    for f, b, s, t in mc.TEXT_MASK_METRICS:
+        font = ImageFont.truetype(str(resolve_font_path(f, b)), s)
+        metrics.append({"font": f, "bold": b, "size": s, "text": t, "metrics": list(font.getmetrics()),
+                        "length": font.getlength(t),
+                        "bbox": {a: list(font.getbbox(t, anchor=a)) for a in ("ls", "mm", "lm", "rm")}})
+    return {"masks": masks, "metrics": metrics}
+
+
 def synthetic_effect_chains() -> list[dict]:
     """La cadena de FFmpeg de effects_ffmpeg (clip_fx.py) para media_cases.EFFECT_CHAINS, en un
     cuadro de 360×640: el C++ comprueba que lee de cada `effects` lo mismo que FFmpeg."""
@@ -1779,8 +1804,30 @@ def synthetic_text_render_fixtures(ctx: Ctx) -> list[dict]:
     from app import compose, font_metrics, text_ass
     files = RENDER_DIR / "files"
     real_clip_path, fake_width = compose._clip_path, text_ass.text_width
+    real_build = compose.build_command
     compose._clip_path = lambda project, clip, shape_files=None: files / clip.filename
     text_ass.text_width = font_metrics.text_width
+
+    # Un texto en capa propia (su .ass es <salida>.mt<i>.ass) lo dibuja el filtro `ass` sobre una
+    # capa RGBA, y sobre RGB FFmpeg 9 escribe los colores en rango de TV: el blanco sale a 235
+    # (sobre yuva444p, a 255). Es la divergencia de «sobre una imagen» (decisión de Edu; el C++
+    # pinta el color pedido): para comparar lo demás (3D, máscara, fusión y orden), aquí esa capa se
+    # dibuja en yuva444p y vuelve a RGBA. Detrás de una capa propia, el overlay deja el cuadro en
+    # RGB y al .ass global le pasa lo mismo: también se dibuja en yuv444p. Sin capas propias el
+    # grafo no cambia.
+    def build_full_range(*args, **kwargs):
+        cmd = real_build(*args, **kwargs)
+        i = cmd.index("-filter_complex")
+        graph = cmd[i + 1]
+        if ".mt0.ass" in graph:
+            graph = re.sub(r"format=rgba,(?P<ass>ass='[^']*\.mt\d+\.ass'(?::fontsdir='[^']*')?:alpha=1)",
+                           r"format=yuva444p,\g<ass>,format=rgba", graph)
+            graph = re.sub(r"\[(?P<lab>[^\]]+)\](?P<ass>ass='[^']*'(?::fontsdir='[^']*')?)\[txass\]",
+                           r"[\g<lab>]format=yuv444p,\g<ass>[txass]", graph)
+        cmd[i + 1] = graph
+        return cmd
+
+    compose.build_command = build_full_range
     try:
         cases = []
         for i, (name, background, texts, times) in enumerate(mc.RENDER_TEXT):
@@ -1803,15 +1850,22 @@ def synthetic_text_render_fixtures(ctx: Ctx) -> list[dict]:
                 png = f"x{i:02d}_{int(round(t * 1000)):05d}.png"
                 compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
                 (RENDER_DIR / png).with_suffix(".ass").unlink(missing_ok=True)  # el .ass que deja render_frame
+                for extra in RENDER_DIR.glob(f"{Path(png).stem}.*.ass"):  # y los de capa propia (.mt0.ass…)
+                    extra.unlink()
                 case = {"name": name, "t": t, "frame": png, "timeline": _pure(timeline.model_dump())}
                 if name in mc.RENDER_TEXT_DIVERGENCES:
                     case["divergence"] = mc.RENDER_TEXT_DIVERGENCES[name]
+                if name in mc.RENDER_TEXT_FLOORS:
+                    case["min_psnr"] = mc.RENDER_TEXT_FLOORS[name]
+                if name in mc.RENDER_TEXT_LOOSE:
+                    case["loose"] = mc.RENDER_TEXT_LOOSE[name]
                 if name in mc.RENDER_TEXT_PENDING:
                     case["pending"] = True
                 cases.append(case)
         return cases
     finally:
         compose._clip_path, text_ass.text_width = real_clip_path, fake_width
+        compose.build_command = real_build
 
 
 def synthetic_shape_fixtures(ctx: Ctx) -> dict:
@@ -2813,7 +2867,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
-    ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d"],
+    ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -2837,6 +2891,10 @@ def main() -> None:
         warp = synthetic_text_warp_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "text" / "warp.json", warp, len(warp["clips"]) + len(warp["project"]), 0)
 
+    if args.solo == "mascaras":
+        tmask = synthetic_text_mask_fixtures()
+        write(RENDER_DIR / "text_masks.json", tmask, len(tmask["masks"]) + len(tmask["metrics"]), 0)
+        return
     if args.solo == "texto3d":
         warp_group()
         if args.real:
@@ -2856,6 +2914,8 @@ def main() -> None:
         write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
         chains = synthetic_effect_chains()
         write(RENDER_DIR / "effects.json", chains, len(chains), 0)
+        tmask = synthetic_text_mask_fixtures()
+        write(RENDER_DIR / "text_masks.json", tmask, len(tmask["masks"]) + len(tmask["metrics"]), 0)
 
     if args.solo == "render":
         render_group()

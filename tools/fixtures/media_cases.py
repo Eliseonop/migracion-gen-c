@@ -450,6 +450,38 @@ _EFFECT_SCENES = [
       "masks": [{"type": "rectangle", "target": "adjust", "x": 0.5, "y": 0.5, "w": 0.4, "h": 0.2}]}, [0.5]),
     ("grano 12", "grad.png", {"effects": {"grain": 12}}, [0.5]),
 ]
+# Máscaras de tipo texto (_paint_text de clip_mask.py, con Pillow): (nombre, máscara cruda, ancho, alto).
+_TM = {"type": "text", "x": 0.5, "y": 0.5}
+TEXT_MASKS = [
+    ("por defecto (TEXTO en Anton)", {**_TM}, 360, 640),
+    ("Arial Black, dos líneas", {**_TM, "text": {"content": "HOLA\nmundo", "font": "Arial Black", "size": 0.12}}, 360, 640),
+    ("alineada a la izquierda", {**_TM, "w": 0.4, "text": {"content": "Izq\nlínea dos", "align": "left", "size": 0.1}},
+     360, 640),
+    ("alineada a la derecha y escalada", {**_TM, "w": 0.3, "scale_x": 1.5,
+                                          "text": {"content": "Der\nmás larga", "align": "right", "size": 0.1}}, 360, 640),
+    ("peso 400 (sin negrita): Arial", {**_TM, "text": {"content": "Arial fina", "font": "Arial", "weight": 400,
+                                                        "size": 0.08}}, 360, 640),
+    ("girada 25°", {**_TM, "rotation": 25, "text": {"content": "GIRO", "size": 0.15}}, 360, 640),
+    ("girada −90° fuera del centro", {**_TM, "x": 0.3, "y": 0.6, "rotation": -90,
+                                      "text": {"content": "LADO", "font": "Impact", "size": 0.1}}, 360, 640),
+    ("difuminada e invertida", {**_TM, "feather": 0.01, "invert": True, "text": {"content": "BLUR", "size": 0.2}},
+     360, 640),
+    ("al 50 %", {**_TM, "opacity": 0.5, "text": {"content": "MEDIA", "size": 0.12}}, 360, 640),
+    ("tamaño mínimo y máximo", {**_TM, "text": {"content": "chico", "size": 0.001}}, 360, 640),
+    ("muy grande, se sale", {**_TM, "text": {"content": "ENORME", "size": 1.5}}, 360, 640),
+    ("horizontal, Tahoma", {**_TM, "y": 0.4, "text": {"content": "Tahoma 16:9", "font": "Tahoma", "size": 0.2}},
+     640, 360),
+    ("con tildes y ñ", {**_TM, "text": {"content": "Añoró Ñandú", "font": "Segoe UI Black", "size": 0.08}}, 360, 640),
+    ("líneas vacías", {**_TM, "text": {"content": "\nmedio\n", "size": 0.1}}, 360, 640),
+    ("fuente que no existe (la de respaldo)", {**_TM, "text": {"content": "Nada", "font": "No Existe", "size": 0.1}},
+     360, 640),
+]
+# Medidas de Pillow (font_metrics y anclas de ImageDraw.text) de los textos de las máscaras:
+# (fuente, negrita, tamaño en px, texto).
+TEXT_MASK_METRICS = [(f, b, s, t) for f, b in [("Anton", True), ("Arial Black", True), ("Arial", False),
+                                                ("Impact", False), ("Tahoma", True), ("Segoe UI Black", True)]
+                     for s in (2, 11, 12, 37, 80, 141) for t in ("TEXTO", "Hola mundo", "Añoró Ñandú", "AVAV fi", "")]
+
 # Escenas con grano (aleatorio: no es el mismo que el del export): se comparan las medias por
 # bloques de 8×8 y la fuerza del ruido, no los píxeles.
 RENDER_NOISY = {"efecto: grano 12"}
@@ -875,6 +907,48 @@ RENDER_TEXT = [
     ("Curva animada con sombra", None,
      [(_HOLA, {**_PLAIN, "curve_on": True, "curve": -0.6, "shadow": True, "shadow_color": "#ff0000",
                "shadow_distance": 0.08}, {"keyframes": _KF_MOVE})], [0.5]),
+    # Capa propia (_prepare_texts): giro 3D (la capa deformada con `perspective`), máscara y fusión.
+    ("3D: girado en Y 35°", None, [(_HOLA, {**_PLAIN, "rot_y": 35, "size": 0.07}, {})], [0.5]),
+    ("3D: inclinado en X −40° con perspectiva 1 y dos líneas", None,
+     [(_HOLA + "\nsegunda línea", {**_PLAIN, "rot_x": -40, "perspective": 1, "size": 0.06}, {})], [0.5]),
+    ("3D: girado en X e Y con Fondo", None,
+     [(_HOLA, {**_PLAIN, "rot_x": 25, "rot_y": -30, "bg": "#2040a0", "bg_opacity": 1, "border_width": 3}, {})],
+     [0.5]),
+    ("3D con sombra", None,
+     [(_HOLA, {**_PLAIN, "rot_y": -30, "shadow": True, "shadow_distance": 0.08, "shadow_opacity": 0.8}, {})],
+     [0.5]),
+    ("3D: girado en el plano y en Y, a un lado", None,
+     [(_HOLA, {**_PLAIN, "rot_y": 50, "rotation": 15, "x": 0.35, "y": 0.3}, {})], [0.5]),
+    ("3D animado: rot_x de 0 a 60 con keyframes", None,
+     [(_HOLA, {**_PLAIN, "size": 0.07}, {"keyframes": {"enabled": True, "items": [
+         {"t": 0, "props": {"rot_x": 0, "rot_y": -20}}, {"t": 1.5, "props": {"rot_x": 60, "rot_y": 20}}]}})],
+     [0.0, 0.5, 1.2]),
+    ("3D con karaoke y aparición fundida", None, [(_HOLA, {**_CLASSIC_TXT, "rot_y": 30}, {})], [0.1, 0.7]),
+    ("máscara circular difuminada en un texto", None,
+     [(_HOLA, {**_PLAIN, "size": 0.08}, {"masks": [{"type": "circle", "x": 0.5, "y": 0.5, "w": 0.35, "h": 0.12,
+                                                    "feather": 0.02}]})], [0.5]),
+    ("máscara lineal invertida en un texto de dos líneas", None,
+     [(_HOLA + "\nsegunda línea", _PLAIN, {"masks": [{"type": "linear", "x": 0.5, "y": 0.5, "rotation": 20,
+                                                     "invert": True}]})], [0.5]),
+    ("máscara animada con keyframes en un texto", None,
+     [(_HOLA, {**_PLAIN, "size": 0.08}, {"masks": [{"type": "rectangle", "w": 0.2, "h": 0.2}],
+                                         "keyframes": {"enabled": True, "items": [
+                                             {"t": 0, "props": {"mx": 0.3}}, {"t": 1.5, "props": {"mx": 0.7}}]}})],
+     [0.2, 1.0]),
+    ("texto multiplicado sobre un vídeo", "moving30.mp4",
+     [(_HOLA, {**_PLAIN, "size": 0.08, "color": "#ff8800"}, {"blend_mode": "multiply"})], [0.5]),
+    ("texto en pantalla sobre un vídeo", "moving30.mp4",
+     [(_HOLA, {**_PLAIN, "size": 0.08, "color": "#3366ff"}, {"blend_mode": "screen"})], [0.5]),
+    ("3D, máscara y diferencia sobre un vídeo", "moving30.mp4",
+     [(_HOLA, {**_PLAIN, "size": 0.08, "rot_y": 30},
+       {"blend_mode": "difference", "masks": [{"type": "rectangle", "x": 0.5, "y": 0.5, "w": 0.3, "h": 0.2}]})],
+     [0.5]),
+    ("capa propia debajo del texto normal (el .ass global va encima)", None,
+     [(_HOLA, {**_PLAIN, "size": 0.08, "color": "#ff3030", "rot_y": 25}, {}),
+      (_HOLA, {**_PLAIN, "size": 0.08, "y": 0.52}, {})], [0.5]),
+    ("dos en capa propia: manda el inicio, no la lista", None,
+     [("arriba", {**_PLAIN, "size": 0.1, "color": "#30ff30", "rot_x": 20}, {"start": 0.2}),
+      ("abajo", {**_PLAIN, "size": 0.1, "color": "#ff30ff", "rot_x": -20, "y": 0.52}, {"start": 0.0})], [0.5]),
 ]
 
 # Croma: los dict crudos de bg_removal.chroma que se normalizan y se pasan a chroma_filters,
@@ -903,6 +977,9 @@ CHROMA_HEIGHTS = [0, 180, 512, 1080, 2160]
 # el test las dibuja pero no compara.
 _FORCED_WHITE = ("libass lee el color de \\c y \\3c como un entero con signo y saturado: con una opacidad de "
                  "0,5 o menos (alfa ≥ 0x80), relleno y trazo salen blancos; el C++ pinta el color pedido")
+_ALPHA_CUBED = ("en capa propia, el filtro ass con alpha=1 deja en la capa transparente el color premultiplicado y "
+                "el alfa al cuadrado, y el overlay vuelve a multiplicar: lo semitransparente sale como c·α³ (un "
+                "blanco al 50 % da 31 en vez de 128); el C++ pinta c·α, como el preview")
 RENDER_TEXT_DIVERGENCES = {
     "sobre una imagen": "con una imagen PNG debajo, libass escribe el blanco como 235 (rango de TV) en un "
                         "fotograma de rango completo: el texto sale gris (sobre vídeo o negro sale 255)",
@@ -911,6 +988,33 @@ RENDER_TEXT_DIVERGENCES = {
     "animado con aparición pop, al principio (opacidad 0,25)": _FORCED_WHITE,
     "animado: opacidad por keyframes, por debajo de 0,5": _FORCED_WHITE,
     "animado con aparición fundida, al principio (opacidad 0,25)": _FORCED_WHITE,
+    "3D con karaoke y aparición fundida": _ALPHA_CUBED,
+}
+
+# Suelo del PSNR de luma estricto de algunas escenas (2 dB por debajo de lo medido, 2026-10-17): con
+# solo los 16 dB de todas, el test no vería, por ejemplo, el medio píxel de la homografía del 3D.
+RENDER_TEXT_FLOORS = {
+    "3D: girado en Y 35°": 25,
+    "3D: inclinado en X −40° con perspectiva 1 y dos líneas": 26,
+    "3D: girado en X e Y con Fondo": 26,
+    "3D con sombra": 25,
+    "3D: girado en el plano y en Y, a un lado": 25,
+    "máscara circular difuminada en un texto": 31,
+    "máscara lineal invertida en un texto de dos líneas": 27,
+    "máscara animada con keyframes en un texto": 26,
+    "texto multiplicado sobre un vídeo": 30,
+    "texto en pantalla sobre un vídeo": 35,
+    "3D, máscara y diferencia sobre un vídeo": 29,
+    "capa propia debajo del texto normal (el .ass global va encima)": 26,
+    "dos en capa propia: manda el inicio, no la lista": 26,
+}
+
+# Escenas de RENDER_TEXT en las que el export se aparta solo un poco (decisión de Edu): el test las
+# compara con el PSNR que perdona 1 px, pero no con el estricto.
+RENDER_TEXT_LOOSE = {
+    "3D animado: rot_x de 0 a 60 con keyframes":
+        "la variable `in` de perspective empieza en 1 y _frame_expr la trata como si empezara en 0: el export "
+        "deforma cada fotograma con las esquinas del siguiente; el C++ usa las del mismo fotograma que el texto",
 }
 
 # Escenas de RENDER_TEXT de una etapa siguiente, que el render aún no dibuja: si da Unsupported, el

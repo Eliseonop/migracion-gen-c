@@ -1304,3 +1304,13 @@ Decisión de Edu (§6):
 - **Pendiente de Edu:** confirmar que los efectos siguen al export y no al preview (TODO).
 
 **Siguiente:** la máscara de texto y el texto 3D; los efectos de vídeo (`vfx`); medir con los proyectos de 4K.
+
+### 2026-10-17 — F3: texto 3D, con máscara o con fusión (capa propia) en el render
+
+- **Hecho:**
+  - `gc_core/text3d`: espejo de `text3d.py`, `text_warp_spec`, `text_is_3d` y la regla de capa propia de `_prepare_texts`.
+  - `draw_timeline_texts`: los textos de capa propia (sin vídeo encima) van antes que el .ass global, por orden de inicio; cada uno en un lienzo transparente, deformado con la homografía de `perspective` (con el medio píxel entre índices y centros), recortado con su máscara y fundido con su modo.
+- **Verificación:** paridad exacta del núcleo (52 clips × 3 cuadros, 72 proyecciones y tus 679 textos); 14 escenas de render nuevas frente a `compose.render_frame` (27–37 dB estrictos, 41–88 tolerantes), con un suelo por escena; 6/6 mutantes fallan. MSVC + vcpkg 164/164 (Debug y Release), MinGW 133/133. 0 warnings.
+- **Divergencias nuevas para Edu (TODO):** lo semitransparente de un texto en capa propia sale como c·α³ en el export; el 3D animado va un fotograma adelantado; y el rango de TV del filtro `ass` sobre RGB también afecta a la capa propia y al .ass que va detrás (la fixture lo corrige para comparar lo demás).
+
+**Siguiente:** la máscara de tipo texto (`_paint_text`, Pillow); después, los efectos de vídeo (`vfx`).

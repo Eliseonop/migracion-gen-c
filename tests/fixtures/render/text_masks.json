@@ -1,0 +1,7131 @@
+{
+ "masks": [
+  {
+   "name": "por defecto (TEXTO en Anton)",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "TEXTO",
+     "font": "Anton",
+     "size": 0.22,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm00.png",
+   "font_file": "Anton-Regular.ttf"
+  },
+  {
+   "name": "Arial Black, dos líneas",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "HOLA\nmundo",
+     "font": "Arial Black",
+     "size": 0.12,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm01.png",
+   "font_file": "ariblk.ttf"
+  },
+  {
+   "name": "alineada a la izquierda",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.4,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "Izq\nlínea dos",
+     "font": "Anton",
+     "size": 0.1,
+     "weight": 700,
+     "align": "left"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm02.png",
+   "font_file": "Anton-Regular.ttf"
+  },
+  {
+   "name": "alineada a la derecha y escalada",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.3,
+    "h": 0.5,
+    "scale_x": 1.5,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "Der\nmás larga",
+     "font": "Anton",
+     "size": 0.1,
+     "weight": 700,
+     "align": "right"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm03.png",
+   "font_file": "Anton-Regular.ttf"
+  },
+  {
+   "name": "peso 400 (sin negrita): Arial",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "Arial fina",
+     "font": "Arial",
+     "size": 0.08,
+     "weight": 400.0,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm04.png",
+   "font_file": "arial.ttf"
+  },
+  {
+   "name": "girada 25°",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 25.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "GIRO",
+     "font": "Anton",
+     "size": 0.15,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm05.png",
+   "font_file": "Anton-Regular.ttf"
+  },
+  {
+   "name": "girada −90° fuera del centro",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.3,
+    "y": 0.6,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": -90.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "LADO",
+     "font": "Impact",
+     "size": 0.1,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm06.png",
+   "font_file": "impact.ttf"
+  },
+  {
+   "name": "difuminada e invertida",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.01,
+    "invert": true,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "BLUR",
+     "font": "Anton",
+     "size": 0.2,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm07.png",
+   "font_file": "Anton-Regular.ttf"
+  },
+  {
+   "name": "al 50 %",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 0.5,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "MEDIA",
+     "font": "Anton",
+     "size": 0.12,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm08.png",
+   "font_file": "Anton-Regular.ttf"
+  },
+  {
+   "name": "tamaño mínimo y máximo",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "chico",
+     "font": "Anton",
+     "size": 0.02,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm09.png",
+   "font_file": "Anton-Regular.ttf"
+  },
+  {
+   "name": "muy grande, se sale",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "ENORME",
+     "font": "Anton",
+     "size": 1.5,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm10.png",
+   "font_file": "Anton-Regular.ttf"
+  },
+  {
+   "name": "horizontal, Tahoma",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.4,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "Tahoma 16:9",
+     "font": "Tahoma",
+     "size": 0.2,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 640,
+   "h": 360,
+   "png": "tm11.png",
+   "font_file": "tahomabd.ttf"
+  },
+  {
+   "name": "con tildes y ñ",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "Añoró Ñandú",
+     "font": "Segoe UI Black",
+     "size": 0.08,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm12.png",
+   "font_file": "seguibl.ttf"
+  },
+  {
+   "name": "líneas vacías",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "\nmedio\n",
+     "font": "Anton",
+     "size": 0.1,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm13.png",
+   "font_file": "Anton-Regular.ttf"
+  },
+  {
+   "name": "fuente que no existe (la de respaldo)",
+   "mask": {
+    "id": "m0",
+    "type": "text",
+    "enabled": true,
+    "x": 0.5,
+    "y": 0.5,
+    "w": 0.5,
+    "h": 0.5,
+    "scale_x": 1.0,
+    "scale_y": 1.0,
+    "rotation": 0.0,
+    "feather": 0.0,
+    "invert": false,
+    "opacity": 1.0,
+    "radius": 0.0,
+    "target": "clip",
+    "text": {
+     "content": "Nada",
+     "font": "No Existe",
+     "size": 0.1,
+     "weight": 700,
+     "align": "center"
+    }
+   },
+   "w": 360,
+   "h": 640,
+   "png": "tm14.png",
+   "font_file": "arial.ttf"
+  }
+ ],
+ "metrics": [
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 2,
+   "text": "TEXTO",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 5.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     5,
+     0
+    ],
+    "mm": [
+     -3,
+     -1,
+     2,
+     1
+    ],
+    "lm": [
+     0,
+     -1,
+     5,
+     1
+    ],
+    "rm": [
+     -5,
+     -1,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 2,
+   "text": "Hola mundo",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 10.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     10,
+     0
+    ],
+    "mm": [
+     -5,
+     -1,
+     5,
+     1
+    ],
+    "lm": [
+     0,
+     -1,
+     10,
+     1
+    ],
+    "rm": [
+     -10,
+     -1,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 2,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 10.0,
+   "bbox": {
+    "ls": [
+     0,
+     -3,
+     10,
+     0
+    ],
+    "mm": [
+     -5,
+     -2,
+     5,
+     1
+    ],
+    "lm": [
+     0,
+     -2,
+     10,
+     1
+    ],
+    "rm": [
+     -10,
+     -2,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 2,
+   "text": "AVAV fi",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 5.0,
+   "bbox": {
+    "ls": [
+     0,
+     -3,
+     6,
+     0
+    ],
+    "mm": [
+     -3,
+     -2,
+     3,
+     1
+    ],
+    "lm": [
+     0,
+     -2,
+     6,
+     1
+    ],
+    "rm": [
+     -5,
+     -2,
+     1,
+     1
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 2,
+   "text": "",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 11,
+   "text": "TEXTO",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 23.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     23,
+     0
+    ],
+    "mm": [
+     -12,
+     -4,
+     11,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     23,
+     5
+    ],
+    "rm": [
+     -23,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 11,
+   "text": "Hola mundo",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 49.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     50,
+     0
+    ],
+    "mm": [
+     -25,
+     -4,
+     25,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     50,
+     5
+    ],
+    "rm": [
+     -49,
+     -4,
+     1,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 11,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 52.0,
+   "bbox": {
+    "ls": [
+     0,
+     -12,
+     53,
+     0
+    ],
+    "mm": [
+     -26,
+     -7,
+     27,
+     5
+    ],
+    "lm": [
+     0,
+     -7,
+     53,
+     5
+    ],
+    "rm": [
+     -52,
+     -7,
+     1,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 11,
+   "text": "AVAV fi",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 29.0,
+   "bbox": {
+    "ls": [
+     0,
+     -11,
+     29,
+     0
+    ],
+    "mm": [
+     -15,
+     -6,
+     14,
+     5
+    ],
+    "lm": [
+     0,
+     -6,
+     29,
+     5
+    ],
+    "rm": [
+     -29,
+     -6,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 11,
+   "text": "",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 12,
+   "text": "TEXTO",
+   "metrics": [
+    15,
+    4
+   ],
+   "length": 27.0,
+   "bbox": {
+    "ls": [
+     0,
+     -10,
+     27,
+     0
+    ],
+    "mm": [
+     -14,
+     -4,
+     13,
+     6
+    ],
+    "lm": [
+     0,
+     -4,
+     27,
+     6
+    ],
+    "rm": [
+     -27,
+     -4,
+     0,
+     6
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 12,
+   "text": "Hola mundo",
+   "metrics": [
+    15,
+    4
+   ],
+   "length": 57.0,
+   "bbox": {
+    "ls": [
+     0,
+     -10,
+     57,
+     0
+    ],
+    "mm": [
+     -29,
+     -4,
+     28,
+     6
+    ],
+    "lm": [
+     0,
+     -4,
+     57,
+     6
+    ],
+    "rm": [
+     -57,
+     -4,
+     0,
+     6
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 12,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    15,
+    4
+   ],
+   "length": 61.0,
+   "bbox": {
+    "ls": [
+     0,
+     -14,
+     61,
+     0
+    ],
+    "mm": [
+     -31,
+     -8,
+     30,
+     6
+    ],
+    "lm": [
+     0,
+     -8,
+     61,
+     6
+    ],
+    "rm": [
+     -61,
+     -8,
+     0,
+     6
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 12,
+   "text": "AVAV fi",
+   "metrics": [
+    15,
+    4
+   ],
+   "length": 33.0,
+   "bbox": {
+    "ls": [
+     0,
+     -11,
+     33,
+     0
+    ],
+    "mm": [
+     -17,
+     -5,
+     16,
+     6
+    ],
+    "lm": [
+     0,
+     -5,
+     33,
+     6
+    ],
+    "rm": [
+     -33,
+     -5,
+     0,
+     6
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 12,
+   "text": "",
+   "metrics": [
+    15,
+    4
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 37,
+   "text": "TEXTO",
+   "metrics": [
+    44,
+    13
+   ],
+   "length": 81.0,
+   "bbox": {
+    "ls": [
+     0,
+     -33,
+     81,
+     0
+    ],
+    "mm": [
+     -41,
+     -17,
+     40,
+     16
+    ],
+    "lm": [
+     0,
+     -17,
+     81,
+     16
+    ],
+    "rm": [
+     -81,
+     -17,
+     0,
+     16
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 37,
+   "text": "Hola mundo",
+   "metrics": [
+    44,
+    13
+   ],
+   "length": 172.0,
+   "bbox": {
+    "ls": [
+     0,
+     -33,
+     172,
+     0
+    ],
+    "mm": [
+     -86,
+     -17,
+     86,
+     16
+    ],
+    "lm": [
+     0,
+     -17,
+     172,
+     16
+    ],
+    "rm": [
+     -172,
+     -17,
+     0,
+     16
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 37,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    44,
+    13
+   ],
+   "length": 184.0,
+   "bbox": {
+    "ls": [
+     0,
+     -41,
+     184,
+     0
+    ],
+    "mm": [
+     -92,
+     -25,
+     92,
+     16
+    ],
+    "lm": [
+     0,
+     -25,
+     184,
+     16
+    ],
+    "rm": [
+     -184,
+     -25,
+     0,
+     16
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 37,
+   "text": "AVAV fi",
+   "metrics": [
+    44,
+    13
+   ],
+   "length": 98.0,
+   "bbox": {
+    "ls": [
+     0,
+     -35,
+     98,
+     0
+    ],
+    "mm": [
+     -49,
+     -19,
+     49,
+     16
+    ],
+    "lm": [
+     0,
+     -19,
+     98,
+     16
+    ],
+    "rm": [
+     -98,
+     -19,
+     0,
+     16
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 37,
+   "text": "",
+   "metrics": [
+    44,
+    13
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 80,
+   "text": "TEXTO",
+   "metrics": [
+    95,
+    27
+   ],
+   "length": 175.0,
+   "bbox": {
+    "ls": [
+     0,
+     -70,
+     175,
+     1
+    ],
+    "mm": [
+     -88,
+     -36,
+     87,
+     35
+    ],
+    "lm": [
+     0,
+     -36,
+     175,
+     35
+    ],
+    "rm": [
+     -175,
+     -36,
+     0,
+     35
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 80,
+   "text": "Hola mundo",
+   "metrics": [
+    95,
+    27
+   ],
+   "length": 379.0,
+   "bbox": {
+    "ls": [
+     0,
+     -69,
+     379,
+     1
+    ],
+    "mm": [
+     -190,
+     -35,
+     189,
+     35
+    ],
+    "lm": [
+     0,
+     -35,
+     379,
+     35
+    ],
+    "rm": [
+     -379,
+     -35,
+     0,
+     35
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 80,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    95,
+    27
+   ],
+   "length": 405.0,
+   "bbox": {
+    "ls": [
+     0,
+     -86,
+     405,
+     1
+    ],
+    "mm": [
+     -203,
+     -52,
+     202,
+     35
+    ],
+    "lm": [
+     0,
+     -52,
+     405,
+     35
+    ],
+    "rm": [
+     -405,
+     -52,
+     0,
+     35
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 80,
+   "text": "AVAV fi",
+   "metrics": [
+    95,
+    27
+   ],
+   "length": 214.0,
+   "bbox": {
+    "ls": [
+     0,
+     -74,
+     214,
+     0
+    ],
+    "mm": [
+     -107,
+     -40,
+     107,
+     34
+    ],
+    "lm": [
+     0,
+     -40,
+     214,
+     34
+    ],
+    "rm": [
+     -214,
+     -40,
+     0,
+     34
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 80,
+   "text": "",
+   "metrics": [
+    95,
+    27
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 141,
+   "text": "TEXTO",
+   "metrics": [
+    166,
+    47
+   ],
+   "length": 307.0,
+   "bbox": {
+    "ls": [
+     0,
+     -123,
+     307,
+     1
+    ],
+    "mm": [
+     -154,
+     -63,
+     153,
+     61
+    ],
+    "lm": [
+     0,
+     -63,
+     307,
+     61
+    ],
+    "rm": [
+     -307,
+     -63,
+     0,
+     61
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 141,
+   "text": "Hola mundo",
+   "metrics": [
+    166,
+    47
+   ],
+   "length": 663.0,
+   "bbox": {
+    "ls": [
+     0,
+     -122,
+     663,
+     1
+    ],
+    "mm": [
+     -332,
+     -62,
+     331,
+     61
+    ],
+    "lm": [
+     0,
+     -62,
+     663,
+     61
+    ],
+    "rm": [
+     -663,
+     -62,
+     0,
+     61
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 141,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    166,
+    47
+   ],
+   "length": 708.0,
+   "bbox": {
+    "ls": [
+     0,
+     -152,
+     708,
+     1
+    ],
+    "mm": [
+     -354,
+     -92,
+     354,
+     61
+    ],
+    "lm": [
+     0,
+     -92,
+     708,
+     61
+    ],
+    "rm": [
+     -708,
+     -92,
+     0,
+     61
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 141,
+   "text": "AVAV fi",
+   "metrics": [
+    166,
+    47
+   ],
+   "length": 375.0,
+   "bbox": {
+    "ls": [
+     0,
+     -131,
+     375,
+     0
+    ],
+    "mm": [
+     -188,
+     -71,
+     187,
+     60
+    ],
+    "lm": [
+     0,
+     -71,
+     375,
+     60
+    ],
+    "rm": [
+     -375,
+     -71,
+     0,
+     60
+    ]
+   }
+  },
+  {
+   "font": "Anton",
+   "bold": true,
+   "size": 141,
+   "text": "",
+   "metrics": [
+    166,
+    47
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 2,
+   "text": "TEXTO",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 7.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     7,
+     1
+    ],
+    "mm": [
+     -4,
+     -1,
+     3,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     7,
+     2
+    ],
+    "rm": [
+     -7,
+     -1,
+     0,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 2,
+   "text": "Hola mundo",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 12.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     13,
+     1
+    ],
+    "mm": [
+     -6,
+     -1,
+     7,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     13,
+     2
+    ],
+    "rm": [
+     -12,
+     -1,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 2,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 13.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     14,
+     1
+    ],
+    "mm": [
+     -7,
+     -1,
+     7,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     14,
+     2
+    ],
+    "rm": [
+     -13,
+     -1,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 2,
+   "text": "AVAV fi",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 11.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     11,
+     0
+    ],
+    "mm": [
+     -6,
+     -1,
+     5,
+     1
+    ],
+    "lm": [
+     0,
+     -1,
+     11,
+     1
+    ],
+    "rm": [
+     -11,
+     -1,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 2,
+   "text": "",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 11,
+   "text": "TEXTO",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 42.0,
+   "bbox": {
+    "ls": [
+     0,
+     -8,
+     42,
+     0
+    ],
+    "mm": [
+     -21,
+     -3,
+     21,
+     5
+    ],
+    "lm": [
+     0,
+     -3,
+     42,
+     5
+    ],
+    "rm": [
+     -42,
+     -3,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 11,
+   "text": "Hola mundo",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 70.0,
+   "bbox": {
+    "ls": [
+     0,
+     -8,
+     70,
+     0
+    ],
+    "mm": [
+     -35,
+     -3,
+     35,
+     5
+    ],
+    "lm": [
+     0,
+     -3,
+     70,
+     5
+    ],
+    "rm": [
+     -70,
+     -3,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 11,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 76.0,
+   "bbox": {
+    "ls": [
+     0,
+     -11,
+     76,
+     0
+    ],
+    "mm": [
+     -38,
+     -6,
+     38,
+     5
+    ],
+    "lm": [
+     0,
+     -6,
+     76,
+     5
+    ],
+    "rm": [
+     -76,
+     -6,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 11,
+   "text": "AVAV fi",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 48.0,
+   "bbox": {
+    "ls": [
+     0,
+     -8,
+     48,
+     0
+    ],
+    "mm": [
+     -24,
+     -3,
+     24,
+     5
+    ],
+    "lm": [
+     0,
+     -3,
+     48,
+     5
+    ],
+    "rm": [
+     -48,
+     -3,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 11,
+   "text": "",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 12,
+   "text": "TEXTO",
+   "metrics": [
+    14,
+    4
+   ],
+   "length": 46.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     46,
+     0
+    ],
+    "mm": [
+     -23,
+     -4,
+     23,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     46,
+     5
+    ],
+    "rm": [
+     -46,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 12,
+   "text": "Hola mundo",
+   "metrics": [
+    14,
+    4
+   ],
+   "length": 78.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     78,
+     0
+    ],
+    "mm": [
+     -39,
+     -4,
+     39,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     78,
+     5
+    ],
+    "rm": [
+     -78,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 12,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    14,
+    4
+   ],
+   "length": 84.0,
+   "bbox": {
+    "ls": [
+     0,
+     -12,
+     84,
+     0
+    ],
+    "mm": [
+     -42,
+     -7,
+     42,
+     5
+    ],
+    "lm": [
+     0,
+     -7,
+     84,
+     5
+    ],
+    "rm": [
+     -84,
+     -7,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 12,
+   "text": "AVAV fi",
+   "metrics": [
+    14,
+    4
+   ],
+   "length": 49.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     49,
+     0
+    ],
+    "mm": [
+     -25,
+     -4,
+     24,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     49,
+     5
+    ],
+    "rm": [
+     -49,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 12,
+   "text": "",
+   "metrics": [
+    14,
+    4
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 37,
+   "text": "TEXTO",
+   "metrics": [
+    41,
+    12
+   ],
+   "length": 140.984375,
+   "bbox": {
+    "ls": [
+     0,
+     -27,
+     141,
+     0
+    ],
+    "mm": [
+     -70,
+     -12,
+     71,
+     15
+    ],
+    "lm": [
+     0,
+     -12,
+     141,
+     15
+    ],
+    "rm": [
+     -141,
+     -12,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 37,
+   "text": "Hola mundo",
+   "metrics": [
+    41,
+    12
+   ],
+   "length": 242.0,
+   "bbox": {
+    "ls": [
+     0,
+     -27,
+     242,
+     0
+    ],
+    "mm": [
+     -121,
+     -12,
+     121,
+     15
+    ],
+    "lm": [
+     0,
+     -12,
+     242,
+     15
+    ],
+    "rm": [
+     -242,
+     -12,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 37,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    41,
+    12
+   ],
+   "length": 263.0,
+   "bbox": {
+    "ls": [
+     0,
+     -34,
+     263,
+     0
+    ],
+    "mm": [
+     -132,
+     -19,
+     131,
+     15
+    ],
+    "lm": [
+     0,
+     -19,
+     263,
+     15
+    ],
+    "rm": [
+     -263,
+     -19,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 37,
+   "text": "AVAV fi",
+   "metrics": [
+    41,
+    12
+   ],
+   "length": 153.90625,
+   "bbox": {
+    "ls": [
+     0,
+     -27,
+     154,
+     0
+    ],
+    "mm": [
+     -77,
+     -12,
+     77,
+     15
+    ],
+    "lm": [
+     0,
+     -12,
+     154,
+     15
+    ],
+    "rm": [
+     -154,
+     -12,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 37,
+   "text": "",
+   "metrics": [
+    41,
+    12
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 80,
+   "text": "TEXTO",
+   "metrics": [
+    89,
+    25
+   ],
+   "length": 302.953125,
+   "bbox": {
+    "ls": [
+     0,
+     -58,
+     303,
+     1
+    ],
+    "mm": [
+     -151,
+     -26,
+     152,
+     33
+    ],
+    "lm": [
+     0,
+     -26,
+     303,
+     33
+    ],
+    "rm": [
+     -303,
+     -26,
+     0,
+     33
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 80,
+   "text": "Hola mundo",
+   "metrics": [
+    89,
+    25
+   ],
+   "length": 519.0,
+   "bbox": {
+    "ls": [
+     0,
+     -57,
+     519,
+     1
+    ],
+    "mm": [
+     -260,
+     -25,
+     259,
+     33
+    ],
+    "lm": [
+     0,
+     -25,
+     519,
+     33
+    ],
+    "rm": [
+     -519,
+     -25,
+     0,
+     33
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 80,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    89,
+    25
+   ],
+   "length": 563.0,
+   "bbox": {
+    "ls": [
+     0,
+     -72,
+     563,
+     1
+    ],
+    "mm": [
+     -282,
+     -40,
+     281,
+     33
+    ],
+    "lm": [
+     0,
+     -40,
+     563,
+     33
+    ],
+    "rm": [
+     -563,
+     -40,
+     0,
+     33
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 80,
+   "text": "AVAV fi",
+   "metrics": [
+    89,
+    25
+   ],
+   "length": 332.796875,
+   "bbox": {
+    "ls": [
+     0,
+     -58,
+     333,
+     0
+    ],
+    "mm": [
+     -166,
+     -26,
+     167,
+     32
+    ],
+    "lm": [
+     0,
+     -26,
+     333,
+     32
+    ],
+    "rm": [
+     -333,
+     -26,
+     0,
+     32
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 80,
+   "text": "",
+   "metrics": [
+    89,
+    25
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 141,
+   "text": "TEXTO",
+   "metrics": [
+    156,
+    44
+   ],
+   "length": 532.921875,
+   "bbox": {
+    "ls": [
+     0,
+     -103,
+     533,
+     2
+    ],
+    "mm": [
+     -266,
+     -47,
+     267,
+     58
+    ],
+    "lm": [
+     0,
+     -47,
+     533,
+     58
+    ],
+    "rm": [
+     -533,
+     -47,
+     0,
+     58
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 141,
+   "text": "Hola mundo",
+   "metrics": [
+    156,
+    44
+   ],
+   "length": 916.0,
+   "bbox": {
+    "ls": [
+     0,
+     -101,
+     916,
+     2
+    ],
+    "mm": [
+     -458,
+     -45,
+     458,
+     58
+    ],
+    "lm": [
+     0,
+     -45,
+     916,
+     58
+    ],
+    "rm": [
+     -916,
+     -45,
+     0,
+     58
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 141,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    156,
+    44
+   ],
+   "length": 995.0,
+   "bbox": {
+    "ls": [
+     0,
+     -126,
+     995,
+     2
+    ],
+    "mm": [
+     -498,
+     -70,
+     497,
+     58
+    ],
+    "lm": [
+     0,
+     -70,
+     995,
+     58
+    ],
+    "rm": [
+     -995,
+     -70,
+     0,
+     58
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 141,
+   "text": "AVAV fi",
+   "metrics": [
+    156,
+    44
+   ],
+   "length": 588.625,
+   "bbox": {
+    "ls": [
+     0,
+     -103,
+     589,
+     0
+    ],
+    "mm": [
+     -294,
+     -47,
+     295,
+     56
+    ],
+    "lm": [
+     0,
+     -47,
+     589,
+     56
+    ],
+    "rm": [
+     -589,
+     -47,
+     0,
+     56
+    ]
+   }
+  },
+  {
+   "font": "Arial Black",
+   "bold": true,
+   "size": 141,
+   "text": "",
+   "metrics": [
+    156,
+    44
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 2,
+   "text": "TEXTO",
+   "metrics": [
+    2,
+    1
+   ],
+   "length": 6.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     6,
+     1
+    ],
+    "mm": [
+     -3,
+     -1,
+     3,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     6,
+     2
+    ],
+    "rm": [
+     -6,
+     -1,
+     0,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 2,
+   "text": "Hola mundo",
+   "metrics": [
+    2,
+    1
+   ],
+   "length": 10.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     11,
+     1
+    ],
+    "mm": [
+     -5,
+     -1,
+     6,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     11,
+     2
+    ],
+    "rm": [
+     -10,
+     -1,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 2,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    2,
+    1
+   ],
+   "length": 11.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     11,
+     1
+    ],
+    "mm": [
+     -6,
+     -1,
+     5,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     11,
+     2
+    ],
+    "rm": [
+     -11,
+     -1,
+     0,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 2,
+   "text": "AVAV fi",
+   "metrics": [
+    2,
+    1
+   ],
+   "length": 6.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     7,
+     0
+    ],
+    "mm": [
+     -3,
+     -1,
+     4,
+     1
+    ],
+    "lm": [
+     0,
+     -1,
+     7,
+     1
+    ],
+    "rm": [
+     -6,
+     -1,
+     1,
+     1
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 2,
+   "text": "",
+   "metrics": [
+    2,
+    1
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 11,
+   "text": "TEXTO",
+   "metrics": [
+    10,
+    3
+   ],
+   "length": 37.0,
+   "bbox": {
+    "ls": [
+     0,
+     -8,
+     37,
+     0
+    ],
+    "mm": [
+     -19,
+     -4,
+     18,
+     4
+    ],
+    "lm": [
+     0,
+     -4,
+     37,
+     4
+    ],
+    "rm": [
+     -37,
+     -4,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 11,
+   "text": "Hola mundo",
+   "metrics": [
+    10,
+    3
+   ],
+   "length": 58.0,
+   "bbox": {
+    "ls": [
+     0,
+     -8,
+     58,
+     0
+    ],
+    "mm": [
+     -29,
+     -4,
+     29,
+     4
+    ],
+    "lm": [
+     0,
+     -4,
+     58,
+     4
+    ],
+    "rm": [
+     -58,
+     -4,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 11,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    10,
+    3
+   ],
+   "length": 64.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -11,
+     64,
+     0
+    ],
+    "mm": [
+     -33,
+     -7,
+     32,
+     4
+    ],
+    "lm": [
+     -1,
+     -7,
+     64,
+     4
+    ],
+    "rm": [
+     -65,
+     -7,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 11,
+   "text": "AVAV fi",
+   "metrics": [
+    10,
+    3
+   ],
+   "length": 36.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -8,
+     36,
+     0
+    ],
+    "mm": [
+     -19,
+     -4,
+     18,
+     4
+    ],
+    "lm": [
+     -1,
+     -4,
+     36,
+     4
+    ],
+    "rm": [
+     -37,
+     -4,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 11,
+   "text": "",
+   "metrics": [
+    10,
+    3
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 12,
+   "text": "TEXTO",
+   "metrics": [
+    11,
+    3
+   ],
+   "length": 39.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     39,
+     0
+    ],
+    "mm": [
+     -20,
+     -5,
+     19,
+     4
+    ],
+    "lm": [
+     0,
+     -5,
+     39,
+     4
+    ],
+    "rm": [
+     -39,
+     -5,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 12,
+   "text": "Hola mundo",
+   "metrics": [
+    11,
+    3
+   ],
+   "length": 67.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     67,
+     0
+    ],
+    "mm": [
+     -34,
+     -5,
+     33,
+     4
+    ],
+    "lm": [
+     0,
+     -5,
+     67,
+     4
+    ],
+    "rm": [
+     -67,
+     -5,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 12,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    11,
+    3
+   ],
+   "length": 73.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -12,
+     73,
+     0
+    ],
+    "mm": [
+     -38,
+     -8,
+     36,
+     4
+    ],
+    "lm": [
+     -1,
+     -8,
+     73,
+     4
+    ],
+    "rm": [
+     -74,
+     -8,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 12,
+   "text": "AVAV fi",
+   "metrics": [
+    11,
+    3
+   ],
+   "length": 41.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -9,
+     41,
+     0
+    ],
+    "mm": [
+     -22,
+     -5,
+     20,
+     4
+    ],
+    "lm": [
+     -1,
+     -5,
+     41,
+     4
+    ],
+    "rm": [
+     -42,
+     -5,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 12,
+   "text": "",
+   "metrics": [
+    11,
+    3
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 37,
+   "text": "TEXTO",
+   "metrics": [
+    34,
+    8
+   ],
+   "length": 124.984375,
+   "bbox": {
+    "ls": [
+     0,
+     -27,
+     125,
+     0
+    ],
+    "mm": [
+     -62,
+     -14,
+     63,
+     13
+    ],
+    "lm": [
+     0,
+     -14,
+     125,
+     13
+    ],
+    "rm": [
+     -125,
+     -14,
+     0,
+     13
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 37,
+   "text": "Hola mundo",
+   "metrics": [
+    34,
+    8
+   ],
+   "length": 202.0,
+   "bbox": {
+    "ls": [
+     0,
+     -27,
+     202,
+     0
+    ],
+    "mm": [
+     -101,
+     -14,
+     101,
+     13
+    ],
+    "lm": [
+     0,
+     -14,
+     202,
+     13
+    ],
+    "rm": [
+     -202,
+     -14,
+     0,
+     13
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 37,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    34,
+    8
+   ],
+   "length": 221.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -33,
+     221,
+     0
+    ],
+    "mm": [
+     -112,
+     -20,
+     110,
+     13
+    ],
+    "lm": [
+     -1,
+     -20,
+     221,
+     13
+    ],
+    "rm": [
+     -222,
+     -20,
+     0,
+     13
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 37,
+   "text": "AVAV fi",
+   "metrics": [
+    34,
+    8
+   ],
+   "length": 127.859375,
+   "bbox": {
+    "ls": [
+     -1,
+     -27,
+     128,
+     0
+    ],
+    "mm": [
+     -65,
+     -14,
+     64,
+     13
+    ],
+    "lm": [
+     -1,
+     -14,
+     128,
+     13
+    ],
+    "rm": [
+     -129,
+     -14,
+     0,
+     13
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 37,
+   "text": "",
+   "metrics": [
+    34,
+    8
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 80,
+   "text": "TEXTO",
+   "metrics": [
+    73,
+    17
+   ],
+   "length": 265.984375,
+   "bbox": {
+    "ls": [
+     0,
+     -59,
+     266,
+     1
+    ],
+    "mm": [
+     -133,
+     -31,
+     133,
+     29
+    ],
+    "lm": [
+     0,
+     -31,
+     266,
+     29
+    ],
+    "rm": [
+     -266,
+     -31,
+     0,
+     29
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 80,
+   "text": "Hola mundo",
+   "metrics": [
+    73,
+    17
+   ],
+   "length": 435.0,
+   "bbox": {
+    "ls": [
+     0,
+     -58,
+     435,
+     1
+    ],
+    "mm": [
+     -218,
+     -30,
+     217,
+     29
+    ],
+    "lm": [
+     0,
+     -30,
+     435,
+     29
+    ],
+    "rm": [
+     -435,
+     -30,
+     0,
+     29
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 80,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    73,
+    17
+   ],
+   "length": 475.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -70,
+     475,
+     1
+    ],
+    "mm": [
+     -239,
+     -42,
+     237,
+     29
+    ],
+    "lm": [
+     -1,
+     -42,
+     475,
+     29
+    ],
+    "rm": [
+     -476,
+     -42,
+     0,
+     29
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 80,
+   "text": "AVAV fi",
+   "metrics": [
+    73,
+    17
+   ],
+   "length": 273.71875,
+   "bbox": {
+    "ls": [
+     -1,
+     -59,
+     274,
+     0
+    ],
+    "mm": [
+     -138,
+     -31,
+     137,
+     28
+    ],
+    "lm": [
+     -1,
+     -31,
+     274,
+     28
+    ],
+    "rm": [
+     -275,
+     -31,
+     0,
+     28
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 80,
+   "text": "",
+   "metrics": [
+    73,
+    17
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 141,
+   "text": "TEXTO",
+   "metrics": [
+    128,
+    30
+   ],
+   "length": 469.953125,
+   "bbox": {
+    "ls": [
+     0,
+     -103,
+     470,
+     1
+    ],
+    "mm": [
+     -235,
+     -54,
+     235,
+     50
+    ],
+    "lm": [
+     0,
+     -54,
+     470,
+     50
+    ],
+    "rm": [
+     -470,
+     -54,
+     0,
+     50
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 141,
+   "text": "Hola mundo",
+   "metrics": [
+    128,
+    30
+   ],
+   "length": 757.0,
+   "bbox": {
+    "ls": [
+     0,
+     -101,
+     757,
+     1
+    ],
+    "mm": [
+     -379,
+     -52,
+     378,
+     50
+    ],
+    "lm": [
+     0,
+     -52,
+     757,
+     50
+    ],
+    "rm": [
+     -757,
+     -52,
+     0,
+     50
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 141,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    128,
+    30
+   ],
+   "length": 828.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -123,
+     828,
+     1
+    ],
+    "mm": [
+     -415,
+     -74,
+     414,
+     50
+    ],
+    "lm": [
+     -1,
+     -74,
+     828,
+     50
+    ],
+    "rm": [
+     -829,
+     -74,
+     0,
+     50
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 141,
+   "text": "AVAV fi",
+   "metrics": [
+    128,
+    30
+   ],
+   "length": 484.53125,
+   "bbox": {
+    "ls": [
+     -1,
+     -102,
+     485,
+     0
+    ],
+    "mm": [
+     -243,
+     -53,
+     243,
+     49
+    ],
+    "lm": [
+     -1,
+     -53,
+     485,
+     49
+    ],
+    "rm": [
+     -486,
+     -53,
+     0,
+     49
+    ]
+   }
+  },
+  {
+   "font": "Arial",
+   "bold": false,
+   "size": 141,
+   "text": "",
+   "metrics": [
+    128,
+    30
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 2,
+   "text": "TEXTO",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 5.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     6,
+     1
+    ],
+    "mm": [
+     -3,
+     -1,
+     3,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     6,
+     2
+    ],
+    "rm": [
+     -5,
+     -1,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 2,
+   "text": "Hola mundo",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 10.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     10,
+     1
+    ],
+    "mm": [
+     -5,
+     -1,
+     5,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     10,
+     2
+    ],
+    "rm": [
+     -10,
+     -1,
+     0,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 2,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 10.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -2,
+     10,
+     1
+    ],
+    "mm": [
+     -6,
+     -1,
+     5,
+     2
+    ],
+    "lm": [
+     -1,
+     -1,
+     10,
+     2
+    ],
+    "rm": [
+     -11,
+     -1,
+     0,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 2,
+   "text": "AVAV fi",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 6.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -2,
+     6,
+     0
+    ],
+    "mm": [
+     -4,
+     -1,
+     3,
+     1
+    ],
+    "lm": [
+     -1,
+     -1,
+     6,
+     1
+    ],
+    "rm": [
+     -7,
+     -1,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 2,
+   "text": "",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 11,
+   "text": "TEXTO",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 26.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     26,
+     0
+    ],
+    "mm": [
+     -13,
+     -4,
+     13,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     26,
+     5
+    ],
+    "rm": [
+     -26,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 11,
+   "text": "Hola mundo",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 55.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     55,
+     0
+    ],
+    "mm": [
+     -28,
+     -4,
+     27,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     55,
+     5
+    ],
+    "rm": [
+     -55,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 11,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 60.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -12,
+     60,
+     0
+    ],
+    "mm": [
+     -31,
+     -7,
+     30,
+     5
+    ],
+    "lm": [
+     -1,
+     -7,
+     60,
+     5
+    ],
+    "rm": [
+     -61,
+     -7,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 11,
+   "text": "AVAV fi",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 32.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -9,
+     32,
+     0
+    ],
+    "mm": [
+     -17,
+     -4,
+     16,
+     5
+    ],
+    "lm": [
+     -1,
+     -4,
+     32,
+     5
+    ],
+    "rm": [
+     -33,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 11,
+   "text": "",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 12,
+   "text": "TEXTO",
+   "metrics": [
+    13,
+    3
+   ],
+   "length": 30.0,
+   "bbox": {
+    "ls": [
+     0,
+     -10,
+     30,
+     0
+    ],
+    "mm": [
+     -15,
+     -5,
+     15,
+     5
+    ],
+    "lm": [
+     0,
+     -5,
+     30,
+     5
+    ],
+    "rm": [
+     -30,
+     -5,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 12,
+   "text": "Hola mundo",
+   "metrics": [
+    13,
+    3
+   ],
+   "length": 57.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     57,
+     0
+    ],
+    "mm": [
+     -29,
+     -4,
+     28,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     57,
+     5
+    ],
+    "rm": [
+     -57,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 12,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    13,
+    3
+   ],
+   "length": 61.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -12,
+     61,
+     0
+    ],
+    "mm": [
+     -32,
+     -7,
+     30,
+     5
+    ],
+    "lm": [
+     -1,
+     -7,
+     61,
+     5
+    ],
+    "rm": [
+     -62,
+     -7,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 12,
+   "text": "AVAV fi",
+   "metrics": [
+    13,
+    3
+   ],
+   "length": 32.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -9,
+     32,
+     0
+    ],
+    "mm": [
+     -17,
+     -4,
+     16,
+     5
+    ],
+    "lm": [
+     -1,
+     -4,
+     32,
+     5
+    ],
+    "rm": [
+     -33,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 12,
+   "text": "",
+   "metrics": [
+    13,
+    3
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 37,
+   "text": "TEXTO",
+   "metrics": [
+    38,
+    8
+   ],
+   "length": 87.0,
+   "bbox": {
+    "ls": [
+     0,
+     -29,
+     87,
+     0
+    ],
+    "mm": [
+     -44,
+     -14,
+     43,
+     15
+    ],
+    "lm": [
+     0,
+     -14,
+     87,
+     15
+    ],
+    "rm": [
+     -87,
+     -14,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 37,
+   "text": "Hola mundo",
+   "metrics": [
+    38,
+    8
+   ],
+   "length": 181.0,
+   "bbox": {
+    "ls": [
+     0,
+     -29,
+     181,
+     0
+    ],
+    "mm": [
+     -91,
+     -14,
+     90,
+     15
+    ],
+    "lm": [
+     0,
+     -14,
+     181,
+     15
+    ],
+    "rm": [
+     -181,
+     -14,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 37,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    38,
+    8
+   ],
+   "length": 192.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -36,
+     192,
+     0
+    ],
+    "mm": [
+     -97,
+     -21,
+     96,
+     15
+    ],
+    "lm": [
+     -1,
+     -21,
+     192,
+     15
+    ],
+    "rm": [
+     -193,
+     -21,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 37,
+   "text": "AVAV fi",
+   "metrics": [
+    38,
+    8
+   ],
+   "length": 103.96875,
+   "bbox": {
+    "ls": [
+     -1,
+     -29,
+     104,
+     0
+    ],
+    "mm": [
+     -53,
+     -14,
+     52,
+     15
+    ],
+    "lm": [
+     -1,
+     -14,
+     104,
+     15
+    ],
+    "rm": [
+     -105,
+     -14,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 37,
+   "text": "",
+   "metrics": [
+    38,
+    8
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 80,
+   "text": "TEXTO",
+   "metrics": [
+    81,
+    17
+   ],
+   "length": 190.0,
+   "bbox": {
+    "ls": [
+     0,
+     -64,
+     190,
+     1
+    ],
+    "mm": [
+     -95,
+     -32,
+     95,
+     33
+    ],
+    "lm": [
+     0,
+     -32,
+     190,
+     33
+    ],
+    "rm": [
+     -190,
+     -32,
+     0,
+     33
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 80,
+   "text": "Hola mundo",
+   "metrics": [
+    81,
+    17
+   ],
+   "length": 390.0,
+   "bbox": {
+    "ls": [
+     0,
+     -63,
+     390,
+     1
+    ],
+    "mm": [
+     -195,
+     -31,
+     195,
+     33
+    ],
+    "lm": [
+     0,
+     -31,
+     390,
+     33
+    ],
+    "rm": [
+     -390,
+     -31,
+     0,
+     33
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 80,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    81,
+    17
+   ],
+   "length": 417.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -76,
+     417,
+     1
+    ],
+    "mm": [
+     -210,
+     -44,
+     208,
+     33
+    ],
+    "lm": [
+     -1,
+     -44,
+     417,
+     33
+    ],
+    "rm": [
+     -418,
+     -44,
+     0,
+     33
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 80,
+   "text": "AVAV fi",
+   "metrics": [
+    81,
+    17
+   ],
+   "length": 224.921875,
+   "bbox": {
+    "ls": [
+     -1,
+     -63,
+     225,
+     0
+    ],
+    "mm": [
+     -113,
+     -31,
+     113,
+     32
+    ],
+    "lm": [
+     -1,
+     -31,
+     225,
+     32
+    ],
+    "rm": [
+     -226,
+     -31,
+     0,
+     32
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 80,
+   "text": "",
+   "metrics": [
+    81,
+    17
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 141,
+   "text": "TEXTO",
+   "metrics": [
+    143,
+    30
+   ],
+   "length": 334.0,
+   "bbox": {
+    "ls": [
+     0,
+     -114,
+     334,
+     2
+    ],
+    "mm": [
+     -167,
+     -57,
+     167,
+     59
+    ],
+    "lm": [
+     0,
+     -57,
+     334,
+     59
+    ],
+    "rm": [
+     -334,
+     -57,
+     0,
+     59
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 141,
+   "text": "Hola mundo",
+   "metrics": [
+    143,
+    30
+   ],
+   "length": 687.0,
+   "bbox": {
+    "ls": [
+     0,
+     -111,
+     687,
+     2
+    ],
+    "mm": [
+     -344,
+     -54,
+     343,
+     59
+    ],
+    "lm": [
+     0,
+     -54,
+     687,
+     59
+    ],
+    "rm": [
+     -687,
+     -54,
+     0,
+     59
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 141,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    143,
+    30
+   ],
+   "length": 733.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -136,
+     733,
+     2
+    ],
+    "mm": [
+     -368,
+     -79,
+     366,
+     59
+    ],
+    "lm": [
+     -1,
+     -79,
+     733,
+     59
+    ],
+    "rm": [
+     -734,
+     -79,
+     0,
+     59
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 141,
+   "text": "AVAV fi",
+   "metrics": [
+    143,
+    30
+   ],
+   "length": 396.875,
+   "bbox": {
+    "ls": [
+     -1,
+     -111,
+     397,
+     0
+    ],
+    "mm": [
+     -199,
+     -54,
+     199,
+     57
+    ],
+    "lm": [
+     -1,
+     -54,
+     397,
+     57
+    ],
+    "rm": [
+     -398,
+     -54,
+     0,
+     57
+    ]
+   }
+  },
+  {
+   "font": "Impact",
+   "bold": false,
+   "size": 141,
+   "text": "",
+   "metrics": [
+    143,
+    30
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 2,
+   "text": "TEXTO",
+   "metrics": [
+    2,
+    1
+   ],
+   "length": 6.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     6,
+     1
+    ],
+    "mm": [
+     -3,
+     -1,
+     3,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     6,
+     2
+    ],
+    "rm": [
+     -6,
+     -1,
+     0,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 2,
+   "text": "Hola mundo",
+   "metrics": [
+    2,
+    1
+   ],
+   "length": 12.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     13,
+     1
+    ],
+    "mm": [
+     -6,
+     -1,
+     7,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     13,
+     2
+    ],
+    "rm": [
+     -12,
+     -1,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 2,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    2,
+    1
+   ],
+   "length": 12.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     13,
+     1
+    ],
+    "mm": [
+     -6,
+     -1,
+     7,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     13,
+     2
+    ],
+    "rm": [
+     -12,
+     -1,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 2,
+   "text": "AVAV fi",
+   "metrics": [
+    2,
+    1
+   ],
+   "length": 7.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     7,
+     0
+    ],
+    "mm": [
+     -4,
+     -1,
+     3,
+     1
+    ],
+    "lm": [
+     0,
+     -1,
+     7,
+     1
+    ],
+    "rm": [
+     -7,
+     -1,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 2,
+   "text": "",
+   "metrics": [
+    2,
+    1
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 11,
+   "text": "TEXTO",
+   "metrics": [
+    11,
+    3
+   ],
+   "length": 37.0,
+   "bbox": {
+    "ls": [
+     0,
+     -8,
+     38,
+     0
+    ],
+    "mm": [
+     -19,
+     -4,
+     19,
+     4
+    ],
+    "lm": [
+     0,
+     -4,
+     38,
+     4
+    ],
+    "rm": [
+     -37,
+     -4,
+     1,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 11,
+   "text": "Hola mundo",
+   "metrics": [
+    11,
+    3
+   ],
+   "length": 66.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     66,
+     0
+    ],
+    "mm": [
+     -33,
+     -5,
+     33,
+     4
+    ],
+    "lm": [
+     0,
+     -5,
+     66,
+     4
+    ],
+    "rm": [
+     -66,
+     -5,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 11,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    11,
+    3
+   ],
+   "length": 73.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -11,
+     73,
+     0
+    ],
+    "mm": [
+     -38,
+     -7,
+     36,
+     4
+    ],
+    "lm": [
+     -1,
+     -7,
+     73,
+     4
+    ],
+    "rm": [
+     -74,
+     -7,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 11,
+   "text": "AVAV fi",
+   "metrics": [
+    11,
+    3
+   ],
+   "length": 40.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -9,
+     40,
+     0
+    ],
+    "mm": [
+     -21,
+     -5,
+     20,
+     4
+    ],
+    "lm": [
+     -1,
+     -5,
+     40,
+     4
+    ],
+    "rm": [
+     -41,
+     -5,
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 11,
+   "text": "",
+   "metrics": [
+    11,
+    3
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 12,
+   "text": "TEXTO",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 38.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     38,
+     0
+    ],
+    "mm": [
+     -19,
+     -4,
+     19,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     38,
+     5
+    ],
+    "rm": [
+     -38,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 12,
+   "text": "Hola mundo",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 73.0,
+   "bbox": {
+    "ls": [
+     0,
+     -10,
+     74,
+     0
+    ],
+    "mm": [
+     -37,
+     -5,
+     37,
+     5
+    ],
+    "lm": [
+     0,
+     -5,
+     74,
+     5
+    ],
+    "rm": [
+     -73,
+     -5,
+     1,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 12,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 79.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -12,
+     79,
+     0
+    ],
+    "mm": [
+     -41,
+     -7,
+     39,
+     5
+    ],
+    "lm": [
+     -1,
+     -7,
+     79,
+     5
+    ],
+    "rm": [
+     -80,
+     -7,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 12,
+   "text": "AVAV fi",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 45.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -10,
+     45,
+     0
+    ],
+    "mm": [
+     -24,
+     -5,
+     22,
+     5
+    ],
+    "lm": [
+     -1,
+     -5,
+     45,
+     5
+    ],
+    "rm": [
+     -46,
+     -5,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 12,
+   "text": "",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 37,
+   "text": "TEXTO",
+   "metrics": [
+    38,
+    8
+   ],
+   "length": 122.0,
+   "bbox": {
+    "ls": [
+     0,
+     -27,
+     122,
+     0
+    ],
+    "mm": [
+     -61,
+     -12,
+     61,
+     15
+    ],
+    "lm": [
+     0,
+     -12,
+     122,
+     15
+    ],
+    "rm": [
+     -122,
+     -12,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 37,
+   "text": "Hola mundo",
+   "metrics": [
+    38,
+    8
+   ],
+   "length": 224.0,
+   "bbox": {
+    "ls": [
+     0,
+     -28,
+     224,
+     0
+    ],
+    "mm": [
+     -112,
+     -13,
+     112,
+     15
+    ],
+    "lm": [
+     0,
+     -13,
+     224,
+     15
+    ],
+    "rm": [
+     -224,
+     -13,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 37,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    38,
+    8
+   ],
+   "length": 244.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -36,
+     244,
+     0
+    ],
+    "mm": [
+     -123,
+     -21,
+     122,
+     15
+    ],
+    "lm": [
+     -1,
+     -21,
+     244,
+     15
+    ],
+    "rm": [
+     -245,
+     -21,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 37,
+   "text": "AVAV fi",
+   "metrics": [
+    38,
+    8
+   ],
+   "length": 136.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -28,
+     136,
+     0
+    ],
+    "mm": [
+     -69,
+     -13,
+     68,
+     15
+    ],
+    "lm": [
+     -1,
+     -13,
+     136,
+     15
+    ],
+    "rm": [
+     -137,
+     -13,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 37,
+   "text": "",
+   "metrics": [
+    38,
+    8
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 80,
+   "text": "TEXTO",
+   "metrics": [
+    81,
+    17
+   ],
+   "length": 264.0,
+   "bbox": {
+    "ls": [
+     0,
+     -59,
+     264,
+     1
+    ],
+    "mm": [
+     -132,
+     -27,
+     132,
+     33
+    ],
+    "lm": [
+     0,
+     -27,
+     264,
+     33
+    ],
+    "rm": [
+     -264,
+     -27,
+     0,
+     33
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 80,
+   "text": "Hola mundo",
+   "metrics": [
+    81,
+    17
+   ],
+   "length": 482.0,
+   "bbox": {
+    "ls": [
+     0,
+     -61,
+     482,
+     1
+    ],
+    "mm": [
+     -241,
+     -29,
+     241,
+     33
+    ],
+    "lm": [
+     0,
+     -29,
+     482,
+     33
+    ],
+    "rm": [
+     -482,
+     -29,
+     0,
+     33
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 80,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    81,
+    17
+   ],
+   "length": 524.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -77,
+     524,
+     1
+    ],
+    "mm": [
+     -263,
+     -45,
+     262,
+     33
+    ],
+    "lm": [
+     -1,
+     -45,
+     524,
+     33
+    ],
+    "rm": [
+     -525,
+     -45,
+     0,
+     33
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 80,
+   "text": "AVAV fi",
+   "metrics": [
+    81,
+    17
+   ],
+   "length": 296.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -61,
+     296,
+     0
+    ],
+    "mm": [
+     -149,
+     -29,
+     148,
+     32
+    ],
+    "lm": [
+     -1,
+     -29,
+     296,
+     32
+    ],
+    "rm": [
+     -297,
+     -29,
+     0,
+     32
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 80,
+   "text": "",
+   "metrics": [
+    81,
+    17
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 141,
+   "text": "TEXTO",
+   "metrics": [
+    142,
+    30
+   ],
+   "length": 465.0,
+   "bbox": {
+    "ls": [
+     0,
+     -105,
+     465,
+     2
+    ],
+    "mm": [
+     -233,
+     -49,
+     232,
+     58
+    ],
+    "lm": [
+     0,
+     -49,
+     465,
+     58
+    ],
+    "rm": [
+     -465,
+     -49,
+     0,
+     58
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 141,
+   "text": "Hola mundo",
+   "metrics": [
+    142,
+    30
+   ],
+   "length": 853.0,
+   "bbox": {
+    "ls": [
+     0,
+     -108,
+     853,
+     2
+    ],
+    "mm": [
+     -427,
+     -52,
+     426,
+     58
+    ],
+    "lm": [
+     0,
+     -52,
+     853,
+     58
+    ],
+    "rm": [
+     -853,
+     -52,
+     0,
+     58
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 141,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    142,
+    30
+   ],
+   "length": 925.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -137,
+     925,
+     2
+    ],
+    "mm": [
+     -464,
+     -81,
+     462,
+     58
+    ],
+    "lm": [
+     -1,
+     -81,
+     925,
+     58
+    ],
+    "rm": [
+     -926,
+     -81,
+     0,
+     58
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 141,
+   "text": "AVAV fi",
+   "metrics": [
+    142,
+    30
+   ],
+   "length": 522.0,
+   "bbox": {
+    "ls": [
+     -1,
+     -108,
+     522,
+     0
+    ],
+    "mm": [
+     -262,
+     -52,
+     261,
+     56
+    ],
+    "lm": [
+     -1,
+     -52,
+     522,
+     56
+    ],
+    "rm": [
+     -523,
+     -52,
+     0,
+     56
+    ]
+   }
+  },
+  {
+   "font": "Tahoma",
+   "bold": true,
+   "size": 141,
+   "text": "",
+   "metrics": [
+    142,
+    30
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 2,
+   "text": "TEXTO",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 6.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     6,
+     1
+    ],
+    "mm": [
+     -3,
+     -1,
+     3,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     6,
+     2
+    ],
+    "rm": [
+     -6,
+     -1,
+     0,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 2,
+   "text": "Hola mundo",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 12.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     13,
+     1
+    ],
+    "mm": [
+     -6,
+     -1,
+     7,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     13,
+     2
+    ],
+    "rm": [
+     -12,
+     -1,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 2,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 13.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     14,
+     1
+    ],
+    "mm": [
+     -7,
+     -1,
+     7,
+     2
+    ],
+    "lm": [
+     0,
+     -1,
+     14,
+     2
+    ],
+    "rm": [
+     -13,
+     -1,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 2,
+   "text": "AVAV fi",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 9.0,
+   "bbox": {
+    "ls": [
+     0,
+     -2,
+     9,
+     0
+    ],
+    "mm": [
+     -5,
+     -1,
+     4,
+     1
+    ],
+    "lm": [
+     0,
+     -1,
+     9,
+     1
+    ],
+    "rm": [
+     -9,
+     -1,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 2,
+   "text": "",
+   "metrics": [
+    3,
+    1
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 11,
+   "text": "TEXTO",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 36.0,
+   "bbox": {
+    "ls": [
+     0,
+     -8,
+     37,
+     0
+    ],
+    "mm": [
+     -18,
+     -3,
+     19,
+     5
+    ],
+    "lm": [
+     0,
+     -3,
+     37,
+     5
+    ],
+    "rm": [
+     -36,
+     -3,
+     1,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 11,
+   "text": "Hola mundo",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 66.0,
+   "bbox": {
+    "ls": [
+     0,
+     -8,
+     66,
+     0
+    ],
+    "mm": [
+     -33,
+     -3,
+     33,
+     5
+    ],
+    "lm": [
+     0,
+     -3,
+     66,
+     5
+    ],
+    "rm": [
+     -66,
+     -3,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 11,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 73.0,
+   "bbox": {
+    "ls": [
+     0,
+     -11,
+     73,
+     0
+    ],
+    "mm": [
+     -37,
+     -6,
+     36,
+     5
+    ],
+    "lm": [
+     0,
+     -6,
+     73,
+     5
+    ],
+    "rm": [
+     -73,
+     -6,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 11,
+   "text": "AVAV fi",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 43.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     43,
+     0
+    ],
+    "mm": [
+     -22,
+     -4,
+     21,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     43,
+     5
+    ],
+    "rm": [
+     -43,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 11,
+   "text": "",
+   "metrics": [
+    12,
+    3
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 12,
+   "text": "TEXTO",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 40.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     40,
+     0
+    ],
+    "mm": [
+     -20,
+     -4,
+     20,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     40,
+     5
+    ],
+    "rm": [
+     -40,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 12,
+   "text": "Hola mundo",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 75.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     75,
+     0
+    ],
+    "mm": [
+     -38,
+     -4,
+     37,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     75,
+     5
+    ],
+    "rm": [
+     -75,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 12,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 82.0,
+   "bbox": {
+    "ls": [
+     0,
+     -12,
+     82,
+     0
+    ],
+    "mm": [
+     -41,
+     -7,
+     41,
+     5
+    ],
+    "lm": [
+     0,
+     -7,
+     82,
+     5
+    ],
+    "rm": [
+     -82,
+     -7,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 12,
+   "text": "AVAV fi",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 46.0,
+   "bbox": {
+    "ls": [
+     0,
+     -9,
+     46,
+     0
+    ],
+    "mm": [
+     -23,
+     -4,
+     23,
+     5
+    ],
+    "lm": [
+     0,
+     -4,
+     46,
+     5
+    ],
+    "rm": [
+     -46,
+     -4,
+     0,
+     5
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 12,
+   "text": "",
+   "metrics": [
+    13,
+    4
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 37,
+   "text": "TEXTO",
+   "metrics": [
+    40,
+    10
+   ],
+   "length": 122.0,
+   "bbox": {
+    "ls": [
+     0,
+     -26,
+     122,
+     0
+    ],
+    "mm": [
+     -61,
+     -11,
+     61,
+     15
+    ],
+    "lm": [
+     0,
+     -11,
+     122,
+     15
+    ],
+    "rm": [
+     -122,
+     -11,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 37,
+   "text": "Hola mundo",
+   "metrics": [
+    40,
+    10
+   ],
+   "length": 223.0,
+   "bbox": {
+    "ls": [
+     0,
+     -27,
+     223,
+     0
+    ],
+    "mm": [
+     -112,
+     -12,
+     111,
+     15
+    ],
+    "lm": [
+     0,
+     -12,
+     223,
+     15
+    ],
+    "rm": [
+     -223,
+     -12,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 37,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    40,
+    10
+   ],
+   "length": 244.0,
+   "bbox": {
+    "ls": [
+     0,
+     -35,
+     244,
+     0
+    ],
+    "mm": [
+     -122,
+     -20,
+     122,
+     15
+    ],
+    "lm": [
+     0,
+     -20,
+     244,
+     15
+    ],
+    "rm": [
+     -244,
+     -20,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 37,
+   "text": "AVAV fi",
+   "metrics": [
+    40,
+    10
+   ],
+   "length": 145.0,
+   "bbox": {
+    "ls": [
+     0,
+     -28,
+     145,
+     0
+    ],
+    "mm": [
+     -73,
+     -13,
+     72,
+     15
+    ],
+    "lm": [
+     0,
+     -13,
+     145,
+     15
+    ],
+    "rm": [
+     -145,
+     -13,
+     0,
+     15
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 37,
+   "text": "",
+   "metrics": [
+    40,
+    10
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 80,
+   "text": "TEXTO",
+   "metrics": [
+    87,
+    21
+   ],
+   "length": 263.0,
+   "bbox": {
+    "ls": [
+     0,
+     -57,
+     263,
+     1
+    ],
+    "mm": [
+     -132,
+     -24,
+     131,
+     34
+    ],
+    "lm": [
+     0,
+     -24,
+     263,
+     34
+    ],
+    "rm": [
+     -263,
+     -24,
+     0,
+     34
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 80,
+   "text": "Hola mundo",
+   "metrics": [
+    87,
+    21
+   ],
+   "length": 485.0,
+   "bbox": {
+    "ls": [
+     0,
+     -59,
+     485,
+     1
+    ],
+    "mm": [
+     -243,
+     -26,
+     242,
+     34
+    ],
+    "lm": [
+     0,
+     -26,
+     485,
+     34
+    ],
+    "rm": [
+     -485,
+     -26,
+     0,
+     34
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 80,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    87,
+    21
+   ],
+   "length": 530.0,
+   "bbox": {
+    "ls": [
+     0,
+     -75,
+     530,
+     1
+    ],
+    "mm": [
+     -265,
+     -42,
+     265,
+     34
+    ],
+    "lm": [
+     0,
+     -42,
+     530,
+     34
+    ],
+    "rm": [
+     -530,
+     -42,
+     0,
+     34
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 80,
+   "text": "AVAV fi",
+   "metrics": [
+    87,
+    21
+   ],
+   "length": 314.0,
+   "bbox": {
+    "ls": [
+     0,
+     -60,
+     314,
+     0
+    ],
+    "mm": [
+     -157,
+     -27,
+     157,
+     33
+    ],
+    "lm": [
+     0,
+     -27,
+     314,
+     33
+    ],
+    "rm": [
+     -314,
+     -27,
+     0,
+     33
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 80,
+   "text": "",
+   "metrics": [
+    87,
+    21
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 141,
+   "text": "TEXTO",
+   "metrics": [
+    153,
+    36
+   ],
+   "length": 465.0,
+   "bbox": {
+    "ls": [
+     0,
+     -100,
+     465,
+     2
+    ],
+    "mm": [
+     -233,
+     -41,
+     232,
+     61
+    ],
+    "lm": [
+     0,
+     -41,
+     465,
+     61
+    ],
+    "rm": [
+     -465,
+     -41,
+     0,
+     61
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 141,
+   "text": "Hola mundo",
+   "metrics": [
+    153,
+    36
+   ],
+   "length": 853.0,
+   "bbox": {
+    "ls": [
+     0,
+     -104,
+     853,
+     2
+    ],
+    "mm": [
+     -427,
+     -45,
+     426,
+     61
+    ],
+    "lm": [
+     0,
+     -45,
+     853,
+     61
+    ],
+    "rm": [
+     -853,
+     -45,
+     0,
+     61
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 141,
+   "text": "Añoró Ñandú",
+   "metrics": [
+    153,
+    36
+   ],
+   "length": 933.0,
+   "bbox": {
+    "ls": [
+     0,
+     -132,
+     933,
+     2
+    ],
+    "mm": [
+     -467,
+     -73,
+     466,
+     61
+    ],
+    "lm": [
+     0,
+     -73,
+     933,
+     61
+    ],
+    "rm": [
+     -933,
+     -73,
+     0,
+     61
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 141,
+   "text": "AVAV fi",
+   "metrics": [
+    153,
+    36
+   ],
+   "length": 553.0,
+   "bbox": {
+    "ls": [
+     0,
+     -106,
+     553,
+     0
+    ],
+    "mm": [
+     -277,
+     -47,
+     276,
+     59
+    ],
+    "lm": [
+     0,
+     -47,
+     553,
+     59
+    ],
+    "rm": [
+     -553,
+     -47,
+     0,
+     59
+    ]
+   }
+  },
+  {
+   "font": "Segoe UI Black",
+   "bold": true,
+   "size": 141,
+   "text": "",
+   "metrics": [
+    153,
+    36
+   ],
+   "length": 0.0,
+   "bbox": {
+    "ls": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "mm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "lm": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "rm": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  }
+ ]
+}

@@ -208,8 +208,12 @@ TEST_CASE("paridad del render: el texto frente al de libass en el export", "[par
         if (c.contains("divergence")) {
             // el export se aparta de lo que pide el texto (decisión de Edu): solo se dibuja
             UNSCOPED_INFO("  divergencia: " << c.at("divergence").get<std::string>());
+        } else if (c.contains("loose")) {
+            // el export se aparta un poco (decisión de Edu): solo el PSNR que perdona 1 px
+            UNSCOPED_INFO("  se aparta un poco: " << c.at("loose").get<std::string>());
+            CHECK(tolerant >= 30.0);
         } else {
-            CHECK(psnr >= 16.0);
+            CHECK(psnr >= c.value("min_psnr", 16.0)); // algunas escenas, con su suelo propio
             CHECK(tolerant >= 30.0);
         }
         ++cases;

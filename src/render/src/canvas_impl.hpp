@@ -7,6 +7,7 @@
 #include "gc/render/canvas.hpp"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkColorFilter.h"
+#include "include/core/SkImage.h"
 #include "include/core/SkSurface.h"
 
 namespace gc::render {
@@ -23,6 +24,8 @@ struct Canvas::Impl {
 
 struct CanvasAccess {
     [[nodiscard]] static SkCanvas* sk(Canvas& canvas) { return canvas.impl_->surface->getCanvas(); }
+    // Lo dibujado hasta ahora, como imagen de Skia (premultiplicada).
+    [[nodiscard]] static sk_sp<SkImage> image(Canvas& canvas) { return canvas.impl_->surface->makeImageSnapshot(); }
 };
 
 } // namespace gc::render
