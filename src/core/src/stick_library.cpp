@@ -713,7 +713,8 @@ Result<Json> create_stick(const std::optional<fs::path>& base, const Json& name,
         }
 
         std::optional<std::int64_t> top;
-        for (const Json& s : list_of(base).at("sticks")) {
+        const Json listed = list_of(base); // con GCC 13/14 el temporal no vive el bucle (P2718)
+        for (const Json& s : listed.at("sticks")) {
             if (const auto order = s.at("order").get<std::int64_t>(); order < kNoOrder) {
                 top = std::max(top.value_or(order), order);
             }
