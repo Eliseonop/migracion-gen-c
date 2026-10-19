@@ -12,6 +12,7 @@
 #include <string_view>
 #include <vector>
 
+#include "gc/core/ids.hpp"
 #include "gc/core/json.hpp"
 #include "gc/core/model.hpp"
 #include "gc/core/timeline_ui.hpp"
@@ -40,6 +41,16 @@ enum class AlignEdge { Start, End, Both };
 // Marcadores y beats como puntos de imán (sin los beats de `exclude` ni de clips desactivados).
 [[nodiscard]] std::vector<AlignClip> snap_targets(const std::vector<Json>& markers, const ClipList& clips,
                                                   std::span<const std::string> exclude = {});
+
+// normalizeMarkers: {id, t ≥ 0 con 3 decimales, label (60 unidades UTF-16), color}, por tiempo. Un
+// marcador sin id recibe uno de `ids`.
+[[nodiscard]] std::vector<Json> normalize_markers(const std::vector<Json>& markers, IdSource& ids);
+// toggleMarkerAt: quita el marcador que haya a menos de medio fotograma de `t` o pone uno en `t`.
+[[nodiscard]] std::vector<Json> toggle_marker_at(const std::vector<Json>& markers, double t, double fps,
+                                                 IdSource& ids);
+// nextSnapTime: el siguiente (dir > 0) o el anterior marcador o beat desde `t`.
+[[nodiscard]] std::optional<double> next_snap_time(const std::vector<Json>& markers, const ClipList& clips,
+                                                   double t, int dir);
 
 // Instantes donde un borde de lo que se mueve coincide con un borde de otra pista.
 [[nodiscard]] std::vector<double> timeline_align_hits(std::span<const AlignClip> moving,

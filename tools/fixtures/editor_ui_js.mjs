@@ -77,6 +77,9 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     newTrackIndex: (kind, side) => drop.newTrackIndex(tracks, kind, side),
     slotBoundary: (slot) => drop.slotBoundary(tracks, slot),
     slotIndex: (slot) => drop.slotIndex(tracks, slot),
+    normalizeMarkers: (list) => beats.normalizeMarkers(list).map((x) => [x.t, x.label ?? null, x.color ?? null]),
+    toggleMarkerAt: (t, fps) => beats.toggleMarkerAt(markers, t, fps).map((x) => x.t),
+    nextSnapTime: (t, dir) => beats.nextSnapTime(markers, clips, t, dir),
     emptiedTracks: (candidates) => m.emptiedTracks(tracks, clips, candidates),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)

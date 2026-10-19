@@ -296,6 +296,21 @@ Rectangle {
                     }
                 }
             }
+            Repeater {
+                model: timeline.model.markers
+                Rectangle {
+                    required property var modelData
+                    x: modelData.t * timeline.pps - flick.contentX - 4
+                    y: 2
+                    width: 8
+                    height: 8
+                    rotation: 45
+                    color: modelData.color
+                    ToolTip.visible: markerHover.hovered && !!modelData.label
+                    ToolTip.text: modelData.label
+                    HoverHandler { id: markerHover }
+                }
+            }
             Rectangle {
                 x: timeline.model.playhead * timeline.pps - flick.contentX - 5
                 y: ruler.height - 10

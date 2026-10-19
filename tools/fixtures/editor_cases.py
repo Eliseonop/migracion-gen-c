@@ -140,6 +140,11 @@ def _calls(rng: random.Random, tl: dict) -> list:
         if rng.random() < 0.5:
             q["pointerTime"] = round(rng.uniform(0, 20), 3)
         calls.append(["dropTarget", q])
+    for _ in range(6):
+        calls.append(["toggleMarkerAt", rng.choice([round(rng.uniform(0, 20), 3), 3.5, 3.51, 3.52]), rng.choice([30, 24, 60, 0])])
+        calls.append(["nextSnapTime", round(rng.uniform(-1, 20), 3), rng.choice([1, -1])])
+    calls.append(["normalizeMarkers", [{"id": "a", "t": "2", "label": "x" * 70, "color": "#fff"}, {"t": -4, "label": "ñ😀" * 40},
+                                       {"id": 7, "t": 1e-4, "label": 0, "color": ""}, None, 5, {"id": "z", "t": None, "label": True}]])
     for _ in range(4):
         calls.append(["emptiedTracks", rng.sample(track_ids + ["nada"], k=rng.randint(0, len(track_ids)))])
     for kind in ("video", "text", "audio"):

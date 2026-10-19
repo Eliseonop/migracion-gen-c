@@ -550,6 +550,62 @@ void EditorModel::duplicateSelection() {
     group.commit();
 }
 
+QVariantList EditorModel::markers() const {
+    QVariantList out;
+    if (!session_) {
+        return out;
+    }
+    const auto text = [](const Json& m, const char* key, const char* fallback) {
+        return qstr(m.contains(key) && m.at(key).is_string() ? m.at(key).get<std::string>() : fallback);
+    };
+    for (const Json& m : session_->timeline()->markers) {
+        if (m.is_object() && m.contains("t") && m.at("t").is_number()) {
+            out << QVariantMap{{"id", text(m, "id", "")},
+                               {"t", m.at("t").get<double>()},
+                               {"label", text(m, "label", "")},
+                               {"color", text(m, "color", "#38bdf8")}};
+        }
+    }
+    return out;
+}
+
+void EditorModel::toggleDisabled() {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    const core::TimelineClip* primary = clip(qstr(selection_.anchor.value_or(selection_.ids.front())));
+    const bool off = !(primary && primary->disabled);
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if (std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            c.mut().disabled = off;
+        }
+    }
+    commit(std::move(next), "disable", selection_.ids);
+}
+
+void EditorModel::toggleMarker() {
+    if (!session_) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    next.markers = core::toggle_marker_at(next.markers, playhead_, fps(), ids_);
+    session_->replace(std::move(next), "markers", {});
+}
+
+void EditorModel::jumpSnap(int dir) {
+    if (session_) {
+        if (const auto t = core::next_snap_time(session_->timeline()->markers, session_->timeline()->clips,
+                                                playhead_, dir)) {
+            setPlayhead(*t);
+        }
+    }
+}
+
+void EditorModel::nudgePlayhead(double dt) {
+    setPlayhead(std::clamp(playhead_ + dt, 0.0, duration()));
+}
+
 void EditorModel::undo() {
     if (session_) {
         session_->undo();

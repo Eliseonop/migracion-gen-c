@@ -30,6 +30,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(double duration READ duration NOTIFY timelineChanged)
     Q_PROPERTY(int fps READ fps NOTIFY timelineChanged)
     Q_PROPERTY(double aspect READ aspect NOTIFY timelineChanged)
+    Q_PROPERTY(QVariantList markers READ markers NOTIFY timelineChanged)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
@@ -50,6 +51,7 @@ public:
     // Las filas de clipModel (para los tests).
     [[nodiscard]] QVariantList clips() const;
     [[nodiscard]] double duration() const;
+    [[nodiscard]] QVariantList markers() const;
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
@@ -83,6 +85,12 @@ public:
     Q_INVOKABLE void splitAtPlayhead();
     Q_INVOKABLE void deleteSelection();
     Q_INVOKABLE void duplicateSelection();
+    // Atajos de VideoEditor.jsx: V (desactivar la selección), M (marcador en el cabezal), «,» y «.»
+    // (anterior y siguiente marcador o beat) y las flechas (0,1 s; con Shift, 1 s).
+    Q_INVOKABLE void toggleDisabled();
+    Q_INVOKABLE void toggleMarker();
+    Q_INVOKABLE void jumpSnap(int dir);
+    Q_INVOKABLE void nudgePlayhead(double dt);
     Q_INVOKABLE void undo();
     Q_INVOKABLE void redo();
 

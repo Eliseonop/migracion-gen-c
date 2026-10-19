@@ -14,6 +14,36 @@ Item {
     Shortcut { sequence: "S"; enabled: editor.visible; onActivated: editor.model.splitAtPlayhead() }
     Shortcut { sequence: "Ctrl+D"; enabled: editor.visible; onActivated: editor.model.duplicateSelection() }
     Shortcut { sequence: "Escape"; enabled: editor.visible; onActivated: editor.model.clearSelection() }
+    Shortcut { sequence: "Space"; enabled: editor.visible; onActivated: editor.playing = !editor.playing }
+    Shortcut { sequence: "Left"; enabled: editor.visible; onActivated: editor.model.nudgePlayhead(-0.1) }
+    Shortcut { sequence: "Right"; enabled: editor.visible; onActivated: editor.model.nudgePlayhead(0.1) }
+    Shortcut { sequence: "Shift+Left"; enabled: editor.visible; onActivated: editor.model.nudgePlayhead(-1) }
+    Shortcut { sequence: "Shift+Right"; enabled: editor.visible; onActivated: editor.model.nudgePlayhead(1) }
+    Shortcut { sequence: "V"; enabled: editor.visible; onActivated: editor.model.toggleDisabled() }
+    Shortcut { sequence: "M"; enabled: editor.visible; onActivated: editor.model.toggleMarker() }
+    Shortcut { sequence: ","; enabled: editor.visible; onActivated: editor.model.jumpSnap(-1) }
+    Shortcut { sequence: "."; enabled: editor.visible; onActivated: editor.model.jumpSnap(1) }
+
+    // Reproducir sin vídeo todavía: el cabezal avanza en tiempo real hasta el final.
+    property bool playing: false
+    Timer {
+        interval: 16
+        repeat: true
+        running: editor.playing && editor.visible
+        property double last: 0
+        onRunningChanged: last = Date.now()
+        onTriggered: {
+            const now = Date.now()
+            const next = editor.model.playhead + (now - last) / 1000
+            last = now
+            if (next >= editor.model.duration) {
+                editor.model.playhead = editor.model.duration
+                editor.playing = false
+            } else {
+                editor.model.playhead = next
+            }
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -39,6 +69,8 @@ Item {
             }
             IconButton { text: "↶"; tip: "Deshacer (Ctrl+Z)"; enabled: editor.model.canUndo; onClicked: editor.model.undo() }
             IconButton { text: "↷"; tip: "Rehacer (Ctrl+Y)"; enabled: editor.model.canRedo; onClicked: editor.model.redo() }
+            IconButton { text: editor.playing ? "⏸" : "▶"; tip: "Reproducir (Espacio)"; onClicked: editor.playing = !editor.playing }
+            IconButton { text: "⚑"; tip: "Marcador en el cabezal (M)"; onClicked: editor.model.toggleMarker() }
             IconButton { text: "✂"; tip: "Cortar en el cabezal (S)"; onClicked: editor.model.splitAtPlayhead() }
             IconButton {
                 text: "⧉"; tip: "Duplicar (Ctrl+D)"

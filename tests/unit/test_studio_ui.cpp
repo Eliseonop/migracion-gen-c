@@ -161,3 +161,29 @@ TEST_CASE("studio sin pantalla: arrastrar a la fila de encima cambia de pista; S
     QTest::keyClick(s.window, Qt::Key_Delete);
     CHECK(s.editor->clips().size() == 2);
 }
+
+TEST_CASE("studio sin pantalla: atajos del editor (M, «,» y «.», flechas, V)", "[studio][ui]") {
+    Studio s;
+    s.editor->setPlayhead(1);
+    QTest::keyClick(s.window, Qt::Key_M);
+    s.editor->setPlayhead(3);
+    QTest::keyClick(s.window, Qt::Key_M);
+    REQUIRE(s.editor->markers().size() == 2);
+    QTest::keyClick(s.window, Qt::Key_Comma);
+    CHECK(s.editor->playhead() == 1.0);
+    QTest::keyClick(s.window, Qt::Key_Period);
+    CHECK(s.editor->playhead() == 3.0);
+    QTest::keyClick(s.window, Qt::Key_M); // otra vez en el mismo sitio: lo quita
+    CHECK(s.editor->markers().size() == 1);
+    QTest::keyClick(s.window, Qt::Key_Right, Qt::ShiftModifier);
+    CHECK(s.editor->playhead() == 4.0);
+    QTest::keyClick(s.window, Qt::Key_Left);
+    CHECK(std::abs(s.editor->playhead() - 3.9) < 1e-9);
+
+    QTest::mouseClick(s.window, Qt::LeftButton, {}, s.at("a", 0.5));
+    QCoreApplication::processEvents();
+    QTest::keyClick(s.window, Qt::Key_V);
+    CHECK(s.view("a")["disabled"] == true);
+    QTest::keyClick(s.window, Qt::Key_V);
+    CHECK(s.view("a")["disabled"] == false);
+}

@@ -316,6 +316,25 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "slotIndex") {
         return slot_index(tl.tracks, slot_from(call.at(1)));
     }
+    if (fn == "normalizeMarkers" || fn == "toggleMarkerAt") {
+        SequentialIdSource ids;
+        const auto list = fn == "normalizeMarkers"
+                              ? normalize_markers(call.at(1).get<std::vector<Json>>(), ids)
+                              : toggle_marker_at(tl.markers, num(1), num(2), ids);
+        Json out = Json::array();
+        for (const Json& m : list) {
+            if (fn == "toggleMarkerAt") {
+                out.push_back(m.at("t"));
+            } else {
+                out.push_back({m.at("t"), m.value("label", Json()), m.value("color", Json())});
+            }
+        }
+        return out;
+    }
+    if (fn == "nextSnapTime") {
+        const auto t = next_snap_time(tl.markers, tl.clips, num(1), call.at(2).get<int>());
+        return t ? Json(*t) : Json();
+    }
     if (fn == "emptiedTracks") {
         return emptied_tracks(tl.tracks, tl.clips, strings(call.at(1)));
     }

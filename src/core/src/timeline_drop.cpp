@@ -179,6 +179,103 @@ std::vector<double> clip_beat_times(const TimelineClip& clip) {
     return out;
 }
 
+namespace {
+
+// String(x) de JS para lo que llega en un JSON (texto tal cual; números y booleanos como JS).
+std::string js_string(const Json& v) {
+    if (v.is_string()) {
+        return v.get<std::string>();
+    }
+    if (v.is_boolean()) {
+        return v.get<bool>() ? "true" : "false";
+    }
+    return v.dump();
+}
+
+bool js_truthy(const Json& v) {
+    if (v.is_null()) {
+        return false;
+    }
+    if (v.is_boolean()) {
+        return v.get<bool>();
+    }
+    if (v.is_number()) {
+        const double n = v.get<double>();
+        return n != 0 && !std::isnan(n);
+    }
+    if (v.is_string()) {
+        return !v.get_ref<const std::string&>().empty();
+    }
+    return true;
+}
+
+// .slice(0, n) en unidades UTF-16 (un carácter fuera del plano básico cuenta 2 y no se parte).
+std::string slice_utf16(const std::string& s, std::size_t n) {
+    std::size_t units = 0;
+    std::size_t i = 0;
+    while (i < s.size()) {
+        const auto lead = static_cast<unsigned char>(s[i]);
+        const std::size_t len = lead < 0x80 ? 1 : lead < 0xE0 ? 2 : lead < 0xF0 ? 3 : 4;
+        const std::size_t width = len == 4 ? 2 : 1;
+        if (units + width > n) {
+            break;
+        }
+        units += width;
+        i += len;
+    }
+    return s.substr(0, std::min(i, s.size()));
+}
+
+} // namespace
+
+std::vector<Json> normalize_markers(const std::vector<Json>& markers, IdSource& ids) {
+    std::vector<Json> out;
+    for (const Json& m : markers) {
+        const Json none;
+        const auto field = [&](const char* key) -> const Json& {
+            return m.is_object() && m.contains(key) ? m.at(key) : none;
+        };
+        Json n = Json::object();
+        n["id"] = js_truthy(field("id")) ? js_string(field("id")) : make_uid(ids, "m");
+        n["t"] =
+            js_fixed3(std::max(0.0, or_zero(m.is_object() && m.contains("t") ? js_number(m.at("t")) : 0)));
+        if (js_truthy(field("label"))) {
+            n["label"] = slice_utf16(js_string(field("label")), 60);
+        }
+        if (js_truthy(field("color"))) {
+            n["color"] = js_string(field("color"));
+        }
+        out.push_back(std::move(n));
+    }
+    std::ranges::stable_sort(out, {}, [](const Json& m) { return m.at("t").get<double>(); });
+    return out;
+}
+
+std::vector<Json> toggle_marker_at(const std::vector<Json>& markers, double t, double fps, IdSource& ids) {
+    std::vector<Json> list = normalize_markers(markers, ids);
+    const double tol = 0.5 / (or_zero(fps) == 0 ? 30 : fps) + 1e-6;
+    const auto hit = std::ranges::find_if(
+        list, [&](const Json& m) { return std::abs(m.at("t").get<double>() - t) <= tol; });
+    if (hit != list.end()) {
+        list.erase(hit);
+        return list;
+    }
+    list.push_back({{"id", make_uid(ids, "m")}, {"t", t}});
+    return normalize_markers(list, ids);
+}
+
+std::optional<double> next_snap_time(const std::vector<Json>& markers, const ClipList& clips, double t,
+                                     int dir) {
+    std::optional<double> best;
+    for (const AlignClip& p : snap_targets(markers, clips)) {
+        const bool after = dir > 0 ? p.start > t + 1e-3 : p.start < t - 1e-3;
+        if (after && (!best || (dir > 0 ? p.start < *best : p.start > *best))) {
+            best = p.start;
+        }
+    }
+    return best;
+}
+
 std::vector<AlignClip> snap_targets(const std::vector<Json>& markers, const ClipList& clips,
                                     std::span<const std::string> exclude) {
     std::vector<double> marks;
