@@ -547,6 +547,32 @@ def _fragment_case(rng: random.Random) -> dict:
     return {"name": "fragmentar", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
 
 
+def _sfx_name_case() -> dict:
+    """Los borradores del modal de SFX (lib/sfxName.js)."""
+    cats = [{"id": "01_IMPACTOS", "label": "Impactos", "count": 3}, {"id": "favoritos", "label": "Favoritos"},
+            {"id": "02_AIRE"}, {"id": "", "label": "sin id"}, None, {"id": "03_ÑU", "label": "Ñandú Σ", "count": 0},
+            {"id": 7, "label": ""}]
+    calls: list = []
+    for name in ("golpe.mp3", "a/b/c.wav", "C:\\x\\y.ogg", ".hidden", "sin_ext", "  dos.puntos.mp3  ", "",
+                 None, 5, "x/\nb/c.mp3", "dir/", "ñandú ü.flac", "a.", "/"):
+        calls.append(["sfxNameFromFile", name])
+    calls += [["realSfxCategories", cats], ["realSfxCategories", None], ["realSfxCategories", []]]
+    for cat in ({"id": "02_AIRE", "label": "Aire"}, {"id": "nueva", "count": None}, {"id": "favoritos"}, {"label": "x"},
+                None, {"id": "01_IMPACTOS", "label": "", "count": 9}, {"id": 7, "label": "siete"}):
+        calls.append(["upsertSfxCategory", cats, cat])
+    for text in ("impactos", "  IMPACTOS ", "01_impactos", "02_aire", "ñandú σ", "Ñandú Σ", "nueva cosa", "", "   ",
+                 None, 7, "7", "favoritos"):
+        calls.append(["matchSfxCategory", text, [c for c in cats if c is not None]])
+    for sfx in ({"id": "01_IMPACTOS/golpe.mp3", "name": "Golpe", "folder": "01_IMPACTOS", "category": "Impactos",
+                 "uso": "caídas", "url": "/api/sfx/file/x"}, {}, None, {"id": "", "name": None, "uso": 0}):
+        calls.append(["sfxDraftFromSaved", sfx])
+    for row in ({"name": "  Golpe ", "categoryId": " 01_IMPACTOS ", "uso": " x "}, {"name": None, "categoryId": "",
+                 "categoryLabel": "impactos"}, {"categoryLabel": "Otra nueva"}, {}, None,
+                {"name": 5, "categoryId": 0, "categoryLabel": "  ", "uso": None}):
+        calls.append(["sfxSavePayload", row, [c for c in cats if c is not None]])
+    return {"name": "sfx", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
+
+
 def _crop_case(rng: random.Random) -> dict:
     """Confirmar el modal Recortar (confirmCrop)."""
     clips = [clip("st", "V1", start=0, inp=1, out=6, layout="overlay"),
@@ -593,5 +619,6 @@ def cases() -> list[dict]:
     out.append(_mask_case(rng))
     out.append(_fragment_case(rng))
     out.append(_crop_case(rng))
+    out.append(_sfx_name_case())
     out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
     return out

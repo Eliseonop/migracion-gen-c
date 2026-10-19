@@ -59,6 +59,7 @@ add_library(gc_core
     src/session.cpp
     src/settings.cpp
     src/sfx_disk.cpp
+    src/sfx_name.cpp
     src/sfx_library.cpp
     src/stick_library.cpp
     src/timeline_rules.cpp

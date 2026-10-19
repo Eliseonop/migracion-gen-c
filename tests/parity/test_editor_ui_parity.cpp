@@ -17,6 +17,7 @@
 #include "gc/core/mask_edit.hpp"
 #include "gc/core/material_drop.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/sfx_name.hpp"
 #include "gc/core/shapes.hpp"
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_drop.hpp"
@@ -635,6 +636,24 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         TimelineClip c = clip(call.at(1));
         toggle_style_kf(c, call.at(2), num(4), strings(call.at(3)), num(5), ids);
         return c.keyframes ? without_ids(*c.keyframes) : Json();
+    }
+    if (fn == "sfxNameFromFile") {
+        return sfx_name_from_file(call.at(1));
+    }
+    if (fn == "realSfxCategories") {
+        return real_sfx_categories(call.at(1));
+    }
+    if (fn == "upsertSfxCategory") {
+        return upsert_sfx_category(call.at(1), call.at(2));
+    }
+    if (fn == "matchSfxCategory") {
+        return match_sfx_category(call.at(1), call.at(2));
+    }
+    if (fn == "sfxDraftFromSaved") {
+        return sfx_draft_from_saved(call.at(1));
+    }
+    if (fn == "sfxSavePayload") {
+        return sfx_save_payload(call.at(1), call.at(2));
     }
     if (fn == "normalizeFavorites") {
         return normalize_favorites(call.at(1));

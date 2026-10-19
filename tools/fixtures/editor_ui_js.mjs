@@ -28,6 +28,7 @@ const themes = await load('lib/subtitleThemes.js')
 const fxRuntime = await load('fx/core/runtime.js')
 const maskLib = await load('lib/clipMask.js')
 const favorites = await load('lib/favorites.js')
+const sfxName = await load('lib/sfxName.js')
 const projectFps = await load('lib/projectFps.js')
 // confirmCrop de VideoEditor.jsx (con changeReframe, upsertKeyframe, changeTransform y srcTOf) sobre un clip.
 const confirmCrop = (clip, crop, rotation, t, fps) => {
@@ -299,6 +300,12 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     styleKfState: (id, t, keys, fps) => kf.styleKfState(byId(id), t, keys, fps),
     toggleStyleKf: (id, trackStyle, keys, t, fps) => noIds(toggleStyleKf(byId(id), trackStyle, keys, t, fps)).keyframes ?? null,
     normalizeFavorites: (raw) => favorites.normalizeFavorites(raw),
+    sfxNameFromFile: (name) => sfxName.sfxNameFromFile(name),
+    realSfxCategories: (cats) => sfxName.realSfxCategories(cats),
+    upsertSfxCategory: (cats, cat) => sfxName.upsertSfxCategory(cats, cat),
+    matchSfxCategory: (text, cats) => sfxName.matchSfxCategory(text, cats),
+    sfxDraftFromSaved: (sfx) => sfxName.sfxDraftFromSaved(sfx),
+    sfxSavePayload: (row, cats) => sfxName.sfxSavePayload(row, cats),
     nameTextStyleFavorite: (st, existing) => favorites.nameTextStyleFavorite(st, existing),
     splitClipByMaxWords: (id, n) => m.splitClipByMaxWords(byId(id), n).map(({ id: _, asset_id: __, ...rest }) => rest),
     splitTrackText: (track, n) => m.splitTrackTextByMaxWords(clips, track, n).map((c) => [c.text ?? null, c.start, c.out_point]),

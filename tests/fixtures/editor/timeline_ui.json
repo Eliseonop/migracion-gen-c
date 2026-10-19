@@ -716699,6 +716699,1362 @@
    ]
   },
   {
+   "name": "sfx",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "A1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [],
+    "markers": []
+   },
+   "calls": [
+    [
+     "sfxNameFromFile",
+     "golpe.mp3"
+    ],
+    [
+     "sfxNameFromFile",
+     "a/b/c.wav"
+    ],
+    [
+     "sfxNameFromFile",
+     "C:\\x\\y.ogg"
+    ],
+    [
+     "sfxNameFromFile",
+     ".hidden"
+    ],
+    [
+     "sfxNameFromFile",
+     "sin_ext"
+    ],
+    [
+     "sfxNameFromFile",
+     "  dos.puntos.mp3  "
+    ],
+    [
+     "sfxNameFromFile",
+     ""
+    ],
+    [
+     "sfxNameFromFile",
+     null
+    ],
+    [
+     "sfxNameFromFile",
+     5
+    ],
+    [
+     "sfxNameFromFile",
+     "x/\nb/c.mp3"
+    ],
+    [
+     "sfxNameFromFile",
+     "dir/"
+    ],
+    [
+     "sfxNameFromFile",
+     "ñandú ü.flac"
+    ],
+    [
+     "sfxNameFromFile",
+     "a."
+    ],
+    [
+     "sfxNameFromFile",
+     "/"
+    ],
+    [
+     "realSfxCategories",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      null,
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "realSfxCategories",
+     null
+    ],
+    [
+     "realSfxCategories",
+     []
+    ],
+    [
+     "upsertSfxCategory",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      null,
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ],
+     {
+      "id": "02_AIRE",
+      "label": "Aire"
+     }
+    ],
+    [
+     "upsertSfxCategory",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      null,
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ],
+     {
+      "id": "nueva",
+      "count": null
+     }
+    ],
+    [
+     "upsertSfxCategory",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      null,
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ],
+     {
+      "id": "favoritos"
+     }
+    ],
+    [
+     "upsertSfxCategory",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      null,
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ],
+     {
+      "label": "x"
+     }
+    ],
+    [
+     "upsertSfxCategory",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      null,
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ],
+     null
+    ],
+    [
+     "upsertSfxCategory",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      null,
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ],
+     {
+      "id": "01_IMPACTOS",
+      "label": "",
+      "count": 9
+     }
+    ],
+    [
+     "upsertSfxCategory",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      null,
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ],
+     {
+      "id": 7,
+      "label": "siete"
+     }
+    ],
+    [
+     "matchSfxCategory",
+     "impactos",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     "  IMPACTOS ",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     "01_impactos",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     "02_aire",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     "ñandú σ",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     "Ñandú Σ",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     "nueva cosa",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     "",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     "   ",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     null,
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     7,
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     "7",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "matchSfxCategory",
+     "favoritos",
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "sfxDraftFromSaved",
+     {
+      "id": "01_IMPACTOS/golpe.mp3",
+      "name": "Golpe",
+      "folder": "01_IMPACTOS",
+      "category": "Impactos",
+      "uso": "caídas",
+      "url": "/api/sfx/file/x"
+     }
+    ],
+    [
+     "sfxDraftFromSaved",
+     {}
+    ],
+    [
+     "sfxDraftFromSaved",
+     null
+    ],
+    [
+     "sfxDraftFromSaved",
+     {
+      "id": "",
+      "name": null,
+      "uso": 0
+     }
+    ],
+    [
+     "sfxSavePayload",
+     {
+      "name": "  Golpe ",
+      "categoryId": " 01_IMPACTOS ",
+      "uso": " x "
+     },
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "sfxSavePayload",
+     {
+      "name": null,
+      "categoryId": "",
+      "categoryLabel": "impactos"
+     },
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "sfxSavePayload",
+     {
+      "categoryLabel": "Otra nueva"
+     },
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "sfxSavePayload",
+     {},
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "sfxSavePayload",
+     null,
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ],
+    [
+     "sfxSavePayload",
+     {
+      "name": 5,
+      "categoryId": 0,
+      "categoryLabel": "  ",
+      "uso": null
+     },
+     [
+      {
+       "id": "01_IMPACTOS",
+       "label": "Impactos",
+       "count": 3
+      },
+      {
+       "id": "favoritos",
+       "label": "Favoritos"
+      },
+      {
+       "id": "02_AIRE"
+      },
+      {
+       "id": "",
+       "label": "sin id"
+      },
+      {
+       "id": "03_ÑU",
+       "label": "Ñandú Σ",
+       "count": 0
+      },
+      {
+       "id": 7,
+       "label": ""
+      }
+     ]
+    ]
+   ],
+   "geo": [
+    {
+     "id": "T1",
+     "top": 22,
+     "bottom": 51
+    },
+    {
+     "id": "V2",
+     "top": 51,
+     "bottom": 103
+    },
+    {
+     "id": "V1",
+     "top": 103,
+     "bottom": 155
+    },
+    {
+     "id": "A1",
+     "top": 155,
+     "bottom": 207
+    }
+   ],
+   "results": [
+    "golpe",
+    "c",
+    "y",
+    ".hidden",
+    "sin_ext",
+    "dos.puntos",
+    "",
+    "",
+    "5",
+    "b/c",
+    "",
+    "ñandú ü",
+    "a",
+    "",
+    [
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE"
+     },
+     {
+      "id": "03_ÑU",
+      "label": "Ñandú Σ",
+      "count": 0
+     },
+     {
+      "id": 7,
+      "label": ""
+     }
+    ],
+    [],
+    [],
+    [
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "03_ÑU",
+      "label": "Ñandú Σ",
+      "count": 0
+     },
+     {
+      "id": 7,
+      "label": ""
+     },
+     {
+      "id": "02_AIRE",
+      "label": "Aire",
+      "count": 0
+     }
+    ],
+    [
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE"
+     },
+     {
+      "id": "03_ÑU",
+      "label": "Ñandú Σ",
+      "count": 0
+     },
+     {
+      "id": 7,
+      "label": ""
+     },
+     {
+      "id": "nueva",
+      "label": "nueva",
+      "count": 0
+     }
+    ],
+    [
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE"
+     },
+     {
+      "id": "03_ÑU",
+      "label": "Ñandú Σ",
+      "count": 0
+     },
+     {
+      "id": 7,
+      "label": ""
+     }
+    ],
+    [
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE"
+     },
+     {
+      "id": "03_ÑU",
+      "label": "Ñandú Σ",
+      "count": 0
+     },
+     {
+      "id": 7,
+      "label": ""
+     }
+    ],
+    [
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE"
+     },
+     {
+      "id": "03_ÑU",
+      "label": "Ñandú Σ",
+      "count": 0
+     },
+     {
+      "id": 7,
+      "label": ""
+     }
+    ],
+    [
+     {
+      "id": "02_AIRE"
+     },
+     {
+      "id": "03_ÑU",
+      "label": "Ñandú Σ",
+      "count": 0
+     },
+     {
+      "id": 7,
+      "label": ""
+     },
+     {
+      "id": "01_IMPACTOS",
+      "label": "01_IMPACTOS",
+      "count": 9
+     }
+    ],
+    [
+     {
+      "id": "01_IMPACTOS",
+      "label": "Impactos",
+      "count": 3
+     },
+     {
+      "id": "02_AIRE"
+     },
+     {
+      "id": "03_ÑU",
+      "label": "Ñandú Σ",
+      "count": 0
+     },
+     {
+      "id": 7,
+      "label": "siete",
+      "count": 0
+     }
+    ],
+    {
+     "categoryId": "01_IMPACTOS",
+     "newCategory": ""
+    },
+    {
+     "categoryId": "01_IMPACTOS",
+     "newCategory": ""
+    },
+    {
+     "categoryId": "01_IMPACTOS",
+     "newCategory": ""
+    },
+    {
+     "categoryId": "02_AIRE",
+     "newCategory": ""
+    },
+    {
+     "categoryId": "03_ÑU",
+     "newCategory": ""
+    },
+    {
+     "categoryId": "03_ÑU",
+     "newCategory": ""
+    },
+    {
+     "categoryId": "",
+     "newCategory": "nueva cosa"
+    },
+    {
+     "categoryId": "",
+     "newCategory": ""
+    },
+    {
+     "categoryId": "",
+     "newCategory": ""
+    },
+    {
+     "categoryId": "",
+     "newCategory": ""
+    },
+    {
+     "categoryId": 7,
+     "newCategory": ""
+    },
+    {
+     "categoryId": 7,
+     "newCategory": ""
+    },
+    {
+     "categoryId": "favoritos",
+     "newCategory": ""
+    },
+    {
+     "file": null,
+     "sfxId": "01_IMPACTOS/golpe.mp3",
+     "previewUrl": "/api/sfx/file/x",
+     "name": "Golpe",
+     "categoryId": "01_IMPACTOS",
+     "categoryLabel": "Impactos",
+     "uso": "caídas",
+     "saved": false
+    },
+    {
+     "file": null,
+     "sfxId": null,
+     "previewUrl": "",
+     "name": "",
+     "categoryId": "",
+     "categoryLabel": "",
+     "uso": "",
+     "saved": false
+    },
+    {
+     "file": null,
+     "sfxId": null,
+     "previewUrl": "",
+     "name": "",
+     "categoryId": "",
+     "categoryLabel": "",
+     "uso": "",
+     "saved": false
+    },
+    {
+     "file": null,
+     "sfxId": null,
+     "previewUrl": "",
+     "name": "",
+     "categoryId": "",
+     "categoryLabel": "",
+     "uso": "",
+     "saved": false
+    },
+    {
+     "name": "Golpe",
+     "categoryId": "01_IMPACTOS",
+     "newCategory": "",
+     "uso": "x"
+    },
+    {
+     "name": "",
+     "categoryId": "01_IMPACTOS",
+     "newCategory": "",
+     "uso": ""
+    },
+    {
+     "name": "",
+     "categoryId": "",
+     "newCategory": "Otra nueva",
+     "uso": ""
+    },
+    {
+     "name": "",
+     "categoryId": "",
+     "newCategory": "",
+     "uso": ""
+    },
+    {
+     "name": "",
+     "categoryId": "",
+     "newCategory": "",
+     "uso": ""
+    },
+    {
+     "name": "5",
+     "categoryId": "",
+     "newCategory": "",
+     "uso": ""
+    }
+   ]
+  },
+  {
    "name": "textos",
    "timeline": {
     "version": 1,
