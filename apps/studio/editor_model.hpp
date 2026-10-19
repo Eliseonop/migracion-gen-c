@@ -97,6 +97,12 @@ public:
     Q_INVOKABLE void renameTrack(const QString& id, const QString& name);
     Q_INVOKABLE void compactTrack(const QString& id);
     Q_INVOKABLE void reorderTrack(const QString& id, const QString& targetId, bool below);
+    // Inspector: commitPose a la selección (opacidad, volumen…) en el instante del cabezal; modo
+    // de fusión (no el audio; «normal» lo quita); aparición y salida; nota de contexto.
+    Q_INVOKABLE void setPose(const QVariantMap& patch);
+    Q_INVOKABLE void setBlend(const QString& mode);
+    Q_INVOKABLE void setTransition(const QString& appear, const QString& exit);
+    Q_INVOKABLE void setNote(const QString& note);
     Q_INVOKABLE void undo();
     Q_INVOKABLE void redo();
 

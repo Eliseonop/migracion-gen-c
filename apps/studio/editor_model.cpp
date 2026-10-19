@@ -1,11 +1,16 @@
 #include "editor_model.hpp"
 
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <algorithm>
 #include <cmath>
 #include <unordered_map>
 #include <utility>
 
+#include "gc/core/clip_pose_edit.hpp"
+#include "gc/core/keyframes.hpp"
 #include "gc/core/no_overlap.hpp"
+#include "gc/core/pose.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/timeline_rules.hpp"
 #include "gc/core/timeline_view.hpp"
@@ -199,7 +204,16 @@ QVariantMap EditorModel::selectedClip() const {
     if (!c) {
         return {};
     }
-    return {{"id", qstr(c->id)},
+    const double local = playhead_ - c->start;
+    const core::Pose pose = core::clip_pose(*c, std::max(0.0, local));
+    return {{"poseOpacity", pose.opacity},
+            {"volumeAt", core::clip_volume_at(*c, std::max(0.0, local))},
+            {"blend", qstr(c->blend_mode.value_or("normal"))},
+            {"appear", qstr(c->appear)},
+            {"exit", qstr(c->exit)},
+            {"note", qstr(c->note.value_or(""))},
+            {"animated", core::keyframes_enabled(*c) && core::pose_keyframed(*c)},
+            {"id", qstr(c->id)},
             {"kind", qstr(c->kind)},
             {"label", clip_label(*c)},
             {"trackId", qstr(c->track_id)},
@@ -218,6 +232,9 @@ void EditorModel::setPlayhead(double t) {
     if (clamped != playhead_) {
         playhead_ = clamped;
         emit playheadChanged();
+        if (!selection_.ids.empty()) {
+            emit selectionChanged(); // la pose del inspector es la del cabezal
+        }
     }
 }
 
@@ -664,6 +681,69 @@ void EditorModel::reorderTrack(const QString& id, const QString& targetId, bool 
     if (track(id) && track(targetId) && id != targetId) {
         apply(core::ops::ReorderTrack{id.toStdString(), targetId.toStdString(), below ? "below" : "above"});
     }
+}
+
+void EditorModel::setPose(const QVariantMap& patch) {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    const Json json = Json::parse(QJsonDocument(QJsonObject::fromVariantMap(patch)).toJson().toStdString());
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if (std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            core::commit_pose(c.mut(), json, playhead_ - c->start, fps(), ids_);
+        }
+    }
+    commit(std::move(next), "pose", selection_.ids);
+}
+
+void EditorModel::setBlend(const QString& mode) {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if (c->kind != "audio" && std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            c.mut().blend_mode =
+                mode.isEmpty() || mode == "normal" ? std::nullopt : std::optional(mode.toStdString());
+        }
+    }
+    commit(std::move(next), "blend", selection_.ids);
+}
+
+void EditorModel::setTransition(const QString& appear, const QString& exit) {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    const auto ids = selection_.ids;
+    core::EditSession::Group group(*session_);
+    for (const auto& id : ids) {
+        if (!ok(session_->apply(
+                core::ops::SetClipTransition{id, appear.toStdString(), exit.toStdString()}))) {
+            return;
+        }
+    }
+    group.commit();
+}
+
+// setClipNote de VideoEditor.jsx: la nota (sin espacios alrededor) y su origen; vacía la quita.
+void EditorModel::setNote(const QString& note) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c) {
+        return;
+    }
+    const std::string text = note.trimmed().toStdString();
+    if (text == c->note.value_or("")) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == c->id) {
+            item.mut().note = text.empty() ? std::nullopt : std::optional(text);
+            item.mut().note_source = text.empty() ? std::nullopt : std::optional<std::string>("user");
+        }
+    }
+    commit(std::move(next), "note", {c->id});
 }
 
 void EditorModel::undo() {

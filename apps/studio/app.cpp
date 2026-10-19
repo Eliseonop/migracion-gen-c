@@ -1,6 +1,6 @@
 // genclip-studio: el editor de escritorio (F5).
 //
-//   genclip-studio [--root <carpeta>] [--open <proyecto>] [--grab <png>]
+//   genclip-studio [--root <carpeta>] [--open <proyecto> [--select <clip>]] [--grab <png>]
 //
 // <carpeta> tiene data/projects.json y clips/, como backend/ de video-yt (así se abren tus
 // proyectos de siempre). Sin --root, la carpeta de datos de la app. --grab guarda una captura de
@@ -31,6 +31,7 @@ int gc::studio::run(int argc, char* argv[]) {
     args.addOption({"root", "Carpeta con data/projects.json y clips/.", "carpeta"});
     args.addOption({"grab", "Guarda una captura de la ventana y sale.", "png"});
     args.addOption({"open", "Abre ese proyecto en el editor.", "id"});
+    args.addOption({"select", "Con --open, selecciona ese clip.", "clip"});
     args.process(app);
     const QString root = args.isSet("root")
                              ? args.value("root")
@@ -51,6 +52,9 @@ int gc::studio::run(int argc, char* argv[]) {
         Qt::QueuedConnection);
     if (args.isSet("open")) {
         editor.openProject(args.value("open"));
+        if (args.isSet("select")) {
+            editor.select(args.value("select"));
+        }
     }
     engine.load(QUrl("qrc:/qt/qml/GenClip/Studio/Main.qml"));
     if (args.isSet("grab") && !engine.rootObjects().isEmpty()) {

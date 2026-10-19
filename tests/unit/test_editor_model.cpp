@@ -238,3 +238,34 @@ TEST_CASE("editor: cabecera de pista (ver, bloquear, nombre, juntar y orden)", "
     m.reorderTrack("A1", "V2", false); // el audio no entra en la pila
     CHECK(m.tracks().last().toMap()["id"] == "A1");
 }
+
+TEST_CASE("editor: inspector (opacidad y volumen sin animar, fusión, transiciones y nota)", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.select("a");
+    m.select("b", true);
+    m.setPose({{"opacity", 0.4}});
+    CHECK(m.selectedClip()["poseOpacity"] == 0.4);
+    CHECK_FALSE(m.selectedClip()["animated"].toBool()); // mover ≠ animar: sin keyframes
+    m.setBlend("screen");
+    m.setTransition("fade", "pop");
+    const core::Timeline tl = f.saved();
+    for (const auto& c : tl.clips) {
+        if (c->id == "a" || c->id == "b") {
+            CHECK(c->opacity == 0.4);
+            CHECK(c->blend_mode == "screen");
+            CHECK(c->appear == "fade");
+            CHECK(c->exit == "pop");
+        }
+    }
+    m.setBlend("normal");
+    CHECK(m.selectedClip()["blend"] == "normal");
+    m.select("m");
+    m.setPose({{"volume", 1.6}});
+    CHECK(m.selectedClip()["volumeAt"] == 1.6);
+    m.setNote("  el momento clave ");
+    CHECK(m.selectedClip()["note"] == "el momento clave");
+    m.undo();
+    CHECK(m.selectedClip()["note"] == "");
+}
