@@ -65,6 +65,16 @@ Rectangle {
     readonly property bool hasMask: !!mk.type
     readonly property var maskTypes: [["linear", "División"], ["film", "Película"], ["circle", "Círculo"], ["rectangle", "Rectángulo"],
         ["star", "Estrella"], ["heart", "Corazón"], ["text", "Texto"], ["brush", "Pincel"]]
+    // toggleWordFx de textKaraoke.js: los efectos de la palabra activa se combinan; ninguno = "none".
+    function wordFxList(fx) {
+        const all = ["highlight", "glow", "pop"]
+        return Array.isArray(fx) ? all.filter((x) => fx.indexOf(x) >= 0) : all.indexOf(fx) >= 0 ? [fx] : []
+    }
+    function toggleWordFx(fx, name) {
+        const on = wordFxList(fx)
+        const next = ["highlight", "glow", "pop"].filter((x) => x === name ? on.indexOf(x) < 0 : on.indexOf(x) >= 0)
+        return next.length ? next : "none"
+    }
     readonly property var swatches: ["#ffffff", "#111111", "#ffe400", "#ff2d2d", "#ff8a00", "#2ee83f", "#1e90ff", "#ff3d8b"]
     readonly property var blends: [
         ["normal", "Normal"], ["darken", "Oscurecer"], ["multiply", "Multiplicar"], ["color_burn", "Subexponer color"],
@@ -529,6 +539,50 @@ Rectangle {
                                                           : { curve_on: true, curve: Number(panel.st.curve) || 0.5 }, true)
                 }
                 StyleSlider { visible: !!panel.st.curve_on; title: ""; key: "curve"; fallback: 0.5; from: -100; to: 100 }
+            }
+            Label { visible: panel.text; text: "Palabra activa (karaoke)"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
+            RowLayout {
+                visible: panel.text
+                spacing: 4
+                Repeater {
+                    model: [["highlight", "Color"], ["glow", "Brillo"], ["pop", "Pop"]]
+                    Toggle {
+                        required property var modelData
+                        objectName: "insp:wordfx:" + modelData[0]
+                        implicitWidth: implicitContentWidth + 16
+                        text: modelData[1]
+                        on: panel.wordFxList(panel.st.word_fx).indexOf(modelData[0]) >= 0
+                        onClicked: panel.model.changeStyle({ word_fx: panel.toggleWordFx(panel.st.word_fx, modelData[0]) })
+                    }
+                }
+            }
+            SwatchRow {
+                visible: panel.text
+                title: "Resalte"
+                prefix: "insp:highlight:"
+                current: panel.st.highlight_color || "#ffe566"
+                onPicked: (c) => panel.model.changeStyle({ highlight_color: c })
+            }
+            StyleSlider { visible: panel.text; title: "Activa %"; key: "active_opacity"; fallback: 1 }
+            StyleSlider { visible: panel.text; title: "Inactiva %"; key: "inactive_opacity"; fallback: 1 }
+            RowLayout {
+                visible: panel.text
+                Label { Layout.preferredWidth: 70; text: "Por cuadro"; color: Theme.textSecondary }
+                Choice {
+                    objectName: "insp:maxWords"
+                    options: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => [String(n), n + (n === 1 ? " palabra" : " palabras")])
+                    current: String(panel.st.max_words ?? 8)
+                    onPicked: (v) => panel.model.changeStyle({ max_words: Number(v) })
+                }
+            }
+            RowLayout {
+                visible: panel.text
+                Label { Layout.preferredWidth: 70; text: "Aparición"; color: Theme.textSecondary }
+                Choice {
+                    options: [["none", "Nada"], ["fade", "Fade"], ["pop", "Pop"], ["slide_up", "Slide up"], ["typing", "Escritura"]]
+                    current: panel.st.block_appear || "none"
+                    onPicked: (v) => panel.model.changeStyle({ block_appear: v })
+                }
             }
             Num {
                 visible: panel.text

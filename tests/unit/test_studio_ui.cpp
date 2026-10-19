@@ -322,6 +322,10 @@ TEST_CASE("studio sin pantalla: el botón T añade un texto y el inspector lo ca
     CHECK(s.editor->selectedClip()["style"].toMap()["align"] == "left");
     s.click("insp:color:#ffe400");
     CHECK(s.editor->selectedClip()["style"].toMap()["color"] == "#ffe400");
+    QQuickItem* glow = s.item("insp:wordfx:glow"); // más abajo en el inspector, fuera de la vista
+    REQUIRE(glow);
+    QMetaObject::invokeMethod(glow, "clicked");
+    CHECK(s.editor->selectedClip()["style"].toMap()["word_fx"].toStringList() == QStringList{"glow"});
 }
 
 TEST_CASE("studio sin pantalla: los marcadores se arrastran y se quitan con el botón derecho", "[studio][ui]") {

@@ -1363,6 +1363,6 @@ Decisión de Edu (§6):
 - **Sin fixture del JS** (lógica dentro de componentes de React): `transform_view` y la lógica del `EditorModel` (efectos, filtros, atributos, animaciones…). Tienen tests propios y los ha revisado el revisor de la migración contra el JS.
 
 **Siguiente:**
-- El resto del texto (estilos de fondo y brillo, karaoke por palabra).
+- El resto del texto (estilos de fondo y brillo, fragmentar en cuadros, «Mis estilos»).
 - Recortar.
 - El preview espera a `gc_render`.
