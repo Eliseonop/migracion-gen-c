@@ -908,3 +908,43 @@ TEST_CASE("editor: gestionar las carpetas de material", "[studio]") {
     CHECK(std::filesystem::exists(root / "Nueva" / "nube.jpg"));
     CHECK(col(1)["count"] == 1); // las favoritas primero
 }
+
+TEST_CASE("editor: dar de alta y editar SFX", "[studio]") {
+    Fixture f;
+    const auto lib = f.dir / "sfx";
+    std::filesystem::create_directories(lib / "01_IMPACTOS");
+    std::ofstream(lib / "01_IMPACTOS" / "golpe.mp3") << "x";
+    REQUIRE(core::write_json_file(lib / "sfx_library.json",
+                                  {{"categorias", {{"01_IMPACTOS", {{"etiqueta", "Impactos"}, {"cantidad", 1}}}}},
+                                   {"sonidos", Json::array({{{"sonido", "Golpe"}, {"archivo", "golpe.mp3"},
+                                                             {"carpeta", "01_IMPACTOS"}}})}}));
+    std::ofstream(f.dir / "boom.wav") << "RIFF";
+    std::ofstream(f.dir / "nota.txt") << "x";
+    core::SettingsFile settings(f.dir / "data" / "settings.json");
+    REQUIRE(settings.save({{"sfx_folder", core::path_to_utf8(lib)}}));
+    studio::EditorModel m(f.store, &settings);
+    REQUIRE(m.openProject("p1"));
+    const auto url = [&](const char* name) { return QUrl::fromLocalFile(QString::fromStdString((f.dir / name).string())); };
+    const QVariantList drafts = m.sfxDrafts({url("boom.wav"), url("nota.txt")}, "01_IMPACTOS");
+    REQUIRE(drafts.size() == 1); // solo audios
+    QVariantMap row = drafts[0].toMap();
+    CHECK(row["name"] == "boom");
+    CHECK(row["categoryId"] == "01_IMPACTOS");
+    row["categoryId"] = "";
+    row["categoryLabel"] = "";
+    CHECK(m.saveSfx(row) == "Pon una categoría.");
+    const QVariantMap cat = m.createSfxCategory("Explosiones");
+    CHECK(cat["id"] == "02_EXPLOSIONES");
+    CHECK(m.createSfxCategory(" explosiones ")["id"] == "02_EXPLOSIONES"); // ya está
+    row["categoryId"] = cat["id"];
+    row["name"] = " Boom ";
+    CHECK(m.saveSfx(row).isEmpty());
+    CHECK(std::filesystem::exists(lib / "02_EXPLOSIONES" / "boom.wav"));
+    QVariantMap edit = m.sfxDraft("sfx:02_EXPLOSIONES/boom.wav");
+    CHECK(edit["name"] == "Boom");
+    edit["categoryId"] = "01_IMPACTOS";
+    edit["uso"] = "golpes";
+    CHECK(m.saveSfx(edit).isEmpty());
+    CHECK(std::filesystem::exists(lib / "01_IMPACTOS" / "boom.wav"));
+    CHECK(m.sfxDraft("sfx:01_IMPACTOS/boom.wav")["uso"] == "golpes");
+}

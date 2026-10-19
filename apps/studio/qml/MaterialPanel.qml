@@ -9,6 +9,7 @@ Rectangle {
     id: panel
     required property var model
     required property Item dragLayer
+    property var sfxModal: null
     property string filter: "all"
     property string source: "project"
     property string query: ""
@@ -81,6 +82,12 @@ Rectangle {
                 else if (panel.source === "collection")
                     panel.model.searchCollections(text, panel.collection)
             }
+        }
+        SmallButton {
+            objectName: "sfx:new"
+            visible: panel.source === "sfx" && !!panel.sfxModal
+            text: "＋ Nuevo SFX"
+            onClicked: panel.sfxModal.openNew(panel.sfxCategory)
         }
         Flow {
             visible: panel.source === "sfx" && panel.model.sfxCategories.length > 0
@@ -241,6 +248,16 @@ Rectangle {
                             text: panel.model.formatTime(slot.modelData.duration)
                             color: Theme.muted
                             font.pixelSize: 11
+                        }
+                        ToolButton {
+                            objectName: "sfx:edit:" + slot.modelData.key
+                            visible: slot.modelData.source === "sfx" && !!panel.sfxModal
+                            implicitWidth: 22
+                            implicitHeight: 22
+                            text: "✎"
+                            palette.buttonText: Theme.muted
+                            background: null
+                            onClicked: panel.sfxModal.openEdit(slot.modelData.key)
                         }
                     }
                 }

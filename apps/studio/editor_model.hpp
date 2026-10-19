@@ -89,6 +89,12 @@ public:
     [[nodiscard]] QVariantList sfxCategories() const { return sfx_categories_; }
     // search de sfx_library: los sonidos que tienen todas las palabras de `q`, en `category`.
     Q_INVOKABLE void searchSfx(const QString& q, const QString& category);
+    // Modal «Nuevo SFX» / «Editar SFX» (SfxClassifyModal.jsx): filas de borrador, crear una
+    // categoría y guardar una fila (devuelve el error o nada).
+    Q_INVOKABLE QVariantList sfxDrafts(const QList<QUrl>& files, const QString& defaultCategory) const;
+    Q_INVOKABLE QVariantMap sfxDraft(const QString& key) const;
+    Q_INVOKABLE QVariantMap createSfxCategory(const QString& label);
+    Q_INVOKABLE QString saveSfx(const QVariantMap& row);
     // Colecciones de material (carpetas de `material_root` o assets/material): {id, name, count}.
     [[nodiscard]] QVariantList collections() const { return collections_; }
     [[nodiscard]] QString collectionsRoot() const { return collections_root_; }
@@ -330,6 +336,10 @@ private:
     void reload_collections();
     void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);
+    [[nodiscard]] std::optional<std::filesystem::path> sfx_dir() const;
+    [[nodiscard]] Json real_sfx_categories() const;
+    std::pair<std::string, std::string> sfx_query_; // q y categoría de la última búsqueda
+    std::map<QString, Json> sfx_items_;              // material → el sonido como lo da la búsqueda
     core::SettingsFile* settings_ = nullptr;
     // changeTrackStyle / applyTrackPreset: el estilo de la pista y el de todos sus textos.
     template <class Restyle>

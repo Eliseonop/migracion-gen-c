@@ -1,10 +1,13 @@
 #include "editor_model.hpp"
 
 #include <QColor>
+#include <QFile>
+#include <QFileInfo>
 #include <QImageReader>
 #include <QPointF>
 #include <QUrl>
 #include <QGuiApplication>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <algorithm>
@@ -32,6 +35,7 @@
 #include "gc/core/pose.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/sfx_disk.hpp"
+#include "gc/core/sfx_name.hpp"
 #include "gc/core/shapes.hpp"
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_rules.hpp"
@@ -48,6 +52,10 @@ Json to_json(const QVariantMap& map) {
 
 QVariantMap to_variant(const Json& json) {
     return QJsonDocument::fromJson(QByteArray::fromStdString(json.dump())).object().toVariantMap();
+}
+
+QVariant to_qvariant(const Json& json) {
+    return QJsonDocument::fromJson(QByteArray::fromStdString(Json::array({json}).dump())).array().at(0).toVariant();
 }
 
 const std::map<std::string, std::vector<std::string>>& text_kf_sections() {
@@ -256,18 +264,24 @@ bool EditorModel::openProject(const QString& pid) {
     return true;
 }
 
+std::optional<std::filesystem::path> EditorModel::sfx_dir() const {
+    const auto data_dir = store_.file().parent_path();
+    return core::sfx_base(settings_ ? settings_->load() : Json::object(), assets_dir(data_dir) / "sfx_library");
+}
+
 void EditorModel::load_sfx(const std::string& q, const std::string& category) {
+    sfx_query_ = {q, category};
     materials_.erase(std::remove_if(materials_.begin(), materials_.end(),
                                     [](const QVariant& m) { return m.toMap()["source"] == "sfx"; }),
                      materials_.end());
-    const auto data_dir = store_.file().parent_path();
     const Json settings = settings_ ? settings_->load() : Json::object();
-    const Json sfx = core::sfx_search(
-        core::sfx_base(settings, assets_dir(data_dir) / "sfx_library"), settings, q, category);
+    const Json sfx = core::sfx_search(sfx_dir(), settings, q, category);
+    sfx_items_.clear();
     for (const Json& item : sfx.value("items", Json::array())) {
         const QString key = "sfx:" + qstr(item.value("id", ""));
         const Json payload = core::drag_payload("sfx", item);
         payloads_[key] = payload;
+        sfx_items_[key] = item;
         materials_ << QVariantMap{{"key", key},
                                   {"source", "sfx"},
                                   {"assetKind", "sfx"},
@@ -401,6 +415,86 @@ int EditorModel::addCollectionFiles(const QString& collection, const QList<QUrl>
     }
     reload_collections();
     return static_cast<int>(added->value("saved", Json::array()).size());
+}
+
+Json EditorModel::real_sfx_categories() const {
+    Json cats = Json::array();
+    for (const QVariant& c : sfx_categories_) {
+        cats.push_back(to_json(c.toMap()));
+    }
+    return core::real_sfx_categories(cats);
+}
+
+QVariantList EditorModel::sfxDrafts(const QList<QUrl>& files, const QString& defaultCategory) const {
+    const Json cats = real_sfx_categories();
+    const auto with_id = [&](const std::string& id) {
+        return std::ranges::find_if(cats, [&](const Json& c) { return c.value("id", Json()) == id; });
+    };
+    auto cat = with_id(defaultCategory.toStdString());
+    cat = cat != cats.end() ? cat : with_id("13_OTHER");
+    cat = cat != cats.end() ? cat : cats.begin();
+    const Json id = cat != cats.end() ? cat->value("id", Json("")) : Json("");
+    const Json label = cat != cats.end() ? cat->value("label", id) : Json("");
+    QVariantList out;
+    for (const QUrl& url : files) {
+        const QString file = url.isLocalFile() ? url.toLocalFile() : url.toString();
+        if (core::is_sfx_audio(QFileInfo(file).fileName().toStdString())) {
+            out << QVariantMap{{"file", file},
+                               {"sfxId", QVariant()},
+                               {"name", qstr(core::sfx_name_from_file(QFileInfo(file).fileName().toStdString()))},
+                               {"categoryId", to_qvariant(id)},
+                               {"categoryLabel", to_qvariant(label)},
+                               {"uso", ""},
+                               {"saved", false}};
+        }
+    }
+    return out;
+}
+
+QVariantMap EditorModel::sfxDraft(const QString& key) const {
+    const auto it = sfx_items_.find(key);
+    return it == sfx_items_.end() ? QVariantMap() : to_variant(core::sfx_draft_from_saved(it->second));
+}
+
+QVariantMap EditorModel::createSfxCategory(const QString& label) {
+    const Json hit = core::match_sfx_category(label.toStdString(), real_sfx_categories());
+    if (!hit.at("categoryId").get<std::string>().empty()) {
+        return {{"id", to_qvariant(hit.at("categoryId"))}};
+    }
+    const auto cat = core::sfx_create_category(sfx_dir(), label.toStdString());
+    if (!cat) {
+        return {{"error", qstr(cat.error().message)}};
+    }
+    load_sfx(sfx_query_.first, sfx_query_.second);
+    emit projectChanged();
+    return to_variant(*cat);
+}
+
+QString EditorModel::saveSfx(const QVariantMap& row) {
+    const Json draft = to_json(row);
+    const Json payload = core::sfx_save_payload(draft, real_sfx_categories());
+    const core::SfxSoundEdit edit{payload.at("name").get<std::string>(), payload.at("categoryId").get<std::string>(),
+                                  payload.at("newCategory").get<std::string>(), payload.at("uso").get<std::string>()};
+    if (edit.category_id.empty() && edit.new_category.empty()) {
+        return "Pon una categoría.";
+    }
+    Result<Json> saved = fail(ErrorCode::InvalidArgument, "Sin archivo.");
+    if (const QString id = row["sfxId"].toString(); !id.isEmpty()) {
+        if (!settings_) {
+            return "Sin ajustes.";
+        }
+        saved = core::sfx_update_sound(sfx_dir(), *settings_, id.toStdString(), edit);
+    } else if (QFile file(row["file"].toString()); file.open(QIODevice::ReadOnly)) {
+        const QByteArray data = file.readAll();
+        saved = core::sfx_add_sound(sfx_dir(), QFileInfo(file).fileName().toStdString(),
+                                    std::string_view(data.constData(), static_cast<std::size_t>(data.size())), edit);
+    }
+    if (!saved) {
+        return qstr(saved.error().message);
+    }
+    load_sfx(sfx_query_.first, sfx_query_.second);
+    emit projectChanged();
+    return {};
 }
 
 void EditorModel::searchSfx(const QString& q, const QString& category) {

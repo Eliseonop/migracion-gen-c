@@ -138,6 +138,7 @@ Item {
                 Layout.fillHeight: true
                 model: editor.model
                 dragLayer: overlay
+                sfxModal: sfxModal
             }
 
             Rectangle {
@@ -194,6 +195,7 @@ Item {
 
     // «Pegar atributos» (EdPasteAttrs.jsx): qué grupos del clip copiado van a los seleccionados.
     CropModal { id: cropModal; model: editor.model }
+    SfxModal { id: sfxModal; model: editor.model }
 
     Popup {
         id: pasteAttrs
