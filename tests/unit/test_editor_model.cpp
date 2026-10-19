@@ -438,3 +438,30 @@ TEST_CASE("editor: figuras y capa de ajuste en el cabezal", "[studio]") {
     m.undo();
     CHECK(m.clips().size() == 3);
 }
+
+TEST_CASE("editor: la velocidad de un audio estira sus subtítulos enlazados", "[studio]") {
+    Fixture f;
+    core::Timeline tl = f.saved();
+    tl.tracks.push_back({});
+    tl.tracks.back().id = "T1";
+    tl.tracks.back().kind = "text";
+    tl.tracks.back().name = "T1";
+    for (auto& t : tl.tracks) {
+        if (t.id == "A1") {
+            t.linked_track_id = "T1";
+        }
+    }
+    auto sub = core::clip_from_json({{"id", "s"}, {"track_id", "T1"}, {"kind", "text"}, {"asset_kind", "text"},
+                                     {"asset_id", "s"}, {"filename", ""}, {"start", 4.0}, {"in_point", 0.0}, {"out_point", 2.0},
+                                     {"text", "hola"}});
+    REQUIRE(sub);
+    tl.clips.emplace_back(std::move(*sub));
+    REQUIRE(f.store.save_timeline("p1", core::to_json(tl)));
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.select("m");
+    m.setSpeed(2);
+    m.select("s");
+    CHECK(m.selectedClip()["start"] == 2.0); // el audio empieza en 0: todo a la mitad
+    CHECK(m.selectedClip()["duration"] == 1.0);
+}

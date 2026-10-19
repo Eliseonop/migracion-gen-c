@@ -8,6 +8,8 @@
 #include <map>
 #include <ranges>
 
+#include "gc/core/timeline_rules.hpp"
+
 namespace gc::core {
 
 namespace {
@@ -152,7 +154,7 @@ double ui_clip_speed(const TimelineClip& clip) {
     if (has_free_duration(clip) || !std::isfinite(clip.speed) || clip.speed <= 0) {
         return 1.0;
     }
-    return std::clamp(clip.speed, 0.1, 10.0);
+    return std::clamp(clip.speed, kSpeedMin, kSpeedMax);
 }
 
 double ui_clip_duration(const TimelineClip& clip) {
@@ -416,6 +418,44 @@ group_move_starts(std::span<const std::pair<std::string, double>> originals, dou
         out.emplace_back(id, js_fixed3(start + d));
     }
     return out;
+}
+
+void scale_text_clip_from_anchor(TimelineClip& clip, double anchor, double scale) {
+    const double dur = std::max(0.0, clip.out_point - clip.in_point);
+    const double span = js_fixed3(std::max(0.05, dur * scale));
+    clip.start = js_fixed3(std::max(0.0, anchor + (clip.start - anchor) * scale));
+    clip.in_point = 0;
+    clip.out_point = span;
+    clip.source_duration = span;
+    for (Word& w : clip.words) {
+        w.start = js_fixed3(w.start * scale);
+        w.end = js_fixed3(w.end * scale);
+    }
+}
+
+void apply_audio_speed_to_linked_text(ClipList& clips, const std::vector<TimelineTrack>& tracks,
+                                      const TimelineClip& audio, double speed) {
+    if (audio.kind != "audio") {
+        return;
+    }
+    const auto track = std::ranges::find(tracks, audio.track_id, &TimelineTrack::id);
+    if (track == tracks.end() || !track->linked_track_id || track->linked_track_id->empty()) {
+        return;
+    }
+    const double old_speed = ui_clip_speed(audio);
+    const double next_speed = std::clamp(speed != 0 && !std::isnan(speed) ? speed : 1, kSpeedMin, kSpeedMax);
+    if (std::abs(old_speed - next_speed) < 1e-6) {
+        return;
+    }
+    const double scale = old_speed / next_speed;
+    const double a0 = audio.start;
+    const double a1 = ui_clip_end(audio);
+    for (auto& c : clips) {
+        if (c->kind == "text" && c->track_id == *track->linked_track_id && ui_clip_end(*c) > a0 + 1e-3 &&
+            c->start < a1 - 1e-3) {
+            scale_text_clip_from_anchor(c.mut(), a0, scale);
+        }
+    }
 }
 
 } // namespace gc::core

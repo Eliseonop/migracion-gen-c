@@ -95,6 +95,12 @@ struct SelectMods {
 [[nodiscard]] ClipSelection next_clip_selection(const ClipList& clips, const ClipSelection& current,
                                                 std::string_view clicked_id, SelectMods mods);
 
+// scaleTextClipFromAnchor: un texto (y los tiempos de sus palabras) estirado por `scale` desde `anchor`.
+void scale_text_clip_from_anchor(TimelineClip& clip, double anchor, double scale);
+// applyAudioSpeedToLinkedText: al cambiar la velocidad de un audio, sus subtítulos (los textos de la
+// pista enlazada que caen en el audio) se estiran con él. `speed` es el número tal cual (JS: Number(x)).
+void apply_audio_speed_to_linked_text(ClipList& clips, const std::vector<TimelineTrack>& tracks,
+                                      const TimelineClip& audio, double speed);
 // emptiedTracks: de `candidates`, las pistas sin clips que se pueden quitar (sin bloquear y sin
 // dejar su tipo sin ninguna pista libre).
 [[nodiscard]] std::vector<std::string> emptied_tracks(const std::vector<TimelineTrack>& tracks,

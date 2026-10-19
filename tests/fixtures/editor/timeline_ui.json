@@ -688741,6 +688741,1937 @@
    ]
   },
   {
+   "name": "subtítulos enlazados",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T2",
+      "kind": "text",
+      "name": "T2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "A1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": "T1",
+      "magnetic": false
+     },
+     {
+      "id": "A2",
+      "kind": "audio",
+      "name": "A2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "A3",
+      "kind": "audio",
+      "name": "A3",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": "",
+      "magnetic": false
+     }
+    ],
+    "clips": [
+     {
+      "id": "a",
+      "track_id": "A1",
+      "kind": "audio",
+      "asset_kind": "audios",
+      "asset_id": "a",
+      "filename": "a.mp4",
+      "name": null,
+      "start": 2.0,
+      "in_point": 0.0,
+      "out_point": 8.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "a2",
+      "track_id": "A1",
+      "kind": "audio",
+      "asset_kind": "audios",
+      "asset_id": "a2",
+      "filename": "a2.mp4",
+      "name": null,
+      "start": 12.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 2.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "b",
+      "track_id": "A2",
+      "kind": "audio",
+      "asset_kind": "audios",
+      "asset_id": "b",
+      "filename": "b.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 5.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "c",
+      "track_id": "A3",
+      "kind": "audio",
+      "asset_kind": "audios",
+      "asset_id": "c",
+      "filename": "c.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 5.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "v",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "v",
+      "filename": "v.mp4",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t0",
+      "track_id": "T2",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t0",
+      "filename": "",
+      "name": null,
+      "start": 2.0,
+      "in_point": 0.0,
+      "out_point": 1.5,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "t0",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "uno",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.4555,
+        "end": 1.0005,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t1",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t1",
+      "filename": "",
+      "name": null,
+      "start": 3.6,
+      "in_point": 0.0,
+      "out_point": 2.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "t1",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "uno",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.4555,
+        "end": 1.0005,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t2",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t2",
+      "filename": "",
+      "name": null,
+      "start": 7.9995,
+      "in_point": 0.0,
+      "out_point": 1.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "t2",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "uno",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.4555,
+        "end": 1.0005,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t3",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t3",
+      "filename": "",
+      "name": null,
+      "start": 9.9995,
+      "in_point": 0.0,
+      "out_point": 1.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "t3",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "uno",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.4555,
+        "end": 1.0005,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t4",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t4",
+      "filename": "",
+      "name": null,
+      "start": 1.0,
+      "in_point": 0.0,
+      "out_point": 1.0005,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "t4",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "uno",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.4555,
+        "end": 1.0005,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t5",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t5",
+      "filename": "",
+      "name": null,
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 1.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "t5",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "uno",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.4555,
+        "end": 1.0005,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t6",
+      "track_id": "T2",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t6",
+      "filename": "",
+      "name": null,
+      "start": 13.0,
+      "in_point": 0.0,
+      "out_point": 1.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "t6",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "uno",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.4555,
+        "end": 1.0005,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t7",
+      "track_id": "T2",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t7",
+      "filename": "",
+      "name": null,
+      "start": 14.5,
+      "in_point": 0.0,
+      "out_point": 3.0,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "t7",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "uno",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.4555,
+        "end": 1.0005,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "t8",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "t8",
+      "filename": "",
+      "name": null,
+      "start": 5.25,
+      "in_point": 0.0,
+      "out_point": 0.33,
+      "source_duration": 0.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": "t8",
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [
+       {
+        "text": "uno",
+        "start": 0.0,
+        "end": 0.4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.4555,
+        "end": 1.0005,
+        "prob": null
+       }
+      ],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": null,
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     }
+    ],
+    "markers": []
+   },
+   "calls": [
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     2
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     0.5
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     0.1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     10
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     50
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     0.01
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     0
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     -1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     "2"
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     null
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     1.0000001
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a",
+     3.3
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     2
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     0.5
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     0.1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     10
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     50
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     0.01
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     0
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     -1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     "2"
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     null
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     1.0000001
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "a2",
+     3.3
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     2
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     0.5
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     0.1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     10
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     50
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     0.01
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     0
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     -1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     "2"
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     null
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     1.0000001
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "b",
+     3.3
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     2
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     0.5
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     0.1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     10
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     50
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     0.01
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     0
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     -1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     "2"
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     null
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     1.0000001
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "c",
+     3.3
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     2
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     0.5
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     0.1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     10
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     50
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     0.01
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     0
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     -1
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     "2"
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     null
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     1.0000001
+    ],
+    [
+     "applyAudioSpeedToLinkedText",
+     "v",
+     3.3
+    ]
+   ],
+   "geo": [
+    {
+     "id": "T2",
+     "top": 22,
+     "bottom": 51
+    },
+    {
+     "id": "T1",
+     "top": 51,
+     "bottom": 80
+    },
+    {
+     "id": "V1",
+     "top": 80,
+     "bottom": 132
+    },
+    {
+     "id": "A1",
+     "top": 132,
+     "bottom": 184
+    },
+    {
+     "id": "A2",
+     "top": 184,
+     "bottom": 236
+    },
+    {
+     "id": "A3",
+     "top": 236,
+     "bottom": 288
+    }
+   ],
+   "results": [
+    [],
+    [
+     [
+      "t1",
+      2.8,
+      1,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.2,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.228,
+        "end": 0.5,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t2",
+      5,
+      0.5,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.2,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.228,
+        "end": 0.5,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t8",
+      3.625,
+      0.165,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.2,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.228,
+        "end": 0.5,
+        "prob": null
+       }
+      ]
+     ]
+    ],
+    [
+     [
+      "t1",
+      5.2,
+      4,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.8,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.911,
+        "end": 2.001,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t2",
+      13.999,
+      2,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.8,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.911,
+        "end": 2.001,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t8",
+      8.5,
+      0.66,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.8,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.911,
+        "end": 2.001,
+        "prob": null
+       }
+      ]
+     ]
+    ],
+    [
+     [
+      "t1",
+      18,
+      20,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 4.555,
+        "end": 10.005,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t2",
+      61.995,
+      10,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 4.555,
+        "end": 10.005,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t8",
+      34.5,
+      3.3,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 4.555,
+        "end": 10.005,
+        "prob": null
+       }
+      ]
+     ]
+    ],
+    [
+     [
+      "t1",
+      2.16,
+      0.2,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.04,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.046,
+        "end": 0.1,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t2",
+      2.6,
+      0.1,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.04,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.046,
+        "end": 0.1,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t8",
+      2.325,
+      0.05,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.04,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.046,
+        "end": 0.1,
+        "prob": null
+       }
+      ]
+     ]
+    ],
+    [
+     [
+      "t1",
+      2.16,
+      0.2,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.04,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.046,
+        "end": 0.1,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t2",
+      2.6,
+      0.1,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.04,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.046,
+        "end": 0.1,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t8",
+      2.325,
+      0.05,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.04,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.046,
+        "end": 0.1,
+        "prob": null
+       }
+      ]
+     ]
+    ],
+    [
+     [
+      "t1",
+      18,
+      20,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 4.555,
+        "end": 10.005,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t2",
+      61.995,
+      10,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 4.555,
+        "end": 10.005,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t8",
+      34.5,
+      3.3,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 4.555,
+        "end": 10.005,
+        "prob": null
+       }
+      ]
+     ]
+    ],
+    [],
+    [
+     [
+      "t1",
+      18,
+      20,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 4.555,
+        "end": 10.005,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t2",
+      61.995,
+      10,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 4.555,
+        "end": 10.005,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t8",
+      34.5,
+      3.3,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 4,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 4.555,
+        "end": 10.005,
+        "prob": null
+       }
+      ]
+     ]
+    ],
+    [
+     [
+      "t1",
+      2.8,
+      1,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.2,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.228,
+        "end": 0.5,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t2",
+      5,
+      0.5,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.2,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.228,
+        "end": 0.5,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t8",
+      3.625,
+      0.165,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.2,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.228,
+        "end": 0.5,
+        "prob": null
+       }
+      ]
+     ]
+    ],
+    [],
+    [],
+    [
+     [
+      "t1",
+      2.485,
+      0.606,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.121,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.138,
+        "end": 0.303,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t2",
+      3.818,
+      0.303,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.121,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.138,
+        "end": 0.303,
+        "prob": null
+       }
+      ]
+     ],
+     [
+      "t8",
+      2.985,
+      0.1,
+      [
+       {
+        "text": "uno",
+        "start": 0,
+        "end": 0.121,
+        "prob": null
+       },
+       {
+        "text": "dos",
+        "start": 0.138,
+        "end": 0.303,
+        "prob": null
+       }
+      ]
+     ]
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+   ]
+  },
+  {
    "name": "textos",
    "timeline": {
     "version": 1,
@@ -689708,15 +691639,21 @@
      0,
      3,
      "hola",
-     {
-      "size": 0.1
-     }
+     null
     ],
     [
      "makeTextClip",
      "T1",
      -1,
      0.2,
+     "hola",
+     null
+    ],
+    [
+     "makeTextClip",
+     "T1",
+     2.0004,
+     7.12345,
      "hola",
      {
       "size": 0.1
@@ -689725,9 +691662,9 @@
     [
      "makeTextClip",
      "T1",
-     2.0004,
-     7.12345,
-     "hola",
+     0,
+     3,
+     "",
      {
       "size": 0.1
      }
@@ -689735,14 +691672,6 @@
     [
      "makeTextClip",
      "T1",
-     0,
-     3,
-     "",
-     null
-    ],
-    [
-     "makeTextClip",
-     "T1",
      -1,
      0.2,
      "",
@@ -689762,7 +691691,9 @@
      0,
      3,
      "Una frase bastante larga para el nombre",
-     null
+     {
+      "size": 0.1
+     }
     ],
     [
      "makeTextClip",
@@ -689770,7 +691701,9 @@
      -1,
      0.2,
      "Una frase bastante larga para el nombre",
-     null
+     {
+      "size": 0.1
+     }
     ],
     [
      "makeTextClip",
@@ -689798,7 +691731,9 @@
      -1,
      0.2,
      "ñandú 😀😀 emojis largos fin",
-     null
+     {
+      "size": 0.1
+     }
     ],
     [
      "makeTextClip",
@@ -689806,7 +691741,9 @@
      2.0004,
      7.12345,
      "ñandú 😀😀 emojis largos fin",
-     null
+     {
+      "size": 0.1
+     }
     ],
     [
      "defaultShape",
@@ -690126,7 +692063,7 @@
       "fill": "#00ff00"
      },
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690135,7 +692072,7 @@
       "fill": "#00ff00"
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690153,16 +692090,6 @@
       "fill": "#00ff00"
      },
      -1,
-     24
-    ],
-    [
-     "changeShape",
-     "v",
-     {
-      "x": 0.2,
-      "rotation": 30
-     },
-     0,
      24
     ],
     [
@@ -690172,8 +692099,18 @@
       "x": 0.2,
       "rotation": 30
      },
-     0.5,
+     0,
      24
+    ],
+    [
+     "changeShape",
+     "v",
+     {
+      "x": 0.2,
+      "rotation": 30
+     },
+     0.5,
+     30
     ],
     [
      "changeShape",
@@ -690233,7 +692170,7 @@
       "h": "0.2"
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690269,36 +692206,6 @@
       "opacity": 0.3
      },
      -1,
-     24
-    ],
-    [
-     "changeShape",
-     "v",
-     {
-      "sides": 7,
-      "dash": "dot"
-     },
-     0,
-     24
-    ],
-    [
-     "changeShape",
-     "v",
-     {
-      "sides": 7,
-      "dash": "dot"
-     },
-     0.5,
-     24
-    ],
-    [
-     "changeShape",
-     "v",
-     {
-      "sides": 7,
-      "dash": "dot"
-     },
-     1.25,
      30
     ],
     [
@@ -690308,15 +692215,6 @@
       "sides": 7,
       "dash": "dot"
      },
-     -1,
-     30
-    ],
-    [
-     "changeShape",
-     "v",
-     {
-      "cx": 0.1
-     },
      0,
      24
     ],
@@ -690324,7 +692222,8 @@
      "changeShape",
      "v",
      {
-      "cx": 0.1
+      "sides": 7,
+      "dash": "dot"
      },
      0.5,
      30
@@ -690333,6 +692232,44 @@
      "changeShape",
      "v",
      {
+      "sides": 7,
+      "dash": "dot"
+     },
+     1.25,
+     30
+    ],
+    [
+     "changeShape",
+     "v",
+     {
+      "sides": 7,
+      "dash": "dot"
+     },
+     -1,
+     24
+    ],
+    [
+     "changeShape",
+     "v",
+     {
+      "cx": 0.1
+     },
+     0,
+     30
+    ],
+    [
+     "changeShape",
+     "v",
+     {
+      "cx": 0.1
+     },
+     0.5,
+     30
+    ],
+    [
+     "changeShape",
+     "v",
+     {
       "cx": 0.1
      },
      1.25,
@@ -690352,21 +692289,21 @@
      "v",
      {},
      0,
-     30
-    ],
-    [
-     "changeShape",
-     "v",
-     {},
-     0.5,
      24
     ],
     [
      "changeShape",
      "v",
      {},
-     1.25,
+     0.5,
      30
+    ],
+    [
+     "changeShape",
+     "v",
+     {},
+     1.25,
+     24
     ],
     [
      "changeShape",
@@ -690429,16 +692366,6 @@
       "rotation": 30
      },
      0.5,
-     30
-    ],
-    [
-     "changeShape",
-     "vk",
-     {
-      "x": 0.2,
-      "rotation": 30
-     },
-     1.25,
      24
     ],
     [
@@ -690448,6 +692375,16 @@
       "x": 0.2,
       "rotation": 30
      },
+     1.25,
+     30
+    ],
+    [
+     "changeShape",
+     "vk",
+     {
+      "x": 0.2,
+      "rotation": 30
+     },
      -1,
      30
     ],
@@ -690469,16 +692406,6 @@
       "h": "0.2"
      },
      0.5,
-     30
-    ],
-    [
-     "changeShape",
-     "vk",
-     {
-      "w": 0.5,
-      "h": "0.2"
-     },
-     1.25,
      24
     ],
     [
@@ -690488,6 +692415,16 @@
       "w": 0.5,
       "h": "0.2"
      },
+     1.25,
+     30
+    ],
+    [
+     "changeShape",
+     "vk",
+     {
+      "w": 0.5,
+      "h": "0.2"
+     },
      -1,
      24
     ],
@@ -690507,7 +692444,7 @@
       "opacity": 0.3
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690516,7 +692453,7 @@
       "opacity": 0.3
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690525,26 +692462,6 @@
       "opacity": 0.3
      },
      -1,
-     24
-    ],
-    [
-     "changeShape",
-     "vk",
-     {
-      "sides": 7,
-      "dash": "dot"
-     },
-     0,
-     30
-    ],
-    [
-     "changeShape",
-     "vk",
-     {
-      "sides": 7,
-      "dash": "dot"
-     },
-     0.5,
      24
     ],
     [
@@ -690554,7 +692471,17 @@
       "sides": 7,
       "dash": "dot"
      },
-     1.25,
+     0,
+     30
+    ],
+    [
+     "changeShape",
+     "vk",
+     {
+      "sides": 7,
+      "dash": "dot"
+     },
+     0.5,
      30
     ],
     [
@@ -690564,8 +692491,18 @@
       "sides": 7,
       "dash": "dot"
      },
-     -1,
+     1.25,
      24
+    ],
+    [
+     "changeShape",
+     "vk",
+     {
+      "sides": 7,
+      "dash": "dot"
+     },
+     -1,
+     30
     ],
     [
      "changeShape",
@@ -690583,15 +692520,6 @@
       "cx": 0.1
      },
      0.5,
-     24
-    ],
-    [
-     "changeShape",
-     "vk",
-     {
-      "cx": 0.1
-     },
-     1.25,
      30
     ],
     [
@@ -690600,8 +692528,17 @@
      {
       "cx": 0.1
      },
+     1.25,
+     24
+    ],
+    [
+     "changeShape",
+     "vk",
+     {
+      "cx": 0.1
+     },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690615,7 +692552,7 @@
      "vk",
      {},
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690629,7 +692566,7 @@
      "vk",
      {},
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690638,7 +692575,7 @@
       "fill": "#00ff00"
      },
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690647,7 +692584,7 @@
       "fill": "#00ff00"
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690656,7 +692593,7 @@
       "fill": "#00ff00"
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690695,7 +692632,7 @@
       "rotation": 30
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690705,7 +692642,7 @@
       "rotation": 30
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690725,7 +692662,7 @@
       "h": "0.2"
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690745,7 +692682,7 @@
       "h": "0.2"
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690781,7 +692718,7 @@
       "opacity": 0.3
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690791,7 +692728,7 @@
       "dash": "dot"
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690801,7 +692738,7 @@
       "dash": "dot"
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690830,7 +692767,7 @@
       "cx": 0.1
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690839,7 +692776,7 @@
       "cx": 0.1
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690857,14 +692794,14 @@
       "cx": 0.1
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
      "img",
      {},
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690878,14 +692815,14 @@
      "img",
      {},
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
      "img",
      {},
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690903,7 +692840,7 @@
       "fill": "#00ff00"
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -690941,7 +692878,7 @@
       "rotation": 30
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690961,7 +692898,7 @@
       "rotation": 30
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -690981,7 +692918,7 @@
       "h": "0.2"
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691001,7 +692938,7 @@
       "h": "0.2"
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691028,7 +692965,7 @@
       "opacity": 0.3
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691037,7 +692974,7 @@
       "opacity": 0.3
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691057,7 +692994,7 @@
       "dash": "dot"
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691077,7 +693014,7 @@
       "dash": "dot"
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691095,7 +693032,7 @@
       "cx": 0.1
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691104,7 +693041,7 @@
       "cx": 0.1
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691113,7 +693050,7 @@
       "cx": 0.1
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691127,7 +693064,7 @@
      "t",
      {},
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691150,7 +693087,7 @@
       "fill": "#00ff00"
      },
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691159,7 +693096,7 @@
       "fill": "#00ff00"
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691168,7 +693105,7 @@
       "fill": "#00ff00"
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691217,7 +693154,7 @@
       "rotation": 30
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691227,7 +693164,7 @@
       "h": "0.2"
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691237,7 +693174,7 @@
       "h": "0.2"
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691247,7 +693184,7 @@
       "h": "0.2"
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691266,7 +693203,7 @@
       "opacity": 0.3
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691275,7 +693212,7 @@
       "opacity": 0.3
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691284,7 +693221,7 @@
       "opacity": 0.3
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691313,7 +693250,7 @@
       "dash": "dot"
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691323,7 +693260,7 @@
       "dash": "dot"
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691342,7 +693279,7 @@
       "cx": 0.1
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691351,7 +693288,7 @@
       "cx": 0.1
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691369,14 +693306,14 @@
       "cx": 0.1
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
      "tk",
      {},
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691406,24 +693343,6 @@
       "fill": "#00ff00"
      },
      0,
-     30
-    ],
-    [
-     "changeShape",
-     "sh",
-     {
-      "fill": "#00ff00"
-     },
-     0.5,
-     30
-    ],
-    [
-     "changeShape",
-     "sh",
-     {
-      "fill": "#00ff00"
-     },
-     1.25,
      24
     ],
     [
@@ -691432,8 +693351,26 @@
      {
       "fill": "#00ff00"
      },
-     -1,
+     0.5,
      30
+    ],
+    [
+     "changeShape",
+     "sh",
+     {
+      "fill": "#00ff00"
+     },
+     1.25,
+     24
+    ],
+    [
+     "changeShape",
+     "sh",
+     {
+      "fill": "#00ff00"
+     },
+     -1,
+     24
     ],
     [
      "changeShape",
@@ -691453,7 +693390,7 @@
       "rotation": 30
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691483,7 +693420,7 @@
       "h": "0.2"
      },
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691493,7 +693430,7 @@
       "h": "0.2"
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691522,7 +693459,7 @@
       "opacity": 0.3
      },
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691531,7 +693468,7 @@
       "opacity": 0.3
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691540,7 +693477,7 @@
       "opacity": 0.3
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691549,7 +693486,7 @@
       "opacity": 0.3
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691579,7 +693516,7 @@
       "dash": "dot"
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691589,7 +693526,7 @@
       "dash": "dot"
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691607,7 +693544,7 @@
       "cx": 0.1
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691616,7 +693553,7 @@
       "cx": 0.1
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691632,14 +693569,14 @@
      "sh",
      {},
      0,
-     24
+     30
     ],
     [
      "changeShape",
      "sh",
      {},
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691653,7 +693590,7 @@
      "sh",
      {},
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691671,15 +693608,6 @@
       "fill": "#00ff00"
      },
      0.5,
-     24
-    ],
-    [
-     "changeShape",
-     "au",
-     {
-      "fill": "#00ff00"
-     },
-     1.25,
      30
     ],
     [
@@ -691688,6 +693616,15 @@
      {
       "fill": "#00ff00"
      },
+     1.25,
+     30
+    ],
+    [
+     "changeShape",
+     "au",
+     {
+      "fill": "#00ff00"
+     },
      -1,
      24
     ],
@@ -691699,7 +693636,7 @@
       "rotation": 30
      },
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691719,7 +693656,7 @@
       "rotation": 30
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691729,7 +693666,7 @@
       "rotation": 30
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691769,7 +693706,7 @@
       "h": "0.2"
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691787,7 +693724,7 @@
       "opacity": 0.3
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691796,7 +693733,7 @@
       "opacity": 0.3
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691815,7 +693752,7 @@
       "dash": "dot"
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691825,7 +693762,7 @@
       "dash": "dot"
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691835,7 +693772,7 @@
       "dash": "dot"
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691854,7 +693791,7 @@
       "cx": 0.1
      },
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691895,7 +693832,7 @@
      "au",
      {},
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -691909,7 +693846,7 @@
      "au",
      {},
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -691985,7 +693922,7 @@
       "rotation": 30
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692034,15 +693971,6 @@
       "opacity": 0.3
      },
      0,
-     24
-    ],
-    [
-     "changeShape",
-     "adj",
-     {
-      "opacity": 0.3
-     },
-     0.5,
      30
     ],
     [
@@ -692051,8 +693979,17 @@
      {
       "opacity": 0.3
      },
-     1.25,
+     0.5,
      30
+    ],
+    [
+     "changeShape",
+     "adj",
+     {
+      "opacity": 0.3
+     },
+     1.25,
+     24
     ],
     [
      "changeShape",
@@ -692071,7 +694008,7 @@
       "dash": "dot"
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692101,7 +694038,7 @@
       "dash": "dot"
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692119,7 +694056,7 @@
       "cx": 0.1
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692144,7 +694081,7 @@
      "adj",
      {},
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692158,14 +694095,14 @@
      "adj",
      {},
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
      "adj",
      {},
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692183,7 +694120,7 @@
       "fill": "#00ff00"
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692201,7 +694138,7 @@
       "fill": "#00ff00"
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692221,7 +694158,7 @@
       "rotation": 30
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692231,7 +694168,7 @@
       "rotation": 30
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692241,7 +694178,7 @@
       "rotation": 30
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692261,7 +694198,7 @@
       "h": "0.2"
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692281,7 +694218,7 @@
       "h": "0.2"
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692308,7 +694245,7 @@
       "opacity": 0.3
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692317,7 +694254,7 @@
       "opacity": 0.3
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692327,7 +694264,7 @@
       "dash": "dot"
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692357,7 +694294,7 @@
       "dash": "dot"
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692414,14 +694351,14 @@
      "rf",
      {},
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
      "rf",
      {},
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692487,7 +694424,7 @@
       "rotation": 30
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692497,7 +694434,7 @@
       "rotation": 30
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692517,7 +694454,7 @@
       "h": "0.2"
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692527,7 +694464,7 @@
       "h": "0.2"
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692555,7 +694492,7 @@
       "opacity": 0.3
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692573,7 +694510,7 @@
       "opacity": 0.3
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692583,7 +694520,7 @@
       "dash": "dot"
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692593,16 +694530,6 @@
       "dash": "dot"
      },
      0.5,
-     24
-    ],
-    [
-     "changeShape",
-     "ts",
-     {
-      "sides": 7,
-      "dash": "dot"
-     },
-     1.25,
      30
     ],
     [
@@ -692612,8 +694539,18 @@
       "sides": 7,
       "dash": "dot"
      },
-     -1,
+     1.25,
      24
+    ],
+    [
+     "changeShape",
+     "ts",
+     {
+      "sides": 7,
+      "dash": "dot"
+     },
+     -1,
+     30
     ],
     [
      "changeShape",
@@ -692622,7 +694559,7 @@
       "cx": 0.1
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692631,7 +694568,7 @@
       "cx": 0.1
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692649,21 +694586,21 @@
       "cx": 0.1
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
      "ts",
      {},
      0,
-     24
+     30
     ],
     [
      "changeShape",
      "ts",
      {},
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692677,7 +694614,7 @@
      "ts",
      {},
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692686,24 +694623,6 @@
       "fill": "#00ff00"
      },
      0,
-     24
-    ],
-    [
-     "changeShape",
-     "shk",
-     {
-      "fill": "#00ff00"
-     },
-     0.5,
-     24
-    ],
-    [
-     "changeShape",
-     "shk",
-     {
-      "fill": "#00ff00"
-     },
-     1.25,
      30
     ],
     [
@@ -692712,6 +694631,24 @@
      {
       "fill": "#00ff00"
      },
+     0.5,
+     24
+    ],
+    [
+     "changeShape",
+     "shk",
+     {
+      "fill": "#00ff00"
+     },
+     1.25,
+     30
+    ],
+    [
+     "changeShape",
+     "shk",
+     {
+      "fill": "#00ff00"
+     },
      -1,
      24
     ],
@@ -692723,7 +694660,7 @@
       "rotation": 30
      },
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692733,7 +694670,7 @@
       "rotation": 30
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692743,7 +694680,7 @@
       "rotation": 30
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692763,7 +694700,7 @@
       "h": "0.2"
      },
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692783,7 +694720,7 @@
       "h": "0.2"
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692802,7 +694739,7 @@
       "opacity": 0.3
      },
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692811,7 +694748,7 @@
       "opacity": 0.3
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692820,7 +694757,7 @@
       "opacity": 0.3
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692869,7 +694806,7 @@
       "dash": "dot"
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692887,7 +694824,7 @@
       "cx": 0.1
      },
      0.5,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692896,7 +694833,7 @@
       "cx": 0.1
      },
      1.25,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692926,14 +694863,14 @@
      "shk",
      {},
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
      "shk",
      {},
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -692969,7 +694906,7 @@
       "fill": "#00ff00"
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -692979,7 +694916,7 @@
       "rotation": 30
      },
      0,
-     24
+     30
     ],
     [
      "changeShape",
@@ -693009,7 +694946,7 @@
       "rotation": 30
      },
      -1,
-     30
+     24
     ],
     [
      "changeShape",
@@ -693029,7 +694966,7 @@
       "h": "0.2"
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -693039,7 +694976,7 @@
       "h": "0.2"
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -693076,7 +695013,7 @@
       "opacity": 0.3
      },
      1.25,
-     30
+     24
     ],
     [
      "changeShape",
@@ -693085,7 +695022,7 @@
       "opacity": 0.3
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
@@ -693143,7 +695080,7 @@
       "cx": 0.1
      },
      0.5,
-     30
+     24
     ],
     [
      "changeShape",
@@ -693161,14 +695098,14 @@
       "cx": 0.1
      },
      -1,
-     24
+     30
     ],
     [
      "changeShape",
      "ti",
      {},
      0,
-     30
+     24
     ],
     [
      "changeShape",
@@ -693189,7 +695126,7 @@
      "ti",
      {},
      -1,
-     24
+     30
     ],
     [
      "newTextDuration",
@@ -693214,7 +695151,7 @@
      {
       "color": "#ff0000"
      },
-     24
+     30
     ],
     [
      "changeStyle",
@@ -693223,32 +695160,13 @@
       "color": "#ff0000"
      },
      0,
-     24,
+     30,
      true
     ],
     [
      "upsertStyleKf",
      "t",
      0.5,
-     {
-      "color": "#ff0000"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "color": "#ff0000"
-     },
-     0.5,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "t",
-     0.51,
      {
       "color": "#ff0000"
      },
@@ -693260,14 +695178,52 @@
      {
       "color": "#ff0000"
      },
-     0.51,
+     0.5,
      24,
      false
     ],
     [
      "upsertStyleKf",
      "t",
+     0.51,
+     {
+      "color": "#ff0000"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "color": "#ff0000"
+     },
+     0.51,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "t",
      1.7,
+     {
+      "color": "#ff0000"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "color": "#ff0000"
+     },
+     1.7,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "t",
+     -1,
      {
       "color": "#ff0000"
      },
@@ -693279,16 +695235,16 @@
      {
       "color": "#ff0000"
      },
-     1.7,
+     -1,
      30,
-     true
+     false
     ],
     [
      "upsertStyleKf",
      "t",
-     -1,
+     0,
      {
-      "color": "#ff0000"
+      "color": "nada"
      },
      24
     ],
@@ -693296,54 +695252,16 @@
      "changeStyle",
      "t",
      {
-      "color": "#ff0000"
+      "color": "nada"
      },
-     -1,
+     0,
      24,
      false
     ],
     [
      "upsertStyleKf",
      "t",
-     0,
-     {
-      "color": "nada"
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "color": "nada"
-     },
-     0,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "t",
      0.5,
-     {
-      "color": "nada"
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "color": "nada"
-     },
-     0.5,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "t",
-     0.51,
      {
       "color": "nada"
      },
@@ -693355,14 +695273,14 @@
      {
       "color": "nada"
      },
-     0.51,
+     0.5,
      30,
      false
     ],
     [
      "upsertStyleKf",
      "t",
-     1.7,
+     0.51,
      {
       "color": "nada"
      },
@@ -693374,8 +695292,27 @@
      {
       "color": "nada"
      },
-     1.7,
+     0.51,
      24,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "t",
+     1.7,
+     {
+      "color": "nada"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "color": "nada"
+     },
+     1.7,
+     60,
      false
     ],
     [
@@ -693385,7 +695322,7 @@
      {
       "color": "nada"
      },
-     30
+     60
     ],
     [
      "changeStyle",
@@ -693394,8 +695331,8 @@
       "color": "nada"
      },
      -1,
-     30,
-     false
+     60,
+     true
     ],
     [
      "upsertStyleKf",
@@ -693405,7 +695342,7 @@
       "font": "Impact",
       "size": 0.06
      },
-     24
+     60
     ],
     [
      "changeStyle",
@@ -693415,76 +695352,13 @@
       "size": 0.06
      },
      0,
-     24,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "t",
-     0.5,
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     0.5,
      60,
      false
     ],
     [
      "upsertStyleKf",
      "t",
-     0.51,
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     0.51,
-     60,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "t",
-     1.7,
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     1.7,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "t",
-     -1,
+     0.5,
      {
       "font": "Impact",
       "size": 0.06
@@ -693498,59 +695372,17 @@
       "font": "Impact",
       "size": 0.06
      },
-     -1,
+     0.5,
      30,
      false
     ],
     [
      "upsertStyleKf",
      "t",
-     0,
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     0,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "t",
-     0.5,
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     0.5,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "t",
      0.51,
      {
-      "x": 0.2,
-      "y": "0.3"
+      "font": "Impact",
+      "size": 0.06
      },
      24
     ],
@@ -693558,8 +695390,8 @@
      "changeStyle",
      "t",
      {
-      "x": 0.2,
-      "y": "0.3"
+      "font": "Impact",
+      "size": 0.06
      },
      0.51,
      24,
@@ -693570,41 +695402,41 @@
      "t",
      1.7,
      {
-      "x": 0.2,
-      "y": "0.3"
+      "font": "Impact",
+      "size": 0.06
      },
-     60
+     24
     ],
     [
      "changeStyle",
      "t",
      {
-      "x": 0.2,
-      "y": "0.3"
+      "font": "Impact",
+      "size": 0.06
      },
      1.7,
-     60,
-     true
+     24,
+     false
     ],
     [
      "upsertStyleKf",
      "t",
      -1,
      {
-      "x": 0.2,
-      "y": "0.3"
+      "font": "Impact",
+      "size": 0.06
      },
-     60
+     24
     ],
     [
      "changeStyle",
      "t",
      {
-      "x": 0.2,
-      "y": "0.3"
+      "font": "Impact",
+      "size": 0.06
      },
      -1,
-     60,
+     24,
      false
     ],
     [
@@ -693612,8 +695444,8 @@
      "t",
      0,
      {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
+      "x": 0.2,
+      "y": "0.3"
      },
      60
     ],
@@ -693621,8 +695453,8 @@
      "changeStyle",
      "t",
      {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
+      "x": 0.2,
+      "y": "0.3"
      },
      0,
      60,
@@ -693633,8 +695465,8 @@
      "t",
      0.5,
      {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
+      "x": 0.2,
+      "y": "0.3"
      },
      60
     ],
@@ -693642,8 +695474,8 @@
      "changeStyle",
      "t",
      {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
+      "x": 0.2,
+      "y": "0.3"
      },
      0.5,
      60,
@@ -693654,10 +695486,115 @@
      "t",
      0.51,
      {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     0.51,
+     60,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "t",
+     1.7,
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     1.7,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "t",
+     -1,
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     -1,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "t",
+     0,
+     {
       "border_width": 4,
       "shadow_color": "#00ff00"
      },
      24
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     0,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "t",
+     0.5,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     0.5,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "t",
+     0.51,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     60
     ],
     [
      "changeStyle",
@@ -693667,7 +695604,7 @@
       "shadow_color": "#00ff00"
      },
      0.51,
-     24,
+     60,
      false
     ],
     [
@@ -693699,7 +695636,7 @@
       "border_width": 4,
       "shadow_color": "#00ff00"
      },
-     24
+     60
     ],
     [
      "changeStyle",
@@ -693709,7 +695646,7 @@
       "shadow_color": "#00ff00"
      },
      -1,
-     24,
+     60,
      false
     ],
     [
@@ -693762,7 +695699,7 @@
       "opacity": 0.5,
       "bold": false
      },
-     60
+     24
     ],
     [
      "changeStyle",
@@ -693772,7 +695709,7 @@
       "bold": false
      },
      0.51,
-     60,
+     24,
      false
     ],
     [
@@ -693804,7 +695741,7 @@
       "opacity": 0.5,
       "bold": false
      },
-     24
+     60
     ],
     [
      "changeStyle",
@@ -693814,7 +695751,7 @@
       "bold": false
      },
      -1,
-     24,
+     60,
      false
     ],
     [
@@ -693825,7 +695762,7 @@
       "curve": 0.4,
       "scale": 2
      },
-     24
+     60
     ],
     [
      "changeStyle",
@@ -693835,7 +695772,7 @@
       "scale": 2
      },
      0,
-     24,
+     60,
      false
     ],
     [
@@ -693846,7 +695783,7 @@
       "curve": 0.4,
       "scale": 2
      },
-     60
+     24
     ],
     [
      "changeStyle",
@@ -693856,78 +695793,16 @@
       "scale": 2
      },
      0.5,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "t",
-     0.51,
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     0.51,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "t",
-     1.7,
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     1.7,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "t",
-     -1,
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "t",
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     -1,
      24,
      false
     ],
     [
      "upsertStyleKf",
      "t",
-     0,
+     0.51,
      {
-      "cx": 0.3
+      "curve": 0.4,
+      "scale": 2
      },
      24
     ],
@@ -693935,15 +695810,77 @@
      "changeStyle",
      "t",
      {
-      "cx": 0.3
+      "curve": 0.4,
+      "scale": 2
      },
-     0,
+     0.51,
      24,
      true
     ],
     [
      "upsertStyleKf",
      "t",
+     1.7,
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     1.7,
+     24,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "t",
+     -1,
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     -1,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "t",
+     0,
+     {
+      "cx": 0.3
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "t",
+     {
+      "cx": 0.3
+     },
+     0,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "t",
      0.5,
      {
       "cx": 0.3
@@ -693958,7 +695895,7 @@
      },
      0.5,
      24,
-     true
+     false
     ],
     [
      "upsertStyleKf",
@@ -693986,7 +695923,7 @@
      {
       "cx": 0.3
      },
-     24
+     30
     ],
     [
      "changeStyle",
@@ -693995,8 +695932,8 @@
       "cx": 0.3
      },
      1.7,
-     24,
-     false
+     30,
+     true
     ],
     [
      "upsertStyleKf",
@@ -694005,7 +695942,7 @@
      {
       "cx": 0.3
      },
-     24
+     30
     ],
     [
      "changeStyle",
@@ -694014,8 +695951,8 @@
       "cx": 0.3
      },
      -1,
-     24,
-     false
+     30,
+     true
     ],
     [
      "upsertStyleKf",
@@ -694052,35 +695989,20 @@
      "t",
      0.51,
      {},
-     30
+     24
     ],
     [
      "changeStyle",
      "t",
      {},
      0.51,
-     30,
+     24,
      true
     ],
     [
      "upsertStyleKf",
      "t",
      1.7,
-     {},
-     60
-    ],
-    [
-     "changeStyle",
-     "t",
-     {},
-     1.7,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "t",
-     -1,
      {},
      30
     ],
@@ -694088,9 +696010,24 @@
      "changeStyle",
      "t",
      {},
-     -1,
+     1.7,
      30,
      true
+    ],
+    [
+     "upsertStyleKf",
+     "t",
+     -1,
+     {},
+     24
+    ],
+    [
+     "changeStyle",
+     "t",
+     {},
+     -1,
+     24,
+     false
     ],
     [
      "upsertStyleKf",
@@ -694099,7 +696036,7 @@
      {
       "color": "#ff0000"
      },
-     24
+     30
     ],
     [
      "changeStyle",
@@ -694108,7 +696045,7 @@
       "color": "#ff0000"
      },
      0,
-     24,
+     30,
      true
     ],
     [
@@ -694137,25 +696074,6 @@
      {
       "color": "#ff0000"
      },
-     24
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "color": "#ff0000"
-     },
-     0.51,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     1.7,
-     {
-      "color": "#ff0000"
-     },
      30
     ],
     [
@@ -694164,8 +696082,27 @@
      {
       "color": "#ff0000"
      },
-     1.7,
+     0.51,
      30,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     1.7,
+     {
+      "color": "#ff0000"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "color": "#ff0000"
+     },
+     1.7,
+     60,
      true
     ],
     [
@@ -694175,7 +696112,7 @@
      {
       "color": "#ff0000"
      },
-     30
+     60
     ],
     [
      "changeStyle",
@@ -694184,65 +696121,65 @@
       "color": "#ff0000"
      },
      -1,
-     30,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     0,
-     {
-      "color": "nada"
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "color": "nada"
-     },
-     0,
-     30,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     0.5,
-     {
-      "color": "nada"
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "color": "nada"
-     },
-     0.5,
-     60,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     0.51,
-     {
-      "color": "nada"
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "color": "nada"
-     },
-     0.51,
      60,
      false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     0,
+     {
+      "color": "nada"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "color": "nada"
+     },
+     0,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     0.5,
+     {
+      "color": "nada"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "color": "nada"
+     },
+     0.5,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     0.51,
+     {
+      "color": "nada"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "color": "nada"
+     },
+     0.51,
+     60,
+     true
     ],
     [
      "upsertStyleKf",
@@ -694270,7 +696207,7 @@
      {
       "color": "nada"
      },
-     60
+     30
     ],
     [
      "changeStyle",
@@ -694279,7 +696216,7 @@
       "color": "nada"
      },
      -1,
-     60,
+     30,
      false
     ],
     [
@@ -694301,33 +696238,12 @@
      },
      0,
      60,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     0.5,
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     0.5,
-     60,
      false
     ],
     [
      "upsertStyleKf",
      "tk",
-     0.51,
+     0.5,
      {
       "font": "Impact",
       "size": 0.06
@@ -694341,8 +696257,29 @@
       "font": "Impact",
       "size": 0.06
      },
-     0.51,
+     0.5,
      30,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     0.51,
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     0.51,
+     24,
      false
     ],
     [
@@ -694353,7 +696290,7 @@
       "font": "Impact",
       "size": 0.06
      },
-     60
+     24
     ],
     [
      "changeStyle",
@@ -694363,7 +696300,7 @@
       "size": 0.06
      },
      1.7,
-     60,
+     24,
      false
     ],
     [
@@ -694479,7 +696416,7 @@
       "x": 0.2,
       "y": "0.3"
      },
-     24
+     60
     ],
     [
      "changeStyle",
@@ -694489,13 +696426,97 @@
       "y": "0.3"
      },
      -1,
-     24,
+     60,
      false
     ],
     [
      "upsertStyleKf",
      "tk",
      0,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     0,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     0.5,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     0.5,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     0.51,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     0.51,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     1.7,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     1.7,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     -1,
      {
       "border_width": 4,
       "shadow_color": "#00ff00"
@@ -694509,103 +696530,19 @@
       "border_width": 4,
       "shadow_color": "#00ff00"
      },
-     0,
+     -1,
      30,
      false
     ],
     [
      "upsertStyleKf",
      "tk",
-     0.5,
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     0.5,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     0.51,
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     0.51,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     1.7,
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     1.7,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     -1,
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     -1,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
      0,
      {
       "opacity": 0.5,
       "bold": false
      },
-     60
+     24
     ],
     [
      "changeStyle",
@@ -694615,7 +696552,7 @@
       "bold": false
      },
      0,
-     60,
+     24,
      false
     ],
     [
@@ -694637,7 +696574,7 @@
      },
      0.5,
      60,
-     false
+     true
     ],
     [
      "upsertStyleKf",
@@ -694668,7 +696605,7 @@
       "opacity": 0.5,
       "bold": false
      },
-     24
+     30
     ],
     [
      "changeStyle",
@@ -694678,8 +696615,8 @@
       "bold": false
      },
      1.7,
-     24,
-     false
+     30,
+     true
     ],
     [
      "upsertStyleKf",
@@ -694689,7 +696626,7 @@
       "opacity": 0.5,
       "bold": false
      },
-     60
+     30
     ],
     [
      "changeStyle",
@@ -694699,7 +696636,7 @@
       "bold": false
      },
      -1,
-     60,
+     30,
      true
     ],
     [
@@ -694721,32 +696658,32 @@
      },
      0,
      30,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     0.5,
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     30
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     0.5,
+     30,
      false
     ],
     [
      "upsertStyleKf",
      "tk",
-     0.5,
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     0.5,
-     30,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
      0.51,
      {
       "curve": 0.4,
@@ -694763,7 +696700,7 @@
      },
      0.51,
      30,
-     true
+     false
     ],
     [
      "upsertStyleKf",
@@ -694784,7 +696721,7 @@
      },
      1.7,
      30,
-     true
+     false
     ],
     [
      "upsertStyleKf",
@@ -694830,63 +696767,6 @@
      "upsertStyleKf",
      "tk",
      0.5,
-     {
-      "cx": 0.3
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "cx": 0.3
-     },
-     0.5,
-     30,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     0.51,
-     {
-      "cx": 0.3
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "cx": 0.3
-     },
-     0.51,
-     30,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     1.7,
-     {
-      "cx": 0.3
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "tk",
-     {
-      "cx": 0.3
-     },
-     1.7,
-     30,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "tk",
-     -1,
      {
       "cx": 0.3
      },
@@ -694898,8 +696778,65 @@
      {
       "cx": 0.3
      },
+     0.5,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     0.51,
+     {
+      "cx": 0.3
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "cx": 0.3
+     },
+     0.51,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
+     1.7,
+     {
+      "cx": 0.3
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "cx": 0.3
+     },
+     1.7,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "tk",
      -1,
-     60,
+     {
+      "cx": 0.3
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "tk",
+     {
+      "cx": 0.3
+     },
+     -1,
+     24,
      false
     ],
     [
@@ -694907,14 +696844,14 @@
      "tk",
      0,
      {},
-     60
+     24
     ],
     [
      "changeStyle",
      "tk",
      {},
      0,
-     60,
+     24,
      false
     ],
     [
@@ -694930,7 +696867,7 @@
      {},
      0.5,
      60,
-     false
+     true
     ],
     [
      "upsertStyleKf",
@@ -694975,50 +696912,12 @@
      {},
      -1,
      60,
-     true
+     false
     ],
     [
      "upsertStyleKf",
      "ts",
      0,
-     {
-      "color": "#ff0000"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "color": "#ff0000"
-     },
-     0,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.5,
-     {
-      "color": "#ff0000"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "color": "#ff0000"
-     },
-     0.5,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.51,
      {
       "color": "#ff0000"
      },
@@ -695030,14 +696929,14 @@
      {
       "color": "#ff0000"
      },
-     0.51,
+     0,
      60,
      false
     ],
     [
      "upsertStyleKf",
      "ts",
-     1.7,
+     0.5,
      {
       "color": "#ff0000"
      },
@@ -695049,9 +696948,47 @@
      {
       "color": "#ff0000"
      },
-     1.7,
+     0.5,
      60,
      false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     0.51,
+     {
+      "color": "#ff0000"
+     },
+     30
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "color": "#ff0000"
+     },
+     0.51,
+     30,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     1.7,
+     {
+      "color": "#ff0000"
+     },
+     30
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "color": "#ff0000"
+     },
+     1.7,
+     30,
+     true
     ],
     [
      "upsertStyleKf",
@@ -695060,7 +696997,7 @@
      {
       "color": "#ff0000"
      },
-     60
+     30
     ],
     [
      "changeStyle",
@@ -695069,7 +697006,7 @@
       "color": "#ff0000"
      },
      -1,
-     60,
+     30,
      false
     ],
     [
@@ -695098,7 +697035,7 @@
      {
       "color": "nada"
      },
-     30
+     24
     ],
     [
      "changeStyle",
@@ -695107,27 +697044,27 @@
       "color": "nada"
      },
      0.5,
-     30,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     0.51,
+     {
+      "color": "nada"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "color": "nada"
+     },
+     0.51,
+     24,
      true
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.51,
-     {
-      "color": "nada"
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "color": "nada"
-     },
-     0.51,
-     30,
-     false
     ],
     [
      "upsertStyleKf",
@@ -695136,7 +697073,7 @@
      {
       "color": "nada"
      },
-     30
+     24
     ],
     [
      "changeStyle",
@@ -695145,7 +697082,7 @@
       "color": "nada"
      },
      1.7,
-     30,
+     24,
      false
     ],
     [
@@ -695154,68 +697091,6 @@
      -1,
      {
       "color": "nada"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "color": "nada"
-     },
-     -1,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0,
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     0,
-     24,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.5,
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     0.5,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.51,
-     {
-      "font": "Impact",
-      "size": 0.06
      },
      60
     ],
@@ -695223,16 +697098,78 @@
      "changeStyle",
      "ts",
      {
-      "font": "Impact",
-      "size": 0.06
+      "color": "nada"
      },
-     0.51,
+     -1,
      60,
      false
     ],
     [
      "upsertStyleKf",
      "ts",
+     0,
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     0,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     0.5,
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     30
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     0.5,
+     30,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     0.51,
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     0.51,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
      1.7,
      {
       "font": "Impact",
@@ -695249,7 +697186,7 @@
      },
      1.7,
      24,
-     false
+     true
     ],
     [
      "upsertStyleKf",
@@ -695297,69 +697234,6 @@
      "upsertStyleKf",
      "ts",
      0.5,
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     0.5,
-     24,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.51,
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     0.51,
-     30,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     1.7,
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     1.7,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     -1,
      {
       "x": 0.2,
       "y": "0.3"
@@ -695373,50 +697247,8 @@
       "x": 0.2,
       "y": "0.3"
      },
-     -1,
+     0.5,
      60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0,
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     0,
-     30,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.5,
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     0.5,
-     24,
      false
     ],
     [
@@ -695424,8 +697256,50 @@
      "ts",
      0.51,
      {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
+      "x": 0.2,
+      "y": "0.3"
+     },
+     30
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     0.51,
+     30,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     1.7,
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     1.7,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     -1,
+     {
+      "x": 0.2,
+      "y": "0.3"
      },
      60
     ],
@@ -695433,17 +697307,17 @@
      "changeStyle",
      "ts",
      {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
+      "x": 0.2,
+      "y": "0.3"
      },
-     0.51,
+     -1,
      60,
      false
     ],
     [
      "upsertStyleKf",
      "ts",
-     1.7,
+     0,
      {
       "border_width": 4,
       "shadow_color": "#00ff00"
@@ -695457,14 +697331,14 @@
       "border_width": 4,
       "shadow_color": "#00ff00"
      },
-     1.7,
+     0,
      30,
      false
     ],
     [
      "upsertStyleKf",
      "ts",
-     -1,
+     0.5,
      {
       "border_width": 4,
       "shadow_color": "#00ff00"
@@ -695478,17 +697352,17 @@
       "border_width": 4,
       "shadow_color": "#00ff00"
      },
-     -1,
+     0.5,
      24,
      false
     ],
     [
      "upsertStyleKf",
      "ts",
-     0,
+     0.51,
      {
-      "opacity": 0.5,
-      "bold": false
+      "border_width": 4,
+      "shadow_color": "#00ff00"
      },
      24
     ],
@@ -695496,59 +697370,59 @@
      "changeStyle",
      "ts",
      {
-      "opacity": 0.5,
-      "bold": false
+      "border_width": 4,
+      "shadow_color": "#00ff00"
      },
-     0,
+     0.51,
      24,
      false
     ],
     [
      "upsertStyleKf",
      "ts",
-     0.5,
-     {
-      "opacity": 0.5,
-      "bold": false
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "opacity": 0.5,
-      "bold": false
-     },
-     0.5,
-     30,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.51,
-     {
-      "opacity": 0.5,
-      "bold": false
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "opacity": 0.5,
-      "bold": false
-     },
-     0.51,
-     30,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
      1.7,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     30
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     1.7,
+     30,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     -1,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     30
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     -1,
+     30,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     0,
      {
       "opacity": 0.5,
       "bold": false
@@ -695562,13 +697436,76 @@
       "opacity": 0.5,
       "bold": false
      },
-     1.7,
+     0,
      60,
      false
     ],
     [
      "upsertStyleKf",
      "ts",
+     0.5,
+     {
+      "opacity": 0.5,
+      "bold": false
+     },
+     30
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "opacity": 0.5,
+      "bold": false
+     },
+     0.5,
+     30,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     0.51,
+     {
+      "opacity": 0.5,
+      "bold": false
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "opacity": 0.5,
+      "bold": false
+     },
+     0.51,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     1.7,
+     {
+      "opacity": 0.5,
+      "bold": false
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "opacity": 0.5,
+      "bold": false
+     },
+     1.7,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
      -1,
      {
       "opacity": 0.5,
@@ -695585,7 +697522,7 @@
      },
      -1,
      30,
-     false
+     true
     ],
     [
      "upsertStyleKf",
@@ -695606,33 +697543,12 @@
      },
      0,
      24,
-     false
+     true
     ],
     [
      "upsertStyleKf",
      "ts",
      0.5,
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     0.5,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.51,
      {
       "curve": 0.4,
       "scale": 2
@@ -695646,8 +697562,29 @@
       "curve": 0.4,
       "scale": 2
      },
-     0.51,
+     0.5,
      30,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     0.51,
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     0.51,
+     60,
      true
     ],
     [
@@ -695669,7 +697606,7 @@
      },
      1.7,
      24,
-     true
+     false
     ],
     [
      "upsertStyleKf",
@@ -695690,7 +697627,7 @@
      },
      -1,
      30,
-     true
+     false
     ],
     [
      "upsertStyleKf",
@@ -695709,12 +697646,31 @@
      },
      0,
      60,
-     true
+     false
     ],
     [
      "upsertStyleKf",
      "ts",
      0.5,
+     {
+      "cx": 0.3
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {
+      "cx": 0.3
+     },
+     0.5,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     0.51,
      {
       "cx": 0.3
      },
@@ -695726,27 +697682,8 @@
      {
       "cx": 0.3
      },
-     0.5,
+     0.51,
      24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.51,
-     {
-      "cx": 0.3
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {
-      "cx": 0.3
-     },
-     0.51,
-     30,
      false
     ],
     [
@@ -695792,59 +697729,59 @@
      "ts",
      0,
      {},
-     24
+     60
     ],
     [
      "changeStyle",
      "ts",
      {},
      0,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     0.5,
+     {},
+     60
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {},
+     0.5,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     0.51,
+     {},
+     30
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {},
+     0.51,
+     30,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ts",
+     1.7,
+     {},
+     24
+    ],
+    [
+     "changeStyle",
+     "ts",
+     {},
+     1.7,
      24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.5,
-     {},
-     60
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {},
-     0.5,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     0.51,
-     {},
-     60
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {},
-     0.51,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ts",
-     1.7,
-     {},
-     60
-    ],
-    [
-     "changeStyle",
-     "ts",
-     {},
-     1.7,
-     60,
      false
     ],
     [
@@ -695866,63 +697803,6 @@
      "upsertStyleKf",
      "ti",
      0,
-     {
-      "color": "#ff0000"
-     },
-     30
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "color": "#ff0000"
-     },
-     0,
-     30,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     0.5,
-     {
-      "color": "#ff0000"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "color": "#ff0000"
-     },
-     0.5,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     0.51,
-     {
-      "color": "#ff0000"
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "color": "#ff0000"
-     },
-     0.51,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     1.7,
      {
       "color": "#ff0000"
      },
@@ -695934,14 +697814,14 @@
      {
       "color": "#ff0000"
      },
-     1.7,
+     0,
      24,
      false
     ],
     [
      "upsertStyleKf",
      "ti",
-     -1,
+     0.5,
      {
       "color": "#ff0000"
      },
@@ -695953,13 +697833,70 @@
      {
       "color": "#ff0000"
      },
-     -1,
+     0.5,
      30,
      false
     ],
     [
      "upsertStyleKf",
      "ti",
+     0.51,
+     {
+      "color": "#ff0000"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "color": "#ff0000"
+     },
+     0.51,
+     24,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     1.7,
+     {
+      "color": "#ff0000"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "color": "#ff0000"
+     },
+     1.7,
+     24,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     -1,
+     {
+      "color": "#ff0000"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "color": "#ff0000"
+     },
+     -1,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
      0,
      {
       "color": "nada"
@@ -695974,7 +697911,7 @@
      },
      0,
      24,
-     true
+     false
     ],
     [
      "upsertStyleKf",
@@ -695993,7 +697930,7 @@
      },
      0.5,
      24,
-     true
+     false
     ],
     [
      "upsertStyleKf",
@@ -696031,7 +697968,7 @@
      },
      1.7,
      24,
-     false
+     true
     ],
     [
      "upsertStyleKf",
@@ -696056,69 +697993,6 @@
      "upsertStyleKf",
      "ti",
      0,
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     0,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     0.5,
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     0.5,
-     24,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     0.51,
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     0.51,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     1.7,
      {
       "font": "Impact",
       "size": 0.06
@@ -696132,48 +698006,6 @@
       "font": "Impact",
       "size": 0.06
      },
-     1.7,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     -1,
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "font": "Impact",
-      "size": 0.06
-     },
-     -1,
-     60,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     0,
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
      0,
      60,
      false
@@ -696183,8 +698015,50 @@
      "ti",
      0.5,
      {
-      "x": 0.2,
-      "y": "0.3"
+      "font": "Impact",
+      "size": 0.06
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     0.5,
+     60,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     0.51,
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "font": "Impact",
+      "size": 0.06
+     },
+     0.51,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     1.7,
+     {
+      "font": "Impact",
+      "size": 0.06
      },
      30
     ],
@@ -696192,20 +698066,20 @@
      "changeStyle",
      "ti",
      {
-      "x": 0.2,
-      "y": "0.3"
+      "font": "Impact",
+      "size": 0.06
      },
-     0.5,
+     1.7,
      30,
      false
     ],
     [
      "upsertStyleKf",
      "ti",
-     0.51,
+     -1,
      {
-      "x": 0.2,
-      "y": "0.3"
+      "font": "Impact",
+      "size": 0.06
      },
      24
     ],
@@ -696213,17 +698087,17 @@
      "changeStyle",
      "ti",
      {
-      "x": 0.2,
-      "y": "0.3"
+      "font": "Impact",
+      "size": 0.06
      },
-     0.51,
+     -1,
      24,
      false
     ],
     [
      "upsertStyleKf",
      "ti",
-     1.7,
+     0,
      {
       "x": 0.2,
       "y": "0.3"
@@ -696237,50 +698111,8 @@
       "x": 0.2,
       "y": "0.3"
      },
-     1.7,
+     0,
      60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     -1,
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "x": 0.2,
-      "y": "0.3"
-     },
-     -1,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     0,
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     0,
-     24,
      false
     ],
     [
@@ -696288,8 +698120,8 @@
      "ti",
      0.5,
      {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
+      "x": 0.2,
+      "y": "0.3"
      },
      24
     ],
@@ -696297,8 +698129,8 @@
      "changeStyle",
      "ti",
      {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
+      "x": 0.2,
+      "y": "0.3"
      },
      0.5,
      24,
@@ -696309,8 +698141,50 @@
      "ti",
      0.51,
      {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
+      "x": 0.2,
+      "y": "0.3"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     0.51,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     1.7,
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "x": 0.2,
+      "y": "0.3"
+     },
+     1.7,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     -1,
+     {
+      "x": 0.2,
+      "y": "0.3"
      },
      60
     ],
@@ -696318,53 +698192,11 @@
      "changeStyle",
      "ti",
      {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
+      "x": 0.2,
+      "y": "0.3"
      },
-     0.51,
+     -1,
      60,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     1.7,
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     1.7,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     -1,
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "border_width": 4,
-      "shadow_color": "#00ff00"
-     },
-     -1,
-     24,
      true
     ],
     [
@@ -696372,6 +698204,111 @@
      "ti",
      0,
      {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     0,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     0.5,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     0.5,
+     24,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     0.51,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     0.51,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     1.7,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     1.7,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     -1,
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "border_width": 4,
+      "shadow_color": "#00ff00"
+     },
+     -1,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     0,
+     {
       "opacity": 0.5,
       "bold": false
      },
@@ -696417,7 +698354,7 @@
       "opacity": 0.5,
       "bold": false
      },
-     60
+     24
     ],
     [
      "changeStyle",
@@ -696427,7 +698364,7 @@
       "bold": false
      },
      0.51,
-     60,
+     24,
      false
     ],
     [
@@ -696437,69 +698374,6 @@
      {
       "opacity": 0.5,
       "bold": false
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "opacity": 0.5,
-      "bold": false
-     },
-     1.7,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     -1,
-     {
-      "opacity": 0.5,
-      "bold": false
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "opacity": 0.5,
-      "bold": false
-     },
-     -1,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     0,
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     0,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     0.5,
-     {
-      "curve": 0.4,
-      "scale": 2
      },
      30
     ],
@@ -696507,16 +698381,79 @@
      "changeStyle",
      "ti",
      {
-      "curve": 0.4,
-      "scale": 2
+      "opacity": 0.5,
+      "bold": false
      },
-     0.5,
+     1.7,
      30,
      true
     ],
     [
      "upsertStyleKf",
      "ti",
+     -1,
+     {
+      "opacity": 0.5,
+      "bold": false
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "opacity": 0.5,
+      "bold": false
+     },
+     -1,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     0,
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     0,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     0.5,
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     0.5,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
      0.51,
      {
       "curve": 0.4,
@@ -696532,74 +698469,55 @@
       "scale": 2
      },
      0.51,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     1.7,
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     1.7,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     -1,
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "curve": 0.4,
-      "scale": 2
-     },
-     -1,
-     24,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     0,
-     {
-      "cx": 0.3
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "cx": 0.3
-     },
-     0,
      24,
      true
     ],
     [
      "upsertStyleKf",
      "ti",
-     0.5,
+     1.7,
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     60
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     1.7,
+     60,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     -1,
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {
+      "curve": 0.4,
+      "scale": 2
+     },
+     -1,
+     24,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     0,
      {
       "cx": 0.3
      },
@@ -696611,52 +698529,14 @@
      {
       "cx": 0.3
      },
+     0,
+     60,
+     true
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
      0.5,
-     60,
-     false
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     0.51,
-     {
-      "cx": 0.3
-     },
-     24
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "cx": 0.3
-     },
-     0.51,
-     24,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     1.7,
-     {
-      "cx": 0.3
-     },
-     60
-    ],
-    [
-     "changeStyle",
-     "ti",
-     {
-      "cx": 0.3
-     },
-     1.7,
-     60,
-     true
-    ],
-    [
-     "upsertStyleKf",
-     "ti",
-     -1,
      {
       "cx": 0.3
      },
@@ -696668,59 +698548,71 @@
      {
       "cx": 0.3
      },
-     -1,
+     0.5,
      30,
      false
     ],
     [
      "upsertStyleKf",
      "ti",
-     0,
-     {},
+     0.51,
+     {
+      "cx": 0.3
+     },
      24
     ],
     [
      "changeStyle",
      "ti",
-     {},
-     0,
+     {
+      "cx": 0.3
+     },
+     0.51,
      24,
      false
     ],
     [
      "upsertStyleKf",
      "ti",
-     0.5,
-     {},
+     1.7,
+     {
+      "cx": 0.3
+     },
      60
     ],
     [
      "changeStyle",
      "ti",
-     {},
-     0.5,
+     {
+      "cx": 0.3
+     },
+     1.7,
      60,
      false
     ],
     [
      "upsertStyleKf",
      "ti",
-     0.51,
-     {},
+     -1,
+     {
+      "cx": 0.3
+     },
      24
     ],
     [
      "changeStyle",
      "ti",
-     {},
-     0.51,
+     {
+      "cx": 0.3
+     },
+     -1,
      24,
      true
     ],
     [
      "upsertStyleKf",
      "ti",
-     1.7,
+     0,
      {},
      24
     ],
@@ -696728,14 +698620,14 @@
      "changeStyle",
      "ti",
      {},
-     1.7,
+     0,
      24,
      false
     ],
     [
      "upsertStyleKf",
      "ti",
-     -1,
+     0.5,
      {},
      30
     ],
@@ -696743,8 +698635,53 @@
      "changeStyle",
      "ti",
      {},
-     -1,
+     0.5,
      30,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     0.51,
+     {},
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {},
+     0.51,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     1.7,
+     {},
+     24
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {},
+     1.7,
+     24,
+     false
+    ],
+    [
+     "upsertStyleKf",
+     "ti",
+     -1,
+     {},
+     60
+    ],
+    [
+     "changeStyle",
+     "ti",
+     {},
+     -1,
+     60,
      false
     ]
    ],
@@ -696940,7 +698877,29 @@
      "reframe": null,
      "text": "hola",
      "style": {
-      "size": 0.1
+      "font": "Arial",
+      "size": 0.009375,
+      "color": "#ffffff",
+      "bold": true,
+      "align": "center",
+      "x": 0.5,
+      "y": 0.5,
+      "w": 0.8,
+      "border_width": 6,
+      "border_color": "#000000",
+      "shadow": false,
+      "shadow_color": "#000000",
+      "glow": false,
+      "bg": "none",
+      "bg_opacity": 0.55,
+      "highlight_color": "#ffe566",
+      "word_fx": "none",
+      "block_appear": "none",
+      "inactive_opacity": 1,
+      "active_opacity": 1,
+      "opacity": 1,
+      "max_words": 8,
+      "preset": "outline"
      },
      "words": [],
      "text_role": "free",
@@ -696966,7 +698925,29 @@
      "reframe": null,
      "text": "hola",
      "style": {
-      "size": 0.1
+      "font": "Arial",
+      "size": 0.009375,
+      "color": "#ffffff",
+      "bold": true,
+      "align": "center",
+      "x": 0.5,
+      "y": 0.5,
+      "w": 0.8,
+      "border_width": 6,
+      "border_color": "#000000",
+      "shadow": false,
+      "shadow_color": "#000000",
+      "glow": false,
+      "bg": "none",
+      "bg_opacity": 0.55,
+      "highlight_color": "#ffe566",
+      "word_fx": "none",
+      "block_appear": "none",
+      "inactive_opacity": 1,
+      "active_opacity": 1,
+      "opacity": 1,
+      "max_words": 8,
+      "preset": "outline"
      },
      "words": [],
      "text_role": "free",
@@ -697018,29 +698999,7 @@
      "reframe": null,
      "text": "Texto",
      "style": {
-      "font": "Arial",
-      "size": 0.009375,
-      "color": "#ffffff",
-      "bold": true,
-      "align": "center",
-      "x": 0.5,
-      "y": 0.5,
-      "w": 0.8,
-      "border_width": 6,
-      "border_color": "#000000",
-      "shadow": false,
-      "shadow_color": "#000000",
-      "glow": false,
-      "bg": "none",
-      "bg_opacity": 0.55,
-      "highlight_color": "#ffe566",
-      "word_fx": "none",
-      "block_appear": "none",
-      "inactive_opacity": 1,
-      "active_opacity": 1,
-      "opacity": 1,
-      "max_words": 8,
-      "preset": "outline"
+      "size": 0.1
      },
      "words": [],
      "text_role": "free",
@@ -697162,29 +699121,7 @@
      "reframe": null,
      "text": "Una frase bastante larga para el nombre",
      "style": {
-      "font": "Arial",
-      "size": 0.009375,
-      "color": "#ffffff",
-      "bold": true,
-      "align": "center",
-      "x": 0.5,
-      "y": 0.5,
-      "w": 0.8,
-      "border_width": 6,
-      "border_color": "#000000",
-      "shadow": false,
-      "shadow_color": "#000000",
-      "glow": false,
-      "bg": "none",
-      "bg_opacity": 0.55,
-      "highlight_color": "#ffe566",
-      "word_fx": "none",
-      "block_appear": "none",
-      "inactive_opacity": 1,
-      "active_opacity": 1,
-      "opacity": 1,
-      "max_words": 8,
-      "preset": "outline"
+      "size": 0.1
      },
      "words": [],
      "text_role": "free",
@@ -697210,29 +699147,7 @@
      "reframe": null,
      "text": "Una frase bastante larga para el nombre",
      "style": {
-      "font": "Arial",
-      "size": 0.009375,
-      "color": "#ffffff",
-      "bold": true,
-      "align": "center",
-      "x": 0.5,
-      "y": 0.5,
-      "w": 0.8,
-      "border_width": 6,
-      "border_color": "#000000",
-      "shadow": false,
-      "shadow_color": "#000000",
-      "glow": false,
-      "bg": "none",
-      "bg_opacity": 0.55,
-      "highlight_color": "#ffe566",
-      "word_fx": "none",
-      "block_appear": "none",
-      "inactive_opacity": 1,
-      "active_opacity": 1,
-      "opacity": 1,
-      "max_words": 8,
-      "preset": "outline"
+      "size": 0.1
      },
      "words": [],
      "text_role": "free",
@@ -697310,29 +699225,7 @@
      "reframe": null,
      "text": "ñandú 😀😀 emojis largos fin",
      "style": {
-      "font": "Arial",
-      "size": 0.009375,
-      "color": "#ffffff",
-      "bold": true,
-      "align": "center",
-      "x": 0.5,
-      "y": 0.5,
-      "w": 0.8,
-      "border_width": 6,
-      "border_color": "#000000",
-      "shadow": false,
-      "shadow_color": "#000000",
-      "glow": false,
-      "bg": "none",
-      "bg_opacity": 0.55,
-      "highlight_color": "#ffe566",
-      "word_fx": "none",
-      "block_appear": "none",
-      "inactive_opacity": 1,
-      "active_opacity": 1,
-      "opacity": 1,
-      "max_words": 8,
-      "preset": "outline"
+      "size": 0.1
      },
      "words": [],
      "text_role": "free",
@@ -697358,29 +699251,7 @@
      "reframe": null,
      "text": "ñandú 😀😀 emojis largos fin",
      "style": {
-      "font": "Arial",
-      "size": 0.009375,
-      "color": "#ffffff",
-      "bold": true,
-      "align": "center",
-      "x": 0.5,
-      "y": 0.5,
-      "w": 0.8,
-      "border_width": 6,
-      "border_color": "#000000",
-      "shadow": false,
-      "shadow_color": "#000000",
-      "glow": false,
-      "bg": "none",
-      "bg_opacity": 0.55,
-      "highlight_color": "#ffe566",
-      "word_fx": "none",
-      "block_appear": "none",
-      "inactive_opacity": 1,
-      "active_opacity": 1,
-      "opacity": 1,
-      "max_words": 8,
-      "preset": "outline"
+      "size": 0.1
      },
      "words": [],
      "text_role": "free",
@@ -701434,7 +703305,7 @@
         }
        },
        {
-        "t": 1.25,
+        "t": 1.266667,
         "interpolation": "linear",
         "props": {
          "x": 0.1,
@@ -702716,7 +704587,7 @@
         }
        },
        {
-        "t": 1.266667,
+        "t": 1.25,
         "interpolation": "linear",
         "props": {
          "x": 0.2,
@@ -703002,7 +704873,7 @@
         }
        },
        {
-        "t": 1.25,
+        "t": 1.266667,
         "interpolation": "linear",
         "props": {
          "x": 0.3,
@@ -703287,7 +705158,7 @@
         }
        },
        {
-        "t": 1.25,
+        "t": 1.266667,
         "interpolation": "linear",
         "props": {
          "x": 0.3,
@@ -704140,7 +706011,13 @@
        "t": 0.5,
        "interpolation": "linear",
        "props": {
-        "font_size": 40,
+        "font_size": 40
+       }
+      },
+      {
+       "t": 0.516667,
+       "interpolation": "linear",
+       "props": {
         "color": "#ff0000"
        }
       }
@@ -704757,7 +706634,13 @@
        "t": 0.5,
        "interpolation": "linear",
        "props": {
-        "font_size": 40,
+        "font_size": 40
+       }
+      },
+      {
+       "t": 0.516667,
+       "interpolation": "linear",
+       "props": {
         "border_width": 4,
         "shadow_color": "#00ff00"
        }
@@ -705088,13 +706971,7 @@
        "t": 0.5,
        "interpolation": "linear",
        "props": {
-        "font_size": 40
-       }
-      },
-      {
-       "t": 0.516667,
-       "interpolation": "linear",
-       "props": {
+        "font_size": 40,
         "curve": 0.4
        }
       }
@@ -705130,7 +707007,7 @@
        }
       },
       {
-       "t": 1.7,
+       "t": 1.708333,
        "interpolation": "linear",
        "props": {
         "curve": 0.4
@@ -705418,7 +707295,7 @@
         }
        },
        {
-        "t": 1.708333,
+        "t": 1.7,
         "interpolation": "linear",
         "props": {
          "x": 0.4,
@@ -707176,7 +709053,7 @@
        }
       },
       {
-       "t": 1.708333,
+       "t": 1.7,
        "interpolation": "linear",
        "props": {
         "border_width": 4,
@@ -707611,7 +709488,7 @@
         }
        },
        {
-        "t": 1.708333,
+        "t": 1.7,
         "interpolation": "linear",
         "props": {
          "x": 1,
@@ -708458,7 +710335,7 @@
         }
        },
        {
-        "t": 0.5,
+        "t": 0.516667,
         "interpolation": "linear",
         "props": {
          "x": 1,
@@ -709071,13 +710948,6 @@
        }
       },
       {
-       "t": 0.516667,
-       "interpolation": "linear",
-       "props": {
-        "color": "#ff0000"
-       }
-      },
-      {
        "t": 2,
        "interpolation": "linear",
        "props": {
@@ -709099,13 +710969,6 @@
         "props": {
          "color": "#ff0000",
          "y": 0.3
-        }
-       },
-       {
-        "t": 0.516667,
-        "interpolation": "linear",
-        "props": {
-         "color": "#ff0000"
         }
        },
        {
@@ -709154,22 +711017,13 @@
       "items": [
        {
         "t": 0.5,
-        "interpolation": "linear",
         "props": {
          "color": "#ff0000",
          "y": 0.3
         }
        },
        {
-        "t": 1.7,
-        "interpolation": "linear",
-        "props": {
-         "color": "#ff0000"
-        }
-       },
-       {
         "t": 2,
-        "interpolation": "linear",
         "props": {
          "color": "#00ff00"
         }
@@ -710160,13 +712014,7 @@
        "interpolation": "linear",
        "props": {
         "color": "#ff0000",
-        "y": 0.3
-       }
-      },
-      {
-       "t": 0.516667,
-       "interpolation": "linear",
-       "props": {
+        "y": 0.3,
         "border_width": 4,
         "shadow_color": "#00ff00"
        }
@@ -710579,7 +712427,7 @@
         }
        },
        {
-        "t": 1.7,
+        "t": 1.708333,
         "interpolation": "linear",
         "props": {
          "x": 0.5,
@@ -710884,7 +712732,13 @@
        "interpolation": "linear",
        "props": {
         "color": "#ff0000",
-        "y": 0.3,
+        "y": 0.3
+       }
+      },
+      {
+       "t": 0.516667,
+       "interpolation": "linear",
+       "props": {
         "curve": 0.4
        }
       },
@@ -710911,8 +712765,15 @@
         "interpolation": "linear",
         "props": {
          "color": "#ff0000",
-         "y": 0.3,
+         "y": 0.3
+        }
+       },
+       {
+        "t": 0.516667,
+        "interpolation": "linear",
+        "props": {
          "x": 0.5,
+         "y": 0.3,
          "scale": 2,
          "rotation": 0,
          "opacity": 1,
@@ -711737,6 +713598,113 @@
      "items": [
       {
        "t": 0,
+       "interpolation": "hold",
+       "props": {
+        "color": "#ff0000"
+       }
+      },
+      {
+       "t": 1.6,
+       "interpolation": "linear",
+       "props": {
+        "border_width": 2
+       }
+      }
+     ]
+    },
+    {
+     "style": {
+      "color": "#ff0000"
+     },
+     "keyframes": {
+      "enabled": true,
+      "items": [
+       {
+        "t": 0,
+        "interpolation": "hold",
+        "props": {
+         "color": "#ff0000"
+        }
+       },
+       {
+        "t": 1.6,
+        "interpolation": "linear",
+        "props": {
+         "border_width": 2
+        }
+       }
+      ]
+     }
+    },
+    {
+     "enabled": true,
+     "items": [
+      {
+       "t": 0,
+       "interpolation": "hold",
+       "props": {
+        "color": "#111111"
+       }
+      },
+      {
+       "t": 0.5,
+       "interpolation": "hold",
+       "props": {
+        "color": "#ff0000"
+       }
+      },
+      {
+       "t": 1.6,
+       "interpolation": "linear",
+       "props": {
+        "border_width": 2
+       }
+      }
+     ]
+    },
+    {
+     "style": {
+      "color": "#ff0000"
+     },
+     "keyframes": {
+      "enabled": true,
+      "items": [
+       {
+        "t": 0,
+        "interpolation": "hold",
+        "props": {
+         "color": "#111111"
+        }
+       },
+       {
+        "t": 0.5,
+        "interpolation": "hold",
+        "props": {
+         "color": "#ff0000"
+        }
+       },
+       {
+        "t": 1.6,
+        "interpolation": "linear",
+        "props": {
+         "border_width": 2
+        }
+       }
+      ]
+     }
+    },
+    {
+     "enabled": true,
+     "items": [
+      {
+       "t": 0,
+       "interpolation": "hold",
+       "props": {
+        "color": "#111111"
+       }
+      },
+      {
+       "t": 0.5,
        "interpolation": "hold",
        "props": {
         "color": "#ff0000"
@@ -711786,120 +713754,6 @@
        }
       },
       {
-       "t": 0.5,
-       "interpolation": "hold",
-       "props": {
-        "color": "#ff0000"
-       }
-      },
-      {
-       "t": 1.6,
-       "interpolation": "linear",
-       "props": {
-        "border_width": 2
-       }
-      }
-     ]
-    },
-    {
-     "style": {
-      "color": "#ff0000"
-     },
-     "keyframes": {
-      "enabled": true,
-      "items": [
-       {
-        "t": 0,
-        "interpolation": "hold",
-        "props": {
-         "color": "#111111"
-        }
-       },
-       {
-        "t": 0.5,
-        "interpolation": "hold",
-        "props": {
-         "color": "#ff0000"
-        }
-       },
-       {
-        "t": 1.6,
-        "interpolation": "linear",
-        "props": {
-         "border_width": 2
-        }
-       }
-      ]
-     }
-    },
-    {
-     "enabled": true,
-     "items": [
-      {
-       "t": 0,
-       "interpolation": "hold",
-       "props": {
-        "color": "#111111"
-       }
-      },
-      {
-       "t": 0.516667,
-       "interpolation": "hold",
-       "props": {
-        "color": "#ff0000"
-       }
-      },
-      {
-       "t": 1.6,
-       "interpolation": "linear",
-       "props": {
-        "border_width": 2
-       }
-      }
-     ]
-    },
-    {
-     "style": {
-      "color": "#ff0000"
-     },
-     "keyframes": {
-      "enabled": true,
-      "items": [
-       {
-        "t": 0,
-        "interpolation": "hold",
-        "props": {
-         "color": "#111111"
-        }
-       },
-       {
-        "t": 0.516667,
-        "interpolation": "hold",
-        "props": {
-         "color": "#ff0000"
-        }
-       },
-       {
-        "t": 1.6,
-        "interpolation": "linear",
-        "props": {
-         "border_width": 2
-        }
-       }
-      ]
-     }
-    },
-    {
-     "enabled": true,
-     "items": [
-      {
-       "t": 0,
-       "interpolation": "hold",
-       "props": {
-        "color": "#111111"
-       }
-      },
-      {
        "t": 1.6,
        "interpolation": "linear",
        "props": {
@@ -711924,24 +713778,17 @@
       "items": [
        {
         "t": 0,
-        "interpolation": "hold",
         "props": {
          "color": "#111111"
-        }
+        },
+        "interpolation": "hold"
        },
        {
         "t": 1.6,
-        "interpolation": "linear",
         "props": {
          "border_width": 2
-        }
-       },
-       {
-        "t": 1.708333,
-        "interpolation": "linear",
-        "props": {
-         "color": "#ff0000"
-        }
+        },
+        "interpolation": "ease_out"
        }
       ]
      }
@@ -712747,24 +714594,17 @@
       "items": [
        {
         "t": 0,
-        "interpolation": "hold",
         "props": {
          "color": "#111111"
-        }
-       },
-       {
-        "t": 0.5,
-        "interpolation": "hold",
-        "props": {
-         "border_width": 4
-        }
+        },
+        "interpolation": "hold"
        },
        {
         "t": 1.6,
-        "interpolation": "linear",
         "props": {
          "border_width": 2
-        }
+        },
+        "interpolation": "ease_out"
        }
       ]
      }
@@ -712807,17 +714647,24 @@
       "items": [
        {
         "t": 0,
+        "interpolation": "hold",
         "props": {
          "color": "#111111"
-        },
-        "interpolation": "hold"
+        }
+       },
+       {
+        "t": 0.516667,
+        "interpolation": "hold",
+        "props": {
+         "border_width": 4
+        }
        },
        {
         "t": 1.6,
+        "interpolation": "linear",
         "props": {
          "border_width": 2
-        },
-        "interpolation": "ease_out"
+        }
        }
       ]
      }
@@ -712920,17 +714767,18 @@
       "items": [
        {
         "t": 0,
+        "interpolation": "hold",
         "props": {
-         "color": "#111111"
-        },
-        "interpolation": "hold"
+         "color": "#111111",
+         "border_width": 4
+        }
        },
        {
         "t": 1.6,
+        "interpolation": "linear",
         "props": {
          "border_width": 2
-        },
-        "interpolation": "ease_out"
+        }
        }
       ]
      }
@@ -713328,7 +715176,7 @@
        }
       },
       {
-       "t": 1.708333,
+       "t": 1.7,
        "interpolation": "linear",
        "props": {
         "curve": 0.4

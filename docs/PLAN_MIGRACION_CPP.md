@@ -1343,4 +1343,4 @@ Decisión de Edu (§6):
   - Un keyframe sin id es aleatorio en el JS, así que el rombo no lo puede quitar; en C++ sí se quita.
   - `t: null` en un keyframe de pose: el JS lo toma como t = 0 y la pose de Python (la del export) lo ignora. C++ sigue a la del export.
 
-**Siguiente:** `applyAudioSpeedToLinkedText`, el resto del texto (temas, trazo, fondo, sombra), máscaras y filtros en el inspector. El preview espera a `gc_render`, que en Linux sigue bloqueado por la red de vcpkg.
+**Siguiente:** el resto del texto (temas, trazo, fondo, sombra), máscaras y filtros en el inspector. El preview espera a `gc_render`, que en Linux sigue bloqueado por la red de vcpkg.

@@ -247,6 +247,8 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       const c = noIds(changeStyle(byId(id), patch, t, fps, fixed))
       return { style: c.style ?? null, keyframes: c.keyframes ?? null }
     },
+    applyAudioSpeedToLinkedText: (audioId, speed) => m.applyAudioSpeedToLinkedText(clips, tracks, byId(audioId), speed)
+      .filter((c, i) => c !== clips[i]).map((c) => [c.id, c.start, c.out_point, c.words]),
     emptiedTracks: (candidates) => m.emptiedTracks(tracks, clips, candidates),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)

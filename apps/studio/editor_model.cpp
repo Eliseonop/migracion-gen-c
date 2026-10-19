@@ -943,8 +943,25 @@ void EditorModel::fx_each(const char* cause, Edit edit) {
     commit(std::move(next), cause, selection_.ids);
 }
 
+// patchClipFx({speed}): primero los subtítulos enlazados de cada audio, luego la velocidad.
 void EditorModel::setSpeed(double speed) {
-    fx_each("speed", [&](core::TimelineClip& c) { c.speed = std::clamp(speed, 0.1, 10.0); });
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (const auto& id : selection_.ids) {
+        const auto it = std::ranges::find_if(next.clips, [&](const auto& c) { return c->id == id; });
+        if (it != next.clips.end()) {
+            const core::TimelineClip audio = it->get();
+            core::apply_audio_speed_to_linked_text(next.clips, next.tracks, audio, speed);
+        }
+    }
+    for (auto& c : next.clips) {
+        if (c->kind != "text" && std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            c.mut().speed = std::clamp(speed, core::kSpeedMin, core::kSpeedMax);
+        }
+    }
+    commit(std::move(next), "speed", selection_.ids);
 }
 
 void EditorModel::toggleKeepPitch() {

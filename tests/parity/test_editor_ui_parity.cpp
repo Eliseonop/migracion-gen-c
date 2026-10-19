@@ -590,6 +590,22 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         change_text_style(c, call.at(2), num(3), num(4), call.at(5).get<bool>(), ids);
         return {{"style", c.style ? *c.style : Json()}, {"keyframes", c.keyframes ? without_ids(*c.keyframes) : Json()}};
     }
+    if (fn == "applyAudioSpeedToLinkedText") {
+        ClipList clips = tl.clips;
+        apply_audio_speed_to_linked_text(clips, tl.tracks, clip(call.at(1)), js_number(call.at(2)));
+        Json out = Json::array();
+        for (std::size_t i = 0; i < clips.size(); ++i) {
+            if (&clips[i].get() != &tl.clips[i].get()) {
+                Json words = Json::array();
+                for (const Word& w : clips[i]->words) {
+                    words.push_back({{"text", w.text}, {"start", w.start}, {"end", w.end},
+                                     {"prob", w.prob ? Json(*w.prob) : Json()}});
+                }
+                out.push_back({clips[i]->id, clips[i]->start, clips[i]->out_point, words});
+            }
+        }
+        return out;
+    }
     if (fn == "emptiedTracks") {
         return emptied_tracks(tl.tracks, tl.clips, strings(call.at(1)));
     }

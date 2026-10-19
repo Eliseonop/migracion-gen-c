@@ -399,6 +399,24 @@ def _text_calls(rng: random.Random) -> list:
     return calls
 
 
+def _linked_case(rng: random.Random) -> dict:
+    """Subtítulos enlazados a un audio (applyAudioSpeedToLinkedText)."""
+    tracks = [track("V1", "video"), track("T1", "text"), track("T2", "text"),
+              track("A1", "audio", linked_track_id="T1"), track("A2", "audio"), track("A3", "audio", linked_track_id="")]
+    words = [{"text": "uno", "start": 0.0, "end": 0.4}, {"text": "dos", "start": 0.4555, "end": 1.0005}]
+    clips = [clip("a", "A1", "audio", start=2, out=8, speed=1.0), clip("a2", "A1", "audio", start=12, out=4, speed=2.0),
+             clip("b", "A2", "audio", start=0, out=5), clip("c", "A3", "audio", start=0, out=5),
+             clip("v", "V1", start=0, out=4)]
+    for n, (start, dur) in enumerate([(2, 1.5), (3.6, 2), (7.9995, 1), (9.9995, 1), (1, 1.0005), (0, 1), (13, 1),
+                                      (14.5, 3), (5.25, 0.33)]):
+        clips.append(clip(f"t{n}", rng.choice(["T1", "T1", "T2"]), "text", start=start, out=dur, text=f"t{n}", words=words))
+    calls = []
+    for aid in ("a", "a2", "b", "c", "v"):
+        for sp in (1, 2, 0.5, 0.1, 10, 50, 0.01, 0, -1, "2", None, 1.0000001, 3.3):
+            calls.append(["applyAudioSpeedToLinkedText", aid, sp])
+    return {"name": "subtítulos enlazados", "timeline": {"tracks": tracks, "clips": clips}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -419,5 +437,6 @@ def cases() -> list[dict]:
         tl = _random_timeline(rng)
         out.append({"name": f"aleatoria {n}", "timeline": tl, "calls": _calls(rng, tl)})
     out.append({"name": "encuadre", "timeline": {"tracks": TRACKS, "clips": POSE_CLIPS}, "calls": _layout_calls(rng)})
+    out.append(_linked_case(rng))
     out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
     return out
