@@ -1,0 +1,36 @@
+// Ejecuta las funciones REALES de la timeline del editor de video-yt (editorModel.js) con Node (≥ 22).
+//
+//   node tools/fixtures/editor_ui_js.mjs <video-yt>/frontend/src < casos.json > salida.json
+//
+// Entrada: [{clips, calls: [[fn, ...args]]}]; los clips se nombran por id en los argumentos.
+// Salida: por caso, el resultado de cada llamada (Infinity como "inf").
+// Lo llama tools/fixtures/export_fixtures.py; video-yt solo se lee.
+import { readFileSync } from 'node:fs'
+import { pathToFileURL } from 'node:url'
+
+const root = process.argv[2].replace(/[\\/]+$/, '')
+const m = await import(pathToFileURL(`${root}/features/editor/editorModel.js`).href)
+
+const inf = (x) => (x === Infinity ? 'inf' : x)
+const cases = JSON.parse(readFileSync(0, 'utf8'))
+const out = cases.map(({ clips, calls }) => {
+  const byId = (id) => clips.find((c) => c.id === id)
+  const run = {
+    toFixed: (x) => +x.toFixed(3),
+    clipDur: (id) => m.clipDur(byId(id)),
+    clipsOnTrackSorted: (track) => m.clipsOnTrackSorted(clips, track).map((c) => c.id),
+    freeStartOnTrack: (track, desired, dur, exclude) => m.freeStartOnTrack(clips, track, desired, dur, { excludeIds: exclude }),
+    clampStartNoOverlap: (track, desired, dur, exclude) => m.clampStartNoOverlap(clips, track, desired, dur, { excludeIds: exclude }),
+    trimBounds: (id) => { const b = m.trimBounds(clips, byId(id)); return { left: b.left, right: inf(b.right) } },
+    clampTrimDelta: (id, mode, delta) => m.clampTrimDelta(clips, byId(id), mode, delta),
+    trimClipPatch: (id, mode, delta) => m.trimClipPatch(byId(id), mode, delta),
+    rangeSelectOnTrack: (track, from, to) => m.rangeSelectOnTrack(clips, track, from, to),
+    nextClipSelection: (ids, anchor, clicked, mods) => m.nextClipSelection(clips, ids, anchor, clicked, mods),
+    groupMoveFromOrig: (origs, delta) => {
+      const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)
+      return moved.map((c) => c.start)
+    },
+  }
+  return calls.map(([fn, ...args]) => run[fn](...args))
+})
+process.stdout.write(JSON.stringify(out))

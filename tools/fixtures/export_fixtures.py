@@ -26,6 +26,7 @@ Salida (al repo):
   tests/fixtures/layout/synthetic.json     encuadre: casos de layout_cases.py
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
+  tests/fixtures/editor/timeline_ui.json   timeline del editor: editor_cases.py (editorModel.js con Node)
   tests/fixtures/frame/synthetic.json      fotograma: frame_cases.py (drawComposite con Node)
   tests/fixtures/history/synthetic.json    historial: pasos de history_cases.py
   tests/fixtures/settings/synthetic.json   ajustes: pasos de settings_cases.py
@@ -2462,6 +2463,15 @@ def synthetic_layers_fixtures(ctx: Ctx) -> dict:
                                             "heads": c["heads"]} for c in lc.CASES])}
 
 
+def synthetic_editor_ui_fixtures(ctx: Ctx) -> dict:
+    """La timeline del editor (editorModel.js con Node, editor_cases.py): clips tal como los deja pydantic."""
+    sys.path.insert(0, str(HERE))
+    import editor_cases as ec
+    cases = [{**c, "timeline": ctx.schemas.Timeline(**c["timeline"]).model_dump()} for c in ec.cases()]
+    results = _node(ctx, "editor_ui_js.mjs", [{"clips": c["timeline"]["clips"], "calls": c["calls"]} for c in cases])
+    return {"cases": [{**c, "results": r} for c, r in zip(cases, results)]}
+
+
 def real_layers_fixtures(ctx: Ctx, data: dict) -> dict:
     """Tus timelines, en los bordes de cada clip (±0,01–0,03 s), su mitad y su final."""
     cases = []
@@ -2867,7 +2877,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
-    ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras"],
+    ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -2881,6 +2891,15 @@ def main() -> None:
 
     if args.solo == "export":
         export_group()
+        return
+
+    def editor_group() -> None:
+        ed = synthetic_editor_ui_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "editor" / "timeline_ui.json", ed,
+              sum(len(c["calls"]) for c in ed["cases"]), 0)
+
+    if args.solo == "editor":
+        editor_group()
         return
     def shapes_group() -> None:
         shp = synthetic_shape_fixtures(ctx)
@@ -2958,6 +2977,7 @@ def main() -> None:
     write(RENDER_DIR / "text.json", ren_txt, len(ren_txt), 0)
     export_group()
     shapes_group()
+    editor_group()
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)

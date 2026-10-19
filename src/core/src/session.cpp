@@ -91,6 +91,18 @@ Result<Change> EditSession::apply(std::string_view op, const Json& params) {
     return apply(*command);
 }
 
+Change EditSession::replace(Timeline next, std::string cause, std::vector<std::string> changed) {
+    const bool recorded = group_depth_ == 0;
+    if (recorded) {
+        history_.record(current_);
+        history_changed();
+    }
+    Change change{0, std::move(cause), std::move(changed), {}};
+    publish(std::make_shared<const Timeline>(std::move(next)), change);
+    change.revision = revision_;
+    return change;
+}
+
 bool EditSession::undo() {
     TimelineSnapshot restored = history_.undo(current_);
     if (!restored) {

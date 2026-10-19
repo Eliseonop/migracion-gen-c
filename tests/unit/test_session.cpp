@@ -324,3 +324,18 @@ TEST_CASE("leer JSON: un NUL es un error y un número que se desborda es inf, co
     REQUIRE(r);
     CHECK(r->at("a").at(2).get<std::string>() == std::string(1, '\0'));
 }
+
+TEST_CASE("sesión: replace (el PUT del editor) es un paso de deshacer y avisa a los observadores",
+          "[session]") {
+    EditSession s = session();
+    std::vector<std::string> causes;
+    s.subscribe([&](const TimelineSnapshot&, const Change& ch) { causes.push_back(ch.cause); });
+    Timeline next = *s.timeline();
+    next.clips[0].mut().start = 9;
+    const Change ch = s.replace(next, "trim", {"a"});
+    CHECK(ch.revision == s.revision());
+    CHECK(find(*s.timeline(), "a").start == 9);
+    CHECK(s.undo());
+    CHECK(find(*s.timeline(), "a").start == 0);
+    CHECK(causes == std::vector<std::string>{"trim", "undo"});
+}

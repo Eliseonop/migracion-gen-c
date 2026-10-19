@@ -101,6 +101,9 @@ public:
 
     [[nodiscard]] Result<Change> apply(const Command& command);
     [[nodiscard]] Result<Change> apply(std::string_view op, const Json& params);
+    // La timeline entera hecha por el editor (el PUT de video-yt: arrastrar o recortar en la UI),
+    // sin settle; es un paso de deshacer como cualquier op.
+    Change replace(Timeline next, std::string cause, std::vector<std::string> changed);
 
     bool undo();
     bool redo();
