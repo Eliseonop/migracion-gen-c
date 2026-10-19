@@ -1367,7 +1367,8 @@ Decisión de Edu (§6):
 - `confirm_crop` (confirmCrop de VideoEditor.jsx) con paridad: clip animado → tamaño en el reframe y keyframe en el cabezal; estático → un único keyframe del reframe. El giro decide si anima con el clip ya recortado, como `setClips`.
 - Modal en QML (`CropModal.qml`) sobre `CropEditor`: tiradores, mover, proporciones, rotación, restablecer, scrub y Confirmar. Tests del modelo, del recuadro y de la interfaz sin pantalla (mutante «sin confirmCrop» detectado).
 - Una imagen se muestra con su aspecto real; un vídeo va a 16:9 y sin fotograma hasta gc_media.
-- **Linux:** 191/191 con GCC y 138/138 con Clang + libc++.
+- **Curva del keyframe:** el editor bézier de EdCurve.jsx (`CurveEditor.qml`, en Canvas porque el Qt de apt no trae QtQuick.Shapes), con `curvePoints` sobre `ease_t`; el arrastre es local y se aplica al soltar, en un solo paso de deshacer.
+- **Linux:** 192/192 con GCC y 138/138 con Clang + libc++.
 
 **Siguiente:**
 - El preview espera a `gc_render`.

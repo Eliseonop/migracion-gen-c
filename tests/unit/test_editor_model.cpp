@@ -3,6 +3,7 @@
 
 #include <QAbstractItemModel>
 #include <QCoreApplication>
+#include <QPointF>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -605,9 +606,19 @@ TEST_CASE("editor: copiar, pegar y duplicar el keyframe del cabezal", "[studio]"
     CHECK(m.selectedClip()["kf"] == "on");
     CHECK(m.selectedClip()["poseOpacity"] == 0.25);
     m.setPlayhead(2);
-    CHECK(m.selectedClip()["curve"] == "linear"); // la del keyframe al que se llega (el de 3 s)
+    const auto curve = [&] { return m.selectedClip()["curve"].toMap(); };
+    CHECK(curve()["kind"] == "linear"); // la del keyframe al que se llega (el de 3 s)
+    CHECK_FALSE(curve()["first"].toBool());
     m.setCurve("bezier");
-    CHECK(m.selectedClip()["curve"] == "bezier");
+    CHECK(curve()["kind"] == "bezier");
+    m.setCurve("bezier", {0.1234, 1.5, 0.9, 1});
+    CHECK(curve()["bezier"] == QVariantList{0.123, 1.5, 0.9, 1.0});
+    CHECK(studio::EditorModel::curvePoints("hold", {}).size() == 3);
+    const QVariantList pts = studio::EditorModel::curvePoints("bezier", {0.1, 1.5, 0.9, 1}, 4);
+    CHECK(pts.size() == 5);
+    CHECK(pts[2].toPointF().y() > 1); // el rebote se pasa
+    m.setPlayhead(0.5);
+    CHECK(curve()["first"].toBool());
     m.setPlayhead(3);
     REQUIRE(m.duplicateKeyframe()); // del cabezal (3 s) a 4 s
     m.setPlayhead(4);

@@ -235,7 +235,10 @@ public:
     // Alt+C / Alt+V / Alt+D: copiar el keyframe del cabezal, pegarlo en el cabezal y duplicarlo
     // (al cabezal si está libre; si no, un segundo después).
     // Curva de velocidad (KfCurvePanel e interpAnimKf): la del keyframe al que se llega desde el cabezal.
-    Q_INVOKABLE void setCurve(const QString& mode);
+    // `bezier` [x1, y1, x2, y2] de los tiradores; vacío = el de la curva actual.
+    Q_INVOKABLE void setCurve(const QString& mode, const QVariantList& bezier = {});
+    // curvePoints de EdCurve.jsx: la curva muestreada (x, y) para dibujarla.
+    Q_INVOKABLE static QVariantList curvePoints(const QString& kind, const QVariantList& bezier, int steps = 48);
     Q_INVOKABLE void moveKeyframe(const QString& clipId, const QString& kfId, double fraction);
     Q_INVOKABLE bool copyKeyframe();
     Q_INVOKABLE bool pasteKeyframe();

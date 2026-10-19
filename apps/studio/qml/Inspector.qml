@@ -1194,9 +1194,29 @@ Rectangle {
                     options: [["linear", "Linear"], ["ease-in", "Ease In"], ["ease-out", "Ease Out"], ["ease-in-out", "Ease In-Out"],
                               ["cubic-in", "Cúbica In"], ["cubic-out", "Cúbica Out"], ["cubic-in-out", "Cúbica In-Out"],
                               ["back-out", "Rebote"], ["bezier", "Personalizada"], ["hold", "Hold"]]
-                    current: panel.has ? panel.clip.curve : "linear"
+                    current: panel.has && panel.clip.curve ? panel.clip.curve.kind : "linear"
                     onPicked: (v) => panel.model.setCurve(v)
                 }
+            }
+            CurveEditor {
+                visible: panel.has && !!panel.clip.curve
+                Layout.alignment: Qt.AlignHCenter
+                model: panel.model
+                kind: panel.has && panel.clip.curve ? panel.clip.curve.kind : "linear"
+                bezier: panel.has && panel.clip.curve ? panel.clip.curve.bezier : [0.42, 0, 0.58, 1]
+            }
+            Label {
+                visible: panel.has && !!panel.clip.curve && panel.clip.curve.kind === "bezier"
+                text: visible ? "cubic-bezier(" + panel.clip.curve.bezier.map((v) => v.toFixed(2)).join(", ") + ")" : ""
+                color: Theme.muted
+                font.family: "monospace"
+            }
+            Label {
+                visible: panel.has && !!panel.clip.curve && panel.clip.curve.first
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                text: "Primer keyframe: su curva no se usa. Selecciona el siguiente."
+                color: Theme.folder
             }
 
             Section { visible: panel.has; text: "ANIMACIÓN" }

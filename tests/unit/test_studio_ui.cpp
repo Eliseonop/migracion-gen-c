@@ -415,3 +415,21 @@ TEST_CASE("studio sin pantalla: el modal Recortar se abre desde la barra y confi
     CHECK_FALSE(s.item("cropConfirm"));
     CHECK(s.editor->canUndo());
 }
+
+TEST_CASE("studio sin pantalla: el tirador de la curva del keyframe la vuelve personalizada", "[studio][ui]") {
+    Studio s;
+    s.editor->select("a");
+    s.editor->setPlayhead(1);
+    s.editor->toggleKeyframe();
+    s.editor->setPlayhead(3);
+    s.editor->toggleKeyframe();
+    s.editor->setPlayhead(2);
+    s.click("insp:tab:anim");
+    QQuickItem* h = s.item("curveHandle:1");
+    REQUIRE(h);
+    const QPoint from = h->mapToScene(QPointF(h->width() / 2, h->height() / 2)).toPoint();
+    s.drag(from, from + QPoint(-20, -30));
+    const QVariantMap curve = s.editor->selectedClip()["curve"].toMap();
+    CHECK(curve["kind"] == "bezier");
+    CHECK(curve["bezier"].toList()[1].toDouble() > 0.1); // subió
+}

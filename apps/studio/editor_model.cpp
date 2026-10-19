@@ -2,6 +2,7 @@
 
 #include <QColor>
 #include <QImageReader>
+#include <QPointF>
 #include <QUrl>
 #include <QGuiApplication>
 #include <QJsonDocument>
@@ -527,7 +528,19 @@ QVariantMap EditorModel::selectedClip() const {
          }()},
         {"curve", [&] {
              const auto k = core::target_interp_item(*c, std::max(0.0, local), fps());
-             return k ? qstr(std::string(core::interp_name(core::normalize_interp(k->at("interpolation"))))) : QString();
+             if (!k) {
+                 return QVariant(QString());
+             }
+             QVariantList bez;
+             for (const double v : core::interp_bezier(*k)) {
+                 bez << v;
+             }
+             const auto items = core::normalize_kf_items(
+                 c->keyframes ? c->keyframes->value("items", Json::array()) : Json::array(), ids_);
+             return QVariant(QVariantMap{
+                 {"kind", qstr(std::string(core::interp_name(core::normalize_interp(k->value("interpolation", Json())))))},
+                 {"bezier", bez},
+                 {"first", !items.empty() && items.front().value("id", Json()) == k->value("id", Json())}});
          }()},
         {"flipH", c->flip_h},
         {"flipV", c->flip_v},
@@ -1461,16 +1474,38 @@ void EditorModel::addAdjustment() {
     add_generated(std::move(next), core::make_adjustment_clip_json(tid, playhead_, kDur, ids_), "add-adjustment");
 }
 
-void EditorModel::setCurve(const QString& mode) {
+QVariantList EditorModel::curvePoints(const QString& kind, const QVariantList& bezier, int steps) {
+    if (kind == "hold") {
+        return {QPointF(0, 0), QPointF(0.999, 0), QPointF(1, 1)};
+    }
+    Json bez = Json::array();
+    for (const QVariant& v : bezier) {
+        bez.push_back(v.toDouble());
+    }
+    const core::Interp interp = core::normalize_interp(Json(kind.toStdString()));
+    QVariantList out;
+    for (int i = 0; i <= steps; ++i) {
+        const double x = static_cast<double>(i) / steps;
+        out << QPointF(x, core::ease_t(x, interp, bez));
+    }
+    return out;
+}
+
+void EditorModel::setCurve(const QString& mode, const QVariantList& bezier) {
     const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
     const auto target = c ? core::target_interp_item(*c, std::max(0.0, playhead_ - c->start), fps()) : std::nullopt;
     if (!target) {
         return;
     }
-    const auto bez = core::interp_bezier(*target);
+    Json bez = core::interp_bezier(*target);
+    if (bezier.size() == 4) {
+        for (int i = 0; i < 4; ++i) {
+            bez[static_cast<std::size_t>(i)] = core::js_fixed(bezier[i].toDouble(), 3);
+        }
+    }
     const core::KeyframePatch patch{.t = {},
                                     .interpolation = mode.toStdString(),
-                                    .bezier = mode == "bezier" ? Json(bez) : Json(),
+                                    .bezier = mode == "bezier" ? bez : Json(),
                                     .props = {}};
     core::Timeline next = *session_->timeline();
     for (auto& item : next.clips) {
