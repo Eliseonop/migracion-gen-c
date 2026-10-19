@@ -291,6 +291,33 @@ Rectangle {
                     }
                 }
             }
+            RowLayout {
+                visible: panel.text
+                Layout.fillWidth: true
+                spacing: 4
+                Repeater {
+                    model: [["upper", "TT"], ["lower", "tt"], ["title", "Tt"]]
+                    Toggle {
+                        required property var modelData
+                        objectName: "insp:case:" + modelData[0]
+                        text: modelData[1]
+                        on: panel.st.text_case === modelData[0]
+                        onClicked: panel.model.changeStyle({ text_case: on ? null : modelData[0] })
+                    }
+                }
+                Num {
+                    objectName: "insp:letterSpacing"
+                    title: "Ca"
+                    value: Math.round((Number(panel.st.letter_spacing) || 0) * 100)
+                    onCommitted: (v) => panel.model.changeStyle({ letter_spacing: Math.max(-50, Math.min(100, v)) / 100 })
+                }
+                Num {
+                    objectName: "insp:lineHeight"
+                    title: "Lí"
+                    value: { const v = Number(panel.st.line_height); return isFinite(v) ? Math.max(0.6, Math.min(3, v)) : 1.22 }
+                    onCommitted: (v) => panel.model.changeStyle({ line_height: Number(Math.max(0.6, Math.min(3, v)).toFixed(2)) })
+                }
+            }
             Flow {
                 visible: panel.text
                 Layout.fillWidth: true
@@ -567,6 +594,13 @@ Rectangle {
                     value: panel.tf.degrees ?? 0
                     onCommitted: (v) => panel.model.setRotation(v)
                 }
+            }
+            RowLayout {
+                visible: !!panel.tf.show
+                spacing: 4
+                Label { Layout.preferredWidth: 60; text: "Voltear"; color: Theme.textSecondary }
+                Toggle { objectName: "insp:flipH"; text: "⇋"; on: panel.has && panel.clip.flipH; onClicked: panel.model.toggleFlip("h") }
+                Toggle { objectName: "insp:flipV"; text: "⇵"; on: panel.has && panel.clip.flipV; onClicked: panel.model.toggleFlip("v") }
             }
 
             Section { visible: panel.visual; text: "MEZCLA" + (panel.clip.animated ? " · ANIMADA" : "") }

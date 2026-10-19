@@ -344,6 +344,10 @@ TEST_CASE("editor: transformación y velocidad desde el inspector", "[studio]") 
     CHECK(tf()["scalePct"] == 100);
     CHECK(tf()["degrees"] == 0);
 
+    m.toggleFlip("h");
+    CHECK(m.selectedClip()["flipH"] == true);
+    m.toggleFlip("h");
+    CHECK(m.selectedClip()["flipH"] == false);
     m.setSpeed(2);
     CHECK(m.selectedClip()["duration"] == 2);
     m.setSpeed(50);

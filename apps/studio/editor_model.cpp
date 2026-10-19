@@ -329,6 +329,8 @@ QVariantMap EditorModel::selectedClip() const {
         {"shape", c->kind == "shape" ? to_variant(core::normalize_shape(c->shape.value_or(Json::object()))
                                                       .value_or(Json::object()))
                                      : QVariantMap()},
+        {"flipH", c->flip_h},
+        {"flipV", c->flip_v},
         {"keepPitch", c->keep_pitch},
         {"reverse", c->reverse},
         {"poseOpacity", pose.opacity},
@@ -971,6 +973,22 @@ void EditorModel::setRotation(double deg) {
 
 void EditorModel::resetTransform() {
     pose_each("transform", [](const core::TimelineClip& c) { return core::transform_reset_patch(c); });
+}
+
+void EditorModel::toggleFlip(const QString& axis) {
+    const core::TimelineClip* primary = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!primary) {
+        return;
+    }
+    const bool vertical = axis == "v";
+    const bool next = vertical ? !primary->flip_v : !primary->flip_h;
+    core::Timeline tl = *session_->timeline();
+    for (auto& c : tl.clips) {
+        if (c->kind != "audio" && std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            (vertical ? c.mut().flip_v : c.mut().flip_h) = next;
+        }
+    }
+    commit(std::move(tl), "flip", selection_.ids);
 }
 
 template <class Edit>

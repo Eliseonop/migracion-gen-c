@@ -127,6 +127,8 @@ public:
     Q_INVOKABLE void setScalePct(double pct);
     Q_INVOKABLE void setRotation(double deg);
     Q_INVOKABLE void resetTransform();
+    // toggleFlip: voltear en horizontal ("h") o vertical ("v"); todos quedan como el opuesto del principal.
+    Q_INVOKABLE void toggleFlip(const QString& axis);
     // Velocidad, tono y reversa (patchClipFx de VideoEditor.jsx; los textos no cambian).
     Q_INVOKABLE void setSpeed(double speed);
     Q_INVOKABLE void toggleKeepPitch();
