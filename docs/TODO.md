@@ -65,11 +65,12 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 - [x] CMake ≥ 3.28 con presets: `mingw-*`, `msvc-*`, `msvc-vcpkg-*`, `linux-debug`, `macos-debug` y `ci`
 - [x] Dependencias con `find_package` y, si no están, FetchContent con hash verificado (nlohmann/json 3.12.0, spdlog 1.15.3, Catch2 3.9.1)
 - [x] `vcpkg.json` preparado para F3
-- [x] Warnings estrictos (`gc_set_warnings`): 0 warnings con GCC 15
+- [x] Warnings estrictos (`gc_set_warnings`): 0 warnings con GCC 13 y 14 y Clang 20 en Linux. Con GCC 15 (WSL) el único aviso era un falso positivo de `-Wnull-dereference` de nlohmann en `clip_filters.cpp`, reescrito sin volver a probarlo con GCC 15
 - [x] `-ffp-contract=off` para que los cálculos den los mismos bits en todas las plataformas
 - [x] `genclip --version` con argumentos y salida en UTF-8 en Windows
 - [x] CI de GitHub Actions escrito (Windows MSVC, Linux GCC, macOS Clang)
-- [ ] CI ejecutándose (el remoto ya existe: falta el primer push). Ojo: las fixtures de disco (SFX y colecciones) llevan la semántica de `WindowsPath` (sin distinguir mayúsculas, «\» como separador, «C:x»), y las de proyectos guardan el texto de `projects.json` con los CRLF de Windows (`write_json_file` escribe LF fuera de Windows, como Python); en Linux y macOS habrá que saltarlas o adaptarlas
+- [ ] CI ejecutándose (el remoto ya existe: falta el primer push)
+- [x] Linux comprobado en local (2026-10-19, preset `ci` con `-Werror`): GCC 13.3, GCC 14.2 y Clang 20.1 con libc++ compilan con 0 warnings y pasan los 133 tests. Las fixtures de disco con la semántica de `WindowsPath` (sin distinguir mayúsculas, «\» como separador, «C:x»: SFX, colecciones, stick y guardar en la biblioteca) se saltan fuera de Windows (`kWindowsPathOnly`); las de proyectos se comparan sin los CRLF (`native_eol`). Clang 18 no vale: con libstdc++ no hay `std::expected` y libc++ 18 no tiene `from_chars` de reales. Clang 20.1.2 compila mal una referencia con argumento por defecto `constexpr` (`const LayerRules& rules = kRenderLayers` leía siempre el valor por defecto): `LayerRules` va ahora por valor. Sin red a los .tar.gz de GitHub, spdlog y Catch2 se clonan con git y se pasan con `FETCHCONTENT_SOURCE_DIR_*`
 - [x] Toolchain MSVC operativo (`msvc-debug`): MSVC 14.50 de VS 2026 compila con 0 warnings y pasa todos los tests; `msvc-vcpkg-debug` configura con el vcpkg de `E:\vcpkg` (lo que hizo falta, en las notas de F3)
 - [ ] `GC_WARNINGS_AS_ERRORS` activado en el CI de Windows
 - [x] `.clang-tidy` y spdlog. `python tools/dev/tidy.py [--fix] [filtro]` pasa el clang-tidy de CLion por `src`, `apps` y `tests` y tiene que quedar en 0 avisos (lo que se desactiva y por qué está en el propio `.clang-tidy`). El registro es `gc_log` (`src/log`, spdlog 1.15.3 con hash verificado o el de vcpkg): `init`, el nivel de `GENCLIP_LOG` y salida a stderr. `genclip` lo usa para sus errores; `gc_core` no registra nada

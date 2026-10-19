@@ -14,7 +14,7 @@ bool paints(const TimelineClip& clip) {
     return k == "video" || k == "image" || k == "shape" || k == "motion" || k == "adjustment" || k == "text";
 }
 
-std::vector<Cow<TimelineClip>> layers_at(const Timeline& timeline, double head, const LayerRules& rules) {
+std::vector<Cow<TimelineClip>> layers_at(const Timeline& timeline, double head, LayerRules rules) {
     const auto layers = stack_layers(timeline.tracks);
     // Con ids repetidos gana el último (new Map(...) de JS).
     std::unordered_map<std::string_view, const TimelineTrack*> track_by_id;
@@ -74,7 +74,7 @@ std::vector<Cow<TimelineClip>> layers_at(const Timeline& timeline, double head, 
     return out;
 }
 
-std::vector<Cow<TimelineClip>> videos_at(const Timeline& timeline, double head, const LayerRules& rules) {
+std::vector<Cow<TimelineClip>> videos_at(const Timeline& timeline, double head, LayerRules rules) {
     std::vector<Cow<TimelineClip>> out = layers_at(timeline, head, rules);
     std::erase_if(out, [](const Cow<TimelineClip>& c) { return c->kind == "text"; });
     return out;

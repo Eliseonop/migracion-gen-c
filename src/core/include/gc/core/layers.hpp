@@ -46,9 +46,9 @@ inline constexpr LayerRules kPreviewLayers{0.02, false};
 
 // Clips que se dibujan en `head` (s de la timeline), de fondo a frente.
 [[nodiscard]] std::vector<Cow<TimelineClip>> layers_at(const Timeline& timeline, double head,
-                                                       const LayerRules& rules = kRenderLayers);
+                                                       LayerRules rules = kRenderLayers);
 // Lo mismo sin los textos.
 [[nodiscard]] std::vector<Cow<TimelineClip>> videos_at(const Timeline& timeline, double head,
-                                                       const LayerRules& rules = kRenderLayers);
+                                                       LayerRules rules = kRenderLayers);
 
 } // namespace gc::core
