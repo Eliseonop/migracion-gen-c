@@ -236,4 +236,165 @@ void commit_pose(TimelineClip& clip, const Json& patch, double local_t, double f
     }
 }
 
+namespace {
+
+double timeline_to_source(const TimelineClip& c, double local_t) {
+    const double local = local_t * ui_clip_speed(c);
+    return c.reverse ? c.out_point - local : c.in_point + local;
+}
+
+std::vector<Json> items_of(const TimelineClip& clip, IdSource& ids) {
+    return normalize_kf_items(clip.keyframes ? field(*clip.keyframes, "items") : Json(), ids);
+}
+
+std::optional<std::string> reframe_kf_id_near(const TimelineClip& clip, double t, double snap) {
+    if (!clip.reframe) {
+        return std::nullopt;
+    }
+    for (const Keyframe& k : clip.reframe->keyframes) {
+        if (std::abs(k.t - t) < snap) {
+            const Json& id = field(k.extra, "id");
+            return truthy(id) ? std::optional(id.is_string() ? id.get<std::string>() : id.dump())
+                              : std::optional<std::string>("");
+        }
+    }
+    return std::nullopt;
+}
+
+} // namespace
+
+std::vector<std::string> text_style_kf_keys(const TimelineClip& clip) {
+    SequentialIdSource ids;
+    std::vector<std::string> out;
+    const auto items = items_of(clip, ids);
+    for (const auto key : kTextStyleKfKeys) {
+        const bool used = std::ranges::any_of(
+            items, [&](const Json& k) { return kf_value_valid(key, field(k.at("props"), key)); });
+        if (used) {
+            out.emplace_back(key);
+        }
+    }
+    return out;
+}
+
+std::string kf_state(const TimelineClip& clip, double local_t, double fps) {
+    SequentialIdSource ids;
+    const double t = js_fixed(snap_to_frame(local_t, fps), 6);
+    const double snap = frame_duration(fps) / 2;
+    std::vector<Json> posed;
+    std::ranges::copy_if(items_of(clip, ids), std::back_inserter(posed), has_pose_props);
+    if (std::ranges::any_of(posed,
+                            [&](const Json& k) { return std::abs(k.at("t").get<double>() - t) < snap; }) ||
+        reframe_kf_id_near(clip, t, snap)) {
+        return "on";
+    }
+    if (!keyframes_enabled(clip)) {
+        return "off";
+    }
+    return !posed.empty() || text_style_kf_keys(clip).empty() ? "empty" : "off";
+}
+
+std::optional<std::string> keyframe_id_at(const TimelineClip& clip, double local_t, double fps) {
+    SequentialIdSource ids;
+    const double t = js_fixed(snap_to_frame(local_t, fps), 6);
+    const double snap = frame_duration(fps) / 2;
+    for (const Json& k : items_of(clip, ids)) {
+        if (std::abs(k.at("t").get<double>() - t) < snap) {
+            return k.at("id").is_string() ? k.at("id").get<std::string>() : k.at("id").dump();
+        }
+    }
+    auto rf = reframe_kf_id_near(clip, t, snap);
+    return rf && !rf->empty() ? rf : std::nullopt;
+}
+
+void toggle_keyframe_at(TimelineClip& clip, double local_t, double fps, IdSource& ids) {
+    if (clip.kind != "video" && clip.kind != "image" && clip.kind != "shape" && clip.kind != "text" &&
+        clip.kind != "audio") {
+        return;
+    }
+    const double t = std::min(ui_clip_duration(clip), std::max(0.0, local_t));
+    if (kf_state(clip, t, fps) == "on") {
+        const auto id = keyframe_id_at(clip, t, fps);
+        std::vector<Json> items;
+        for (Json& k : items_of(clip, ids)) {
+            if (k.at("id") != Json(id.value_or(""))) {
+                items.push_back(std::move(k));
+                continue;
+            }
+            if (clip.kind == "text" &&
+                !text_style_kf_keys(clip).empty()) { // removePoseKf: se queda el estilo
+                Json style = Json::object();
+                for (const auto key : kTextStyleKfKeys) {
+                    if (kf_value_valid(key, field(k.at("props"), key))) {
+                        style[std::string(key)] = k.at("props").at(std::string(key));
+                    }
+                }
+                if (!style.empty()) {
+                    k["props"] = std::move(style);
+                    items.push_back(std::move(k));
+                }
+            }
+        }
+        if (clip.kind == "text" && !text_style_kf_keys(clip).empty()) { // removePoseKf
+            Json prev = clip.keyframes && clip.keyframes->is_object() ? *clip.keyframes : Json::object();
+            prev["items"] = items;
+            clip.keyframes = std::move(prev);
+        } else if (keyframes_enabled(clip)) { // deleteKeyframeItem
+            const bool enabled = !items.empty();
+            clip.keyframes = Json{{"enabled", enabled}, {"items", items}};
+        } else if (clip.reframe && id) { // el rombo marcaba un keyframe del encuadre
+            const auto other = [&](const Keyframe& k) { return field(k.extra, "id") == Json(*id); };
+            std::erase_if(clip.reframe->keyframes, other);
+            std::erase_if(clip.reframe->keyframes2, other);
+        }
+        return;
+    }
+    // enableKeyframes y luego upsertKeyframeAt con el parche vacío.
+    const Json prev = clip.keyframes && clip.keyframes->is_object() ? *clip.keyframes : Json::object();
+    std::vector<Json> items = items_of(clip, ids);
+    if (truthy(field(prev, "enabled")) && !items.empty()) {
+        Json next = prev;
+        next["enabled"] = true;
+        next["items"] = items;
+        clip.keyframes = std::move(next);
+    } else {
+        if (items.empty()) {
+            TimelineClip snap = clip;
+            snap.keyframes.reset();
+            KfProps base = static_props(snap);
+            if (snap.reframe) {
+                const double src = std::min(
+                    clip.out_point, std::max(clip.in_point, timeline_to_source(clip, local_t))); // srcTOf
+                const Frame fr =
+                    frame_at(snap.reframe->keyframes, src, snap.reframe->zoom, snap.reframe->pan_mode);
+                base.set("cx", std::isfinite(fr.cx) ? fr.cx : 0.5);
+                base.set("cy", std::isfinite(fr.cy) ? fr.cy : 0.5);
+                base.set("zoom", std::isfinite(fr.zoom) ? fr.zoom : snap.reframe->zoom);
+            }
+            items.push_back({{"id", make_uid(ids, "k")},
+                             {"t", js_fixed(snap_to_frame(t, 30), 6)},
+                             {"interpolation", "linear"},
+                             {"props", base.to_json()}});
+        }
+        clip.keyframes = Json{{"enabled", true}, {"items", items}};
+    }
+    upsert_keyframe_ui(clip, t, Json::object(), std::nullopt, fps, ids);
+}
+
+void apply_volume_fade_ui(TimelineClip& clip, double duration, const std::string& side, IdSource& ids,
+                          double fade) {
+    const double dur = std::max(0.05, std::isfinite(duration) ? duration : 0);
+    const double window = std::min(std::max(0.05, std::isfinite(fade) ? fade : 0.5), dur / 2);
+    const double peak = std::min(2.0, std::max(0.0, std::isfinite(clip.volume) ? clip.volume : 1.0));
+    const double target = peak > 0.001 ? peak : 1;
+    clip.volume = target;
+    if (side == "in") {
+        upsert_keyframe_ui(clip, 0, {{"volume", 0}}, "ease-out", 30, ids);
+        upsert_keyframe_ui(clip, window, {{"volume", target}}, "ease-out", 30, ids);
+    } else {
+        upsert_keyframe_ui(clip, std::max(0.0, dur - window), {{"volume", target}}, "ease-in", 30, ids);
+        upsert_keyframe_ui(clip, dur, {{"volume", 0}}, "ease-in", 30, ids);
+    }
+}
+
 } // namespace gc::core

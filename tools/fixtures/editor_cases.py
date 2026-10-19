@@ -207,12 +207,17 @@ POSE_CLIPS = [
     clip("t", "T1", "text", start=0, out=3, text="hola", style={"x": 0.4, "font_size": 50},
          keyframes={"enabled": True, "items": [{"id": "s1", "t": 0.5, "props": {"font_size": 40}}]}),
     clip("tk", "T1", "text", start=4, out=3, text="adiós", style={"y": 0.7},
-         keyframes={"enabled": True, "items": [{"id": "p1", "t": 1, "props": {"y": 0.2}}, {"t": None, "props": {"x": 1}},
-                                               {"t": "2", "props": {"scale": 2}, "interpolation": ""}]}),
+         keyframes={"enabled": True, "items": [{"id": "p1", "t": 1, "props": {"y": 0.2}}, {"id": "p2", "t": None, "props": {"x": 1}},
+                                               {"id": "p3", "t": "2", "props": {"scale": 2}, "interpolation": ""}]}),
     clip("sh", "V2", "shape", start=6, out=2, shape={"type": "rect", "x": 0.5, "draw": 0.5},
          keyframes={"enabled": False, "items": [{"t": 0.2, "props": {"x": 0.1}}]}),
     clip("au", "A1", "audio", start=0, out=8, volume=1.5, audio_fx={"eq": True, "reverb": 0.3}),
     clip("adj", "V2", "adjustment", start=9, out=2, asset_kind="shape"),
+    clip("rf", "V1", start=11, inp=2, out=8, reframe={"zoom": 0.9, "keyframes": [{"id": "r1", "t": 3.0, "cx": 0.2, "cy": 0.5},
+                                                                               {"id": "r2", "t": 5, "cx": 0.8, "cy": 0.5}]}),
+    clip("ts", "T1", "text", start=8, out=4, text="estilo", style={"color": "#ffffff"},
+         keyframes={"enabled": True, "items": [{"id": "s1", "t": 0.5, "props": {"color": "#ff0000", "y": 0.3}},
+                                               {"id": "s2", "t": 2, "props": {"color": "#00ff00"}}]}),
 ]
 POSE_PATCHES = [{"opacity": 0.4}, {"volume": 1.8}, {"x": 0.1, "y": 0.9}, {"scale": "2"}, {"cx": 0.3}, {"zoom": 0.5},
                 {"draw": 1.4}, {"eq": 0.5, "reverb": True}, {"rot_x": 10, "rotation": 45}, {"opacity": None}, {}]
@@ -220,6 +225,15 @@ POSE_PATCHES = [{"opacity": 0.4}, {"volume": 1.8}, {"x": 0.1, "y": 0.9}, {"scale
 
 def _pose_calls(rng: random.Random) -> list:
     calls: list = []
+    for c in POSE_CLIPS:
+        calls.append(["textStyleKfKeys", c["id"]])
+        for t in (0, 0.5, 0.51, 1, 1.5, 2, 3, 3.02, -1, 9):
+            fps = rng.choice([30, 24, 25])
+            calls.append(["kfState", c["id"], t, fps])
+            calls.append(["keyframeIdAt", c["id"], t, fps])
+            calls.append(["toggleKeyframe", c["id"], t, fps])
+        for side in ("in", "out"):
+            calls.append(["applyVolumeFade", c["id"], side])
     for c in POSE_CLIPS:
         calls.append(["poseKeyframed", c["id"]])
         for patch in POSE_PATCHES:

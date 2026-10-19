@@ -228,25 +228,27 @@ QVariantMap EditorModel::selectedClip() const {
     }
     const double local = playhead_ - c->start;
     const core::Pose pose = core::clip_pose(*c, std::max(0.0, local));
-    return {{"poseOpacity", pose.opacity},
-            {"volumeAt", core::clip_volume_at(*c, std::max(0.0, local))},
-            {"blend", qstr(c->blend_mode.value_or("normal"))},
-            {"appear", qstr(c->appear)},
-            {"exit", qstr(c->exit)},
-            {"note", qstr(c->note.value_or(""))},
-            {"animated", core::keyframes_enabled(*c) && core::pose_keyframed(*c)},
-            {"id", qstr(c->id)},
-            {"kind", qstr(c->kind)},
-            {"label", clip_label(*c)},
-            {"trackId", qstr(c->track_id)},
-            {"start", c->start},
-            {"duration", core::ui_clip_duration(*c)},
-            {"inPoint", c->in_point},
-            {"outPoint", c->out_point},
-            {"speed", core::ui_clip_speed(*c)},
-            {"opacity", c->opacity.value_or(1.0)},
-            {"muted", c->muted},
-            {"disabled", c->disabled}};
+    return {
+        {"poseOpacity", pose.opacity},
+        {"volumeAt", core::clip_volume_at(*c, std::max(0.0, local))},
+        {"blend", qstr(c->blend_mode.value_or("normal"))},
+        {"appear", qstr(c->appear)},
+        {"exit", qstr(c->exit)},
+        {"note", qstr(c->note.value_or(""))},
+        {"animated", core::keyframes_enabled(*c) && core::pose_keyframed(*c)},
+        {"kf", qstr(core::kf_state(*c, std::min(core::ui_clip_duration(*c), std::max(0.0, local)), fps()))},
+        {"id", qstr(c->id)},
+        {"kind", qstr(c->kind)},
+        {"label", clip_label(*c)},
+        {"trackId", qstr(c->track_id)},
+        {"start", c->start},
+        {"duration", core::ui_clip_duration(*c)},
+        {"inPoint", c->in_point},
+        {"outPoint", c->out_point},
+        {"speed", core::ui_clip_speed(*c)},
+        {"opacity", c->opacity.value_or(1.0)},
+        {"muted", c->muted},
+        {"disabled", c->disabled}};
 }
 
 void EditorModel::setPlayhead(double t) {
@@ -943,6 +945,51 @@ bool EditorModel::paste() {
     commit(std::move(next), "paste", ids);
     emit selectionChanged();
     return true;
+}
+
+void EditorModel::toggleKeyframe() {
+    const core::TimelineClip* c =
+        selection_.ids.empty() ? nullptr : clip(qstr(selection_.anchor.value_or(selection_.ids.front())));
+    if (!c) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    const std::string id = c->id;
+    for (auto& item : next.clips) {
+        if (item->id == id) {
+            core::toggle_keyframe_at(item.mut(), playhead_ - item->start, fps(), ids_);
+        }
+    }
+    commit(std::move(next), "keyframe", {id});
+}
+
+void EditorModel::fadeVolume(const QString& side) {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if ((c->kind == "audio" || c->kind == "video") &&
+            std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            core::apply_volume_fade_ui(c.mut(), core::ui_clip_duration(*c), side.toStdString(), ids_);
+        }
+    }
+    commit(std::move(next), "fade-" + side.toStdString(), selection_.ids);
+}
+
+void EditorModel::toggleMuted() {
+    const core::TimelineClip* primary = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!primary) {
+        return;
+    }
+    const bool muted = !primary->muted;
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if (std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            c.mut().muted = muted;
+        }
+    }
+    commit(std::move(next), "mute", selection_.ids);
 }
 
 void EditorModel::undo() {

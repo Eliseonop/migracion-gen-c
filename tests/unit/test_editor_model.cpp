@@ -295,3 +295,31 @@ TEST_CASE("editor: copiar, cortar y pegar en el cabezal (un paso de deshacer)", 
     REQUIRE(m.paste()); // la música vuelve, ahora en 1 s
     CHECK(clip_view(m, m.selection()[0])["start"] == 1.0);
 }
+
+TEST_CASE("editor: rombo de keyframe, fundidos y silenciar", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.select("a");
+    m.setPlayhead(1);
+    CHECK(m.selectedClip()["kf"] == "off");
+    m.toggleKeyframe();
+    CHECK(m.selectedClip()["kf"] == "on");
+    m.setPlayhead(3);
+    CHECK(m.selectedClip()["kf"] == "empty");
+    m.setPose({{"opacity", 0.2}}); // ya animado: cae en un keyframe nuevo
+    CHECK(m.selectedClip()["kf"] == "on");
+    m.setPlayhead(1);
+    CHECK(m.selectedClip()["poseOpacity"] == 1.0);
+    m.toggleKeyframe(); // quita el de 1 s
+    CHECK(m.selectedClip()["kf"] == "empty");
+
+    m.select("m");
+    m.fadeVolume("in");
+    m.setPlayhead(0);
+    CHECK(m.selectedClip()["volumeAt"] == 0.0);
+    m.setPlayhead(0.5);
+    CHECK(m.selectedClip()["volumeAt"] == 1.0);
+    m.toggleMuted();
+    CHECK(m.selectedClip()["muted"] == true);
+}

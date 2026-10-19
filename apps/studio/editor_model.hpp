@@ -115,6 +115,11 @@ public:
     Q_INVOKABLE void setBlend(const QString& mode);
     Q_INVOKABLE void setTransition(const QString& appear, const QString& exit);
     Q_INVOKABLE void setNote(const QString& note);
+    // El rombo (toggleKeyframeAtPlayhead) del clip seleccionado; fundido de volumen de entrada o
+    // salida y silenciar, en la selección.
+    Q_INVOKABLE void toggleKeyframe();
+    Q_INVOKABLE void fadeVolume(const QString& side);
+    Q_INVOKABLE void toggleMuted();
     // Ctrl+C / Ctrl+X / Ctrl+V (copySelectedClips y pasteClips de VideoEditor.jsx): se pega en el
     // cabezal conservando la separación; en su pista si sigue, si no en una compatible.
     Q_INVOKABLE bool copySelection();

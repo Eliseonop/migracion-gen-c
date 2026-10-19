@@ -74,6 +74,8 @@ struct KfProps {
 [[nodiscard]] std::optional<std::size_t> kf_prop_index(std::string_view key);
 
 [[nodiscard]] bool keyframes_enabled(const TimelineClip& clip);
+// validKfValue: un color «#rrggbb» en las propiedades de color; un número finito en las demás.
+[[nodiscard]] bool kf_value_valid(std::string_view key, const Json& value);
 [[nodiscard]] double clamp_volume(const Json& value); // 0–2; lo que no es número = 1
 // Valores sin animar (transform/estilo/figura, máscara, volumen, audio).
 [[nodiscard]] KfProps static_props(const TimelineClip& clip);

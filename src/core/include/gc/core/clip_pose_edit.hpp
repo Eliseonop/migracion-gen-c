@@ -35,4 +35,19 @@ void apply_static_pose(TimelineClip& clip, const Json& patch);
 // commitPose de VideoEditor.jsx para un clip: `local_t` es el cabezal menos su inicio.
 void commit_pose(TimelineClip& clip, const Json& patch, double local_t, double fps, IdSource& ids);
 
+// --- El rombo de keyframe (toggleKeyframeAtPlayhead de VideoEditor.jsx) ---------------------
+
+// kfState: "on" (keyframe de pose en este fotograma), "empty" (animado, sin keyframe aquí) u "off".
+[[nodiscard]] std::string kf_state(const TimelineClip& clip, double local_t, double fps);
+// keyframeIdAt: el id del keyframe de pose o de encuadre en este fotograma.
+[[nodiscard]] std::optional<std::string> keyframe_id_at(const TimelineClip& clip, double local_t, double fps);
+// textStyleKfKeys: las propiedades de estilo del texto que tienen keyframes.
+[[nodiscard]] std::vector<std::string> text_style_kf_keys(const TimelineClip& clip);
+// Pone o quita el keyframe de pose en `local_t` (el rombo). En un texto con estilo animado, quitarlo
+// le deja el estilo a ese keyframe.
+void toggle_keyframe_at(TimelineClip& clip, double local_t, double fps, IdSource& ids);
+// applyVolumeFade de clipKeyframes.js: fundido de volumen de entrada ("in") o salida ("out").
+void apply_volume_fade_ui(TimelineClip& clip, double duration, const std::string& side, IdSource& ids,
+                          double fade = 0.5);
+
 } // namespace gc::core

@@ -33,6 +33,7 @@ Rectangle {
     component Choice: ComboBox {
         id: choice
         required property var options
+        Layout.preferredWidth: 100
         property string current
         signal picked(string value)
         Layout.fillWidth: true
@@ -41,6 +42,13 @@ Rectangle {
         onActivated: (i) => picked(options[i][0])
         contentItem: Label { leftPadding: 10; text: choice.displayText; color: Theme.text; verticalAlignment: Text.AlignVCenter }
         background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
+    }
+    component Small: Button {
+        id: small
+        Layout.fillWidth: true
+        font.pixelSize: 12
+        contentItem: Label { text: small.text; font: small.font; color: Theme.text; horizontalAlignment: Text.AlignHCenter }
+        background: Rectangle { radius: Theme.radiusSm; color: small.hovered ? Theme.card3 : Theme.card2; border.color: Theme.lineBright }
     }
     component Percent: RowLayout {
         id: row
@@ -63,6 +71,7 @@ Rectangle {
     Flickable {
         anchors.fill: parent
         anchors.margins: 16
+        contentWidth: width
         contentHeight: body.implicitHeight
         clip: true
 
@@ -96,6 +105,27 @@ Rectangle {
                 font.pixelSize: 12
             }
 
+            RowLayout {
+                visible: panel.has && panel.clip.kind !== "adjustment"
+                Layout.topMargin: 8
+                ToolButton {
+                    objectName: "insp:keyframe"
+                    // ◆ keyframe en el cabezal · ◇ animado, sin keyframe aquí · ◇ gris sin animar
+                    text: panel.clip.kf === "on" ? "◆" : "◇"
+                    font.pixelSize: 16
+                    palette.buttonText: panel.clip.kf === "off" ? Theme.muted : Theme.folder
+                    background: Rectangle { radius: Theme.radiusSm; color: parent.hovered ? Theme.card3 : "transparent" }
+                    ToolTip.visible: hovered
+                    ToolTip.text: panel.clip.kf === "on" ? "Quitar el keyframe del cabezal" : "Keyframe en el cabezal"
+                    onClicked: panel.model.toggleKeyframe()
+                }
+                Label {
+                    text: panel.clip.kf === "off" ? "Sin animar" : panel.clip.kf === "on" ? "Keyframe en el cabezal" : "Animado"
+                    color: Theme.textSecondary
+                    font.pixelSize: 12
+                }
+            }
+
             Section { visible: panel.visual; text: "MEZCLA" + (panel.clip.animated ? " · ANIMADA" : "") }
             Percent {
                 visible: panel.visual
@@ -120,6 +150,14 @@ Rectangle {
                 maxValue: 2
                 value: panel.has ? panel.clip.volumeAt : 1
                 onCommitted: (v) => panel.model.setPose({ volume: Math.round(v * 100) / 100 })
+            }
+            RowLayout {
+                visible: panel.sound
+                Layout.fillWidth: true
+                spacing: 6
+                Small { objectName: "insp:fadein"; text: "Fade in"; onClicked: panel.model.fadeVolume("in") }
+                Small { objectName: "insp:fadeout"; text: "Fade out"; onClicked: panel.model.fadeVolume("out") }
+                Small { objectName: "insp:mute"; text: panel.has && panel.clip.muted ? "Activar" : "Mute"; onClicked: panel.model.toggleMuted() }
             }
 
             Section { visible: panel.has; text: "ANIMACIÓN" }

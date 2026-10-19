@@ -62,6 +62,23 @@ const clipNoIds = (c) => {
   return rest
 }
 
+// toggleKeyframeAtPlayhead de VideoEditor.jsx para un clip (`localT` = cabezal − inicio).
+const toggleKf = (c, localT, fps) => {
+  if (!kf.canKeyframe(c)) return c
+  const t = Math.min(m.clipDur(c), Math.max(0, localT))
+  const st = kf.kfState(c, t, fps)
+  const id = kf.keyframeIdAt(c, t, fps)
+  if (st === 'on') {
+    if (c.kind === 'text' && kf.textStyleKfKeys(c).size) return kf.removePoseKf(c, id)
+    if (c.keyframes?.enabled) return kf.deleteKeyframeItem(c, id)
+    if (!c.reframe) return c
+    const keep = (arr) => (arr || []).filter((k) => k.id !== id)
+    return { ...c, reframe: { ...c.reframe, keyframes: keep(c.reframe.keyframes), keyframes2: keep(c.reframe.keyframes2) } }
+  }
+  const src = Math.min(c.out_point, Math.max(c.in_point, m.timelineToSource(c, c.start + localT)))
+  return kf.upsertKeyframeAt(kf.enableKeyframes(c, t, src), t, {}, undefined, fps)
+}
+
 // commitPose de VideoEditor.jsx para un clip (sus refs y la selección aparte).
 const commitPose = (c, patch, localT, fps) => {
   if (!kf.canKeyframe(c)) return c
@@ -147,6 +164,14 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     placeAsset: (payload, track, start, fit) => clipNoIds(placeAsset(payload, track, start, fit ?? undefined)),
     segmentRange: (item) => extract.segmentRange(item),
     materialDuration: (item) => extract.materialDuration(item),
+    kfState: (id, t, fps) => kf.kfState(byId(id), t, fps),
+    keyframeIdAt: (id, t, fps) => kf.keyframeIdAt(byId(id), t, fps) ?? null,
+    textStyleKfKeys: (id) => [...kf.textStyleKfKeys(byId(id))],
+    toggleKeyframe: (id, t, fps) => {
+      const c = noIds(toggleKf(byId(id), t, fps))
+      return { keyframes: c.keyframes ?? null, reframeKfs: (c.reframe?.keyframes || []).map((k) => k.t) }
+    },
+    applyVolumeFade: (id, side) => noIds(kf.applyVolumeFade(byId(id), m.clipDur(byId(id)), side)).keyframes,
     emptiedTracks: (candidates) => m.emptiedTracks(tracks, clips, candidates),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)

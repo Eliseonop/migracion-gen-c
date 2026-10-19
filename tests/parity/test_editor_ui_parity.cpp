@@ -361,6 +361,32 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         const auto t = next_snap_time(tl.markers, tl.clips, num(1), call.at(2).get<int>());
         return t ? Json(*t) : Json();
     }
+    if (fn == "kfState") {
+        return kf_state(clip(call.at(1)), num(2), num(3));
+    }
+    if (fn == "keyframeIdAt") {
+        const auto id = keyframe_id_at(clip(call.at(1)), num(2), num(3));
+        return id ? Json(*id) : Json();
+    }
+    if (fn == "textStyleKfKeys") {
+        return text_style_kf_keys(clip(call.at(1)));
+    }
+    if (fn == "toggleKeyframe" || fn == "applyVolumeFade") {
+        TimelineClip c = clip(call.at(1));
+        SequentialIdSource ids;
+        if (fn == "applyVolumeFade") {
+            apply_volume_fade_ui(c, ui_clip_duration(c), str(2), ids);
+            return without_ids(*c.keyframes);
+        }
+        toggle_keyframe_at(c, num(2), num(3), ids);
+        Json rf = Json::array();
+        if (c.reframe) {
+            for (const Keyframe& k : c.reframe->keyframes) {
+                rf.push_back(k.t);
+            }
+        }
+        return {{"keyframes", c.keyframes ? without_ids(*c.keyframes) : Json()}, {"reframeKfs", rf}};
+    }
     if (fn == "poseKeyframed") {
         return pose_keyframed(clip(call.at(1)));
     }

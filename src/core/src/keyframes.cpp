@@ -222,6 +222,10 @@ std::vector<Json> iter_items(const Json& items) { return py_iter(items).value_or
 
 } // namespace
 
+bool kf_value_valid(std::string_view key, const Json& value) {
+    return valid_kf_value(key, value);
+}
+
 KfProps interp_items(const std::vector<Json>& items, double t, const KfProps& fallback) {
     // `_merge(static_props({}), fallback)`: un NaN del respaldo vale lo de un clip vacío.
     static const KfProps kEmpty = static_props(TimelineClip{});
