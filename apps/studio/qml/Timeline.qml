@@ -7,6 +7,7 @@ import QtQuick.Controls.Basic
 Rectangle {
     id: timeline
     required property var model
+    signal contextClip(string clipId) // clic derecho en un clip (ya elegido)
     readonly property int headWidth: 132
     readonly property int rulerHeight: 22
     readonly property real pps: model.pps
@@ -471,7 +472,16 @@ Rectangle {
                                 timeline.guides = block.trim.times || []
                             }
                         }
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
                         onPressed: (m) => {
+                            if (m.button === Qt.RightButton) {
+                                block.mode = ""
+                                if (!block.selected)
+                                    timeline.model.select(block.clipId, false, false)
+                                const id = block.clipId
+                                Qt.callLater(() => timeline.contextClip(id))
+                                return
+                            }
                             block.pressX = lane(m).x
                             block.pressY = lane(m).y
                             block.mode = block.locked ? "" : m.x < 6 ? "trim-left" : m.x > width - 6 ? "trim-right" : "move"

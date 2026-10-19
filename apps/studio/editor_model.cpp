@@ -40,6 +40,7 @@
 #include "gc/core/shape_geometry.hpp"
 #include "gc/core/shapes.hpp"
 #include "gc/core/text_clip_ui.hpp"
+#include "gc/core/text_style.hpp"
 #include "gc/core/timeline_rules.hpp"
 #include "gc/core/timeline_view.hpp"
 #include "gc/core/vfx_stack.hpp"
@@ -1553,6 +1554,104 @@ void EditorModel::confirmCrop() {
         }
     }
     commit(std::move(tl), "crop", {c->id});
+}
+
+namespace {
+
+// clipFavRef de lib/favorites.js: un SFX se marca por su archivo (o su id).
+std::optional<std::string> sfx_fav_id(const core::TimelineClip& c) {
+    if (c.asset_kind != "sfx") {
+        return std::nullopt;
+    }
+    return c.filename.empty() ? c.asset_id : c.filename;
+}
+
+} // namespace
+
+QVariantMap EditorModel::clipMenu(const QString& clipId) const {
+    const core::TimelineClip* c = clip(clipId);
+    if (!c) {
+        return {};
+    }
+    const core::LayerInfo layer = core::clip_layer_info(session_->timeline()->clips, c->id);
+    const auto fav_id = sfx_fav_id(*c);
+    const Json favs = core::normalize_favorites(settings_ ? settings_->load().value("favorites", Json()) : Json());
+    const Json& sfx = favs.value("sfx", Json::array());
+    return {{"kind", qstr(c->kind)},
+            {"disabled", c->disabled},
+            {"canLayer", core::can_layer_clip(*c)},
+            {"canBack", layer.can_back},
+            {"canFront", layer.can_front},
+            {"hasBeats", !core::clip_beat_times(*c).empty()},
+            {"sfx", fav_id.has_value()},
+            {"favorite", fav_id && std::ranges::find(sfx, Json(*fav_id)) != sfx.end()},
+            {"canPasteAttrs", attr_clipboard_ && attr_clipboard_->id != c->id}};
+}
+
+void EditorModel::moveLayer(const QString& clipId, const QString& action) {
+    if (!clip(clipId)) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    next.clips = core::move_clip_layer(next.clips, clipId.toStdString(), action.toStdString());
+    commit(std::move(next), "layer", {clipId.toStdString()});
+}
+
+// toggleClipFav: la estrella del SFX en los ajustes (favorites.sfx).
+void EditorModel::toggleClipFavorite(const QString& clipId) {
+    const core::TimelineClip* c = clip(clipId);
+    const auto id = c ? sfx_fav_id(*c) : std::nullopt;
+    if (!id || !settings_) {
+        return;
+    }
+    Json favs = core::normalize_favorites(settings_->load().value("favorites", Json()));
+    Json& sfx = favs["sfx"];
+    if (const auto it = std::ranges::find(sfx, Json(*id)); it != sfx.end()) {
+        sfx.erase(it);
+    } else {
+        sfx.push_back(*id);
+    }
+    if (ok(settings_->save(Json{{"favorites", favs}}))) {
+        load_sfx(sfx_query_.first, sfx_query_.second);
+        emit projectChanged();
+    }
+}
+
+// applyGlobalTemplate: el estilo completo de este texto en todas las pistas y textos.
+void EditorModel::applyGlobalTemplate(const QString& clipId) {
+    const core::TimelineClip* c = clip(clipId);
+    if (!c || c->kind != "text") {
+        return;
+    }
+    const core::TimelineTrack* own = track(qstr(c->track_id));
+    const Json tmpl = core::effective_text_style(own && own->style ? *own->style : Json(), c->style.value_or(Json()));
+    core::Timeline next = *session_->timeline();
+    std::vector<std::string> changed;
+    for (auto& t : next.tracks) {
+        if (t.kind == "text") {
+            t.style = tmpl;
+        }
+    }
+    for (auto& x : next.clips) {
+        if (x->kind == "text") {
+            x.mut().style = tmpl;
+            changed.push_back(x->id);
+        }
+    }
+    commit(std::move(next), "global-template", changed);
+}
+
+void EditorModel::removeBeats(const QString& clipId) {
+    if (!clip(clipId)) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& x : next.clips) {
+        if (x->id == clipId.toStdString()) {
+            x.mut().beats.reset();
+        }
+    }
+    commit(std::move(next), "beats", {clipId.toStdString()});
 }
 
 void EditorModel::toggleFlip(const QString& axis) {

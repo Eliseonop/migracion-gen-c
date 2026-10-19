@@ -1374,7 +1374,8 @@ Decisión de Edu (§6):
 - **Pestaña Efectos:** la pila del inspector pasa a su propia pestaña con desplegables (EdVfxStack) y la biblioteca a una pestaña del material (EdVfxLibrary, con la búsqueda de `listEffects`). El test destapó que el inspector no se refrescaba tras una edición (el modelo solo avisaba de `timelineChanged`); ahora cada cambio avisa también a la selección.
 - **Figuras en el material:** pestaña con miniaturas (Canvas sobre `shape_geometry`, sin el plugin SVG de Qt) que se arrastran a la timeline. `place_asset_clip` no tenía la rama de figuras de `placeAsset`; ahora sí, con casos en la fixture del editor (mutante «sin rama» detectado).
 - **Textos en el material:** pestaña «Texto» con el texto por defecto y los temas, que se arrastran (`place_text_clip`, la rama de texto de `placeAsset`, con el estilo de la pista; 48 casos en la fixture del editor, mutante «sin tema» detectado) o se aplican con un clic. Las fichas comparten `MaterialTile.qml` con las figuras.
-- **Linux:** 200/200 con GCC y 140/140 con Clang + libc++.
+- **Menú del clic derecho en un clip:** lo que no necesita red ni IA (favorito, plantilla global, capas, activar, beats, voltear, atributos, dividir, duplicar y eliminar). Las capas (`move_clip_layer`) con paridad: 3 100 llamadas más en la fixture del editor, mutante «al fondo ↔ al frente» detectado.
+- **Linux:** 201/201 con GCC y 140/140 con Clang + libc++.
 
 **Siguiente:**
 - El preview espera a `gc_render`.

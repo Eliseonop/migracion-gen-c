@@ -490,3 +490,35 @@ TEST_CASE("studio sin pantalla: los textos del material se añaden, cambian de t
     CHECK(s.editor->selectedClip()["kind"] == "text");
     CHECK(s.editor->selectedClip()["themeId"] == "box");
 }
+
+TEST_CASE("studio sin pantalla: el menú del clic derecho ordena capas y elimina", "[studio][ui]") {
+    Studio s;
+    s.editor->setPlayhead(1);
+    s.editor->addText(); // el texto de la pista nueva no comparte pista con «a»
+    s.editor->select("a");
+    s.editor->duplicateSelection(); // la copia, en V1 detrás de «a»: dos capas en la pista
+    const QString copy = s.editor->selection().front();
+    const auto order = [&] {
+        QStringList ids;
+        for (const QVariant& c : s.editor->clips()) {
+            if (c.toMap()["trackId"] == "V1") {
+                ids << c.toMap()["clipId"].toString();
+            }
+        }
+        return ids;
+    };
+    const QStringList before = order();
+    QTest::mouseClick(s.window, Qt::RightButton, {}, s.at("a", 0.5));
+    QTest::qWait(50);
+    REQUIRE(s.item("ctx:front"));
+    QMetaObject::invokeMethod(s.item("ctx:front"), "triggered");
+    QCoreApplication::processEvents();
+    CHECK(order().back() == "a");
+    CHECK(order() != before);
+    QTest::mouseClick(s.window, Qt::RightButton, {}, s.at("b", 0.5));
+    QTest::qWait(50);
+    QMetaObject::invokeMethod(s.item("ctx:delete"), "triggered");
+    QCoreApplication::processEvents();
+    CHECK(s.view("b").isEmpty());
+    CHECK(!copy.isEmpty());
+}

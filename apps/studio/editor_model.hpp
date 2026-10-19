@@ -156,6 +156,12 @@ public:
     // Atajos de VideoEditor.jsx: V (desactivar la selección), M (marcador en el cabezal), «,» y «.»
     // (anterior y siguiente marcador o beat) y las flechas (0,1 s; con Shift, 1 s).
     Q_INVOKABLE void toggleDisabled();
+    // Menú contextual de un clip (ctxMenu de VideoEditor.jsx): qué ofrece y sus acciones propias.
+    Q_INVOKABLE QVariantMap clipMenu(const QString& clipId) const;
+    Q_INVOKABLE void moveLayer(const QString& clipId, const QString& action);
+    Q_INVOKABLE void toggleClipFavorite(const QString& clipId);
+    Q_INVOKABLE void applyGlobalTemplate(const QString& clipId);
+    Q_INVOKABLE void removeBeats(const QString& clipId);
     Q_INVOKABLE void toggleMarker();
     // patchMarker de VideoEditor.jsx: mover (al fotograma), renombrar (vacío = sin nombre) o quitar.
     Q_INVOKABLE void moveMarker(const QString& id, double t);

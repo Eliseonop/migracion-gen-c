@@ -188,6 +188,7 @@ Item {
             Layout.fillHeight: true
             Layout.preferredHeight: 2
             model: editor.model
+            onContextClip: (id) => clipMenu.openFor(id)
         }
     }
 
@@ -196,6 +197,7 @@ Item {
     // «Pegar atributos» (EdPasteAttrs.jsx): qué grupos del clip copiado van a los seleccionados.
     CropModal { id: cropModal; model: editor.model }
     SfxModal { id: sfxModal; model: editor.model }
+    ClipMenu { id: clipMenu; model: editor.model; onPasteAttributes: pasteAttrs.openFor(editor.model.pasteableGroups()) }
 
     Popup {
         id: pasteAttrs
