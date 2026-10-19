@@ -522,10 +522,47 @@ Rectangle {
                 onPicked: (c) => panel.model.changeStyle({ glow: !(panel.st.glow && (panel.st.glow_color || "").toLowerCase() === c), glow_color: c })
             }
             StyleSlider { visible: panel.text && !!panel.st.bg && panel.st.bg !== "none"; title: "Fondo %"; key: "bg_opacity"; fallback: 0.55 }
+            RowLayout {
+                visible: panel.text && !!panel.st.bg && panel.st.bg !== "none"
+                spacing: 4
+                Label { Layout.preferredWidth: 70; text: "Caja"; color: Theme.textSecondary }
+                Repeater {
+                    model: [["line", "Por línea"], ["block", "Bloque"]]
+                    Toggle {
+                        required property var modelData
+                        implicitWidth: implicitContentWidth + 16
+                        text: modelData[1]
+                        on: (panel.st.bg_style || "line") === modelData[0]
+                        onClicked: panel.model.changeStyle({ bg_style: modelData[0] }, true)
+                    }
+                }
+            }
+            StyleSlider { visible: panel.text && !!panel.st.bg && panel.st.bg !== "none"; title: "Redondeo"; key: "bg_radius" }
+            StyleSlider { visible: panel.text && !!panel.st.bg && panel.st.bg !== "none"; title: "Alto"; key: "bg_pad_y" }
+            StyleSlider { visible: panel.text && !!panel.st.bg && panel.st.bg !== "none"; title: "Ancho"; key: "bg_pad_x" }
+            StyleSlider { visible: panel.text && !!panel.st.bg && panel.st.bg !== "none"; title: "Desp. X"; key: "bg_dx"; from: -100; to: 100 }
+            StyleSlider { visible: panel.text && !!panel.st.bg && panel.st.bg !== "none"; title: "Desp. Y"; key: "bg_dy"; from: -100; to: 100 }
             StyleSlider { visible: panel.text && !!panel.st.shadow; title: "Sombra %"; key: "shadow_opacity"; fallback: 0.6 }
             StyleSlider { visible: panel.text && !!panel.st.shadow; title: "Desenfoque"; key: "shadow_blur"; fallback: 0.05; scale: 200 }
             StyleSlider { visible: panel.text && !!panel.st.shadow; title: "Distancia"; key: "shadow_distance"; fallback: 0.06 }
             StyleSlider { visible: panel.text && !!panel.st.shadow; title: "Ángulo"; key: "shadow_angle"; fallback: 45; scale: 1; from: -180; to: 180 }
+            RowLayout {
+                visible: panel.text && !!panel.st.glow
+                spacing: 4
+                Label { Layout.preferredWidth: 70; text: "Brillo"; color: Theme.textSecondary }
+                Repeater {
+                    model: [["soft", "Suave"], ["strong", "Intenso"]]
+                    Toggle {
+                        required property var modelData
+                        implicitWidth: implicitContentWidth + 16
+                        text: modelData[1]
+                        on: (panel.st.glow_style === "strong" ? "strong" : "soft") === modelData[0]
+                        onClicked: panel.model.changeStyle({ glow_style: modelData[0] }, true)
+                    }
+                }
+            }
+            StyleSlider { visible: panel.text && !!panel.st.glow; title: "Brillo X"; key: "glow_dx"; from: -100; to: 100 }
+            StyleSlider { visible: panel.text && !!panel.st.glow; title: "Brillo Y"; key: "glow_dy"; from: -100; to: 100 }
             StyleSlider { visible: panel.text && !!panel.st.glow; title: "Intensidad"; key: "glow_intensity"; fallback: 0.9 }
             StyleSlider { visible: panel.text && !!panel.st.glow; title: "Intervalo"; key: "glow_range"; fallback: 0.5 }
             RowLayout {
