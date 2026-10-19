@@ -308,6 +308,31 @@ void EditorModel::select(const QString& id, bool additive, bool range) {
     emit selectionChanged(); // sin rebuild(): rehacer la lista recrearía el clip que se está pulsando
 }
 
+void EditorModel::selectInRect(double x0, double y0, double x1, double y1, bool additive) {
+    if (!session_) {
+        return;
+    }
+    const double left = std::min(x0, x1);
+    const double right = std::max(x0, x1);
+    const double top = std::min(y0, y1);
+    const double bottom = std::max(y0, y1);
+    std::vector<std::string> ids = additive ? selection_.ids : std::vector<std::string>{};
+    for (const QVariantMap& row : clip_model_.rows()) {
+        const double cx0 = row["start"].toDouble() * pps_;
+        const double cx1 = cx0 + std::max(6.0, row["duration"].toDouble() * pps_);
+        const double cy0 = row["clipY"].toDouble();
+        const double cy1 = cy0 + row["clipHeight"].toDouble();
+        const std::string id = row["clipId"].toString().toStdString();
+        if (right >= cx0 && left <= cx1 && bottom >= cy0 && top <= cy1 &&
+            std::ranges::find(ids, id) == ids.end()) {
+            ids.push_back(id);
+        }
+    }
+    selection_.anchor = ids.empty() ? std::nullopt : std::optional(ids.back());
+    selection_.ids = std::move(ids);
+    emit selectionChanged();
+}
+
 void EditorModel::clearSelection() {
     selection_ = {};
     emit selectionChanged();

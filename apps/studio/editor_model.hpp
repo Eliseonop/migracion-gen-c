@@ -76,6 +76,9 @@ public:
 
     Q_INVOKABLE void select(const QString& id, bool additive = false, bool range = false);
     Q_INVOKABLE void clearSelection();
+    // Selección por área (startMarquee de EdTimeline): los clips que corta el rectángulo, en px de
+    // las filas; con `additive` se suman a los que había.
+    Q_INVOKABLE void selectInRect(double x0, double y0, double x1, double y1, bool additive);
     // Dónde caería el clip (o la selección, si es un grupo) arrastrado `delta` s con el centro del
     // fantasma a `centerY` px de las filas: {group, delta | start, trackId, newTrack, lineY, times}.
     // `times` son las guías del imán. No cambia nada.

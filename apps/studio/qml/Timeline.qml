@@ -196,7 +196,42 @@ Rectangle {
                 return ts.length ? ts[ts.length - 1].y + ts[ts.length - 1].height : timeline.rulerHeight
             }
 
-            TapHandler { onTapped: timeline.model.clearSelection() }
+            // Rectángulo de selección en un hueco: los clips que corta (Ctrl suma); un clic sin
+            // arrastre limpia la selección.
+            MouseArea {
+                id: marquee
+                anchors.fill: parent
+                property point from
+                property bool moved
+                property bool additive
+                onPressed: (m) => {
+                    from = Qt.point(m.x, m.y)
+                    moved = false
+                    additive = (m.modifiers & Qt.ControlModifier) !== 0
+                }
+                onPositionChanged: (m) => {
+                    if (!moved && Math.hypot(m.x - from.x, m.y - from.y) < 4)
+                        return
+                    moved = true
+                    band.x = Math.min(from.x, m.x)
+                    band.y = Math.min(from.y, m.y)
+                    band.width = Math.abs(m.x - from.x)
+                    band.height = Math.abs(m.y - from.y)
+                    timeline.model.selectInRect(from.x, from.y, m.x, m.y, additive)
+                }
+                onReleased: {
+                    if (!moved && !additive)
+                        timeline.model.clearSelection()
+                    moved = false
+                }
+            }
+            Rectangle {
+                id: band
+                visible: marquee.moved
+                z: 9
+                color: Qt.rgba(1, 0.23, 0.36, 0.12)
+                border.color: Theme.accent
+            }
 
             // Material soltado desde el panel: el clip empieza bajo el puntero.
             DropArea {

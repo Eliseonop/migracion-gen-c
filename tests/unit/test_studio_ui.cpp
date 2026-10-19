@@ -225,3 +225,17 @@ TEST_CASE("studio sin pantalla: arrastrar material del panel a la timeline crea 
     CHECK(made["kind"] == "audio");
     CHECK(std::abs(made["start"].toDouble() - (to.x() - lane.x()) / pps) < 0.1);
 }
+
+TEST_CASE("studio sin pantalla: el rectángulo de selección elige los clips que corta", "[studio][ui]") {
+    Studio s;
+    const QPoint a = s.at("a", 0.5);
+    const QPoint b = s.at("b", 0.5);
+    // Desde un hueco de V1 entre «a» y «b», arriba, hasta el centro de «b»: corta solo «b».
+    const QPoint gap((s.at("a", 1.0).x() + s.at("b", 0.0).x()) / 2, a.y() - 20);
+    s.drag(gap, b);
+    CHECK(s.editor->selection() == QStringList{"b"});
+    s.drag(gap, QPoint(a.x(), b.y())); // hacia atrás: «a»
+    CHECK(s.editor->selection() == QStringList{"a"});
+    QTest::mouseClick(s.window, Qt::LeftButton, {}, gap);
+    CHECK(s.editor->selection().isEmpty());
+}
