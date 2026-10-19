@@ -13,6 +13,7 @@
 #include "gc/core/clip_attrs.hpp"
 #include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_layout_ui.hpp"
+#include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/material_drop.hpp"
@@ -346,6 +347,15 @@ QVariantMap EditorModel::selectedClip() const {
         {"shape", c->kind == "shape" ? to_variant(core::normalize_shape(c->shape.value_or(Json::object()))
                                                       .value_or(Json::object()))
                                      : QVariantMap()},
+        {"animations", [&] {
+             QVariantMap out;
+             if (c->animations && c->animations->is_object()) {
+                 for (const auto& [slot, v] : c->animations->items()) {
+                     out[qstr(slot)] = qstr(v.is_object() ? v.value("id", "") : "");
+                 }
+             }
+             return out;
+         }()},
         {"curve", [&] {
              const auto k = core::target_interp_item(*c, std::max(0.0, local), fps());
              return k ? qstr(std::string(core::interp_name(core::normalize_interp(k->at("interpolation"))))) : QString();
@@ -1446,6 +1456,58 @@ void EditorModel::setAudioFx(const QString& id, double value) {
     Json fx = c->audio_fx && c->audio_fx->is_object() ? *c->audio_fx : Json::object();
     fx[id.toStdString()] = n;
     fx_each("audio-fx", [&](core::TimelineClip& item) { item.audio_fx = fx; });
+}
+
+QVariantList EditorModel::animationSlots() {
+    QVariantList out;
+    const auto catalog = core::fx_catalog();
+    if (!catalog) {
+        return out;
+    }
+    const Json& data = catalog->data();
+    for (const Json& slot : data.value("slots", Json::array())) {
+        QVariantList items;
+        for (const Json& a : data.value("anims", Json::array())) {
+            if (a.value("slot", "") == slot.value("id", "")) {
+                items << QVariantMap{{"id", qstr(a.value("id", ""))},
+                                     {"name", qstr(a.value("name", ""))},
+                                     {"dur", a.value("dur", 0.0)}};
+            }
+        }
+        out << QVariantMap{{"id", qstr(slot.value("id", ""))}, {"label", qstr(slot.value("label", ""))}, {"items", items}};
+    }
+    return out;
+}
+
+void EditorModel::setAnimation(const QString& slot, const QString& id) {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    const auto catalog = core::fx_catalog();
+    const Json* anim = catalog && !id.isEmpty() ? catalog->anim(id.toStdString()) : nullptr;
+    Json value;
+    if (anim) {
+        value = {{"id", id.toStdString()}};
+        if (slot != "combo") {
+            value["dur"] = anim->value("dur", Json());
+        }
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        const bool animable = c->kind == "video" || c->kind == "image" || c->kind == "motion" || c->kind == "text" ||
+                              c->kind == "shape";
+        if (!animable || std::ranges::find(selection_.ids, c->id) == selection_.ids.end()) {
+            continue;
+        }
+        Json anims = c->animations && c->animations->is_object() ? *c->animations : Json::object();
+        if (value.is_null()) {
+            anims.erase(slot.toStdString());
+        } else {
+            anims[slot.toStdString()] = value;
+        }
+        c.mut().animations = anims.empty() ? std::nullopt : std::optional(anims);
+    }
+    commit(std::move(next), "animation", selection_.ids);
 }
 
 void EditorModel::setAdjustIntensity(double value) {

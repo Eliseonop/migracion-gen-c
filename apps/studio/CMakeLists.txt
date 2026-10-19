@@ -8,6 +8,9 @@ add_library(gc_studio STATIC app.cpp clip_list_model.cpp editor_model.cpp home_m
 target_include_directories(gc_studio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gc_studio PUBLIC gc::core Qt6::Core Qt6::Gui Qt6::Quick Qt6::QuickControls2)
 gc_set_warnings(gc_studio)
+# El catálogo de efectos y animaciones (resources/fx) va dentro del ejecutable.
+qt_add_resources(gc_studio "gc_resources" PREFIX "/" BASE "${PROJECT_SOURCE_DIR}/resources"
+                 FILES "${PROJECT_SOURCE_DIR}/resources/fx/catalog.json")
 
 set(qml_files Main Theme Home SideItem ProjectCard FolderCard InlineEdit IconButton Editor Timeline Inspector
               MaterialPanel Settings)

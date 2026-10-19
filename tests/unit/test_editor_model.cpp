@@ -9,6 +9,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "gc/core/io.hpp"
+#include "gc/core/fx_catalog.hpp"
 #include "gc/core/serialize.hpp"
 
 #include "editor_model.hpp"
@@ -605,4 +606,22 @@ TEST_CASE("editor: copiar, pegar y duplicar el keyframe del cabezal", "[studio]"
     m.setPlayhead(4);
     CHECK(m.selectedClip()["kf"] == "on");
     CHECK(m.selectedClip()["poseOpacity"] == 0.25);
+}
+
+TEST_CASE("editor: animaciones de clip del catálogo por ranura", "[studio]") {
+    auto catalog = core::FxCatalog::load(core::path_from_utf8(GC_RESOURCES_DIR) / "fx" / "catalog.json");
+    REQUIRE(catalog);
+    core::set_fx_catalog(std::make_shared<const core::FxCatalog>(std::move(*catalog)));
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    REQUIRE(studio::EditorModel::animationSlots().size() == 4);
+    m.select("a");
+    m.setAnimation("in", "fade_in");
+    CHECK(m.selectedClip()["animations"].toMap()["in"] == "fade_in");
+    const core::Timeline tl = f.saved();
+    CHECK(tl.clips.front()->animations->at("in") == Json{{"id", "fade_in"}, {"dur", 0.5}});
+    m.setAnimation("in", "");
+    CHECK(m.selectedClip()["animations"].toMap().isEmpty());
+    CHECK_FALSE(f.saved().clips.front()->animations);
 }

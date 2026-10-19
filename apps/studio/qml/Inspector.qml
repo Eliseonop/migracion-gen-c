@@ -11,6 +11,13 @@ Rectangle {
     readonly property bool has: !!clip.id
     readonly property bool visual: has && clip.kind !== "audio" && clip.kind !== "adjustment"
     readonly property bool sound: has && (clip.kind === "audio" || clip.kind === "video")
+    // Pestañas (navs de EdInspector): Clip, Color, Audio y Animación, según el tipo de clip.
+    property string tab: "clip"
+    readonly property var tabList: [["clip", "Clip"]]
+        .concat(filterable || effectable ? [["color", "Color"]] : [])
+        .concat(sound ? [["audio", "Audio"]] : [])
+        .concat(has && clip.kind !== "adjustment" ? [["anim", "Animación"]] : [])
+    readonly property string tabNow: tabList.some((t) => t[0] === tab) ? tab : "clip"
     readonly property var tf: has ? clip.transform : ({})
     readonly property var speeds: [0.3, 0.5, 1, 1.5, 2, 3, 5, 10]
     readonly property bool text: has && clip.kind === "text"
@@ -241,6 +248,32 @@ Rectangle {
                     font.pixelSize: 12
                 }
             }
+
+            TabBar {
+                id: tabs
+                visible: panel.has
+                Layout.fillWidth: true
+                Layout.topMargin: 6
+                background: Rectangle { color: "transparent" }
+                Repeater {
+                    model: panel.tabList
+                    TabButton {
+                        required property var modelData
+                        objectName: "insp:tab:" + modelData[0]
+                        text: modelData[1]
+                        font.pixelSize: 12
+                        checked: panel.tabNow === modelData[0]
+                        onClicked: panel.tab = modelData[0]
+                        contentItem: Label { text: parent.text; font: parent.font; color: parent.checked ? Theme.text : Theme.muted; horizontalAlignment: Text.AlignHCenter }
+                        background: Rectangle { color: "transparent"; Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 2; color: parent.parent.checked ? Theme.accent : "transparent" } }
+                    }
+                }
+            }
+
+            ColumnLayout {
+                visible: panel.tabNow === "clip"
+                Layout.fillWidth: true
+                spacing: 6
 
             Section { visible: panel.text; text: "TEXTO" }
             TextArea {
@@ -603,19 +636,6 @@ Rectangle {
                 Toggle { objectName: "insp:flipV"; text: "⇵"; on: panel.has && panel.clip.flipV; onClicked: panel.model.toggleFlip("v") }
             }
 
-            RowLayout {
-                visible: panel.has && !!panel.clip.curve
-                Label { Layout.preferredWidth: 70; text: "Curva"; color: Theme.textSecondary }
-                Choice {
-                    objectName: "insp:curve"
-                    options: [["linear", "Linear"], ["ease-in", "Ease In"], ["ease-out", "Ease Out"], ["ease-in-out", "Ease In-Out"],
-                              ["cubic-in", "Cúbica In"], ["cubic-out", "Cúbica Out"], ["cubic-in-out", "Cúbica In-Out"],
-                              ["back-out", "Rebote"], ["bezier", "Personalizada"], ["hold", "Hold"]]
-                    current: panel.has ? panel.clip.curve : "linear"
-                    onPicked: (v) => panel.model.setCurve(v)
-                }
-            }
-
             Section { visible: panel.visual; text: "MEZCLA" + (panel.clip.animated ? " · ANIMADA" : "") }
             Percent {
                 visible: panel.visual
@@ -630,49 +650,6 @@ Rectangle {
                 options: panel.blends
                 current: panel.has ? panel.clip.blend : "normal"
                 onPicked: (v) => panel.model.setBlend(v)
-            }
-
-            Section { visible: panel.sound; text: "AUDIO" }
-            Percent {
-                visible: panel.sound
-                objectName: "insp:volume"
-                title: "Volumen"
-                maxValue: 2
-                value: panel.has ? panel.clip.volumeAt : 1
-                onCommitted: (v) => panel.model.setPose({ volume: Math.round(v * 100) / 100 })
-            }
-            Flow {
-                visible: panel.sound
-                Layout.fillWidth: true
-                spacing: 4
-                Repeater {
-                    model: panel.sound ? panel.audioFx : []
-                    Toggle {
-                        required property var modelData
-                        objectName: "insp:afx:" + modelData[0]
-                        implicitWidth: implicitContentWidth + 16
-                        text: modelData[1]
-                        on: panel.clip.audioFx[modelData[0]] > 0
-                        onClicked: panel.model.setAudioFx(modelData[0], on ? 0 : 1)
-                    }
-                }
-            }
-            Repeater {
-                model: panel.sound ? panel.audioFx.filter((f) => panel.clip.audioFx[f[0]] > 0) : []
-                Percent {
-                    required property var modelData
-                    title: modelData[1]
-                    value: panel.clip.audioFx[modelData[0]]
-                    onCommitted: (v) => panel.model.setAudioFx(modelData[0], Math.round(v * 20) / 20)
-                }
-            }
-            RowLayout {
-                visible: panel.sound
-                Layout.fillWidth: true
-                spacing: 6
-                Small { objectName: "insp:fadein"; text: "Fade in"; onClicked: panel.model.fadeVolume("in") }
-                Small { objectName: "insp:fadeout"; text: "Fade out"; onClicked: panel.model.fadeVolume("out") }
-                Small { objectName: "insp:mute"; text: panel.has && panel.clip.muted ? "Activar" : "Mute"; onClicked: panel.model.toggleMuted() }
             }
 
             RowLayout {
@@ -708,6 +685,27 @@ Rectangle {
                 Small { objectName: "insp:pitch"; text: panel.has && panel.clip.keepPitch ? "Tono ✓" : "Tono"; onClicked: panel.model.toggleKeepPitch() }
                 Small { objectName: "insp:reverse"; text: panel.has && panel.clip.reverse ? "Reversa ✓" : "Reversa"; onClicked: panel.model.toggleReverse() }
             }
+
+            Section { visible: panel.has; text: "NOTA" }
+            TextArea {
+                visible: panel.has
+                objectName: "insp:note"
+                Layout.fillWidth: true
+                Layout.preferredHeight: 70
+                wrapMode: TextEdit.Wrap
+                placeholderText: "Qué significa este fragmento en la historia…"
+                placeholderTextColor: Theme.muted
+                color: Theme.text
+                text: panel.has ? panel.clip.note : ""
+                background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
+                onActiveFocusChanged: if (!activeFocus && panel.has) panel.model.setNote(text)
+            }
+            }
+
+            ColumnLayout {
+                visible: panel.tabNow === "color"
+                Layout.fillWidth: true
+                spacing: 6
 
             Section { visible: panel.filterable; text: panel.has && panel.clip.kind === "adjustment" ? "CAPA DE AJUSTE" : "COLOR" }
             Percent {
@@ -836,6 +834,74 @@ Rectangle {
                     Toggle { implicitWidth: 22; text: "×"; onClicked: panel.model.toggleFilter(appliedRow.modelData.id) }
                 }
             }
+            }
+
+            ColumnLayout {
+                visible: panel.tabNow === "audio"
+                Layout.fillWidth: true
+                spacing: 6
+
+            Section { visible: panel.sound; text: "AUDIO" }
+            Percent {
+                visible: panel.sound
+                objectName: "insp:volume"
+                title: "Volumen"
+                maxValue: 2
+                value: panel.has ? panel.clip.volumeAt : 1
+                onCommitted: (v) => panel.model.setPose({ volume: Math.round(v * 100) / 100 })
+            }
+            Flow {
+                visible: panel.sound
+                Layout.fillWidth: true
+                spacing: 4
+                Repeater {
+                    model: panel.sound ? panel.audioFx : []
+                    Toggle {
+                        required property var modelData
+                        objectName: "insp:afx:" + modelData[0]
+                        implicitWidth: implicitContentWidth + 16
+                        text: modelData[1]
+                        on: panel.clip.audioFx[modelData[0]] > 0
+                        onClicked: panel.model.setAudioFx(modelData[0], on ? 0 : 1)
+                    }
+                }
+            }
+            Repeater {
+                model: panel.sound ? panel.audioFx.filter((f) => panel.clip.audioFx[f[0]] > 0) : []
+                Percent {
+                    required property var modelData
+                    title: modelData[1]
+                    value: panel.clip.audioFx[modelData[0]]
+                    onCommitted: (v) => panel.model.setAudioFx(modelData[0], Math.round(v * 20) / 20)
+                }
+            }
+            RowLayout {
+                visible: panel.sound
+                Layout.fillWidth: true
+                spacing: 6
+                Small { objectName: "insp:fadein"; text: "Fade in"; onClicked: panel.model.fadeVolume("in") }
+                Small { objectName: "insp:fadeout"; text: "Fade out"; onClicked: panel.model.fadeVolume("out") }
+                Small { objectName: "insp:mute"; text: panel.has && panel.clip.muted ? "Activar" : "Mute"; onClicked: panel.model.toggleMuted() }
+            }
+            }
+
+            ColumnLayout {
+                visible: panel.tabNow === "anim"
+                Layout.fillWidth: true
+                spacing: 6
+
+            RowLayout {
+                visible: panel.has && !!panel.clip.curve
+                Label { Layout.preferredWidth: 70; text: "Curva"; color: Theme.textSecondary }
+                Choice {
+                    objectName: "insp:curve"
+                    options: [["linear", "Linear"], ["ease-in", "Ease In"], ["ease-out", "Ease Out"], ["ease-in-out", "Ease In-Out"],
+                              ["cubic-in", "Cúbica In"], ["cubic-out", "Cúbica Out"], ["cubic-in-out", "Cúbica In-Out"],
+                              ["back-out", "Rebote"], ["bezier", "Personalizada"], ["hold", "Hold"]]
+                    current: panel.has ? panel.clip.curve : "linear"
+                    onPicked: (v) => panel.model.setCurve(v)
+                }
+            }
 
             Section { visible: panel.has; text: "ANIMACIÓN" }
             RowLayout {
@@ -859,19 +925,19 @@ Rectangle {
                 }
             }
 
-            Section { visible: panel.has; text: "NOTA" }
-            TextArea {
-                visible: panel.has
-                objectName: "insp:note"
-                Layout.fillWidth: true
-                Layout.preferredHeight: 70
-                wrapMode: TextEdit.Wrap
-                placeholderText: "Qué significa este fragmento en la historia…"
-                placeholderTextColor: Theme.muted
-                color: Theme.text
-                text: panel.has ? panel.clip.note : ""
-                background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
-                onActiveFocusChanged: if (!activeFocus && panel.has) panel.model.setNote(text)
+            Repeater {
+                model: panel.has && ["video", "image", "text", "shape"].indexOf(panel.clip.kind) >= 0 ? panel.model.animationSlots : []
+                RowLayout {
+                    required property var modelData
+                    Label { Layout.preferredWidth: 70; text: modelData.label; color: Theme.textSecondary }
+                    Choice {
+                        objectName: "insp:anim:" + modelData.id
+                        options: [["", "Ninguna"]].concat(modelData.items.map((a) => [a.id, a.name]))
+                        current: panel.clip.animations[modelData.id] || ""
+                        onPicked: (v) => panel.model.setAnimation(modelData.id, v)
+                    }
+                }
+            }
             }
         }
     }

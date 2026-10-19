@@ -38,6 +38,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
     Q_PROPERTY(QVariantList textLooks READ textLooks CONSTANT)
     Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
+    Q_PROPERTY(QVariantList animationSlots READ animationSlots CONSTANT)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
@@ -66,6 +67,8 @@ public:
     [[nodiscard]] static QVariantList textLooks();
     // FILTERS de clipFilters.js con su muestra (piel, cielo, vegetación y gris filtrados).
     [[nodiscard]] static QVariantList colorFilters();
+    // Ranuras de las animaciones de clip del catálogo: [{id, label, items: [{id, name, dur}]}].
+    [[nodiscard]] static QVariantList animationSlots();
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
@@ -151,6 +154,8 @@ public:
     Q_INVOKABLE void setEffect(const QString& key, const QVariant& value);
     // Efecto o filtro de sonido (setFx de EdEffects.jsx): 0–1; con keyframes, en el del cabezal.
     Q_INVOKABLE void setAudioFx(const QString& id, double value);
+    // setClipAnimation: la animación `id` del catálogo en la ranura (in, out, loop o combo); vacío la quita.
+    Q_INVOKABLE void setAnimation(const QString& slot, const QString& id);
     // Intensidad de una capa de ajuste (su opacidad).
     Q_INVOKABLE void setAdjustIntensity(double value);
     Q_INVOKABLE void setFilterAmount(int index, double amount);

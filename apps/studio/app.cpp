@@ -10,6 +10,7 @@
 
 #include <QCommandLineParser>
 #include <QDir>
+#include <QFile>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
@@ -17,6 +18,7 @@
 #include <QTimer>
 #include <QUrl>
 
+#include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
 
 #include "editor_model.hpp"
@@ -26,6 +28,12 @@
 int gc::studio::run(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
     QGuiApplication::setApplicationName("GenClipPro");
+
+    QFile catalog(":/fx/catalog.json");
+    if (catalog.open(QIODevice::ReadOnly)) {
+        gc::core::set_fx_catalog(std::make_shared<const gc::core::FxCatalog>(
+            gc::Json::parse(catalog.readAll().toStdString(), nullptr, false)));
+    }
 
     QCommandLineParser args;
     args.addHelpOption();

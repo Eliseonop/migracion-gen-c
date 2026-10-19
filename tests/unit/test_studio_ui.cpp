@@ -375,3 +375,19 @@ TEST_CASE("studio sin pantalla: un rombo de keyframe se arrastra y un clic lleva
     CHECK(std::abs(s.editor->playhead() - 3) < 0.1);
     CHECK(s.editor->canUndo() == undo);
 }
+
+TEST_CASE("studio sin pantalla: las pestañas del inspector según el clip", "[studio][ui]") {
+    Studio s;
+    s.editor->select("a");
+    QCoreApplication::processEvents();
+    CHECK(s.item("insp:x"));
+    CHECK_FALSE(s.item("insp:fx:brightness"));
+    s.click("insp:tab:color");
+    CHECK(s.item("insp:fx:brightness"));
+    CHECK_FALSE(s.item("insp:x"));
+    s.click("insp:tab:anim");
+    CHECK(s.item("insp:appear"));
+    s.click("editor:addText"); // un texto no tiene Color ni Audio
+    CHECK_FALSE(s.item("insp:tab:color"));
+    CHECK_FALSE(s.item("insp:tab:audio"));
+}
