@@ -207,3 +207,34 @@ TEST_CASE("editor: mover un clip solo avisa de su fila (QML no recrea los delega
     m.deleteSelection();
     CHECK(resets == 1);
 }
+
+TEST_CASE("editor: cabecera de pista (ver, bloquear, nombre, juntar y orden)", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    const auto track_view = [&](const QString& id) {
+        for (const QVariant& t : m.tracks()) {
+            if (t.toMap()["id"] == id) {
+                return t.toMap();
+            }
+        }
+        return QVariantMap{};
+    };
+    m.toggleTrack("V1", "hidden");
+    CHECK(track_view("V1")["hidden"] == true);
+    m.renameTrack("V1", "  Principal ");
+    CHECK(track_view("V1")["name"] == "Pri");
+    m.compactTrack("V1"); // a (0–4) y b (6–9): b pasa a 4
+    CHECK(clip_view(m, "b")["start"] == 4.0);
+    m.toggleTrack("V1", "locked");
+    m.compactTrack("V1");
+    CHECK(track_view("V1")["locked"] == true);
+    m.reorderTrack("V1", "V2", false); // V1 encima de V2 en pantalla
+    QStringList order;
+    for (const QVariant& t : m.tracks()) {
+        order << t.toMap()["id"].toString();
+    }
+    CHECK(order == QStringList{"V1", "V2", "A1"});
+    m.reorderTrack("A1", "V2", false); // el audio no entra en la pila
+    CHECK(m.tracks().last().toMap()["id"] == "A1");
+}

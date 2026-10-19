@@ -187,3 +187,16 @@ TEST_CASE("studio sin pantalla: atajos del editor (M, «,» y «.», flechas, V)
     QTest::keyClick(s.window, Qt::Key_V);
     CHECK(s.view("a")["disabled"] == false);
 }
+
+TEST_CASE("studio sin pantalla: con la pista bloqueada sus clips no se arrastran", "[studio][ui]") {
+    Studio s;
+    QQuickItem* lock = s.item("track:V1:locked");
+    REQUIRE(lock);
+    QTest::mouseClick(s.window, Qt::LeftButton, {},
+                      lock->mapToScene(QPointF(lock->width() / 2, lock->height() / 2)).toPoint());
+    QCoreApplication::processEvents();
+    const QPoint from = s.at("b", 0.5);
+    s.drag(from, from - QPoint(60, 0));
+    CHECK(s.view("b")["start"].toDouble() == 6.0);
+    CHECK(s.view("b")["locked"] == true);
+}

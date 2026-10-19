@@ -6,8 +6,8 @@ namespace gc::studio {
 
 namespace {
 
-const QList<QByteArray> kRoles{"clipId",   "trackId", "kind",       "label", "speed",   "start",
-                               "duration", "clipY",   "clipHeight", "muted", "disabled"};
+const QList<QByteArray> kRoles{"clipId",   "trackId", "kind",       "label", "speed",    "start",
+                               "duration", "clipY",   "clipHeight", "muted", "disabled", "locked"};
 
 } // namespace
 

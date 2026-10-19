@@ -91,6 +91,12 @@ public:
     Q_INVOKABLE void toggleMarker();
     Q_INVOKABLE void jumpSnap(int dir);
     Q_INVOKABLE void nudgePlayhead(double dt);
+    // Cabecera de pista (EdTimeline.jsx): ver, silenciar, bloquear o magnética; nombre (3 letras
+    // como mucho, TRACK_NAME_MAX); juntar sus clips desde 0; y cambiar el orden en pantalla.
+    Q_INVOKABLE void toggleTrack(const QString& id, const QString& prop);
+    Q_INVOKABLE void renameTrack(const QString& id, const QString& name);
+    Q_INVOKABLE void compactTrack(const QString& id);
+    Q_INVOKABLE void reorderTrack(const QString& id, const QString& targetId, bool below);
     Q_INVOKABLE void undo();
     Q_INVOKABLE void redo();
 

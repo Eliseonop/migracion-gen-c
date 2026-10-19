@@ -116,10 +116,12 @@ void EditorModel::rebuild() {
         const core::Timeline& tl = *session_->timeline();
         std::erase_if(selection_.ids, [&](const std::string& id) { return !clip(qstr(id)); });
         std::unordered_map<std::string, std::pair<double, int>> rows_of; // pista → (y, alto)
+        std::unordered_map<std::string, bool> locked;
         double y = kRulerHeight;
         for (const core::TimelineTrack* t : core::display_tracks(tl.tracks)) {
             const int h = core::track_row_height(t->kind, row_height_);
             rows_of[t->id] = {y, h};
+            locked[t->id] = t->locked;
             tracks_.push_back(QVariantMap{{"id", qstr(t->id)},
                                           {"name", qstr(t->name)},
                                           {"kind", qstr(t->kind)},
@@ -146,7 +148,8 @@ void EditorModel::rebuild() {
                             {"clipY", row->second.first + kClipInset},
                             {"clipHeight", row->second.second - 2 * kClipInset},
                             {"muted", c->muted},
-                            {"disabled", c->disabled}});
+                            {"disabled", c->disabled},
+                            {"locked", locked[c->track_id]}});
         }
     }
     clip_model_.sync(std::move(rows));
@@ -604,6 +607,63 @@ void EditorModel::jumpSnap(int dir) {
 
 void EditorModel::nudgePlayhead(double dt) {
     setPlayhead(std::clamp(playhead_ + dt, 0.0, duration()));
+}
+
+void EditorModel::toggleTrack(const QString& id, const QString& prop) {
+    if (!track(id)) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& t : next.tracks) {
+        if (qstr(t.id) != id) {
+            continue;
+        }
+        bool& flag = prop == "hidden"   ? t.hidden
+                     : prop == "muted"  ? t.muted
+                     : prop == "locked" ? t.locked
+                                        : t.magnetic;
+        flag = !flag;
+    }
+    commit(std::move(next), "track-" + prop.toStdString(), {id.toStdString()});
+}
+
+void EditorModel::renameTrack(const QString& id, const QString& name) {
+    const core::TimelineTrack* t = track(id);
+    const QString n = name.trimmed().left(3);
+    if (t && !n.isEmpty() && n != qstr(t->name)) {
+        apply(core::ops::RenameTrack{t->id, n.toStdString()});
+    }
+}
+
+// compactTrack de VideoEditor.jsx: los clips de la pista uno tras otro desde 0, en su orden.
+void EditorModel::compactTrack(const QString& id) {
+    const core::TimelineTrack* t = track(id);
+    if (!t || t->locked) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    std::vector<Cow<core::TimelineClip>*> row;
+    for (auto& c : next.clips) {
+        if (c->track_id == t->id) {
+            row.push_back(&c);
+        }
+    }
+    std::ranges::stable_sort(row, {}, [](const Cow<core::TimelineClip>* c) { return (*c)->start; });
+    double cursor = 0;
+    for (auto* c : row) {
+        const double start = core::js_fixed3(cursor);
+        cursor += core::ui_clip_duration(**c);
+        if ((*c)->start != start) {
+            c->mut().start = start;
+        }
+    }
+    commit(std::move(next), "compact", {t->id});
+}
+
+void EditorModel::reorderTrack(const QString& id, const QString& targetId, bool below) {
+    if (track(id) && track(targetId) && id != targetId) {
+        apply(core::ops::ReorderTrack{id.toStdString(), targetId.toStdString(), below ? "below" : "above"});
+    }
 }
 
 void EditorModel::undo() {

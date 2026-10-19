@@ -24,6 +24,7 @@ Rectangle {
     property string dragId: ""
     property var drag: null // previewDrag del clip que se arrastra
     property var guides: [] // instantes de las guías del imán
+    property var trackDrop: null // {id, targetId, below} al arrastrar una cabecera
 
     function colorsOf(kind) { return colors[kind] || ["#2b3350", "#1d2436", "#ffffff"] }
     function rowY(trackId) {
@@ -55,20 +56,108 @@ Rectangle {
         }
         Repeater {
             model: timeline.model.tracks
-            Rectangle {
+            delegate: Rectangle {
+                id: head
                 required property var modelData
+                property bool editing: false
+                objectName: "track:" + modelData.id
                 width: heads.width
                 height: modelData.height
                 y: modelData.y - flick.contentY
-                color: modelData.kind === "audio" ? Qt.rgba(0.39, 0.4, 0.95, 0.06) : "transparent"
-                border.color: Theme.line
-                Label {
+                color: timeline.trackDrop && timeline.trackDrop.targetId === modelData.id ? Qt.rgba(1, 0.23, 0.36, 0.12)
+                     : modelData.kind === "audio" ? Qt.rgba(0.39, 0.4, 0.95, 0.06) : "transparent"
+                opacity: modelData.hidden ? 0.55 : 1
+                Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.line }
+                Rectangle { // dónde caerá la pista que se arrastra
+                    visible: !!timeline.trackDrop && timeline.trackDrop.targetId === head.modelData.id
+                    y: visible && timeline.trackDrop.below ? parent.height - 2 : 0
+                    width: parent.width
+                    height: 2
+                    color: Theme.accent
+                }
+
+                // Arrastrar la cabecera arriba o abajo cambia el orden de las capas (solo en su grupo).
+                MouseArea {
+                    anchors.fill: parent
+                    property real pressY
+                    onPressed: (m) => pressY = m.y
+                    onPositionChanged: (m) => {
+                        if (!pressed || Math.abs(m.y - pressY) < 4)
+                            return
+                        const y = head.modelData.y + m.y
+                        const stack = (k) => k === "video" || k === "text"
+                        const target = timeline.model.tracks.find((t) => y >= t.y && y < t.y + t.height)
+                        timeline.trackDrop = target && target.id !== head.modelData.id && stack(target.kind) === stack(head.modelData.kind)
+                            ? { id: head.modelData.id, targetId: target.id, below: y >= target.y + target.height / 2 } : null
+                    }
+                    onReleased: {
+                        const drop = timeline.trackDrop
+                        timeline.trackDrop = null
+                        if (drop)
+                            Qt.callLater(() => timeline.model.reorderTrack(drop.id, drop.targetId, drop.below))
+                    }
+                    onDoubleClicked: head.editing = true
+                }
+
+                Row {
                     anchors.verticalCenter: parent.verticalCenter
-                    x: 10
-                    text: (modelData.kind === "audio" ? "♪ " : modelData.kind === "text" ? "T " : "▣ ") + modelData.name
-                          + (modelData.magnetic ? "  ⧲" : "") + (modelData.locked ? "  🔒" : "")
-                    color: Theme.textSecondary
-                    font.pixelSize: 12
+                    x: 8
+                    spacing: 2
+                    Label {
+                        visible: !head.editing
+                        width: 34
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: head.modelData.name.slice(0, 3)
+                        color: Theme.textSecondary
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+                    InlineEdit {
+                        visible: head.editing
+                        width: 34
+                        active: head.editing
+                        initial: head.modelData.name
+                        maximumLength: 3
+                        onDone: (value) => {
+                            head.editing = false
+                            if (value !== null)
+                                Qt.callLater(() => timeline.model.renameTrack(head.modelData.id, value))
+                        }
+                    }
+                    Label {
+                        visible: head.modelData.magnetic
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "⧲"
+                        color: Theme.folder
+                        font.pixelSize: 11
+                    }
+                    Repeater {
+                        model: [
+                            { prop: "hidden", on: head.modelData.hidden, text: head.modelData.hidden ? "◌" : "◉", tip: "Visibilidad", off: head.modelData.kind === "audio" },
+                            { prop: "muted", on: head.modelData.muted, text: head.modelData.muted ? "🔇" : "🔊", tip: "Silenciar", off: head.modelData.kind === "text" },
+                            { prop: "compact", on: false, text: "⇤", tip: "Juntar clips al inicio (sin huecos ni solapes)", off: head.modelData.locked },
+                            { prop: "locked", on: head.modelData.locked, text: head.modelData.locked ? "🔒" : "🔓", tip: "Bloquear", off: false }
+                        ]
+                        delegate: ToolButton {
+                            required property var modelData
+                            objectName: "track:" + head.modelData.id + ":" + modelData.prop
+                            implicitWidth: 18
+                            implicitHeight: 18
+                            padding: 0
+                            enabled: !modelData.off
+                            text: modelData.text
+                            font.pixelSize: 10
+                            palette.buttonText: modelData.on ? Theme.accent : Theme.muted
+                            ToolTip.visible: hovered
+                            ToolTip.text: modelData.tip
+                            background: Rectangle { radius: 4; color: parent.hovered ? Qt.rgba(1, 1, 1, 0.08) : "transparent" }
+                            onClicked: {
+                                const id = head.modelData.id
+                                const prop = modelData.prop
+                                Qt.callLater(() => prop === "compact" ? timeline.model.compactTrack(id) : timeline.model.toggleTrack(id, prop))
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -138,6 +227,7 @@ Rectangle {
                     required property real clipHeight
                     required property bool muted
                     required property bool disabled
+                    required property bool locked
                     objectName: "clip:" + clipId
                     readonly property var palette3: timeline.colorsOf(kind)
                     readonly property var dp: timeline.drag
@@ -188,7 +278,7 @@ Rectangle {
                         onPressed: (m) => {
                             block.pressX = lane(m).x
                             block.pressY = lane(m).y
-                            block.mode = m.x < 6 ? "trim-left" : m.x > width - 6 ? "trim-right" : "move"
+                            block.mode = block.locked ? "" : m.x < 6 ? "trim-left" : m.x > width - 6 ? "trim-right" : "move"
                             const keep = block.selected && !(m.modifiers & (Qt.ControlModifier | Qt.ShiftModifier))
                             if (!keep)
                                 timeline.model.select(block.clipId, (m.modifiers & Qt.ControlModifier) !== 0,
