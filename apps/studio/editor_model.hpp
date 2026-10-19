@@ -124,6 +124,10 @@ public:
     Q_INVOKABLE void toggleReverse();
     Q_INVOKABLE void setTransition(const QString& appear, const QString& exit);
     Q_INVOKABLE void setNote(const QString& note);
+    // Textos (addText, changeText y changeStyle de VideoEditor.jsx).
+    Q_INVOKABLE void addText();
+    Q_INVOKABLE void changeText(const QString& text);
+    Q_INVOKABLE void changeStyle(const QVariantMap& patch, bool fixed = false);
     // El rombo (toggleKeyframeAtPlayhead) del clip seleccionado; fundido de volumen de entrada o
     // salida y silenciar, en la selección.
     Q_INVOKABLE void toggleKeyframe();

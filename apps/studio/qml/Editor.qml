@@ -71,6 +71,7 @@ Item {
                 font.bold: true
                 elide: Text.ElideRight
             }
+            IconButton { objectName: "editor:addText"; text: "T"; tip: "Añadir texto en el cabezal"; onClicked: editor.model.addText() }
             IconButton { text: "⚙"; tip: "Ajustes (Ctrl+,)"; onClicked: editor.openSettings() }
             IconButton { text: "↶"; tip: "Deshacer (Ctrl+Z)"; enabled: editor.model.canUndo; onClicked: editor.model.undo() }
             IconButton { text: "↷"; tip: "Rehacer (Ctrl+Y)"; enabled: editor.model.canRedo; onClicked: editor.model.redo() }

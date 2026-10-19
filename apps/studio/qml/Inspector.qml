@@ -13,6 +13,11 @@ Rectangle {
     readonly property bool sound: has && (clip.kind === "audio" || clip.kind === "video")
     readonly property var tf: has ? clip.transform : ({})
     readonly property var speeds: [0.3, 0.5, 1, 1.5, 2, 3, 5, 10]
+    readonly property bool text: has && clip.kind === "text"
+    readonly property var st: text ? clip.style : ({})
+    readonly property var fonts: ["Arial", "Arial Black", "Anton", "Segoe UI", "Segoe UI Black", "Calibri", "Bahnschrift",
+        "Tahoma", "Impact", "Georgia", "Verdana", "Times New Roman", "Courier New", "Consolas", "Trebuchet MS"]
+    readonly property var swatches: ["#ffffff", "#111111", "#ffe400", "#ff2d2d", "#ff8a00", "#2ee83f", "#1e90ff", "#ff3d8b"]
     readonly property var blends: [
         ["normal", "Normal"], ["darken", "Oscurecer"], ["multiply", "Multiplicar"], ["color_burn", "Subexponer color"],
         ["lighten", "Aclarar"], ["screen", "Trama"], ["color_dodge", "Sobreexponer color"], ["overlay", "Superponer"],
@@ -70,6 +75,13 @@ Rectangle {
             onEditingFinished: if (Number(text) !== num.value) num.committed(Number(text))
         }
         Label { visible: !!num.suffix; text: num.suffix; color: Theme.muted }
+    }
+    component Toggle: Small {
+        id: toggle
+        property bool on
+        Layout.fillWidth: false
+        implicitWidth: 34
+        highlighted: on
     }
     component Percent: RowLayout {
         id: row
@@ -145,6 +157,94 @@ Rectangle {
                     color: Theme.textSecondary
                     font.pixelSize: 12
                 }
+            }
+
+            Section { visible: panel.text; text: "TEXTO" }
+            TextArea {
+                visible: panel.text
+                objectName: "insp:text"
+                Layout.fillWidth: true
+                Layout.preferredHeight: 64
+                wrapMode: TextEdit.Wrap
+                placeholderText: "Escribe el texto…"
+                placeholderTextColor: Theme.muted
+                color: Theme.text
+                text: panel.text ? panel.clip.text : ""
+                background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
+                onActiveFocusChanged: if (!activeFocus && panel.text) panel.model.changeText(text)
+            }
+            RowLayout {
+                visible: panel.text
+                Layout.fillWidth: true
+                Choice {
+                    objectName: "insp:font"
+                    options: panel.fonts.map((f) => [f, f])
+                    current: panel.st.font || "Arial"
+                    onPicked: (v) => panel.model.changeStyle({ font: v })
+                }
+                Num {
+                    Layout.preferredWidth: 90
+                    objectName: "insp:size"
+                    title: "px"
+                    value: Math.round((panel.st.size ?? 60 / 1280) * 1280)
+                    onCommitted: (v) => panel.model.changeStyle({ size: Number((Math.max(1, v) / 1280).toFixed(6)) })
+                }
+            }
+            RowLayout {
+                visible: panel.text
+                spacing: 4
+                Toggle { objectName: "insp:bold"; text: "B"; font.bold: true; on: !!panel.st.bold; onClicked: panel.model.changeStyle({ bold: !panel.st.bold }) }
+                Toggle { text: "U"; font.underline: true; on: !!panel.st.underline; onClicked: panel.model.changeStyle({ underline: !panel.st.underline }) }
+                Toggle { text: "I"; font.italic: true; on: !!panel.st.italic; onClicked: panel.model.changeStyle({ italic: !panel.st.italic }) }
+                Item { Layout.fillWidth: true }
+                Repeater {
+                    model: [["left", "⇤"], ["center", "≡"], ["right", "⇥"]]
+                    Toggle {
+                        required property var modelData
+                        objectName: "insp:align:" + modelData[0]
+                        text: modelData[1]
+                        on: (panel.st.align || "center") === modelData[0]
+                        onClicked: panel.model.changeStyle({ align: modelData[0] })
+                    }
+                }
+            }
+            Flow {
+                visible: panel.text
+                Layout.fillWidth: true
+                spacing: 4
+                Repeater {
+                    model: panel.swatches
+                    Rectangle {
+                        required property string modelData
+                        objectName: "insp:color:" + modelData
+                        width: 22
+                        height: 22
+                        radius: 11
+                        color: modelData
+                        border.width: (panel.st.color || "#ffffff").toLowerCase() === modelData ? 2 : 1
+                        border.color: border.width > 1 ? Theme.accent : Theme.lineBright
+                        TapHandler { onTapped: panel.model.changeStyle({ color: parent.modelData }) }
+                    }
+                }
+                TextField {
+                    objectName: "insp:color"
+                    width: 84
+                    height: 24
+                    font.pixelSize: 12
+                    text: panel.st.color || "#ffffff"
+                    color: Theme.text
+                    validator: RegularExpressionValidator { regularExpression: /#[0-9a-fA-F]{6}/ }
+                    background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
+                    onEditingFinished: if (acceptableInput) panel.model.changeStyle({ color: text.toLowerCase() })
+                }
+            }
+            Num {
+                visible: panel.text
+                objectName: "insp:boxwidth"
+                title: "↔"
+                suffix: "%"
+                value: Math.round((panel.st.w ?? 0.8) * 100)
+                onCommitted: (v) => panel.model.changeStyle({ w: Math.max(0.15, Math.min(1, v / 100)) })
             }
 
             RowLayout {

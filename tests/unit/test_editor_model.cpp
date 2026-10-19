@@ -361,3 +361,55 @@ TEST_CASE("editor: transformación y velocidad desde el inspector", "[studio]") 
     m.select("m");
     CHECK_FALSE(m.selectedClip()["transform"].toMap()["show"].toBool()); // el audio no tiene transformación
 }
+
+TEST_CASE("editor: añadir un texto crea su pista y se edita desde el inspector", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.setPlayhead(2);
+    m.addText();
+    const QVariantMap made = m.selectedClip();
+    REQUIRE(made["kind"] == "text");
+    CHECK(made["start"] == 2.0);
+    CHECK(made["duration"] == 8.0); // del cabezal al final de la timeline (10 s)
+    CHECK(made["text"] == "Texto predeterminado");
+    CHECK(made["style"].toMap()["y"] == 0.86); // la caja de los subtítulos
+    const QString tid = made["trackId"].toString();
+    CHECK(tid.startsWith("T1-"));
+
+    m.changeText("Hola mundo");
+    m.changeStyle({{"color", "#ff0000"}, {"size", 0.05}});
+    core::Timeline tl = f.saved();
+    const auto it = std::ranges::find_if(tl.clips, [](const auto& c) { return c->kind == "text"; });
+    REQUIRE(it != tl.clips.end());
+    CHECK((*it)->text == "Hola mundo");
+    CHECK((*it)->name == "Hola mundo");
+    CHECK((*it)->style->at("color") == "#ff0000");
+    CHECK_FALSE((*it)->keyframes); // sin animar: solo el estilo fijo
+
+    m.setPlayhead(5); // con el color animado, el cambio cae en un keyframe del cabezal
+    core::Timeline animated = f.saved();
+    for (auto& c : animated.clips) {
+        if (c->kind == "text") {
+            c.mut().keyframes = Json{{"enabled", true}, {"items", Json::array({{{"id", "k1"}, {"t", 0}, {"props", {{"color", "#00ff00"}}}}})}};
+        }
+    }
+    REQUIRE(f.store.save_timeline("p1", core::to_json(animated)));
+    REQUIRE(m.openProject("p1"));
+    m.select(made["id"].toString());
+    m.setPlayhead(5);
+    m.changeStyle({{"color", "#0000ff"}});
+    CHECK(m.selectedClip()["style"].toMap()["color"] == "#0000ff");
+    tl = f.saved();
+    for (const auto& c : tl.clips) {
+        if (c->kind == "text") {
+            CHECK(c->keyframes->at("items").size() == 2);
+        }
+    }
+    m.setPlayhead(2);
+    CHECK(m.selectedClip()["style"].toMap()["color"] == "#00ff00");
+
+    m.setPlayhead(10);
+    m.addText(); // con un texto seleccionado, en su misma pista (si se solapara, settle lo subiría a otra)
+    CHECK(m.selectedClip()["trackId"] == tid);
+}

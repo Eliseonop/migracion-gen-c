@@ -311,3 +311,15 @@ TEST_CASE("studio sin pantalla: arrastrar hasta el borde desplaza la vista y el 
     const double reached = (before - grab) / s.editor->pps(); // donde caería sin desplazar
     CHECK(s.view("b")["start"].toDouble() > reached + 1);
 }
+
+TEST_CASE("studio sin pantalla: el botón T añade un texto y el inspector lo cambia", "[studio][ui]") {
+    Studio s;
+    s.click("editor:addText");
+    REQUIRE(s.editor->selectedClip()["kind"] == "text");
+    s.click("insp:bold");
+    CHECK(s.editor->selectedClip()["style"].toMap()["bold"] == false);
+    s.click("insp:align:left");
+    CHECK(s.editor->selectedClip()["style"].toMap()["align"] == "left");
+    s.click("insp:color:#ffe400");
+    CHECK(s.editor->selectedClip()["style"].toMap()["color"] == "#ffe400");
+}

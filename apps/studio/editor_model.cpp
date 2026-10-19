@@ -15,10 +15,23 @@
 #include "gc/core/no_overlap.hpp"
 #include "gc/core/pose.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_rules.hpp"
 #include "gc/core/timeline_view.hpp"
 
 namespace gc::studio {
+
+namespace {
+
+Json to_json(const QVariantMap& map) {
+    return Json::parse(QJsonDocument(QJsonObject::fromVariantMap(map)).toJson().toStdString());
+}
+
+QVariantMap to_variant(const Json& json) {
+    return QJsonDocument::fromJson(QByteArray::fromStdString(json.dump())).object().toVariantMap();
+}
+
+} // namespace
 
 namespace {
 
@@ -264,6 +277,10 @@ QVariantMap EditorModel::selectedClip() const {
                                   {"y", tv.y},
                                   {"scalePct", tv.scale_pct},
                                   {"degrees", tv.rotation_deg}}},
+        {"text", qstr(c->text.value_or(""))},
+        {"style", c->kind == "text" ? to_variant(core::with_text_style_kf(c->style.value_or(Json::object()),
+                                                                           core::text_style_at(*c, std::max(0.0, local))))
+                                    : QVariantMap()},
         {"keepPitch", c->keep_pitch},
         {"reverse", c->reverse},
         {"poseOpacity", pose.opacity},
@@ -865,7 +882,7 @@ void EditorModel::setPose(const QVariantMap& patch) {
     if (!session_ || selection_.ids.empty()) {
         return;
     }
-    const Json json = Json::parse(QJsonDocument(QJsonObject::fromVariantMap(patch)).toJson().toStdString());
+    const Json json = to_json(patch);
     core::Timeline next = *session_->timeline();
     for (auto& c : next.clips) {
         if (std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
@@ -938,6 +955,70 @@ void EditorModel::toggleReverse() {
     if (c) {
         fx_each("speed", [reverse = !c->reverse](core::TimelineClip& item) { item.reverse = reverse; });
     }
+}
+
+void EditorModel::addText() {
+    if (!session_) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    const core::TimelineClip* sel = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const core::TimelineTrack* own = sel ? track(qstr(sel->track_id)) : nullptr;
+    const auto text_track = std::ranges::find(next.tracks, std::string("text"), &core::TimelineTrack::kind);
+    std::string tid;
+    Json style;
+    if (own && own->kind == "text") {
+        tid = own->id;
+        style = core::new_text_style(own->style.value_or(Json()));
+    } else if (text_track != next.tracks.end()) {
+        tid = text_track->id;
+        style = core::new_text_style(text_track->style.value_or(Json()));
+    } else { // ensureTextTrack: pista nueva con el tema de subtítulos; el texto aún no la ve
+        core::TimelineTrack t = core::build_track("text", next.tracks, ids_.hex32().substr(0, 8));
+        t.style = core::subtitle_style();
+        tid = t.id;
+        style = core::new_text_style(Json());
+        core::insert_track(next.tracks, std::move(t));
+    }
+    const double dur = core::new_text_duration(next, playhead_);
+    auto made = core::clip_from_json(core::make_text_clip_json(tid, playhead_, dur, core::kDefaultText, style, ids_));
+    if (!ok(made)) {
+        return;
+    }
+    const std::string id = made->id;
+    next.clips.emplace_back(std::move(*made));
+    selection_ = {{id}, id};
+    commit(std::move(next), "add-text", {id});
+    emit selectionChanged();
+}
+
+void EditorModel::changeText(const QString& text) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c || c->kind != "text" || c->text.value_or("") == text.toStdString()) {
+        return;
+    }
+    const std::string id = c->id;
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == id) {
+            core::change_text(item.mut(), text.toStdString());
+        }
+    }
+    commit(std::move(next), "text", {id});
+}
+
+void EditorModel::changeStyle(const QVariantMap& patch, bool fixed) {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    const Json json = to_json(patch);
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if (c->kind == "text" && std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            core::change_text_style(c.mut(), json, playhead_ - c->start, fps(), fixed, ids_);
+        }
+    }
+    commit(std::move(next), "text-style", selection_.ids);
 }
 
 void EditorModel::setBlend(const QString& mode) {
