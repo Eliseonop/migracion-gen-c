@@ -1,0 +1,117 @@
+#pragma once
+
+// ViewModel del editor (VideoEditor.jsx + EdTimeline.jsx): la timeline de un proyecto en una
+// EditSession, con la lógica de arrastre y recorte de React (gc/core/timeline_ui.hpp). Cada cambio
+// se guarda en projects.json, como el PUT /timeline de video-yt.
+
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QVariantList>
+#include <QVariantMap>
+#include <memory>
+#include <optional>
+
+#include "gc/core/projects_store.hpp"
+#include "gc/core/session.hpp"
+#include "gc/core/timeline_ui.hpp"
+
+namespace gc::studio {
+
+class EditorModel : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(bool isOpen READ isOpen NOTIFY projectChanged)
+    Q_PROPERTY(QString projectName READ projectName NOTIFY projectChanged)
+    Q_PROPERTY(QVariantList tracks READ tracks NOTIFY timelineChanged)
+    Q_PROPERTY(QVariantList clips READ clips NOTIFY timelineChanged)
+    Q_PROPERTY(double duration READ duration NOTIFY timelineChanged)
+    Q_PROPERTY(int fps READ fps NOTIFY timelineChanged)
+    Q_PROPERTY(double aspect READ aspect NOTIFY timelineChanged)
+    Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
+    Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
+    Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
+    Q_PROPERTY(QVariantMap selectedClip READ selectedClip NOTIFY selectionChanged)
+    Q_PROPERTY(double playhead READ playhead WRITE setPlayhead NOTIFY playheadChanged)
+    Q_PROPERTY(double pps READ pps WRITE setPps NOTIFY zoomChanged)
+    Q_PROPERTY(int rowHeight READ rowHeight WRITE setRowHeight NOTIFY timelineChanged)
+    Q_PROPERTY(QString error READ error NOTIFY errorChanged)
+
+public:
+    explicit EditorModel(core::ProjectsStore& store, QObject* parent = nullptr);
+    ~EditorModel() override;
+
+    [[nodiscard]] bool isOpen() const { return session_ != nullptr; }
+    [[nodiscard]] QString projectName() const { return project_name_; }
+    [[nodiscard]] QVariantList tracks() const { return tracks_; }
+    [[nodiscard]] QVariantList clips() const { return clips_; }
+    [[nodiscard]] double duration() const;
+    [[nodiscard]] int fps() const;
+    [[nodiscard]] double aspect() const;
+    [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
+    [[nodiscard]] bool canRedo() const { return session_ && session_->can_redo(); }
+    [[nodiscard]] QStringList selection() const;
+    [[nodiscard]] QVariantMap selectedClip() const;
+    [[nodiscard]] double playhead() const { return playhead_; }
+    [[nodiscard]] double pps() const { return pps_; }
+    [[nodiscard]] int rowHeight() const { return row_height_; }
+    [[nodiscard]] QString error() const { return error_; }
+
+    void setPlayhead(double t);
+    void setPps(double pps);
+    void setRowHeight(int height);
+
+    Q_INVOKABLE bool openProject(const QString& pid);
+    Q_INVOKABLE void closeProject();
+
+    Q_INVOKABLE void select(const QString& id, bool additive = false, bool range = false);
+    Q_INVOKABLE void clearSelection();
+    // Inicio y pista donde caería el clip arrastrado (sin cambiar nada).
+    Q_INVOKABLE QVariantMap previewMove(const QString& id, double start, const QString& trackId) const;
+    Q_INVOKABLE void moveClip(const QString& id, double start, const QString& trackId);
+    // {start, duration} del clip con el borde movido `delta` s (sin cambiar nada).
+    Q_INVOKABLE QVariantMap previewTrim(const QString& id, bool left, double delta) const;
+    Q_INVOKABLE void trimClip(const QString& id, bool left, double delta);
+    Q_INVOKABLE void splitAtPlayhead();
+    Q_INVOKABLE void deleteSelection();
+    Q_INVOKABLE void duplicateSelection();
+    Q_INVOKABLE void undo();
+    Q_INVOKABLE void redo();
+
+    Q_INVOKABLE void zoomBy(double factor, double viewWidth);
+    Q_INVOKABLE void zoomToFit(double viewWidth);
+    // Marcas de la regla visibles: [{t, x, major, label}].
+    Q_INVOKABLE QVariantList ticks(double scrollX, double viewWidth) const;
+    Q_INVOKABLE QString formatTime(double t) const;
+
+signals:
+    void projectChanged();
+    void timelineChanged();
+    void selectionChanged();
+    void playheadChanged();
+    void zoomChanged();
+    void errorChanged();
+
+private:
+    void rebuild();
+    void setError(const QString& message);
+    template <class T>
+    bool ok(const Result<T>& r);
+    void apply(const core::Command& command);
+    [[nodiscard]] const core::TimelineClip* clip(const QString& id) const;
+    [[nodiscard]] const core::TimelineTrack* track(const QString& id) const;
+    [[nodiscard]] bool canDrop(const core::TimelineClip& c, const core::TimelineTrack& t) const;
+
+    core::ProjectsStore& store_;
+    std::unique_ptr<core::EditSession> session_;
+    std::string project_id_;
+    QString project_name_;
+    QVariantList tracks_;
+    QVariantList clips_;
+    core::ClipSelection selection_;
+    double playhead_ = 0;
+    double pps_ = 40;
+    int row_height_ = 52;
+    QString error_;
+};
+
+} // namespace gc::studio

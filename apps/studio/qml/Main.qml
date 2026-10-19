@@ -4,33 +4,33 @@ import QtQuick.Controls.Basic
 ApplicationWindow {
     id: window
     required property var home
-    property string projectId: ""
+    required property var editor
 
     width: 1280
     height: 800
     visible: true
-    title: projectId ? "GenClipPro · " + projectId : "GenClipPro"
+    title: editor.isOpen ? "GenClipPro · " + editor.projectName : "GenClipPro"
     color: Theme.bg
 
     Home {
         anchors.fill: parent
         anchors.margins: 20
-        visible: !window.projectId
+        visible: !window.editor.isOpen
         model: window.home
-        onOpenProject: (pid) => window.projectId = pid
+        onOpenProject: (pid) => window.editor.openProject(pid)
     }
 
-    Column {
-        anchors.centerIn: parent
-        spacing: 12
-        visible: !!window.projectId
-        Label { text: "El editor llega en la pantalla 2 de F5"; color: Theme.text; font.pixelSize: 18 }
-        Button { text: "Volver al inicio"; onClicked: window.projectId = "" }
+    Editor {
+        anchors.fill: parent
+        visible: window.editor.isOpen
+        model: window.editor
+        onClosed: { window.editor.closeProject(); window.home.reload() }
     }
 
     footer: Label {
-        visible: !!window.home.error
-        text: window.home.error
+        readonly property string message: window.editor.isOpen ? window.editor.error : window.home.error
+        visible: !!message
+        text: message
         color: Theme.danger
         padding: 8
     }
