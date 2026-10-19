@@ -27,6 +27,7 @@ const shapes = await load('lib/shapes.js')
 const themes = await load('lib/subtitleThemes.js')
 const fxRuntime = await load('fx/core/runtime.js')
 const maskLib = await load('lib/clipMask.js')
+const favorites = await load('lib/favorites.js')
 // Máscaras de VideoEditor.jsx (addMask, removeMask, duplicateMask, changeMask y commitMask) sobre un clip.
 const maskOps = (clip, aspect, fps, t) => {
   let made = clip
@@ -261,6 +262,8 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
         : op === 'changeMask' || op === 'commitMask' ? ops.run(op, id, arg) : ops.run(op)
       return { masks: masksOf(c), keyframes: noIds(c).keyframes ?? null }
     },
+    normalizeFavorites: (raw) => favorites.normalizeFavorites(raw),
+    nameTextStyleFavorite: (st, existing) => favorites.nameTextStyleFavorite(st, existing),
     splitClipByMaxWords: (id, n) => m.splitClipByMaxWords(byId(id), n).map(({ id: _, asset_id: __, ...rest }) => rest),
     splitTrackText: (track, n) => m.splitTrackTextByMaxWords(clips, track, n).map((c) => [c.text ?? null, c.start, c.out_point]),
     normalizeVfxEntry: (raw) => noUid(fxRuntime.normalizeVfxEntry(raw)),

@@ -54,6 +54,15 @@ void upsert_style_kf(TimelineClip& clip, double local_t, const Json& patch, doub
 // `fixed`), su keyframe en el cabezal; la pose (x, y, escala…) sigue la regla de commitPose.
 void change_text_style(TimelineClip& clip, const Json& patch, double local_t, double fps, bool fixed, IdSource& ids);
 
+// --- «Mis estilos» (favorites.js): los favoritos de los ajustes -----------------------------------
+
+// normalizeFavorites: {sfx, audios, textStyles} (los ids como texto; estilos solo con `style`).
+[[nodiscard]] Json normalize_favorites(const Json& raw);
+// nameTextStyleFavorite: «<tema> · <px>px», con «(2)», «(3)»… si ya existe.
+[[nodiscard]] std::string name_text_style_favorite(const Json& style, const Json& existing);
+// makeTextStyleFavorite: {id, name, style}.
+[[nodiscard]] Json make_text_style_favorite(const Json& style, const Json& existing, IdSource& ids);
+
 // --- Fragmentar subtítulos en cuadros (editorModel.js) -----------------------------------------
 
 // splitClipByMaxWords: el texto en trozos de `max_words` palabras, repartiendo el tiempo por sus

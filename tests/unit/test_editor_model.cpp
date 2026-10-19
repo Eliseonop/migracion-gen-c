@@ -766,3 +766,21 @@ TEST_CASE("editor: fragmentar un subtítulo en cuadros", "[studio]") {
     m.undo();
     CHECK(static_cast<int>(m.clips().size()) == before);
 }
+
+TEST_CASE("editor: «Mis estilos» de texto en los ajustes", "[studio]") {
+    Fixture f;
+    core::SettingsFile settings(f.dir / "data" / "settings.json");
+    studio::EditorModel m(f.store, &settings);
+    REQUIRE(m.openProject("p1"));
+    m.addText();
+    m.applyTextTheme("neon");
+    m.saveTextFavorite();
+    REQUIRE(m.textFavorites().size() == 1);
+    const QString id = m.textFavorites().front().toMap()["id"].toString();
+    CHECK(m.textFavorites().front().toMap()["name"] == "neon · 61px");
+    m.applyTextTheme("neon"); // lo quita
+    m.applyTextFavorite(id);
+    CHECK(m.selectedClip()["themeId"] == "neon");
+    m.deleteTextFavorite(id);
+    CHECK(m.textFavorites().isEmpty());
+}

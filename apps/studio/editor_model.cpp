@@ -152,7 +152,7 @@ QString speed_badge(const core::TimelineClip& c) {
 
 } // namespace
 
-EditorModel::EditorModel(core::ProjectsStore& store, const core::SettingsFile* settings, QObject* parent)
+EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* settings, QObject* parent)
     : QObject(parent), store_(store), settings_(settings) {}
 
 EditorModel::~EditorModel() = default;
@@ -1938,6 +1938,78 @@ void EditorModel::fragmentText() {
     }
     commit(std::move(next), "fragment", selection_.ids);
     emit selectionChanged();
+}
+
+QVariantList EditorModel::textFavorites() const {
+    QVariantList out;
+    if (!settings_) {
+        return out;
+    }
+    const Json favs = core::normalize_favorites(settings_->load().value("favorites", Json()));
+    for (const Json& f : favs["textStyles"]) {
+        out << QVariantMap{{"id", qstr(f.value("id", ""))}, {"name", qstr(f.value("name", ""))}};
+    }
+    return out;
+}
+
+void EditorModel::saveTextFavorite() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const core::TimelineTrack* t = !c && !selected_track_.empty() ? track(qstr(selected_track_)) : nullptr;
+    const Json style = c && c->kind == "text" ? c->style.value_or(Json::object())
+                       : t && t->kind == "text" ? t->style.value_or(Json::object())
+                                                : Json();
+    if (!settings_ || style.is_null()) {
+        return;
+    }
+    Json favs = core::normalize_favorites(settings_->load().value("favorites", Json()));
+    favs["textStyles"].push_back(core::make_text_style_favorite(style, favs["textStyles"], ids_));
+    if (ok(settings_->save({{"favorites", favs}}))) {
+        emit favoritesChanged();
+    }
+}
+
+void EditorModel::deleteTextFavorite(const QString& id) {
+    if (!settings_) {
+        return;
+    }
+    Json favs = core::normalize_favorites(settings_->load().value("favorites", Json()));
+    Json kept = Json::array();
+    for (const Json& f : favs["textStyles"]) {
+        if (f.value("id", Json()) != id.toStdString()) {
+            kept.push_back(f);
+        }
+    }
+    favs["textStyles"] = kept;
+    if (ok(settings_->save({{"favorites", favs}}))) {
+        emit favoritesChanged();
+    }
+}
+
+// applyTextFavorite: el estilo guardado entero a los textos seleccionados o a la pista elegida.
+void EditorModel::applyTextFavorite(const QString& id) {
+    if (!settings_ || !session_) {
+        return;
+    }
+    Json style;
+    const Json favs = core::normalize_favorites(settings_->load().value("favorites", Json()));
+    for (const Json& f : favs["textStyles"]) {
+        if (f.value("id", Json()) == id.toStdString()) {
+            style = f.at("style");
+        }
+    }
+    if (!style.is_object()) {
+        return;
+    }
+    if (restyle_track([&](const Json&) { return style; })) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if (c->kind == "text" && std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            c.mut().style = style;
+        }
+    }
+    commit(std::move(next), "text-favorite", selection_.ids);
 }
 
 void EditorModel::applyTextTheme(const QString& id) {

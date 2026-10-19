@@ -577,6 +577,37 @@ Rectangle {
                 }
                 StyleSlider { visible: !!panel.st.curve_on; title: ""; key: "curve"; fallback: 0.5; from: -100; to: 100 }
             }
+            RowLayout {
+                visible: panel.text
+                Label { Layout.fillWidth: true; text: "Mis estilos"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
+                Small { objectName: "insp:favorite:save"; Layout.fillWidth: false; text: "★ Guardar"; onClicked: panel.model.saveTextFavorite() }
+            }
+            Flow {
+                visible: panel.text && panel.model.textFavorites.length > 0
+                Layout.fillWidth: true
+                spacing: 4
+                Repeater {
+                    model: panel.model.textFavorites
+                    Rectangle {
+                        required property var modelData
+                        objectName: "insp:favorite:" + modelData.id
+                        width: favRow.implicitWidth + 12
+                        height: 24
+                        radius: Theme.radiusSm
+                        color: Theme.card2
+                        border.color: Theme.lineBright
+                        Row {
+                            id: favRow
+                            anchors.centerIn: parent
+                            spacing: 6
+                            Label { text: parent.parent.modelData.name; color: Theme.text; font.pixelSize: 11
+                                    TapHandler { onTapped: panel.model.applyTextFavorite(parent.parent.parent.modelData.id) } }
+                            Label { text: "×"; color: Theme.muted; font.pixelSize: 11
+                                    TapHandler { onTapped: panel.model.deleteTextFavorite(parent.parent.parent.modelData.id) } }
+                        }
+                    }
+                }
+            }
             Label { visible: panel.text; text: "Palabra activa (karaoke)"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
             RowLayout {
                 visible: panel.text

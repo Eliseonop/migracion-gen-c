@@ -67,6 +67,11 @@ std::string js_string(const Json& v) {
     return v.dump();
 }
 
+double js_round_half_up(double v) { // Math.round
+    const double r = std::floor(v);
+    return v - r >= 0.5 ? r + 1 : r;
+}
+
 std::string lower(std::string s) {
     std::ranges::transform(s, s.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
     return s;
@@ -345,6 +350,51 @@ void change_text_style(TimelineClip& clip, const Json& patch, double local_t, do
     if (!kf_style.empty()) {
         upsert_style_kf(clip, t, kf_style, fps, ids);
     }
+}
+
+Json normalize_favorites(const Json& raw) {
+    Json out = {{"sfx", Json::array()}, {"audios", Json::array()}, {"textStyles", Json::array()}};
+    if (!raw.is_object()) {
+        return out;
+    }
+    const auto list = [&](const char* key) { return field(raw, key).is_array() ? field(raw, key) : Json::array(); };
+    for (const char* key : {"sfx", "audios"}) {
+        for (const Json& v : list(key)) {
+            out[key].push_back(js_string(v));
+        }
+    }
+    for (const Json& v : list("textStyles")) {
+        if (v.is_object() && truthy(field(v, "style"))) {
+            out["textStyles"].push_back(v);
+        }
+    }
+    return out;
+}
+
+std::string name_text_style_favorite(const Json& style, const Json& existing) {
+    const Json& theme = truthy(field(style, "theme")) ? field(style, "theme") : field(style, "preset");
+    const Json& size = field(style, "size");
+    const double px = js_round_half_up((size.is_null() ? 0.05 : js_number(size)) * 1280);
+    const std::string base = (truthy(theme) ? js_string(theme) : "Estilo") + " · " + js_string(Json(px)) + "px";
+    std::vector<std::string> names;
+    for (const Json& f : existing.is_array() ? existing : Json::array()) {
+        names.push_back(js_string(field(f, "name")));
+    }
+    const auto taken = [&](const std::string& n) { return std::ranges::find(names, n) != names.end(); };
+    if (!taken(base)) {
+        return base;
+    }
+    int i = 2;
+    while (taken(base + " (" + std::to_string(i) + ")")) {
+        ++i;
+    }
+    return base + " (" + std::to_string(i) + ")";
+}
+
+Json make_text_style_favorite(const Json& style, const Json& existing, IdSource& ids) {
+    return {{"id", make_uid(ids, "tf")},
+            {"name", name_text_style_favorite(style, existing)},
+            {"style", style.is_object() ? style : Json::object()}};
 }
 
 std::vector<Json> split_clip_by_max_words(const TimelineClip& clip, const Json& max_words, IdSource& ids) {

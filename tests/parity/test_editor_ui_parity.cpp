@@ -605,6 +605,12 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "newTextDuration") {
         return new_text_duration(tl, num(1));
     }
+    if (fn == "normalizeFavorites") {
+        return normalize_favorites(call.at(1));
+    }
+    if (fn == "nameTextStyleFavorite") {
+        return name_text_style_favorite(call.at(1), call.at(2));
+    }
     if (fn == "splitClipByMaxWords") {
         SequentialIdSource ids;
         Json out = Json::array();

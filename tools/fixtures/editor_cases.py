@@ -520,6 +520,12 @@ def _fragment_case(rng: random.Random) -> dict:
              clip("s", "T1", "text", start=11, out=1.3333, text="ñandú 😀 emoji largos textos para el nombre del clip"),
              clip("v", "V1", start=0, out=4)]
     calls: list = []
+    for raw in (None, [], {"sfx": [1, "a", None, True], "audios": "x", "textStyles": [None, {"style": {}}, {"style": {"a": 1}, "id": "t"}, 3]}):
+        calls.append(["normalizeFavorites", raw])
+    for st in ({}, {"theme": "neon", "size": 0.048}, {"preset": "fire", "size": "0.1"}, {"theme": "", "preset": "", "size": None},
+               {"size": 0.0001}, {"theme": 7, "size": 0.05}, {"size": 0.0003906}):
+        for existing in ([], [{"name": "neon · 61px"}, {"name": "neon · 61px (2)"}], [{"name": "Estilo · 64px"}], None):
+            calls.append(["nameTextStyleFavorite", st, existing])
     for cid in ("w", "p", "f", "s"):
         for n in (1, 2, 3, 4, 10, 0, -1, "2", None, 2.7):
             calls.append(["splitClipByMaxWords", cid, n])

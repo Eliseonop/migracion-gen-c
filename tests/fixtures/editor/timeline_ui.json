@@ -706826,6 +706826,324 @@
    },
    "calls": [
     [
+     "normalizeFavorites",
+     null
+    ],
+    [
+     "normalizeFavorites",
+     []
+    ],
+    [
+     "normalizeFavorites",
+     {
+      "sfx": [
+       1,
+       "a",
+       null,
+       true
+      ],
+      "audios": "x",
+      "textStyles": [
+       null,
+       {
+        "style": {}
+       },
+       {
+        "style": {
+         "a": 1
+        },
+        "id": "t"
+       },
+       3
+      ]
+     }
+    ],
+    [
+     "nameTextStyleFavorite",
+     {},
+     []
+    ],
+    [
+     "nameTextStyleFavorite",
+     {},
+     [
+      {
+       "name": "neon · 61px"
+      },
+      {
+       "name": "neon · 61px (2)"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {},
+     [
+      {
+       "name": "Estilo · 64px"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {},
+     null
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": "neon",
+      "size": 0.048
+     },
+     []
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": "neon",
+      "size": 0.048
+     },
+     [
+      {
+       "name": "neon · 61px"
+      },
+      {
+       "name": "neon · 61px (2)"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": "neon",
+      "size": 0.048
+     },
+     [
+      {
+       "name": "Estilo · 64px"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": "neon",
+      "size": 0.048
+     },
+     null
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "preset": "fire",
+      "size": "0.1"
+     },
+     []
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "preset": "fire",
+      "size": "0.1"
+     },
+     [
+      {
+       "name": "neon · 61px"
+      },
+      {
+       "name": "neon · 61px (2)"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "preset": "fire",
+      "size": "0.1"
+     },
+     [
+      {
+       "name": "Estilo · 64px"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "preset": "fire",
+      "size": "0.1"
+     },
+     null
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": "",
+      "preset": "",
+      "size": null
+     },
+     []
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": "",
+      "preset": "",
+      "size": null
+     },
+     [
+      {
+       "name": "neon · 61px"
+      },
+      {
+       "name": "neon · 61px (2)"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": "",
+      "preset": "",
+      "size": null
+     },
+     [
+      {
+       "name": "Estilo · 64px"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": "",
+      "preset": "",
+      "size": null
+     },
+     null
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "size": 0.0001
+     },
+     []
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "size": 0.0001
+     },
+     [
+      {
+       "name": "neon · 61px"
+      },
+      {
+       "name": "neon · 61px (2)"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "size": 0.0001
+     },
+     [
+      {
+       "name": "Estilo · 64px"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "size": 0.0001
+     },
+     null
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": 7,
+      "size": 0.05
+     },
+     []
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": 7,
+      "size": 0.05
+     },
+     [
+      {
+       "name": "neon · 61px"
+      },
+      {
+       "name": "neon · 61px (2)"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": 7,
+      "size": 0.05
+     },
+     [
+      {
+       "name": "Estilo · 64px"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "theme": 7,
+      "size": 0.05
+     },
+     null
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "size": 0.0003906
+     },
+     []
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "size": 0.0003906
+     },
+     [
+      {
+       "name": "neon · 61px"
+      },
+      {
+       "name": "neon · 61px (2)"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "size": 0.0003906
+     },
+     [
+      {
+       "name": "Estilo · 64px"
+      }
+     ]
+    ],
+    [
+     "nameTextStyleFavorite",
+     {
+      "size": 0.0003906
+     },
+     null
+    ],
+    [
      "splitClipByMaxWords",
      "w",
      1
@@ -707069,6 +707387,64 @@
     }
    ],
    "results": [
+    {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    {
+     "sfx": [
+      "1",
+      "a",
+      "null",
+      "true"
+     ],
+     "audios": [],
+     "textStyles": [
+      {
+       "style": {}
+      },
+      {
+       "style": {
+        "a": 1
+       },
+       "id": "t"
+      }
+     ]
+    },
+    "Estilo · 64px",
+    "Estilo · 64px",
+    "Estilo · 64px (2)",
+    "Estilo · 64px",
+    "neon · 61px",
+    "neon · 61px (3)",
+    "neon · 61px",
+    "neon · 61px",
+    "fire · 128px",
+    "fire · 128px",
+    "fire · 128px",
+    "fire · 128px",
+    "Estilo · 64px",
+    "Estilo · 64px",
+    "Estilo · 64px (2)",
+    "Estilo · 64px",
+    "Estilo · 0px",
+    "Estilo · 0px",
+    "Estilo · 0px",
+    "Estilo · 0px",
+    "7 · 64px",
+    "7 · 64px",
+    "7 · 64px",
+    "7 · 64px",
+    "Estilo · 0px",
+    "Estilo · 0px",
+    "Estilo · 0px",
+    "Estilo · 0px",
     [
      {
       "track_id": "T1",

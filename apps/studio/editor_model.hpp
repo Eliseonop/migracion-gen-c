@@ -44,6 +44,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList vfxCatalog READ vfxCatalog CONSTANT)
     Q_PROPERTY(QVariantList sfxCategories READ sfxCategories NOTIFY projectChanged)
     Q_PROPERTY(QVariantList collections READ collections NOTIFY projectChanged)
+    Q_PROPERTY(QVariantList textFavorites READ textFavorites NOTIFY favoritesChanged)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
@@ -57,7 +58,7 @@ class EditorModel : public QObject {
 
 public:
     // `settings` (opcional) da la carpeta de los SFX; la biblioteca está junto a projects.json.
-    explicit EditorModel(core::ProjectsStore& store, const core::SettingsFile* settings = nullptr,
+    explicit EditorModel(core::ProjectsStore& store, core::SettingsFile* settings = nullptr,
                          QObject* parent = nullptr);
     ~EditorModel() override;
 
@@ -209,6 +210,12 @@ public:
     // applyFragment: parte el texto seleccionado (o los subtítulos de la pista elegida) en cuadros de
     // `max_words` palabras, con sus tiempos.
     Q_INVOKABLE void fragmentText();
+    // «Mis estilos» (favoritos de los ajustes): {id, name}; guardar el del texto o la pista elegidos,
+    // aplicarlo (el estilo entero) y quitarlo.
+    [[nodiscard]] QVariantList textFavorites() const;
+    Q_INVOKABLE void saveTextFavorite();
+    Q_INVOKABLE void applyTextFavorite(const QString& id);
+    Q_INVOKABLE void deleteTextFavorite(const QString& id);
     // applyPreset: un clic aplica el tema a los textos seleccionados; otro en el mismo lo quita.
     Q_INVOKABLE void applyTextTheme(const QString& id);
     // Estilo preestablecido «Aa» (vacío = «Ninguno»).
@@ -246,6 +253,7 @@ signals:
     void projectChanged();
     void timelineChanged();
     void selectionChanged();
+    void favoritesChanged();
     void playheadChanged();
     void zoomChanged();
     void errorChanged();
@@ -298,7 +306,7 @@ private:
     QVariantList collections_;
     void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);
-    const core::SettingsFile* settings_ = nullptr;
+    core::SettingsFile* settings_ = nullptr;
     // changeTrackStyle / applyTrackPreset: el estilo de la pista y el de todos sus textos.
     template <class Restyle>
     bool restyle_track(Restyle restyle, bool theme = false);
