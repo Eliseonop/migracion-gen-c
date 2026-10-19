@@ -16,6 +16,7 @@
 
 #include "editor_model.hpp"
 #include "home_model.hpp"
+#include "settings_model.hpp"
 
 using namespace gc;
 
@@ -45,6 +46,8 @@ struct Studio {
     core::SequentialIdSource ids;
     std::unique_ptr<studio::HomeModel> home;
     std::unique_ptr<studio::EditorModel> editor;
+    std::unique_ptr<core::SettingsFile> settings_file;
+    std::unique_ptr<studio::SettingsModel> settings;
     std::unique_ptr<QQmlApplicationEngine> engine;
     QQuickWindow* window = nullptr;
 
@@ -72,9 +75,12 @@ struct Studio {
         home = std::make_unique<studio::HomeModel>(*store, ids);
         editor = std::make_unique<studio::EditorModel>(*store);
         REQUIRE(editor->openProject("p1"));
+        settings_file = std::make_unique<core::SettingsFile>(dir / "data" / "settings.json");
+        settings = std::make_unique<studio::SettingsModel>(*settings_file);
         engine = std::make_unique<QQmlApplicationEngine>();
-        engine->setInitialProperties(
-            {{"home", QVariant::fromValue(home.get())}, {"editor", QVariant::fromValue(editor.get())}});
+        engine->setInitialProperties({{"home", QVariant::fromValue(home.get())},
+                                      {"editor", QVariant::fromValue(editor.get())},
+                                      {"settings", QVariant::fromValue(settings.get())}});
         engine->load(QUrl("qrc:/qt/qml/GenClip/Studio/Main.qml"));
         REQUIRE(!engine->rootObjects().isEmpty());
         window = qobject_cast<QQuickWindow*>(engine->rootObjects().front());
@@ -104,6 +110,12 @@ struct Studio {
         QQuickItem* c = item("clip:" + id);
         REQUIRE(c);
         return c->mapToScene(QPointF(c->width() * fx, c->height() / 2)).toPoint();
+    }
+    void click(const QString& name) {
+        QQuickItem* i = item(name);
+        REQUIRE(i);
+        QTest::mouseClick(window, Qt::LeftButton, {}, i->mapToScene(QPointF(i->width() / 2, i->height() / 2)).toPoint());
+        QCoreApplication::processEvents();
     }
     void drag(QPoint from, QPoint to) {
         QTest::mousePress(window, Qt::LeftButton, {}, from);
@@ -238,4 +250,28 @@ TEST_CASE("studio sin pantalla: el rectángulo de selección elige los clips que
     CHECK(s.editor->selection() == QStringList{"a"});
     QTest::mouseClick(s.window, Qt::LeftButton, {}, gap);
     CHECK(s.editor->selection().isEmpty());
+}
+
+TEST_CASE("studio sin pantalla: Ctrl+, abre los ajustes, cambia los fps y guarda una clave", "[studio][ui]") {
+    Studio s;
+    CHECK_FALSE(s.item("set:fps:60"));
+    QTest::keyClick(s.window, Qt::Key_Comma, Qt::ControlModifier);
+    s.click("set:fps:60");
+    CHECK(s.settings->fps() == 60);
+    s.click("set:quality:high");
+    CHECK(s.settings->quality() == "high");
+    QTest::keyClick(s.window, Qt::Key_S); // el editor está tapado: sus atajos no cortan
+    CHECK(s.editor->clips().size() == 2);
+
+    s.click("set:add:gemini");
+    QQuickItem* field = s.item("set:key:gemini");
+    REQUIRE(field);
+    CHECK(field->hasActiveFocus());
+    for (const char ch : std::string("k123")) {
+        QTest::keyClick(s.window, ch);
+    }
+    QTest::keyClick(s.window, Qt::Key_Return);
+    CHECK(s.settings_file->api_key("gemini") == "k123");
+    s.click("set:remove:gemini");
+    CHECK(s.settings_file->api_key("gemini").empty());
 }

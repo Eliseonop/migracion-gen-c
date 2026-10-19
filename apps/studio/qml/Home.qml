@@ -8,6 +8,7 @@ Item {
     required property var model
     property bool newGroup
     signal openProject(string pid)
+    signal openSettings
 
     RowLayout {
         anchors.fill: parent
@@ -98,7 +99,10 @@ Item {
                     anchors.fill: parent
                     anchors.margins: 20
                     spacing: 12
-                    Label { text: "Nuevo proyecto"; color: Theme.text; font.pixelSize: 17; font.bold: true }
+                    RowLayout {
+                        Label { Layout.fillWidth: true; text: "Nuevo proyecto"; color: Theme.text; font.pixelSize: 17; font.bold: true }
+                        IconButton { objectName: "home:settings"; text: "⚙"; tip: "Ajustes (Ctrl+,)"; onClicked: home.openSettings() }
+                    }
                     RowLayout {
                         spacing: 10
                         TextField {

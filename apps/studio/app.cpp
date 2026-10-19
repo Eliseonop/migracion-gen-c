@@ -21,6 +21,7 @@
 
 #include "editor_model.hpp"
 #include "home_model.hpp"
+#include "settings_model.hpp"
 
 int gc::studio::run(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
@@ -43,10 +44,13 @@ int gc::studio::run(int argc, char* argv[]) {
     gc::core::RandomIdSource ids;
     gc::studio::HomeModel home(store, ids);
     gc::studio::EditorModel editor(store);
+    gc::core::SettingsFile settings_file(base / "data" / "settings.json");
+    gc::studio::SettingsModel settings(settings_file);
 
     QQmlApplicationEngine engine;
     engine.setInitialProperties(
-        {{"home", QVariant::fromValue(&home)}, {"editor", QVariant::fromValue(&editor)}});
+        {{"home", QVariant::fromValue(&home)}, {"editor", QVariant::fromValue(&editor)},
+                                 {"settings", QVariant::fromValue(&settings)}});
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app, [] { QCoreApplication::exit(1); },
         Qt::QueuedConnection);

@@ -7,6 +7,7 @@ Item {
     id: editor
     required property var model
     signal closed
+    signal openSettings
 
     Shortcut { sequences: [StandardKey.Undo]; enabled: editor.visible; onActivated: editor.model.undo() }
     Shortcut { sequences: [StandardKey.Redo, "Ctrl+Y"]; enabled: editor.visible; onActivated: editor.model.redo() }
@@ -70,6 +71,7 @@ Item {
                 font.bold: true
                 elide: Text.ElideRight
             }
+            IconButton { text: "⚙"; tip: "Ajustes (Ctrl+,)"; onClicked: editor.openSettings() }
             IconButton { text: "↶"; tip: "Deshacer (Ctrl+Z)"; enabled: editor.model.canUndo; onClicked: editor.model.undo() }
             IconButton { text: "↷"; tip: "Rehacer (Ctrl+Y)"; enabled: editor.model.canRedo; onClicked: editor.model.redo() }
             IconButton { text: editor.playing ? "⏸" : "▶"; tip: "Reproducir (Espacio)"; onClicked: editor.playing = !editor.playing }

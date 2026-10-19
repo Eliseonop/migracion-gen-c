@@ -463,8 +463,8 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 - [ ] Pestaña **Efectos** del inspector (plan §6.3): aparece al añadir un efecto al clip; una subpestaña por efecto, en el orden de `vfx` y reordenable, con sus propiedades generadas desde los `params` del catálogo (`toggle`, `range`, `select`, `color`…), activar o desactivar, restablecer y quitar. Con muchos efectos, una lista de tarjetas plegables
 - [ ] 4. Biblioteca y materiales *(empezado, 2026-10-19: panel con el material del proyecto (vídeos, imágenes y audios, con filtro) que se arrastra a la timeline como en React: `materialTarget` (empieza bajo el puntero, con imán), `dropTarget` (hueco, pista vecina, pista nueva o inserción en la magnética) y `placeAsset`/`makeClip`, con paridad en `material_drop.hpp`. Falta la biblioteca global, las colecciones, SFX, Alt para reemplazar, miniaturas (gc_media), importar y textos o figuras)*
 - [ ] 5. Export con progreso
-- [ ] 6. Ajustes
-- [ ] 7. Atajos de teclado *(en marcha: Espacio, ←/→ (Shift = 1 s), S, V, M, «,» y «.», Supr, Ctrl+D, Ctrl+Z/Y y Esc; faltan copiar y pegar clips (Ctrl+C/X/V), los atributos (Ctrl+Alt+C/V), los keyframes (Alt) e I/O)*
+- [x] 6. Ajustes (`settings_model.hpp` + `Settings.qml`, EdSettings.jsx): fps y calidad del export, modelo de Whisper y API keys (añadir, cambiar, quitar; solo se ve cuántas hay). Desde el inicio, el editor o Ctrl+,
+- [ ] 7. Atajos de teclado *(en marcha: Espacio, ←/→ (Shift = 1 s), S, V, M, «,» y «.», Supr, Ctrl+D, Ctrl+Z/Y y Esc; Ctrl+C/X/V; faltan los atributos (Ctrl+Alt+C/V), los keyframes (Alt) e I/O)*
 - [ ] Geometría de la vista previa de `clipLayout.js` (`frameOf`, `slotAspectOf`, `destRectOnFrame`, `freeFrameAt`, tiradores de recorte)
 - [ ] Reproductor: reloj de audio maestro, preview a ½ o ¼, proxies al importar, repintado solo si algo cambia y 60 fps en el cabezal
 - [ ] Puente REST temporal con el backend Python (`:8000`) para lo no portado
