@@ -20,7 +20,10 @@ namespace gc::core {
 
 using ClipList = std::vector<Cow<TimelineClip>>;
 
-// +x.toFixed(3) de JS: redondeo del valor exacto, con el empate lejos del cero.
+// x.toFixed(digits) de JS (|x| < 1e21): redondeo del valor exacto, con el empate lejos del cero.
+[[nodiscard]] std::string js_to_fixed(double x, int digits);
+// +x.toFixed(digits).
+[[nodiscard]] double js_fixed(double x, int digits);
 [[nodiscard]] double js_fixed3(double x);
 
 // clipSpeed, clipDur y clipEnd de editorModel.js.

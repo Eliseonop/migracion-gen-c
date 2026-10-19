@@ -71,18 +71,25 @@ bool contains(const std::vector<std::string>& ids, std::string_view id) {
 
 } // namespace
 
-double js_fixed3(double x) {
-    if (!std::isfinite(x)) {
-        return x;
-    }
-    const double scaled = x * 1000.0;
+std::string js_to_fixed(double x, int digits) {
+    const double scale = std::pow(10.0, digits);
+    const double scaled = x * scale;
     const double lo = std::floor(scaled);
-    if (scaled - lo == 0.5 && std::fma(x, 1000.0, -scaled) == 0.0) { // empate exacto
-        return (x < 0 ? lo : lo + 1) / 1000.0;
+    char text[400];
+    if (scaled - lo == 0.5 && std::fma(x, scale, -scaled) == 0.0) { // empate exacto: lejos del cero
+        std::snprintf(text, sizeof text, "%.*f", digits, (x < 0 ? lo : lo + 1) / scale);
+    } else {
+        std::snprintf(text, sizeof text, "%.*f", digits, x);
     }
-    char text[64];
-    std::snprintf(text, sizeof text, "%.3f", x);
-    return std::strtod(text, nullptr);
+    return text;
+}
+
+double js_fixed(double x, int digits) {
+    return std::isfinite(x) ? std::strtod(js_to_fixed(x, digits).c_str(), nullptr) : x;
+}
+
+double js_fixed3(double x) {
+    return js_fixed(x, 3);
 }
 
 bool has_free_duration(const TimelineClip& clip) {

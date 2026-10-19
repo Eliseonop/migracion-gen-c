@@ -1,6 +1,7 @@
 // Paridad de la timeline del editor (gc/core/timeline_ui.hpp) con editorModel.js de video-yt,
 // ejecutado con Node: tests/fixtures/editor/timeline_ui.json (editor_cases.py).
 
+#include <cmath>
 #include <filesystem>
 #include <limits>
 #include <string>
@@ -11,6 +12,7 @@
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/timeline_ui.hpp"
+#include "gc/core/timeline_view.hpp"
 
 using gc::Json;
 using namespace gc::core;
@@ -30,6 +32,20 @@ Json ids(const std::vector<const TimelineClip*>& clips) {
         out.push_back(c->id);
     }
     return out;
+}
+
+// Number(raw) de JS para el alto de fila: null y "" son «sin valor»; un texto que no es número, NaN.
+std::optional<double> row_raw(const Json& v) {
+    if (v.is_null() || v == "") {
+        return std::nullopt;
+    }
+    if (v.is_string()) {
+        char* end = nullptr;
+        const std::string s = v.get<std::string>();
+        const double n = std::strtod(s.c_str(), &end);
+        return *end == '\0' ? n : std::numeric_limits<double>::quiet_NaN();
+    }
+    return v.get<double>();
 }
 
 TrimEdge edge(const Json& mode) {
@@ -100,6 +116,56 @@ Json run(const Timeline& tl, const Json& call) {
         const ClipSelection next = next_clip_selection(tl.clips, cur, call.at(3).get<std::string>(), mods);
         return {{"ids", next.ids}, {"anchorId", next.anchor ? Json(*next.anchor) : Json()}};
     }
+    if (fn == "maxPps") {
+        return max_pps(num(1), num(2));
+    }
+    if (fn == "minPps") {
+        return min_pps(num(1), num(2));
+    }
+    if (fn == "clampPps") {
+        return clamp_pps(num(1), num(2), num(3), num(4));
+    }
+    if (fn == "zoomByDrag") {
+        return zoom_by_drag(num(1), num(2), num(3), num(4), num(5));
+    }
+    if (fn == "tickSteps") {
+        return tick_steps(num(1));
+    }
+    if (fn == "tickStep") {
+        return tick_step(num(1), num(2), call.at(3).get<bool>());
+    }
+    if (fn == "fmtRuler") {
+        const Json& o = call.at(2);
+        const std::optional<double> step =
+            o.contains("step") ? std::optional(o.at("step").get<double>()) : std::nullopt;
+        return fmt_ruler(num(1), o.at("fps").get<double>(), step, o.at("long").get<bool>());
+    }
+    if (fn == "buildTicks") {
+        const Json& o = call.at(3);
+        Json out = Json::array();
+        for (const Tick& k :
+             build_ticks(num(1), num(2), o.at("fps").get<double>(), o.at("scrollX").get<double>(),
+                         o.at("viewW").get<double>(), o.at("dense").get<bool>())) {
+            out.push_back({k.t, k.major, k.step});
+        }
+        return out;
+    }
+    if (fn == "clampRowHeight") {
+        return clamp_row_height(row_raw(call.at(1)));
+    }
+    if (fn == "trackRowHeight") {
+        return track_row_height(call.at(1).get<std::string>(), row_raw(call.at(2)));
+    }
+    if (fn == "stepRowHeight") {
+        return step_row_height(row_raw(call.at(1)), num(2));
+    }
+    if (fn == "displayTracks") {
+        Json out = Json::array();
+        for (const TimelineTrack* t : display_tracks(tl.tracks)) {
+            out.push_back(t->id);
+        }
+        return out;
+    }
     if (fn == "groupMoveFromOrig") {
         std::vector<std::pair<std::string, double>> origs;
         for (const Json& o : call.at(1)) {
@@ -129,8 +195,12 @@ TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]
         const Json& results = c.at("results");
         for (std::size_t i = 0; i < calls.size(); ++i) {
             INFO(c.at("name").get<std::string>() << " :: " << calls[i].dump());
-            CHECK(nlohmann::json::parse(run(*tl, calls[i]).dump()) ==
-                  nlohmann::json::parse(results[i].dump()));
+            const Json got = run(*tl, calls[i]);
+            if (calls[i].at(0) == "zoomByDrag") { // Math.pow de V8 y el pow de la libc: hasta 1 ulp
+                CHECK(std::abs(got.get<double>() / results[i].get<double>() - 1) < 1e-15);
+            } else {
+                CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(results[i].dump()));
+            }
             ++n;
         }
     }

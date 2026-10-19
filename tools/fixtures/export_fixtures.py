@@ -2464,11 +2464,12 @@ def synthetic_layers_fixtures(ctx: Ctx) -> dict:
 
 
 def synthetic_editor_ui_fixtures(ctx: Ctx) -> dict:
-    """La timeline del editor (editorModel.js con Node, editor_cases.py): clips tal como los deja pydantic."""
+    """La timeline del editor (editorModel.js, timelineScale.js, trackRows.js y trackStack.js con Node,
+    editor_cases.py), con los clips tal como los deja pydantic."""
     sys.path.insert(0, str(HERE))
     import editor_cases as ec
     cases = [{**c, "timeline": ctx.schemas.Timeline(**c["timeline"]).model_dump()} for c in ec.cases()]
-    results = _node(ctx, "editor_ui_js.mjs", [{"clips": c["timeline"]["clips"], "calls": c["calls"]} for c in cases])
+    results = _node(ctx, "editor_ui_js.mjs", [{"tracks": c["timeline"]["tracks"], "clips": c["timeline"]["clips"], "calls": c["calls"]} for c in cases])
     return {"cases": [{**c, "results": r} for c, r in zip(cases, results)]}
 
 

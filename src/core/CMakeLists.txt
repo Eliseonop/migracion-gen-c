@@ -61,6 +61,7 @@ add_library(gc_core
     src/stick_library.cpp
     src/timeline_rules.cpp
     src/timeline_ui.cpp
+    src/timeline_view.cpp
 )
 add_library(gc::core ALIAS gc_core)
 
