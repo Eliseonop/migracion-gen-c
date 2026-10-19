@@ -1,6 +1,7 @@
 // Paridad de la timeline del editor (gc/core/timeline_ui.hpp) con editorModel.js de video-yt,
 // ejecutado con Node: tests/fixtures/editor/timeline_ui.json (editor_cases.py).
 
+#include <algorithm>
 #include <cmath>
 #include <filesystem>
 #include <limits>
@@ -9,6 +10,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "gc/core/clip_layout_ui.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/material_drop.hpp"
@@ -108,6 +110,33 @@ TrackSlot slot_from(const Json& j) {
 
 Json times_json(const std::vector<double>& times) {
     return times;
+}
+
+CropWindow crop_from(const Json& j) {
+    return {j.at("cx").get<double>(), j.at("cy").get<double>(), j.at("wf").get<double>(), j.at("hf").get<double>()};
+}
+
+Json crop_json(const CropWindow& c) { return {{"cx", c.cx}, {"cy", c.cy}, {"wf", c.wf}, {"hf", c.hf}}; }
+
+Json dest_json(const DestRect& d) {
+    return {{"dx", d.dx}, {"dy", d.dy}, {"dw", d.dw}, {"dh", d.dh}, {"rotation", d.rotation}};
+}
+
+double opt_num(const Json& v) { return v.is_number() ? v.get<double>() : 0; }
+
+// Geometría con senos y cosenos o divisiones encadenadas: la de V8 y la de la libc difieren en ulps.
+bool near(const Json& a, const Json& b) {
+    if (a.is_number() && b.is_number()) {
+        const double x = a.get<double>();
+        const double y = b.get<double>();
+        return x == y || std::abs(x - y) <= 1e-12 * std::max({1.0, std::abs(x), std::abs(y)});
+    }
+    if (a.is_object() && b.is_object()) {
+        return a.size() == b.size() && std::ranges::all_of(a.items(), [&](const auto& kv) {
+                   return b.contains(kv.key()) && near(kv.value(), b.at(kv.key()));
+               });
+    }
+    return a == b;
 }
 
 Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call) {
@@ -434,6 +463,85 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         }
         return c;
     }
+    if (fn == "frameOf") {
+        return frame_of(clip(call.at(1)));
+    }
+    if (fn == "slotAspectOf") {
+        return slot_aspect_of(clip(call.at(1)), num(2));
+    }
+    if (fn == "toCapcutPos") {
+        const auto [X, Y] = to_capcut_pos(num(1), num(2), num(3), num(4));
+        return {{"X", X}, {"Y", Y}};
+    }
+    if (fn == "fromCapcutPos") {
+        const auto [x, y] = from_capcut_pos(num(1), num(2), num(3), num(4));
+        return {{"x", x}, {"y", y}};
+    }
+    if (fn == "frameRectOf") {
+        const Rect r = frame_rect_of(num(1), num(2), opt_num(call.at(3)), opt_num(call.at(4)));
+        return {{"x", r.x}, {"y", r.y}, {"w", r.w}, {"h", r.h}};
+    }
+    if (fn == "destRectOnFrame") {
+        const Json& t = call.at(1);
+        const Json& p = call.at(2);
+        const Json& f = call.at(5);
+        const Pose pose{t.at("x").get<double>(), t.at("y").get<double>(), t.at("scale").get<double>(),
+                        t.at("rotation").get<double>()};
+        const SourceCrop px{p.at("sx").get<double>(), p.at("sy").get<double>(), p.at("sw").get<double>(),
+                            p.at("sh").get<double>()};
+        const Rect frame{f.at("x").get<double>(), f.at("y").get<double>(), f.at("w").get<double>(),
+                         f.at("h").get<double>()};
+        return dest_json(dest_rect_on_frame(pose, px, num(3), num(4), frame));
+    }
+    if (fn == "sourceCropPx") {
+        const SourceCrop p = source_crop_px(crop_from(call.at(1)), num(2), num(3));
+        return {{"sx", p.sx}, {"sy", p.sy}, {"sw", p.sw}, {"sh", p.sh}};
+    }
+    if (fn == "clampCrop") {
+        return crop_json(clamp_crop(num(1), num(2), num(3), num(4)));
+    }
+    if (fn == "cropSizeFromCorner") {
+        const auto [wf, hf] = crop_size_from_corner(num(1), num(2), num(3), num(4));
+        return {{"wf", wf}, {"hf", hf}};
+    }
+    if (fn == "cropHandleAt") {
+        const Json& rect = call.at(4);
+        const auto h = crop_handle_at(num(1), num(2), crop_from(call.at(3)), rect.value("width", 0.0),
+                                      rect.value("height", 0.0), num(5));
+        return h ? Json{{"hx", h->first}, {"hy", h->second}} : Json();
+    }
+    if (fn == "insideCrop") {
+        return inside_crop(num(1), num(2), crop_from(call.at(3)));
+    }
+    if (fn == "resizeCropFree") {
+        return crop_json(resize_crop_free(crop_from(call.at(1)), call.at(2).get<int>(), call.at(3).get<int>(), num(4), num(5)));
+    }
+    if (fn == "resizeCropLocked") {
+        return crop_json(resize_crop_locked(crop_from(call.at(1)), call.at(2).get<int>(), call.at(3).get<int>(), num(4),
+                                            num(5), num(6)));
+    }
+    if (fn == "cropRatioNorm") {
+        const auto r = crop_ratio_norm(str(1), num(2), num(3));
+        return r ? Json(*r) : Json();
+    }
+    if (fn == "fitCropRatio") {
+        return crop_json(fit_crop_ratio(crop_from(call.at(1)), num(2)));
+    }
+    if (fn == "cropCursor") {
+        return crop_cursor(call.at(1).get<int>(), call.at(2).get<int>());
+    }
+    if (fn == "freeFrameAt") {
+        const Frame f = free_frame_at(clip(call.at(1)), num(2), num(3), num(4), num(5), num(6));
+        return {{"cx", f.cx}, {"cy", f.cy}, {"zoom", f.zoom}};
+    }
+    if (fn == "hitTransformHandle") {
+        const Json& d = call.at(3);
+        const auto hit = hit_transform_handle(num(1), num(2),
+                                              {d.at("dx").get<double>(), d.at("dy").get<double>(),
+                                               d.at("dw").get<double>(), d.at("dh").get<double>(),
+                                               d.at("rotation").get<double>()});
+        return hit ? Json(*hit) : Json();
+    }
     if (fn == "emptiedTracks") {
         return emptied_tracks(tl.tracks, tl.clips, strings(call.at(1)));
     }
@@ -474,6 +582,8 @@ TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]
             const Json got = run(*tl, geo, calls[i]);
             if (calls[i].at(0) == "zoomByDrag") { // Math.pow de V8 y el pow de la libc: hasta 1 ulp
                 CHECK(std::abs(got.get<double>() / results[i].get<double>() - 1) < 1e-15);
+            } else if (c.at("name") == "encuadre") {
+                CHECK(near(nlohmann::json::parse(got.dump()), nlohmann::json::parse(results[i].dump())));
             } else {
                 CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(results[i].dump()));
             }

@@ -64,6 +64,7 @@ add_library(gc_core
     src/timeline_rules.cpp
     src/timeline_drop.cpp
     src/timeline_ui.cpp
+    src/clip_layout_ui.cpp
     src/timeline_view.cpp
 )
 add_library(gc::core ALIAS gc_core)

@@ -465,7 +465,8 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 - [ ] 5. Export con progreso
 - [x] 6. Ajustes (`settings_model.hpp` + `Settings.qml`, EdSettings.jsx): fps y calidad del export, modelo de Whisper y API keys (añadir, cambiar, quitar; solo se ve cuántas hay). Desde el inicio, el editor o Ctrl+,
 - [ ] 7. Atajos de teclado *(en marcha: Espacio, ←/→ (Shift = 1 s), S, V, M, «,» y «.», Supr, Ctrl+D, Ctrl+Z/Y y Esc; Ctrl+C/X/V; faltan los atributos (Ctrl+Alt+C/V), los keyframes (Alt) e I/O)*
-- [ ] Geometría de la vista previa de `clipLayout.js` (`frameOf`, `slotAspectOf`, `destRectOnFrame`, `freeFrameAt`, tiradores de recorte)
+- [x] Geometría de la vista previa de `clipLayout.js` (`clip_layout_ui.hpp`): `frameOf`, `slotAspectOf`, la posición de CapCut, el recuadro Main (`frameRectOf`, `destRectOnFrame`), Recortar (`clampCrop`, tiradores, `resizeCropFree/Locked`, proporciones) y `freeFrameAt` y `hitTransformHandle`. Paridad en `export_fixtures.py --solo editor` (caso «encuadre», con 1e-12 de tolerancia por los senos y cosenos)
+  - **Divergencia que se queda:** un keyframe de pose con `t: null` es t = 0 en `clipPose` de JS (el preview de video-yt) y se ignora en la pose de Python (su export). C++ tiene una sola pose, la del export
 - [ ] Reproductor: reloj de audio maestro, preview a ½ o ¼, proxies al importar, repintado solo si algo cambia y 60 fps en el cabezal
 - [ ] Puente REST temporal con el backend Python (`:8000`) para lo no portado
 - [ ] **Salida:** editar y exportar un short completo sin abrir la UI React

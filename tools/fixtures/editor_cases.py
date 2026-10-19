@@ -289,6 +289,72 @@ def _material_calls(rng: random.Random) -> list:
     return calls
 
 
+def _crop(rng: random.Random) -> dict:
+    wf, hf = rng.choice([1, 0.5, 0.05, round(rng.uniform(0.05, 1), 4)]), rng.choice([1, 0.3, round(rng.uniform(0.05, 1), 4)])
+    return {"cx": round(rng.uniform(wf / 2, 1 - wf / 2), 4), "cy": round(rng.uniform(hf / 2, 1 - hf / 2), 4), "wf": wf, "hf": hf}
+
+
+def _layout_calls(rng: random.Random) -> list:
+    """Geometría de la vista previa (clipLayout.js): recuadro Main, Recortar y tiradores."""
+    calls: list = []
+    for c in POSE_CLIPS:
+        calls.append(["frameOf", c["id"]])
+        calls.append(["slotAspectOf", c["id"], rng.choice([9 / 16, 16 / 9, 1])])
+        for t in (0, 0.5, 1.5, 3, round(rng.uniform(0, 4), 4)):
+            if c["id"] == "tk":  # keyframe con t null: JS lo pone en 0 y la pose de Python (la del export) lo ignora
+                continue
+            for src, out in (((1920, 1080), (1080, 1920)), ((1080, 1920), (1080, 1920)), ((640, 480), (1920, 1080))):
+                calls.append(["freeFrameAt", c["id"], t, *src, *out])
+    for x, y in ((1.75, -0.75), (-0.75, 1.75), (1.25, 0.25), (0.5, 0.5)):  # empates de Math.round
+        calls.append(["toCapcutPos", x, y, 1, 1])
+    for _ in range(60):
+        w, h = rng.choice([(1080, 1920), (1920, 1080), (1080, 1080)])
+        x, y = round(rng.uniform(-2, 3), 4), round(rng.uniform(-2, 3), 4)
+        calls.append(["toCapcutPos", x, y, w, h])
+        calls.append(["fromCapcutPos", rng.randint(-50000, 50000), rng.randint(-5000, 5000), w, h])
+        calls.append(["frameRectOf", rng.choice([800, 1234.5]), rng.choice([450, 900]), rng.choice([None, 0, 0.5, 1, 2.5, -1]),
+                      rng.choice([None, 0, 9 / 16, 16 / 9, 1])])
+    for _ in range(150):
+        crop = _crop(rng)
+        tr = {"x": round(rng.uniform(-0.5, 1.5), 3), "y": round(rng.uniform(-0.5, 1.5), 3), "scale": rng.choice([1, 0.5, 2.25]),
+              "rotation": rng.choice([0, 30, -90, 181])}
+        px = {"sx": rng.uniform(0, 500), "sy": rng.uniform(0, 500), "sw": rng.uniform(10, 1920), "sh": rng.uniform(10, 1080)}
+        frame = {"x": rng.uniform(0, 100), "y": rng.uniform(0, 50), "w": rng.uniform(200, 600), "h": rng.uniform(300, 900)}
+        calls.append(["destRectOnFrame", tr, px, 1080, 1920, frame])
+        calls.append(["sourceCropPx", crop, rng.choice([1920, 640]), rng.choice([1080, 480])])
+        calls.append(["clampCrop", rng.uniform(-0.2, 1.2), rng.uniform(-0.2, 1.2), rng.uniform(0, 1.3), rng.uniform(0, 1.3)])
+        nx, ny = round(rng.uniform(-0.1, 1.1), 4), round(rng.uniform(-0.1, 1.1), 4)
+        calls.append(["cropSizeFromCorner", nx, ny, crop["cx"], crop["cy"]])
+        calls.append(["cropHandleAt", nx, ny, crop, rng.choice([{"width": 400, "height": 700}, {}, {"width": 0, "height": 50}]),
+                      rng.choice([12, 40, 200])])
+        h0 = rng.choice(crop_handle_norms_py(crop))
+        calls.append(["cropHandleAt", h0[2], h0[3], crop, {"width": 400, "height": 700}, 12])
+        calls.append(["insideCrop", nx, ny, crop])
+        hx, hy = rng.choice([-1, 0, 1]), rng.choice([-1, 0, 1])
+        calls.append(["resizeCropFree", crop, hx, hy, nx, ny])
+        calls.append(["resizeCropLocked", crop, hx, hy, nx, ny, rng.choice([1, 0.5625, 16 / 9 / (9 / 16), 3.2])])
+        calls.append(["fitCropRatio", crop, rng.choice([1, 0.5625, 1.7777777777777777, 0.2, 5])])
+        calls.append(["cropCursor", hx, hy])
+        dest = {"dx": rng.uniform(0, 300), "dy": rng.uniform(0, 300), "dw": rng.uniform(20, 400), "dh": rng.uniform(20, 400),
+                "rotation": rng.choice([0, 45, -30, 90])}
+        for _ in range(3):
+            calls.append(["hitTransformHandle", rng.uniform(-50, 750), rng.uniform(-50, 750), dest])
+        calls.append(["hitTransformHandle", dest["dx"] + dest["dw"] / 2, dest["dy"] + dest["dh"] / 2, dest])
+        calls.append(["hitTransformHandle", dest["dx"] + 1, dest["dy"] + 1, dest])
+        if dest["rotation"] == 0:  # justo dentro del margen del tirador de giro
+            calls.append(["hitTransformHandle", dest["dx"] + dest["dw"] / 2, dest["dy"] + dest["dh"] + 26 + 11.5, dest])
+    for rid in ("free", "original", "output", "16:9", "9:16", "1:1", "4:3", "3:4", "4:5", "2.35:1", "nada"):
+        for src in (16 / 9, 9 / 16, 1, 0, -1):
+            calls.append(["cropRatioNorm", rid, src, rng.choice([9 / 16, 16 / 9, 0])])
+    return calls
+
+
+def crop_handle_norms_py(c: dict) -> list:
+    xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
+    ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
+    return [(ix - 1, iy - 1, xs[ix], ys[iy]) for iy in range(3) for ix in range(3) if (ix, iy) != (1, 1)]
+
+
 def cases() -> list[dict]:
     rng = random.Random(20261019)
     out = [{"name": "toFixed", "timeline": {"tracks": TRACKS, "clips": []},
@@ -302,4 +368,5 @@ def cases() -> list[dict]:
     for n in range(40):
         tl = _random_timeline(rng)
         out.append({"name": f"aleatoria {n}", "timeline": tl, "calls": _calls(rng, tl)})
+    out.append({"name": "encuadre", "timeline": {"tracks": TRACKS, "clips": POSE_CLIPS}, "calls": _layout_calls(rng)})
     return out
