@@ -326,6 +326,7 @@ private:
     QString collections_root_;
     std::pair<std::string, std::string> collections_query_; // q y colección de la última búsqueda
     [[nodiscard]] std::optional<std::filesystem::path> collections_base() const;
+    [[nodiscard]] std::optional<std::filesystem::path> media_path(const core::TimelineClip& c) const;
     void reload_collections();
     void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);

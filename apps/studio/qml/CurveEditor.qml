@@ -94,7 +94,8 @@ Item {
         }
         onReleased: {
             editor.dragging = 0
-            editor.model.setCurve("bezier", editor.live)
+            if (editor.live.some((v, i) => v !== editor.bezier[i])) // un clic sin arrastrar no cambia nada
+                editor.model.setCurve("bezier", editor.live)
         }
     }
 }

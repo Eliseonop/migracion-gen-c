@@ -1366,7 +1366,7 @@ Decisión de Edu (§6):
 
 - `confirm_crop` (confirmCrop de VideoEditor.jsx) con paridad: clip animado → tamaño en el reframe y keyframe en el cabezal; estático → un único keyframe del reframe. El giro decide si anima con el clip ya recortado, como `setClips`.
 - Modal en QML (`CropModal.qml`) sobre `CropEditor`: tiradores, mover, proporciones, rotación, restablecer, scrub y Confirmar. Tests del modelo, del recuadro y de la interfaz sin pantalla (mutante «sin confirmCrop» detectado).
-- Una imagen se muestra con su aspecto real; un vídeo va a 16:9 y sin fotograma hasta gc_media.
+- Solo imágenes, con su aspecto real. Un vídeo avisa hasta gc_media: con un aspecto inventado, el recorte guardado saldría mal (revisión). Un clic en un tirador de la curva sin arrastrar no la cambia, y Enter en el giro o la proporción no confirma.
 - **Curva del keyframe:** el editor bézier de EdCurve.jsx (`CurveEditor.qml`, en Canvas porque el Qt de apt no trae QtQuick.Shapes), con `curvePoints` sobre `ease_t`; el arrastre es local y se aplica al soltar, en un solo paso de deshacer.
 - **Carpetas de material:** gestionar (raíz, crear, favorita, visible) y subir archivos desde el panel. Lo destapó la prueba: `set_collections_root` usaba el `str(Path)` de Windows también en Linux (una ruta absoluta nunca valía). Ahora usa el del sistema (`py_native_path_str`: Windows igual que antes, `str(PurePosixPath)` en el resto), y lo mismo las rutas que enseñan colecciones y SFX.
 - **Linux:** 194/194 con GCC y 139/139 con Clang + libc++.

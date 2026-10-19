@@ -1352,28 +1352,38 @@ void EditorModel::resetTransform() {
     pose_each("transform", [](const core::TimelineClip& c) { return core::transform_reset_patch(c); });
 }
 
+std::optional<std::filesystem::path> EditorModel::media_path(const core::TimelineClip& c) const {
+    const auto project = store_.get_project(project_id_);
+    if (!project || !*project) {
+        return std::nullopt;
+    }
+    const auto data_dir = store_.file().parent_path();
+    const Json settings = settings_ ? settings_->load() : Json::object();
+    return core::clip_media_path(**project, c, {store_.clips_dir(), data_dir,
+                                                core::collections_root(settings, assets_dir(data_dir) / "material")});
+}
+
 QVariantMap EditorModel::openCrop() {
     const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
     if (!c || (c->kind != "video" && c->kind != "image") || !core::is_overlay(*c)) {
         return {};
     }
+    if (c->kind == "video") {
+        setError("Recortar un vídeo llega con el preview: todavía no se lee su tamaño.");
+        return {};
+    }
+    const auto path = media_path(*c); // canCropClip: el medio tiene que estar
+    const QString file = path ? QString::fromStdString(core::path_to_utf8(*path)) : QString();
+    const QSize size = QImageReader(file).size();
+    if (size.isEmpty()) {
+        setError("No se puede leer la imagen del clip.");
+        return {};
+    }
+    const double src_aspect = static_cast<double>(size.width()) / size.height();
+    const QString source = QUrl::fromLocalFile(file).toString();
     const double end = core::ui_clip_end(*c);
     if (playhead_ < c->start || playhead_ >= end) {
         setPlayhead(c->start + 0.02);
-    }
-    QString source;
-    double src_aspect = 16.0 / 9.0; // mediaSize sin decodificar el vídeo
-    if (const auto project = store_.get_project(project_id_); project && *project) {
-        const auto data_dir = store_.file().parent_path();
-        const Json settings = settings_ ? settings_->load() : Json::object();
-        const core::MediaDirs dirs{store_.clips_dir(), data_dir,
-                                   core::collections_root(settings, assets_dir(data_dir) / "material")};
-        if (const auto path = core::clip_media_path(**project, *c, dirs); path && c->kind == "image") {
-            source = QUrl::fromLocalFile(QString::fromStdString(path->string())).toString();
-            if (const QSize size = QImageReader(QString::fromStdString(path->string())).size(); !size.isEmpty()) {
-                src_aspect = static_cast<double>(size.width()) / size.height();
-            }
-        }
     }
     const double local = std::clamp(playhead_ - c->start, 0.0, end - c->start);
     const core::CropWindow crop =

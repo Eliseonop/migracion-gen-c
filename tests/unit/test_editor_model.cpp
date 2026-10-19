@@ -3,6 +3,7 @@
 
 #include <QAbstractItemModel>
 #include <QCoreApplication>
+#include <QImage>
 #include <QPointF>
 #include <QUrl>
 #include <filesystem>
@@ -820,13 +821,23 @@ TEST_CASE("editor: recortar un clip superpuesto", "[studio]") {
     Fixture f;
     const auto file = f.dir / "data" / "projects.json";
     Json data = *core::read_json_file(file);
-    data["projects"][0]["timeline"]["clips"][1]["layout"] = "overlay";
-    data["projects"][0]["timeline"]["clips"][1]["transform"] = {{"rotation", 5}};
+    Json& clips = data["projects"][0]["timeline"]["clips"];
+    clips[1].update({{"kind", "image"}, {"asset_kind", "images"}, {"filename", "foto.png"}, {"layout", "overlay"},
+                     {"transform", {{"rotation", 5}}}});
+    clips.push_back(clip("v", "V2", "video", 0, 4));
+    clips.back()["layout"] = "overlay";
     REQUIRE(core::write_json_file(file, data));
+    const auto project = f.store.get_project("p1");
+    const auto image = core::project_base(f.store.clips_dir(), **project) / "image" / "foto.png";
+    std::filesystem::create_directories(image.parent_path());
+    REQUIRE(QImage(400, 200, QImage::Format_RGB32).save(QString::fromStdString(image.string())));
     studio::EditorModel m(f.store);
     REQUIRE(m.openProject("p1"));
     m.select("a");
     CHECK(m.openCrop().isEmpty()); // un clip a pantalla completa no se recorta
+    m.select("v");
+    CHECK(m.openCrop().isEmpty()); // un vídeo, hasta saber su tamaño
+    CHECK(m.error().contains("vídeo"));
     m.select("b");
     const QVariantMap start = m.openCrop();
     CHECK(start["clipId"] == "b");
@@ -834,6 +845,7 @@ TEST_CASE("editor: recortar un clip superpuesto", "[studio]") {
     auto* crop = qobject_cast<studio::CropEditor*>(m.cropEditor());
     REQUIRE(crop);
     CHECK(crop->rotation() == 5);
+    CHECK(crop->srcAspect() == 2); // el de la imagen
     crop->pickRatio("1:1");
     crop->setRotation(-20);
     const double wf = crop->wf();

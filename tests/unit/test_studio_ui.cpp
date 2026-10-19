@@ -3,6 +3,7 @@
 
 #include <QCoreApplication>
 #include <QGuiApplication>
+#include <QImage>
 #include <QQmlApplicationEngine>
 #include <QQuickItem>
 #include <QQuickWindow>
@@ -61,7 +62,8 @@ struct Studio {
                          {"tracks", tracks},
                          {"clips", Json::array({clip("a", "V1", 0, 4), [] {
                               Json b = clip("b", "V1", 6, 3);
-                              b["layout"] = "overlay";
+                              b.update({{"kind", "image"}, {"asset_kind", "images"}, {"filename", "b.png"},
+                                        {"layout", "overlay"}});
                               return b;
                           }()})}};
         REQUIRE(core::write_json_file(
@@ -78,6 +80,9 @@ struct Studio {
                                         {"images", Json::array({{{"id", "i1"}, {"filename", "logo.png"},
                                                                  {"url", "/i"}, {"label", "Logo"}}})}}})}}));
         store = std::make_unique<core::ProjectsStore>(dir / "data" / "projects.json", dir / "clips");
+        const auto image = core::project_base(store->clips_dir(), **store->get_project("p1")) / "image" / "b.png";
+        std::filesystem::create_directories(image.parent_path());
+        REQUIRE(QImage(160, 90, QImage::Format_RGB32).save(QString::fromStdString(image.string())));
         home = std::make_unique<studio::HomeModel>(*store, ids);
         editor = std::make_unique<studio::EditorModel>(*store);
         REQUIRE(editor->openProject("p1"));

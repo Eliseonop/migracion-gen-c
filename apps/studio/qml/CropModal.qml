@@ -37,7 +37,7 @@ Popup {
     padding: 16
     background: Rectangle { radius: Theme.radiusLg; color: Theme.card; border.color: Theme.lineBright }
 
-    Shortcut { sequences: ["Return", "Enter"]; enabled: modal.opened; onActivated: modal.confirm() }
+    Shortcut { sequences: ["Return", "Enter"]; enabled: modal.opened && !degrees.activeFocus && !ratioBox.activeFocus; onActivated: modal.confirm() }
 
     contentItem: ColumnLayout {
         spacing: 10
@@ -155,6 +155,7 @@ Popup {
                 onMoved: modal.crop.rotation = value
             }
             SpinBox {
+                id: degrees
                 from: -180; to: 180
                 value: Math.round(modal.crop.rotation)
                 editable: true
@@ -162,6 +163,7 @@ Popup {
             }
             Label { text: "Recorte"; color: Theme.muted }
             ComboBox {
+                id: ratioBox
                 objectName: "cropRatio"
                 model: modal.crop.ratios
                 textRole: "label"
