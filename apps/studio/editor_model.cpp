@@ -1,6 +1,8 @@
 #include "editor_model.hpp"
 
 #include <QColor>
+#include <QImageReader>
+#include <QUrl>
 #include <QGuiApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -13,9 +15,11 @@
 #include "gc/core/clip_attrs.hpp"
 #include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_layout_ui.hpp"
+#include "gc/core/clip_media.hpp"
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/collections.hpp"
+#include "gc/core/frame.hpp"
 #include "gc/core/history_store.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/keyframes.hpp"
@@ -1254,6 +1258,60 @@ void EditorModel::setRotation(double deg) {
 
 void EditorModel::resetTransform() {
     pose_each("transform", [](const core::TimelineClip& c) { return core::transform_reset_patch(c); });
+}
+
+QVariantMap EditorModel::openCrop() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c || (c->kind != "video" && c->kind != "image") || !core::is_overlay(*c)) {
+        return {};
+    }
+    const double end = core::ui_clip_end(*c);
+    if (playhead_ < c->start || playhead_ >= end) {
+        setPlayhead(c->start + 0.02);
+    }
+    QString source;
+    double src_aspect = 16.0 / 9.0; // mediaSize sin decodificar el vídeo
+    if (const auto project = store_.get_project(project_id_); project && *project) {
+        const auto data_dir = store_.file().parent_path();
+        const Json settings = settings_ ? settings_->load() : Json::object();
+        const core::MediaDirs dirs{store_.clips_dir(), data_dir,
+                                   core::collections_root(settings, assets_dir(data_dir) / "material")};
+        if (const auto path = core::clip_media_path(**project, *c, dirs); path && c->kind == "image") {
+            source = QUrl::fromLocalFile(QString::fromStdString(path->string())).toString();
+            if (const QSize size = QImageReader(QString::fromStdString(path->string())).size(); !size.isEmpty()) {
+                src_aspect = static_cast<double>(size.width()) / size.height();
+            }
+        }
+    }
+    const double local = std::clamp(playhead_ - c->start, 0.0, end - c->start);
+    const core::CropWindow crop =
+        core::crop_window(*c, src_aspect, aspect(), core::source_time(*c, playhead_, c->start), local);
+    crop_clip_ = c->id;
+    crop_editor_.load({{"srcAspect", src_aspect}, {"outAspect", aspect()}, {"cx", crop.cx}, {"cy", crop.cy},
+                       {"wf", crop.wf}, {"hf", crop.hf},
+                       {"rotation", core::js_number(c->transform.value_or(Json::object()).value("rotation", Json(0)))}});
+    return {{"clipId", qstr(c->id)}, {"kind", qstr(c->kind)}, {"source", source}, {"start", c->start},
+            {"duration", end - c->start}};
+}
+
+void EditorModel::confirmCrop() {
+    const core::TimelineClip* c = clip(qstr(std::exchange(crop_clip_, {})));
+    if (!c) {
+        return;
+    }
+    const double local = std::max(0.0, playhead_ - c->start);
+    auto next = core::confirm_crop(*c, crop_editor_.crop(), crop_editor_.rotation(), local,
+                                   core::source_time(*c, playhead_, c->start), fps(), ids_);
+    if (!ok(next)) {
+        return;
+    }
+    core::Timeline tl = *session_->timeline();
+    for (auto& x : tl.clips) {
+        if (x->id == c->id) {
+            x.mut() = std::move(*next);
+        }
+    }
+    commit(std::move(tl), "crop", {c->id});
 }
 
 void EditorModel::toggleFlip(const QString& axis) {

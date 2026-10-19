@@ -1362,6 +1362,12 @@ Decisión de Edu (§6):
 - **Paridad:** la del editor pasa a unas 45 000 llamadas.
 - **Sin fixture del JS** (lógica dentro de componentes de React): `transform_view` y la lógica del `EditorModel` (efectos, filtros, atributos, animaciones…). Tienen tests propios y los ha revisado el revisor de la migración contra el JS.
 
+**Recortar (misma fecha):**
+
+- `confirm_crop` (confirmCrop de VideoEditor.jsx) con paridad: clip animado → tamaño en el reframe y keyframe en el cabezal; estático → un único keyframe del reframe. El giro decide si anima con el clip ya recortado, como `setClips`.
+- Modal en QML (`CropModal.qml`) sobre `CropEditor`: tiradores, mover, proporciones, rotación, restablecer, scrub y Confirmar. Tests del modelo, del recuadro y de la interfaz sin pantalla (mutante «sin confirmCrop» detectado).
+- Una imagen se muestra con su aspecto real; un vídeo va a 16:9 y sin fotograma hasta gc_media.
+- **Linux:** 191/191 con GCC y 138/138 con Clang + libc++.
+
 **Siguiente:**
-- Recortar.
 - El preview espera a `gc_render`.

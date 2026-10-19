@@ -59,7 +59,11 @@ struct Studio {
                                          {{"id", "A1"}, {"kind", "audio"}, {"name", "A1"}}});
         const Json tl = {{"schema_version", 5},
                          {"tracks", tracks},
-                         {"clips", Json::array({clip("a", "V1", 0, 4), clip("b", "V1", 6, 3)})}};
+                         {"clips", Json::array({clip("a", "V1", 0, 4), [] {
+                              Json b = clip("b", "V1", 6, 3);
+                              b["layout"] = "overlay";
+                              return b;
+                          }()})}};
         REQUIRE(core::write_json_file(
             dir / "data" / "projects.json",
             {{"projects", Json::array({{{"id", "p1"},
@@ -394,4 +398,20 @@ TEST_CASE("studio sin pantalla: las pestañas del inspector según el clip", "[s
     s.click("editor:addText"); // un texto no tiene Color ni Audio
     CHECK_FALSE(s.item("insp:tab:color"));
     CHECK_FALSE(s.item("insp:tab:audio"));
+}
+
+TEST_CASE("studio sin pantalla: el modal Recortar se abre desde la barra y confirma", "[studio][ui]") {
+    Studio s;
+    s.editor->select("a");
+    s.click("cropButton");
+    QTest::qWait(50);
+    CHECK_FALSE(s.item("cropConfirm")); // a pantalla completa no hay recorte
+    s.editor->select("b");
+    s.click("cropButton");
+    QTest::qWait(50);
+    QMetaObject::invokeMethod(s.editor->cropEditor(), "pickRatio", Q_ARG(QString, "1:1"));
+    s.click("cropConfirm");
+    QTest::qWait(50);
+    CHECK_FALSE(s.item("cropConfirm"));
+    CHECK(s.editor->canUndo());
 }

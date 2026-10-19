@@ -107,6 +107,15 @@ Item {
             IconButton { text: "⚑"; tip: "Marcador en el cabezal (M)"; onClicked: editor.model.toggleMarker() }
             IconButton { text: "✂"; tip: "Cortar en el cabezal (S)"; onClicked: editor.model.splitAtPlayhead() }
             IconButton {
+                objectName: "cropButton"
+                text: "⛶"; tip: "Recortar el clip seleccionado"
+                enabled: editor.model.selection.length > 0
+                onClicked: {
+                    editor.playing = false
+                    cropModal.openFor(editor.model.openCrop())
+                }
+            }
+            IconButton {
                 text: "⧉"; tip: "Duplicar (Ctrl+D)"
                 enabled: editor.model.selection.length > 0
                 onClicked: editor.model.duplicateSelection()
@@ -184,6 +193,8 @@ Item {
     Item { id: overlay; anchors.fill: parent; z: 100 }
 
     // «Pegar atributos» (EdPasteAttrs.jsx): qué grupos del clip copiado van a los seleccionados.
+    CropModal { id: cropModal; model: editor.model }
+
     Popup {
         id: pasteAttrs
         objectName: "pasteAttrs"

@@ -23,6 +23,7 @@
 #include "gc/core/timeline_ui.hpp"
 
 #include "clip_list_model.hpp"
+#include "crop_editor.hpp"
 
 namespace gc::studio {
 
@@ -32,6 +33,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QString projectName READ projectName NOTIFY projectChanged)
     Q_PROPERTY(QVariantList tracks READ tracks NOTIFY timelineChanged)
     Q_PROPERTY(QObject* clipModel READ clipModel CONSTANT)
+    Q_PROPERTY(QObject* cropEditor READ cropEditor CONSTANT)
     Q_PROPERTY(double duration READ duration NOTIFY timelineChanged)
     Q_PROPERTY(int fps READ fps NOTIFY timelineChanged)
     Q_PROPERTY(double aspect READ aspect NOTIFY timelineChanged)
@@ -66,6 +68,7 @@ public:
     [[nodiscard]] QString projectName() const { return project_name_; }
     [[nodiscard]] QVariantList tracks() const { return tracks_; }
     [[nodiscard]] QObject* clipModel() { return &clip_model_; }
+    [[nodiscard]] QObject* cropEditor() { return &crop_editor_; }
     // Las filas de clipModel (para los tests).
     [[nodiscard]] QVariantList clips() const;
     [[nodiscard]] double duration() const;
@@ -158,6 +161,9 @@ public:
     Q_INVOKABLE void setScalePct(double pct);
     Q_INVOKABLE void setRotation(double deg);
     Q_INVOKABLE void resetTransform();
+    // Modal Recortar: carga cropEditor con el clip seleccionado (vacío si no se puede recortar) y lo aplica.
+    Q_INVOKABLE QVariantMap openCrop();
+    Q_INVOKABLE void confirmCrop();
     // toggleFlip: voltear en horizontal ("h") o vertical ("v"); todos quedan como el opuesto del principal.
     Q_INVOKABLE void toggleFlip(const QString& axis);
     // Velocidad, tono y reversa (patchClipFx de VideoEditor.jsx; los textos no cambian).
@@ -315,6 +321,8 @@ private:
     bool restyle_track(Restyle restyle, bool theme = false);
     std::map<QString, Json> payloads_; // material → dragPayload
     ClipListModel clip_model_;
+    CropEditor crop_editor_;
+    std::string crop_clip_;
     core::ClipSelection selection_;
     double playhead_ = 0;
     double pps_ = 40;

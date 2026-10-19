@@ -803,3 +803,58 @@ TEST_CASE("editor: el rombo del color de un texto", "[studio]") {
     m.setPlayhead(3);
     CHECK(m.selectedClip()["styleKf"].toMap()["color"] == "on");
 }
+
+TEST_CASE("editor: recortar un clip superpuesto", "[studio]") {
+    Fixture f;
+    const auto file = f.dir / "data" / "projects.json";
+    Json data = *core::read_json_file(file);
+    data["projects"][0]["timeline"]["clips"][1]["layout"] = "overlay";
+    data["projects"][0]["timeline"]["clips"][1]["transform"] = {{"rotation", 5}};
+    REQUIRE(core::write_json_file(file, data));
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.select("a");
+    CHECK(m.openCrop().isEmpty()); // un clip a pantalla completa no se recorta
+    m.select("b");
+    const QVariantMap start = m.openCrop();
+    CHECK(start["clipId"] == "b");
+    CHECK(std::abs(m.playhead() - 6.02) < 1e-9); // el cabezal entra en el clip
+    auto* crop = qobject_cast<studio::CropEditor*>(m.cropEditor());
+    REQUIRE(crop);
+    CHECK(crop->rotation() == 5);
+    crop->pickRatio("1:1");
+    crop->setRotation(-20);
+    const double wf = crop->wf();
+    m.confirmCrop();
+    const auto saved_b = [&] {
+        const core::Timeline tl = f.saved();
+        return **std::ranges::find(tl.clips, std::string("b"), [](const auto& c) { return c->id; });
+    };
+    const core::TimelineClip b = saved_b();
+    REQUIRE(b.reframe);
+    CHECK(std::abs(*b.reframe->crop_w - wf) < 1e-4);
+    CHECK(b.reframe->keyframes.size() == 1);
+    CHECK(b.transform->value("rotation", Json(0)) == -20);
+    m.undo();
+    CHECK_FALSE(saved_b().reframe);
+}
+
+TEST_CASE("editor: el recuadro del modal Recortar", "[studio]") {
+    studio::CropEditor crop;
+    crop.load({{"cx", 0.5}, {"cy", 0.5}, {"wf", 0.5}, {"hf", 0.5}});
+    CHECK_FALSE(crop.press(0.05, 0.05, 400, 300));
+    REQUIRE(crop.press(0.5, 0.5, 400, 300)); // dentro: mueve
+    crop.drag(0.6, 0.45);
+    CHECK(std::abs(crop.cx() - 0.6) < 1e-9);
+    CHECK(std::abs(crop.cy() - 0.45) < 1e-9);
+    crop.release();
+    crop.load({{"cx", 0.5}, {"cy", 0.5}, {"wf", 0.5}, {"hf", 0.5}});
+    REQUIRE(crop.press(0.75, 0.75, 400, 300)); // esquina: el borde opuesto queda anclado
+    crop.drag(0.85, 0.85);
+    CHECK(std::abs(crop.wf() - 0.6) < 1e-9);
+    CHECK(std::abs(crop.cx() - 0.55) < 1e-9);
+    CHECK(crop.cursorAt(0.25, 0.25, 400, 300) == Qt::SizeFDiagCursor);
+    crop.reset();
+    CHECK(crop.wf() == 1);
+    CHECK(crop.ratio() == "free");
+}
