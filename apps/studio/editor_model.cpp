@@ -298,6 +298,7 @@ QVariantMap EditorModel::selectedClip() const {
                                   {"scalePct", tv.scale_pct},
                                   {"degrees", tv.rotation_deg}}},
         {"text", qstr(c->text.value_or(""))},
+        {"effects", to_variant(c->effects.value_or(Json::object()))},
         {"filters", [&] {
              QVariantList out;
              for (const auto& f : core::clip_filters(*c)) {
@@ -1148,6 +1149,24 @@ void EditorModel::set_filters(const std::vector<core::ClipFilter>& stack) {
     fx_each("filters", [&](core::TimelineClip& c) {
         c.filters = list;
         c.look = "none";
+    });
+}
+
+void EditorModel::setEffect(const QString& key, double value) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c) {
+        return;
+    }
+    Json effects = c->effects && c->effects->is_object() ? *c->effects : Json::object();
+    effects[key.toStdString()] = value;
+    fx_each("effects", [&](core::TimelineClip& item) { item.effects = effects; });
+}
+
+void EditorModel::setAdjustIntensity(double value) {
+    fx_each("opacity", [&](core::TimelineClip& c) {
+        if (c.kind == "adjustment") {
+            c.opacity = std::clamp(value, 0.0, 1.0);
+        }
     });
 }
 

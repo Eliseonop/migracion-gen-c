@@ -487,7 +487,7 @@ TEST_CASE("editor: temas de subtítulos y estilos preestablecidos de un texto", 
     CHECK(m.selectedClip()["lookId"] == "none");
 }
 
-TEST_CASE("editor: filtros de color apilados", "[studio]") {
+TEST_CASE("editor: filtros de color apilados y ajustes de color", "[studio]") {
     Fixture f;
     studio::EditorModel m(f.store);
     REQUIRE(m.openProject("p1"));
@@ -503,6 +503,10 @@ TEST_CASE("editor: filtros de color apilados", "[studio]") {
     CHECK(fs[0].toMap()["amount"] == 0.4);
     m.toggleFilter("cool");
     CHECK(m.selectedClip()["filters"].toList().size() == 1);
+    m.setEffect("exposure", 0.3);
+    m.setEffect("hue", -45);
+    CHECK(m.selectedClip()["effects"].toMap()["exposure"] == 0.3);
+    CHECK(m.selectedClip()["effects"].toMap()["hue"] == -45);
     const core::Timeline tl = f.saved();
     for (const auto& c : tl.clips) {
         if (c->id == "a") {

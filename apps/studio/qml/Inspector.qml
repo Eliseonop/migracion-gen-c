@@ -27,6 +27,14 @@ Rectangle {
         const f = model.colorFilters.find((x) => x.id === id)
         return f ? f.label : id
     }
+    readonly property var colorFx: [["brightness", "Brillo", -0.5, 0.5, 100, ""], ["contrast", "Contraste", -0.5, 0.5, 100, ""],
+        ["saturation", "Saturación", -1, 1, 100, ""], ["exposure", "Exposición", -1, 1, 100, ""],
+        ["whites", "Blancos", -1, 1, 100, ""], ["temperature", "Temperatura", -1, 1, 100, ""], ["hue", "Tono", -180, 180, 1, "°"]]
+    function fxNum(id) {
+        const v = has && clip.effects ? clip.effects[id] : 0
+        const n = v === true ? 1 : Number(v)
+        return isFinite(n) ? n : 0
+    }
     readonly property var swatches: ["#ffffff", "#111111", "#ffe400", "#ff2d2d", "#ff8a00", "#2ee83f", "#1e90ff", "#ff3d8b"]
     readonly property var blends: [
         ["normal", "Normal"], ["darken", "Oscurecer"], ["multiply", "Multiplicar"], ["color_burn", "Subexponer color"],
@@ -616,7 +624,36 @@ Rectangle {
                 Small { objectName: "insp:reverse"; text: panel.has && panel.clip.reverse ? "Reversa ✓" : "Reversa"; onClicked: panel.model.toggleReverse() }
             }
 
-            Section { visible: panel.filterable; text: "FILTROS" }
+            Section { visible: panel.filterable; text: panel.has && panel.clip.kind === "adjustment" ? "CAPA DE AJUSTE" : "COLOR" }
+            Percent {
+                visible: panel.has && panel.clip.kind === "adjustment"
+                objectName: "insp:adjust:intensity"
+                title: "Intensidad"
+                value: panel.has ? panel.clip.opacity : 1
+                onCommitted: (v) => panel.model.setAdjustIntensity(Math.round(v * 100) / 100)
+            }
+            Repeater {
+                model: panel.filterable ? panel.colorFx : []
+                RowLayout {
+                    id: fxRow
+                    required property var modelData
+                    readonly property real unit: modelData[4]
+                    Layout.fillWidth: true
+                    Label { Layout.preferredWidth: 70; text: fxRow.modelData[1]; color: Theme.textSecondary }
+                    Slider {
+                        id: fxSlider
+                        objectName: "insp:fx:" + fxRow.modelData[0]
+                        Layout.fillWidth: true
+                        from: fxRow.modelData[2] * fxRow.unit
+                        to: fxRow.modelData[3] * fxRow.unit
+                        stepSize: 1
+                        value: Math.round(panel.fxNum(fxRow.modelData[0]) * fxRow.unit)
+                        onPressedChanged: if (!pressed) panel.model.setEffect(fxRow.modelData[0], Math.round(value) / fxRow.unit)
+                    }
+                    Label { Layout.preferredWidth: 40; text: Math.round(fxSlider.value) + fxRow.modelData[5]; color: Theme.text; horizontalAlignment: Text.AlignRight }
+                }
+            }
+            Label { visible: panel.filterable; text: "Filtros"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
             Repeater {
                 model: panel.filterable ? [["color", "Color"], ["cine", "Cine"], ["retro", "Retro"], ["bn", "Blanco y negro"]] : []
                 ColumnLayout {
