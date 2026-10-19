@@ -21,7 +21,7 @@ public:
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
     // Filas nuevas: {clipId, trackId, kind, label, speed, start, duration, clipY, clipHeight, muted,
-    // disabled, locked, kfs}.
+    // disabled, locked, kfs, beats}.
     void sync(QVector<QVariantMap> rows);
     [[nodiscard]] const QVector<QVariantMap>& rows() const { return rows_; }
 

@@ -355,6 +355,7 @@ Rectangle {
                     required property bool disabled
                     required property bool locked
                     required property var kfs
+                    required property var beats
                     objectName: "clip:" + clipId
                     readonly property var palette3: timeline.colorsOf(kind)
                     readonly property var dp: timeline.drag
@@ -381,6 +382,17 @@ Rectangle {
                         GradientStop { position: 1; color: block.palette3[1] }
                     }
 
+                    Repeater { // beats del clip (uno de cada `every`)
+                        model: block.beats
+                        Rectangle {
+                            required property real modelData
+                            x: modelData * block.width - 0.5
+                            y: block.height - 8
+                            width: 1
+                            height: 6
+                            color: Qt.rgba(1, 1, 1, 0.55)
+                        }
+                    }
                     Repeater { // keyframes del clip seleccionado, con los colores de kfColor
                         model: block.selected ? block.kfs : []
                         Rectangle {

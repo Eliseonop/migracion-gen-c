@@ -540,3 +540,19 @@ TEST_CASE("editor: efectos de sonido, fijos o en el keyframe del cabezal", "[stu
     m.setPlayhead(2);
     CHECK(m.selectedClip()["audioFx"].toMap()["reverb"] == 0.6);
 }
+
+TEST_CASE("editor: los beats del clip como fracción de su ancho", "[studio]") {
+    Fixture f;
+    core::Timeline tl = f.saved();
+    for (auto& c : tl.clips) {
+        if (c->id == "m") {
+            c.mut().beats = Json{{"times", Json::array({1.0, 2.5, 5.0, 12.0})}, {"bpm", 120}, {"every", 1}};
+        }
+    }
+    REQUIRE(f.store.save_timeline("p1", core::to_json(tl)));
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    const QVariantList beats = clip_view(m, "m")["beats"].toList();
+    REQUIRE(beats.size() == 3); // el de 12 s cae fuera del recorte (0–10)
+    CHECK(beats[1].toDouble() == 0.25);
+}

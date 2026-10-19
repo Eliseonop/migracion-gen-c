@@ -89,6 +89,18 @@ QString clip_label(const core::TimelineClip& c) {
 
 // Puntos de keyframe del clip (ClipBlock de EdTimeline): fracción 0–1 de su ancho. Los de pose van
 // en tiempo local; sin ellos, los del encuadre, que van en tiempo de la fuente.
+// Beats del clip como fracción de su ancho (las rayitas de EdTimeline).
+QVariantList beat_marks(const core::TimelineClip& c) {
+    QVariantList out;
+    const double dur = core::ui_clip_duration(c);
+    for (const double t : core::clip_beat_times(c)) {
+        if (dur > 0) {
+            out << (t - c.start) / dur;
+        }
+    }
+    return out;
+}
+
 QVariantList keyframe_marks(const core::TimelineClip& c) {
     QVariantList out;
     const double dur = core::ui_clip_duration(c);
@@ -232,7 +244,8 @@ void EditorModel::rebuild() {
                             {"muted", c->muted},
                             {"disabled", c->disabled},
                             {"locked", locked[c->track_id]},
-                            {"kfs", keyframe_marks(*c)}});
+                            {"kfs", keyframe_marks(*c)},
+                            {"beats", beat_marks(*c)}});
         }
     }
     clip_model_.sync(std::move(rows));
