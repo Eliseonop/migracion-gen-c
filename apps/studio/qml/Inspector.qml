@@ -574,6 +574,7 @@ Rectangle {
                     current: String(panel.st.max_words ?? 8)
                     onPicked: (v) => panel.model.changeStyle({ max_words: Number(v) })
                 }
+                Small { objectName: "insp:fragment"; Layout.fillWidth: false; text: "Fragmentar"; onClicked: panel.model.fragmentText() }
             }
             RowLayout {
                 visible: panel.text

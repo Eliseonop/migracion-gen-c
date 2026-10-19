@@ -1912,6 +1912,34 @@ QVariantList EditorModel::textLooks() {
     return out;
 }
 
+void EditorModel::fragmentText() {
+    if (!session_) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const core::TimelineTrack* t = !c && !selected_track_.empty() ? track(qstr(selected_track_)) : nullptr;
+    Result<core::ClipList> parts = core::ClipList{};
+    if (c && c->kind == "text") {
+        parts = core::split_one_text_clip(next.clips, c->id, c->style.value_or(Json()).value("max_words", Json()), ids_);
+    } else if (t && t->kind == "text") {
+        parts = core::split_track_text(next.clips, t->id, t->style.value_or(Json()).value("max_words", Json(8)), ids_);
+    } else {
+        return;
+    }
+    if (!ok(parts) || parts->size() == next.clips.size()) {
+        return;
+    }
+    const auto index = c ? std::ranges::find(next.clips, c->id, [](const auto& x) { return x->id; }) - next.clips.begin() : -1;
+    next.clips = std::move(*parts);
+    if (index >= 0) { // el primer cuadro queda seleccionado
+        const std::string first = next.clips[static_cast<std::size_t>(index)]->id;
+        selection_ = {{first}, first};
+    }
+    commit(std::move(next), "fragment", selection_.ids);
+    emit selectionChanged();
+}
+
 void EditorModel::applyTextTheme(const QString& id) {
     const core::TimelineClip* source = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
     const Json* theme = core::theme_by_id(id.toStdString());

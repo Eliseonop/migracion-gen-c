@@ -605,6 +605,26 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "newTextDuration") {
         return new_text_duration(tl, num(1));
     }
+    if (fn == "splitClipByMaxWords") {
+        SequentialIdSource ids;
+        Json out = Json::array();
+        for (Json c : split_clip_by_max_words(clip(call.at(1)), call.at(2), ids)) {
+            c.erase("id");
+            c.erase("asset_id");
+            out.push_back(std::move(c));
+        }
+        return out;
+    }
+    if (fn == "splitTrackText") {
+        SequentialIdSource ids;
+        const auto clips = split_track_text(tl.clips, str(1), call.at(2), ids);
+        REQUIRE(clips);
+        Json out = Json::array();
+        for (const auto& c : *clips) {
+            out.push_back({c->text ? Json(*c->text) : Json(), c->start, c->out_point});
+        }
+        return out;
+    }
     if (fn == "maskOp") {
         SequentialIdSource ids;
         TimelineClip c = clip(call.at(1));

@@ -206,6 +206,9 @@ public:
     Q_INVOKABLE void changeShape(const QVariantMap& patch);
     Q_INVOKABLE void changeText(const QString& text);
     Q_INVOKABLE void changeStyle(const QVariantMap& patch, bool fixed = false);
+    // applyFragment: parte el texto seleccionado (o los subtítulos de la pista elegida) en cuadros de
+    // `max_words` palabras, con sus tiempos.
+    Q_INVOKABLE void fragmentText();
     // applyPreset: un clic aplica el tema a los textos seleccionados; otro en el mismo lo quita.
     Q_INVOKABLE void applyTextTheme(const QString& id);
     // Estilo preestablecido «Aa» (vacío = «Ninguno»).

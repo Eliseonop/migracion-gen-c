@@ -509,6 +509,25 @@ def _mask_case(rng: random.Random) -> dict:
     return {"name": "máscaras", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
 
 
+def _fragment_case(rng: random.Random) -> dict:
+    """Fragmentar subtítulos en cuadros (splitClipByMaxWords y splitTrackTextByMaxWords)."""
+    words = [{"text": w, "start": round(i * 0.4, 3), "end": round(i * 0.4 + 0.35, 3), **({"prob": 0.9} if i % 2 else {})}
+             for i, w in enumerate("uno dos tres cuatro cinco seis siete".split())]
+    clips = [clip("w", "T1", "text", start=2, out=3, text="uno dos tres cuatro cinco seis siete", words=words,
+                  origin={"transcript_id": "tr", "word_range": [10, 17]}, style={"max_words": 3}),
+             clip("p", "T1", "text", start=6, out=2.5, text="  palabras   sin tiempos ni origen  ", style={"color": "#fff"}),
+             clip("f", "T1", "text", start=9, out=1, text="texto libre de varias palabras", text_role="free"),
+             clip("s", "T1", "text", start=11, out=1.3333, text="ñandú 😀 emoji largos textos para el nombre del clip"),
+             clip("v", "V1", start=0, out=4)]
+    calls: list = []
+    for cid in ("w", "p", "f", "s"):
+        for n in (1, 2, 3, 4, 10, 0, -1, "2", None, 2.7):
+            calls.append(["splitClipByMaxWords", cid, n])
+    for n in (1, 2, 5, None):
+        calls.append(["splitTrackText", "T1", n])
+    return {"name": "fragmentar", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -532,5 +551,6 @@ def cases() -> list[dict]:
     out.append(_linked_case(rng))
     out.append(_vfx_case(rng))
     out.append(_mask_case(rng))
+    out.append(_fragment_case(rng))
     out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
     return out

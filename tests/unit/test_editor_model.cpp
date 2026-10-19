@@ -751,3 +751,18 @@ TEST_CASE("editor: deshacer sobrevive a cerrar y abrir el proyecto", "[studio]")
     CHECK(start_of(f.saved(), "b") == 6);
     CHECK(again.canRedo());
 }
+
+TEST_CASE("editor: fragmentar un subtítulo en cuadros", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.addText();
+    m.changeText("uno dos tres cuatro cinco");
+    m.changeStyle({{"max_words", 2}});
+    const int before = static_cast<int>(m.clips().size());
+    m.fragmentText();
+    CHECK(static_cast<int>(m.clips().size()) == before + 2);
+    CHECK(m.selectedClip()["text"] == "uno dos");
+    m.undo();
+    CHECK(static_cast<int>(m.clips().size()) == before);
+}

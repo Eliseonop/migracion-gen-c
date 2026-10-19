@@ -261,6 +261,8 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
         : op === 'changeMask' || op === 'commitMask' ? ops.run(op, id, arg) : ops.run(op)
       return { masks: masksOf(c), keyframes: noIds(c).keyframes ?? null }
     },
+    splitClipByMaxWords: (id, n) => m.splitClipByMaxWords(byId(id), n).map(({ id: _, asset_id: __, ...rest }) => rest),
+    splitTrackText: (track, n) => m.splitTrackTextByMaxWords(clips, track, n).map((c) => [c.text ?? null, c.start, c.out_point]),
     normalizeVfxEntry: (raw) => noUid(fxRuntime.normalizeVfxEntry(raw)),
     keepsUid: (raw) => fxRuntime.normalizeVfxEntry(raw)?.uid ?? null,
     makeVfxEntry: (id) => noUid(fxRuntime.makeVfxEntry(id)),

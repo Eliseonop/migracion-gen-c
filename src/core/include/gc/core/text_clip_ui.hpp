@@ -8,9 +8,11 @@
 #include <string>
 #include <string_view>
 
+#include "gc/core/error.hpp"
 #include "gc/core/ids.hpp"
 #include "gc/core/json.hpp"
 #include "gc/core/model.hpp"
+#include "gc/core/timeline_ui.hpp"
 
 namespace gc::core {
 
@@ -51,5 +53,18 @@ void upsert_style_kf(TimelineClip& clip, double local_t, const Json& patch, doub
 // changeStyle para un texto: el estilo fijo y, si esas propiedades ya están animadas (y no es
 // `fixed`), su keyframe en el cabezal; la pose (x, y, escala…) sigue la regla de commitPose.
 void change_text_style(TimelineClip& clip, const Json& patch, double local_t, double fps, bool fixed, IdSource& ids);
+
+// --- Fragmentar subtítulos en cuadros (editorModel.js) -----------------------------------------
+
+// splitClipByMaxWords: el texto en trozos de `max_words` palabras, repartiendo el tiempo por sus
+// palabras reales (o a partes iguales) y llevando `origin`. Un trozo o menos: el clip tal cual.
+[[nodiscard]] std::vector<Json> split_clip_by_max_words(const TimelineClip& clip, const Json& max_words,
+                                                        IdSource& ids);
+// splitOneTextClip: ese clip de texto partido en su sitio de la lista.
+[[nodiscard]] Result<ClipList> split_one_text_clip(const ClipList& clips, std::string_view clip_id,
+                                                   const Json& max_words, IdSource& ids);
+// splitTrackTextByMaxWords: todos los subtítulos (no los textos libres) de la pista.
+[[nodiscard]] Result<ClipList> split_track_text(const ClipList& clips, std::string_view track_id,
+                                                const Json& max_words, IdSource& ids);
 
 } // namespace gc::core

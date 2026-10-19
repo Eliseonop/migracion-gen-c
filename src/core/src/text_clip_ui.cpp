@@ -6,7 +6,10 @@
 #include <cmath>
 #include <initializer_list>
 
+#include "gc/core/captions.hpp"
 #include "gc/core/clip_pose_edit.hpp"
+#include "gc/core/migrations.hpp"
+#include "gc/core/serialize.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/timeline_ui.hpp"
 #include "gc/core/timeline_view.hpp"
@@ -342,6 +345,124 @@ void change_text_style(TimelineClip& clip, const Json& patch, double local_t, do
     if (!kf_style.empty()) {
         upsert_style_kf(clip, t, kf_style, fps, ids);
     }
+}
+
+std::vector<Json> split_clip_by_max_words(const TimelineClip& clip, const Json& max_words, IdSource& ids) {
+    const std::string text = clip.text.value_or("");
+    const auto chunks = chunk_caption_text(text, max_words);
+    if (chunks.size() <= 1) {
+        return {to_json(clip)};
+    }
+    const std::size_t total = std::max<std::size_t>(1, split_caption_words(text).size());
+    const double dur = ui_clip_duration(clip);
+    const double base = clip.start;
+    const bool has_words = clip.words.size() == split_caption_words(text).size() && !clip.words.empty();
+    const Json origin = clip.origin ? *clip.origin : Json();
+    const Json& range = origin.is_object() ? origin.value("word_range", Json()) : Json();
+    const double origin_start = range.is_array() && !range.empty() && range[0].is_number() ? range[0].get<double>() : 0;
+    const Json source = to_json(clip);
+    std::vector<Json> out;
+    std::size_t acc = 0;
+    for (std::size_t i = 0; i < chunks.size(); ++i) {
+        const std::size_t n = split_caption_words(chunks[i]).size();
+        const std::size_t from = acc;
+        const std::size_t to = acc + n;
+        acc = to;
+        double start = 0;
+        double d = 0;
+        Json words = Json::array();
+        if (has_words) {
+            const std::size_t last = std::min(to, clip.words.size());
+            const double w0 = from < last ? clip.words[from].start : dur * (static_cast<double>(from) / total);
+            const double wn = from < last ? clip.words[last - 1].end : dur * (static_cast<double>(to) / total);
+            start = base + w0;
+            d = std::max(0.05, wn - w0);
+            for (std::size_t k = from; k < last; ++k) {
+                const Word& w = clip.words[k];
+                Json word = {{"text", w.text},
+                             {"start", js_fixed3(std::max(0.0, w.start - w0))},
+                             {"end", js_fixed3(std::max(0.0, w.end - w0))}};
+                if (w.prob) {
+                    word["prob"] = *w.prob;
+                }
+                words.push_back(std::move(word));
+            }
+        } else {
+            start = base + dur * (static_cast<double>(from) / total);
+            const double end = i == chunks.size() - 1 ? base + dur : base + dur * (static_cast<double>(to) / total);
+            d = std::max(0.05, end - start);
+        }
+        Json frag = source;
+        frag["id"] = make_uid(ids, "c");
+        frag["asset_id"] = make_uid(ids, "t");
+        frag["text"] = chunks[i];
+        frag["name"] = slice_utf16(chunks[i], 22);
+        frag["start"] = js_fixed3(start);
+        frag["in_point"] = 0;
+        frag["out_point"] = js_fixed3(d);
+        frag["source_duration"] = js_fixed3(d);
+        frag["style"] = clip.style && clip.style->is_object() ? *clip.style : Json::object();
+        frag["words"] = std::move(words);
+        if (origin.is_object()) {
+            Json o = origin;
+            o["fragment_index"] = i;
+            o["word_range"] = Json::array({origin_start + static_cast<double>(from), origin_start + static_cast<double>(to)});
+            frag["origin"] = std::move(o);
+        }
+        out.push_back(std::move(frag));
+    }
+    return out;
+}
+
+namespace {
+
+Result<void> append_parts(ClipList& out, const std::vector<Json>& parts) {
+    for (const Json& p : parts) {
+        auto c = clip_from_json(p);
+        if (!c) {
+            return std::unexpected(c.error());
+        }
+        out.emplace_back(std::move(*c));
+    }
+    return {};
+}
+
+} // namespace
+
+Result<ClipList> split_one_text_clip(const ClipList& clips, std::string_view clip_id, const Json& max_words,
+                                     IdSource& ids) {
+    ClipList out;
+    for (const auto& c : clips) {
+        if (c->id == clip_id && c->kind == "text") {
+            const auto parts = split_clip_by_max_words(*c, max_words, ids);
+            if (parts.size() > 1) {
+                if (auto r = append_parts(out, parts); !r) {
+                    return std::unexpected(r.error());
+                }
+                continue;
+            }
+        }
+        out.push_back(c);
+    }
+    return out;
+}
+
+Result<ClipList> split_track_text(const ClipList& clips, std::string_view track_id, const Json& max_words,
+                                  IdSource& ids) {
+    ClipList out;
+    for (const auto& c : clips) {
+        if (c->kind == "text" && c->track_id == track_id && resolve_text_role(to_json(*c)) != "free") {
+            const auto parts = split_clip_by_max_words(*c, max_words, ids);
+            if (parts.size() > 1) {
+                if (auto r = append_parts(out, parts); !r) {
+                    return std::unexpected(r.error());
+                }
+                continue;
+            }
+        }
+        out.push_back(c);
+    }
+    return out;
 }
 
 } // namespace gc::core
