@@ -15,6 +15,7 @@
 
 #include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_pose_edit.hpp"
+#include "gc/core/history_store.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/session.hpp"
 #include "gc/core/settings.hpp"
@@ -280,6 +281,7 @@ private:
 
     core::ProjectsStore& store_;
     std::unique_ptr<core::EditSession> session_;
+    std::unique_ptr<core::Autosave> autosave_; // después de session_: se destruye antes
     mutable core::RandomIdSource ids_;
     std::string project_id_;
     QString project_name_;

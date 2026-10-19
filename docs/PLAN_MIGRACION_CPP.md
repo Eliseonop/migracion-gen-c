@@ -1364,6 +1364,5 @@ Decisión de Edu (§6):
 
 **Siguiente:**
 - El resto del texto (opacidades y desenfoques de fondo, sombra y brillo, curva, karaoke por palabra).
-- El historial de deshacer en disco en el studio.
 - Recortar.
 - El preview espera a `gc_render`.

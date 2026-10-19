@@ -16,6 +16,7 @@
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/collections.hpp"
+#include "gc/core/history_store.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/library.hpp"
@@ -214,9 +215,18 @@ bool EditorModel::openProject(const QString& pid) {
     }
     load_sfx("", "");
     load_collections("", "");
-    session_ = std::make_unique<core::EditSession>((*project)->timeline.value_or(default_timeline()));
-    session_->subscribe([this](const core::TimelineSnapshot& tl, const core::Change&) {
-        (void)ok(store_.save_timeline(project_id_, core::to_json(*tl)));
+    // Deshacer sobrevive a cerrar el proyecto: data/history/<pid>.json, el mismo archivo que video-yt.
+    autosave_.reset();
+    const auto history_file = core::history_path(store_.file().parent_path(), project_id_);
+    session_ = std::make_unique<core::EditSession>((*project)->timeline.value_or(default_timeline()),
+                                                   core::load_history(history_file));
+    autosave_ = std::make_unique<core::Autosave>(*session_, history_file, [this](const core::Timeline& tl) {
+        const auto saved = store_.save_timeline(project_id_, core::to_json(tl));
+        return saved ? Result<void>{} : Result<void>(std::unexpected(saved.error()));
+    });
+    session_->subscribe([this](const core::TimelineSnapshot&, const core::Change&) {
+        const auto failed = autosave_->last_error();
+        setError(failed ? qstr(failed->message) : QString());
         rebuild();
     });
     selection_ = {};
@@ -304,6 +314,7 @@ void EditorModel::searchSfx(const QString& q, const QString& category) {
 }
 
 void EditorModel::closeProject() {
+    autosave_.reset();
     session_.reset();
     project_id_.clear();
     project_name_.clear();

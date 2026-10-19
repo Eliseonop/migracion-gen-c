@@ -729,3 +729,21 @@ TEST_CASE("editor: material de la biblioteca y de la carpeta de SFX", "[studio]"
     m.searchSfx("pum", "");
     CHECK(std::ranges::any_of(m.materials(), [](const QVariant& v) { return v.toMap()["source"] == "sfx"; }));
 }
+
+TEST_CASE("editor: deshacer sobrevive a cerrar y abrir el proyecto", "[studio]") {
+    Fixture f;
+    {
+        studio::EditorModel m(f.store);
+        REQUIRE(m.openProject("p1"));
+        m.moveClip("b", 7, "V1");
+        CHECK(m.canUndo());
+    }
+    CHECK(std::filesystem::exists(f.dir / "data" / "history" / "p1.json"));
+    studio::EditorModel again(f.store);
+    REQUIRE(again.openProject("p1"));
+    CHECK(start_of(f.saved(), "b") == 7);
+    REQUIRE(again.canUndo());
+    again.undo();
+    CHECK(start_of(f.saved(), "b") == 6);
+    CHECK(again.canRedo());
+}
