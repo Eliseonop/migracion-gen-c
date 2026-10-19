@@ -455,8 +455,8 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 
 ## F5 — Editor de escritorio Qt → **M2**
 
-- [ ] App Qt Quick (QML + ViewModels C++) con preview como `QQuickItem`
-- [ ] 1. Inicio: proyectos y carpetas
+- [ ] App Qt Quick (QML + ViewModels C++) con preview como `QQuickItem` *(empezada, 2026-10-19: `apps/studio`, que se compila si hay Qt ≥ 6.4. `gc_studio` lleva los ViewModels y el arranque con avisos estrictos; el ejecutable `genclip-studio` añade el módulo QML `GenClip.Studio`, cuyo C++ generado por qmlcachegen no pasa `gc_set_warnings`. `--root <carpeta>` abre una carpeta con `data/projects.json` y `clips/`, como `backend/` de video-yt; `--grab <png>` guarda una captura y sale, para revisarla sin pantalla con `QT_QPA_PLATFORM=offscreen`. Probado en Linux con Qt 6.4.2 de apt: no usa nada de 6.5 o posterior, como `loadFromModule` o `topLeftRadius`. Falta el preview)*
+- [ ] 1. Inicio: proyectos y carpetas *(hecho salvo la miniatura: `HomeModel` sobre `ProjectsStore` con la lógica de `Home.jsx`: un group_id huérfano cuenta como sin carpeta, los nombres vacíos o iguales no llaman al almacén, crear entra en la carpeta del proyecto y abre el proyecto, y los errores del almacén quedan en `error`. En QML: barra de carpetas, crear, migas, rejilla, renombrar en el sitio y arrastrar proyectos a carpetas. Tests en `test_home_model.cpp`. Falta la miniatura del primer clip, que necesita gc_media)*
 - [ ] 2. Editor: preview + timeline (arrastre sin solapes, pista magnética, zoom, beats y marcadores)
 - [ ] 3. Inspector: transform, texto, filtros, máscaras y modal de recortar
 - [ ] Pestaña **Efectos** del inspector (plan §6.3): aparece al añadir un efecto al clip; una subpestaña por efecto, en el orden de `vfx` y reordenable, con sus propiedades generadas desde los `params` del catálogo (`toggle`, `range`, `select`, `color`…), activar o desactivar, restablecer y quitar. Con muchos efectos, una lista de tarjetas plegables

@@ -17,6 +17,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 option(GC_BUILD_TESTS "Compilar los tests" ${PROJECT_IS_TOP_LEVEL})
 option(GC_BUILD_CLI "Compilar la herramienta de línea de órdenes genclip" ON)
+option(GC_BUILD_STUDIO "Compilar el editor genclip-studio si hay Qt 6" ON)
 option(GC_WARNINGS_AS_ERRORS "Tratar los warnings como errores (CI)" OFF)
 
 include(GcOptions)
@@ -36,6 +37,14 @@ endif()
 
 if(GC_BUILD_CLI)
     add_subdirectory(apps/cli)
+endif()
+
+if(GC_BUILD_STUDIO)
+    find_package(Qt6 6.4 QUIET COMPONENTS Quick QuickControls2)
+    if(Qt6_FOUND)
+        message(STATUS "Qt ${Qt6_VERSION} encontrado: se compila genclip-studio")
+        add_subdirectory(apps/studio)
+    endif()
 endif()
 
 if(GC_BUILD_TESTS)
