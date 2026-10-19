@@ -146,12 +146,12 @@ std::vector<ClipFilter> clip_filters(const TimelineClip& clip) {
             if (!f.is_object()) {
                 continue;
             }
-            const auto id = f.find("id");
-            if (id == f.end() || !id->is_string() || find_filter(id->get_ref<const std::string&>()) == nullptr) {
+            const std::string id =
+                f.value("id", Json{}).is_string() ? f["id"].get<std::string>() : std::string{};
+            if (id.empty() || find_filter(id) == nullptr) {
                 continue;
             }
-            const auto amount = f.find("amount");
-            out.push_back({id->get<std::string>(), amount == f.end() ? 1.0 : clamp01(*amount)});
+            out.push_back({id, f.contains("amount") ? clamp01(f["amount"]) : 1.0});
         }
         return out;
     }
