@@ -155,7 +155,7 @@ struct DropQuery {
     double duration = 0;
     std::optional<double> pointer_time = {};
     std::span<const std::string> exclude = {};
-    std::string_view origin_id;
+    std::string_view origin_id = {};
     bool origin_alone = false;
     bool replace = false; // Alt
     double pps = 60;

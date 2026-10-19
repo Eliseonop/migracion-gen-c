@@ -52,15 +52,22 @@ struct Studio {
         app();
         std::filesystem::remove_all(dir);
         const Json tracks = Json::array({{{"id", "V1"}, {"kind", "video"}, {"name", "V1"}},
-                                         {{"id", "V2"}, {"kind", "video"}, {"name", "V2"}}});
+                                         {{"id", "V2"}, {"kind", "video"}, {"name", "V2"}},
+                                         {{"id", "A1"}, {"kind", "audio"}, {"name", "A1"}}});
         const Json tl = {{"schema_version", 5},
                          {"tracks", tracks},
                          {"clips", Json::array({clip("a", "V1", 0, 4), clip("b", "V1", 6, 3)})}};
-        REQUIRE(core::write_json_file(dir / "data" / "projects.json",
-                                      {{"projects", Json::array({{{"id", "p1"},
-                                                                  {"name", "Uno"},
-                                                                  {"created_at", "2026-10-19T10:00:00+00:00"},
-                                                                  {"timeline", tl}}})}}));
+        REQUIRE(core::write_json_file(
+            dir / "data" / "projects.json",
+            {{"projects", Json::array({{{"id", "p1"},
+                                        {"name", "Uno"},
+                                        {"created_at", "2026-10-19T10:00:00+00:00"},
+                                        {"timeline", tl},
+                                        {"audios", Json::array({{{"id", "a1"},
+                                                                 {"filename", "m.mp3"},
+                                                                 {"url", "/u"},
+                                                                 {"duration", 5.0},
+                                                                 {"label", "Música"}}})}}})}}));
         store = std::make_unique<core::ProjectsStore>(dir / "data" / "projects.json", dir / "clips");
         home = std::make_unique<studio::HomeModel>(*store, ids);
         editor = std::make_unique<studio::EditorModel>(*store);
@@ -199,4 +206,22 @@ TEST_CASE("studio sin pantalla: con la pista bloqueada sus clips no se arrastran
     s.drag(from, from - QPoint(60, 0));
     CHECK(s.view("b")["start"].toDouble() == 6.0);
     CHECK(s.view("b")["locked"] == true);
+}
+
+TEST_CASE("studio sin pantalla: arrastrar material del panel a la timeline crea el clip", "[studio][ui]") {
+    Studio s;
+    QQuickItem* card = s.item("material:audios:a1");
+    REQUIRE(card);
+    QQuickItem* a = s.item("clip:a");
+    REQUIRE(a);
+    // A la fila del audio (debajo de V1), a la altura de 10 s.
+    const double pps = s.editor->pps();
+    const QPointF lane = a->mapToScene(QPointF(0, 0)) - QPointF(a->x(), a->y() - 3);
+    const QPoint to = (lane + QPointF(10 * pps, 52 * 2 + 26)).toPoint();
+    s.drag(card->mapToScene(QPointF(20, card->height() / 2)).toPoint(), to);
+    QCoreApplication::processEvents();
+    REQUIRE(s.editor->clips().size() == 3);
+    const QVariantMap made = s.editor->selectedClip();
+    CHECK(made["kind"] == "audio");
+    CHECK(std::abs(made["start"].toDouble() - (to.x() - lane.x()) / pps) < 0.1);
 }

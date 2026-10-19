@@ -9,6 +9,7 @@
 #include <QStringList>
 #include <QVariantList>
 #include <QVariantMap>
+#include <map>
 #include <memory>
 #include <optional>
 
@@ -31,6 +32,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(int fps READ fps NOTIFY timelineChanged)
     Q_PROPERTY(double aspect READ aspect NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList markers READ markers NOTIFY timelineChanged)
+    Q_PROPERTY(QVariantList materials READ materials NOTIFY projectChanged)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
@@ -52,6 +54,8 @@ public:
     [[nodiscard]] QVariantList clips() const;
     [[nodiscard]] double duration() const;
     [[nodiscard]] QVariantList markers() const;
+    // Material del proyecto (vídeos, imágenes y audios): [{key, assetKind, kind, name, duration}].
+    [[nodiscard]] QVariantList materials() const { return materials_; }
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
@@ -78,6 +82,11 @@ public:
     Q_INVOKABLE QVariantMap previewDrag(const QString& id, double delta, double centerY) const;
     Q_INVOKABLE void dropDrag(const QString& id, double delta, double centerY);
     // Inicio y pista exactos (sin imán ni pista nueva): para scripts y tests.
+    // Material arrastrado desde el panel con el puntero en (x, y) px de las filas; `alt` reemplaza el
+    // clip de debajo: {start, trackId, newTrack, lineY, times, duration}. No cambia nada.
+    Q_INVOKABLE QVariantMap previewMaterialDrop(const QString& key, double x, double y, bool alt) const;
+    // Lo suelta (dropAsset de VideoEditor.jsx) y selecciona el clip nuevo.
+    Q_INVOKABLE void dropMaterial(const QString& key, double x, double y, bool alt);
     Q_INVOKABLE void moveClip(const QString& id, double start, const QString& trackId);
     // {start, duration, times} del clip con el borde movido `delta` s. No cambia nada.
     Q_INVOKABLE QVariantMap previewTrim(const QString& id, bool left, double delta) const;
@@ -134,6 +143,8 @@ private:
     [[nodiscard]] std::optional<DragPlan> planDrag(const QString& id, double delta, double centerY) const;
     [[nodiscard]] std::optional<core::ClipPatch> planTrim(const QString& id, bool left, double delta,
                                                           std::vector<double>* times = nullptr) const;
+    [[nodiscard]] std::optional<std::pair<Json, core::Drop>> planMaterialDrop(const QString& key, double x,
+                                                                              double y, bool alt) const;
     [[nodiscard]] std::vector<core::AlignClip> snapOthers(std::span<const std::string> moving,
                                                           bool beats_too) const;
     [[nodiscard]] const core::TimelineClip* clip(const QString& id) const;
@@ -146,6 +157,8 @@ private:
     std::string project_id_;
     QString project_name_;
     QVariantList tracks_;
+    QVariantList materials_;
+    std::map<QString, Json> payloads_; // material → dragPayload
     ClipListModel clip_model_;
     core::ClipSelection selection_;
     double playhead_ = 0;

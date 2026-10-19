@@ -198,6 +198,42 @@ Rectangle {
 
             TapHandler { onTapped: timeline.model.clearSelection() }
 
+            // Material soltado desde el panel: el clip empieza bajo el puntero.
+            DropArea {
+                id: materialDrop
+                anchors.fill: parent
+                keys: ["material"]
+                property var hint: null
+                onPositionChanged: (d) => hint = timeline.model.previewMaterialDrop(d.source.materialKey, d.x, d.y, false)
+                onExited: hint = null
+                onDropped: (d) => {
+                    const key = d.source.materialKey
+                    const x = d.x
+                    const y = d.y
+                    hint = null
+                    Qt.callLater(() => timeline.model.dropMaterial(key, x, y, false))
+                }
+            }
+            Rectangle { // dónde caerá
+                visible: !!materialDrop.hint && !materialDrop.hint.newTrack && !!materialDrop.hint.trackId
+                x: visible ? materialDrop.hint.start * timeline.pps : 0
+                y: visible ? timeline.rowY(materialDrop.hint.trackId) + 3 : 0
+                width: visible ? Math.max(6, materialDrop.hint.duration * timeline.pps) : 0
+                height: 40
+                z: 6
+                radius: 6
+                color: Qt.rgba(0.13, 0.77, 0.37, 0.22)
+                border.color: "#22c55e"
+            }
+            Rectangle {
+                visible: !!materialDrop.hint && materialDrop.hint.newTrack
+                y: visible ? materialDrop.hint.lineY - 1 : 0
+                width: lanes.width
+                height: 2
+                z: 8
+                color: "#22c55e"
+            }
+
             Repeater {
                 model: timeline.model.tracks
                 Rectangle {

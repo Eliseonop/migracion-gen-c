@@ -90,6 +90,13 @@ Item {
             Layout.preferredHeight: 3
             spacing: 10
 
+            MaterialPanel {
+                Layout.preferredWidth: 260
+                Layout.fillHeight: true
+                model: editor.model
+                dragLayer: overlay
+            }
+
             Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -139,4 +146,6 @@ Item {
             model: editor.model
         }
     }
+
+    Item { id: overlay; anchors.fill: parent; z: 100 }
 }

@@ -9,6 +9,7 @@
 
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/keyframes.hpp"
+#include "gc/core/material_drop.hpp"
 #include "gc/core/no_overlap.hpp"
 #include "gc/core/pose.hpp"
 #include "gc/core/serialize.hpp"
@@ -89,6 +90,27 @@ bool EditorModel::openProject(const QString& pid) {
     }
     project_id_ = (*project)->id;
     project_name_ = qstr((*project)->name);
+    materials_.clear();
+    payloads_.clear();
+    const auto add = [&](const char* asset_kind, const QString& key, const Json& item, const char* kind) {
+        const Json payload = core::drag_payload(asset_kind, item);
+        payloads_[key] = payload;
+        materials_ << QVariantMap{
+            {"key", key},
+            {"assetKind", asset_kind},
+            {"kind", kind},
+            {"name", qstr(payload.value("name", Json("")).is_string() ? payload.value("name", "") : "")},
+            {"duration", core::js_number(payload.value("duration", Json(0)))}};
+    };
+    for (const auto& c : (*project)->clips) {
+        add("clips", QString("clips:%1").arg(c.index), core::to_json(c), "video");
+    }
+    for (const auto& i : (*project)->images) {
+        add("images", "images:" + qstr(i.id), core::to_json(i), "image");
+    }
+    for (const auto& a : (*project)->audios) {
+        add("audios", "audios:" + qstr(a.id), core::to_json(a), "audio");
+    }
     session_ = std::make_unique<core::EditSession>((*project)->timeline.value_or(default_timeline()));
     session_->subscribe([this](const core::TimelineSnapshot& tl, const core::Change&) {
         (void)ok(store_.save_timeline(project_id_, core::to_json(*tl)));
@@ -420,6 +442,96 @@ void EditorModel::dropDrag(const QString& id, double delta, double centerY) {
         }
     }
     commit(std::move(next), "move", {c->id}, {c->track_id});
+}
+
+// materialTarget de EdTimeline.jsx: el material empieza en el puntero, con el imán, y cae donde
+// diga dropTarget.
+std::optional<std::pair<Json, core::Drop>> EditorModel::planMaterialDrop(const QString& key, double x,
+                                                                         double y, bool alt) const {
+    const auto it = payloads_.find(key);
+    if (!session_ || it == payloads_.end()) {
+        return std::nullopt;
+    }
+    const Json& payload = it->second;
+    const core::Timeline& tl = *session_->timeline();
+    const double d = core::js_number(payload.value("duration", Json(0)));
+    const double span = std::max(0.1, std::isnan(d) || d == 0 ? 1 : d);
+    const double pointer = x / pps_;
+    const double thr = core::align_threshold_sec(pps_);
+    core::TimelineClip ghost;
+    ghost.id = "__drop__";
+    ghost.start = pointer;
+    ghost.out_point = span;
+    const auto snapped = core::snap_clip_move(ghost, 0, snapOthers({}, false), thr);
+    std::vector<core::TrackRow> geo;
+    for (const QVariant& v : tracks_) {
+        const QVariantMap t = v.toMap();
+        geo.push_back({t["id"].toString().toStdString(), t["y"].toDouble(),
+                       t["y"].toDouble() + t["height"].toDouble()});
+    }
+    const std::string kind = core::lane_kind_for_asset(payload.value("asset_kind", std::string()));
+    const auto land = core::drop_target(tl.tracks, tl.clips, geo,
+                                        {.kind = kind,
+                                         .y = y,
+                                         .time = snapped.start,
+                                         .duration = span,
+                                         .pointer_time = pointer,
+                                         .replace = alt,
+                                         .pps = pps_,
+                                         .snap_sec = thr});
+    if (!land) {
+        return std::nullopt;
+    }
+    return std::pair{payload, *land};
+}
+
+QVariantMap EditorModel::previewMaterialDrop(const QString& key, double x, double y, bool alt) const {
+    const auto plan = planMaterialDrop(key, x, y, alt);
+    if (!plan) {
+        return {};
+    }
+    const core::Drop& land = plan->second;
+    const double d = core::js_number(plan->first.value("duration", Json(0)));
+    return {{"start", land.start},
+            {"trackId", land.track_id ? qstr(*land.track_id) : QString()},
+            {"newTrack", land.slot.has_value()},
+            {"lineY", land.line_y},
+            {"replace", land.replace_id.has_value()},
+            {"duration", std::max(0.1, std::isnan(d) || d == 0 ? 1 : d)}};
+}
+
+void EditorModel::dropMaterial(const QString& key, double x, double y, bool alt) {
+    const auto plan = planMaterialDrop(key, x, y, alt);
+    if (!plan) {
+        return;
+    }
+    const auto& [payload, land] = *plan;
+    core::Timeline next = *session_->timeline();
+    std::string track_id = land.track_id.value_or("");
+    std::optional<double> fit;
+    if (land.slot) { // resolveDropTarget: la pista nueva se crea ahora
+        core::TimelineTrack t =
+            core::build_track(core::lane_kind_for_asset(payload.value("asset_kind", std::string())),
+                              next.tracks, ids_.hex32().substr(0, 8));
+        track_id = t.id;
+        next.tracks.insert(next.tracks.begin() +
+                               static_cast<std::ptrdiff_t>(core::slot_index(next.tracks, *land.slot)),
+                           std::move(t));
+    } else if (land.replace_id) {
+        if (const core::TimelineClip* old = clip(qstr(*land.replace_id))) {
+            fit = core::ui_clip_duration(*old);
+        }
+        std::erase_if(next.clips, [&](const auto& c) { return c->id == *land.replace_id; });
+    }
+    auto made = core::clip_from_json(core::place_asset_clip(payload, track_id, land.start, fit, ids_));
+    if (!ok(made)) {
+        return;
+    }
+    const std::string id = made->id;
+    next.clips.emplace_back(std::move(*made));
+    selection_ = {{id}, id};
+    commit(std::move(next), "drop-material", {id});
+    emit selectionChanged();
 }
 
 void EditorModel::moveClip(const QString& id, double start, const QString& trackId) {

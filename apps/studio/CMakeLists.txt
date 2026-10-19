@@ -9,7 +9,8 @@ target_include_directories(gc_studio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gc_studio PUBLIC gc::core Qt6::Core Qt6::Gui Qt6::Quick Qt6::QuickControls2)
 gc_set_warnings(gc_studio)
 
-set(qml_files Main Theme Home SideItem ProjectCard FolderCard InlineEdit IconButton Editor Timeline Inspector)
+set(qml_files Main Theme Home SideItem ProjectCard FolderCard InlineEdit IconButton Editor Timeline Inspector
+              MaterialPanel)
 list(TRANSFORM qml_files REPLACE "(.+)" "qml/\\1.qml")
 foreach(file IN LISTS qml_files)
     cmake_path(GET file FILENAME name)
