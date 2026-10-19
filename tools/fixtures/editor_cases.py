@@ -484,6 +484,31 @@ def _vfx_case(rng: random.Random) -> dict:
     return {"name": "efectos animados", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
 
 
+def _mask_case(rng: random.Random) -> dict:
+    """Máscaras desde el editor (addMask, removeMask, duplicateMask, changeMask y commitMask)."""
+    m0 = {"id": "m1", "type": "rectangle", "x": 0.3, "y": 0.6, "w": 0.4, "h": 0.2, "feather": 0.05, "target": "clip"}
+    clips = [clip("v0", "V1", start=0, out=6),
+             clip("v1", "V1", start=7, out=6, masks=[m0, {"id": "m2", "type": "text", "text": {"content": "hola"}}]),
+             clip("v2", "V2", start=0, out=5, masks=[dict(m0, id="m3")], keyframes={"enabled": True, "items": [
+                 {"id": "a", "t": 0, "props": {"x": 0.5, "mx": 0.3, "mw": 0.4}}, {"id": "b", "t": 2, "props": {"mx": 0.7, "msx": 2}}]}),
+             clip("t0", "T1", "text", start=0, out=3, text="hola", masks=[{"id": "m4", "type": "brush", "brush": {"points": [{"x": 0.1, "y": 0.2, "m": 1}, {"x": "a"}]}}])]
+    calls: list = []
+    for c in clips:
+        for aspect in (9 / 16, 16 / 9, 0, -1):
+            for typ in ("circle", "linear", "film", "rectangle", "star", "heart", "text", "brush", "nada"):
+                calls.append(["maskOp", c["id"], "addMask", typ, aspect, 0, 30])
+            calls.append(["maskOp", c["id"], "addAdjust", "circle", aspect, 0, 30])
+        for op in ("removeMask", "duplicateMask"):
+            calls.append(["maskOp", c["id"], op, None, 9 / 16, 0, 30])
+        for patch in ({"type": "star"}, {"type": "rectangle"}, {"type": ""}, {"invert": True, "opacity": 3},
+                      {"x": "0.2", "radius": 0.9, "target": "adjust"}, {"text": {"content": "nuevo", "size": 9}}, {"enabled": False}):
+            calls.append(["maskOp", c["id"], "changeMask", patch, rng.choice([9 / 16, 1]), 0, 30])
+        for patch in ({"mx": 0.2, "my": "0.8"}, {"mw": 9, "mfeather": 1}, {"mrot": 45, "msx": 0.5}, {"x": 0.1}, {"mx": None}):
+            for t in (0, 1.25, 3):
+                calls.append(["maskOp", c["id"], "commitMask", patch, 9 / 16, t, rng.choice([30, 24])])
+    return {"name": "máscaras", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -506,5 +531,6 @@ def cases() -> list[dict]:
     out.append({"name": "encuadre", "timeline": {"tracks": TRACKS, "clips": POSE_CLIPS}, "calls": _layout_calls(rng)})
     out.append(_linked_case(rng))
     out.append(_vfx_case(rng))
+    out.append(_mask_case(rng))
     out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
     return out

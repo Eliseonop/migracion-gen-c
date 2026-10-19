@@ -14,6 +14,7 @@
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/mask_edit.hpp"
 #include "gc/core/material_drop.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/shapes.hpp"
@@ -603,6 +604,29 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     }
     if (fn == "newTextDuration") {
         return new_text_duration(tl, num(1));
+    }
+    if (fn == "maskOp") {
+        SequentialIdSource ids;
+        TimelineClip c = clip(call.at(1));
+        const std::string op = str(2);
+        const double aspect = num(4);
+        if (op == "addMask" || op == "addAdjust") {
+            add_mask(c, str(3), op == "addMask" ? "clip" : "adjust", aspect, ids);
+        } else if (op == "removeMask") {
+            remove_mask(c);
+        } else if (op == "duplicateMask") {
+            duplicate_mask(c, ids);
+        } else if (op == "changeMask") {
+            change_mask(c, call.at(3), aspect, ids);
+        } else {
+            commit_mask(c, call.at(3), num(5), num(6), ids);
+        }
+        Json masks = Json::array();
+        for (Json m : c.masks) {
+            m.erase("id");
+            masks.push_back(std::move(m));
+        }
+        return {{"masks", masks}, {"keyframes", c.keyframes ? without_ids(*c.keyframes) : Json()}};
     }
     if (fn == "normalizeVfxEntry" || fn == "makeVfxEntry" || fn == "keepsUid") {
         SequentialIdSource ids;

@@ -26,6 +26,23 @@ const karaoke = await load('lib/textKaraoke.js')
 const shapes = await load('lib/shapes.js')
 const themes = await load('lib/subtitleThemes.js')
 const fxRuntime = await load('fx/core/runtime.js')
+const maskLib = await load('lib/clipMask.js')
+// Máscaras de VideoEditor.jsx (addMask, removeMask, duplicateMask, changeMask y commitMask) sobre un clip.
+const maskOps = (clip, aspect, fps, t) => {
+  let made = clip
+  const setClips = (fn) => { made = fn([made])[0] }
+  const src = `${root}/features/editor/VideoEditor.jsx`
+  const deps = { setClips, clipMasks: maskLib.clipMasks, defaultMask: maskLib.defaultMask, normalizeMask: maskLib.normalizeMask,
+    maskId: maskLib.maskId, MASK_KF_KEYS: maskLib.MASK_KF_KEYS, outAspect: aspect, setMaskMode: () => {}, setMaskDraw: () => {},
+    shouldKeyframe: kf.shouldKeyframe, localTOf: () => Math.max(0, t), upsertKf: (c, tt, p, i) => kf.upsertKeyframeAt(c, tt, p, i, fps),
+    markKf: () => {} }
+  const names = ['patchFirstMask', 'retypeMask', 'dropMaskSizeKfs', 'applyStaticMask']
+  const body = names.map((n) => extractFunction(src, n)).join('\n')
+  const make = (name) => new Function(...Object.keys(deps), 'selectedClip',
+    `${body}\n${extractFunction(src, name)}\nreturn ${name}`)(...Object.values(deps), clip)
+  return { run: (name, ...args) => { make(name)(...args); return made } }
+}
+const masksOf = (c) => (c.masks || []).map(({ id, ...m }) => m)
 const noUid = (e) => { if (!e) return null; const { uid, ...rest } = e; return rest }
 
 // applyStaticPose vive dentro de VideoEditor.jsx (no se exporta): se extrae su texto y se evalúa con
@@ -237,6 +254,12 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     makeAdjustmentClip: (track, start, dur) => {
       const { id, ...rest } = m.makeAdjustmentClip(track, start, dur ?? undefined)
       return rest
+    },
+    maskOp: (id, op, arg, aspect, t, fps) => {
+      const ops = maskOps(byId(id), aspect, fps, t)
+      const c = op === 'addMask' ? ops.run('addMask', arg, 'clip') : op === 'addAdjust' ? ops.run('addMask', arg, 'adjust')
+        : op === 'changeMask' || op === 'commitMask' ? ops.run(op, id, arg) : ops.run(op)
+      return { masks: masksOf(c), keyframes: noIds(c).keyframes ?? null }
     },
     normalizeVfxEntry: (raw) => noUid(fxRuntime.normalizeVfxEntry(raw)),
     keepsUid: (raw) => fxRuntime.normalizeVfxEntry(raw)?.uid ?? null,
