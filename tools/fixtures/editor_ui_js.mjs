@@ -24,6 +24,7 @@ const layout = await load('lib/clipLayout.js')
 const textstyles = await load('lib/textstyles.js')
 const karaoke = await load('lib/textKaraoke.js')
 const shapes = await load('lib/shapes.js')
+const themes = await load('lib/subtitleThemes.js')
 
 // applyStaticPose vive dentro de VideoEditor.jsx (no se exporta): se extrae su texto y se evalúa con
 // lo que usa. Es JS sin JSX.
@@ -231,6 +232,14 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       const c = noIds(changeShape(byId(id), patch, t, fps))
       return { shape: c.shape ?? null, keyframes: c.keyframes ?? null }
     },
+    subtitleThemes: () => themes.SUBTITLE_THEMES,
+    textLooks: () => textstyles.TEXT_LOOKS,
+    applyThemeToStyle: (cur, id) => karaoke.applyThemeToStyle(cur, themes.themeById(id)),
+    clearTextTheme: (cur) => textstyles.clearTextTheme(cur),
+    selectedSubtitleThemeId: (st) => textstyles.selectedSubtitleThemeId(st),
+    applyOrClearTheme: (cur, id) => textstyles.applyOrClearTheme(cur, id ? themes.themeById(id) : null),
+    lookPatch: (id) => textstyles.lookPatch(textstyles.TEXT_LOOKS.find((l) => l.id === id) || null),
+    activeLookId: (st) => textstyles.activeLookId(st),
     defaultTextStyle: () => textstyles.defaultTextStyle(),
     subtitleStyle: () => textstyles.subtitleStyle(),
     newTextStyle: (trackStyle) => newTextStyle(trackStyle),

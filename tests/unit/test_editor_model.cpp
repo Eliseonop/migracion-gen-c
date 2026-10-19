@@ -465,3 +465,24 @@ TEST_CASE("editor: la velocidad de un audio estira sus subtítulos enlazados", "
     CHECK(m.selectedClip()["start"] == 2.0); // el audio empieza en 0: todo a la mitad
     CHECK(m.selectedClip()["duration"] == 1.0);
 }
+
+TEST_CASE("editor: temas de subtítulos y estilos preestablecidos de un texto", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    CHECK(studio::EditorModel::textThemes().size() > 20);
+    m.addText();
+    m.changeStyle({{"x", 0.3}});
+    m.applyTextTheme("neon");
+    QVariantMap st = m.selectedClip()["style"].toMap();
+    CHECK(m.selectedClip()["themeId"] == "neon");
+    CHECK(st["font"] == "Segoe UI Black");
+    CHECK(st["x"] == 0.3); // el tema conserva la caja
+    m.applyTextTheme("neon"); // otro clic en el mismo lo quita
+    CHECK(m.selectedClip()["themeId"] == "");
+    CHECK(m.selectedClip()["style"].toMap()["preset"] == "outline");
+    m.applyTextLook("black-yellow");
+    CHECK(m.selectedClip()["lookId"] == "black-yellow");
+    m.applyTextLook("");
+    CHECK(m.selectedClip()["lookId"] == "none");
+}

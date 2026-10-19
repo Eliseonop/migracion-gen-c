@@ -1,7 +1,10 @@
 #include "gc/core/text_clip_ui.hpp"
 
 #include <algorithm>
+#include <array>
+#include <cctype>
 #include <cmath>
+#include <initializer_list>
 
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/keyframes.hpp"
@@ -13,6 +16,10 @@ namespace gc::core {
 namespace {
 
 constexpr double kTextDefaultDuration = 3; // TEXT_DEFAULT_DUR
+constexpr std::array<std::string_view, 9> kLookKeys{"color",  "border_width", "border_color", "bg",       "bg_opacity",
+                                                    "shadow", "shadow_color", "glow",         "glow_color"};
+
+#include "text_themes.inc"
 
 const Json& field(const Json& obj, std::string_view key) {
     static const Json kNull;
@@ -21,6 +28,63 @@ const Json& field(const Json& obj, std::string_view key) {
     }
     const auto it = obj.find(std::string(key));
     return it == obj.end() ? kNull : *it;
+}
+
+bool truthy(const Json& v) {
+    if (v.is_null()) {
+        return false;
+    }
+    if (v.is_boolean()) {
+        return v.get<bool>();
+    }
+    if (v.is_number()) {
+        return v.get<double>() != 0 && !std::isnan(v.get<double>());
+    }
+    return !v.is_string() || !v.get_ref<const std::string&>().empty();
+}
+
+// String(x) de JS para lo que guarda un estilo.
+std::string js_string(const Json& v) {
+    if (v.is_string()) {
+        return v.get<std::string>();
+    }
+    if (v.is_null()) {
+        return "null";
+    }
+    if (v.is_boolean()) {
+        return v.get<bool>() ? "true" : "false";
+    }
+    if (v.is_number_integer()) {
+        return v.dump();
+    }
+    if (v.is_number()) {
+        const double d = v.get<double>();
+        return d == std::trunc(d) && std::abs(d) < 1e15 ? std::to_string(static_cast<long long>(d)) : v.dump();
+    }
+    return v.dump();
+}
+
+std::string lower(std::string s) {
+    std::ranges::transform(s, s.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+    return s;
+}
+
+// a ?? b ?? c de JS: el primero que no sea null; sin ninguno, la clave no se escribe.
+void coalesce(Json& out, const char* key, std::initializer_list<Json> values) {
+    for (const Json& v : values) {
+        if (!v.is_null()) {
+            out[key] = v;
+            return;
+        }
+    }
+    out.erase(key);
+}
+
+// karaokeOn: algún efecto de palabra conocido (highlight, glow, pop).
+bool karaoke_on(const Json& style) {
+    const Json& fx = field(style, "word_fx");
+    const auto known = [](const Json& x) { return x == "highlight" || x == "glow" || x == "pop"; };
+    return fx.is_array() ? std::ranges::any_of(fx, known) : known(fx);
 }
 
 } // namespace
@@ -51,13 +115,113 @@ Json default_text_style() {
             {"preset", "outline"}};
 }
 
-Json subtitle_style() {
-    return {{"size", 0.048},          {"bold", true},           {"align", "center"},      {"x", 0.5},
-            {"y", 0.86},              {"w", 0.88},              {"bg", "none"},           {"bg_opacity", 0.55},
-            {"shadow", false},        {"glow", false},          {"inactive_opacity", 0.55}, {"active_opacity", 1},
-            {"max_words", 8},         {"font", "Arial Black"},  {"color", "#ffffff"},     {"border_width", 5},
-            {"border_color", "#111111"}, {"highlight_color", "#ffe566"}, {"word_fx", "highlight"},
-            {"block_appear", "fade"}, {"theme", "classic"},     {"preset", "classic"},    {"opacity", 1}};
+Json subtitle_style() { return apply_theme_to_style(Json::object(), *theme_by_id("classic")); }
+
+const Json& subtitle_themes() {
+    static const Json themes = Json::parse(kSubtitleThemesJson);
+    return themes;
+}
+
+const Json* theme_by_id(std::string_view id) {
+    const auto& list = subtitle_themes();
+    const auto it = std::ranges::find_if(list, [&](const Json& t) { return t.at("id") == id; });
+    return it == list.end() ? nullptr : &*it;
+}
+
+Json apply_theme_to_style(const Json& current, const Json& theme) {
+    const Json& pack = field(theme, "style").is_object() ? theme.at("style") : Json::object();
+    Json out = pack;
+    out["theme"] = theme.at("id");
+    out["preset"] = theme.at("id");
+    for (const char* key : {"x", "y", "w", "max_words"}) {
+        coalesce(out, key, {field(current, key), field(pack, key)});
+    }
+    coalesce(out, "opacity", {field(current, "opacity"), field(pack, "opacity"), Json(1)});
+    return out;
+}
+
+Json clear_text_theme(const Json& current) {
+    const Json plain = default_text_style();
+    Json out = plain;
+    for (const char* key : {"x", "y", "w", "size", "max_words"}) {
+        coalesce(out, key, {field(current, key), field(plain, key)});
+    }
+    coalesce(out, "opacity", {field(current, "opacity"), Json(1)});
+    return out;
+}
+
+std::optional<std::string> selected_subtitle_theme_id(const Json& style) {
+    const Json& id = truthy(field(style, "theme")) ? field(style, "theme") : field(style, "preset");
+    const Json* theme = id.is_string() ? theme_by_id(id.get<std::string>()) : nullptr;
+    if (!theme || (karaoke_on(theme->at("style")) && !karaoke_on(style))) {
+        return std::nullopt;
+    }
+    return id.get<std::string>();
+}
+
+Json apply_or_clear_theme(const Json& current, const Json* theme) {
+    if (!theme || selected_subtitle_theme_id(current) == theme->at("id").get<std::string>()) {
+        return clear_text_theme(current);
+    }
+    return apply_theme_to_style(current, *theme);
+}
+
+const Json& text_looks() {
+    static const Json looks = Json::parse(kTextLooksJson);
+    return looks;
+}
+
+Json look_patch(const Json* look) {
+    Json out = Json::parse(kLookBaseJson);
+    if (look && field(*look, "style").is_object()) {
+        for (const auto& [key, value] : look->at("style").items()) {
+            out[key] = value;
+        }
+    }
+    return out;
+}
+
+std::optional<std::string> active_look_id(const Json& style) {
+    static const Json base = Json::parse(kLookBaseJson);
+    const auto glow_color = [&] {
+        for (const char* key : {"glow_color", "shadow_color"}) {
+            if (truthy(field(style, key))) {
+                return js_string(field(style, key));
+            }
+        }
+        return std::string("#ffffff");
+    };
+    const auto same = [&](const Json& ref) {
+        return std::ranges::all_of(kLookKeys, [&](std::string_view k) {
+            const Json& a = field(style, k).is_null() ? field(base, k) : field(style, k);
+            const Json& b = field(ref, k);
+            if (k == "bg") {
+                return (truthy(a) ? js_string(a) : "none") == (truthy(b) ? js_string(b) : "none");
+            }
+            if (k == "bg_opacity" && (truthy(field(ref, "bg")) ? js_string(field(ref, "bg")) : "none") == "none") {
+                return true;
+            }
+            if (k == "shadow_color" && !truthy(field(ref, "shadow"))) {
+                return true;
+            }
+            if (k == "glow_color") {
+                return !truthy(field(ref, "glow")) || lower(glow_color()) == lower(js_string(b));
+            }
+            if (b.is_string()) {
+                return lower(js_string(a)) == lower(b.get<std::string>());
+            }
+            return js_number(a) == js_number(b) || a == b;
+        });
+    };
+    if (same(base)) {
+        return "none";
+    }
+    for (const Json& look : text_looks()) {
+        if (same(look.at("style"))) {
+            return look.at("id").get<std::string>();
+        }
+    }
+    return std::nullopt;
 }
 
 Json new_text_style(const Json& track_style) {

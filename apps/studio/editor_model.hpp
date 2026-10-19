@@ -33,6 +33,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(double aspect READ aspect NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList markers READ markers NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList materials READ materials NOTIFY projectChanged)
+    Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
+    Q_PROPERTY(QVariantList textLooks READ textLooks CONSTANT)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
@@ -56,6 +58,9 @@ public:
     [[nodiscard]] QVariantList markers() const;
     // Material del proyecto (vídeos, imágenes y audios): [{key, assetKind, kind, name, duration}].
     [[nodiscard]] QVariantList materials() const { return materials_; }
+    // Temas de subtítulos y estilos «Aa» con lo que pinta su muestra (color, trazo, fondo, brillo).
+    [[nodiscard]] static QVariantList textThemes();
+    [[nodiscard]] static QVariantList textLooks();
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
@@ -133,6 +138,10 @@ public:
     Q_INVOKABLE void changeShape(const QVariantMap& patch);
     Q_INVOKABLE void changeText(const QString& text);
     Q_INVOKABLE void changeStyle(const QVariantMap& patch, bool fixed = false);
+    // applyPreset: un clic aplica el tema a los textos seleccionados; otro en el mismo lo quita.
+    Q_INVOKABLE void applyTextTheme(const QString& id);
+    // Estilo preestablecido «Aa» (vacío = «Ninguno»).
+    Q_INVOKABLE void applyTextLook(const QString& id);
     // El rombo (toggleKeyframeAtPlayhead) del clip seleccionado; fundido de volumen de entrada o
     // salida y silenciar, en la selección.
     Q_INVOKABLE void toggleKeyframe();

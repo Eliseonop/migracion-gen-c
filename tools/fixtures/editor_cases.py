@@ -364,7 +364,27 @@ TEXT_CLIPS = POSE_CLIPS + [
 
 def _text_calls(rng: random.Random) -> list:
     """Textos del editor: crear (makeTextClip, newTextStyle) y cambiar su estilo (changeStyle)."""
-    calls: list = [["defaultTextStyle"], ["subtitleStyle"]]
+    calls: list = [["defaultTextStyle"], ["subtitleStyle"], ["subtitleThemes"], ["textLooks"]]
+    theme_ids = ["classic", "neon", "fire", "box", "shorts", "yellow", "gold-glow", "nada"]
+    currents = [None, {}, {"x": 0.3, "y": None, "w": 0.5, "size": 0.07, "opacity": 0.4, "max_words": 4},
+                {"theme": "neon", "word_fx": "glow"}, {"theme": "neon", "word_fx": "none"}, {"preset": "fire", "word_fx": ["pop"]},
+                {"theme": "", "preset": "box", "word_fx": "highlight"}, {"preset": "outline"}]
+    for cur in currents:
+        calls.append(["clearTextTheme", cur])
+        calls.append(["selectedSubtitleThemeId", cur])
+        for tid in theme_ids[:-1]:
+            calls.append(["applyThemeToStyle", cur or {}, tid])
+        for tid in theme_ids + [None]:
+            calls.append(["applyOrClearTheme", cur, tid])
+    looks = ["white-black", "black-white", "white-shadow", "black-grey", "black-green-glow", "white-yellow-glow", "nada", None]
+    for lk in looks:
+        calls.append(["lookPatch", lk])
+    sts = [{}, {"color": "#FFFFFF"}, {"color": "#ffe600", "border_width": "5"}, {"bg": "#9A9A9A", "bg_opacity": 0.3},
+           {"color": "#000000", "glow": True, "shadow_color": "#33ff33"}, {"glow": True, "glow_color": "#FFD400"},
+           {"shadow": True, "shadow_color": "#123456"}, {"border_width": 5, "border_color": "#000000", "bg": "none"},
+           {"color": "#000000", "bg": "#ffffff", "bg_opacity": 1}, {"border_width": 4.0, "shadow": True}]
+    for st in sts:
+        calls.append(["activeLookId", st])
     for ts in (None, {}, {"font": "Anton", "y": 0.2, "color": "#123456"}, {"x": None}):
         calls.append(["newTextStyle", ts])
     for text in ("hola", "", "Una frase bastante larga para el nombre", "ñandú 😀😀 emojis largos fin"):

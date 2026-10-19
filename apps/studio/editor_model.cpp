@@ -279,6 +279,9 @@ QVariantMap EditorModel::selectedClip() const {
                                   {"scalePct", tv.scale_pct},
                                   {"degrees", tv.rotation_deg}}},
         {"text", qstr(c->text.value_or(""))},
+        {"themeId", c->kind == "text" ? qstr(core::selected_subtitle_theme_id(c->style.value_or(Json())).value_or(""))
+                                       : QString()},
+        {"lookId", c->kind == "text" ? qstr(core::active_look_id(c->style.value_or(Json())).value_or("")) : QString()},
         {"style", c->kind == "text" ? to_variant(core::with_text_style_kf(c->style.value_or(Json::object()),
                                                                            core::text_style_at(*c, std::max(0.0, local))))
                                     : QVariantMap()},
@@ -1070,6 +1073,65 @@ void EditorModel::changeShape(const QVariantMap& patch) {
         }
     }
     commit(std::move(next), "shape", selection_.ids);
+}
+
+namespace {
+
+QVariantMap swatch(const Json& item, const Json& style) {
+    const auto text = [&](const char* key, const char* fallback) {
+        const Json& v = style.contains(key) ? style.at(key) : Json();
+        return QString::fromStdString(v.is_string() ? v.get<std::string>() : fallback);
+    };
+    return {{"id", QString::fromStdString(item.at("id").get<std::string>())},
+            {"name", QString::fromStdString(item.value("name", item.at("id").get<std::string>()))},
+            {"color", text("color", "#ffffff")},
+            {"stroke", style.value("border_width", Json(0)).is_number() && style.at("border_width").get<double>() > 0
+                           ? text("border_color", "#000000")
+                           : QString()},
+            {"bg", text("bg", "none")},
+            {"glow", style.value("glow", false) ? text("glow_color", "") : QString()}};
+}
+
+} // namespace
+
+QVariantList EditorModel::textThemes() {
+    QVariantList out;
+    for (const Json& t : core::subtitle_themes()) {
+        out << swatch(t, t.at("style"));
+    }
+    return out;
+}
+
+QVariantList EditorModel::textLooks() {
+    QVariantList out;
+    for (const Json& l : core::text_looks()) {
+        out << swatch(l, l.at("style"));
+    }
+    return out;
+}
+
+void EditorModel::applyTextTheme(const QString& id) {
+    const core::TimelineClip* source = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const Json* theme = core::theme_by_id(id.toStdString());
+    if (!source || !theme) {
+        return;
+    }
+    const bool clearing = core::selected_subtitle_theme_id(source->style.value_or(Json())) == id.toStdString();
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if (c->kind == "text" && std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            const Json style = c->style.value_or(Json());
+            c.mut().style = clearing ? core::clear_text_theme(style) : core::apply_theme_to_style(style, *theme);
+        }
+    }
+    commit(std::move(next), "text-theme", selection_.ids);
+}
+
+void EditorModel::applyTextLook(const QString& id) {
+    const Json& looks = core::text_looks();
+    const auto it = std::ranges::find_if(looks, [&](const Json& l) { return l.at("id") == id.toStdString(); });
+    const Json patch = core::look_patch(it == looks.end() ? nullptr : &*it);
+    changeStyle(to_variant(patch));
 }
 
 void EditorModel::changeText(const QString& text) {

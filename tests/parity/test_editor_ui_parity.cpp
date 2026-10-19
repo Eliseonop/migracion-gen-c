@@ -555,6 +555,34 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         c.erase("id");
         return c;
     }
+    if (fn == "subtitleThemes") {
+        return subtitle_themes();
+    }
+    if (fn == "textLooks") {
+        return text_looks();
+    }
+    if (fn == "applyThemeToStyle") {
+        return apply_theme_to_style(call.at(1), *theme_by_id(str(2)));
+    }
+    if (fn == "clearTextTheme") {
+        return clear_text_theme(call.at(1));
+    }
+    if (fn == "selectedSubtitleThemeId") {
+        const auto id = selected_subtitle_theme_id(call.at(1));
+        return id ? Json(*id) : Json();
+    }
+    if (fn == "applyOrClearTheme") {
+        return apply_or_clear_theme(call.at(1), call.at(2).is_string() ? theme_by_id(str(2)) : nullptr);
+    }
+    if (fn == "lookPatch") {
+        const Json& looks = text_looks();
+        const auto it = std::ranges::find_if(looks, [&](const Json& l) { return l.at("id") == call.at(1); });
+        return look_patch(it == looks.end() ? nullptr : &*it);
+    }
+    if (fn == "activeLookId") {
+        const auto id = active_look_id(call.at(1));
+        return id ? Json(*id) : Json();
+    }
     if (fn == "defaultTextStyle") {
         return default_text_style();
     }

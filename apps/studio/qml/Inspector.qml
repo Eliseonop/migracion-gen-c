@@ -86,6 +86,51 @@ Rectangle {
         implicitWidth: 34
         highlighted: on
     }
+    component SwatchRow: RowLayout {
+        id: swRow
+        required property string title
+        property string current
+        property string prefix
+        signal picked(string color)
+        spacing: 4
+        Label { Layout.preferredWidth: 60; text: swRow.title; color: Theme.textSecondary }
+        Repeater {
+            model: panel.swatches
+            Rectangle {
+                required property string modelData
+                objectName: swRow.prefix + modelData
+                width: 18
+                height: 18
+                radius: 9
+                color: modelData
+                border.width: (swRow.current || "").toLowerCase() === modelData ? 2 : 1
+                border.color: border.width > 1 ? Theme.accent : Theme.lineBright
+                TapHandler { onTapped: swRow.picked(parent.modelData) }
+            }
+        }
+    }
+    component AaTile: Rectangle {
+        id: tile
+        required property var look
+        property bool on
+        signal picked
+        width: 40
+        height: 30
+        radius: Theme.radiusSm
+        color: look.bg && look.bg !== "none" ? look.bg : Theme.card2
+        border.width: on ? 2 : 1
+        border.color: on ? Theme.accent : Theme.lineBright
+        Text {
+            anchors.centerIn: parent
+            text: "Aa"
+            font.pixelSize: 15
+            font.bold: true
+            color: tile.look.color
+            style: tile.look.stroke ? Text.Outline : tile.look.glow ? Text.Raised : Text.Normal
+            styleColor: tile.look.stroke || tile.look.glow || "transparent"
+        }
+        TapHandler { onTapped: tile.picked() }
+    }
     component Percent: RowLayout {
         id: row
         required property string title
@@ -240,6 +285,95 @@ Rectangle {
                     background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
                     onEditingFinished: if (acceptableInput) panel.model.changeStyle({ color: text.toLowerCase() })
                 }
+            }
+            Label { visible: panel.text; text: "Estilo preestablecido"; color: Theme.muted; font.pixelSize: 11 }
+            Flow {
+                visible: panel.text
+                Layout.fillWidth: true
+                spacing: 4
+                AaTile {
+                    objectName: "insp:look:none"
+                    look: ({ color: Theme.muted, stroke: "", bg: "none", glow: "" })
+                    on: panel.text && panel.clip.lookId === "none"
+                    onPicked: panel.model.applyTextLook("")
+                    Text { anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; text: "⃠"; color: Theme.muted }
+                }
+                Repeater {
+                    model: panel.model.textLooks
+                    AaTile {
+                        required property var modelData
+                        objectName: "insp:look:" + modelData.id
+                        look: modelData
+                        on: panel.text && panel.clip.lookId === modelData.id
+                        onPicked: panel.model.applyTextLook(modelData.id)
+                    }
+                }
+            }
+            Label { visible: panel.text; text: "Temas de subtítulos"; color: Theme.muted; font.pixelSize: 11 }
+            Flow {
+                visible: panel.text
+                Layout.fillWidth: true
+                spacing: 4
+                Repeater {
+                    model: panel.model.textThemes
+                    Rectangle {
+                        required property var modelData
+                        readonly property bool on: panel.text && panel.clip.themeId === modelData.id
+                        objectName: "insp:theme:" + modelData.id
+                        width: themeName.implicitWidth + 16
+                        height: 24
+                        radius: Theme.radiusSm
+                        color: modelData.bg && modelData.bg !== "none" ? modelData.bg : Theme.card2
+                        border.width: on ? 2 : 1
+                        border.color: on ? Theme.accent : Theme.lineBright
+                        Text {
+                            id: themeName
+                            anchors.centerIn: parent
+                            text: modelData.name
+                            font.pixelSize: 11
+                            font.bold: true
+                            color: modelData.color
+                            style: modelData.stroke ? Text.Outline : Text.Normal
+                            styleColor: modelData.stroke || "transparent"
+                        }
+                        TapHandler { onTapped: panel.model.applyTextTheme(parent.modelData.id) }
+                    }
+                }
+            }
+            SwatchRow {
+                visible: panel.text
+                title: "Trazo"
+                prefix: "insp:border:"
+                current: (panel.st.border_width ?? 0) > 0 ? panel.st.border_color || "#000000" : ""
+                onPicked: (c) => panel.model.changeStyle({ border_color: c, border_width: Math.max(4, panel.st.border_width ?? 0) })
+            }
+            Num {
+                visible: panel.text
+                objectName: "insp:border:width"
+                title: "Gr"
+                value: panel.st.border_width ?? 0
+                onCommitted: (v) => panel.model.changeStyle({ border_width: Math.max(0, Math.min(20, Math.round(v))) })
+            }
+            SwatchRow {
+                visible: panel.text
+                title: "Fondo"
+                prefix: "insp:bg:"
+                current: panel.st.bg && panel.st.bg !== "none" ? panel.st.bg : ""
+                onPicked: (c) => panel.model.changeStyle({ bg: (panel.st.bg || "").toLowerCase() === c ? "none" : c })
+            }
+            SwatchRow {
+                visible: panel.text
+                title: "Sombra"
+                prefix: "insp:shadow:"
+                current: panel.st.shadow ? panel.st.shadow_color || "#000000" : ""
+                onPicked: (c) => panel.model.changeStyle({ shadow: !(panel.st.shadow && (panel.st.shadow_color || "").toLowerCase() === c), shadow_color: c })
+            }
+            SwatchRow {
+                visible: panel.text
+                title: "Brillo"
+                prefix: "insp:glow:"
+                current: panel.st.glow ? panel.st.glow_color || panel.st.shadow_color || "#ffffff" : ""
+                onPicked: (c) => panel.model.changeStyle({ glow: !(panel.st.glow && (panel.st.glow_color || "").toLowerCase() === c), glow_color: c })
             }
             Num {
                 visible: panel.text
