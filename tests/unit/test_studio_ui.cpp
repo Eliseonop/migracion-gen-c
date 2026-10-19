@@ -292,3 +292,22 @@ TEST_CASE("studio sin pantalla: Ctrl+, abre los ajustes, cambia los fps y guarda
     s.click("set:remove:gemini");
     CHECK(s.settings_file->api_key("gemini").empty());
 }
+
+TEST_CASE("studio sin pantalla: arrastrar hasta el borde desplaza la vista y el clip la sigue", "[studio][ui]") {
+    Studio s;
+    QQuickItem* lane = s.item("clip:b")->parentItem();
+    const QPoint from = s.at("b", 0.5);
+    const double grab = from.x() - s.at("b", 0.0).x();
+    const QPoint edge(s.window->width() - 30, from.y());
+    QTest::mousePress(s.window, Qt::LeftButton, {}, from);
+    for (int i = 1; i <= 8; ++i) {
+        QTest::mouseMove(s.window, from + (edge - from) * i / 8);
+    }
+    const double before = lane->mapFromScene(QPointF(edge)).x();
+    QTest::qWait(300);
+    CHECK(lane->mapFromScene(QPointF(edge)).x() > before + 100); // la vista ha corrido bajo el puntero
+    QTest::mouseRelease(s.window, Qt::LeftButton, {}, edge);
+    QCoreApplication::processEvents();
+    const double reached = (before - grab) / s.editor->pps(); // donde caería sin desplazar
+    CHECK(s.view("b")["start"].toDouble() > reached + 1);
+}

@@ -25,6 +25,48 @@ Rectangle {
     property var drag: null // previewDrag del clip que se arrastra
     property var guides: [] // instantes de las guías del imán
     property var trackDrop: null // {id, targetId, below} al arrastrar una cabecera
+    property point autoPoint // puntero (escena) mientras se arrastra
+    property var autoTick: null // rehace la vista previa del gesto tras desplazar
+
+    // edgeSpeed de EdTimeline: más deprisa cuanto más cerca del borde.
+    function edgeSpeed(fromStart, fromEnd) {
+        const edge = 44
+        const max = 22
+        if (fromStart < edge)
+            return -max * Math.min(1, (edge - fromStart) / edge)
+        if (fromEnd < edge)
+            return max * Math.min(1, (edge - fromEnd) / edge)
+        return 0
+    }
+    function follow(scenePoint, tick) {
+        autoPoint = scenePoint
+        autoTick = tick
+    }
+
+    // Autodesplazamiento (autoScrollAt): con el puntero cerca de un borde de los carriles, la vista
+    // corre sola y el gesto se recalcula donde caerá.
+    Timer {
+        interval: 16
+        repeat: true
+        running: !!timeline.autoTick
+        onTriggered: {
+            const p = flick.mapFromItem(null, timeline.autoPoint.x, timeline.autoPoint.y)
+            const near = p.x > -60 && p.x < flick.width + 60 && p.y > -60 && p.y < flick.height + 60
+            let vx = near ? timeline.edgeSpeed(p.x, flick.width - p.x) : 0
+            let vy = near ? timeline.edgeSpeed(p.y - timeline.rulerHeight, flick.height - p.y) : 0
+            const maxX = flick.contentWidth - flick.width
+            const maxY = flick.contentHeight - flick.height
+            if ((vx < 0 && flick.contentX <= 0) || (vx > 0 && flick.contentX >= maxX - 1))
+                vx = 0
+            if ((vy < 0 && flick.contentY <= 0) || (vy > 0 && flick.contentY >= maxY - 1))
+                vy = 0
+            if (!vx && !vy)
+                return
+            flick.contentX = Math.max(0, Math.min(maxX, flick.contentX + vx))
+            flick.contentY = Math.max(0, Math.min(maxY, flick.contentY + vy))
+            timeline.autoTick()
+        }
+    }
 
     function colorsOf(kind) { return colors[kind] || ["#2b3350", "#1d2436", "#ffffff"] }
     function rowY(trackId) {
@@ -239,14 +281,26 @@ Rectangle {
                 anchors.fill: parent
                 keys: ["material"]
                 property var hint: null
-                onPositionChanged: (d) => hint = timeline.model.previewMaterialDrop(d.source.materialKey, d.x, d.y, timeline.model.altHeld())
-                onExited: hint = null
+                property string key
+                property point scene
+                function update() {
+                    const p = lanes.mapFromItem(null, scene.x, scene.y)
+                    hint = timeline.model.previewMaterialDrop(key, p.x, p.y, timeline.model.altHeld())
+                }
+                onPositionChanged: (d) => {
+                    key = d.source.materialKey
+                    scene = lanes.mapToItem(null, d.x, d.y)
+                    update()
+                    timeline.follow(scene, update)
+                }
+                onExited: { hint = null; timeline.autoTick = null }
                 onDropped: (d) => {
                     const key = d.source.materialKey
                     const x = d.x
                     const y = d.y
                     const alt = timeline.model.altHeld()
                     hint = null
+                    timeline.autoTick = null
                     Qt.callLater(() => timeline.model.dropMaterial(key, x, y, alt))
                 }
             }
@@ -359,10 +413,23 @@ Rectangle {
                         hoverEnabled: true
                         cursorShape: block.mode === "move" ? Qt.ClosedHandCursor
                                    : mouseX < 6 || mouseX > width - 6 ? Qt.SizeHorCursor : Qt.OpenHandCursor
-                        // En px del carril: el clip se mueve con el gesto y sus coordenadas también.
+                        // En px del carril: el clip se mueve con el gesto y sus coordenadas también, y la
+                        // vista puede desplazarse sola bajo el puntero.
+                        property point scene
                         function lane(m) { return mapToItem(lanes, m.x, m.y) }
-                        function delta(m) { return (lane(m).x - block.pressX) / timeline.pps }
-                        function centerY(m) { return block.clipY + block.height / 2 + lane(m).y - block.pressY }
+                        function at() { return lanes.mapFromItem(null, scene.x, scene.y) }
+                        function delta() { return (at().x - block.pressX) / timeline.pps }
+                        function centerY() { return block.clipY + block.height / 2 + at().y - block.pressY }
+                        function update() {
+                            if (block.mode === "move") {
+                                timeline.dragId = block.clipId
+                                timeline.drag = timeline.model.previewDrag(block.clipId, delta(), centerY())
+                                timeline.guides = timeline.drag.times || []
+                            } else {
+                                block.trim = timeline.model.previewTrim(block.clipId, block.mode === "trim-left", delta())
+                                timeline.guides = block.trim.times || []
+                            }
+                        }
                         onPressed: (m) => {
                             block.pressX = lane(m).x
                             block.pressY = lane(m).y
@@ -375,24 +442,21 @@ Rectangle {
                         onPositionChanged: (m) => {
                             if (!pressed || !block.mode)
                                 return
-                            if (block.mode === "move") {
-                                if (!timeline.dragId && Math.hypot(lane(m).x - block.pressX, lane(m).y - block.pressY) < 3)
-                                    return
-                                timeline.dragId = block.clipId
-                                timeline.drag = timeline.model.previewDrag(block.clipId, delta(m), centerY(m))
-                                timeline.guides = timeline.drag.times || []
-                            } else {
-                                block.trim = timeline.model.previewTrim(block.clipId, block.mode === "trim-left", delta(m))
-                                timeline.guides = block.trim.times || []
-                            }
+                            if (block.mode === "move" && !timeline.dragId
+                                    && Math.hypot(lane(m).x - block.pressX, lane(m).y - block.pressY) < 3)
+                                return
+                            scene = mapToItem(null, m.x, m.y)
+                            update()
+                            timeline.follow(scene, update)
                         }
                         // El cambio se aplica fuera del manejador: rehace la lista de clips y este
                         // delegado desaparece.
                         onReleased: (m) => {
                             const model = timeline.model
                             const id = block.clipId
-                            const d = delta(m)
-                            const cy = centerY(m)
+                            scene = mapToItem(null, m.x, m.y)
+                            const d = delta()
+                            const cy = centerY()
                             const left = block.mode === "trim-left"
                             const action = block.mode === "move" && timeline.dragId ? () => model.dropDrag(id, d, cy)
                                          : block.mode !== "move" && block.trim ? () => model.trimClip(id, left, d)
@@ -403,6 +467,7 @@ Rectangle {
                             timeline.dragId = ""
                             timeline.drag = null
                             timeline.guides = []
+                            timeline.autoTick = null
                             if (action)
                                 Qt.callLater(action)
                         }
