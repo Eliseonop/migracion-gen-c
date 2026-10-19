@@ -858,6 +858,42 @@ void EditorModel::toggleMarker() {
     session_->replace(std::move(next), "markers", {});
 }
 
+void EditorModel::patch_marker(const QString& id, const std::optional<Json>& patch) {
+    if (!session_) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    std::vector<Json> list;
+    for (Json m : next.markers) {
+        if (m.is_object() && m.value("id", Json()) == id.toStdString()) {
+            if (!patch) {
+                continue;
+            }
+            for (const auto& [key, value] : patch->items()) {
+                if (value.is_null()) {
+                    m.erase(key);
+                } else {
+                    m[key] = value;
+                }
+            }
+        }
+        list.push_back(std::move(m));
+    }
+    next.markers = core::normalize_markers(list, ids_);
+    session_->replace(std::move(next), "markers", {});
+}
+
+void EditorModel::moveMarker(const QString& id, double t) {
+    patch_marker(id, Json{{"t", core::snap_to_frame(std::max(0.0, t), fps())}});
+}
+
+void EditorModel::renameMarker(const QString& id, const QString& label) {
+    const QString name = label.trimmed();
+    patch_marker(id, Json{{"label", name.isEmpty() ? Json() : Json(name.toStdString())}});
+}
+
+void EditorModel::removeMarker(const QString& id) { patch_marker(id, std::nullopt); }
+
 void EditorModel::jumpSnap(int dir) {
     if (session_) {
         if (const auto t = core::next_snap_time(session_->timeline()->markers, session_->timeline()->clips,

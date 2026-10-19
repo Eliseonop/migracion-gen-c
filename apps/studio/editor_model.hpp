@@ -110,6 +110,10 @@ public:
     // (anterior y siguiente marcador o beat) y las flechas (0,1 s; con Shift, 1 s).
     Q_INVOKABLE void toggleDisabled();
     Q_INVOKABLE void toggleMarker();
+    // patchMarker de VideoEditor.jsx: mover (al fotograma), renombrar (vacío = sin nombre) o quitar.
+    Q_INVOKABLE void moveMarker(const QString& id, double t);
+    Q_INVOKABLE void renameMarker(const QString& id, const QString& label);
+    Q_INVOKABLE void removeMarker(const QString& id);
     Q_INVOKABLE void jumpSnap(int dir);
     Q_INVOKABLE void nudgePlayhead(double dt);
     // Cabecera de pista (EdTimeline.jsx): ver, silenciar, bloquear o magnética; nombre (3 letras
@@ -188,6 +192,7 @@ signals:
     void errorChanged();
 
 private:
+    void patch_marker(const QString& id, const std::optional<Json>& patch);
     void set_filters(const std::vector<core::ClipFilter>& stack);
     void add_generated(core::Timeline next, Json clip, const char* cause);
     template <class Patch>

@@ -323,3 +323,22 @@ TEST_CASE("studio sin pantalla: el botón T añade un texto y el inspector lo ca
     s.click("insp:color:#ffe400");
     CHECK(s.editor->selectedClip()["style"].toMap()["color"] == "#ffe400");
 }
+
+TEST_CASE("studio sin pantalla: los marcadores se arrastran y se quitan con el botón derecho", "[studio][ui]") {
+    Studio s;
+    s.editor->setPlayhead(2);
+    QTest::keyClick(s.window, Qt::Key_M);
+    REQUIRE(s.editor->markers().size() == 1);
+    const QString id = s.editor->markers().front().toMap()["id"].toString();
+    QQuickItem* flag = s.item("marker:" + id);
+    REQUIRE(flag);
+    const QPoint from = flag->mapToScene(QPointF(flag->width() / 2, 5)).toPoint();
+    s.drag(from, from + QPoint(static_cast<int>(3 * s.editor->pps()), 0));
+    CHECK(std::abs(s.editor->markers().front().toMap()["t"].toDouble() - 5) < 0.1);
+    s.editor->renameMarker(id, "  gancho ");
+    CHECK(s.editor->markers().front().toMap()["label"] == "gancho");
+    QQuickItem* moved = s.item("marker:" + id);
+    QTest::mouseClick(s.window, Qt::RightButton, {}, moved->mapToScene(QPointF(moved->width() / 2, 5)).toPoint());
+    QCoreApplication::processEvents();
+    CHECK(s.editor->markers().isEmpty());
+}

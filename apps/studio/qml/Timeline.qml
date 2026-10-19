@@ -539,20 +539,80 @@ Rectangle {
                     }
                 }
             }
-            Repeater {
+            Repeater { // marcadores: arrastrar mueve, clic va a él, doble clic nombra, clic derecho quita
                 model: timeline.model.markers
-                Rectangle {
+                Item {
+                    id: marker
                     required property var modelData
-                    x: modelData.t * timeline.pps - flick.contentX - 4
-                    y: 2
-                    width: 8
-                    height: 8
-                    rotation: 45
-                    color: modelData.color
-                    ToolTip.visible: markerHover.hovered && !!modelData.label
-                    ToolTip.text: modelData.label
-                    HoverHandler { id: markerHover }
+                    property real dragT: -1
+                    objectName: "marker:" + modelData.id
+                    z: 3
+                    x: (dragT >= 0 ? dragT : modelData.t) * timeline.pps - flick.contentX - 7
+                    width: 14
+                    height: ruler.height
+                    Rectangle {
+                        x: 3
+                        y: 2
+                        width: 8
+                        height: 8
+                        rotation: 45
+                        color: marker.modelData.color
+                    }
+                    Label {
+                        x: 14
+                        y: 1
+                        visible: !!marker.modelData.label
+                        text: marker.modelData.label
+                        color: marker.modelData.color
+                        font.pixelSize: 10
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        cursorShape: Qt.SizeHorCursor
+                        property real pressX
+                        onPressed: (m) => pressX = m.x
+                        onPositionChanged: (m) => {
+                            if (pressed && (marker.dragT >= 0 || Math.abs(m.x - pressX) >= 3))
+                                marker.dragT = Math.max(0, (mapToItem(ruler, m.x, 0).x + flick.contentX) / timeline.pps)
+                        }
+                        onReleased: (m) => {
+                            const model = timeline.model
+                            const id = marker.modelData.id
+                            const t = marker.dragT
+                            const at = marker.modelData.t
+                            marker.dragT = -1
+                            if (m.button === Qt.RightButton)
+                                Qt.callLater(() => model.removeMarker(id))
+                            else if (t >= 0)
+                                Qt.callLater(() => model.moveMarker(id, t))
+                            else
+                                model.playhead = at
+                        }
+                        onDoubleClicked: {
+                            markerName.markerId = marker.modelData.id
+                            markerName.text = marker.modelData.label
+                            markerName.x = marker.x
+                            markerName.visible = true
+                            markerName.forceActiveFocus()
+                        }
+                    }
                 }
+            }
+            TextField {
+                id: markerName
+                property string markerId
+                objectName: "marker:name"
+                visible: false
+                z: 20
+                y: 0
+                width: 140
+                height: ruler.height
+                font.pixelSize: 11
+                placeholderText: "Nombre del marcador"
+                onAccepted: { timeline.model.renameMarker(markerId, text); visible = false }
+                onActiveFocusChanged: if (!activeFocus) visible = false
+                Keys.onEscapePressed: visible = false
             }
             Rectangle {
                 x: timeline.model.playhead * timeline.pps - flick.contentX - 5
