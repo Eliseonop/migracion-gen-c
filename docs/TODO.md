@@ -487,7 +487,7 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 ## F7 — Nube, agente y MCP
 
 - [ ] gc_cloud con SSE: Gemini, OpenAI-compatible (openrouter, groq, cerebras, mistral, hf), Azure (TTS, STT, Vision, imagen; 3 regiones con alternativa), Foundry
-- [ ] Stock: Pexels, Giphy, Pixabay y Unsplash
+- [ ] Stock: Pexels, Giphy, Pixabay y Unsplash *(las palabras clave locales de «Explorar», hechas, 2026-10-19: `keywords.hpp`, espejo de la parte sin IA de `explore_keywords.py` (las más repetidas sin muletillas, con frases de 2 y 3 palabras; leer la lista que devuelve una IA; el texto del proyecto). Paridad con el Python real, `export_fixtures.py --solo keywords`)*
 - [ ] Chat IA con streaming y confirmaciones
 - [ ] Servidor MCP en `:8000/mcp` con los 50 tools, DTO semántico, errores estructurados y resources (`capabilities://`, `help://`, `config://`, `project://`)
 - [ ] YouTube con el sidecar `yt-dlp` (solo escritorio)

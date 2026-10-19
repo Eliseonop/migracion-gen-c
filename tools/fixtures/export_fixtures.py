@@ -34,6 +34,7 @@ Salida (al repo):
   tests/fixtures/sfx/synthetic.json        biblioteca de SFX en disco: pasos de sfx_cases.py
   tests/fixtures/sfx/write.json            alta, edición y categorías de SFX (sfx_cases.WRITE_STEPS)
   tests/fixtures/beats/synthetic.json      beats automáticos (beats.py) sobre las señales de beats_cases.py
+  tests/fixtures/keywords/synthetic.json   palabras clave locales de Explorar (explore_keywords.py)
   tests/fixtures/collections/synthetic.json  colecciones de material: pasos de collections_cases.py
   tests/fixtures/stick/synthetic.json      personajes stick: pasos de stick_cases.py
   tests/fixtures/projects/synthetic.json   almacén de proyectos: pasos de projects_cases.py
@@ -1003,6 +1004,26 @@ def synthetic_beats_fixtures(ctx: Ctx) -> list:
             entry["error"] = type(e).__name__
         out.append(entry)
     return out
+
+
+def synthetic_keyword_fixtures(ctx: Ctx) -> dict:
+    """explore_keywords.py sin IA: extract_keywords, parse_keyword_list, gather_theme_text y
+    suggest_keywords con la IA anulada (sin claves)."""
+    sys.path.insert(0, str(HERE))
+    import keyword_cases as kc
+    from app import explore_keywords as ek
+    from app.schemas import Project
+    saved = ek._llm_keywords
+    ek._llm_keywords = lambda text: []
+    try:
+        return {
+            "extract": [[t, n, ek.extract_keywords(t, n)] for t in kc.TEXTS for n in (8, 3, 1)],
+            "parse": [[r, ek.parse_keyword_list(r)] for r in kc.RAWS],
+            "gather": [[p, ek.gather_theme_text(Project.model_validate(p))] for p in kc.PROJECTS],
+            "suggest": [[t, ek.suggest_keywords(t)] for t in kc.TEXTS],
+        }
+    finally:
+        ek._llm_keywords = saved
 
 
 def real_sfx_fixtures(ctx: Ctx) -> dict:
@@ -2936,7 +2957,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats"],
+                                       "sfx_escritura", "beats", "keywords"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -2976,6 +2997,14 @@ def main() -> None:
 
     if args.solo == "beats":
         beats_group()
+        return
+
+    def keywords_group() -> None:
+        kw = synthetic_keyword_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "keywords" / "synthetic.json", kw, sum(len(v) for v in kw.values()), 0)
+
+    if args.solo == "keywords":
+        keywords_group()
         return
     def shapes_group() -> None:
         shp = synthetic_shape_fixtures(ctx)
@@ -3073,6 +3102,7 @@ def main() -> None:
           sum("error" in s for s in sfx_syn["steps"]))
     sfx_write_group()
     beats_group()
+    keywords_group()
     js = synthetic_json_fixtures()
     write(REPO / "tests" / "fixtures" / "json" / "synthetic.json", js,
           len(js["floats"]) + len(js["dumps"]) + len(js["loads"]), sum("error" in c for c in js["loads"]))

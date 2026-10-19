@@ -1376,7 +1376,8 @@ Decisión de Edu (§6):
 - **Textos en el material:** pestaña «Texto» con el texto por defecto y los temas, que se arrastran (`place_text_clip`, la rama de texto de `placeAsset`, con el estilo de la pista; 48 casos en la fixture del editor, mutante «sin tema» detectado) o se aplican con un clic. Las fichas comparten `MaterialTile.qml` con las figuras.
 - **Menú del clic derecho en un clip:** lo que no necesita red ni IA (favorito, plantilla global, capas, activar, beats, voltear, atributos, dividir, duplicar y eliminar). Las capas (`move_clip_layer`) con paridad: 3 100 llamadas más en la fixture del editor, mutante «al fondo ↔ al frente» detectado.
 - **Beats automáticos (F6, adelantado):** `detect_beats` sobre el audio mono a 22 050 Hz, como `beats.py`, con su propia FFT. Señales sintéticas reproducibles en los dos lados (ruido LCG y golpes con caída exponencial): 120, 90, 174, 128 con silencios, 100 con acentos, 60 y 140 BPM, silencio, ruido y tres entradas cortas (dos fallan como en Python). Solo falta la decodificación, que es de gc_media.
-- **Linux:** 202/202 con GCC y 141/141 con Clang + libc++.
+- **Palabras clave de «Explorar» (F7, la parte local):** `extract_keywords`, `parse_keyword_list`, `gather_theme_text` y la sugerencia sin IA, con 96 casos del Python real (texto con tildes, İ/ı/ſ/K por el `re.I`, respuestas de IA con ``` o con texto alrededor, tipos raros en la lista). Un mutante es equivalente: la segunda condición del filtro de Python nunca se cumple.
+- **Linux:** 203/203 con GCC y 142/142 con Clang + libc++.
 
 **Siguiente:**
 - El preview espera a `gc_render`.
