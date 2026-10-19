@@ -141,7 +141,7 @@ public:
     // Filtros de color (EdFilters.jsx): clic añade o quita; intensidad y orden en la pila.
     Q_INVOKABLE void toggleFilter(const QString& id);
     // patchEffects: un valor de `effects` (Brillo, Contraste, Exposición…) sobre los del clip principal.
-    Q_INVOKABLE void setEffect(const QString& key, double value);
+    Q_INVOKABLE void setEffect(const QString& key, const QVariant& value);
     // Intensidad de una capa de ajuste (su opacidad).
     Q_INVOKABLE void setAdjustIntensity(double value);
     Q_INVOKABLE void setFilterAmount(int index, double amount);

@@ -20,6 +20,7 @@ Rectangle {
     readonly property bool shape: has && clip.kind === "shape"
     readonly property var sh: shape ? clip.shape : ({})
     readonly property bool canFill: shape && ["line", "check", "x"].indexOf(sh.type) < 0 && !(sh.type === "path" && !sh.closed)
+    readonly property bool effectable: has && ["video", "image", "shape"].indexOf(clip.kind) >= 0
     readonly property bool filterable: has && ["video", "image", "adjustment"].indexOf(clip.kind) >= 0
     readonly property var applied: has ? clip.filters : []
     function filterIndex(id) { return applied.findIndex((f) => f.id === id) }
@@ -34,6 +35,14 @@ Rectangle {
         const v = has && clip.effects ? clip.effects[id] : 0
         const n = v === true ? 1 : Number(v)
         return isFinite(n) ? n : 0
+    }
+    // VIDEO_FX_TOGGLES de clipFx.js: [id, nombre, rango o interruptor, mín, máx, paso, al encender].
+    readonly property var videoFx: [["blur", "Desenfoque", true, 0, 8, 0.5, 2], ["sharpen", "Enfoque", true, 0, 5, 0.5, 1.5],
+        ["glow", "Glow", true, 0, 12, 1, 6], ["grayscale", "Grayscale", false], ["sepia", "Sepia", false],
+        ["pixelate", "Pixelate", true, 0, 24, 1, 8], ["vhs", "VHS", false], ["grain", "Grain", true, 0, 40, 1, 12]]
+    function fxOn(id) {
+        const v = has && clip.effects ? clip.effects[id] : undefined
+        return v === true || (v !== false && v != null && Number(v) > 0)
     }
     readonly property var swatches: ["#ffffff", "#111111", "#ffe400", "#ff2d2d", "#ff8a00", "#2ee83f", "#1e90ff", "#ff3d8b"]
     readonly property var blends: [
@@ -651,6 +660,43 @@ Rectangle {
                         onPressedChanged: if (!pressed) panel.model.setEffect(fxRow.modelData[0], Math.round(value) / fxRow.unit)
                     }
                     Label { Layout.preferredWidth: 40; text: Math.round(fxSlider.value) + fxRow.modelData[5]; color: Theme.text; horizontalAlignment: Text.AlignRight }
+                }
+            }
+            Label { visible: panel.effectable; text: "Efectos"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
+            Flow {
+                visible: panel.effectable
+                Layout.fillWidth: true
+                spacing: 4
+                Repeater {
+                    model: panel.effectable ? panel.videoFx : []
+                    Toggle {
+                        required property var modelData
+                        objectName: "insp:vfx:" + modelData[0]
+                        implicitWidth: implicitContentWidth + 16
+                        text: modelData[1]
+                        on: panel.fxOn(modelData[0])
+                        onClicked: panel.model.setEffect(modelData[0], modelData[2] ? (on ? 0 : modelData[6]) : !on)
+                    }
+                }
+            }
+            Repeater {
+                model: panel.effectable ? panel.videoFx.filter((f) => f[2] && panel.fxOn(f[0])) : []
+                RowLayout {
+                    id: vfxRow
+                    required property var modelData
+                    Layout.fillWidth: true
+                    Label { Layout.preferredWidth: 70; text: vfxRow.modelData[1]; color: Theme.textSecondary }
+                    Slider {
+                        id: vfxSlider
+                        Layout.fillWidth: true
+                        from: vfxRow.modelData[3]
+                        to: vfxRow.modelData[4]
+                        stepSize: vfxRow.modelData[5]
+                        snapMode: Slider.SnapAlways
+                        value: panel.fxNum(vfxRow.modelData[0])
+                        onPressedChanged: if (!pressed) panel.model.setEffect(vfxRow.modelData[0], value)
+                    }
+                    Label { Layout.preferredWidth: 30; text: vfxSlider.value; color: Theme.text; horizontalAlignment: Text.AlignRight }
                 }
             }
             Label { visible: panel.filterable; text: "Filtros"; color: Theme.muted; font.pixelSize: 11; font.bold: true }

@@ -1152,13 +1152,16 @@ void EditorModel::set_filters(const std::vector<core::ClipFilter>& stack) {
     });
 }
 
-void EditorModel::setEffect(const QString& key, double value) {
+void EditorModel::setEffect(const QString& key, const QVariant& value) {
     const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
     if (!c) {
         return;
     }
     Json effects = c->effects && c->effects->is_object() ? *c->effects : Json::object();
-    effects[key.toStdString()] = value;
+    const Json patch = to_json(QVariantMap{{key, value}});
+    for (const auto& [k, v] : patch.items()) {
+        effects[k] = v;
+    }
     fx_each("effects", [&](core::TimelineClip& item) { item.effects = effects; });
 }
 

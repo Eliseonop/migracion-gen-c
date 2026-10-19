@@ -507,6 +507,10 @@ TEST_CASE("editor: filtros de color apilados y ajustes de color", "[studio]") {
     m.setEffect("hue", -45);
     CHECK(m.selectedClip()["effects"].toMap()["exposure"] == 0.3);
     CHECK(m.selectedClip()["effects"].toMap()["hue"] == -45);
+    m.setEffect("vhs", true);
+    m.setEffect("blur", 2);
+    CHECK(m.selectedClip()["effects"].toMap()["vhs"] == true);
+    CHECK(m.selectedClip()["effects"].toMap()["exposure"] == 0.3); // se suman a los que había
     const core::Timeline tl = f.saved();
     for (const auto& c : tl.clips) {
         if (c->id == "a") {
