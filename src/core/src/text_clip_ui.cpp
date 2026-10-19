@@ -23,19 +23,6 @@ const Json& field(const Json& obj, std::string_view key) {
     return it == obj.end() ? kNull : *it;
 }
 
-// flattenPatch(patch, 'text'): la pose numérica de un cambio de estilo.
-Json flatten_text_patch(const Json& patch) {
-    Json out = Json::object();
-    for (const char* key : {"x", "y", "scale", "rotation", "opacity", "cx", "cy", "zoom"}) {
-        const Json& v = field(patch, key);
-        const bool any = std::string_view(key).starts_with('c') || std::string_view(key) == "zoom";
-        if (!v.is_null() && (any || std::isfinite(js_number(v)))) {
-            out[key] = js_number(v);
-        }
-    }
-    return out;
-}
-
 } // namespace
 
 Json default_text_style() {
@@ -178,7 +165,7 @@ void change_text_style(TimelineClip& clip, const Json& patch, double local_t, do
     }
     clip.style = std::move(style);
     const double t = std::max(0.0, local_t);
-    const Json pose = flatten_text_patch(patch);
+    const Json pose = flatten_pose_patch(patch);
     if (!pose.empty() && should_keyframe(clip, pose)) {
         upsert_keyframe_ui(clip, t, pose, std::nullopt, fps, ids);
     }

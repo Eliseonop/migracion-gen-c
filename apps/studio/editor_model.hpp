@@ -129,6 +129,8 @@ public:
     // Figura del catálogo en el cabezal (addAsset('shape')) y capa de ajuste (addAdjustmentLayer).
     Q_INVOKABLE void addShape(const QString& type, const QString& label);
     Q_INVOKABLE void addAdjustment();
+    // Inspector de figuras (EdShape.jsx).
+    Q_INVOKABLE void changeShape(const QVariantMap& patch);
     Q_INVOKABLE void changeText(const QString& text);
     Q_INVOKABLE void changeStyle(const QVariantMap& patch, bool fixed = false);
     // El rombo (toggleKeyframeAtPlayhead) del clip seleccionado; fundido de volumen de entrada o

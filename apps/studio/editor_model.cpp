@@ -282,6 +282,9 @@ QVariantMap EditorModel::selectedClip() const {
         {"style", c->kind == "text" ? to_variant(core::with_text_style_kf(c->style.value_or(Json::object()),
                                                                            core::text_style_at(*c, std::max(0.0, local))))
                                     : QVariantMap()},
+        {"shape", c->kind == "shape" ? to_variant(core::normalize_shape(c->shape.value_or(Json::object()))
+                                                      .value_or(Json::object()))
+                                     : QVariantMap()},
         {"keepPitch", c->keep_pitch},
         {"reverse", c->reverse},
         {"poseOpacity", pose.opacity},
@@ -1036,6 +1039,20 @@ void EditorModel::addAdjustment() {
         core::insert_track(next.tracks, std::move(t));
     }
     add_generated(std::move(next), core::make_adjustment_clip_json(tid, playhead_, kDur, ids_), "add-adjustment");
+}
+
+void EditorModel::changeShape(const QVariantMap& patch) {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    const Json json = to_json(patch);
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if (std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            core::change_shape(c.mut(), json, playhead_ - c->start, fps(), ids_);
+        }
+    }
+    commit(std::move(next), "shape", selection_.ids);
 }
 
 void EditorModel::changeText(const QString& text) {

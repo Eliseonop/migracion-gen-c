@@ -17,6 +17,9 @@ Rectangle {
     readonly property var st: text ? clip.style : ({})
     readonly property var fonts: ["Arial", "Arial Black", "Anton", "Segoe UI", "Segoe UI Black", "Calibri", "Bahnschrift",
         "Tahoma", "Impact", "Georgia", "Verdana", "Times New Roman", "Courier New", "Consolas", "Trebuchet MS"]
+    readonly property bool shape: has && clip.kind === "shape"
+    readonly property var sh: shape ? clip.shape : ({})
+    readonly property bool canFill: shape && ["line", "check", "x"].indexOf(sh.type) < 0 && !(sh.type === "path" && !sh.closed)
     readonly property var swatches: ["#ffffff", "#111111", "#ffe400", "#ff2d2d", "#ff8a00", "#2ee83f", "#1e90ff", "#ff3d8b"]
     readonly property var blends: [
         ["normal", "Normal"], ["darken", "Oscurecer"], ["multiply", "Multiplicar"], ["color_burn", "Subexponer color"],
@@ -245,6 +248,102 @@ Rectangle {
                 suffix: "%"
                 value: Math.round((panel.st.w ?? 0.8) * 100)
                 onCommitted: (v) => panel.model.changeStyle({ w: Math.max(0.15, Math.min(1, v / 100)) })
+            }
+
+            Section { visible: panel.shape; text: "FIGURA" }
+            RowLayout {
+                visible: panel.shape
+                Layout.fillWidth: true
+                spacing: 8
+                Num { objectName: "insp:shape:w"; title: "An"; suffix: "%"; value: Math.round((panel.sh.w ?? 0) * 100)
+                      onCommitted: (v) => panel.model.changeShape({ w: v / 100 }) }
+                Num { objectName: "insp:shape:h"; title: "Al"; suffix: "%"; value: Math.round((panel.sh.h ?? 0) * 100)
+                      onCommitted: (v) => panel.model.changeShape({ h: v / 100 }) }
+            }
+            RowLayout {
+                visible: panel.canFill
+                spacing: 4
+                Toggle {
+                    objectName: "insp:shape:fillOn"
+                    implicitWidth: 64
+                    text: "Relleno"
+                    on: !!panel.sh.fill && panel.sh.fill !== "none"
+                    onClicked: panel.model.changeShape({ fill: on ? "none" : "#e53935" })
+                }
+                Repeater {
+                    model: panel.swatches
+                    Rectangle {
+                        required property string modelData
+                        objectName: "insp:shape:fill:" + modelData
+                        width: 18
+                        height: 18
+                        radius: 9
+                        color: modelData
+                        border.width: (panel.sh.fill || "").toLowerCase() === modelData ? 2 : 1
+                        border.color: border.width > 1 ? Theme.accent : Theme.lineBright
+                        TapHandler { onTapped: panel.model.changeShape({ fill: parent.modelData }) }
+                    }
+                }
+            }
+            RowLayout {
+                visible: panel.shape
+                spacing: 4
+                Label { Layout.preferredWidth: 60; text: "Borde"; color: Theme.textSecondary }
+                Repeater {
+                    model: panel.swatches
+                    Rectangle {
+                        required property string modelData
+                        objectName: "insp:shape:stroke:" + modelData
+                        width: 18
+                        height: 18
+                        radius: 9
+                        color: modelData
+                        border.width: (panel.sh.stroke || "").toLowerCase() === modelData ? 2 : 1
+                        border.color: border.width > 1 ? Theme.accent : Theme.lineBright
+                        TapHandler { onTapped: panel.model.changeShape({ stroke: parent.modelData }) }
+                    }
+                }
+            }
+            RowLayout {
+                visible: panel.shape
+                Layout.fillWidth: true
+                spacing: 8
+                Num { objectName: "insp:shape:stroke"; title: "Gr"; value: panel.sh.strokeWidth ?? 0
+                      onCommitted: (v) => panel.model.changeShape({ strokeWidth: Math.max(0, Math.min(20, Math.round(v))) }) }
+                Num {
+                    visible: panel.shape && ["square", "rect", "speech"].indexOf(panel.sh.type) >= 0
+                    objectName: "insp:shape:radius"
+                    title: "Esq"
+                    value: Math.round((panel.sh.cornerRadius ?? 0) * 100)
+                    onCommitted: (v) => panel.model.changeShape({ cornerRadius: Math.max(0, Math.min(0.5, v / 100)) })
+                }
+                Num {
+                    visible: panel.shape && ["polygon", "star"].indexOf(panel.sh.type) >= 0
+                    objectName: "insp:shape:sides"
+                    title: panel.sh.type === "star" ? "Pun" : "Lad"
+                    value: panel.sh.sides ?? 5
+                    onCommitted: (v) => panel.model.changeShape({ sides: Math.max(3, Math.min(12, Math.round(v))) })
+                }
+            }
+            RowLayout {
+                visible: panel.shape && panel.sh.type !== "letterbox"
+                Label { Layout.preferredWidth: 60; text: "Trazo"; color: Theme.textSecondary }
+                Choice {
+                    objectName: "insp:shape:dash"
+                    options: [["solid", "Continuo"], ["dash", "Discontinuo"], ["dot", "Punteado"]]
+                    current: panel.sh.dash || "solid"
+                    onPicked: (v) => panel.model.changeShape({ dash: v })
+                }
+            }
+            RowLayout {
+                visible: panel.shape && ["arrow", "arrow_curve", "arrow_double"].indexOf(panel.sh.type) >= 0
+                Label { Layout.preferredWidth: 60; text: "Punta"; color: Theme.textSecondary }
+                Choice {
+                    objectName: "insp:shape:arrow"
+                    options: [["filled", "Rellena"], ["line", "Línea"], ["none", "Sin punta"]]
+                    current: panel.sh.arrowHead || "filled"
+                    onPicked: (v) => panel.model.changeShape({ arrowHead: v })
+                }
             }
 
             RowLayout {

@@ -317,7 +317,7 @@ TransformView transform_view(const TimelineClip& clip, double t, double frame_w,
     }
     const double raw = fill ? zoom_to_scale(props.get("zoom"))
                        : height_fit(clip) ? pose.scale / hs_of(clip, height_scale)
-                       : pose.scale != 0 ? pose.scale
+                       : pose.scale != 0 && !std::isnan(pose.scale) ? pose.scale
                                          : 1;
     v.scale_pct = js_round(raw * 100);
     v.rotation_deg = js_fixed(pose.rotation, 1);

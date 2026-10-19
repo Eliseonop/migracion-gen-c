@@ -430,6 +430,11 @@ TEST_CASE("editor: figuras y capa de ajuste en el cabezal", "[studio]") {
     CHECK(made["kind"] == "adjustment");
     CHECK(made["start"] == 1.0);
     m.undo();
+    m.select(m.clips().back().toMap()["clipId"].toString());
+    m.changeShape({{"fill", "#00ff00"}, {"sides", 7}});
+    CHECK(m.selectedClip()["shape"].toMap()["fill"] == "#00ff00");
+    CHECK(m.selectedClip()["shape"].toMap()["sides"] == 7);
+    m.undo();
     m.undo();
     CHECK(m.clips().size() == 3);
 }

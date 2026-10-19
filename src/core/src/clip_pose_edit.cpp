@@ -225,6 +225,37 @@ void apply_static_pose(TimelineClip& clip, const Json& patch) {
     }
 }
 
+Json flatten_pose_patch(const Json& patch) {
+    Json out = Json::object();
+    for (const char* key : {"x", "y", "scale", "rotation", "opacity"}) {
+        const Json& v = field(patch, key);
+        if (!v.is_null() && std::isfinite(js_number(v))) {
+            out[key] = js_number(v);
+        }
+    }
+    for (const char* key : {"cx", "cy", "zoom"}) {
+        if (!field(patch, key).is_null()) {
+            out[key] = js_number(field(patch, key));
+        }
+    }
+    return out;
+}
+
+void change_shape(TimelineClip& clip, const Json& patch, double local_t, double fps, IdSource& ids) {
+    if (clip.kind != "shape" || !patch.is_object()) {
+        return;
+    }
+    Json shape = clip.shape && clip.shape->is_object() ? *clip.shape : Json::object();
+    for (const auto& [key, value] : patch.items()) {
+        shape[key] = value;
+    }
+    clip.shape = std::move(shape);
+    const Json pose = flatten_pose_patch(patch);
+    if (!pose.empty() && should_keyframe(clip, pose)) {
+        upsert_keyframe_ui(clip, std::max(0.0, local_t), pose, std::nullopt, fps, ids);
+    }
+}
+
 void commit_pose(TimelineClip& clip, const Json& patch, double local_t, double fps, IdSource& ids) {
     if (clip.kind != "video" && clip.kind != "image" && clip.kind != "shape" && clip.kind != "text" &&
         clip.kind != "audio") {

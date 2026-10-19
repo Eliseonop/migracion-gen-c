@@ -32,6 +32,11 @@ void upsert_keyframe_ui(TimelineClip& clip, double local_t, const Json& patch,
                         const std::optional<std::string>& interpolation, double fps, IdSource& ids);
 // applyStaticPose de VideoEditor.jsx.
 void apply_static_pose(TimelineClip& clip, const Json& patch);
+// flattenPatch(patch, 'text' | 'shape'): la pose numérica (x, y, escala, giro, opacidad y encuadre).
+[[nodiscard]] Json flatten_pose_patch(const Json& patch);
+// changeShape de VideoEditor.jsx: la figura con `patch` encima y, si la pose ya está animada, su
+// keyframe en el cabezal.
+void change_shape(TimelineClip& clip, const Json& patch, double local_t, double fps, IdSource& ids);
 // commitPose de VideoEditor.jsx para un clip: `local_t` es el cabezal menos su inicio.
 void commit_pose(TimelineClip& clip, const Json& patch, double local_t, double fps, IdSource& ids);
 

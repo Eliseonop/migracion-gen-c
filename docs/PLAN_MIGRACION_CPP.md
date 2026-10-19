@@ -1321,3 +1321,26 @@ Decisión de Edu (§6):
 - **Verificación:** 180 medidas de Pillow (métricas y ancla vertical exactas), 15 máscaras frente al alfa de `combined_alpha` (29,8–58,5 dB) y 2 escenas de render compuesto (43–44 dB); 5/6 mutantes fallan (el otro mueve 0,3 px). MSVC + vcpkg 166/166 (Debug y Release), MinGW 133/133. 0 warnings.
 
 **Siguiente:** los efectos de vídeo (`vfx`), los textos de una pista con vídeo encima y medir con los proyectos de 4K.
+
+### 2026-10-19 — F0 en Linux y F5: el editor Qt Quick (`genclip-studio`)
+
+- **F0 en Linux:** GCC 13 y 14 y Clang 20 + libc++ con `-DGC_WARNINGS_AS_ERRORS=ON` y 0 warnings. Los tests que solo tienen sentido en Windows se saltan fuera de él. Con libc++ no se compila el studio, porque el Qt de las distribuciones usa libstdc++ y no enlaza.
+- **F5:** `apps/studio` con ViewModels en C++ (`HomeModel`, `EditorModel` sobre `EditSession`, `ClipListModel`, `SettingsModel`) y QML compatible con Qt 6.4:
+  - inicio con carpetas;
+  - timeline: arrastrar con imán y `dropTarget`, recortar, pistas nuevas, grupo, Alt para reemplazar y autodesplazamiento;
+  - cabecera de pista, marcadores, selección por área, portapapeles y atajos;
+  - panel de material;
+  - inspector: transformación, mezcla, velocidad, audio con fundidos, rombo de keyframe, aparición y salida, nota, textos y figuras;
+  - ajustes.
+- **Lógica en `gc_core`:** `timeline_ui`, `timeline_view`, `timeline_drop`, `clip_pose_edit`, `material_drop`, `clip_layout_ui` y `text_clip_ui`.
+- **Verificación de la paridad:**
+  - Con el JS real del editor de video-yt, ejecutado con Node: `export_fixtures.py --solo editor`, unas 44 000 llamadas.
+  - Las funciones internas de `VideoEditor.jsx` (`applyStaticPose`, `placeAsset`, `newTextStyle`, `changeStyle`, `changeShape`) se extraen del código fuente.
+  - Mutantes comprobados en cada tanda.
+- **Interfaz entera sin pantalla:** QTest con `QT_QPA_PLATFORM=offscreen` (ratón y teclado). Así salieron varios fallos de la timeline: delegados recreados al seleccionar, la coordenada del gesto y un delegado destruido dentro de su propio manejador.
+- **Linux:** 169/169 con GCC y 138/138 con Clang + libc++.
+- **Divergencias que se quedan:**
+  - Un keyframe sin id es aleatorio en el JS, así que el rombo no lo puede quitar; en C++ sí se quita.
+  - `t: null` en un keyframe de pose: el JS lo toma como t = 0 y la pose de Python (la del export) lo ignora. C++ sigue a la del export.
+
+**Siguiente:** `applyAudioSpeedToLinkedText`, el resto del texto (temas, trazo, fondo, sombra), máscaras y filtros en el inspector. El preview espera a `gc_render`, que en Linux sigue bloqueado por la red de vcpkg.

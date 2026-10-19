@@ -355,6 +355,8 @@ TEXT_PATCHES = [{"color": "#ff0000"}, {"color": "nada"}, {"font": "Impact", "siz
 
 
 TEXT_CLIPS = POSE_CLIPS + [
+    clip("shk", "V2", "shape", start=1, out=3, shape={"type": "star"},
+         keyframes={"enabled": True, "items": [{"id": "q1", "t": 0.5, "props": {"x": 0.3}}]}),
     clip("ti", "T1", "text", start=13, out=4, text="curvas", style={"color": "#ffffff"},
          keyframes={"enabled": True, "items": [{"id": "h0", "t": 0, "props": {"color": "#111111"}, "interpolation": "hold"},
                                                {"id": "h2", "t": 1.6, "props": {"border_width": 2}, "interpolation": "ease_out"}]})]
@@ -378,6 +380,12 @@ def _text_calls(rng: random.Random) -> list:
             calls.append(["makeShapeClip", "V2", start, dur, preset])
     for start, dur in ((0, None), (-2, 0.1), (3.0006, 7), (1, 0)):
         calls.append(["makeAdjustmentClip", "V2", start, dur])
+    shape_patches = [{"fill": "#00ff00"}, {"x": 0.2, "rotation": 30}, {"w": 0.5, "h": "0.2"}, {"opacity": 0.3},
+                     {"sides": 7, "dash": "dot"}, {"cx": 0.1}, {}]
+    for c in TEXT_CLIPS:
+        for patch in shape_patches:
+            for t in (0, 0.5, 1.25, -1):
+                calls.append(["changeShape", c["id"], patch, t, rng.choice([30, 24])])
     for ph in (0, 2.5, 30, 11.9996):
         calls.append(["newTextDuration", ph])
     for c in TEXT_CLIPS:

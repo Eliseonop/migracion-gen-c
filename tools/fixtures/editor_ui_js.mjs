@@ -70,6 +70,15 @@ const changeStyle = (clip, patch, t, fps, fixed) => {
     () => {})(clip.id, patch, fixed ? { fixed: true } : undefined)
   return made
 }
+const changeShape = (clip, patch, t, fps) => {
+  let made = clip
+  const setClips = (fn) => { made = fn([clip])[0] }
+  new Function('setClips', 'selIdsRef', 'flattenPatch', 'shouldKeyframe', 'localTOf', 'upsertKf', 'markKf',
+    `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'changeShape')}`)(
+    setClips, { current: [clip.id] }, kf.flattenPatch, kf.shouldKeyframe, () => Math.max(0, t),
+    (c, tt, p, i) => kf.upsertKeyframeAt(c, tt, p, i, fps), () => {})(clip.id, patch)
+  return made
+}
 // Sin ids (salen de la hora): el del clip y los de los keyframes del encuadre.
 const clipNoIds = (c) => {
   if (!c) return c
@@ -217,6 +226,10 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     makeAdjustmentClip: (track, start, dur) => {
       const { id, ...rest } = m.makeAdjustmentClip(track, start, dur ?? undefined)
       return rest
+    },
+    changeShape: (id, patch, t, fps) => {
+      const c = noIds(changeShape(byId(id), patch, t, fps))
+      return { shape: c.shape ?? null, keyframes: c.keyframes ?? null }
     },
     defaultTextStyle: () => textstyles.defaultTextStyle(),
     subtitleStyle: () => textstyles.subtitleStyle(),

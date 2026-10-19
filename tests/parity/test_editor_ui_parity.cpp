@@ -574,6 +574,12 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "newTextDuration") {
         return new_text_duration(tl, num(1));
     }
+    if (fn == "changeShape") {
+        SequentialIdSource ids;
+        TimelineClip c = clip(call.at(1));
+        change_shape(c, call.at(2), num(3), num(4), ids);
+        return {{"shape", c.shape ? *c.shape : Json()}, {"keyframes", c.keyframes ? without_ids(*c.keyframes) : Json()}};
+    }
     if (fn == "upsertStyleKf" || fn == "changeStyle") {
         SequentialIdSource ids;
         TimelineClip c = clip(call.at(1));
