@@ -184,6 +184,9 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
 } // namespace
 
 TEST_CASE("paridad de la biblioteca de SFX en disco: pasos sintéticos", "[parity][sfx]") {
+    if constexpr (!gc::test::kWindows) {
+        SKIP(gc::test::kWindowsPathOnly);
+    }
     const auto path = kFixtures / "sfx" / "synthetic.json";
     REQUIRE(fs::exists(path)); // faltan: ejecuta tools/fixtures/export_fixtures.py
     auto file = read_json_file(path);

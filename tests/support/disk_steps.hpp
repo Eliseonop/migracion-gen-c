@@ -18,6 +18,13 @@
 
 namespace gc::test {
 
+#ifdef _WIN32
+inline constexpr bool kWindows = true;
+#else
+inline constexpr bool kWindows = false;
+#endif
+inline constexpr const char* kWindowsPathOnly = "Fixtures con la semántica de WindowsPath: solo en Windows";
+
 inline std::string replace_all(std::string s, std::string_view from, std::string_view to) {
     for (auto pos = s.find(from); pos != std::string::npos; pos = s.find(from, pos + to.size())) {
         s.replace(pos, from.size(), to);
@@ -46,6 +53,11 @@ inline Json replace_in_strings(const Json& value, std::string_view from, std::st
         return out;
     }
     return value;
+}
+
+// Fuera de Windows, Python escribe LF: los textos sin los CRLF de las fixtures.
+inline Json native_eol(const Json& value) {
+    return kWindows ? value : replace_in_strings(value, "\r\n", "\n");
 }
 
 // El contenido de un paso: el texto tal cual o el JSON escrito.

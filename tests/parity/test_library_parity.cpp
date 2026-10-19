@@ -242,6 +242,9 @@ std::size_t run_save_steps(const Json& steps) {
 } // namespace
 
 TEST_CASE("paridad de la biblioteca: guardar desde un proyecto", "[parity][library]") {
+    if constexpr (!gc::test::kWindows) {
+        SKIP(gc::test::kWindowsPathOnly);
+    }
     const auto path = kFixtures / "library" / "synthetic.json";
     REQUIRE(std::filesystem::exists(path));
     auto file = read_json_file(path);

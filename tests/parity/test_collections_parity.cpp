@@ -214,6 +214,9 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
 } // namespace
 
 TEST_CASE("paridad de las colecciones de material: pasos sintéticos", "[parity][collections]") {
+    if constexpr (!gc::test::kWindows) {
+        SKIP(gc::test::kWindowsPathOnly);
+    }
     const auto path = kFixtures / "collections" / "synthetic.json";
     REQUIRE(fs::exists(path)); // faltan: ejecuta tools/fixtures/export_fixtures.py
     auto file = read_json_file(path);

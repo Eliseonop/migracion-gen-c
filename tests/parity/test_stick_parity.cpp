@@ -145,6 +145,9 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
 } // namespace
 
 TEST_CASE("paridad de los personajes stick: pasos sintéticos", "[parity][stick]") {
+    if constexpr (!gc::test::kWindows) {
+        SKIP(gc::test::kWindowsPathOnly);
+    }
     const auto path = kFixtures / "stick" / "synthetic.json";
     REQUIRE(fs::exists(path)); // faltan: ejecuta tools/fixtures/export_fixtures.py
     auto file = read_json_file(path);

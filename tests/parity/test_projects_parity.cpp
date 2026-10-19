@@ -198,13 +198,14 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
         } else {
             INFO("error: " << (ok ? std::string() : ok.error().to_string()));
             REQUIRE(ok);
-            const auto diff = gc::test::json_diff(s.at("result"), tmp_of(result));
+            const auto diff = gc::test::json_diff(gc::test::native_eol(s.at("result")),
+                                                  gc::test::native_eol(tmp_of(result)));
             INFO("resultado: " << diff.value_or(""));
             CHECK_FALSE(diff);
         }
         if (s.contains("file")) { // el texto de projects.json después del paso
             const Json written = fs::exists(file) ? Json(replace_all(gc::test::read_file(file), posix, "{TMP}")) : Json();
-            CHECK(written == s.at("file"));
+            CHECK(gc::test::native_eol(written) == gc::test::native_eol(s.at("file")));
         }
         ++n;
     }
