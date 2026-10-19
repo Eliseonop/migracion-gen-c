@@ -33,6 +33,7 @@ Salida (al repo):
   tests/fixtures/library/synthetic.json    biblioteca: pasos de library_cases.py
   tests/fixtures/sfx/synthetic.json        biblioteca de SFX en disco: pasos de sfx_cases.py
   tests/fixtures/sfx/write.json            alta, edición y categorías de SFX (sfx_cases.WRITE_STEPS)
+  tests/fixtures/beats/synthetic.json      beats automáticos (beats.py) sobre las señales de beats_cases.py
   tests/fixtures/collections/synthetic.json  colecciones de material: pasos de collections_cases.py
   tests/fixtures/stick/synthetic.json      personajes stick: pasos de stick_cases.py
   tests/fixtures/projects/synthetic.json   almacén de proyectos: pasos de projects_cases.py
@@ -974,6 +975,34 @@ def synthetic_sfx_write_fixtures(ctx: Ctx) -> dict:
     sys.path.insert(0, str(HERE))
     import sfx_cases as xc
     return {"root": None, "steps": _run_sfx_steps(xc.WRITE_STEPS, None)}
+
+
+def synthetic_beats_fixtures(ctx: Ctx) -> list:
+    """beats.py sobre las señales de beats_cases: la curva de ataque (cada 7 fotogramas), el tempo
+    sin redondear, los fotogramas de los beats y lo que devuelve detect_beats."""
+    sys.path.insert(0, str(HERE))
+    import beats_cases as bc
+    from app import beats
+    out = []
+    for case in bc.CASES:
+        y = bc.synth(case)
+        entry: dict = {"case": case}
+        try:
+            if y.size < beats.N_FFT:   # decode_mono
+                raise ValueError("El clip no tiene audio suficiente para detectar beats.")
+            env = beats.onset_envelope(y)
+            bpm = beats.estimate_bpm(env)
+            frames = beats.track_beats(env, bpm)
+            entry.update({
+                "env_len": len(env), "env": [float(v) for v in env[::7]], "bpm_raw": float(bpm),
+                "frames": [int(f) for f in frames],
+                "times": [round(float(f * beats.HOP / beats.SR + beats.ONSET_LAG), 3) for f in frames],
+                "bpm": round(bpm, 1),
+            })
+        except Exception as e:  # noqa: BLE001
+            entry["error"] = type(e).__name__
+        out.append(entry)
+    return out
 
 
 def real_sfx_fixtures(ctx: Ctx) -> dict:
@@ -2907,7 +2936,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura"],
+                                       "sfx_escritura", "beats"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -2939,6 +2968,14 @@ def main() -> None:
 
     if args.solo == "sfx_escritura":
         sfx_write_group()
+        return
+
+    def beats_group() -> None:
+        bts = synthetic_beats_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "beats" / "synthetic.json", bts, len(bts), sum("error" in b for b in bts))
+
+    if args.solo == "beats":
+        beats_group()
         return
     def shapes_group() -> None:
         shp = synthetic_shape_fixtures(ctx)
@@ -3035,6 +3072,7 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "sfx" / "synthetic.json", sfx_syn, len(sfx_syn["steps"]),
           sum("error" in s for s in sfx_syn["steps"]))
     sfx_write_group()
+    beats_group()
     js = synthetic_json_fixtures()
     write(REPO / "tests" / "fixtures" / "json" / "synthetic.json", js,
           len(js["floats"]) + len(js["dumps"]) + len(js["loads"]), sum("error" in c for c in js["loads"]))

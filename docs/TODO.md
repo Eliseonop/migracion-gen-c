@@ -480,7 +480,7 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 - [ ] TTS: Kokoro y Piper (espeak-ng)
 - [ ] YuNet + reframe automático
 - [ ] Tracking LK + RANSAC (`object_track`)
-- [ ] Beats por FFT
+- [ ] Beats por FFT *(el algoritmo hecho, 2026-10-19: `beat_detect.hpp`, espejo de `beats.py` (flujo espectral en 48 bandas, tempo por autocorrelación con preferencia por 120 BPM y programación dinámica de Ellis) con una FFT radix-2 propia, sin dependencias. Paridad con el `beats.py` real sobre 12 señales sintéticas deterministas (`export_fixtures.py --solo beats`): en Linux, beats idénticos y curva de ataque a 1e-6; mutantes (tightness, bandas, prior, parábola) detectados. Falta decodificar el audio a 22 050 Hz (gc_media) y el «Detectar beats» del menú del clip)*
 - [ ] `model_manager`: descarga bajo demanda y presupuesto de RAM
 - [ ] Fixtures de IA (IoU ≥ 0,95; Δ palabras ≤ 80 ms) y benchmarks iguales o mejores que Python
 
