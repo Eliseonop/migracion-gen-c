@@ -1,7 +1,9 @@
 // El ViewModel del inicio (apps/studio/home_model.hpp): lo que Home.jsx hace por su cuenta antes
 // de llamar a la API.
 
+#include <QCoreApplication>
 #include <filesystem>
+#include <string>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -14,7 +16,8 @@ using namespace gc;
 namespace {
 
 struct Fixture {
-    std::filesystem::path dir = std::filesystem::temp_directory_path() / "gc_home_model";
+    std::filesystem::path dir = std::filesystem::temp_directory_path() /
+                                ("gc_home_model_" + std::to_string(QCoreApplication::applicationPid()));
     core::SequentialIdSource ids;
     core::ProjectsStore store{dir / "data" / "projects.json", dir / "clips",
                               [] { return std::string("2026-10-19T10:00:00+00:00"); }};

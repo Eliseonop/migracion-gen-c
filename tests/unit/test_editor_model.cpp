@@ -1,7 +1,9 @@
 // El ViewModel del editor (apps/studio/editor_model.hpp): lo que hace cada gesto de la timeline y
 // que el resultado se guarda en projects.json.
 
+#include <QCoreApplication>
 #include <filesystem>
+#include <string>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -23,7 +25,8 @@ Json clip(const char* id, const char* track, const char* kind, double start, dou
 }
 
 struct Fixture {
-    std::filesystem::path dir = std::filesystem::temp_directory_path() / "gc_editor_model";
+    std::filesystem::path dir = std::filesystem::temp_directory_path() /
+                                ("gc_editor_model_" + std::to_string(QCoreApplication::applicationPid()));
     core::ProjectsStore store{dir / "data" / "projects.json", dir / "clips"};
 
     Fixture() {

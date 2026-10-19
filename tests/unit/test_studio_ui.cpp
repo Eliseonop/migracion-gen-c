@@ -1,12 +1,14 @@
 // genclip-studio entero sin pantalla: el QML real con los ViewModels, manejado con el ratón y el
 // teclado de QTest. Comprueba que los gestos de la timeline llegan al modelo y a projects.json.
 
+#include <QCoreApplication>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickItem>
 #include <QQuickWindow>
 #include <QTest>
 #include <filesystem>
+#include <string>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -19,13 +21,15 @@ using namespace gc;
 
 namespace {
 
+// Una sola app para todo el proceso y sin destruir: hacerlo al salir, detrás de los estáticos de Qt,
+// rompe.
 QGuiApplication& app() {
     static int argc = 1;
     static char name[] = "gc_tests";
     static char* argv[] = {name, nullptr};
     qputenv("QT_QPA_PLATFORM", "offscreen");
-    static QGuiApplication instance(argc, argv);
-    return instance;
+    static auto* instance = new QGuiApplication(argc, argv);
+    return *instance;
 }
 
 Json clip(const char* id, const char* track, double start, double out) {
@@ -35,7 +39,8 @@ Json clip(const char* id, const char* track, double start, double out) {
 }
 
 struct Studio {
-    std::filesystem::path dir = std::filesystem::temp_directory_path() / "gc_studio_ui";
+    std::filesystem::path dir = std::filesystem::temp_directory_path() /
+                                ("gc_studio_ui_" + std::to_string(QCoreApplication::applicationPid()));
     std::unique_ptr<core::ProjectsStore> store;
     core::SequentialIdSource ids;
     std::unique_ptr<studio::HomeModel> home;
@@ -99,6 +104,7 @@ struct Studio {
             QTest::mouseMove(window, from + (to - from) * i / 8);
         }
         QTest::mouseRelease(window, Qt::LeftButton, {}, to);
+        QCoreApplication::processEvents(); // la timeline aplica el gesto con Qt.callLater
     }
     [[nodiscard]] QVariantMap view(const QString& id) const {
         for (const QVariant& v : editor->clips()) {
@@ -149,6 +155,7 @@ TEST_CASE("studio sin pantalla: arrastrar a la fila de encima cambia de pista; S
 
     s.editor->setPlayhead(2);
     QTest::mouseClick(s.window, Qt::LeftButton, {}, s.at("a", 0.5));
+    QCoreApplication::processEvents();
     QTest::keyClick(s.window, Qt::Key_S);
     CHECK(s.editor->clips().size() == 3);
     QTest::keyClick(s.window, Qt::Key_Delete);

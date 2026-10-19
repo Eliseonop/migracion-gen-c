@@ -198,18 +198,25 @@ Rectangle {
                                 timeline.guides = block.trim.times || []
                             }
                         }
+                        // El cambio se aplica fuera del manejador: rehace la lista de clips y este
+                        // delegado desaparece.
                         onReleased: (m) => {
-                            if (block.mode === "move" && timeline.dragId)
-                                timeline.model.dropDrag(block.modelData.id, delta(m), centerY(m))
-                            else if (block.mode !== "move" && block.trim)
-                                timeline.model.trimClip(block.modelData.id, block.mode === "trim-left", delta(m))
-                            else if (block.mode === "move" && !(m.modifiers & (Qt.ControlModifier | Qt.ShiftModifier)))
-                                timeline.model.select(block.modelData.id, false, false)
+                            const model = timeline.model
+                            const id = block.modelData.id
+                            const d = delta(m)
+                            const cy = centerY(m)
+                            const left = block.mode === "trim-left"
+                            const action = block.mode === "move" && timeline.dragId ? () => model.dropDrag(id, d, cy)
+                                         : block.mode !== "move" && block.trim ? () => model.trimClip(id, left, d)
+                                         : block.mode === "move" && !(m.modifiers & (Qt.ControlModifier | Qt.ShiftModifier))
+                                           ? () => model.select(id, false, false) : null
                             block.mode = ""
                             block.trim = null
                             timeline.dragId = ""
                             timeline.drag = null
                             timeline.guides = []
+                            if (action)
+                                Qt.callLater(action)
                         }
                     }
                 }
