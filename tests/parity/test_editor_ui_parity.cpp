@@ -605,6 +605,28 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "newTextDuration") {
         return new_text_duration(tl, num(1));
     }
+    if (fn == "confirmCrop") {
+        SequentialIdSource ids;
+        const TimelineClip& c = clip(call.at(1));
+        const Json& cr = call.at(2);
+        const double t = num(4);
+        const double local = std::max(0.0, t);
+        const double src = std::clamp(c.reverse ? c.out_point - local * ui_clip_speed(c) : c.in_point + local * ui_clip_speed(c),
+                                      c.in_point, c.out_point);
+        auto out = confirm_crop(c, {cr.at("cx").get<double>(), cr.at("cy").get<double>(), cr.at("wf").get<double>(),
+                                    cr.at("hf").get<double>()},
+                                num(3), t, src, num(5), ids);
+        REQUIRE(out);
+        Json j = to_json(*out);
+        Json rf = j.value("reframe", Json());
+        if (rf.is_object()) {
+            for (Json& k : rf["keyframes"]) {
+                k.erase("id");
+            }
+        }
+        return {{"reframe", rf}, {"transform", j.value("transform", Json())}, {"frame", j.value("frame", Json())},
+                {"keyframes", out->keyframes ? without_ids(*out->keyframes) : Json()}};
+    }
     if (fn == "styleKfState") {
         return style_kf_state(clip(call.at(1)), num(2), strings(call.at(3)), num(4));
     }
@@ -796,7 +818,32 @@ TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]
         for (std::size_t i = 0; i < calls.size(); ++i) {
             INFO(c.at("name").get<std::string>() << " :: " << calls[i].dump());
             const Json got = run(*tl, geo, calls[i]);
-            if (calls[i].at(0) == "zoomByDrag") { // Math.pow de V8 y el pow de la libc: hasta 1 ulp
+            if (calls[i].at(0) == "confirmCrop") { // el JS da el objeto tal cual; guardado pasaría por el modelo
+                Json j = to_json([&]() -> const TimelineClip& {
+                    for (const auto& x : tl->clips) {
+                        if (x->id == calls[i].at(1).get<std::string>()) {
+                            return *x;
+                        }
+                    }
+                    throw std::runtime_error("clip");
+                }());
+                const Json& want = results[i];
+                j["reframe"] = want.at("reframe");
+                j["transform"] = want.at("transform");
+                j["frame"] = want.at("frame");
+                j["keyframes"] = want.at("keyframes");
+                auto saved = clip_from_json(j);
+                REQUIRE(saved);
+                Json norm = to_json(*saved);
+                if (norm["reframe"].is_object()) {
+                    for (Json& k : norm["reframe"]["keyframes"]) {
+                        k.erase("id");
+                    }
+                }
+                const Json expected = {{"reframe", norm["reframe"]}, {"transform", norm["transform"]},
+                                       {"frame", norm["frame"]}, {"keyframes", norm["keyframes"]}};
+                CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(expected.dump()));
+            } else if (calls[i].at(0) == "zoomByDrag") { // Math.pow de V8 y el pow de la libc: hasta 1 ulp
                 CHECK(std::abs(got.get<double>() / results[i].get<double>() - 1) < 1e-15);
             } else if (c.at("name") == "encuadre") {
                 CHECK(near(nlohmann::json::parse(got.dump()), nlohmann::json::parse(results[i].dump())));

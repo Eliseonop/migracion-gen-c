@@ -28,6 +28,23 @@ const themes = await load('lib/subtitleThemes.js')
 const fxRuntime = await load('fx/core/runtime.js')
 const maskLib = await load('lib/clipMask.js')
 const favorites = await load('lib/favorites.js')
+const projectFps = await load('lib/projectFps.js')
+// confirmCrop de VideoEditor.jsx (con changeReframe, upsertKeyframe, changeTransform y srcTOf) sobre un clip.
+const confirmCrop = (clip, crop, rotation, t, fps) => {
+  let made = clip
+  let seq = 0
+  const setClips = (fn) => { made = fn([made])[0] }
+  const src = `${root}/features/editor/VideoEditor.jsx`
+  const deps = { setClips, clipsRef: { get current() { return [made] } }, cropClipId: clip.id, setCropClipId: () => {},
+    newReframe: m.newReframe, keyframesOn: kf.keyframesOn, uid: (p) => `${p}${++seq}`, newTransform: layout.newTransform,
+    shouldKeyframe: kf.shouldKeyframe, localTOf: () => Math.max(0, t), upsertKf: (c, tt, p, i) => kf.upsertKeyframeAt(c, tt, p, i, fps),
+    flattenPatch: kf.flattenPatch, markKf: () => {}, snapToFrame: projectFps.snapToFrame, kfSnap: projectFps.kfSnap,
+    clamp: (v, lo, hi) => Math.min(hi, Math.max(lo, v)), fpsRef: { current: fps }, pendingKfSel: { current: null },
+    applyStaticPose, playheadRef: { current: clip.start + t }, timelineToSource: m.timelineToSource }
+  const body = ['changeReframe', 'upsertKeyframe', 'changeTransform', 'srcTOf', 'confirmCrop'].map((n) => extractFunction(src, n)).join('\n')
+  new Function(...Object.keys(deps), `${body}\nreturn confirmCrop`)(...Object.values(deps))({ crop, rotation })
+  return made
+}
 // Máscaras de VideoEditor.jsx (addMask, removeMask, duplicateMask, changeMask y commitMask) sobre un clip.
 const maskOps = (clip, aspect, fps, t) => {
   let made = clip
@@ -52,7 +69,7 @@ function extractFunction(file, name) {
   const src = readFileSync(file, 'utf8')
   const start = src.indexOf(`function ${name}(`)
   let depth = 0
-  for (let i = src.indexOf('{', start); i < src.length; i++) {
+  for (let i = src.indexOf(') {', start) + 2; i < src.length; i++) { // tras los parámetros (puede haber `x = {}`)
     if (src[i] === '{') depth++
     else if (src[i] === '}' && --depth === 0) return src.slice(start, i + 1)
   }
@@ -272,6 +289,12 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       const c = op === 'addMask' ? ops.run('addMask', arg, 'clip') : op === 'addAdjust' ? ops.run('addMask', arg, 'adjust')
         : op === 'changeMask' || op === 'commitMask' ? ops.run(op, id, arg) : ops.run(op)
       return { masks: masksOf(c), keyframes: noIds(c).keyframes ?? null }
+    },
+    confirmCrop: (id, crop, rotation, t, fps) => {
+      const c = confirmCrop(byId(id), crop, rotation, t, fps)
+      const strip = (arr) => (arr || []).map(({ id: _, ...k }) => k)
+      return { reframe: c.reframe ? { ...c.reframe, keyframes: strip(c.reframe.keyframes) } : null, transform: c.transform ?? null,
+        frame: c.frame ?? null, keyframes: noIds(c).keyframes ?? null }
     },
     styleKfState: (id, t, keys, fps) => kf.styleKfState(byId(id), t, keys, fps),
     toggleStyleKf: (id, trackStyle, keys, t, fps) => noIds(toggleStyleKf(byId(id), trackStyle, keys, t, fps)).keyframes ?? null,

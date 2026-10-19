@@ -5,7 +5,10 @@
 #include <numbers>
 #include <tuple>
 
+#include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/keyframes.hpp"
+#include "gc/core/serialize.hpp"
+#include "gc/core/timeline_view.hpp"
 #include "gc/core/timeline_ui.hpp"
 
 namespace gc::core {
@@ -358,6 +361,120 @@ Json transform_reset_patch(const TimelineClip& clip, double height_scale) {
         p["rot_y"] = 0;
     }
     return p;
+}
+
+namespace {
+
+Json new_reframe_json() {
+    return {{"zoom", 1},          {"pan_mode", "smooth"}, {"dual_crop", false},       {"split_orientation", "vertical"},
+            {"split_layout", "auto"}, {"master", false},  {"face_track_mode", nullptr}, {"keyframes", Json::array()},
+            {"keyframes2", Json::array()}};
+}
+
+// changeReframe: {...(c.reframe || newReframe()), ...patch}.
+Result<TimelineClip> change_reframe(const TimelineClip& clip, const Json& patch) {
+    Json j = to_json(clip);
+    Json rf = j.value("reframe", Json()).is_object() ? j["reframe"] : new_reframe_json();
+    for (const auto& [key, value] : patch.items()) {
+        rf[key] = value;
+    }
+    j["reframe"] = std::move(rf);
+    return clip_from_json(j);
+}
+
+bool keyframes_on(const TimelineClip& clip) {
+    return clip.keyframes && clip.keyframes->value("enabled", false) == true &&
+           clip.keyframes->value("items", Json::array()).is_array() && !clip.keyframes->at("items").empty();
+}
+
+} // namespace
+
+Result<TimelineClip> confirm_crop(const TimelineClip& clip, const CropWindow& crop, double rotation, double local_t,
+                                  double src_t, double fps, IdSource& ids) {
+    const Json original = to_json(clip);
+    const Json rf = original.value("reframe", Json()).is_object() ? original.at("reframe") : new_reframe_json();
+    const double cx = js_fixed(crop.cx, 4);
+    const double cy = js_fixed(crop.cy, 4);
+    const Json size = {{"crop_w", js_fixed(crop.wf, 4)}, {"crop_h", js_fixed(crop.hf, 4)}};
+    const Json kfs = rf.value("keyframes", Json::array());
+    TimelineClip out = clip;
+    if (keyframes_on(clip) || (kfs.is_array() && kfs.size() > 1)) {
+        auto sized = change_reframe(out, size);
+        if (!sized) {
+            return sized;
+        }
+        out = std::move(*sized);
+        if (out.reframe && out.reframe->dual_crop) { // upsertKeyframe: keyframe del encuadre en la fuente
+            Json j = to_json(out);
+            Json list = j["reframe"].value("keyframes", Json::array());
+            const double t = js_fixed(snap_to_frame(std::clamp(src_t, out.in_point, out.out_point), fps), 6);
+            const auto hit = std::find_if(list.begin(), list.end(), [&](const Json& k) {
+                return std::abs(js_number(k.value("t", Json(0))) - t) < frame_duration(fps) / 2;
+            });
+            if (hit != list.end()) {
+                (*hit)["t"] = t;
+                (*hit)["cx"] = cx;
+                (*hit)["cy"] = cy;
+            } else {
+                list.push_back({{"id", make_uid(ids, "k")}, {"t", t}, {"cx", cx}, {"cy", cy},
+                                {"zoom", j["reframe"].value("zoom", Json(1))}, {"pan_mode", "smooth"}});
+            }
+            std::stable_sort(list.begin(), list.end(), [](const Json& a, const Json& b) {
+                return js_number(a.value("t", Json(0))) < js_number(b.value("t", Json(0)));
+            });
+            j["reframe"]["keyframes"] = std::move(list);
+            auto back = clip_from_json(j);
+            if (!back) {
+                return back;
+            }
+            out = std::move(*back);
+        } else {
+            upsert_keyframe_ui(out, std::max(0.0, local_t), Json{{"cx", cx}, {"cy", cy}}, std::nullopt, fps, ids);
+            apply_static_pose(out, Json{{"cx", cx}, {"cy", cy}});
+        }
+    } else {
+        const Json k0 = kfs.is_array() && !kfs.empty() && kfs[0].is_object() ? kfs[0] : Json::object();
+        const auto truthy = [](const Json& v) { return v.is_string() ? !v.get_ref<const std::string&>().empty() : !v.is_null(); };
+        Json key = {{"id", truthy(k0.value("id", Json())) ? k0.at("id") : Json(make_uid(ids, "k"))},
+                    {"t", clip.in_point},
+                    {"cx", cx},
+                    {"cy", cy},
+                    {"zoom", !k0.value("zoom", Json()).is_null() ? k0.at("zoom") : !rf.value("zoom", Json()).is_null() ? rf.at("zoom") : Json(1)},
+                    {"pan_mode", truthy(k0.value("pan_mode", Json())) ? k0.at("pan_mode") : Json("smooth")}};
+        Json patch = size;
+        patch["keyframes"] = Json::array({std::move(key)});
+        auto fixed = change_reframe(out, patch);
+        if (!fixed) {
+            return fixed;
+        }
+        out = std::move(*fixed);
+    }
+    const double rot = js_fixed(rotation, 2);
+    const Json& tr = original.value("transform", Json());
+    const double current = tr.is_object() ? js_number(tr.value("rotation", Json(0))) : 0;
+    if (std::abs((std::isfinite(current) ? current : 0) - rot) > 0.009) { // changeTransform
+        Json j = to_json(out);
+        Json t = {{"x", 0.5}, {"y", 0.5}, {"scale", 1}, {"rotation", 0}};
+        if (j.value("transform", Json()).is_object()) {
+            for (const auto& [key, value] : j["transform"].items()) {
+                t[key] = value;
+            }
+        }
+        t["rotation"] = rot;
+        j["frame"] = "free";
+        j["transform"] = std::move(t);
+        auto back = clip_from_json(j);
+        if (!back) {
+            return back;
+        }
+        const Json patch = {{"rotation", rot}};
+        const bool animate = should_keyframe(out, patch); // con el clip ya recortado, como setClips
+        out = std::move(*back);
+        if (animate) {
+            upsert_keyframe_ui(out, std::max(0.0, local_t), flatten_pose_patch(patch), std::nullopt, fps, ids);
+        }
+    }
+    return out;
 }
 
 } // namespace gc::core

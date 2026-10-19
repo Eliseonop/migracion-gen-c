@@ -547,6 +547,27 @@ def _fragment_case(rng: random.Random) -> dict:
     return {"name": "fragmentar", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
 
 
+def _crop_case(rng: random.Random) -> dict:
+    """Confirmar el modal Recortar (confirmCrop)."""
+    clips = [clip("st", "V1", start=0, inp=1, out=6, layout="overlay"),
+             clip("rk", "V1", start=7, inp=0, out=5, layout="overlay", transform={"x": 0.3, "rotation": 10},
+                  reframe={"zoom": 0.8, "keyframes": [{"id": "r1", "t": 0.5, "cx": 0.4, "cy": 0.5, "pan_mode": "direct"}]}),
+             clip("an", "V2", start=0, out=5, layout="overlay", reframe={"zoom": 0.9, "keyframes": [
+                 {"id": "a1", "t": 0, "cx": 0.2, "cy": 0.5}, {"id": "a2", "t": 3, "cx": 0.8, "cy": 0.5}]}),
+             clip("dc", "V2", start=6, inp=2, out=8, layout="overlay", reframe={"dual_crop": True, "zoom": 0.7, "keyframes": [
+                 {"id": "d1", "t": 2, "cx": 0.3, "cy": 0.5}, {"id": "d2", "t": 5, "cx": 0.6, "cy": 0.5}]}),
+             clip("kf", "V1", start=13, out=4, layout="overlay", keyframes={"enabled": True, "items": [
+                 {"id": "p1", "t": 0, "props": {"x": 0.2}}, {"id": "p2", "t": 2, "props": {"x": 0.8}}]})]
+    calls: list = []
+    for c in clips:
+        for _ in range(6):
+            crop = {"cx": round(rng.uniform(0.2, 0.8), 6), "cy": round(rng.uniform(0.2, 0.8), 6),
+                    "wf": round(rng.uniform(0.1, 1), 6), "hf": round(rng.uniform(0.1, 1), 6)}
+            calls.append(["confirmCrop", c["id"], crop, rng.choice([0, 10, 10.004, -45.678, 180]), round(rng.uniform(0, 3), 3),
+                          rng.choice([30, 24])])
+    return {"name": "recortar", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -571,5 +592,6 @@ def cases() -> list[dict]:
     out.append(_vfx_case(rng))
     out.append(_mask_case(rng))
     out.append(_fragment_case(rng))
+    out.append(_crop_case(rng))
     out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
     return out

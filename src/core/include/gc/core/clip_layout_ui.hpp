@@ -10,6 +10,8 @@
 #include <string_view>
 
 #include "gc/core/clip_layout.hpp"
+#include "gc/core/error.hpp"
+#include "gc/core/ids.hpp"
 #include "gc/core/model.hpp"
 #include "gc/core/pose.hpp"
 
@@ -108,5 +110,11 @@ struct TransformView {
 [[nodiscard]] Json transform_pos_patch(const TimelineClip& clip, double X, double Y, double frame_w, double frame_h);
 [[nodiscard]] Json transform_scale_patch(const TimelineClip& clip, double pct, double height_scale = 1);
 [[nodiscard]] Json transform_reset_patch(const TimelineClip& clip, double height_scale = 1);
+
+// confirmCrop de VideoEditor.jsx: el recorte (fracciones de la fuente) y el giro del modal Recortar.
+// En un clip animado (keyframes o varios del encuadre) el centro entra como keyframe en el cabezal
+// (`local_t`, y `src_t` en la fuente); si no, el recorte vale para todo el clip.
+[[nodiscard]] Result<TimelineClip> confirm_crop(const TimelineClip& clip, const CropWindow& crop, double rotation,
+                                                double local_t, double src_t, double fps, IdSource& ids);
 
 } // namespace gc::core
