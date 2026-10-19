@@ -66,6 +66,7 @@ add_library(gc_core
     src/timeline_ui.cpp
     src/clip_layout_ui.cpp
     src/text_clip_ui.cpp
+    src/vfx_stack.cpp
     src/timeline_view.cpp
 )
 add_library(gc::core ALIAS gc_core)

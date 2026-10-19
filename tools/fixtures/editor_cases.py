@@ -465,6 +465,25 @@ def _linked_case(rng: random.Random) -> dict:
     return {"name": "subtítulos enlazados", "timeline": {"tracks": tracks, "clips": clips}, "calls": calls}
 
 
+def _vfx_case(rng: random.Random) -> dict:
+    """Pila de efectos animados (normalizeVfxEntry y makeVfxEntry de fx/core/runtime.js)."""
+    import json
+    from pathlib import Path
+    catalog = json.loads((Path(__file__).resolve().parents[2] / "resources" / "fx" / "catalog.json").read_text("utf-8"))
+    calls: list = []
+    for e in catalog["effects"]:
+        calls.append(["makeVfxEntry", e["id"]])
+        raw = {"effect": e["id"], "from": rng.choice([None, -1, 0.5, "2"]), "to": rng.choice([None, 0.2, 3, "x"]),
+               "v": rng.choice([None, 0, 2.6, "3"]), "enabled": rng.choice([None, False, True, 0]), "params": {}}
+        for p in e.get("params", []):
+            raw["params"][p["id"]] = rng.choice([None, "basura", -1e9, 1e9, p.get("def"), True, "#00ff00",
+                                                 (p.get("options") or [{"id": None}])[-1].get("id")])
+        calls.append(["normalizeVfxEntry", raw])
+    calls += [["makeVfxEntry", "nada"], ["normalizeVfxEntry", {"effect": "nada"}], ["normalizeVfxEntry", None],
+              ["keepsUid", {"effect": catalog["effects"][0]["id"], "uid": "fx1"}]]
+    return {"name": "efectos animados", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -486,5 +505,6 @@ def cases() -> list[dict]:
         out.append({"name": f"aleatoria {n}", "timeline": tl, "calls": _calls(rng, tl)})
     out.append({"name": "encuadre", "timeline": {"tracks": TRACKS, "clips": POSE_CLIPS}, "calls": _layout_calls(rng)})
     out.append(_linked_case(rng))
+    out.append(_vfx_case(rng))
     out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
     return out

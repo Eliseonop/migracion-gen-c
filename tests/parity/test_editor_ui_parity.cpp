@@ -11,6 +11,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "gc/core/clip_layout_ui.hpp"
+#include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/material_drop.hpp"
@@ -20,6 +21,7 @@
 #include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
 #include "gc/core/timeline_view.hpp"
+#include "gc/core/vfx_stack.hpp"
 
 using gc::Json;
 using namespace gc::core;
@@ -602,6 +604,18 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "newTextDuration") {
         return new_text_duration(tl, num(1));
     }
+    if (fn == "normalizeVfxEntry" || fn == "makeVfxEntry" || fn == "keepsUid") {
+        SequentialIdSource ids;
+        auto e = fn == "makeVfxEntry" ? make_vfx_entry(str(1), ids) : normalize_vfx_entry(call.at(1), ids);
+        if (!e) {
+            return nullptr;
+        }
+        if (fn == "keepsUid") {
+            return e->at("uid");
+        }
+        e->erase("uid");
+        return *e;
+    }
     if (fn == "patchKeyframe" || fn == "moveKeyframe") {
         SequentialIdSource ids;
         TimelineClip c = clip(call.at(1));
@@ -702,6 +716,9 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
 } // namespace
 
 TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]") {
+    auto catalog = FxCatalog::load(path_from_utf8(GC_RESOURCES_DIR) / "fx" / "catalog.json");
+    REQUIRE(catalog);
+    set_fx_catalog(std::make_shared<const FxCatalog>(std::move(*catalog)));
     const auto path = kFixtures / "editor" / "timeline_ui.json";
     REQUIRE(std::filesystem::exists(path)); // faltan: export_fixtures.py --solo editor
     auto file = read_json_file(path);

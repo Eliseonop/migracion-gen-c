@@ -25,6 +25,8 @@ const textstyles = await load('lib/textstyles.js')
 const karaoke = await load('lib/textKaraoke.js')
 const shapes = await load('lib/shapes.js')
 const themes = await load('lib/subtitleThemes.js')
+const fxRuntime = await load('fx/core/runtime.js')
+const noUid = (e) => { if (!e) return null; const { uid, ...rest } = e; return rest }
 
 // applyStaticPose vive dentro de VideoEditor.jsx (no se exporta): se extrae su texto y se evalúa con
 // lo que usa. Es JS sin JSX.
@@ -236,6 +238,9 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       const { id, ...rest } = m.makeAdjustmentClip(track, start, dur ?? undefined)
       return rest
     },
+    normalizeVfxEntry: (raw) => noUid(fxRuntime.normalizeVfxEntry(raw)),
+    keepsUid: (raw) => fxRuntime.normalizeVfxEntry(raw)?.uid ?? null,
+    makeVfxEntry: (id) => noUid(fxRuntime.makeVfxEntry(id)),
     patchKeyframe: (id, kfId, patch, fps) => noIds(kf.patchKeyframe(byId(id), kfId, patch, fps)).keyframes ?? null,
     moveKeyframe: (id, kfId, newT, fps) => {
       const c = noIds(moveKeyframe(byId(id), kfId, newT, fps))
