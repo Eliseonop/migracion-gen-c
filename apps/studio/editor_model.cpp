@@ -37,6 +37,7 @@
 #include "gc/core/serialize.hpp"
 #include "gc/core/sfx_disk.hpp"
 #include "gc/core/sfx_name.hpp"
+#include "gc/core/shape_geometry.hpp"
 #include "gc/core/shapes.hpp"
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_rules.hpp"
@@ -46,6 +47,13 @@
 namespace gc::studio {
 
 namespace {
+
+// SHAPE_CATALOG de lib/shapes.js: categorías con sus tipos y etiquetas.
+const std::vector<std::pair<const char*, std::vector<std::pair<const char*, const char*>>>> kShapeCatalog{
+    {"Básicas", {{"square", "Cuadrado"}, {"circle", "Círculo"}, {"rect", "Rectángulo"}, {"line", "Línea"}}},
+    {"Flechas", {{"arrow", "Flecha"}, {"arrow_curve", "Flecha curva"}, {"arrow_double", "Flecha doble"}}},
+    {"Geométricas", {{"triangle", "Triángulo"}, {"star", "Estrella"}, {"polygon", "Polígono"}}},
+    {"UI", {{"speech", "Burbuja"}, {"check", "Check"}, {"x", "X"}, {"marker", "Marcador"}, {"heart", "Corazón"}}}};
 
 Json to_json(const QVariantMap& map) {
     return Json::parse(QJsonDocument(QJsonObject::fromVariantMap(map)).toJson().toStdString());
@@ -230,6 +238,19 @@ bool EditorModel::openProject(const QString& pid) {
     }
     for (const auto& a : (*project)->audios) {
         add("project", "audios", "audios:" + qstr(a.id), core::to_json(a), "audio");
+    }
+    for (const auto& [category, items] : kShapeCatalog) { // EdShapes: dragShapePayload
+        for (const auto& [type, label] : items) {
+            const QString key = QString("shape:") + type;
+            payloads_[key] = Json{{"asset_kind", "shape"},       {"asset_id", type},
+                                  {"filename", ""},               {"name", label},
+                                  {"duration", core::kShapeDefaultDuration}, {"kind", "shape"},
+                                  {"shape", core::default_shape(type)},      {"type", type},
+                                  {"label", label}};
+            materials_ << QVariantMap{{"key", key},     {"source", "shapes"}, {"assetKind", "shape"}, {"kind", "shape"},
+                                      {"type", type},   {"name", label},      {"category", category},
+                                      {"duration", core::kShapeDefaultDuration}};
+        }
     }
     // La biblioteca global (data/library) y los sonidos de la carpeta de SFX.
     const auto data_dir = store_.file().parent_path();
@@ -2009,6 +2030,27 @@ QVariantList EditorModel::vfxCatalog() {
                            {"description", qstr(e.value("description", ""))}};
     }
     return out;
+}
+
+QVariantMap EditorModel::shapeThumb(const QString& type) {
+    const Json shape = core::default_shape(type.toStdString());
+    const core::ShapeGeometry geo = core::shape_geometry(type.toStdString(), shape);
+    const auto lines = [](const std::vector<core::Polyline>& list) {
+        QVariantList out;
+        for (const core::Polyline& line : list) {
+            QVariantList pts;
+            for (const core::Point& p : line) {
+                pts << QPointF(p.x, p.y);
+            }
+            out << QVariant(pts);
+        }
+        return out;
+    };
+    const Json& fill = shape.value("fill", Json("#e53935"));
+    return {{"fills", lines(geo.fills)},
+            {"strokes", lines(geo.strokes)},
+            {"fill", fill.is_string() && fill.get<std::string>() != "none" ? qstr(fill.get<std::string>()) : QString()},
+            {"stroke", qstr(shape.value("stroke", Json("#fff")).is_string() ? shape.value("stroke", "#fff") : "#fff")}};
 }
 
 QVariantList EditorModel::vfxCategories() {

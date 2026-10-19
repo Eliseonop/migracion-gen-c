@@ -13,7 +13,7 @@ qt_add_resources(gc_studio "gc_resources" PREFIX "/" BASE "${PROJECT_SOURCE_DIR}
                  FILES "${PROJECT_SOURCE_DIR}/resources/fx/catalog.json")
 
 set(qml_files Main Theme Home SideItem ProjectCard FolderCard InlineEdit IconButton Editor Timeline Inspector
-              MaterialPanel Settings CropModal CurveEditor CollectionsManager SmallButton SfxModal)
+              MaterialPanel Settings CropModal CurveEditor CollectionsManager SmallButton SfxModal ShapeCard)
 list(TRANSFORM qml_files REPLACE "(.+)" "qml/\\1.qml")
 foreach(file IN LISTS qml_files)
     cmake_path(GET file FILENAME name)

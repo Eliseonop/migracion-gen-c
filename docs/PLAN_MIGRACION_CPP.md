@@ -1372,7 +1372,8 @@ Decisión de Edu (§6):
 - **SFX en disco, la parte que escribe** (F1, pendiente desde entonces): `sfx_create_category`, `sfx_add_sound` y `sfx_update_sound` como `sfx.py` (slug «NN_ETIQUETA», «_2» si el archivo ya está, mover al cambiar de categoría, cantidades y la estrella del favorito). Fixture nueva `sfx/write.json` de 75 pasos que no lleva rutas absolutas: es la primera de disco que corre también en Linux. Mutantes (slug a 30, sin llevar la estrella, cantidad negativa) detectados.
 - **Modal de SFX** (SfxClassifyModal.jsx): alta de varios audios y edición de uno, con los borradores de `lib/sfxName.js` (`sfx_name.hpp`, paridad en la fixture del editor) y la escritura de arriba. Sin escuchar el audio hasta el reproductor.
 - **Pestaña Efectos:** la pila del inspector pasa a su propia pestaña con desplegables (EdVfxStack) y la biblioteca a una pestaña del material (EdVfxLibrary, con la búsqueda de `listEffects`). El test destapó que el inspector no se refrescaba tras una edición (el modelo solo avisaba de `timelineChanged`); ahora cada cambio avisa también a la selección.
-- **Linux:** 198/198 con GCC y 140/140 con Clang + libc++.
+- **Figuras en el material:** pestaña con miniaturas (Canvas sobre `shape_geometry`, sin el plugin SVG de Qt) que se arrastran a la timeline. `place_asset_clip` no tenía la rama de figuras de `placeAsset`; ahora sí, con casos en la fixture del editor (mutante «sin rama» detectado).
+- **Linux:** 199/199 con GCC y 140/140 con Clang + libc++.
 
 **Siguiente:**
 - El preview espera a `gc_render`.

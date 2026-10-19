@@ -29,16 +29,18 @@ Rectangle {
         spacing: 8
 
         Label { text: "Material"; color: Theme.text; font.pixelSize: 15; font.bold: true }
-        TabBar {
+        Flow {
             Layout.fillWidth: true
-            background: Rectangle { color: "transparent" }
+            spacing: 2
             Repeater {
-                model: [["project", "Proyecto"], ["library", "Biblio."], ["collection", "Colecc."], ["sfx", "SFX"], ["fx", "Efectos"]]
+                model: [["project", "Proyecto"], ["library", "Biblioteca"], ["collection", "Colecciones"], ["sfx", "SFX"],
+                        ["fx", "Efectos"], ["shapes", "Figuras"]]
                 TabButton {
                     required property var modelData
                     objectName: "material:source:" + modelData[0]
                     text: modelData[1]
-                    font.pixelSize: 11
+                    font.pixelSize: 12
+                    implicitWidth: contentItem.implicitWidth + 14
                     checked: panel.source === modelData[0]
                     onClicked: panel.source = modelData[0]
                     contentItem: Label { text: parent.text; font: parent.font; color: parent.checked ? Theme.text : Theme.muted; horizontalAlignment: Text.AlignHCenter }
@@ -71,6 +73,7 @@ Rectangle {
             }
         }
         TextField {
+            visible: panel.source !== "shapes"
             objectName: "material:search"
             Layout.fillWidth: true
             placeholderText: panel.source === "sfx" ? "Buscar sonidos…" : panel.source === "fx" ? "Buscar: glitch, papel, temblor…" : "Buscar…"
@@ -171,7 +174,7 @@ Rectangle {
             }
         }
         Label {
-            visible: list.count === 0 && panel.source !== "fx"
+            visible: list.count === 0 && panel.source !== "fx" && panel.source !== "shapes"
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             text: panel.source === "library" ? "La biblioteca está vacía: guarda material de un proyecto para usarlo en todos."
@@ -236,9 +239,39 @@ Rectangle {
                 color: Theme.muted
             }
         }
+        Flickable {
+            visible: panel.source === "shapes"
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            contentHeight: shapeColumn.implicitHeight
+            Column {
+                id: shapeColumn
+                width: parent.width
+                spacing: 8
+                Repeater {
+                    model: ["Básicas", "Flechas", "Geométricas", "UI"]
+                    Column {
+                        id: shapeGroup
+                        required property string modelData
+                        width: shapeColumn.width
+                        spacing: 4
+                        Label { text: shapeGroup.modelData; color: Theme.muted; font.pixelSize: 11; font.bold: true }
+                        Flow {
+                            width: parent.width
+                            spacing: 4
+                            Repeater {
+                                model: panel.model.materials.filter((m) => m.source === "shapes" && m.category === shapeGroup.modelData)
+                                ShapeCard { dragLayer: panel.dragLayer; geometry: panel.model.shapeThumb(modelData.type); onPicked: (type, label) => panel.model.addShape(type, label) }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         ListView {
             id: list
-            visible: panel.source !== "fx"
+            visible: panel.source !== "fx" && panel.source !== "shapes"
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true

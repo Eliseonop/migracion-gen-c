@@ -357,6 +357,13 @@ Json make_adjustment_clip_json(std::string_view track_id, double start, double d
 
 Json place_asset_clip(const Json& payload, std::string_view track_id, double start,
                       std::optional<double> fit_duration, IdSource& ids) {
+    const std::string asset_kind = js_str(get(payload, "asset_kind"));
+    if (asset_kind == "shape" || js_str(get(payload, "kind")) == "shape") { // fit || duration || SHAPE_DEFAULT_DUR
+        const double dur = fit_duration && *fit_duration > 0 ? *fit_duration
+                           : truthy(get(payload, "duration"))                                ? number(get(payload, "duration"))
+                                                                                            : kShapeDefaultDuration;
+        return make_shape_clip_json(track_id, start, dur, payload, ids);
+    }
     Json item = Json::object();
     const auto copy = [&](const char* to, const char* from) { put(item, to, get(payload, from)); };
     copy("index", "asset_id");
@@ -371,7 +378,6 @@ Json place_asset_clip(const Json& payload, std::string_view track_id, double sta
                             "in_point", "out_point", "face_track"}) {
         copy(key, key);
     }
-    const std::string asset_kind = js_str(get(payload, "asset_kind"));
     Json clip =
         make_clip_json(asset_kind, item, track_id, start, get(payload, "duration").value_or(Json()), ids);
     const double fit = fit_duration && *fit_duration > 0 ? *fit_duration : 0;

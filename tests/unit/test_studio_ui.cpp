@@ -452,3 +452,19 @@ TEST_CASE("studio sin pantalla: un efecto de la biblioteca va a la pestaña Efec
     CHECK(s.item("insp:vfx:name:0"));
     CHECK(s.editor->selectedClip()["vfx"].toList().size() == 1);
 }
+
+TEST_CASE("studio sin pantalla: una figura del material se añade con un clic o arrastrándola", "[studio][ui]") {
+    Studio s;
+    s.click("material:source:shapes");
+    s.click("material:shape:star");
+    CHECK(s.editor->selectedClip()["kind"] == "shape");
+    const auto count = s.editor->clips().size();
+    QQuickItem* card = s.item("material:shape:circle");
+    REQUIRE(card);
+    const QPoint to = s.at("b", 0.0) + QPoint(static_cast<int>(4 * s.editor->pps()), 0); // tras «b», en V1
+    s.drag(card->mapToScene(QPointF(card->width() / 2, card->height() / 2)).toPoint(), to);
+    QCoreApplication::processEvents();
+    CHECK(s.editor->clips().size() == count + 1);
+    CHECK(s.editor->selectedClip()["kind"] == "shape");
+    CHECK(s.editor->selectedClip()["duration"] == 5.0);
+}

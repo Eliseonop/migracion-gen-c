@@ -286,6 +286,13 @@ def _material_calls(rng: random.Random) -> list:
         payload = {k: v for k, v in payload.items() if v is not None or k in ("reframe", "description", "media_version")}
         for fit in (None, 0, 1.5, 100):
             calls.append(["placeAsset", payload, "V2", rng.choice([0, 2.5, 7.0001]), fit])
+    for shape_type, label in (("star", "Estrella"), ("arrow_curve", "Flecha curva"), ("speech", "Burbuja")):
+        payload = {"asset_kind": "shape", "asset_id": shape_type, "filename": "", "name": label, "duration": 5,
+                   "kind": "shape", "shape": {"type": shape_type, "fill": "#e53935", "sides": 5}, "type": shape_type,
+                   "label": label}
+        for fit, dur in ((None, 5), (2.5, 5), (None, 0), (0, None), (None, 0.1)):
+            calls.append(["placeAsset", {**payload, "duration": dur}, "V1", rng.choice([0, 3.25]), fit])
+    calls.append(["placeAsset", {"kind": "shape", "asset_kind": "clips", "type": "heart", "duration": 2}, "V1", 1, None])
     return calls
 
 

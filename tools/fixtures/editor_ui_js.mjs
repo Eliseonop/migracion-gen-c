@@ -83,13 +83,15 @@ const extract = await load('features/editor/clipExtract.js')
 const dragPayload = new Function('IMAGE_DEFAULT_DUR', 'materialDuration', 'segmentRange', 'hasFaceTrack',
   `return ${extractFunction(`${root}/features/editor/MaterialClipGrid.jsx`, 'dragPayload')}`)(
   m.IMAGE_DEFAULT_DUR, extract.materialDuration, extract.segmentRange, extract.hasFaceTrack)
-// placeAsset de VideoEditor.jsx con su setClips capturado (solo vídeo, imagen y audio).
+// placeAsset de VideoEditor.jsx con su setClips capturado (vídeo, imagen, audio y figuras).
 const placeAsset = (payload, trackId, start, fitDur) => {
   let made = null
   const setClips = (fn) => { made = fn([])[0] }
   const fn = new Function('makeClip', 'isGeneratedDurationClip', 'clipDur', 'clipSpeed', 'setClips', 'setSelClipId',
-    'setSelClipIds', 'chromaBg', `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'placeAsset')}`)(
-    m.makeClip, m.isGeneratedDurationClip, m.clipDur, m.clipSpeed, setClips, () => {}, () => {}, () => ({}))
+    'setSelClipIds', 'chromaBg', 'makeShapeClip', 'SHAPE_DEFAULT_DUR',
+    `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'placeAsset')}`)(
+    m.makeClip, m.isGeneratedDurationClip, m.clipDur, m.clipSpeed, setClips, () => {}, () => {}, () => ({}),
+    m.makeShapeClip, shapes.SHAPE_DEFAULT_DUR)
   fn(payload, trackId, start, fitDur)
   return made
 }

@@ -87,6 +87,8 @@ public:
     // Efectos animados del catálogo: [{id, name, category, description}].
     [[nodiscard]] static QVariantList vfxCatalog();
     [[nodiscard]] static QVariantList vfxCategories();
+    // La miniatura de una figura: anillos y líneas en 0–100 y sus colores por defecto.
+    Q_INVOKABLE static QVariantMap shapeThumb(const QString& type);
     // Categorías de la carpeta de SFX ({id, name, count}; «Favoritos» delante).
     [[nodiscard]] QVariantList sfxCategories() const { return sfx_categories_; }
     // search de sfx_library: los sonidos que tienen todas las palabras de `q`, en `category`.
