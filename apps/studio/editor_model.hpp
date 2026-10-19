@@ -112,6 +112,11 @@ public:
     Q_INVOKABLE void setBlend(const QString& mode);
     Q_INVOKABLE void setTransition(const QString& appear, const QString& exit);
     Q_INVOKABLE void setNote(const QString& note);
+    // Ctrl+C / Ctrl+X / Ctrl+V (copySelectedClips y pasteClips de VideoEditor.jsx): se pega en el
+    // cabezal conservando la separación; en su pista si sigue, si no en una compatible.
+    Q_INVOKABLE bool copySelection();
+    Q_INVOKABLE void cutSelection();
+    Q_INVOKABLE bool paste();
     Q_INVOKABLE void undo();
     Q_INVOKABLE void redo();
 
@@ -158,6 +163,7 @@ private:
     QString project_name_;
     QVariantList tracks_;
     QVariantList materials_;
+    std::vector<std::pair<core::TimelineClip, double>> clipboard_; // clip y desfase con el primero
     std::map<QString, Json> payloads_; // material → dragPayload
     ClipListModel clip_model_;
     core::ClipSelection selection_;

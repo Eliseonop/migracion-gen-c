@@ -13,6 +13,9 @@ Item {
     Shortcut { sequences: ["Delete", "Backspace"]; enabled: editor.visible; onActivated: editor.model.deleteSelection() }
     Shortcut { sequence: "S"; enabled: editor.visible; onActivated: editor.model.splitAtPlayhead() }
     Shortcut { sequence: "Ctrl+D"; enabled: editor.visible; onActivated: editor.model.duplicateSelection() }
+    Shortcut { sequences: [StandardKey.Copy]; enabled: editor.visible; onActivated: editor.model.copySelection() }
+    Shortcut { sequences: [StandardKey.Cut]; enabled: editor.visible; onActivated: editor.model.cutSelection() }
+    Shortcut { sequences: [StandardKey.Paste]; enabled: editor.visible; onActivated: editor.model.paste() }
     Shortcut { sequence: "Escape"; enabled: editor.visible; onActivated: editor.model.clearSelection() }
     Shortcut { sequence: "Space"; enabled: editor.visible; onActivated: editor.playing = !editor.playing }
     Shortcut { sequence: "Left"; enabled: editor.visible; onActivated: editor.model.nudgePlayhead(-0.1) }

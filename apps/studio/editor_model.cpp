@@ -858,6 +858,68 @@ void EditorModel::setNote(const QString& note) {
     commit(std::move(next), "note", {c->id});
 }
 
+bool EditorModel::copySelection() {
+    if (!session_) {
+        return false;
+    }
+    std::vector<const core::TimelineClip*> chosen;
+    for (const auto& c : session_->timeline()->clips) {
+        if (std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            chosen.push_back(&*c);
+        }
+    }
+    if (chosen.empty()) {
+        return false;
+    }
+    double base = chosen.front()->start;
+    for (const auto* c : chosen) {
+        base = std::min(base, c->start);
+    }
+    clipboard_.clear();
+    for (const auto* c : chosen) {
+        clipboard_.emplace_back(*c, c->start - base);
+    }
+    return true;
+}
+
+void EditorModel::cutSelection() {
+    if (copySelection()) {
+        deleteSelection();
+    }
+}
+
+bool EditorModel::paste() {
+    if (!session_ || clipboard_.empty()) {
+        return false;
+    }
+    core::Timeline next = *session_->timeline();
+    std::vector<std::string> ids;
+    for (const auto& [source, offset] : clipboard_) {
+        core::TimelineClip copy = source;
+        if (!std::ranges::any_of(next.tracks, [&](const auto& t) { return t.id == copy.track_id; })) {
+            const std::string lane = core::lane_kind(copy.kind);
+            const auto fallback =
+                std::ranges::find_if(next.tracks, [&](const auto& t) { return t.kind == lane && !t.locked; });
+            if (fallback == next.tracks.end()) {
+                continue;
+            }
+            copy.track_id = fallback->id;
+        }
+        copy.dup_of = source.dup_of.value_or(source.id); // lineageRoot
+        copy.id = core::make_uid(ids_, "c");
+        copy.start = core::js_fixed3(std::max(0.0, playhead_) + offset);
+        ids.push_back(copy.id);
+        next.clips.emplace_back(std::move(copy));
+    }
+    if (ids.empty()) {
+        return false;
+    }
+    selection_ = {ids, ids.back()};
+    commit(std::move(next), "paste", ids);
+    emit selectionChanged();
+    return true;
+}
+
 void EditorModel::undo() {
     if (session_) {
         session_->undo();

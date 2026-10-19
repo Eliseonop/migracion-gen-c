@@ -269,3 +269,29 @@ TEST_CASE("editor: inspector (opacidad y volumen sin animar, fusión, transicion
     m.undo();
     CHECK(m.selectedClip()["note"] == "");
 }
+
+TEST_CASE("editor: copiar, cortar y pegar en el cabezal (un paso de deshacer)", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    CHECK_FALSE(m.paste());
+    m.select("a");
+    m.select("b", true); // a en 0 y b en 6: separación de 6 s
+    REQUIRE(m.copySelection());
+    m.setPlayhead(20);
+    REQUIRE(m.paste());
+    REQUIRE(m.selection().size() == 2);
+    const QVariantMap first = clip_view(m, m.selection()[0]);
+    const QVariantMap second = clip_view(m, m.selection()[1]);
+    CHECK(first["start"] == 20.0);
+    CHECK(second["start"] == 26.0);
+    CHECK(first["trackId"] == "V1");
+    m.undo();
+    CHECK(m.clips().size() == 3);
+    m.select("m");
+    m.cutSelection();
+    CHECK(m.clips().size() == 2);
+    m.setPlayhead(1);
+    REQUIRE(m.paste()); // la música vuelve, ahora en 1 s
+    CHECK(clip_view(m, m.selection()[0])["start"] == 1.0);
+}
