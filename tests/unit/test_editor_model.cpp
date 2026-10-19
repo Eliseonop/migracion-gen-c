@@ -491,6 +491,10 @@ TEST_CASE("editor: temas de subtítulos y estilos preestablecidos de un texto", 
     CHECK(m.selectedClip()["lookId"] == "black-yellow");
     m.applyTextLook("");
     CHECK(m.selectedClip()["lookId"] == "none");
+    m.changeStyle({{"curve_on", true}, {"curve", 0.5}}, true);
+    m.changeStyle({{"shadow_blur", 0.1}});
+    CHECK(m.selectedClip()["style"].toMap()["curve_on"] == true);
+    CHECK(m.selectedClip()["style"].toMap()["shadow_blur"] == 0.1);
     m.setPose({{"rot_x", 30}}); // texto 3D
     CHECK(m.selectedClip()["transform"].toMap()["rotX"] == 30);
 }

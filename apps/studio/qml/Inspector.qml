@@ -176,6 +176,36 @@ Rectangle {
         }
         TapHandler { onTapped: tile.picked() }
     }
+    // Un valor del estilo del texto en una barra: se muestra ×`scale` y se guarda /`scale`.
+    component StyleSlider: RowLayout {
+        id: ss
+        required property string title
+        required property string key
+        property real fallback: 0
+        property real scale: 100
+        property real from: 0
+        property real to: 100
+        readonly property real stored: { const n = Number(panel.st[key]); return isFinite(n) && panel.st[key] !== undefined && panel.st[key] !== null ? n : fallback }
+        Layout.fillWidth: true
+        Label { Layout.preferredWidth: 70; text: ss.title; color: Theme.textSecondary; elide: Text.ElideRight }
+        Slider {
+            id: ssSlider
+            objectName: "insp:style:" + ss.key
+            Layout.fillWidth: true
+            from: ss.from
+            to: ss.to
+            stepSize: 1
+            value: Math.round(ss.stored * ss.scale)
+            onPressedChanged: {
+                if (pressed)
+                    return
+                const patch = {}
+                patch[ss.key] = Math.round(value) / ss.scale
+                panel.model.changeStyle(patch)
+            }
+        }
+        Label { Layout.preferredWidth: 32; text: Math.round(ssSlider.value); color: Theme.text; horizontalAlignment: Text.AlignRight }
+    }
     component FilterSwatch: Row {
         required property var colors
         Repeater {
@@ -480,6 +510,25 @@ Rectangle {
                 prefix: "insp:glow:"
                 current: panel.st.glow ? panel.st.glow_color || panel.st.shadow_color || "#ffffff" : ""
                 onPicked: (c) => panel.model.changeStyle({ glow: !(panel.st.glow && (panel.st.glow_color || "").toLowerCase() === c), glow_color: c })
+            }
+            StyleSlider { visible: panel.text && !!panel.st.bg && panel.st.bg !== "none"; title: "Fondo %"; key: "bg_opacity"; fallback: 0.55 }
+            StyleSlider { visible: panel.text && !!panel.st.shadow; title: "Sombra %"; key: "shadow_opacity"; fallback: 0.6 }
+            StyleSlider { visible: panel.text && !!panel.st.shadow; title: "Desenfoque"; key: "shadow_blur"; fallback: 0.05; scale: 200 }
+            StyleSlider { visible: panel.text && !!panel.st.shadow; title: "Distancia"; key: "shadow_distance"; fallback: 0.06 }
+            StyleSlider { visible: panel.text && !!panel.st.shadow; title: "Ángulo"; key: "shadow_angle"; fallback: 45; scale: 1; from: -180; to: 180 }
+            StyleSlider { visible: panel.text && !!panel.st.glow; title: "Intensidad"; key: "glow_intensity"; fallback: 0.9 }
+            StyleSlider { visible: panel.text && !!panel.st.glow; title: "Intervalo"; key: "glow_range"; fallback: 0.5 }
+            RowLayout {
+                visible: panel.text
+                Toggle {
+                    objectName: "insp:curveOn"
+                    implicitWidth: implicitContentWidth + 16
+                    text: "Curva"
+                    on: !!panel.st.curve_on
+                    onClicked: panel.model.changeStyle(on ? { curve_on: false }
+                                                          : { curve_on: true, curve: Number(panel.st.curve) || 0.5 }, true)
+                }
+                StyleSlider { visible: !!panel.st.curve_on; title: ""; key: "curve"; fallback: 0.5; from: -100; to: 100 }
             }
             Num {
                 visible: panel.text
