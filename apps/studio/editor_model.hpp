@@ -44,6 +44,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
     Q_PROPERTY(QVariantList animationSlots READ animationSlots CONSTANT)
     Q_PROPERTY(QVariantList vfxCatalog READ vfxCatalog CONSTANT)
+    Q_PROPERTY(QVariantList vfxCategories READ vfxCategories CONSTANT)
     Q_PROPERTY(QVariantList sfxCategories READ sfxCategories NOTIFY projectChanged)
     Q_PROPERTY(QVariantList collections READ collections NOTIFY projectChanged)
     Q_PROPERTY(QString collectionsRoot READ collectionsRoot NOTIFY projectChanged)
@@ -85,6 +86,7 @@ public:
     [[nodiscard]] static QVariantList animationSlots();
     // Efectos animados del catálogo: [{id, name, category, description}].
     [[nodiscard]] static QVariantList vfxCatalog();
+    [[nodiscard]] static QVariantList vfxCategories();
     // Categorías de la carpeta de SFX ({id, name, count}; «Favoritos» delante).
     [[nodiscard]] QVariantList sfxCategories() const { return sfx_categories_; }
     // search de sfx_library: los sonidos que tienen todas las palabras de `q`, en `category`.
@@ -203,6 +205,8 @@ public:
     Q_INVOKABLE void changeMask(const QVariantMap& patch);
     Q_INVOKABLE void commitMask(const QVariantMap& patch);
     // Pila de efectos animados (addVfx y EdVfxStack): añadir, parámetros, activar, rango, orden y quitar.
+    // listEffects de fx/registry.js para la biblioteca: categoría y palabras (sin tildes ni mayúsculas).
+    Q_INVOKABLE QVariantList searchVfx(const QString& q, const QString& category) const;
     Q_INVOKABLE void addVfx(const QString& effectId);
     Q_INVOKABLE void setVfxParam(int index, const QString& param, const QVariant& value);
     Q_INVOKABLE void patchVfx(int index, const QVariantMap& patch);

@@ -16,6 +16,7 @@ Rectangle {
     property string sfxCategory: ""
     property string collection: ""
     property bool manage: false
+    property string fxCategory: ""
     function words(text) { return text.toLowerCase().split(/\s+/).filter((w) => w) }
 
     radius: Theme.radiusLg
@@ -32,12 +33,12 @@ Rectangle {
             Layout.fillWidth: true
             background: Rectangle { color: "transparent" }
             Repeater {
-                model: [["project", "Proyecto"], ["library", "Biblioteca"], ["collection", "Colecc."], ["sfx", "SFX"]]
+                model: [["project", "Proyecto"], ["library", "Biblio."], ["collection", "Colecc."], ["sfx", "SFX"], ["fx", "Efectos"]]
                 TabButton {
                     required property var modelData
                     objectName: "material:source:" + modelData[0]
                     text: modelData[1]
-                    font.pixelSize: 12
+                    font.pixelSize: 11
                     checked: panel.source === modelData[0]
                     onClicked: panel.source = modelData[0]
                     contentItem: Label { text: parent.text; font: parent.font; color: parent.checked ? Theme.text : Theme.muted; horizontalAlignment: Text.AlignHCenter }
@@ -72,7 +73,7 @@ Rectangle {
         TextField {
             objectName: "material:search"
             Layout.fillWidth: true
-            placeholderText: panel.source === "sfx" ? "Buscar sonidos…" : "Buscar…"
+            placeholderText: panel.source === "sfx" ? "Buscar sonidos…" : panel.source === "fx" ? "Buscar: glitch, papel, temblor…" : "Buscar…"
             color: Theme.text
             background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
             onTextChanged: {
@@ -170,7 +171,7 @@ Rectangle {
             }
         }
         Label {
-            visible: list.count === 0
+            visible: list.count === 0 && panel.source !== "fx"
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             text: panel.source === "library" ? "La biblioteca está vacía: guarda material de un proyecto para usarlo en todos."
@@ -179,8 +180,65 @@ Rectangle {
                 : "Este proyecto no tiene material todavía."
             color: Theme.muted
         }
+        Flow {
+            visible: panel.source === "fx"
+            Layout.fillWidth: true
+            spacing: 4
+            Repeater {
+                model: [{ id: "", label: "Todos" }].concat(panel.model.vfxCategories)
+                Rectangle {
+                    required property var modelData
+                    readonly property bool on: panel.fxCategory === modelData.id
+                    objectName: "fx:cat:" + modelData.id
+                    width: fxCatLabel.implicitWidth + 14
+                    height: 22
+                    radius: 11
+                    color: on ? Qt.rgba(1, 0.23, 0.36, 0.25) : Theme.card2
+                    border.color: on ? Theme.accent : Theme.lineBright
+                    Label { id: fxCatLabel; anchors.centerIn: parent; text: parent.modelData.label; color: Theme.text; font.pixelSize: 11 }
+                    TapHandler { onTapped: panel.fxCategory = parent.modelData.id }
+                }
+            }
+        }
+        GridView {
+            id: fxGrid
+            visible: panel.source === "fx"
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            cellWidth: width / 2
+            cellHeight: 52
+            readonly property var active: (panel.model.selectedClip.vfx || []).map((e) => e.effect)
+            model: panel.source === "fx" ? panel.model.searchVfx(panel.query, panel.fxCategory) : []
+            delegate: Rectangle {
+                required property var modelData
+                objectName: "fx:" + modelData.id
+                width: fxGrid.cellWidth - 4
+                height: fxGrid.cellHeight - 4
+                radius: Theme.radiusSm
+                color: Theme.card2
+                border.color: fxGrid.active.indexOf(modelData.id) >= 0 ? Theme.accent : fxHover.hovered ? Theme.lineBright : Theme.line
+                ToolTip.visible: fxHover.hovered
+                ToolTip.text: modelData.description + "\nClic: añadir al clip seleccionado"
+                ToolTip.delay: 600
+                HoverHandler { id: fxHover }
+                TapHandler { onTapped: panel.model.addVfx(parent.modelData.id) }
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 6
+                    Label { width: parent.width; text: modelData.name; color: Theme.text; font.pixelSize: 12; elide: Text.ElideRight }
+                    Label { width: parent.width; text: modelData.category; color: Theme.muted; font.pixelSize: 10; elide: Text.ElideRight }
+                }
+            }
+            Label {
+                visible: fxGrid.count === 0
+                text: "Ningún efecto coincide."
+                color: Theme.muted
+            }
+        }
         ListView {
             id: list
+            visible: panel.source !== "fx"
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true

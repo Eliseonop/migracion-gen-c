@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QImageReader>
 #include <QPointF>
+#include <QRegularExpression>
 #include <QUrl>
 #include <QGuiApplication>
 #include <QJsonArray>
@@ -254,6 +255,7 @@ bool EditorModel::openProject(const QString& pid) {
         const auto failed = autosave_->last_error();
         setError(failed ? qstr(failed->message) : QString());
         rebuild();
+        emit selectionChanged(); // el inspector pinta el clip ya cambiado
     });
     selection_ = {};
     playhead_ = 0;
@@ -2005,6 +2007,44 @@ QVariantList EditorModel::vfxCatalog() {
                            {"name", qstr(e.value("name", ""))},
                            {"category", qstr(cats[e.value("category", "")])},
                            {"description", qstr(e.value("description", ""))}};
+    }
+    return out;
+}
+
+QVariantList EditorModel::vfxCategories() {
+    QVariantList out;
+    if (const auto catalog = core::fx_catalog()) {
+        for (const Json& c : catalog->data().value("categories", Json::array())) {
+            out << QVariantMap{{"id", qstr(c.value("id", ""))}, {"label", qstr(c.value("label", ""))}};
+        }
+    }
+    return out;
+}
+
+QVariantList EditorModel::searchVfx(const QString& q, const QString& category) const {
+    const auto norm = [](QString text) { // norm de fx/registry.js: minúsculas y sin diacríticos
+        text = text.toLower().normalized(QString::NormalizationForm_D);
+        text.removeIf([](QChar c) { return c.unicode() >= 0x300 && c.unicode() <= 0x36f; });
+        return text;
+    };
+    const QStringList words = norm(q).trimmed().split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+    const auto catalog = core::fx_catalog();
+    QVariantList out;
+    for (const QVariant& v : vfxCatalog()) {
+        const QVariantMap e = v.toMap();
+        const Json* fx = catalog ? catalog->effect(Json(e["id"].toString().toStdString())) : nullptr;
+        if (!fx || fx->value("engine", "") == "generator" ||
+            (!category.isEmpty() && qstr(fx->value("category", "")) != category)) {
+            continue;
+        }
+        QStringList hay{e["id"].toString(), e["name"].toString(), e["description"].toString()};
+        for (const Json& tag : fx->value("tags", Json::array())) {
+            hay << qstr(tag.is_string() ? tag.get<std::string>() : tag.dump());
+        }
+        const QString text = norm(hay.join(' '));
+        if (std::ranges::all_of(words, [&](const QString& w) { return text.contains(w); })) {
+            out << e;
+        }
     }
     return out;
 }

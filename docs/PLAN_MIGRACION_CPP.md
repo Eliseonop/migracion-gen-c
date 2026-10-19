@@ -1371,7 +1371,8 @@ Decisión de Edu (§6):
 - **Carpetas de material:** gestionar (raíz, crear, favorita, visible) y subir archivos desde el panel. Lo destapó la prueba: `set_collections_root` usaba el `str(Path)` de Windows también en Linux (una ruta absoluta nunca valía). Ahora usa el del sistema (`py_native_path_str`: Windows igual que antes, `str(PurePosixPath)` en el resto), y lo mismo las rutas que enseñan colecciones y SFX.
 - **SFX en disco, la parte que escribe** (F1, pendiente desde entonces): `sfx_create_category`, `sfx_add_sound` y `sfx_update_sound` como `sfx.py` (slug «NN_ETIQUETA», «_2» si el archivo ya está, mover al cambiar de categoría, cantidades y la estrella del favorito). Fixture nueva `sfx/write.json` de 75 pasos que no lleva rutas absolutas: es la primera de disco que corre también en Linux. Mutantes (slug a 30, sin llevar la estrella, cantidad negativa) detectados.
 - **Modal de SFX** (SfxClassifyModal.jsx): alta de varios audios y edición de uno, con los borradores de `lib/sfxName.js` (`sfx_name.hpp`, paridad en la fixture del editor) y la escritura de arriba. Sin escuchar el audio hasta el reproductor.
-- **Linux:** 195/195 con GCC y 140/140 con Clang + libc++.
+- **Pestaña Efectos:** la pila del inspector pasa a su propia pestaña con desplegables (EdVfxStack) y la biblioteca a una pestaña del material (EdVfxLibrary, con la búsqueda de `listEffects`). El test destapó que el inspector no se refrescaba tras una edición (el modelo solo avisaba de `timelineChanged`); ahora cada cambio avisa también a la selección.
+- **Linux:** 198/198 con GCC y 140/140 con Clang + libc++.
 
 **Siguiente:**
 - El preview espera a `gc_render`.

@@ -13,8 +13,10 @@ Rectangle {
     readonly property bool sound: has && (clip.kind === "audio" || clip.kind === "video")
     // Pestañas (navs de EdInspector): Clip, Color, Audio y Animación, según el tipo de clip.
     property string tab: "clip"
+    property var fxOpen: null // el efecto desplegado (uid o posición)
     readonly property var tabList: [["clip", "Clip"]]
         .concat(filterable || effectable ? [["color", "Color"]] : [])
+        .concat(vfxable ? [["fx", "Efectos"]] : [])
         .concat(sound ? [["audio", "Audio"]] : [])
         .concat(has && ["video", "image", "shape", "text"].indexOf(clip.kind) >= 0 ? [["mask", "Máscara"]] : [])
         .concat(has && clip.kind !== "adjustment" ? [["anim", "Animar"]] : [])
@@ -989,86 +991,6 @@ Rectangle {
                     Label { Layout.preferredWidth: 30; text: vfxSlider.value; color: Theme.text; horizontalAlignment: Text.AlignRight }
                 }
             }
-            Label { visible: panel.vfxable; text: "Efectos animados"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
-            Choice {
-                visible: panel.vfxable
-                objectName: "insp:vfx:add"
-                options: [["", "Añadir efecto…"]].concat(panel.model.vfxCatalog.map((e) => [e.id, e.category + " · " + e.name]))
-                current: ""
-                onPicked: (v) => { if (v) panel.model.addVfx(v) }
-            }
-            Repeater {
-                model: panel.vfxable ? panel.clip.vfx : []
-                ColumnLayout {
-                    id: vfxItem
-                    required property var modelData
-                    required property int index
-                    Layout.fillWidth: true
-                    spacing: 4
-                    RowLayout {
-                        spacing: 4
-                        Label { Layout.fillWidth: true; text: vfxItem.modelData.name; color: vfxItem.modelData.enabled === false ? Theme.muted : Theme.text; font.bold: true; elide: Text.ElideRight }
-                        Toggle { objectName: "insp:vfx:on:" + vfxItem.index; implicitWidth: 26; text: "👁"; on: vfxItem.modelData.enabled !== false; onClicked: panel.model.patchVfx(vfxItem.index, { enabled: !on }) }
-                        Toggle { implicitWidth: 22; text: "↑"; enabled: vfxItem.index > 0; onClicked: panel.model.moveVfx(vfxItem.index, -1) }
-                        Toggle { implicitWidth: 22; text: "↓"; enabled: vfxItem.index < panel.clip.vfx.length - 1; onClicked: panel.model.moveVfx(vfxItem.index, 1) }
-                        Toggle { objectName: "insp:vfx:remove:" + vfxItem.index; implicitWidth: 22; text: "×"; onClicked: panel.model.removeVfx(vfxItem.index) }
-                    }
-                    RowLayout {
-                        spacing: 6
-                        Num { title: "De"; suffix: "s"; value: Number(vfxItem.modelData.from) || 0
-                              onCommitted: (v) => panel.model.patchVfx(vfxItem.index, { from: Math.max(0, Math.min(panel.clip.duration, v)) }) }
-                        Num { title: "a"; suffix: "s"; value: vfxItem.modelData.to == null ? Number(panel.clip.duration.toFixed(2)) : vfxItem.modelData.to
-                              onCommitted: (v) => panel.model.patchVfx(vfxItem.index, { to: v >= panel.clip.duration - 0.01 ? null : Math.max(Number(vfxItem.modelData.from) || 0, v) }) }
-                    }
-                    Repeater {
-                        model: vfxItem.modelData.specs
-                        RowLayout {
-                            id: spec
-                            required property var modelData
-                            readonly property var value: vfxItem.modelData.params[modelData.id] ?? modelData.def
-                            function set(v) { panel.model.setVfxParam(vfxItem.index, modelData.id, v) }
-                            Layout.fillWidth: true
-                            Label { Layout.preferredWidth: 70; text: spec.modelData.label; color: Theme.textSecondary; elide: Text.ElideRight }
-                            Slider {
-                                id: specSlider
-                                visible: spec.modelData.type === "range"
-                                Layout.fillWidth: true
-                                from: spec.modelData.min ?? 0
-                                to: spec.modelData.max ?? 1
-                                stepSize: spec.modelData.step ?? 0.01
-                                snapMode: Slider.SnapAlways
-                                value: Number(spec.value)
-                                onPressedChanged: if (!pressed) spec.set(value)
-                            }
-                            Label { visible: specSlider.visible; text: Number(specSlider.value).toFixed(spec.modelData.step >= 1 ? 0 : spec.modelData.step >= 0.1 ? 1 : 2); color: Theme.text }
-                            CheckBox { visible: spec.modelData.type === "toggle"; checked: !!spec.value; onToggled: spec.set(checked) }
-                            TextField {
-                                visible: spec.modelData.type === "color"
-                                Layout.fillWidth: true
-                                text: String(spec.value)
-                                color: Theme.text
-                                validator: RegularExpressionValidator { regularExpression: /#[0-9a-fA-F]{6}/ }
-                                background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
-                                onEditingFinished: if (acceptableInput) spec.set(text.toLowerCase())
-                            }
-                            Choice {
-                                visible: spec.modelData.type === "select"
-                                options: (spec.modelData.options || []).map((o) => [o.id, o.label])
-                                current: String(spec.value)
-                                onPicked: (v) => spec.set(v)
-                            }
-                            Num {
-                                visible: spec.modelData.type === "seed"
-                                title: ""
-                                value: Number(spec.value) || 1
-                                onCommitted: (v) => spec.set(Math.max(1, Math.min(9999, Math.round(v))))
-                            }
-                            Toggle { visible: spec.modelData.type === "seed"; implicitWidth: 26; text: "🎲"; onClicked: spec.set(1 + Math.floor(Math.random() * 9998)) }
-                        }
-                    }
-                    Small { text: "Valores por defecto"; onClicked: panel.model.patchVfx(vfxItem.index, { params: {} }) }
-                }
-            }
             Label { visible: panel.filterable; text: "Filtros"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
             Repeater {
                 model: panel.filterable ? [["color", "Color"], ["cine", "Cine"], ["retro", "Retro"], ["bn", "Blanco y negro"]] : []
@@ -1179,6 +1101,107 @@ Rectangle {
                 Small { objectName: "insp:fadeout"; text: "Fade out"; onClicked: panel.model.fadeVolume("out") }
                 Small { objectName: "insp:mute"; text: panel.has && panel.clip.muted ? "Activar" : "Mute"; onClicked: panel.model.toggleMuted() }
             }
+            }
+
+            ColumnLayout {
+                visible: panel.tabNow === "fx"
+                Layout.fillWidth: true
+                spacing: 6
+
+                RowLayout {
+                    Label { text: "EFECTOS ANIMADOS"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
+                    Label { visible: (panel.clip.vfx || []).length > 1; text: "Se aplican de arriba abajo"; color: Theme.muted; font.pixelSize: 10 }
+                }
+                Label {
+                    visible: !(panel.clip.vfx || []).length
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    text: "Este clip no tiene efectos. Añádelos desde la pestaña Efectos del panel de material."
+                    color: Theme.muted
+                }
+                Repeater {
+                    model: panel.vfxable ? panel.clip.vfx : []
+                    ColumnLayout {
+                        id: vfxItem
+                        required property var modelData
+                        required property int index
+                        readonly property var key: modelData.uid || index
+                        readonly property bool isOpen: panel.fxOpen === key || panel.clip.vfx.length === 1
+                        Layout.fillWidth: true
+                        spacing: 4
+                        RowLayout {
+                            spacing: 4
+                            Label {
+                                objectName: "insp:vfx:name:" + vfxItem.index
+                                Layout.fillWidth: true
+                                text: (vfxItem.isOpen ? "▾ " : "▸ ") + vfxItem.modelData.name
+                                color: vfxItem.modelData.enabled === false ? Theme.muted : Theme.text
+                                font.bold: true
+                                elide: Text.ElideRight
+                                TapHandler { onTapped: panel.fxOpen = vfxItem.isOpen ? null : vfxItem.key }
+                            }
+                            Toggle { objectName: "insp:vfx:on:" + vfxItem.index; implicitWidth: 26; text: "👁"; on: vfxItem.modelData.enabled !== false; onClicked: panel.model.patchVfx(vfxItem.index, { enabled: !on }) }
+                            Toggle { implicitWidth: 22; text: "↑"; enabled: vfxItem.index > 0; onClicked: panel.model.moveVfx(vfxItem.index, -1) }
+                            Toggle { implicitWidth: 22; text: "↓"; enabled: vfxItem.index < panel.clip.vfx.length - 1; onClicked: panel.model.moveVfx(vfxItem.index, 1) }
+                            Toggle { objectName: "insp:vfx:remove:" + vfxItem.index; implicitWidth: 22; text: "×"; onClicked: panel.model.removeVfx(vfxItem.index) }
+                        }
+                        RowLayout {
+                            visible: vfxItem.isOpen
+                            spacing: 6
+                            Num { title: "De"; suffix: "s"; value: Number(vfxItem.modelData.from) || 0
+                                  onCommitted: (v) => panel.model.patchVfx(vfxItem.index, { from: Math.max(0, Math.min(panel.clip.duration, v)) }) }
+                            Num { title: "a"; suffix: "s"; value: vfxItem.modelData.to == null ? Number(panel.clip.duration.toFixed(2)) : vfxItem.modelData.to
+                                  onCommitted: (v) => panel.model.patchVfx(vfxItem.index, { to: v >= panel.clip.duration - 0.01 ? null : Math.max(Number(vfxItem.modelData.from) || 0, v) }) }
+                        }
+                        Repeater {
+                            model: vfxItem.isOpen ? vfxItem.modelData.specs : []
+                            RowLayout {
+                                id: spec
+                                required property var modelData
+                                readonly property var value: vfxItem.modelData.params[modelData.id] ?? modelData.def
+                                function set(v) { panel.model.setVfxParam(vfxItem.index, modelData.id, v) }
+                                Layout.fillWidth: true
+                                Label { Layout.preferredWidth: 70; text: spec.modelData.label; color: Theme.textSecondary; elide: Text.ElideRight }
+                                Slider {
+                                    id: specSlider
+                                    visible: spec.modelData.type === "range"
+                                    Layout.fillWidth: true
+                                    from: spec.modelData.min ?? 0
+                                    to: spec.modelData.max ?? 1
+                                    stepSize: spec.modelData.step ?? 0.01
+                                    snapMode: Slider.SnapAlways
+                                    value: Number(spec.value)
+                                    onPressedChanged: if (!pressed) spec.set(value)
+                                }
+                                Label { visible: specSlider.visible; text: Number(specSlider.value).toFixed(spec.modelData.step >= 1 ? 0 : spec.modelData.step >= 0.1 ? 1 : 2); color: Theme.text }
+                                CheckBox { visible: spec.modelData.type === "toggle"; checked: !!spec.value; onToggled: spec.set(checked) }
+                                TextField {
+                                    visible: spec.modelData.type === "color"
+                                    Layout.fillWidth: true
+                                    text: String(spec.value)
+                                    color: Theme.text
+                                    validator: RegularExpressionValidator { regularExpression: /#[0-9a-fA-F]{6}/ }
+                                    background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
+                                    onEditingFinished: if (acceptableInput) spec.set(text.toLowerCase())
+                                }
+                                Choice {
+                                    visible: spec.modelData.type === "select"
+                                    options: (spec.modelData.options || []).map((o) => [o.id, o.label])
+                                    current: String(spec.value)
+                                    onPicked: (v) => spec.set(v)
+                                }
+                                Num {
+                                    visible: spec.modelData.type === "seed"
+                                    title: ""
+                                    value: Number(spec.value) || 1
+                                    onCommitted: (v) => spec.set(Math.max(1, Math.min(9999, Math.round(v))))
+                                }
+                                Toggle { visible: spec.modelData.type === "seed"; implicitWidth: 26; text: "🎲"; onClicked: spec.set(1 + Math.floor(Math.random() * 9998)) }
+                            }
+                        }
+                        Small { visible: vfxItem.isOpen; text: "Valores por defecto"; onClicked: panel.model.patchVfx(vfxItem.index, { params: {} }) }
+                    }
+                }
             }
 
             ColumnLayout {

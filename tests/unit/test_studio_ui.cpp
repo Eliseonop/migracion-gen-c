@@ -13,6 +13,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
 
 #include "editor_model.hpp"
@@ -437,4 +438,17 @@ TEST_CASE("studio sin pantalla: el tirador de la curva del keyframe la vuelve pe
     const QVariantMap curve = s.editor->selectedClip()["curve"].toMap();
     CHECK(curve["kind"] == "bezier");
     CHECK(curve["bezier"].toList()[1].toDouble() > 0.1); // subió
+}
+
+TEST_CASE("studio sin pantalla: un efecto de la biblioteca va a la pestaña Efectos del clip", "[studio][ui]") {
+    auto catalog = core::FxCatalog::load(core::path_from_utf8(GC_RESOURCES_DIR) / "fx" / "catalog.json");
+    REQUIRE(catalog);
+    core::set_fx_catalog(std::make_shared<const core::FxCatalog>(std::move(*catalog)));
+    Studio s;
+    s.editor->select("a");
+    s.click("material:source:fx");
+    s.click("fx:glitch_rgb");
+    s.click("insp:tab:fx");
+    CHECK(s.item("insp:vfx:name:0"));
+    CHECK(s.editor->selectedClip()["vfx"].toList().size() == 1);
 }

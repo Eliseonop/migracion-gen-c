@@ -948,3 +948,24 @@ TEST_CASE("editor: dar de alta y editar SFX", "[studio]") {
     CHECK(std::filesystem::exists(lib / "01_IMPACTOS" / "boom.wav"));
     CHECK(m.sfxDraft("sfx:01_IMPACTOS/boom.wav")["uso"] == "golpes");
 }
+
+TEST_CASE("editor: buscar en la biblioteca de efectos", "[studio]") {
+    auto catalog = core::FxCatalog::load(core::path_from_utf8(GC_RESOURCES_DIR) / "fx" / "catalog.json");
+    REQUIRE(catalog);
+    core::set_fx_catalog(std::make_shared<const core::FxCatalog>(std::move(*catalog)));
+    Fixture f;
+    studio::EditorModel m(f.store);
+    const auto ids = [&](const char* q, const char* cat) {
+        QStringList out;
+        for (const QVariant& e : m.searchVfx(q, cat)) {
+            out << e.toMap()["id"].toString();
+        }
+        return out;
+    };
+    CHECK(ids("", "").size() == m.vfxCatalog().size());
+    CHECK(ids("ABERRACION", "").contains("glitch_rgb")); // sin tildes ni mayúsculas, también en las etiquetas
+    CHECK(ids("glitch  rgb", "").contains("glitch_rgb"));
+    CHECK(ids("glitch", "retro").isEmpty());
+    CHECK(ids("", "retro").contains("vhs"));
+    CHECK(ids("nada que ver", "").isEmpty());
+}
