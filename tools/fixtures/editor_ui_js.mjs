@@ -108,6 +108,17 @@ const moveKeyframe = (clip, kfId, newT, fps) => {
     setClips, kf.patchKeyframe, { current: fps }, () => {}, { current: [clip] }, [clip], m.sourceToTimeline)(clip.id, kfId, newT)
   return made
 }
+const toggleStyleKf = (clip, trackStyle, keys, t, fps) => {
+  let made = clip
+  const setClips = (fn) => { made = fn([clip])[0] }
+  new Function('fpsRef', 'SHADOW_DEFAULTS', 'setClips', 'clamp', 'localTOf', 'clipDur', 'styleKfState', 'removeStyleKfAt',
+    'tracksRef', 'withTextStyleKf', 'effectiveTextStyle', 'textStyleAt', 'upsertStyleKf', 'markKf',
+    `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'toggleStyleKf')}`)(
+    { current: fps }, textstyles.SHADOW_DEFAULTS, setClips, (v, lo, hi) => Math.min(hi, Math.max(lo, v)), () => Math.max(0, t),
+    m.clipDur, kf.styleKfState, kf.removeStyleKfAt, { current: [{ id: clip.track_id, style: trackStyle ?? undefined }] },
+    kf.withTextStyleKf, textstyles.effectiveTextStyle, kf.textStyleAt, kf.upsertStyleKf, () => {})(clip.id, keys)
+  return made
+}
 // Sin ids (salen de la hora): el del clip y los de los keyframes del encuadre.
 const clipNoIds = (c) => {
   if (!c) return c
@@ -262,6 +273,8 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
         : op === 'changeMask' || op === 'commitMask' ? ops.run(op, id, arg) : ops.run(op)
       return { masks: masksOf(c), keyframes: noIds(c).keyframes ?? null }
     },
+    styleKfState: (id, t, keys, fps) => kf.styleKfState(byId(id), t, keys, fps),
+    toggleStyleKf: (id, trackStyle, keys, t, fps) => noIds(toggleStyleKf(byId(id), trackStyle, keys, t, fps)).keyframes ?? null,
     normalizeFavorites: (raw) => favorites.normalizeFavorites(raw),
     nameTextStyleFavorite: (st, existing) => favorites.nameTextStyleFavorite(st, existing),
     splitClipByMaxWords: (id, n) => m.splitClipByMaxWords(byId(id), n).map(({ id: _, asset_id: __, ...rest }) => rest),

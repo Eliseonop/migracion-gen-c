@@ -784,3 +784,22 @@ TEST_CASE("editor: «Mis estilos» de texto en los ajustes", "[studio]") {
     m.deleteTextFavorite(id);
     CHECK(m.textFavorites().isEmpty());
 }
+
+TEST_CASE("editor: el rombo del color de un texto", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.addText();
+    CHECK(m.selectedClip()["styleKf"].toMap()["color"] == "off");
+    m.setPlayhead(1);
+    m.toggleStyleKeyframe("color");
+    CHECK(m.selectedClip()["styleKf"].toMap()["color"] == "on");
+    m.setPlayhead(3);
+    CHECK(m.selectedClip()["styleKf"].toMap()["color"] == "empty");
+    m.changeStyle({{"color", "#ff0000"}}); // animado: el cambio va al keyframe del cabezal
+    m.setPlayhead(1);
+    CHECK(m.selectedClip()["style"].toMap()["color"] == "#ffffff");
+    m.toggleStyleKeyframe("color");
+    m.setPlayhead(3);
+    CHECK(m.selectedClip()["styleKf"].toMap()["color"] == "on");
+}

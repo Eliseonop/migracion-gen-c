@@ -355,6 +355,11 @@ TEXT_PATCHES = [{"color": "#ff0000"}, {"color": "nada"}, {"font": "Impact", "siz
 
 
 TEXT_CLIPS = POSE_CLIPS + [
+    clip("sk1", "T1", "text", start=21, out=3, text="uno", keyframes={"enabled": True, "items": [
+        {"id": "u1", "t": 0.5, "props": {"color": "#ff0000"}}]}),
+    clip("sk", "T1", "text", start=17, out=3, text="solo color", style={"color": "#ffffff", "border_width": 2},
+         keyframes={"enabled": True, "items": [{"id": "e1", "t": 1.6, "props": {"color": "#ff0000"}},
+                                               {"id": "e2", "t": 2, "props": {"color": "#00ff00", "border_width": 4}}]}),
     clip("shk", "V2", "shape", start=1, out=3, shape={"type": "star"},
          keyframes={"enabled": True, "items": [{"id": "q1", "t": 0.5, "props": {"x": 0.3}}]}),
     clip("crv", "V1", start=20, out=4, keyframes={"enabled": True, "items": [
@@ -428,6 +433,14 @@ def _text_calls(rng: random.Random) -> list:
         for k in ((c.get("reframe") or {}).get("keyframes") or []):
             if k.get("id"):
                 calls.append(["moveKeyframe", c["id"], k["id"], 4.1, 30])
+    sections = [["color"], ["border_color", "border_width"], ["bg", "bg_opacity", "bg_radius"], ["shadow_color", "shadow_opacity", "shadow_blur"],
+                ["glow_color", "glow_intensity"], ["curve"], ["stretch_x", "stretch_y"]]
+    for c in [c for c in TEXT_CLIPS if c["id"] != "tk"]:
+        for keys in sections:
+            for t in (0, 0.5, 1.6, 2, 9):
+                fps = rng.choice([30, 24])
+                calls.append(["styleKfState", c["id"], t, keys, fps])
+                calls.append(["toggleStyleKf", c["id"], rng.choice([None, {"color": "#123456", "bg": "#000000", "shadow_color": "#00ff00"}]), keys, t, fps])
     shape_patches = [{"fill": "#00ff00"}, {"x": 0.2, "rotation": 30}, {"w": 0.5, "h": "0.2"}, {"opacity": 0.3},
                      {"sides": 7, "dash": "dot"}, {"cx": 0.1}, {}]
     for c in TEXT_CLIPS:

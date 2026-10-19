@@ -210,6 +210,9 @@ public:
     // applyFragment: parte el texto seleccionado (o los subtítulos de la pista elegida) en cuadros de
     // `max_words` palabras, con sus tiempos.
     Q_INVOKABLE void fragmentText();
+    // Rombo de una sección del estilo del texto (TEXT_KF_SECTIONS: color, stroke, bg, glow, curve,
+    // stretch, shadow): keyframe en el cabezal con lo que se ve, o lo quita.
+    Q_INVOKABLE void toggleStyleKeyframe(const QString& section);
     // «Mis estilos» (favoritos de los ajustes): {id, name}; guardar el del texto o la pista elegidos,
     // aplicarlo (el estilo entero) y quitarlo.
     [[nodiscard]] QVariantList textFavorites() const;

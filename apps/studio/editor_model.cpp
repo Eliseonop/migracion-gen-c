@@ -45,6 +45,19 @@ QVariantMap to_variant(const Json& json) {
     return QJsonDocument::fromJson(QByteArray::fromStdString(json.dump())).object().toVariantMap();
 }
 
+const std::map<std::string, std::vector<std::string>>& text_kf_sections() {
+    static const std::map<std::string, std::vector<std::string>> kSections{
+        {"color", {"color"}},
+        {"stroke", {"border_color", "border_width"}},
+        {"bg", {"bg", "bg_opacity", "bg_radius", "bg_pad_x", "bg_pad_y", "bg_dx", "bg_dy"}},
+        {"glow", {"glow_color", "glow_intensity", "glow_range", "glow_dx", "glow_dy"}},
+        {"curve", {"curve"}},
+        {"stretch", {"stretch_x", "stretch_y"}},
+        {"shadow", {"shadow_color", "shadow_opacity", "shadow_blur", "shadow_distance", "shadow_angle"}}};
+    return kSections;
+}
+
+
 double js_fixed1(double v) { return std::isfinite(v) ? core::js_fixed(v, 1) : 0.0; }
 
 // ASSETS_DIR de config.py: VIDEO_YT_ASSETS o «assets» junto a la carpeta raíz.
@@ -454,6 +467,15 @@ QVariantMap EditorModel::selectedClip() const {
              QVariantList out;
              for (const auto& f : core::clip_filters(*c)) {
                  out << QVariantMap{{"id", qstr(f.id)}, {"amount", f.amount}, {"swatch", filter_swatch(f.id, f.amount)}};
+             }
+             return out;
+         }()},
+        {"styleKf", [&] {
+             QVariantMap out;
+             if (c->kind == "text") {
+                 for (const auto& [section, keys] : text_kf_sections()) {
+                     out[qstr(section)] = qstr(core::style_kf_state(*c, std::max(0.0, local), keys, fps()));
+                 }
              }
              return out;
          }()},
@@ -1938,6 +1960,25 @@ void EditorModel::fragmentText() {
     }
     commit(std::move(next), "fragment", selection_.ids);
     emit selectionChanged();
+}
+
+
+void EditorModel::toggleStyleKeyframe(const QString& section) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const auto keys = text_kf_sections().find(section.toStdString());
+    if (!c || c->kind != "text" || keys == text_kf_sections().end()) {
+        return;
+    }
+    const core::TimelineTrack* t = track(qstr(c->track_id));
+    const Json track_style = t && t->style ? *t->style : Json();
+    const std::string id = c->id;
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == id) {
+            core::toggle_style_kf(item.mut(), track_style, playhead_ - item->start, keys->second, fps(), ids_);
+        }
+    }
+    commit(std::move(next), "style-keyframe", {id});
 }
 
 QVariantList EditorModel::textFavorites() const {

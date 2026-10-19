@@ -6,6 +6,7 @@
 
 #include <optional>
 #include <string>
+#include <vector>
 #include <string_view>
 
 #include "gc/core/error.hpp"
@@ -53,6 +54,20 @@ void upsert_style_kf(TimelineClip& clip, double local_t, const Json& patch, doub
 // changeStyle para un texto: el estilo fijo y, si esas propiedades ya están animadas (y no es
 // `fixed`), su keyframe en el cabezal; la pose (x, y, escala…) sigue la regla de commitPose.
 void change_text_style(TimelineClip& clip, const Json& patch, double local_t, double fps, bool fixed, IdSource& ids);
+
+// --- El rombo por sección del estilo (Color, Trazo, Fondo, Brillo, Sombra…) -------------------------
+
+// styleKfState: "on" (alguna de `keys` tiene keyframe en este fotograma), "empty" (animadas, sin
+// keyframe aquí) u "off".
+[[nodiscard]] std::string style_kf_state(const TimelineClip& clip, double local_t, const std::vector<std::string>& keys,
+                                         double fps);
+// removeStyleKfAt: quita `keys` del keyframe de `local_t` (y el keyframe, si se queda vacío).
+void remove_style_kf_at(TimelineClip& clip, double local_t, const std::vector<std::string>& keys, double fps,
+                        IdSource& ids);
+// toggleStyleKf de VideoEditor.jsx: quita esas propiedades del keyframe del cabezal o pone en él el
+// valor que se ve (estilo de la pista + del clip + lo animado).
+void toggle_style_kf(TimelineClip& clip, const Json& track_style, double local_t, const std::vector<std::string>& keys,
+                     double fps, IdSource& ids);
 
 // --- «Mis estilos» (favorites.js): los favoritos de los ajustes -----------------------------------
 

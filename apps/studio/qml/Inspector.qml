@@ -521,6 +521,24 @@ Rectangle {
                 current: panel.st.glow ? panel.st.glow_color || panel.st.shadow_color || "#ffffff" : ""
                 onPicked: (c) => panel.model.changeStyle({ glow: !(panel.st.glow && (panel.st.glow_color || "").toLowerCase() === c), glow_color: c })
             }
+            Flow { // rombo por sección: ◆ keyframe en el cabezal · ◇ animada · gris sin animar
+                visible: panel.text && panel.has
+                Layout.fillWidth: true
+                spacing: 4
+                Label { text: "Animar"; color: Theme.textSecondary; width: 60; height: 22; verticalAlignment: Text.AlignVCenter }
+                Repeater {
+                    model: [["color", "Color"], ["stroke", "Trazo"], ["bg", "Fondo"], ["shadow", "Sombra"], ["glow", "Brillo"], ["curve", "Curva"]]
+                    Toggle {
+                        required property var modelData
+                        readonly property string state: panel.has && panel.clip.styleKf ? panel.clip.styleKf[modelData[0]] || "off" : "off"
+                        objectName: "insp:stylekf:" + modelData[0]
+                        implicitWidth: implicitContentWidth + 14
+                        text: (state === "on" ? "◆ " : "◇ ") + modelData[1]
+                        on: state !== "off"
+                        onClicked: panel.model.toggleStyleKeyframe(modelData[0])
+                    }
+                }
+            }
             StyleSlider { visible: panel.text && !!panel.st.bg && panel.st.bg !== "none"; title: "Fondo %"; key: "bg_opacity"; fallback: 0.55 }
             RowLayout {
                 visible: panel.text && !!panel.st.bg && panel.st.bg !== "none"

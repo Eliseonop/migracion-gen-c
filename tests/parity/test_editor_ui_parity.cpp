@@ -605,6 +605,15 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "newTextDuration") {
         return new_text_duration(tl, num(1));
     }
+    if (fn == "styleKfState") {
+        return style_kf_state(clip(call.at(1)), num(2), strings(call.at(3)), num(4));
+    }
+    if (fn == "toggleStyleKf") {
+        SequentialIdSource ids;
+        TimelineClip c = clip(call.at(1));
+        toggle_style_kf(c, call.at(2), num(4), strings(call.at(3)), num(5), ids);
+        return c.keyframes ? without_ids(*c.keyframes) : Json();
+    }
     if (fn == "normalizeFavorites") {
         return normalize_favorites(call.at(1));
     }

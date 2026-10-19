@@ -10,6 +10,8 @@
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/migrations.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/text_style.hpp"
+#include "gc/core/timeline_view.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/timeline_ui.hpp"
 #include "gc/core/timeline_view.hpp"
@@ -350,6 +352,71 @@ void change_text_style(TimelineClip& clip, const Json& patch, double local_t, do
     if (!kf_style.empty()) {
         upsert_style_kf(clip, t, kf_style, fps, ids);
     }
+}
+
+std::string style_kf_state(const TimelineClip& clip, double local_t, const std::vector<std::string>& keys,
+                           double fps) {
+    if (!keyframes_enabled(clip)) {
+        return "off";
+    }
+    const auto animated = text_style_kf_keys(clip);
+    if (std::ranges::none_of(keys, [&](const std::string& k) { return std::ranges::find(animated, k) != animated.end(); })) {
+        return "off";
+    }
+    SequentialIdSource ids;
+    const double t = js_fixed(snap_to_frame(local_t, fps), 6);
+    const auto items = normalize_kf_items(field(*clip.keyframes, "items"), ids);
+    const auto it = std::ranges::find_if(
+        items, [&](const Json& k) { return std::abs(k.at("t").get<double>() - t) < frame_duration(fps) / 2; });
+    const bool on = it != items.end() && std::ranges::any_of(keys, [&](const std::string& k) {
+                        return kf_value_valid(k, field(it->at("props"), k));
+                    });
+    return on ? "on" : "empty";
+}
+
+void remove_style_kf_at(TimelineClip& clip, double local_t, const std::vector<std::string>& keys, double fps,
+                        IdSource& ids) {
+    const double t = js_fixed(snap_to_frame(local_t, fps), 6);
+    Json items = Json::array();
+    for (Json k : normalize_kf_items(clip.keyframes ? field(*clip.keyframes, "items") : Json(), ids)) {
+        if (std::abs(k.at("t").get<double>() - t) >= frame_duration(fps) / 2) {
+            items.push_back(std::move(k));
+            continue;
+        }
+        for (const auto& key : keys) {
+            k["props"].erase(key);
+        }
+        if (!k["props"].empty()) {
+            items.push_back(std::move(k));
+        }
+    }
+    Json kf = clip.keyframes && clip.keyframes->is_object() ? *clip.keyframes : Json::object();
+    kf["enabled"] = !items.empty();
+    kf["items"] = std::move(items);
+    clip.keyframes = std::move(kf);
+}
+
+void toggle_style_kf(TimelineClip& clip, const Json& track_style, double local_t, const std::vector<std::string>& keys,
+                     double fps, IdSource& ids) {
+    if (clip.kind != "text") {
+        return;
+    }
+    const double t = std::clamp(std::max(0.0, local_t), 0.0, ui_clip_duration(clip));
+    if (style_kf_state(clip, t, keys, fps) == "on") {
+        remove_style_kf_at(clip, t, keys, fps, ids);
+        return;
+    }
+    static const Json kDefaults = {{"color", "#ffffff"},      {"border_color", "#000000"}, {"border_width", 0},
+                                   {"bg_opacity", 0.55},      {"shadow_color", "#000000"}, {"shadow_opacity", 0.6},
+                                   {"shadow_blur", 0.05},     {"shadow_distance", 0.06},   {"shadow_angle", 45}};
+    const Json st = with_text_style_kf(effective_text_style(track_style, clip.style.value_or(Json())),
+                                       text_style_at(clip, t));
+    Json patch = Json::object();
+    for (const auto& k : keys) {
+        const Json& v = field(st, k);
+        patch[k] = !v.is_null() ? v : field(kDefaults, k);
+    }
+    upsert_style_kf(clip, t, patch, fps, ids);
 }
 
 Json normalize_favorites(const Json& raw) {
