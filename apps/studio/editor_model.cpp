@@ -15,6 +15,7 @@
 #include "gc/core/clip_layout_ui.hpp"
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
+#include "gc/core/collections.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/library.hpp"
 #include "gc/core/mask_edit.hpp"
@@ -205,6 +206,7 @@ bool EditorModel::openProject(const QString& pid) {
         }
     }
     load_sfx("", "");
+    load_collections("", "");
     session_ = std::make_unique<core::EditSession>((*project)->timeline.value_or(default_timeline()));
     session_->subscribe([this](const core::TimelineSnapshot& tl, const core::Change&) {
         (void)ok(store_.save_timeline(project_id_, core::to_json(*tl)));
@@ -242,6 +244,48 @@ void EditorModel::load_sfx(const std::string& q, const std::string& category) {
     sfx_categories_.clear();
     for (const Json& c : sfx.value("categories", Json::array())) {
         sfx_categories_ << to_variant(c);
+    }
+}
+
+void EditorModel::load_collections(const std::string& q, const std::string& collection) {
+    materials_.erase(std::remove_if(materials_.begin(), materials_.end(),
+                                    [](const QVariant& m) { return m.toMap()["source"] == "collection"; }),
+                     materials_.end());
+    const auto data_dir = store_.file().parent_path();
+    const Json settings = settings_ ? settings_->load() : Json::object();
+    const auto root = core::collections_root(settings, data_dir.parent_path().parent_path() / "assets" / "material");
+    collections_.clear();
+    if (const auto list = core::list_collections(root, settings)) {
+        for (const Json& c : list->value("collections", Json::array())) {
+            collections_ << QVariantMap{{"id", qstr(c.value("id", ""))},
+                                        {"name", qstr(c.value("name", ""))},
+                                        {"count", c.value("count", 0)}};
+        }
+    }
+    const auto found = core::collections_search(root, settings, q, "", collection);
+    for (const Json& item : found ? found->value("items", Json::array()) : Json::array()) {
+        const std::string kind = item.value("kind", "");
+        const char* asset_kind = kind == "video" ? "clips" : kind == "audio" ? "audios" : "images";
+        Json media = item;
+        if (kind == "gif") {
+            media["animated"] = true;
+        }
+        const QString key = "col:" + qstr(item.value("id", ""));
+        const Json payload = core::drag_payload(asset_kind, media);
+        payloads_[key] = payload;
+        materials_ << QVariantMap{{"key", key},
+                                  {"source", "collection"},
+                                  {"assetKind", asset_kind},
+                                  {"kind", kind == "video" ? "video" : kind == "audio" ? "audio" : "image"},
+                                  {"name", qstr(item.value("name", ""))},
+                                  {"duration", core::js_number(payload.value("duration", Json(0)))}};
+    }
+}
+
+void EditorModel::searchCollections(const QString& q, const QString& collection) {
+    if (session_) {
+        load_collections(q.toStdString(), collection.toStdString());
+        emit projectChanged();
     }
 }
 

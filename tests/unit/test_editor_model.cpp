@@ -703,8 +703,11 @@ TEST_CASE("editor: material de la biblioteca y de la carpeta de SFX", "[studio]"
                                  {"label", "Tema"}, {"duration", 3.0}}})}}));
     std::filesystem::create_directories(f.dir / "sfx" / "Golpes");
     { std::ofstream(f.dir / "sfx" / "Golpes" / "pum.wav") << "RIFF"; }
+    std::filesystem::create_directories(f.dir / "material" / "Viajes");
+    { std::ofstream(f.dir / "material" / "Viajes" / "playa.mp4") << "x"; }
     core::SettingsFile settings(f.dir / "data" / "settings.json");
-    REQUIRE(settings.save({{"sfx_folder", core::path_to_utf8(f.dir / "sfx")}}));
+    REQUIRE(settings.save({{"sfx_folder", core::path_to_utf8(f.dir / "sfx")},
+                           {"material_root", core::path_to_utf8(f.dir / "material")}}));
     studio::EditorModel m(f.store, &settings);
     REQUIRE(m.openProject("p1"));
     QStringList sources;
@@ -713,6 +716,9 @@ TEST_CASE("editor: material de la biblioteca y de la carpeta de SFX", "[studio]"
     }
     CHECK(sources.contains("library:Tema"));
     CHECK(sources.contains("sfx:pum"));
+    CHECK(sources.contains("collection:playa"));
+    REQUIRE(m.collections().size() == 1);
+    CHECK(m.collections().front().toMap()["name"] == "Viajes");
     CHECK_FALSE(m.sfxCategories().isEmpty());
     m.searchSfx("nada que coincida", "");
     CHECK(std::ranges::none_of(m.materials(), [](const QVariant& v) { return v.toMap()["source"] == "sfx"; }));

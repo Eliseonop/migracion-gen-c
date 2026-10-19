@@ -12,6 +12,7 @@ Rectangle {
     property string source: "project"
     property string query: ""
     property string sfxCategory: ""
+    property string collection: ""
     function words(text) { return text.toLowerCase().split(/\s+/).filter((w) => w) }
 
     radius: Theme.radiusLg
@@ -28,7 +29,7 @@ Rectangle {
             Layout.fillWidth: true
             background: Rectangle { color: "transparent" }
             Repeater {
-                model: [["project", "Proyecto"], ["library", "Biblioteca"], ["sfx", "SFX"]]
+                model: [["project", "Proyecto"], ["library", "Biblioteca"], ["collection", "Colecc."], ["sfx", "SFX"]]
                 TabButton {
                     required property var modelData
                     objectName: "material:source:" + modelData[0]
@@ -42,7 +43,7 @@ Rectangle {
             }
         }
         Row {
-            visible: panel.source !== "sfx"
+            visible: panel.source === "project" || panel.source === "library"
             spacing: 4
             Repeater {
                 model: [["all", "Todo"], ["video", "Vídeos"], ["image", "Imágenes"], ["audio", "Audios"]]
@@ -75,6 +76,8 @@ Rectangle {
                 panel.query = text
                 if (panel.source === "sfx")
                     panel.model.searchSfx(text, panel.sfxCategory)
+                else if (panel.source === "collection")
+                    panel.model.searchCollections(text, panel.collection)
             }
         }
         Flow {
@@ -101,12 +104,37 @@ Rectangle {
                 }
             }
         }
+        Flow {
+            visible: panel.source === "collection" && panel.model.collections.length > 0
+            Layout.fillWidth: true
+            spacing: 4
+            Repeater {
+                model: [{ id: "", name: "Todas", count: 0 }].concat(panel.model.collections)
+                Rectangle {
+                    required property var modelData
+                    readonly property bool on: panel.collection === modelData.id
+                    width: colLabel.implicitWidth + 14
+                    height: 22
+                    radius: 11
+                    color: on ? Qt.rgba(1, 0.23, 0.36, 0.25) : Theme.card2
+                    border.color: on ? Theme.accent : Theme.lineBright
+                    Label { id: colLabel; anchors.centerIn: parent; text: parent.modelData.name + (parent.modelData.count ? " " + parent.modelData.count : ""); color: Theme.text; font.pixelSize: 11 }
+                    TapHandler {
+                        onTapped: {
+                            panel.collection = parent.modelData.id
+                            panel.model.searchCollections(panel.query, panel.collection)
+                        }
+                    }
+                }
+            }
+        }
         Label {
             visible: list.count === 0
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             text: panel.source === "library" ? "La biblioteca está vacía: guarda material de un proyecto para usarlo en todos."
                 : panel.source === "sfx" ? "No hay sonidos: elige la carpeta de SFX en los ajustes."
+                : panel.source === "collection" ? "No hay colecciones: crea carpetas en la de material (assets/material o la de los ajustes)."
                 : "Este proyecto no tiene material todavía."
             color: Theme.muted
         }
@@ -118,7 +146,7 @@ Rectangle {
             spacing: 6
             model: panel.model.materials.filter((m) => m.source === panel.source
                 && (panel.source === "sfx" || panel.filter === "all" || m.kind === panel.filter)
-                && (panel.source === "sfx" || panel.words(panel.query).every((w) => m.name.toLowerCase().includes(w))))
+                && (panel.source === "sfx" || panel.source === "collection" || panel.words(panel.query).every((w) => m.name.toLowerCase().includes(w))))
             delegate: Item {
                 id: slot
                 required property var modelData

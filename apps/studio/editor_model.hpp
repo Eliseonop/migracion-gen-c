@@ -42,6 +42,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList animationSlots READ animationSlots CONSTANT)
     Q_PROPERTY(QVariantList vfxCatalog READ vfxCatalog CONSTANT)
     Q_PROPERTY(QVariantList sfxCategories READ sfxCategories NOTIFY projectChanged)
+    Q_PROPERTY(QVariantList collections READ collections NOTIFY projectChanged)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
@@ -82,6 +83,10 @@ public:
     [[nodiscard]] QVariantList sfxCategories() const { return sfx_categories_; }
     // search de sfx_library: los sonidos que tienen todas las palabras de `q`, en `category`.
     Q_INVOKABLE void searchSfx(const QString& q, const QString& category);
+    // Colecciones de material (carpetas de `material_root` o assets/material): {id, name, count}.
+    [[nodiscard]] QVariantList collections() const { return collections_; }
+    // search de collections: los medios de las colecciones activas (o de `collection`) que casan con `q`.
+    Q_INVOKABLE void searchCollections(const QString& q, const QString& collection);
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
@@ -283,6 +288,8 @@ private:
     std::optional<core::KeyframeBoard> kf_board_;
     std::string selected_track_;
     QVariantList sfx_categories_;
+    QVariantList collections_;
+    void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);
     const core::SettingsFile* settings_ = nullptr;
     // changeTrackStyle / applyTrackPreset: el estilo de la pista y el de todos sus textos.
