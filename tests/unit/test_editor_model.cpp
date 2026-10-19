@@ -638,3 +638,29 @@ TEST_CASE("editor: animaciones de clip del catálogo por ranura", "[studio]") {
     m.removeVfx(0);
     CHECK_FALSE(f.saved().clips.front()->vfx);
 }
+
+TEST_CASE("editor: máscara del clip (añadir, cambiar de tipo, geometría y quitar)", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.select("a");
+    m.addMask("circle");
+    QVariantMap mask = m.selectedClip()["mask"].toMap();
+    CHECK(mask["type"] == "circle");
+    m.commitMask({{"mx", 0.3}, {"mfeather", 0.1}});
+    m.changeMask({{"invert", true}});
+    mask = m.selectedClip()["mask"].toMap();
+    CHECK(mask["x"] == 0.3);
+    CHECK(mask["feather"] == 0.1);
+    CHECK(mask["invert"] == true);
+    m.changeMask({{"type", "rectangle"}}); // otro tipo: su tamaño, conservando posición
+    mask = m.selectedClip()["mask"].toMap();
+    CHECK(mask["type"] == "rectangle");
+    CHECK(mask["x"] == 0.3);
+    m.duplicateMask();
+    CHECK(m.selectedClip()["maskCount"] == 2);
+    m.removeMask();
+    m.removeMask();
+    CHECK(m.selectedClip()["mask"].toMap().isEmpty());
+    CHECK(f.saved().clips.front()->masks.empty());
+}

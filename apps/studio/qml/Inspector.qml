@@ -16,7 +16,8 @@ Rectangle {
     readonly property var tabList: [["clip", "Clip"]]
         .concat(filterable || effectable ? [["color", "Color"]] : [])
         .concat(sound ? [["audio", "Audio"]] : [])
-        .concat(has && clip.kind !== "adjustment" ? [["anim", "Animación"]] : [])
+        .concat(has && ["video", "image", "shape", "text"].indexOf(clip.kind) >= 0 ? [["mask", "Máscara"]] : [])
+        .concat(has && clip.kind !== "adjustment" ? [["anim", "Animar"]] : [])
     readonly property string tabNow: tabList.some((t) => t[0] === tab) ? tab : "clip"
     readonly property var tf: has ? clip.transform : ({})
     readonly property var speeds: [0.3, 0.5, 1, 1.5, 2, 3, 5, 10]
@@ -56,6 +57,10 @@ Rectangle {
         ["reverb", "Reverberación", "effect"], ["echo", "Eco", "effect"], ["denoise", "Reducir ruido", "effect"],
         ["distortion", "Distorsión", "effect"], ["underwater", "Bajo el agua", "filter"], ["telephone", "Teléfono", "filter"],
         ["radio", "Radio antigua", "filter"], ["megaphone", "Megáfono", "filter"], ["muffled", "Amortiguado", "filter"]]
+    readonly property var mk: has && clip.mask ? clip.mask : ({})
+    readonly property bool hasMask: !!mk.type
+    readonly property var maskTypes: [["linear", "División"], ["film", "Película"], ["circle", "Círculo"], ["rectangle", "Rectángulo"],
+        ["star", "Estrella"], ["heart", "Corazón"], ["text", "Texto"], ["brush", "Pincel"]]
     readonly property var swatches: ["#ffffff", "#111111", "#ffe400", "#ff2d2d", "#ff8a00", "#2ee83f", "#1e90ff", "#ff3d8b"]
     readonly property var blends: [
         ["normal", "Normal"], ["darken", "Oscurecer"], ["multiply", "Multiplicar"], ["color_burn", "Subexponer color"],
@@ -262,7 +267,7 @@ Rectangle {
                         required property var modelData
                         objectName: "insp:tab:" + modelData[0]
                         text: modelData[1]
-                        font.pixelSize: 12
+                        font.pixelSize: 11
                         checked: panel.tabNow === modelData[0]
                         onClicked: panel.tab = modelData[0]
                         contentItem: Label { text: parent.text; font: parent.font; color: parent.checked ? Theme.text : Theme.muted; horizontalAlignment: Text.AlignHCenter }
@@ -1019,6 +1024,107 @@ Rectangle {
                     }
                 }
             }
+            }
+
+            ColumnLayout {
+                visible: panel.tabNow === "mask"
+                Layout.fillWidth: true
+                spacing: 6
+
+                Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: "Solo se verá la parte del clip que quede dentro de la forma." + (panel.has && panel.clip.maskCount > 1
+                          ? " Hay " + panel.clip.maskCount + " máscaras: se combinan y aquí se edita la primera." : "")
+                    color: Theme.muted
+                    font.pixelSize: 11
+                }
+                Flow {
+                    Layout.fillWidth: true
+                    spacing: 4
+                    Repeater {
+                        model: panel.maskTypes
+                        Toggle {
+                            required property var modelData
+                            objectName: "insp:mask:type:" + modelData[0]
+                            implicitWidth: implicitContentWidth + 16
+                            text: modelData[1]
+                            on: panel.mk.type === modelData[0]
+                            onClicked: panel.hasMask ? panel.model.changeMask({ type: modelData[0] }) : panel.model.addMask(modelData[0])
+                        }
+                    }
+                }
+                RowLayout {
+                    visible: panel.hasMask
+                    spacing: 4
+                    Repeater {
+                        model: panel.has && panel.clip.kind !== "text" ? [["clip", "Clip"], ["adjust", "Ajustes"]] : []
+                        Toggle {
+                            required property var modelData
+                            implicitWidth: implicitContentWidth + 16
+                            text: modelData[1]
+                            on: panel.mk.target === modelData[0]
+                            onClicked: panel.model.changeMask({ target: modelData[0] })
+                        }
+                    }
+                }
+                RowLayout {
+                    visible: panel.hasMask
+                    spacing: 4
+                    Toggle { objectName: "insp:mask:invert"; implicitWidth: implicitContentWidth + 16; text: "Invertir"; on: !!panel.mk.invert; onClicked: panel.model.changeMask({ invert: !on }) }
+                    Toggle { implicitWidth: implicitContentWidth + 16; text: "Activa"; on: !!panel.mk.enabled; onClicked: panel.model.changeMask({ enabled: !on }) }
+                    Toggle { implicitWidth: 26; text: "⧉"; onClicked: panel.model.duplicateMask() }
+                    Toggle { objectName: "insp:mask:remove"; implicitWidth: 26; text: "×"; onClicked: panel.model.removeMask() }
+                }
+                RowLayout {
+                    visible: panel.hasMask
+                    spacing: 8
+                    Num { objectName: "insp:mask:x"; title: "X"; value: Math.round((panel.mk.x ?? 0.5) * 1000) / 10; onCommitted: (v) => panel.model.commitMask({ mx: v / 100 }) }
+                    Num { title: "Y"; value: Math.round((panel.mk.y ?? 0.5) * 1000) / 10; onCommitted: (v) => panel.model.commitMask({ my: v / 100 }) }
+                }
+                RowLayout {
+                    visible: panel.hasMask && panel.mk.type !== "linear"
+                    spacing: 8
+                    Num { visible: panel.mk.type !== "film"; objectName: "insp:mask:w"; title: "An"; suffix: "%"; value: Math.round((panel.mk.w ?? 0) * 100)
+                          onCommitted: (v) => panel.model.commitMask({ mw: Math.max(1, Math.min(300, v)) / 100 }) }
+                    Num { title: "Al"; suffix: "%"; value: Math.round((panel.mk.h ?? 0) * 100)
+                          onCommitted: (v) => panel.model.commitMask({ mh: Math.max(1, Math.min(300, v)) / 100 }) }
+                }
+                RowLayout {
+                    visible: panel.hasMask
+                    spacing: 8
+                    Num { title: "EX"; suffix: "%"; value: Math.round((panel.mk.scale_x ?? 1) * 100)
+                          onCommitted: (v) => panel.model.commitMask({ msx: Math.max(5, Math.min(400, v)) / 100 }) }
+                    Num { title: "EY"; suffix: "%"; value: Math.round((panel.mk.scale_y ?? 1) * 100)
+                          onCommitted: (v) => panel.model.commitMask({ msy: Math.max(5, Math.min(400, v)) / 100 }) }
+                }
+                RowLayout {
+                    visible: panel.hasMask
+                    spacing: 8
+                    Num { title: "⟳"; suffix: "°"; value: Number((panel.mk.rotation ?? 0).toFixed(1)); onCommitted: (v) => panel.model.commitMask({ mrot: Math.max(-180, Math.min(180, v)) }) }
+                    Num { objectName: "insp:mask:feather"; title: "Pl"; suffix: "%"; value: Math.round((panel.mk.feather ?? 0) / 0.25 * 100)
+                          onCommitted: (v) => panel.model.commitMask({ mfeather: Math.max(0, Math.min(100, v)) / 100 * 0.25 }) }
+                }
+                Percent {
+                    visible: panel.hasMask
+                    title: "Opacidad"
+                    value: panel.mk.opacity ?? 1
+                    onCommitted: (v) => panel.model.changeMask({ opacity: Math.round(v * 100) / 100 })
+                }
+                Percent {
+                    visible: panel.hasMask && panel.mk.type === "rectangle"
+                    title: "Esquinas"
+                    value: (panel.mk.radius ?? 0) * 2
+                    onCommitted: (v) => panel.model.changeMask({ radius: Math.round(v * 100) / 200 })
+                }
+                TextField {
+                    visible: panel.hasMask && panel.mk.type === "text"
+                    Layout.fillWidth: true
+                    text: panel.mk.text ? panel.mk.text.content : ""
+                    color: Theme.text
+                    background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
+                    onEditingFinished: panel.model.changeMask({ text: Object.assign({}, panel.mk.text, { content: text }) })
+                }
             }
         }
     }

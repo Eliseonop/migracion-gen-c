@@ -16,6 +16,8 @@
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/keyframes.hpp"
+#include "gc/core/mask_edit.hpp"
+#include "gc/core/masks.hpp"
 #include "gc/core/material_drop.hpp"
 #include "gc/core/no_overlap.hpp"
 #include "gc/core/pose.hpp"
@@ -350,6 +352,11 @@ QVariantMap EditorModel::selectedClip() const {
         {"shape", c->kind == "shape" ? to_variant(core::normalize_shape(c->shape.value_or(Json::object()))
                                                       .value_or(Json::object()))
                                      : QVariantMap()},
+        {"mask", [&] { // la primera máscara en el cabezal (con sus keyframes), también las de ajuste
+             const auto masks = core::clip_masks_at(*c, std::max(0.0, local), true);
+             return masks.empty() ? QVariantMap() : to_variant(masks.front());
+         }()},
+        {"maskCount", static_cast<int>(c->masks.size())},
         {"vfx", [&] { // la pila con lo que pinta el inspector: nombre y parámetros del catálogo
              QVariantList out;
              const auto catalog = core::fx_catalog();
@@ -1475,6 +1482,44 @@ void EditorModel::setAudioFx(const QString& id, double value) {
     Json fx = c->audio_fx && c->audio_fx->is_object() ? *c->audio_fx : Json::object();
     fx[id.toStdString()] = n;
     fx_each("audio-fx", [&](core::TimelineClip& item) { item.audio_fx = fx; });
+}
+
+template <class Edit>
+void EditorModel::mask_edit(const char* cause, Edit edit) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c || !core::maskable(*c)) {
+        return;
+    }
+    const std::string id = c->id;
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == id) {
+            edit(item.mut());
+        }
+    }
+    commit(std::move(next), cause, {id});
+}
+
+void EditorModel::addMask(const QString& type) {
+    mask_edit("mask", [&](core::TimelineClip& c) { core::add_mask(c, type.toStdString(), "clip", aspect(), ids_); });
+}
+
+void EditorModel::removeMask() {
+    mask_edit("mask", [](core::TimelineClip& c) { core::remove_mask(c); });
+}
+
+void EditorModel::duplicateMask() {
+    mask_edit("mask", [&](core::TimelineClip& c) { core::duplicate_mask(c, ids_); });
+}
+
+void EditorModel::changeMask(const QVariantMap& patch) {
+    const Json p = to_json(patch);
+    mask_edit("mask", [&](core::TimelineClip& c) { core::change_mask(c, p, aspect(), ids_); });
+}
+
+void EditorModel::commitMask(const QVariantMap& patch) {
+    const Json p = to_json(patch);
+    mask_edit("mask", [&](core::TimelineClip& c) { core::commit_mask(c, p, playhead_ - c.start, fps(), ids_); });
 }
 
 QVariantList EditorModel::vfxCatalog() {

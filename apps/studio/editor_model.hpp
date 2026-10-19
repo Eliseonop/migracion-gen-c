@@ -157,6 +157,12 @@ public:
     Q_INVOKABLE void setEffect(const QString& key, const QVariant& value);
     // Efecto o filtro de sonido (setFx de EdEffects.jsx): 0–1; con keyframes, en el del cabezal.
     Q_INVOKABLE void setAudioFx(const QString& id, double value);
+    // Máscara (EdMask.jsx): la primera del clip.
+    Q_INVOKABLE void addMask(const QString& type);
+    Q_INVOKABLE void removeMask();
+    Q_INVOKABLE void duplicateMask();
+    Q_INVOKABLE void changeMask(const QVariantMap& patch);
+    Q_INVOKABLE void commitMask(const QVariantMap& patch);
     // Pila de efectos animados (addVfx y EdVfxStack): añadir, parámetros, activar, rango, orden y quitar.
     Q_INVOKABLE void addVfx(const QString& effectId);
     Q_INVOKABLE void setVfxParam(int index, const QString& param, const QVariant& value);
@@ -223,6 +229,8 @@ signals:
 private:
     void patch_marker(const QString& id, const std::optional<Json>& patch);
     void set_vfx(Json list);
+    template <class Edit>
+    void mask_edit(const char* cause, Edit edit);
     void set_filters(const std::vector<core::ClipFilter>& stack);
     void add_generated(core::Timeline next, Json clip, const char* cause);
     template <class Patch>
