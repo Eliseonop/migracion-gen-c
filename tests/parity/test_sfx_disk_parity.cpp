@@ -1,7 +1,8 @@
-// Paridad de la BIBLIOTECA DE SFX EN DISCO con video-yt (la parte de lectura de sfx.py).
+// Paridad de la BIBLIOTECA DE SFX EN DISCO con video-yt (sfx.py).
 //
 // Fixtures (tools/fixtures/export_fixtures.py):
-//   tests/fixtures/sfx/synthetic.json   sfx_cases.py (en el repo)
+//   tests/fixtures/sfx/synthetic.json   sfx_cases.py (en el repo; rutas de Windows)
+//   tests/fixtures/sfx/write.json       sfx_cases.WRITE_STEPS: alta, edición y categorías (cualquier sistema)
 //   tests/fixtures/local/sfx/real.json  tu carpeta de SFX con tus favoritos (solo local)
 //
 // Se repiten los pasos sobre una carpeta temporal (o la tuya) con un settings.json temporal
@@ -170,6 +171,34 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
                                              string_set(step[3]));
         } else if (kind == "audio") {
             result = is_sfx_audio(step[1].get<std::string>());
+        } else if (kind == "create" || kind == "add" || kind == "update") {
+            const auto opt = [](const Json& v) { return v.is_null() ? std::nullopt : std::optional(v.get<std::string>()); };
+            const bool add = kind == "add";
+            const std::size_t a = add ? 3 : 2; // nombre, categoría, nueva y uso
+            SfxSoundEdit edit;
+            if (kind != "create") {
+                edit = {opt(step[a]), step[a + 1].get<std::string>(), step[a + 2].get<std::string>(), opt(step[a + 3])};
+            }
+            SettingsFile writer(settings_path);
+            const auto r = kind == "create" ? sfx_create_category(base, step[1].get<std::string>())
+                           : add ? sfx_add_sound(base, step[1].get<std::string>(), step[2].get<std::string>(), edit)
+                                 : sfx_update_sound(base, writer, step[1].get<std::string>(), edit);
+            ok = r.has_value();
+            result = ok ? *r : Json();
+        } else if (kind == "lib") {
+            if (const auto lib = read_json_file_py(*base / "sfx_library.json")) {
+                result = *lib;
+                result.erase("generado");
+            }
+        } else if (kind == "tree") {
+            std::vector<std::string> files;
+            for (const auto& e : fs::recursive_directory_iterator(*base)) {
+                if (e.is_regular_file()) {
+                    files.push_back(replace_all(path_to_utf8(fs::relative(e.path(), *base)), "\\", "/"));
+                }
+            }
+            std::ranges::sort(files);
+            result = files;
         } else {
             FAIL("paso desconocido: " << kind);
         }
@@ -182,6 +211,14 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
 }
 
 } // namespace
+
+TEST_CASE("paridad de la biblioteca de SFX en disco: alta, edición y categorías", "[parity][sfx]") {
+    const auto path = kFixtures / "sfx" / "write.json";
+    REQUIRE(fs::exists(path)); // faltan: ejecuta tools/fixtures/export_fixtures.py --solo sfx_escritura
+    auto file = read_json_file(path);
+    REQUIRE(file);
+    CHECK(run_steps(*file, "write.json") > 70);
+}
 
 TEST_CASE("paridad de la biblioteca de SFX en disco: pasos sintéticos", "[parity][sfx]") {
     if constexpr (!gc::test::kWindows) {

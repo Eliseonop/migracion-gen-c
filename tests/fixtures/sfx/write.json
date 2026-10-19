@@ -1,0 +1,1558 @@
+{
+ "root": null,
+ "steps": [
+  {
+   "step": [
+    "default",
+    "no_existe"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "Golpes"
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "add",
+    "a.mp3",
+    "1",
+    null,
+    "x",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "update",
+    "a.mp3",
+    null,
+    "",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "files",
+    [
+     "lib/01_IMPACTOS/golpe.mp3",
+     "lib/suelto.wav",
+     "lib/07_AIRE/whoosh.ogg"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "default",
+    "lib"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    ""
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "create",
+    "   "
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "lib"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "impactos"
+   ],
+   "result": {
+    "id": "08_IMPACTOS",
+    "label": "impactos",
+    "count": 0
+   }
+  },
+  {
+   "step": [
+    "lib"
+   ],
+   "result": {
+    "total": 3,
+    "categorias": {
+     "01_IMPACTOS": {
+      "etiqueta": "01_IMPACTOS",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "07_AIRE": {
+      "etiqueta": "07_AIRE",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "08_IMPACTOS": {
+      "etiqueta": "impactos",
+      "uso_tipico": "",
+      "cantidad": 0
+     }
+    },
+    "sonidos": [
+     {
+      "sonido": "golpe",
+      "archivo": "golpe.mp3",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "whoosh",
+      "archivo": "whoosh.ogg",
+      "carpeta": "07_AIRE",
+      "categoria": "07_AIRE",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "suelto",
+      "archivo": "suelto.wav",
+      "carpeta": "",
+      "categoria": "",
+      "uso_tipico": ""
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "tree"
+   ],
+   "result": [
+    "01_IMPACTOS/golpe.mp3",
+    "07_AIRE/whoosh.ogg",
+    "sfx_library.json",
+    "suelto.wav"
+   ]
+  },
+  {
+   "step": [
+    "create",
+    "01_impactos"
+   ],
+   "result": {
+    "id": "01_IMPACTOS",
+    "label": "01_IMPACTOS",
+    "count": 1
+   }
+  },
+  {
+   "step": [
+    "create",
+    " IMPACTOS "
+   ],
+   "result": {
+    "id": "08_IMPACTOS",
+    "label": "impactos",
+    "count": 0
+   }
+  },
+  {
+   "step": [
+    "create",
+    "07_aire"
+   ],
+   "result": {
+    "id": "07_AIRE",
+    "label": "07_AIRE",
+    "count": 1
+   }
+  },
+  {
+   "step": [
+    "create",
+    "  Ruido Rosa ñ!! "
+   ],
+   "result": {
+    "id": "09_RUIDO_ROSA",
+    "label": "Ruido Rosa ñ!!",
+    "count": 0
+   }
+  },
+  {
+   "step": [
+    "create",
+    "ñññ"
+   ],
+   "result": {
+    "id": "10_SFX",
+    "label": "ñññ",
+    "count": 0
+   }
+  },
+  {
+   "step": [
+    "create",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+   ],
+   "result": {
+    "id": "11_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "label": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "count": 0
+   }
+  },
+  {
+   "step": [
+    "create",
+    "a--b__c"
+   ],
+   "result": {
+    "id": "12_A_B_C",
+    "label": "a--b__c",
+    "count": 0
+   }
+  },
+  {
+   "step": [
+    "lib"
+   ],
+   "result": {
+    "total": 3,
+    "categorias": {
+     "01_IMPACTOS": {
+      "etiqueta": "01_IMPACTOS",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "07_AIRE": {
+      "etiqueta": "07_AIRE",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "08_IMPACTOS": {
+      "etiqueta": "impactos",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "09_RUIDO_ROSA": {
+      "etiqueta": "Ruido Rosa ñ!!",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "10_SFX": {
+      "etiqueta": "ñññ",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "11_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX": {
+      "etiqueta": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "12_A_B_C": {
+      "etiqueta": "a--b__c",
+      "uso_tipico": "",
+      "cantidad": 0
+     }
+    },
+    "sonidos": [
+     {
+      "sonido": "golpe",
+      "archivo": "golpe.mp3",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "whoosh",
+      "archivo": "whoosh.ogg",
+      "carpeta": "07_AIRE",
+      "categoria": "07_AIRE",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "suelto",
+      "archivo": "suelto.wav",
+      "carpeta": "",
+      "categoria": "",
+      "uso_tipico": ""
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "add",
+    "boom.mp3",
+    "123",
+    "  Boom grande ",
+    "01_IMPACTOS",
+    "",
+    "  explosiones "
+   ],
+   "result": {
+    "id": "01_IMPACTOS/boom.mp3",
+    "name": "Boom grande",
+    "file": "boom.mp3",
+    "folder": "01_IMPACTOS",
+    "category": "01_IMPACTOS",
+    "uso": "explosiones",
+    "url": "/api/sfx/file/01_IMPACTOS/boom.mp3"
+   }
+  },
+  {
+   "step": [
+    "add",
+    "boom.mp3",
+    "456",
+    null,
+    "01_IMPACTOS",
+    "",
+    null
+   ],
+   "result": {
+    "id": "01_IMPACTOS/boom_2.mp3",
+    "name": "boom",
+    "file": "boom_2.mp3",
+    "folder": "01_IMPACTOS",
+    "category": "01_IMPACTOS",
+    "uso": "",
+    "url": "/api/sfx/file/01_IMPACTOS/boom_2.mp3"
+   }
+  },
+  {
+   "step": [
+    "add",
+    "dir/otro.WAV",
+    "7",
+    "",
+    "",
+    "Nueva Cat",
+    ""
+   ],
+   "result": {
+    "id": "13_NUEVA_CAT/otro.WAV",
+    "name": "otro",
+    "file": "otro.WAV",
+    "folder": "13_NUEVA_CAT",
+    "category": "Nueva Cat",
+    "uso": "",
+    "url": "/api/sfx/file/13_NUEVA_CAT/otro.WAV"
+   }
+  },
+  {
+   "step": [
+    "add",
+    "otra.ogg",
+    "8",
+    null,
+    "",
+    "nueva cat",
+    null
+   ],
+   "result": {
+    "id": "14_NUEVA_CAT/otra.ogg",
+    "name": "otra",
+    "file": "otra.ogg",
+    "folder": "14_NUEVA_CAT",
+    "category": "nueva cat",
+    "uso": "",
+    "url": "/api/sfx/file/14_NUEVA_CAT/otra.ogg"
+   }
+  },
+  {
+   "step": [
+    "add",
+    "x.txt",
+    "1",
+    null,
+    "01_IMPACTOS",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "add",
+    "",
+    "1",
+    null,
+    "01_IMPACTOS",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "add",
+    "..",
+    "1",
+    null,
+    "01_IMPACTOS",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "add",
+    "v.mp3",
+    "",
+    null,
+    "01_IMPACTOS",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "add",
+    "v.mp3",
+    "1",
+    null,
+    "",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "add",
+    "v.mp3",
+    "1",
+    null,
+    "../fuera",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "add",
+    "v.mp3",
+    "1",
+    null,
+    " a/b ",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "add",
+    "v.mp3",
+    "1",
+    null,
+    ".",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "add",
+    "v.flac",
+    "1",
+    null,
+    "carpeta_nueva",
+    "",
+    null
+   ],
+   "result": {
+    "id": "carpeta_nueva/v.flac",
+    "name": "v",
+    "file": "v.flac",
+    "folder": "carpeta_nueva",
+    "category": "carpeta_nueva",
+    "uso": "",
+    "url": "/api/sfx/file/carpeta_nueva/v.flac"
+   }
+  },
+  {
+   "step": [
+    "add",
+    "w.aac",
+    "1",
+    "Con uso",
+    "carpeta_nueva",
+    "",
+    "  "
+   ],
+   "result": {
+    "id": "carpeta_nueva/w.aac",
+    "name": "Con uso",
+    "file": "w.aac",
+    "folder": "carpeta_nueva",
+    "category": "carpeta_nueva",
+    "uso": "",
+    "url": "/api/sfx/file/carpeta_nueva/w.aac"
+   }
+  },
+  {
+   "step": [
+    "lib"
+   ],
+   "result": {
+    "total": 9,
+    "categorias": {
+     "01_IMPACTOS": {
+      "etiqueta": "01_IMPACTOS",
+      "uso_tipico": "",
+      "cantidad": 3
+     },
+     "07_AIRE": {
+      "etiqueta": "07_AIRE",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "08_IMPACTOS": {
+      "etiqueta": "impactos",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "09_RUIDO_ROSA": {
+      "etiqueta": "Ruido Rosa ñ!!",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "10_SFX": {
+      "etiqueta": "ñññ",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "11_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX": {
+      "etiqueta": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "12_A_B_C": {
+      "etiqueta": "a--b__c",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "13_NUEVA_CAT": {
+      "etiqueta": "Nueva Cat",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "14_NUEVA_CAT": {
+      "etiqueta": "nueva cat",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "carpeta_nueva": {
+      "etiqueta": "carpeta_nueva",
+      "uso_tipico": "",
+      "cantidad": 2
+     }
+    },
+    "sonidos": [
+     {
+      "sonido": "golpe",
+      "archivo": "golpe.mp3",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "whoosh",
+      "archivo": "whoosh.ogg",
+      "carpeta": "07_AIRE",
+      "categoria": "07_AIRE",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "suelto",
+      "archivo": "suelto.wav",
+      "carpeta": "",
+      "categoria": "",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "Boom grande",
+      "archivo": "boom.mp3",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": "explosiones"
+     },
+     {
+      "sonido": "boom",
+      "archivo": "boom_2.mp3",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "otro",
+      "archivo": "otro.WAV",
+      "carpeta": "13_NUEVA_CAT",
+      "categoria": "Nueva Cat",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "otra",
+      "archivo": "otra.ogg",
+      "carpeta": "14_NUEVA_CAT",
+      "categoria": "nueva cat",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "v",
+      "archivo": "v.flac",
+      "carpeta": "carpeta_nueva",
+      "categoria": "carpeta_nueva",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "Con uso",
+      "archivo": "w.aac",
+      "carpeta": "carpeta_nueva",
+      "categoria": "carpeta_nueva",
+      "uso_tipico": ""
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "tree"
+   ],
+   "result": [
+    "01_IMPACTOS/boom.mp3",
+    "01_IMPACTOS/boom_2.mp3",
+    "01_IMPACTOS/golpe.mp3",
+    "07_AIRE/whoosh.ogg",
+    "13_NUEVA_CAT/otro.WAV",
+    "14_NUEVA_CAT/otra.ogg",
+    "carpeta_nueva/v.flac",
+    "carpeta_nueva/w.aac",
+    "sfx_library.json",
+    "suelto.wav"
+   ]
+  },
+  {
+   "step": [
+    "settings",
+    {
+     "favorites": {
+      "sfx": [
+       "01_IMPACTOS/boom.mp3",
+       "otro",
+       5
+      ]
+     }
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "update",
+    "01_IMPACTOS/boom.mp3",
+    "Bum",
+    "",
+    "",
+    "uso nuevo"
+   ],
+   "result": {
+    "id": "01_IMPACTOS/boom.mp3",
+    "name": "Bum",
+    "file": "boom.mp3",
+    "folder": "01_IMPACTOS",
+    "category": "01_IMPACTOS",
+    "uso": "uso nuevo",
+    "url": "/api/sfx/file/01_IMPACTOS/boom.mp3"
+   }
+  },
+  {
+   "step": [
+    "update",
+    "01_IMPACTOS\\boom.mp3",
+    null,
+    "07_AIRE",
+    "",
+    null
+   ],
+   "result": {
+    "id": "07_AIRE/boom.mp3",
+    "name": "Bum",
+    "file": "boom.mp3",
+    "folder": "07_AIRE",
+    "category": "07_AIRE",
+    "uso": "uso nuevo",
+    "url": "/api/sfx/file/07_AIRE/boom.mp3"
+   }
+  },
+  {
+   "step": [
+    "favorite_ids"
+   ],
+   "result": [
+    "07_AIRE/boom.mp3",
+    "5",
+    "otro"
+   ]
+  },
+  {
+   "step": [
+    "update",
+    " 07_AIRE/boom.mp3 ",
+    null,
+    "",
+    "Mega Nueva",
+    null
+   ],
+   "result": {
+    "id": "15_MEGA_NUEVA/boom.mp3",
+    "name": "Bum",
+    "file": "boom.mp3",
+    "folder": "15_MEGA_NUEVA",
+    "category": "Mega Nueva",
+    "uso": "uso nuevo",
+    "url": "/api/sfx/file/15_MEGA_NUEVA/boom.mp3"
+   }
+  },
+  {
+   "step": [
+    "update",
+    "no/existe.mp3",
+    null,
+    "",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "update",
+    "suelto.wav",
+    "",
+    "01_IMPACTOS",
+    "",
+    ""
+   ],
+   "result": {
+    "id": "01_IMPACTOS/suelto.wav",
+    "name": "suelto",
+    "file": "suelto.wav",
+    "folder": "01_IMPACTOS",
+    "category": "01_IMPACTOS",
+    "uso": "",
+    "url": "/api/sfx/file/01_IMPACTOS/suelto.wav"
+   }
+  },
+  {
+   "step": [
+    "update",
+    "01_IMPACTOS/golpe.mp3",
+    "  ",
+    "01_IMPACTOS",
+    "",
+    null
+   ],
+   "result": {
+    "id": "01_IMPACTOS/golpe.mp3",
+    "name": "golpe",
+    "file": "golpe.mp3",
+    "folder": "01_IMPACTOS",
+    "category": "01_IMPACTOS",
+    "uso": "",
+    "url": "/api/sfx/file/01_IMPACTOS/golpe.mp3"
+   }
+  },
+  {
+   "step": [
+    "update",
+    "01_IMPACTOS/golpe.mp3",
+    null,
+    "../x",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "update",
+    "01_IMPACTOS/boom_2.mp3",
+    null,
+    "07_AIRE",
+    "",
+    null
+   ],
+   "result": {
+    "id": "07_AIRE/boom_2.mp3",
+    "name": "boom",
+    "file": "boom_2.mp3",
+    "folder": "07_AIRE",
+    "category": "07_AIRE",
+    "uso": "",
+    "url": "/api/sfx/file/07_AIRE/boom_2.mp3"
+   }
+  },
+  {
+   "step": [
+    "update",
+    "07_AIRE/whoosh.ogg",
+    null,
+    "01_IMPACTOS",
+    "",
+    null
+   ],
+   "result": {
+    "id": "01_IMPACTOS/whoosh.ogg",
+    "name": "whoosh",
+    "file": "whoosh.ogg",
+    "folder": "01_IMPACTOS",
+    "category": "01_IMPACTOS",
+    "uso": "",
+    "url": "/api/sfx/file/01_IMPACTOS/whoosh.ogg"
+   }
+  },
+  {
+   "step": [
+    "lib"
+   ],
+   "result": {
+    "total": 9,
+    "categorias": {
+     "01_IMPACTOS": {
+      "etiqueta": "01_IMPACTOS",
+      "uso_tipico": "",
+      "cantidad": 3
+     },
+     "07_AIRE": {
+      "etiqueta": "07_AIRE",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "08_IMPACTOS": {
+      "etiqueta": "impactos",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "09_RUIDO_ROSA": {
+      "etiqueta": "Ruido Rosa ñ!!",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "10_SFX": {
+      "etiqueta": "ñññ",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "11_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX": {
+      "etiqueta": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "12_A_B_C": {
+      "etiqueta": "a--b__c",
+      "uso_tipico": "",
+      "cantidad": 0
+     },
+     "13_NUEVA_CAT": {
+      "etiqueta": "Nueva Cat",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "14_NUEVA_CAT": {
+      "etiqueta": "nueva cat",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "carpeta_nueva": {
+      "etiqueta": "carpeta_nueva",
+      "uso_tipico": "",
+      "cantidad": 2
+     },
+     "15_MEGA_NUEVA": {
+      "etiqueta": "Mega Nueva",
+      "uso_tipico": "",
+      "cantidad": 1
+     }
+    },
+    "sonidos": [
+     {
+      "sonido": "golpe",
+      "archivo": "golpe.mp3",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "whoosh",
+      "archivo": "whoosh.ogg",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "suelto",
+      "archivo": "suelto.wav",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "Bum",
+      "archivo": "boom.mp3",
+      "carpeta": "15_MEGA_NUEVA",
+      "categoria": "Mega Nueva",
+      "uso_tipico": "uso nuevo"
+     },
+     {
+      "sonido": "boom",
+      "archivo": "boom_2.mp3",
+      "carpeta": "07_AIRE",
+      "categoria": "07_AIRE",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "otro",
+      "archivo": "otro.WAV",
+      "carpeta": "13_NUEVA_CAT",
+      "categoria": "Nueva Cat",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "otra",
+      "archivo": "otra.ogg",
+      "carpeta": "14_NUEVA_CAT",
+      "categoria": "nueva cat",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "v",
+      "archivo": "v.flac",
+      "carpeta": "carpeta_nueva",
+      "categoria": "carpeta_nueva",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "Con uso",
+      "archivo": "w.aac",
+      "carpeta": "carpeta_nueva",
+      "categoria": "carpeta_nueva",
+      "uso_tipico": ""
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "tree"
+   ],
+   "result": [
+    "01_IMPACTOS/golpe.mp3",
+    "01_IMPACTOS/suelto.wav",
+    "01_IMPACTOS/whoosh.ogg",
+    "07_AIRE/boom_2.mp3",
+    "13_NUEVA_CAT/otro.WAV",
+    "14_NUEVA_CAT/otra.ogg",
+    "15_MEGA_NUEVA/boom.mp3",
+    "carpeta_nueva/v.flac",
+    "carpeta_nueva/w.aac",
+    "sfx_library.json"
+   ]
+  },
+  {
+   "step": [
+    "favorite_ids"
+   ],
+   "result": [
+    "15_MEGA_NUEVA/boom.mp3",
+    "5",
+    "otro"
+   ]
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "categorias": [
+      1
+     ],
+     "sonidos": []
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "Algo"
+   ],
+   "error": "AttributeError"
+  },
+  {
+   "step": [
+    "add",
+    "z.mp3",
+    "1",
+    null,
+    "01_IMPACTOS",
+    "",
+    null
+   ],
+   "error": "AttributeError"
+  },
+  {
+   "step": [
+    "update",
+    "z.mp3",
+    null,
+    "",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "categorias": {
+      "01_X": null
+     },
+     "sonidos": "abc"
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "01_x"
+   ],
+   "result": {
+    "id": "01_X",
+    "label": "01_X",
+    "count": 0
+   }
+  },
+  {
+   "step": [
+    "create",
+    "Otra"
+   ],
+   "result": {
+    "id": "16_OTRA",
+    "label": "Otra",
+    "count": 0
+   }
+  },
+  {
+   "step": [
+    "add",
+    "z.mp3",
+    "1",
+    null,
+    "01_X",
+    "",
+    null
+   ],
+   "error": "AttributeError"
+  },
+  {
+   "step": [
+    "update",
+    "a.mp3",
+    null,
+    "",
+    "",
+    null
+   ],
+   "error": "AttributeError"
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "categorias": {
+      "01_X": {
+       "etiqueta": "Equis",
+       "cantidad": "muchos"
+      }
+     },
+     "sonidos": [
+      {
+       "archivo": "a.mp3",
+       "carpeta": "01_X",
+       "sonido": 5
+      }
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "equis"
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "update",
+    "01_X/a.mp3",
+    null,
+    "",
+    "",
+    null
+   ],
+   "error": "AttributeError"
+  },
+  {
+   "step": [
+    "update",
+    "01_X/a.mp3",
+    "A",
+    "02_Y",
+    "",
+    null
+   ],
+   "error": "ValueError"
+  },
+  {
+   "step": [
+    "tree"
+   ],
+   "result": [
+    "01_IMPACTOS/golpe.mp3",
+    "01_IMPACTOS/suelto.wav",
+    "01_IMPACTOS/whoosh.ogg",
+    "07_AIRE/boom_2.mp3",
+    "13_NUEVA_CAT/otro.WAV",
+    "14_NUEVA_CAT/otra.ogg",
+    "15_MEGA_NUEVA/boom.mp3",
+    "carpeta_nueva/v.flac",
+    "carpeta_nueva/w.aac",
+    "sfx_library.json"
+   ]
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    {
+     "categorias": {
+      "01_X": {
+       "etiqueta": 7,
+       "cantidad": 2.9,
+       "uso_tipico": 3
+      }
+     },
+     "sonidos": [
+      {
+       "archivo": "b.mp3",
+       "carpeta": "01_X",
+       "sonido": 0,
+       "categoria": null,
+       "uso_tipico": 0
+      }
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "7"
+   ],
+   "result": {
+    "id": "01_X",
+    "label": 7,
+    "count": 2
+   }
+  },
+  {
+   "step": [
+    "add",
+    "c.mp3",
+    "1",
+    null,
+    "01_X",
+    "",
+    null
+   ],
+   "result": {
+    "id": "01_X/c.mp3",
+    "name": "c",
+    "file": "c.mp3",
+    "folder": "01_X",
+    "category": 7,
+    "uso": 3,
+    "url": "/api/sfx/file/01_X/c.mp3"
+   }
+  },
+  {
+   "step": [
+    "update",
+    "01_X/b.mp3",
+    null,
+    "",
+    "",
+    null
+   ],
+   "result": {
+    "id": "01_X/b.mp3",
+    "name": "b",
+    "file": "b.mp3",
+    "folder": "01_X",
+    "category": "01_X",
+    "uso": "",
+    "url": "/api/sfx/file/01_X/b.mp3"
+   }
+  },
+  {
+   "step": [
+    "lib"
+   ],
+   "result": {
+    "categorias": {
+     "01_X": {
+      "etiqueta": 7,
+      "cantidad": 3,
+      "uso_tipico": 3
+     }
+    },
+    "sonidos": [
+     {
+      "archivo": "b.mp3",
+      "carpeta": "01_X",
+      "sonido": "b",
+      "categoria": "01_X",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "c",
+      "archivo": "c.mp3",
+      "carpeta": "01_X",
+      "categoria": 7,
+      "uso_tipico": 3
+     }
+    ],
+    "total": 2
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    "{ roto"
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "create",
+    "Tras roto"
+   ],
+   "result": {
+    "id": "17_TRAS_ROTO",
+    "label": "Tras roto",
+    "count": 0
+   }
+  },
+  {
+   "step": [
+    "lib"
+   ],
+   "result": {
+    "total": 10,
+    "categorias": {
+     "01_IMPACTOS": {
+      "etiqueta": "01_IMPACTOS",
+      "uso_tipico": "",
+      "cantidad": 3
+     },
+     "01_X": {
+      "etiqueta": "01_X",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "07_AIRE": {
+      "etiqueta": "07_AIRE",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "13_NUEVA_CAT": {
+      "etiqueta": "13_NUEVA_CAT",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "14_NUEVA_CAT": {
+      "etiqueta": "14_NUEVA_CAT",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "15_MEGA_NUEVA": {
+      "etiqueta": "15_MEGA_NUEVA",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "carpeta_nueva": {
+      "etiqueta": "carpeta_nueva",
+      "uso_tipico": "",
+      "cantidad": 2
+     },
+     "17_TRAS_ROTO": {
+      "etiqueta": "Tras roto",
+      "uso_tipico": "",
+      "cantidad": 0
+     }
+    },
+    "sonidos": [
+     {
+      "sonido": "golpe",
+      "archivo": "golpe.mp3",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "suelto",
+      "archivo": "suelto.wav",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "whoosh",
+      "archivo": "whoosh.ogg",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "c",
+      "archivo": "c.mp3",
+      "carpeta": "01_X",
+      "categoria": "01_X",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "boom_2",
+      "archivo": "boom_2.mp3",
+      "carpeta": "07_AIRE",
+      "categoria": "07_AIRE",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "otro",
+      "archivo": "otro.WAV",
+      "carpeta": "13_NUEVA_CAT",
+      "categoria": "13_NUEVA_CAT",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "otra",
+      "archivo": "otra.ogg",
+      "carpeta": "14_NUEVA_CAT",
+      "categoria": "14_NUEVA_CAT",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "boom",
+      "archivo": "boom.mp3",
+      "carpeta": "15_MEGA_NUEVA",
+      "categoria": "15_MEGA_NUEVA",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "v",
+      "archivo": "v.flac",
+      "carpeta": "carpeta_nueva",
+      "categoria": "carpeta_nueva",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "w",
+      "archivo": "w.aac",
+      "carpeta": "carpeta_nueva",
+      "categoria": "carpeta_nueva",
+      "uso_tipico": ""
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "file",
+    "lib/sfx_library.json",
+    []
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "add",
+    "d.mp3",
+    "1",
+    null,
+    "01_X",
+    "",
+    null
+   ],
+   "result": {
+    "id": "01_X/d.mp3",
+    "name": "d",
+    "file": "d.mp3",
+    "folder": "01_X",
+    "category": "01_X",
+    "uso": "",
+    "url": "/api/sfx/file/01_X/d.mp3"
+   }
+  },
+  {
+   "step": [
+    "lib"
+   ],
+   "result": {
+    "total": 11,
+    "categorias": {
+     "01_IMPACTOS": {
+      "etiqueta": "01_IMPACTOS",
+      "uso_tipico": "",
+      "cantidad": 3
+     },
+     "01_X": {
+      "etiqueta": "01_X",
+      "uso_tipico": "",
+      "cantidad": 2
+     },
+     "07_AIRE": {
+      "etiqueta": "07_AIRE",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "13_NUEVA_CAT": {
+      "etiqueta": "13_NUEVA_CAT",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "14_NUEVA_CAT": {
+      "etiqueta": "14_NUEVA_CAT",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "15_MEGA_NUEVA": {
+      "etiqueta": "15_MEGA_NUEVA",
+      "uso_tipico": "",
+      "cantidad": 1
+     },
+     "carpeta_nueva": {
+      "etiqueta": "carpeta_nueva",
+      "uso_tipico": "",
+      "cantidad": 2
+     }
+    },
+    "sonidos": [
+     {
+      "sonido": "golpe",
+      "archivo": "golpe.mp3",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "suelto",
+      "archivo": "suelto.wav",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "whoosh",
+      "archivo": "whoosh.ogg",
+      "carpeta": "01_IMPACTOS",
+      "categoria": "01_IMPACTOS",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "c",
+      "archivo": "c.mp3",
+      "carpeta": "01_X",
+      "categoria": "01_X",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "boom_2",
+      "archivo": "boom_2.mp3",
+      "carpeta": "07_AIRE",
+      "categoria": "07_AIRE",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "otro",
+      "archivo": "otro.WAV",
+      "carpeta": "13_NUEVA_CAT",
+      "categoria": "13_NUEVA_CAT",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "otra",
+      "archivo": "otra.ogg",
+      "carpeta": "14_NUEVA_CAT",
+      "categoria": "14_NUEVA_CAT",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "boom",
+      "archivo": "boom.mp3",
+      "carpeta": "15_MEGA_NUEVA",
+      "categoria": "15_MEGA_NUEVA",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "v",
+      "archivo": "v.flac",
+      "carpeta": "carpeta_nueva",
+      "categoria": "carpeta_nueva",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "w",
+      "archivo": "w.aac",
+      "carpeta": "carpeta_nueva",
+      "categoria": "carpeta_nueva",
+      "uso_tipico": ""
+     },
+     {
+      "sonido": "d",
+      "archivo": "d.mp3",
+      "carpeta": "01_X",
+      "categoria": "01_X",
+      "uso_tipico": ""
+     }
+    ]
+   }
+  }
+ ]
+}

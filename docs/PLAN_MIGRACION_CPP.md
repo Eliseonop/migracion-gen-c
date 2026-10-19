@@ -1369,7 +1369,8 @@ Decisión de Edu (§6):
 - Solo imágenes, con su aspecto real. Un vídeo avisa hasta gc_media: con un aspecto inventado, el recorte guardado saldría mal (revisión). Un clic en un tirador de la curva sin arrastrar no la cambia, y Enter en el giro o la proporción no confirma.
 - **Curva del keyframe:** el editor bézier de EdCurve.jsx (`CurveEditor.qml`, en Canvas porque el Qt de apt no trae QtQuick.Shapes), con `curvePoints` sobre `ease_t`; el arrastre es local y se aplica al soltar, en un solo paso de deshacer.
 - **Carpetas de material:** gestionar (raíz, crear, favorita, visible) y subir archivos desde el panel. Lo destapó la prueba: `set_collections_root` usaba el `str(Path)` de Windows también en Linux (una ruta absoluta nunca valía). Ahora usa el del sistema (`py_native_path_str`: Windows igual que antes, `str(PurePosixPath)` en el resto), y lo mismo las rutas que enseñan colecciones y SFX.
-- **Linux:** 194/194 con GCC y 139/139 con Clang + libc++.
+- **SFX en disco, la parte que escribe** (F1, pendiente desde entonces): `sfx_create_category`, `sfx_add_sound` y `sfx_update_sound` como `sfx.py` (slug «NN_ETIQUETA», «_2» si el archivo ya está, mover al cambiar de categoría, cantidades y la estrella del favorito). Fixture nueva `sfx/write.json` de 75 pasos que no lleva rutas absolutas: es la primera de disco que corre también en Linux. Mutantes (slug a 30, sin llevar la estrella, cantidad negativa) detectados.
+- **Linux:** 195/195 con GCC y 140/140 con Clang + libc++.
 
 **Siguiente:**
 - El preview espera a `gc_render`.

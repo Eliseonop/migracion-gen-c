@@ -32,6 +32,7 @@ Salida (al repo):
   tests/fixtures/settings/synthetic.json   ajustes: pasos de settings_cases.py
   tests/fixtures/library/synthetic.json    biblioteca: pasos de library_cases.py
   tests/fixtures/sfx/synthetic.json        biblioteca de SFX en disco: pasos de sfx_cases.py
+  tests/fixtures/sfx/write.json            alta, edición y categorías de SFX (sfx_cases.WRITE_STEPS)
   tests/fixtures/collections/synthetic.json  colecciones de material: pasos de collections_cases.py
   tests/fixtures/stick/synthetic.json      personajes stick: pasos de stick_cases.py
   tests/fixtures/projects/synthetic.json   almacén de proyectos: pasos de projects_cases.py
@@ -933,6 +934,22 @@ def _run_sfx_steps(steps: list, root: Path | None) -> list[dict]:
                     result = sfx.with_favorites_category(args[0], args[1], args[2])
                 elif kind == "audio":
                     result = Path(args[0]).suffix.lower() in sfx._AUDIO_EXT
+                elif kind == "create":
+                    result = sfx.create_category(args[0])
+                elif kind == "add":
+                    result = sfx.add_sound(args[0], args[1].encode("utf-8"), name=args[2], category_id=args[3],
+                                           new_category=args[4], uso=args[5])
+                elif kind == "update":
+                    result = sfx.update_sound(args[0], name=args[1], category_id=args[2], new_category=args[3],
+                                              uso=args[4])
+                elif kind == "lib":           # sfx_library.json sin la fecha
+                    jf = sfx.get_base() / "sfx_library.json"
+                    result = json.loads(jf.read_text(encoding="utf-8")) if jf.is_file() else None
+                    if isinstance(result, dict):
+                        result.pop("generado", None)
+                elif kind == "tree":          # los archivos de la biblioteca
+                    base = sfx.get_base()
+                    result = sorted(p.relative_to(base).as_posix() for p in base.rglob("*") if p.is_file())
                 else:
                     raise ValueError(f"paso desconocido: {kind}")
                 entry["result"] = result
@@ -949,6 +966,14 @@ def synthetic_sfx_fixtures(ctx: Ctx) -> dict:
     sys.path.insert(0, str(HERE))
     import sfx_cases as xc
     return {"root": None, "steps": _run_sfx_steps(xc.STEPS, None)}
+
+
+def synthetic_sfx_write_fixtures(ctx: Ctx) -> dict:
+    """Dar de alta, editar y crear categorías (sfx_cases.WRITE_STEPS). Sin rutas absolutas en los
+    resultados: valen en Windows y en el resto."""
+    sys.path.insert(0, str(HERE))
+    import sfx_cases as xc
+    return {"root": None, "steps": _run_sfx_steps(xc.WRITE_STEPS, None)}
 
 
 def real_sfx_fixtures(ctx: Ctx) -> dict:
@@ -2881,7 +2906,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
-    ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor"],
+    ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
+                                       "sfx_escritura"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -2904,6 +2930,15 @@ def main() -> None:
 
     if args.solo == "editor":
         editor_group()
+        return
+
+    def sfx_write_group() -> None:
+        sfx_w = synthetic_sfx_write_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "sfx" / "write.json", sfx_w, len(sfx_w["steps"]),
+              sum("error" in s for s in sfx_w["steps"]))
+
+    if args.solo == "sfx_escritura":
+        sfx_write_group()
         return
     def shapes_group() -> None:
         shp = synthetic_shape_fixtures(ctx)
@@ -2999,6 +3034,7 @@ def main() -> None:
     sfx_syn = synthetic_sfx_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "sfx" / "synthetic.json", sfx_syn, len(sfx_syn["steps"]),
           sum("error" in s for s in sfx_syn["steps"]))
+    sfx_write_group()
     js = synthetic_json_fixtures()
     write(REPO / "tests" / "fixtures" / "json" / "synthetic.json", js,
           len(js["floats"]) + len(js["dumps"]) + len(js["loads"]), sum("error" in c for c in js["loads"]))

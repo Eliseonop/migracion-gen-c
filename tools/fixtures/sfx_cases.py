@@ -21,6 +21,11 @@ Cada paso es una tupla (tipo, *args) que se ejecuta con sfx.py sobre una carpeta
   filter items q categoría favoritos            filter_sfx_items(...)
   favcat categorías items favoritos             with_favorites_category(...)
   audio nombre             Path(nombre).suffix.lower() in _AUDIO_EXT
+  create etiqueta          create_category(etiqueta)
+  add archivo contenido nombre categoría nueva uso      add_sound(...)
+  update ruta nombre categoría nueva uso                update_sound(...)
+  lib                      sfx_library.json sin «generado» (None si no está)
+  tree                     los archivos de la biblioteca, ordenados
 """
 
 SIGMA = "ΟΔΟΣ"            # ΟΔΟΣ: lower() con sigma final → οδος
@@ -175,4 +180,64 @@ STEPS += [
     *[("audio", n) for n in ["x.mp3", "x.MP3", "x.Mp3", ".mp3", "x.mp3.txt", "x.", "x", "x.FLAC", "x.aac",
                              "x.m4a", "x.ogg", "x.wav", "x.wma", "x.mp4", "a/b.mp3", "a.mp3/b", "x.ＭＰ３",
                              "..mp3", "x..mp3", "C:x.wav"]],
+]
+
+# Escribir (write.json): sin búsquedas ni índices, que llevan la ruta de la carpeta, para que
+# valgan en cualquier sistema; sin barras invertidas ni nombres que solo cambian de mayúsculas.
+WRITE_STEPS = [
+    ("default", "no_existe"),
+    ("create", "Golpes"), ("add", "a.mp3", "1", None, "x", "", None), ("update", "a.mp3", None, "", "", None),
+
+    # Sin índice: la biblioteca sale del escaneo.
+    ("files", ["lib/01_IMPACTOS/golpe.mp3", "lib/suelto.wav", "lib/07_AIRE/whoosh.ogg"]),
+    ("default", "lib"),
+    ("create", ""), ("create", "   "), ("lib",),
+    ("create", "impactos"), ("lib",), ("tree",),
+    ("create", "01_impactos"), ("create", " IMPACTOS "), ("create", "07_aire"),
+    ("create", "  Ruido Rosa ñ!! "), ("create", "ñññ"), ("create", "x" * 60), ("create", "a--b__c"),
+    ("lib",),
+
+    ("add", "boom.mp3", "123", "  Boom grande ", "01_IMPACTOS", "", "  explosiones "),
+    ("add", "boom.mp3", "456", None, "01_IMPACTOS", "", None),
+    ("add", "dir/otro.WAV", "7", "", "", "Nueva Cat", ""),
+    ("add", "otra.ogg", "8", None, "", "nueva cat", None),
+    ("add", "x.txt", "1", None, "01_IMPACTOS", "", None), ("add", "", "1", None, "01_IMPACTOS", "", None),
+    ("add", "..", "1", None, "01_IMPACTOS", "", None), ("add", "v.mp3", "", None, "01_IMPACTOS", "", None),
+    ("add", "v.mp3", "1", None, "", "", None), ("add", "v.mp3", "1", None, "../fuera", "", None),
+    ("add", "v.mp3", "1", None, " a/b ", "", None), ("add", "v.mp3", "1", None, ".", "", None),
+    ("add", "v.flac", "1", None, "carpeta_nueva", "", None),
+    ("add", "w.aac", "1", "Con uso", "carpeta_nueva", "", "  "),
+    ("lib",), ("tree",),
+
+    ("settings", {"favorites": {"sfx": ["01_IMPACTOS/boom.mp3", "otro", 5]}}),
+    ("update", "01_IMPACTOS/boom.mp3", "Bum", "", "", "uso nuevo"),
+    ("update", "01_IMPACTOS\\boom.mp3", None, "07_AIRE", "", None),
+    ("favorite_ids",),
+    ("update", " 07_AIRE/boom.mp3 ", None, "", "Mega Nueva", None),
+    ("update", "no/existe.mp3", None, "", "", None),
+    ("update", "suelto.wav", "", "01_IMPACTOS", "", ""),
+    ("update", "01_IMPACTOS/golpe.mp3", "  ", "01_IMPACTOS", "", None),
+    ("update", "01_IMPACTOS/golpe.mp3", None, "../x", "", None),
+    ("update", "01_IMPACTOS/boom_2.mp3", None, "07_AIRE", "", None),   # el destino ya tiene boom.mp3? no
+    ("update", "07_AIRE/whoosh.ogg", None, "01_IMPACTOS", "", None),
+    ("lib",), ("tree",), ("favorite_ids",),
+
+    # Índices raros.
+    ("file", "lib/sfx_library.json", {"categorias": [1], "sonidos": []}),
+    ("create", "Algo"), ("add", "z.mp3", "1", None, "01_IMPACTOS", "", None),
+    ("update", "z.mp3", None, "", "", None),
+    ("file", "lib/sfx_library.json", {"categorias": {"01_X": None}, "sonidos": "abc"}),
+    ("create", "01_x"), ("create", "Otra"), ("add", "z.mp3", "1", None, "01_X", "", None),
+    ("update", "a.mp3", None, "", "", None),
+    ("file", "lib/sfx_library.json", {"categorias": {"01_X": {"etiqueta": "Equis", "cantidad": "muchos"}},
+                                      "sonidos": [{"archivo": "a.mp3", "carpeta": "01_X", "sonido": 5}]}),
+    ("create", "equis"), ("update", "01_X/a.mp3", None, "", "", None),
+    ("update", "01_X/a.mp3", "A", "02_Y", "", None), ("tree",),
+    ("file", "lib/sfx_library.json", {"categorias": {"01_X": {"etiqueta": 7, "cantidad": 2.9, "uso_tipico": 3}},
+                                      "sonidos": [{"archivo": "b.mp3", "carpeta": "01_X", "sonido": 0,
+                                                   "categoria": None, "uso_tipico": 0}]}),
+    ("create", "7"), ("add", "c.mp3", "1", None, "01_X", "", None),
+    ("update", "01_X/b.mp3", None, "", "", None), ("lib",),
+    ("file", "lib/sfx_library.json", "{ roto"), ("create", "Tras roto"), ("lib",),
+    ("file", "lib/sfx_library.json", []), ("add", "d.mp3", "1", None, "01_X", "", None), ("lib",),
 ]

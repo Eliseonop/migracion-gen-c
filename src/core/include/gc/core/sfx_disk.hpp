@@ -7,8 +7,9 @@
 // La carpeta activa es la de `sfx_folder` en los ajustes o, si no existe, la de fábrica
 // (sfx_base). De ella salen el índice (sfx_load_index), la búsqueda (sfx_search) y la
 // biblioteca que usan las recetas (load_sfx_library → set_sfx_library). Dar de alta,
-// editar y crear categorías (add_sound, update_sound, create_category) cambia archivos
-// y llega con la pantalla de la biblioteca de SFX (F5).
+// editar y crear categorías (sfx_add_sound, sfx_update_sound, sfx_create_category) escriben
+// el audio y el índice. Los errores que ve el usuario llevan el texto de Python («No hay
+// biblioteca de SFX.», «Categoría no válida.»…).
 
 #include <cstddef>
 #include <filesystem>
@@ -21,6 +22,7 @@
 
 #include "gc/core/error.hpp"
 #include "gc/core/json.hpp"
+#include "gc/core/settings.hpp"
 #include "gc/core/sfx_library.hpp"
 
 namespace gc::core {
@@ -79,5 +81,26 @@ inline constexpr std::string_view kSfxIndexFile = "sfx_library.json";
 using SfxProbe = std::function<std::optional<double>(const std::filesystem::path&)>;
 [[nodiscard]] SfxLibrary load_sfx_library(const std::optional<std::filesystem::path>& base, const Json& settings,
                                           const SfxProbe& probe);
+
+// Lo que cambian add_sound y update_sound: el nombre, la categoría (la carpeta de una que ya
+// existe o la etiqueta de una nueva, que gana) y el uso típico. nullopt = no llega.
+struct SfxSoundEdit {
+    std::optional<std::string> name;
+    std::string category_id;
+    std::string new_category;
+    std::optional<std::string> uso;
+};
+
+// create_category: la categoría con esa etiqueta o carpeta (sin distinguir mayúsculas) o una
+// nueva «NN_SLUG»; crea su carpeta y devuelve {id, label, count}.
+[[nodiscard]] Result<Json> sfx_create_category(const std::optional<std::filesystem::path>& base, std::string_view label);
+// add_sound: guarda `data` en la carpeta de la categoría (con «_2», «_3»… si el nombre ya
+// existe), lo apunta en sfx_library.json y devuelve su entrada.
+[[nodiscard]] Result<Json> sfx_add_sound(const std::optional<std::filesystem::path>& base, std::string_view filename,
+                                         std::string_view data, const SfxSoundEdit& edit);
+// update_sound: cambia el nombre, el uso o la categoría del sonido `relpath` (moviendo el
+// archivo) y lleva su estrella de favorito al id nuevo.
+[[nodiscard]] Result<Json> sfx_update_sound(const std::optional<std::filesystem::path>& base, SettingsFile& settings,
+                                            std::string_view relpath, const SfxSoundEdit& edit);
 
 } // namespace gc::core
