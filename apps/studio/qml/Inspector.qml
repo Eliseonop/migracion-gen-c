@@ -11,6 +11,8 @@ Rectangle {
     readonly property bool has: !!clip.id
     readonly property bool visual: has && clip.kind !== "audio" && clip.kind !== "adjustment"
     readonly property bool sound: has && (clip.kind === "audio" || clip.kind === "video")
+    readonly property var tf: has ? clip.transform : ({})
+    readonly property var speeds: [0.3, 0.5, 1, 1.5, 2, 3, 5, 10]
     readonly property var blends: [
         ["normal", "Normal"], ["darken", "Oscurecer"], ["multiply", "Multiplicar"], ["color_burn", "Subexponer color"],
         ["lighten", "Aclarar"], ["screen", "Trama"], ["color_dodge", "Sobreexponer color"], ["overlay", "Superponer"],
@@ -48,7 +50,26 @@ Rectangle {
         Layout.fillWidth: true
         font.pixelSize: 12
         contentItem: Label { text: small.text; font: small.font; color: Theme.text; horizontalAlignment: Text.AlignHCenter }
-        background: Rectangle { radius: Theme.radiusSm; color: small.hovered ? Theme.card3 : Theme.card2; border.color: Theme.lineBright }
+        background: Rectangle { radius: Theme.radiusSm; color: small.hovered ? Theme.card3 : Theme.card2; border.color: small.highlighted ? Theme.accent : Theme.lineBright }
+    }
+    component Num: RowLayout {
+        id: num
+        required property string title
+        required property real value
+        property string suffix
+        signal committed(real value)
+        Label { Layout.preferredWidth: 22; text: num.title; color: Theme.textSecondary }
+        TextField {
+            id: field
+            Layout.fillWidth: true
+            text: String(num.value)
+            color: Theme.text
+            selectByMouse: true
+            validator: DoubleValidator { notation: DoubleValidator.StandardNotation }
+            background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: field.activeFocus ? Theme.accent : Theme.lineBright }
+            onEditingFinished: if (Number(text) !== num.value) num.committed(Number(text))
+        }
+        Label { visible: !!num.suffix; text: num.suffix; color: Theme.muted }
     }
     component Percent: RowLayout {
         id: row
@@ -126,6 +147,60 @@ Rectangle {
                 }
             }
 
+            RowLayout {
+                visible: !!panel.tf.show
+                Layout.fillWidth: true
+                Section { Layout.fillWidth: true; text: "TRANSFORMACIÓN" }
+                ToolButton {
+                    objectName: "insp:reset"
+                    Layout.topMargin: 10
+                    text: "↺"
+                    palette.buttonText: Theme.muted
+                    background: Rectangle { radius: Theme.radiusSm; color: parent.hovered ? Theme.card3 : "transparent" }
+                    ToolTip.visible: hovered
+                    ToolTip.text: "Restablecer"
+                    onClicked: panel.model.resetTransform()
+                }
+            }
+            RowLayout {
+                visible: !!panel.tf.xy
+                Layout.fillWidth: true
+                spacing: 8
+                Num {
+                    objectName: "insp:x"
+                    title: "X"
+                    value: panel.tf.x ?? 0
+                    onCommitted: (v) => panel.model.setPosition(v, panel.tf.y)
+                }
+                Num {
+                    objectName: "insp:y"
+                    title: "Y"
+                    value: panel.tf.y ?? 0
+                    onCommitted: (v) => panel.model.setPosition(panel.tf.x, v)
+                }
+            }
+            RowLayout {
+                visible: !!panel.tf.scale || !!panel.tf.rotation
+                Layout.fillWidth: true
+                spacing: 8
+                Num {
+                    visible: !!panel.tf.scale
+                    objectName: "insp:scale"
+                    title: "⤢"
+                    suffix: "%"
+                    value: panel.tf.scalePct ?? 100
+                    onCommitted: (v) => panel.model.setScalePct(v)
+                }
+                Num {
+                    visible: !!panel.tf.rotation
+                    objectName: "insp:rotation"
+                    title: "⟳"
+                    suffix: "°"
+                    value: panel.tf.degrees ?? 0
+                    onCommitted: (v) => panel.model.setRotation(v)
+                }
+            }
+
             Section { visible: panel.visual; text: "MEZCLA" + (panel.clip.animated ? " · ANIMADA" : "") }
             Percent {
                 visible: panel.visual
@@ -158,6 +233,40 @@ Rectangle {
                 Small { objectName: "insp:fadein"; text: "Fade in"; onClicked: panel.model.fadeVolume("in") }
                 Small { objectName: "insp:fadeout"; text: "Fade out"; onClicked: panel.model.fadeVolume("out") }
                 Small { objectName: "insp:mute"; text: panel.has && panel.clip.muted ? "Activar" : "Mute"; onClicked: panel.model.toggleMuted() }
+            }
+
+            RowLayout {
+                visible: panel.has && panel.clip.kind !== "text"
+                Section { Layout.fillWidth: true; text: "VELOCIDAD" }
+                Label {
+                    Layout.topMargin: 10
+                    text: panel.has ? Number(panel.clip.speed.toFixed(2)) + "×" : ""
+                    color: Theme.text
+                    font.bold: true
+                }
+            }
+            Flow {
+                visible: panel.has && panel.clip.kind !== "text"
+                Layout.fillWidth: true
+                spacing: 4
+                Repeater {
+                    model: panel.speeds
+                    Small {
+                        required property real modelData
+                        objectName: "insp:speed:" + modelData
+                        width: 40
+                        text: modelData + "×"
+                        highlighted: panel.has && panel.clip.speed === modelData
+                        onClicked: panel.model.setSpeed(modelData)
+                    }
+                }
+            }
+            RowLayout {
+                visible: panel.has && panel.clip.kind !== "text"
+                Layout.fillWidth: true
+                spacing: 6
+                Small { objectName: "insp:pitch"; text: panel.has && panel.clip.keepPitch ? "Tono ✓" : "Tono"; onClicked: panel.model.toggleKeepPitch() }
+                Small { objectName: "insp:reverse"; text: panel.has && panel.clip.reverse ? "Reversa ✓" : "Reversa"; onClicked: panel.model.toggleReverse() }
             }
 
             Section { visible: panel.has; text: "ANIMACIÓN" }

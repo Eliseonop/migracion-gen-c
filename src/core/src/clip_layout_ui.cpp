@@ -3,7 +3,9 @@
 #include <algorithm>
 #include <cmath>
 #include <numbers>
+#include <tuple>
 
+#include "gc/core/keyframes.hpp"
 #include "gc/core/timeline_ui.hpp"
 
 namespace gc::core {
@@ -42,6 +44,16 @@ double js_round(double v) { // Math.round
     const double r = std::floor(v);
     return v - r >= 0.5 ? r + 1 : r;
 }
+
+constexpr double kTextScaleMax = 100; // TEXT_SCALE_MAX
+
+bool visual_kind(const TimelineClip& c) { return c.kind == "video" || c.kind == "image"; }
+bool fills(const TimelineClip& c) { return visual_kind(c) && !is_overlay(c); }
+bool height_fit(const TimelineClip& c) { return visual_kind(c) && is_overlay(c); }
+double hs_of(const TimelineClip& c, double height_scale) { return height_fit(c) && height_scale > 0 ? height_scale : 1; }
+
+double zoom_to_scale(double z) { return std::isfinite(z) && z > 0 ? js_fixed(clamp(1 / z, 1, 10), 4) : 1; }
+double scale_to_zoom(double s) { return std::isfinite(s) && s > 0 ? js_fixed(clamp(1 / s, 0.1, 1), 4) : 1; }
 
 struct Point2 {
     double x;
@@ -276,6 +288,76 @@ std::optional<std::string> hit_transform_handle(double px, double py, const Dest
     const double y = (px - cx) * std::sin(a) + (py - cy) * std::cos(a);
     return std::abs(x) <= dest.dw / 2 && std::abs(y) <= dest.dh / 2 ? std::optional<std::string>("move")
                                                                      : std::nullopt;
+}
+
+TransformView transform_view(const TimelineClip& clip, double t, double frame_w, double frame_h, double height_scale) {
+    TransformView v;
+    const bool keyable = clip.kind == "video" || clip.kind == "image" || clip.kind == "shape" || clip.kind == "text";
+    if (!keyable) {
+        return v;
+    }
+    const double local = std::max(0.0, t);
+    const Pose pose = clip_pose(clip, local);
+    const KfProps props = clip_props_at(clip, local);
+    const bool fill = fills(clip);
+    const bool free = is_overlay(clip) || clip.kind == "shape" || clip.kind == "text";
+    v.show = true;
+    v.xy = free || fill;
+    v.scale = free;
+    v.zoom_scale = fill;
+    v.rotation = free || visual_kind(clip);
+    v.capcut = !fill && frame_w > 0 && frame_h > 0;
+    const double pan_x = fill ? props.get("cx") : pose.x;
+    const double pan_y = fill ? props.get("cy") : pose.y;
+    if (v.capcut) {
+        std::tie(v.x, v.y) = to_capcut_pos(pan_x, pan_y, frame_w, frame_h);
+    } else {
+        v.x = js_round(pan_x * 100);
+        v.y = js_round(pan_y * 100);
+    }
+    const double raw = fill ? zoom_to_scale(props.get("zoom"))
+                       : height_fit(clip) ? pose.scale / hs_of(clip, height_scale)
+                       : pose.scale != 0 ? pose.scale
+                                         : 1;
+    v.scale_pct = js_round(raw * 100);
+    v.rotation_deg = js_fixed(pose.rotation, 1);
+    return v;
+}
+
+Json transform_pos_patch(const TimelineClip& clip, double X, double Y, double frame_w, double frame_h) {
+    const bool fill = fills(clip);
+    double x = 0;
+    double y = 0;
+    if (!fill && frame_w > 0 && frame_h > 0) {
+        std::tie(x, y) = from_capcut_pos(X, Y, frame_w, frame_h);
+    } else {
+        const double lo = fill ? 0 : kPosMin;
+        const double hi = fill ? 1 : kPosMax;
+        x = clamp(X / 100, lo, hi);
+        y = clamp(Y / 100, lo, hi);
+    }
+    return fill ? Json{{"cx", x}, {"cy", y}} : Json{{"x", x}, {"y", y}};
+}
+
+Json transform_scale_patch(const TimelineClip& clip, double pct, double height_scale) {
+    const double s = pct / 100;
+    if (fills(clip)) {
+        return {{"zoom", scale_to_zoom(s)}};
+    }
+    if (height_fit(clip)) {
+        return {{"scale", js_fixed(clamp(s * hs_of(clip, height_scale), 0.0005, 100), 5)}};
+    }
+    return {{"scale", js_fixed(clamp(s, 0.05, clip.kind == "text" ? kTextScaleMax : 8), 4)}};
+}
+
+Json transform_reset_patch(const TimelineClip& clip, double height_scale) {
+    Json p = {{"x", 0.5},  {"y", 0.5},  {"scale", hs_of(clip, height_scale)}, {"rotation", 0}, {"opacity", 1},
+              {"cx", 0.5}, {"cy", 0.5}, {"zoom", 1}};
+    if (clip.kind == "text") {
+        p["rot_x"] = 0;
+        p["rot_y"] = 0;
+    }
+    return p;
 }
 
 } // namespace gc::core

@@ -113,6 +113,15 @@ public:
     // de fusión (no el audio; «normal» lo quita); aparición y salida; nota de contexto.
     Q_INVOKABLE void setPose(const QVariantMap& patch);
     Q_INVOKABLE void setBlend(const QString& mode);
+    // Panel de Transformación (EdTransform.jsx): X/Y como CapCut, escala en %, giro y restablecer.
+    Q_INVOKABLE void setPosition(double x, double y);
+    Q_INVOKABLE void setScalePct(double pct);
+    Q_INVOKABLE void setRotation(double deg);
+    Q_INVOKABLE void resetTransform();
+    // Velocidad, tono y reversa (patchClipFx de VideoEditor.jsx; los textos no cambian).
+    Q_INVOKABLE void setSpeed(double speed);
+    Q_INVOKABLE void toggleKeepPitch();
+    Q_INVOKABLE void toggleReverse();
     Q_INVOKABLE void setTransition(const QString& appear, const QString& exit);
     Q_INVOKABLE void setNote(const QString& note);
     // El rombo (toggleKeyframeAtPlayhead) del clip seleccionado; fundido de volumen de entrada o
@@ -143,6 +152,10 @@ signals:
     void errorChanged();
 
 private:
+    template <class Patch>
+    void pose_each(const char* cause, Patch patch);
+    template <class Edit>
+    void fx_each(const char* cause, Edit edit);
     void rebuild();
     void setError(const QString& message);
     template <class T>

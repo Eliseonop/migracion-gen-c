@@ -323,3 +323,41 @@ TEST_CASE("editor: rombo de keyframe, fundidos y silenciar", "[studio]") {
     m.toggleMuted();
     CHECK(m.selectedClip()["muted"] == true);
 }
+
+TEST_CASE("editor: transformación y velocidad desde el inspector", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.select("a");
+    const auto tf = [&] { return m.selectedClip()["transform"].toMap(); };
+    CHECK(tf()["zoomScale"].toBool()); // llena el cuadro: X/Y y escala son el encuadre sobre la fuente
+    CHECK_FALSE(tf()["capcut"].toBool());
+    m.setPosition(30, 70);
+    CHECK(tf()["x"] == 30);
+    CHECK(tf()["y"] == 70);
+    m.setScalePct(200);
+    CHECK(tf()["scalePct"] == 200);
+    m.setRotation(45);
+    CHECK(tf()["degrees"] == 45);
+    m.resetTransform();
+    CHECK(tf()["x"] == 50);
+    CHECK(tf()["scalePct"] == 100);
+    CHECK(tf()["degrees"] == 0);
+
+    m.setSpeed(2);
+    CHECK(m.selectedClip()["duration"] == 2);
+    m.setSpeed(50);
+    CHECK(m.selectedClip()["speed"] == 10);
+    m.toggleReverse();
+    m.toggleKeepPitch();
+    const core::Timeline tl = f.saved();
+    for (const auto& c : tl.clips) {
+        if (c->id == "a") {
+            CHECK(c->speed == 10);
+            CHECK(c->reverse);
+            CHECK_FALSE(c->keep_pitch);
+        }
+    }
+    m.select("m");
+    CHECK_FALSE(m.selectedClip()["transform"].toMap()["show"].toBool()); // el audio no tiene transformación
+}

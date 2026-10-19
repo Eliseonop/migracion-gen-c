@@ -85,4 +85,28 @@ struct CropHandle {
 [[nodiscard]] std::optional<std::string> hit_transform_handle(double px, double py, const DestRect& dest,
                                                               double pad = kHandlePad);
 
+// --- Panel de Transformación (EdTransform.jsx) -----------------------------------------------
+
+// Lo que enseña el panel en el instante local `t`. Con `capcut`, X e Y son la posición de CapCut
+// (frame_w × frame_h); sin ella (un clip que llena el cuadro), el encuadre sobre la fuente en %.
+// `height_scale` = alto de salida / alto de la fuente (1 si no se sabe).
+struct TransformView {
+    bool show = false;
+    bool xy = false;
+    bool scale = false;
+    bool zoom_scale = false;
+    bool rotation = false;
+    bool capcut = false;
+    double x = 0;
+    double y = 0;
+    double scale_pct = 100;
+    double rotation_deg = 0;
+};
+[[nodiscard]] TransformView transform_view(const TimelineClip& clip, double t, double frame_w, double frame_h,
+                                           double height_scale = 1);
+// Parches para commitPose: mover a (X, Y), escalar a `pct` % y restablecer.
+[[nodiscard]] Json transform_pos_patch(const TimelineClip& clip, double X, double Y, double frame_w, double frame_h);
+[[nodiscard]] Json transform_scale_patch(const TimelineClip& clip, double pct, double height_scale = 1);
+[[nodiscard]] Json transform_reset_patch(const TimelineClip& clip, double height_scale = 1);
+
 } // namespace gc::core

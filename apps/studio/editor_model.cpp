@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <utility>
 
+#include "gc/core/clip_layout_ui.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/material_drop.hpp"
@@ -249,7 +250,21 @@ QVariantMap EditorModel::selectedClip() const {
     }
     const double local = playhead_ - c->start;
     const core::Pose pose = core::clip_pose(*c, std::max(0.0, local));
+    const auto& tl = *session_->timeline();
+    const core::TransformView tv = core::transform_view(*c, local, tl.width, tl.height);
     return {
+        {"transform", QVariantMap{{"show", tv.show},
+                                  {"xy", tv.xy},
+                                  {"scale", tv.scale || tv.zoom_scale},
+                                  {"zoomScale", tv.zoom_scale},
+                                  {"rotation", tv.rotation},
+                                  {"capcut", tv.capcut},
+                                  {"x", tv.x},
+                                  {"y", tv.y},
+                                  {"scalePct", tv.scale_pct},
+                                  {"degrees", tv.rotation_deg}}},
+        {"keepPitch", c->keep_pitch},
+        {"reverse", c->reverse},
         {"poseOpacity", pose.opacity},
         {"volumeAt", core::clip_volume_at(*c, std::max(0.0, local))},
         {"blend", qstr(c->blend_mode.value_or("normal"))},
@@ -855,6 +870,71 @@ void EditorModel::setPose(const QVariantMap& patch) {
         }
     }
     commit(std::move(next), "pose", selection_.ids);
+}
+
+template <class Patch>
+void EditorModel::pose_each(const char* cause, Patch patch) {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if (std::ranges::find(selection_.ids, c->id) != selection_.ids.end() && c->kind != "audio") {
+            core::commit_pose(c.mut(), patch(*c), playhead_ - c->start, fps(), ids_);
+        }
+    }
+    commit(std::move(next), cause, selection_.ids);
+}
+
+void EditorModel::setPosition(double x, double y) {
+    const auto& tl = *session_->timeline();
+    pose_each("transform", [&](const core::TimelineClip& c) {
+        return core::transform_pos_patch(c, x, y, tl.width, tl.height);
+    });
+}
+
+void EditorModel::setScalePct(double pct) {
+    pose_each("transform", [&](const core::TimelineClip& c) { return core::transform_scale_patch(c, pct); });
+}
+
+void EditorModel::setRotation(double deg) {
+    pose_each("transform", [&](const core::TimelineClip&) { return Json{{"rotation", deg}}; });
+}
+
+void EditorModel::resetTransform() {
+    pose_each("transform", [](const core::TimelineClip& c) { return core::transform_reset_patch(c); });
+}
+
+template <class Edit>
+void EditorModel::fx_each(const char* cause, Edit edit) {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        if (std::ranges::find(selection_.ids, c->id) != selection_.ids.end() && c->kind != "text") {
+            edit(c.mut());
+        }
+    }
+    commit(std::move(next), cause, selection_.ids);
+}
+
+void EditorModel::setSpeed(double speed) {
+    fx_each("speed", [&](core::TimelineClip& c) { c.speed = std::clamp(speed, 0.1, 10.0); });
+}
+
+void EditorModel::toggleKeepPitch() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (c) {
+        fx_each("speed", [keep = !c->keep_pitch](core::TimelineClip& item) { item.keep_pitch = keep; });
+    }
+}
+
+void EditorModel::toggleReverse() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (c) {
+        fx_each("speed", [reverse = !c->reverse](core::TimelineClip& item) { item.reverse = reverse; });
+    }
 }
 
 void EditorModel::setBlend(const QString& mode) {

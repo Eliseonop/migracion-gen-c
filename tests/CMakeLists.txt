@@ -1,5 +1,6 @@
 add_executable(gc_tests
     support/json_diff.cpp
+    unit/test_clip_layout_ui.cpp
     unit/test_clip_media.cpp
     unit/test_coercion.cpp
     unit/test_export_total.cpp
