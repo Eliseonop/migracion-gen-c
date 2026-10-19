@@ -46,6 +46,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList vfxCatalog READ vfxCatalog CONSTANT)
     Q_PROPERTY(QVariantList sfxCategories READ sfxCategories NOTIFY projectChanged)
     Q_PROPERTY(QVariantList collections READ collections NOTIFY projectChanged)
+    Q_PROPERTY(QString collectionsRoot READ collectionsRoot NOTIFY projectChanged)
     Q_PROPERTY(QVariantList textFavorites READ textFavorites NOTIFY favoritesChanged)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
@@ -90,8 +91,14 @@ public:
     Q_INVOKABLE void searchSfx(const QString& q, const QString& category);
     // Colecciones de material (carpetas de `material_root` o assets/material): {id, name, count}.
     [[nodiscard]] QVariantList collections() const { return collections_; }
+    [[nodiscard]] QString collectionsRoot() const { return collections_root_; }
     // search de collections: los medios de las colecciones activas (o de `collection`) que casan con `q`.
     Q_INVOKABLE void searchCollections(const QString& q, const QString& collection);
+    // Gestionar las carpetas de material (EdLibrary.jsx): preferencias, raíz, crear y subir archivos.
+    Q_INVOKABLE void setCollectionPrefs(const QString& id, const QVariantMap& patch);
+    Q_INVOKABLE bool setCollectionsRoot(const QString& path); // ruta o file:// del diálogo
+    Q_INVOKABLE QString createCollection(const QString& name);
+    Q_INVOKABLE int addCollectionFiles(const QString& collection, const QList<QUrl>& files);
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
@@ -316,6 +323,10 @@ private:
     std::string selected_track_;
     QVariantList sfx_categories_;
     QVariantList collections_;
+    QString collections_root_;
+    std::pair<std::string, std::string> collections_query_; // q y colección de la última búsqueda
+    [[nodiscard]] std::optional<std::filesystem::path> collections_base() const;
+    void reload_collections();
     void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);
     core::SettingsFile* settings_ = nullptr;

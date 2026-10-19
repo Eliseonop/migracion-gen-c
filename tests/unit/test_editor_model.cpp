@@ -4,6 +4,7 @@
 #include <QAbstractItemModel>
 #include <QCoreApplication>
 #include <QPointF>
+#include <QUrl>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -868,4 +869,30 @@ TEST_CASE("editor: el recuadro del modal Recortar", "[studio]") {
     crop.reset();
     CHECK(crop.wf() == 1);
     CHECK(crop.ratio() == "free");
+}
+
+TEST_CASE("editor: gestionar las carpetas de material", "[studio]") {
+    Fixture f;
+    core::SettingsFile settings(f.dir / "data" / "settings.json");
+    studio::EditorModel m(f.store, &settings);
+    REQUIRE(m.openProject("p1"));
+    const auto root = f.dir / "material";
+    std::filesystem::create_directories(root / "Fondos");
+    std::ofstream(root / "Fondos" / "cielo.png") << "png";
+    std::ofstream(f.dir / "nube.jpg") << "jpg";
+    const auto col = [&](int i) { return m.collections()[i].toMap(); };
+    CHECK_FALSE(m.setCollectionsRoot(QString::fromStdString((f.dir / "no").string())));
+    CHECK(m.error() == "Carpeta no válida.");
+    REQUIRE(m.setCollectionsRoot(QUrl::fromLocalFile(QString::fromStdString(root.string())).toString()));
+    CHECK(m.collectionsRoot() == QString::fromStdString(root.string()));
+    REQUIRE(m.collections().size() == 1);
+    CHECK(col(0)["enabled"].toBool());
+    m.setCollectionPrefs("Fondos", {{"enabled", false}, {"favorite", true}});
+    CHECK_FALSE(col(0)["enabled"].toBool());
+    CHECK(col(0)["favorite"].toBool());
+    CHECK(m.createCollection("Nueva") == "Nueva");
+    REQUIRE(m.collections().size() == 2);
+    CHECK(m.addCollectionFiles("Nueva", {QUrl::fromLocalFile(QString::fromStdString((f.dir / "nube.jpg").string()))}) == 1);
+    CHECK(std::filesystem::exists(root / "Nueva" / "nube.jpg"));
+    CHECK(col(1)["count"] == 1); // las favoritas primero
 }

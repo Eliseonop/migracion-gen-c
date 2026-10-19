@@ -282,19 +282,28 @@ void EditorModel::load_sfx(const std::string& q, const std::string& category) {
     }
 }
 
+std::optional<std::filesystem::path> EditorModel::collections_base() const {
+    const auto data_dir = store_.file().parent_path();
+    return core::collections_root(settings_ ? settings_->load() : Json::object(), assets_dir(data_dir) / "material");
+}
+
 void EditorModel::load_collections(const std::string& q, const std::string& collection) {
+    collections_query_ = {q, collection};
     materials_.erase(std::remove_if(materials_.begin(), materials_.end(),
                                     [](const QVariant& m) { return m.toMap()["source"] == "collection"; }),
                      materials_.end());
-    const auto data_dir = store_.file().parent_path();
     const Json settings = settings_ ? settings_->load() : Json::object();
-    const auto root = core::collections_root(settings, assets_dir(data_dir) / "material");
+    const auto root = collections_base();
+    collections_root_ = root ? QString::fromStdString(core::path_to_utf8(*root)) : QString();
     collections_.clear();
     if (const auto list = core::list_collections(root, settings)) {
         for (const Json& c : list->value("collections", Json::array())) {
             collections_ << QVariantMap{{"id", qstr(c.value("id", ""))},
                                         {"name", qstr(c.value("name", ""))},
-                                        {"count", c.value("count", 0)}};
+                                        {"count", c.value("count", 0)},
+                                        {"enabled", c.value("enabled", true)},
+                                        {"favorite", c.value("favorite", false)},
+                                        {"path", qstr(c.value("path", ""))}};
         }
     }
     const auto found = core::collections_search(root, settings, q, "", collection);
@@ -322,6 +331,76 @@ void EditorModel::searchCollections(const QString& q, const QString& collection)
         load_collections(q.toStdString(), collection.toStdString());
         emit projectChanged();
     }
+}
+
+void EditorModel::reload_collections() {
+    load_collections(collections_query_.first, collections_query_.second);
+    emit projectChanged();
+}
+
+void EditorModel::setCollectionPrefs(const QString& id, const QVariantMap& patch) {
+    if (!settings_) {
+        return;
+    }
+    const auto flag = [&](const char* key) {
+        return patch.contains(key) ? std::optional(patch[key].toBool()) : std::nullopt;
+    };
+    const std::string label = patch["label"].toString().toStdString();
+    const auto saved = core::set_collection_prefs(*settings_, id.toStdString(), flag("enabled"), flag("favorite"),
+                                                  patch.contains("label") ? std::optional<std::string_view>(label)
+                                                                          : std::nullopt);
+    if (ok(saved)) {
+        reload_collections();
+    }
+}
+
+bool EditorModel::setCollectionsRoot(const QString& path) {
+    if (!settings_) {
+        return false;
+    }
+    const QUrl url(path);
+    const auto saved = core::set_collections_root(*settings_, (url.isLocalFile() ? url.toLocalFile() : path).toStdString());
+    if (!ok(saved)) {
+        return false;
+    }
+    if (!*saved) {
+        setError("Carpeta no válida.");
+        return false;
+    }
+    load_collections("", "");
+    emit projectChanged();
+    return true;
+}
+
+QString EditorModel::createCollection(const QString& name) {
+    const auto id = core::create_collection(collections_base(), name.toStdString());
+    if (!ok(id)) {
+        return {};
+    }
+    reload_collections();
+    return qstr(*id);
+}
+
+int EditorModel::addCollectionFiles(const QString& collection, const QList<QUrl>& files) {
+    std::vector<core::IncomingFile> incoming;
+    for (const QUrl& url : files) {
+        const auto src = core::path_from_utf8(url.toLocalFile().toStdString());
+        const auto copy = [src](const std::filesystem::path& target) -> Result<void> {
+            std::error_code ec;
+            std::filesystem::copy_file(src, target, ec);
+            return ec ? Result<void>(fail(ErrorCode::Io, ec.message())) : Result<void>();
+        };
+        incoming.push_back(core::IncomingFile{Json(core::path_to_utf8(src.filename())), copy});
+    }
+    const auto added = core::add_collection_files(collections_base(), collection.toStdString(), incoming);
+    if (!ok(added)) {
+        return 0;
+    }
+    if (const Json errors = added->value("errors", Json::array()); !errors.empty()) {
+        setError(qstr(errors[0].value("file", "") + ": " + errors[0].value("error", "")));
+    }
+    reload_collections();
+    return static_cast<int>(added->value("saved", Json::array()).size());
 }
 
 void EditorModel::searchSfx(const QString& q, const QString& category) {

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Basic
+import QtQuick.Dialogs
 import QtQuick.Layouts
 
 // Material (EdMaterial.jsx): el del proyecto, la biblioteca global y los SFX, con vídeos, imágenes y
@@ -13,6 +14,7 @@ Rectangle {
     property string query: ""
     property string sfxCategory: ""
     property string collection: ""
+    property bool manage: false
     function words(text) { return text.toLowerCase().split(/\s+/).filter((w) => w) }
 
     radius: Theme.radiusLg
@@ -104,12 +106,44 @@ Rectangle {
                 }
             }
         }
+        RowLayout {
+            visible: panel.source === "collection"
+            SmallButton {
+                objectName: "col:manage"
+                text: "Gestionar carpetas"
+                checkable: true
+                checked: panel.manage
+                onToggled: panel.manage = checked
+            }
+            Item { Layout.fillWidth: true }
+            SmallButton {
+                visible: !!panel.collection
+                text: "Subir"
+                onClicked: uploadDialog.open()
+            }
+        }
+        CollectionsManager {
+            visible: panel.source === "collection" && panel.manage
+            Layout.fillWidth: true
+            model: panel.model
+            onCreated: (id) => {
+                panel.collection = id
+                panel.model.searchCollections(panel.query, id)
+            }
+        }
+        FileDialog {
+            id: uploadDialog
+            title: "Subir a la carpeta"
+            fileMode: FileDialog.OpenFiles
+            nameFilters: ["Medios (*.mp4 *.mov *.webm *.mkv *.png *.jpg *.jpeg *.webp *.gif *.mp3 *.wav *.ogg *.m4a)", "Todos (*)"]
+            onAccepted: panel.model.addCollectionFiles(panel.collection, selectedFiles)
+        }
         Flow {
             visible: panel.source === "collection" && panel.model.collections.length > 0
             Layout.fillWidth: true
             spacing: 4
             Repeater {
-                model: [{ id: "", name: "Todas", count: 0 }].concat(panel.model.collections)
+                model: [{ id: "", name: "Todas", count: 0 }].concat(panel.model.collections.filter((c) => c.enabled))
                 Rectangle {
                     required property var modelData
                     readonly property bool on: panel.collection === modelData.id
