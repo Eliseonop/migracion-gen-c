@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <map>
 #include <ranges>
 
 namespace gc::core {
@@ -90,6 +91,13 @@ double js_fixed(double x, int digits) {
 
 double js_fixed3(double x) {
     return js_fixed(x, 3);
+}
+
+std::string lane_kind(std::string_view clip_kind) {
+    if (clip_kind == "image" || clip_kind == "video" || clip_kind == "shape" || clip_kind == "adjustment") {
+        return "video";
+    }
+    return std::string(clip_kind);
 }
 
 bool has_free_duration(const TimelineClip& clip) {
@@ -309,6 +317,48 @@ ClipSelection next_clip_selection(const ClipList& clips, const ClipSelection& cu
         return {selected, clicked_s};
     }
     return {{clicked_s}, clicked_s};
+}
+
+std::vector<std::string> emptied_tracks(const std::vector<TimelineTrack>& tracks, const ClipList& clips,
+                                        std::span<const std::string> candidates) {
+    std::map<std::string, int> left;
+    for (const auto& t : tracks) {
+        if (!t.locked) {
+            ++left[t.kind];
+        }
+    }
+    std::vector<std::string> out;
+    for (const auto& t : tracks) {
+        const bool used = std::ranges::any_of(clips, [&](const auto& c) { return c->track_id == t.id; });
+        if (std::ranges::find(candidates, t.id) == candidates.end() || used || t.locked ||
+            left[t.kind] <= 1) {
+            continue;
+        }
+        --left[t.kind];
+        out.push_back(t.id);
+    }
+    return out;
+}
+
+TimelineTrack build_track(std::string_view kind, const std::vector<TimelineTrack>& tracks,
+                          std::string_view id_suffix) {
+    const std::string prefix = kind == "video" ? "V" : kind == "audio" ? "A" : "T";
+    long n = 0;
+    for (const auto& t : tracks) {
+        if (t.kind != kind) {
+            continue;
+        }
+        std::string digits;
+        std::ranges::copy_if(t.name, std::back_inserter(digits),
+                             [](char ch) { return ch >= '0' && ch <= '9'; });
+        n = std::max(n, digits.empty() ? 0L
+                                       : std::strtol(digits.substr(0, 15).c_str(), nullptr, 10)); // parseInt
+    }
+    TimelineTrack t;
+    t.name = prefix + std::to_string(n + 1);
+    t.id = t.name + "-" + std::string(id_suffix);
+    t.kind = kind;
+    return t;
 }
 
 std::vector<std::pair<std::string, double>>

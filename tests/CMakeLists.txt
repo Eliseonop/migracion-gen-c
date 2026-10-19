@@ -76,6 +76,12 @@ endif()
 if(TARGET gc_studio)
     target_sources(gc_tests PRIVATE unit/test_editor_model.cpp unit/test_home_model.cpp)
     target_link_libraries(gc_tests PRIVATE gc_studio)
+    # La interfaz entera sin pantalla (QT_QPA_PLATFORM=offscreen), con el ratón de QTest.
+    find_package(Qt6 QUIET COMPONENTS Test)
+    if(Qt6Test_FOUND)
+        target_sources(gc_tests PRIVATE unit/test_studio_ui.cpp)
+        target_link_libraries(gc_tests PRIVATE gc_studio_qml Qt6::Test)
+    endif()
 endif()
 # MSVC sabe que FAIL() lanza y da por inalcanzable el `return`/`throw` que GCC necesita detrás.
 # El manifiesto pone argv en UTF-8: si no, con una página de códigos ANSI que no lo sea (la del

@@ -2,7 +2,7 @@
 //
 //   node tools/fixtures/editor_ui_js.mjs <video-yt>/frontend/src < casos.json > salida.json
 //
-// Entrada: [{tracks, clips, calls: [[fn, ...args]]}]; los clips se nombran por id en los argumentos.
+// Entrada: [{tracks, clips, markers, geo, calls: [[fn, ...args]]}]: `geo` son las filas en pantalla.; los clips se nombran por id en los argumentos.
 // Salida: por caso, el resultado de cada llamada (Infinity como "inf").
 // Lo llama tools/fixtures/export_fixtures.py; video-yt solo se lee.
 import { readFileSync } from 'node:fs'
@@ -14,11 +14,18 @@ const m = await load('features/editor/editorModel.js')
 const scale = await load('features/editor/timelineScale.js')
 const rows = await load('features/editor/trackRows.js')
 const stack = await load('features/editor/trackStack.js')
+const align = await load('features/editor/timelineAlign.js')
+const drop = await load('features/editor/dropIntent.js')
+const magnetic = await load('features/editor/magnetic.js')
+const noOverlap = await load('features/editor/noOverlap.js')
+const beats = await load('lib/beats.js')
 
 const inf = (x) => (x === Infinity ? 'inf' : x)
 const cases = JSON.parse(readFileSync(0, 'utf8'))
-const out = cases.map(({ tracks, clips, calls }) => {
+const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
   const byId = (id) => clips.find((c) => c.id === id)
+  const others = (exclude, beatsToo) => [...align.alignOthers(clips, exclude), ...beats.snapTargets(markers, clips, beatsToo)]
+  const zone = (z) => z && { trackId: z.trackId ?? null, slot: z.slot ?? null, lineY: z.lineY ?? 0 }
   const run = {
     toFixed: (x) => +x.toFixed(3),
     clipDur: (id) => m.clipDur(byId(id)),
@@ -42,6 +49,35 @@ const out = cases.map(({ tracks, clips, calls }) => {
     trackRowHeight: (kind, rowH) => rows.trackRowHeight(kind, rowH),
     stepRowHeight: (rowH, dy) => rows.stepRowHeight(rowH, dy),
     displayTracks: () => stack.displayTracks(tracks).map((t) => t.id),
+    alignThresholdSec: (pps) => align.alignThresholdSec(pps),
+    clipBeatTimes: (id) => beats.clipBeatTimes(byId(id)),
+    snapTargets: (exclude) => beats.snapTargets(markers, clips, exclude).map((t) => [t.trackId, t.start, t.end]),
+    timelineAlignHits: (ids, threshold, which) =>
+      align.timelineAlignHits(ids.map((i) => align.asAlignClip(byId(i))), others(ids, ids), threshold, which),
+    nearestAlignTime: (t, track, threshold) => align.nearestAlignTime(t, track, others([], []), threshold),
+    snapClipMove: (id, delta, threshold, track) => align.snapClipMove(byId(id), delta, others([id], [id]), threshold, track),
+    snapClipTrim: (id, mode, delta, threshold) => align.snapClipTrim(byId(id), mode, delta, others([id], []), threshold),
+    snapClipGroup: (ids, delta, threshold) => align.snapClipGroup(ids.map(byId), delta, others(ids, ids), threshold),
+    clampGroupDelta: (ids, delta) => noOverlap.clampGroupDelta(clips, ids.map(byId), delta, tracks),
+    clipAtTime: (track, t, exclude) => drop.clipAtTime(clips, track, t, exclude)?.id ?? null,
+    clipCollidingWith: (track, start, dur, exclude) => drop.clipCollidingWith(clips, track, start, dur, exclude)?.id ?? null,
+    zoneAt: (kind, y, originId, originAlone) => zone(drop.zoneAt(tracks, geo, kind, y, { originId, originAlone })),
+    placeOnTrack: (track, desired, dur, exclude, stickSec, snapSec) =>
+      drop.placeOnTrack(clips, track, desired, dur, { excludeIds: exclude, stickSec, snapSec })?.start ?? null,
+    liftTarget: (from, start, dur, exclude) => {
+      const l = drop.liftTarget(tracks, clips, from, start, dur, exclude)
+      return l && { trackId: l.trackId ?? null, slot: l.slot ?? null }
+    },
+    magneticCut: (track, t, exclude) => magnetic.magneticCut(clips, track, t, exclude),
+    dropTarget: (q) => {
+      const d = drop.dropTarget({ tracks, clips, geo, ...q })
+      return d && { trackId: d.trackId ?? null, slot: d.slot ?? null, lineY: d.lineY ?? 0, start: d.start,
+        replaceId: d.replaceId ?? null, insert: !!d.insert, lifted: !!d.lifted }
+    },
+    newTrackIndex: (kind, side) => drop.newTrackIndex(tracks, kind, side),
+    slotBoundary: (slot) => drop.slotBoundary(tracks, slot),
+    slotIndex: (slot) => drop.slotIndex(tracks, slot),
+    emptiedTracks: (candidates) => m.emptiedTracks(tracks, clips, candidates),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)
       return moved.map((c) => c.start)

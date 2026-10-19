@@ -93,19 +93,41 @@ TEST_CASE("editor: abre un proyecto; sin timeline, con las pistas de React", "[s
     CHECK(m.error() == "Proyecto no encontrado.");
 }
 
-TEST_CASE("editor: arrastrar se pega al vecino, cambia de pista compatible y se guarda", "[studio]") {
+// Filas de la fixture en pantalla (bajo la regla de 22 px): V2 22–74, V1 74–126 y A1 126–178.
+TEST_CASE("editor: arrastrar como en React (hueco, pista vecina, pista nueva y grupo) y se guarda",
+          "[studio]") {
     Fixture f;
     studio::EditorModel m(f.store);
     REQUIRE(m.openProject("p1"));
-    CHECK(m.previewMove("b", 2, "V1")["start"] == 4.0);    // encima de «a»: al hueco libre más cercano
-    CHECK(m.previewMove("b", 2, "A1")["trackId"] == "V1"); // el audio no admite vídeo
-    m.moveClip("b", 1, "V2");
+    CHECK(m.previewDrag("b", -1.5, 100)["start"] == 4.5);
+    const QVariantMap up = m.previewDrag("b", -4, 100); // encima de «a» y lejos del hueco: sube a V2
+    CHECK(up["trackId"] == "V2");
+    CHECK(up["start"] == 2.0);
+    const QVariantMap fresh = m.previewDrag("b", 0, 150); // un vídeo sobre el audio: pista nueva
+    CHECK(fresh["newTrack"] == true);
+    CHECK(fresh["lineY"] == 126.0);
+
+    m.dropDrag("b", -4, 100);
     CHECK(clip_view(m, "b")["trackId"] == "V2");
-    CHECK(start_of(f.saved(), "b") == 1);
+    CHECK(start_of(f.saved(), "b") == 2);
     m.undo();
     CHECK(start_of(f.saved(), "b") == 6);
-    m.redo();
-    CHECK(start_of(f.saved(), "b") == 1);
+
+    m.dropDrag("b", 0, 150);
+    CHECK(m.tracks().size() == 4);
+    const QString made = clip_view(m, "b")["trackId"].toString();
+    CHECK(made.startsWith("V3-"));
+    m.dropDrag("b", 0, 100); // vuelve a V1: la pista nueva se queda vacía y desaparece
+    CHECK(m.tracks().size() == 3);
+
+    m.select("a");
+    m.select("b", true);
+    const QVariantMap group = m.previewDrag("a", 10, 100);
+    CHECK(group["group"] == true);
+    CHECK(group["delta"] == 10.0);
+    m.dropDrag("a", 10, 100);
+    CHECK(start_of(f.saved(), "a") == 10);
+    CHECK(start_of(f.saved(), "b") == 16);
 }
 
 TEST_CASE("editor: recortar no invade al vecino ni pasa del material", "[studio]") {

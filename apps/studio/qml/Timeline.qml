@@ -21,12 +21,16 @@ Rectangle {
     border.color: Theme.line
     clip: true
 
+    property string dragId: ""
+    property var drag: null // previewDrag del clip que se arrastra
+    property var guides: [] // instantes de las guías del imán
+
     function colorsOf(kind) { return colors[kind] || ["#2b3350", "#1d2436", "#ffffff"] }
-    function trackAt(y) {
+    function rowY(trackId) {
         for (const t of model.tracks)
-            if (y >= t.y && y < t.y + t.height)
-                return t.id
-        return ""
+            if (t.id === trackId)
+                return t.y
+        return 0
     }
 
     Item {
@@ -124,21 +128,26 @@ Rectangle {
                 delegate: Rectangle {
                     id: block
                     required property var modelData
+                    objectName: "clip:" + modelData.id
                     readonly property var palette3: timeline.colorsOf(modelData.kind)
+                    readonly property var dp: timeline.drag
+                    readonly property bool selected: timeline.model.selection.indexOf(modelData.id) >= 0
+                    readonly property bool inGroup: !!dp && dp.group && selected
+                    readonly property bool lifted: !!dp && !dp.group && timeline.dragId === modelData.id
                     property string mode: ""
                     property real pressX
                     property real pressY
-                    property var preview: null
+                    property var trim: null
 
-                    x: (preview ? preview.start : modelData.start) * timeline.pps
-                    y: preview && preview.y !== undefined ? preview.y : modelData.y
-                    width: Math.max(6, (preview && preview.duration !== undefined ? preview.duration : modelData.duration) * timeline.pps)
+                    x: (inGroup ? modelData.start + dp.delta : lifted ? dp.start : trim ? trim.start : modelData.start) * timeline.pps
+                    y: !lifted ? modelData.y : dp.newTrack ? dp.lineY - height / 2 : timeline.rowY(dp.trackId) + 3
+                    width: Math.max(6, (trim ? trim.duration : modelData.duration) * timeline.pps)
                     height: modelData.height
                     z: mode ? 5 : 1
                     radius: 6
-                    opacity: modelData.disabled ? 0.45 : 1
+                    opacity: modelData.disabled ? 0.45 : lifted ? 0.85 : 1
                     border.width: 1.5
-                    border.color: modelData.selected ? palette3[2] : Qt.rgba(1, 1, 1, 0.14)
+                    border.color: selected ? palette3[2] : Qt.rgba(1, 1, 1, 0.14)
                     gradient: Gradient {
                         orientation: Gradient.Horizontal
                         GradientStop { position: 0; color: block.palette3[0] }
@@ -162,39 +171,69 @@ Rectangle {
                         hoverEnabled: true
                         cursorShape: block.mode === "move" ? Qt.ClosedHandCursor
                                    : mouseX < 6 || mouseX > width - 6 ? Qt.SizeHorCursor : Qt.OpenHandCursor
+                        // En px del carril: el clip se mueve con el gesto y sus coordenadas también.
+                        function lane(m) { return mapToItem(lanes, m.x, m.y) }
+                        function delta(m) { return (lane(m).x - block.pressX) / timeline.pps }
+                        function centerY(m) { return block.modelData.y + block.height / 2 + lane(m).y - block.pressY }
                         onPressed: (m) => {
-                            block.pressX = m.x
-                            block.pressY = m.y
+                            block.pressX = lane(m).x
+                            block.pressY = lane(m).y
                             block.mode = m.x < 6 ? "trim-left" : m.x > width - 6 ? "trim-right" : "move"
-                            timeline.model.select(block.modelData.id, (m.modifiers & Qt.ControlModifier) !== 0,
-                                                  (m.modifiers & Qt.ShiftModifier) !== 0)
+                            const keep = block.selected && !(m.modifiers & (Qt.ControlModifier | Qt.ShiftModifier))
+                            if (!keep)
+                                timeline.model.select(block.modelData.id, (m.modifiers & Qt.ControlModifier) !== 0,
+                                                      (m.modifiers & Qt.ShiftModifier) !== 0)
                         }
                         onPositionChanged: (m) => {
                             if (!pressed || !block.mode)
                                 return
-                            const dt = (m.x - block.pressX) / timeline.pps
                             if (block.mode === "move") {
-                                const cy = block.modelData.y + m.y
-                                const target = timeline.trackAt(cy) || block.modelData.trackId
-                                const p = timeline.model.previewMove(block.modelData.id, block.modelData.start + dt, target)
-                                const row = timeline.model.tracks.find((t) => t.id === p.trackId)
-                                block.preview = { start: p.start, trackId: p.trackId, y: row ? row.y + 3 : block.modelData.y }
+                                if (!timeline.dragId && Math.hypot(lane(m).x - block.pressX, lane(m).y - block.pressY) < 3)
+                                    return
+                                timeline.dragId = block.modelData.id
+                                timeline.drag = timeline.model.previewDrag(block.modelData.id, delta(m), centerY(m))
+                                timeline.guides = timeline.drag.times || []
                             } else {
-                                block.preview = timeline.model.previewTrim(block.modelData.id, block.mode === "trim-left", dt)
+                                block.trim = timeline.model.previewTrim(block.modelData.id, block.mode === "trim-left", delta(m))
+                                timeline.guides = block.trim.times || []
                             }
                         }
                         onReleased: (m) => {
-                            const dt = (m.x - block.pressX) / timeline.pps
-                            const moved = Math.abs(m.x - block.pressX) > 2 || Math.abs(m.y - block.pressY) > 2
-                            if (moved && block.mode === "move" && block.preview)
-                                timeline.model.moveClip(block.modelData.id, block.preview.start, block.preview.trackId)
-                            else if (moved && block.mode !== "move")
-                                timeline.model.trimClip(block.modelData.id, block.mode === "trim-left", dt)
+                            if (block.mode === "move" && timeline.dragId)
+                                timeline.model.dropDrag(block.modelData.id, delta(m), centerY(m))
+                            else if (block.mode !== "move" && block.trim)
+                                timeline.model.trimClip(block.modelData.id, block.mode === "trim-left", delta(m))
+                            else if (block.mode === "move" && !(m.modifiers & (Qt.ControlModifier | Qt.ShiftModifier)))
+                                timeline.model.select(block.modelData.id, false, false)
                             block.mode = ""
-                            block.preview = null
+                            block.trim = null
+                            timeline.dragId = ""
+                            timeline.drag = null
+                            timeline.guides = []
                         }
                     }
                 }
+            }
+
+            Repeater {
+                model: timeline.guides
+                Rectangle {
+                    required property real modelData
+                    x: modelData * timeline.pps - 1
+                    width: 2
+                    height: lanes.height
+                    z: 7
+                    color: "#f5d76e"
+                }
+            }
+
+            Rectangle {
+                visible: !!timeline.drag && !timeline.drag.group && timeline.drag.newTrack
+                y: visible ? timeline.drag.lineY - 1 : 0
+                width: lanes.width
+                height: 2
+                z: 8
+                color: "#22c55e"
             }
 
             Rectangle {

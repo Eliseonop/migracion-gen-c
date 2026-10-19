@@ -14,6 +14,7 @@
 
 #include "gc/core/projects_store.hpp"
 #include "gc/core/session.hpp"
+#include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
 
 namespace gc::studio {
@@ -65,10 +66,14 @@ public:
 
     Q_INVOKABLE void select(const QString& id, bool additive = false, bool range = false);
     Q_INVOKABLE void clearSelection();
-    // Inicio y pista donde caería el clip arrastrado (sin cambiar nada).
-    Q_INVOKABLE QVariantMap previewMove(const QString& id, double start, const QString& trackId) const;
+    // Dónde caería el clip (o la selección, si es un grupo) arrastrado `delta` s con el centro del
+    // fantasma a `centerY` px de las filas: {group, delta | start, trackId, newTrack, lineY, times}.
+    // `times` son las guías del imán. No cambia nada.
+    Q_INVOKABLE QVariantMap previewDrag(const QString& id, double delta, double centerY) const;
+    Q_INVOKABLE void dropDrag(const QString& id, double delta, double centerY);
+    // Inicio y pista exactos (sin imán ni pista nueva): para scripts y tests.
     Q_INVOKABLE void moveClip(const QString& id, double start, const QString& trackId);
-    // {start, duration} del clip con el borde movido `delta` s (sin cambiar nada).
+    // {start, duration, times} del clip con el borde movido `delta` s. No cambia nada.
     Q_INVOKABLE QVariantMap previewTrim(const QString& id, bool left, double delta) const;
     Q_INVOKABLE void trimClip(const QString& id, bool left, double delta);
     Q_INVOKABLE void splitAtPlayhead();
@@ -97,12 +102,23 @@ private:
     template <class T>
     bool ok(const Result<T>& r);
     void apply(const core::Command& command);
+    // Como setClips + settleClips de VideoEditor.jsx: resuelve los solapes nuevos, quita las pistas
+    // de `emptied` que se quedan vacías y lo deja todo en un paso de deshacer.
+    void commit(core::Timeline next, std::string cause, std::vector<std::string> changed,
+                std::vector<std::string> emptied = {});
+    struct DragPlan;
+    [[nodiscard]] std::optional<DragPlan> planDrag(const QString& id, double delta, double centerY) const;
+    [[nodiscard]] std::optional<core::ClipPatch> planTrim(const QString& id, bool left, double delta,
+                                                          std::vector<double>* times = nullptr) const;
+    [[nodiscard]] std::vector<core::AlignClip> snapOthers(std::span<const std::string> moving,
+                                                          bool beats_too) const;
     [[nodiscard]] const core::TimelineClip* clip(const QString& id) const;
     [[nodiscard]] const core::TimelineTrack* track(const QString& id) const;
     [[nodiscard]] bool canDrop(const core::TimelineClip& c, const core::TimelineTrack& t) const;
 
     core::ProjectsStore& store_;
     std::unique_ptr<core::EditSession> session_;
+    mutable core::RandomIdSource ids_;
     std::string project_id_;
     QString project_name_;
     QVariantList tracks_;

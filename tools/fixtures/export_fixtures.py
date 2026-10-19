@@ -2469,7 +2469,10 @@ def synthetic_editor_ui_fixtures(ctx: Ctx) -> dict:
     sys.path.insert(0, str(HERE))
     import editor_cases as ec
     cases = [{**c, "timeline": ctx.schemas.Timeline(**c["timeline"]).model_dump()} for c in ec.cases()]
-    results = _node(ctx, "editor_ui_js.mjs", [{"tracks": c["timeline"]["tracks"], "clips": c["timeline"]["clips"], "calls": c["calls"]} for c in cases])
+    cases = [{**c, "geo": ec.geo(c["timeline"]["tracks"])} for c in cases]
+    results = _node(ctx, "editor_ui_js.mjs", [{"tracks": c["timeline"]["tracks"], "clips": c["timeline"]["clips"],
+                                             "markers": c["timeline"]["markers"], "geo": c["geo"], "calls": c["calls"]}
+                                            for c in cases])
     return {"cases": [{**c, "results": r} for c, r in zip(cases, results)]}
 
 

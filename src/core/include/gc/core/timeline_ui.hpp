@@ -30,6 +30,8 @@ using ClipList = std::vector<Cow<TimelineClip>>;
 [[nodiscard]] double ui_clip_speed(const TimelineClip& clip);
 [[nodiscard]] double ui_clip_duration(const TimelineClip& clip);
 [[nodiscard]] double ui_clip_end(const TimelineClip& clip);
+// trackKindForClip: la pista que admite el clip (vídeo, imagen, figura y ajuste van en vídeo).
+[[nodiscard]] std::string lane_kind(std::string_view clip_kind);
 // isGeneratedDurationClip: texto, imagen, figura o ajuste (su duración no la marca un archivo).
 [[nodiscard]] bool has_free_duration(const TimelineClip& clip);
 
@@ -87,6 +89,16 @@ struct SelectMods {
 // nextClipSelection: la selección tras hacer clic en `clicked_id`.
 [[nodiscard]] ClipSelection next_clip_selection(const ClipList& clips, const ClipSelection& current,
                                                 std::string_view clicked_id, SelectMods mods);
+
+// emptiedTracks: de `candidates`, las pistas sin clips que se pueden quitar (sin bloquear y sin
+// dejar su tipo sin ninguna pista libre).
+[[nodiscard]] std::vector<std::string> emptied_tracks(const std::vector<TimelineTrack>& tracks,
+                                                      const ClipList& clips,
+                                                      std::span<const std::string> candidates);
+// buildTrack de VideoEditor.jsx: una pista nueva de `kind` numerada tras las que hay (V3, A2…), con
+// el id «<nombre>-<sufijo>».
+[[nodiscard]] TimelineTrack build_track(std::string_view kind, const std::vector<TimelineTrack>& tracks,
+                                        std::string_view id_suffix);
 
 // groupMoveFromOrig: los inicios de un grupo desplazado `delta` desde los originales (id, start).
 // Nadie queda antes de 0.

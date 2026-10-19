@@ -2,7 +2,9 @@
 
 #include <algorithm>
 #include <cmath>
+#include <utility>
 
+#include "gc/core/no_overlap.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/timeline_rules.hpp"
 #include "gc/core/timeline_view.hpp"
@@ -132,19 +134,17 @@ void EditorModel::rebuild() {
             if (c->track_id != t->id) {
                 continue;
             }
-            clips_.push_back(
-                QVariantMap{{"id", qstr(c->id)},
-                            {"trackId", qstr(c->track_id)},
-                            {"kind", qstr(c->kind)},
-                            {"label", clip_label(*c)},
-                            {"speed", speed_badge(*c)},
-                            {"start", c->start},
-                            {"duration", core::ui_clip_duration(*c)},
-                            {"y", y + kClipInset},
-                            {"height", h - 2 * kClipInset},
-                            {"selected", std::ranges::find(selection_.ids, c->id) != selection_.ids.end()},
-                            {"muted", c->muted},
-                            {"disabled", c->disabled}});
+            clips_.push_back(QVariantMap{{"id", qstr(c->id)},
+                                         {"trackId", qstr(c->track_id)},
+                                         {"kind", qstr(c->kind)},
+                                         {"label", clip_label(*c)},
+                                         {"speed", speed_badge(*c)},
+                                         {"start", c->start},
+                                         {"duration", core::ui_clip_duration(*c)},
+                                         {"y", y + kClipInset},
+                                         {"height", h - 2 * kClipInset},
+                                         {"muted", c->muted},
+                                         {"disabled", c->disabled}});
         }
         y += h;
     }
@@ -253,66 +253,222 @@ void EditorModel::select(const QString& id, bool additive, bool range) {
     }
     selection_ = core::next_clip_selection(session_->timeline()->clips, selection_, id.toStdString(),
                                            {.additive = additive, .range = range, .keep_group = false});
-    rebuild();
-    emit selectionChanged();
+    emit selectionChanged(); // sin rebuild(): rehacer la lista recrearía el clip que se está pulsando
 }
 
 void EditorModel::clearSelection() {
     selection_ = {};
-    rebuild();
     emit selectionChanged();
 }
 
-QVariantMap EditorModel::previewMove(const QString& id, double start, const QString& trackId) const {
-    const core::TimelineClip* c = clip(id);
-    const core::TimelineTrack* t = track(trackId);
-    if (!c) {
-        return {};
+struct EditorModel::DragPlan {
+    bool group = false;
+    double delta = 0;
+    core::Drop land;
+    std::vector<double> times;
+};
+
+std::vector<core::AlignClip> EditorModel::snapOthers(std::span<const std::string> moving,
+                                                     bool beats_too) const {
+    const core::Timeline& tl = *session_->timeline();
+    auto out = core::align_others(tl.clips, moving);
+    for (auto& t :
+         core::snap_targets(tl.markers, tl.clips, beats_too ? moving : std::span<const std::string>{})) {
+        out.push_back(std::move(t));
     }
-    if (!t || !canDrop(*c, *t)) {
-        t = track(qstr(c->track_id));
+    return out;
+}
+
+// EdTimeline.startDrag (modo move): un grupo se mueve junto y se para contra el primer vecino; un
+// clip suelto va con el imán y cae donde diga dropTarget (otra pista o una nueva).
+std::optional<EditorModel::DragPlan> EditorModel::planDrag(const QString& id, double delta,
+                                                           double centerY) const {
+    const core::TimelineClip* c = clip(id);
+    if (!c) {
+        return std::nullopt;
+    }
+    const core::Timeline& tl = *session_->timeline();
+    const double thr = core::align_threshold_sec(pps_);
+    const bool group =
+        selection_.ids.size() > 1 && std::ranges::find(selection_.ids, c->id) != selection_.ids.end();
+    if (group) {
+        std::vector<const core::TimelineClip*> origs;
+        for (const auto& sid : selection_.ids) {
+            if (const core::TimelineClip* o = clip(qstr(sid))) {
+                origs.push_back(o);
+            }
+        }
+        const auto snapped = core::snap_clip_group(origs, delta, snapOthers(selection_.ids, true), thr);
+        const double dd = core::clamp_group_delta(tl.clips, origs, snapped.delta, tl.tracks);
+        return DragPlan{true, dd, {}, dd == snapped.delta ? snapped.times : std::vector<double>{}};
     }
     const std::string self[] = {c->id};
-    const double at = core::clamp_start_no_overlap(session_->timeline()->clips, t->id, start,
-                                                   core::ui_clip_duration(*c), self);
-    return {{"start", at}, {"trackId", qstr(t->id)}};
+    const auto snapped = core::snap_clip_move(*c, delta, snapOthers(self, true), thr);
+    std::vector<core::TrackRow> geo;
+    for (const QVariant& v : tracks_) {
+        const QVariantMap t = v.toMap();
+        geo.push_back({t["id"].toString().toStdString(), t["y"].toDouble(),
+                       t["y"].toDouble() + t["height"].toDouble()});
+    }
+    const bool alone =
+        std::ranges::count(tl.clips, c->track_id, [](const auto& x) { return x->track_id; }) == 1;
+    const std::string kind = core::lane_kind(c->kind);
+    const auto land = core::drop_target(tl.tracks, tl.clips, geo,
+                                        {.kind = kind,
+                                         .y = centerY,
+                                         .time = snapped.start,
+                                         .duration = core::ui_clip_duration(*c),
+                                         .exclude = self,
+                                         .origin_id = c->track_id,
+                                         .origin_alone = alone,
+                                         .pps = pps_,
+                                         .snap_sec = thr});
+    if (!land) {
+        return std::nullopt;
+    }
+    return DragPlan{false, 0, *land, land->start == snapped.start ? snapped.times : std::vector<double>{}};
+}
+
+QVariantMap EditorModel::previewDrag(const QString& id, double delta, double centerY) const {
+    const auto plan = planDrag(id, delta, centerY);
+    if (!plan) {
+        return {};
+    }
+    QVariantList times;
+    for (const double t : plan->times) {
+        times << t;
+    }
+    if (plan->group) {
+        return {{"group", true}, {"delta", plan->delta}, {"times", times}};
+    }
+    return {{"group", false},
+            {"start", plan->land.start},
+            {"trackId", plan->land.track_id ? qstr(*plan->land.track_id) : QString()},
+            {"newTrack", plan->land.slot.has_value()},
+            {"lineY", plan->land.line_y},
+            {"times", times}};
+}
+
+void EditorModel::dropDrag(const QString& id, double delta, double centerY) {
+    const auto plan = planDrag(id, delta, centerY);
+    const core::TimelineClip* c = clip(id);
+    if (!plan || !c) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    if (plan->group) {
+        if (plan->delta == 0) {
+            return;
+        }
+        for (auto& item : next.clips) {
+            if (std::ranges::find(selection_.ids, item->id) != selection_.ids.end()) {
+                item.mut().start = core::js_fixed3(item->start + plan->delta);
+            }
+        }
+        commit(std::move(next), "move-group", selection_.ids);
+        return;
+    }
+    std::string track_id = plan->land.track_id.value_or(c->track_id);
+    if (plan->land.slot) { // moveClipToNewTrack: la pista nueva se crea al soltar
+        core::TimelineTrack t =
+            core::build_track(core::lane_kind(c->kind), next.tracks, ids_.hex32().substr(0, 8));
+        if (const core::TimelineTrack* src = track(qstr(c->track_id));
+            t.kind == "text" && src && src->style) {
+            t.style = src->style;
+        }
+        track_id = t.id;
+        const auto at = static_cast<std::ptrdiff_t>(core::slot_index(next.tracks, *plan->land.slot));
+        next.tracks.insert(next.tracks.begin() + at, std::move(t));
+    } else if (track_id == c->track_id && plan->land.start == c->start) {
+        return;
+    }
+    for (auto& item : next.clips) {
+        if (item->id == c->id) {
+            item.mut().track_id = track_id;
+            item.mut().start =
+                plan->land.slot ? core::js_fixed3(std::max(0.0, plan->land.start)) : plan->land.start;
+        }
+    }
+    commit(std::move(next), "move", {c->id}, {c->track_id});
 }
 
 void EditorModel::moveClip(const QString& id, double start, const QString& trackId) {
-    const QVariantMap to = previewMove(id, start, trackId);
     const core::TimelineClip* c = clip(id);
-    if (!c || (to["start"].toDouble() == c->start && to["trackId"].toString() == qstr(c->track_id))) {
-        return;
+    const core::TimelineTrack* t = track(trackId);
+    if (c && t && canDrop(*c, *t)) {
+        apply(core::ops::MoveClip{c->id, start, t->id});
     }
-    apply(core::ops::MoveClip{c->id, to["start"].toDouble(), to["trackId"].toString().toStdString()});
+}
+
+// previewTrim de EdTimeline: el borde no pasa del vecino (salvo en una pista magnética, que se
+// vuelve a empaquetar) y el imán tampoco puede saltárselo.
+std::optional<core::ClipPatch> EditorModel::planTrim(const QString& id, bool left, double delta,
+                                                     std::vector<double>* times) const {
+    const core::TimelineClip* c = clip(id);
+    if (!c) {
+        return std::nullopt;
+    }
+    const auto& clips = session_->timeline()->clips;
+    const core::TimelineTrack* t = track(qstr(c->track_id));
+    const auto edge = left ? core::TrimEdge::Left : core::TrimEdge::Right;
+    const auto bound = [&](double d) {
+        return t && t->magnetic ? d : core::clamp_trim_delta(clips, *c, edge, d);
+    };
+    const double d = bound(delta);
+    const std::string self[] = {c->id};
+    auto snap = core::snap_clip_trim(*c, edge, d, snapOthers(self, false), core::align_threshold_sec(pps_));
+    if (bound(snap.delta) == snap.delta) {
+        if (times) {
+            *times = std::move(snap.times);
+        }
+        return snap.patch;
+    }
+    return core::trim_clip_patch(*c, edge, d);
 }
 
 QVariantMap EditorModel::previewTrim(const QString& id, bool left, double delta) const {
-    const core::TimelineClip* c = clip(id);
-    if (!c) {
+    std::vector<double> guide;
+    const auto patch = planTrim(id, left, delta, &guide);
+    if (!patch) {
         return {};
     }
-    const auto edge = left ? core::TrimEdge::Left : core::TrimEdge::Right;
-    core::TimelineClip next = *c;
-    core::trim_clip_patch(*c, edge, core::clamp_trim_delta(session_->timeline()->clips, *c, edge, delta))
-        .apply(next);
-    return {{"start", next.start}, {"duration", core::ui_clip_duration(next)}};
+    core::TimelineClip next = *clip(id);
+    patch->apply(next);
+    QVariantList times;
+    for (const double t : guide) {
+        times << t;
+    }
+    return {{"start", next.start}, {"duration", core::ui_clip_duration(next)}, {"times", times}};
 }
 
 void EditorModel::trimClip(const QString& id, bool left, double delta) {
-    const core::TimelineClip* c = clip(id);
-    if (!c || delta == 0) {
+    const auto patch = planTrim(id, left, delta);
+    if (!patch || delta == 0) {
         return;
     }
-    const auto edge = left ? core::TrimEdge::Left : core::TrimEdge::Right;
     core::Timeline next = *session_->timeline();
     for (auto& item : next.clips) {
-        if (item->id == c->id) {
-            core::trim_clip_patch(*c, edge, core::clamp_trim_delta(next.clips, *c, edge, delta))
-                .apply(item.mut());
+        if (qstr(item->id) == id) {
+            patch->apply(item.mut());
         }
     }
-    session_->replace(std::move(next), left ? "trim-left" : "trim-right", {c->id});
+    commit(std::move(next), left ? "trim-left" : "trim-right", {id.toStdString()});
+}
+
+void EditorModel::commit(core::Timeline next, std::string cause, std::vector<std::string> changed,
+                         std::vector<std::string> emptied) {
+    if (auto settled = core::settle_timeline(*session_->timeline(), next, ids_)) {
+        next = std::move(settled->timeline);
+    }
+    for (const auto& gone : core::emptied_tracks(next.tracks, next.clips, emptied)) {
+        std::erase_if(next.tracks, [&](const core::TimelineTrack& t) { return t.id == gone; });
+        for (auto& t : next.tracks) {
+            if (t.linked_track_id == gone) {
+                t.linked_track_id.reset();
+            }
+        }
+    }
+    session_->replace(std::move(next), std::move(cause), std::move(changed));
 }
 
 void EditorModel::apply(const core::Command& command) {
@@ -349,19 +505,24 @@ void EditorModel::splitAtPlayhead() {
     emit selectionChanged();
 }
 
+// deleteClip de VideoEditor.jsx: fuera los clips, y sus pistas si se quedan vacías.
 void EditorModel::deleteSelection() {
     if (!session_ || selection_.ids.empty()) {
         return;
     }
-    const auto ids = selection_.ids;
-    core::EditSession::Group group(*session_);
-    for (const auto& id : ids) {
-        if (!ok(session_->apply(core::ops::RemoveClip{id}))) {
-            return;
+    core::Timeline next = *session_->timeline();
+    std::vector<std::string> tracks;
+    for (const auto& c : next.clips) {
+        if (std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {
+            tracks.push_back(c->track_id);
         }
     }
-    group.commit();
-    selection_ = {};
+    std::erase_if(next.clips, [&](const auto& c) {
+        return std::ranges::find(selection_.ids, c->id) != selection_.ids.end();
+    });
+    const auto ids = std::exchange(selection_.ids, {});
+    selection_.anchor.reset();
+    commit(std::move(next), "delete", ids, std::move(tracks));
     emit selectionChanged();
 }
 

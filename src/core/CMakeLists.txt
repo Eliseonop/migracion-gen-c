@@ -60,6 +60,7 @@ add_library(gc_core
     src/sfx_library.cpp
     src/stick_library.cpp
     src/timeline_rules.cpp
+    src/timeline_drop.cpp
     src/timeline_ui.cpp
     src/timeline_view.cpp
 )
