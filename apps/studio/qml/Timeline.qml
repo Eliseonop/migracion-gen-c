@@ -239,14 +239,15 @@ Rectangle {
                 anchors.fill: parent
                 keys: ["material"]
                 property var hint: null
-                onPositionChanged: (d) => hint = timeline.model.previewMaterialDrop(d.source.materialKey, d.x, d.y, false)
+                onPositionChanged: (d) => hint = timeline.model.previewMaterialDrop(d.source.materialKey, d.x, d.y, timeline.model.altHeld())
                 onExited: hint = null
                 onDropped: (d) => {
                     const key = d.source.materialKey
                     const x = d.x
                     const y = d.y
+                    const alt = timeline.model.altHeld()
                     hint = null
-                    Qt.callLater(() => timeline.model.dropMaterial(key, x, y, false))
+                    Qt.callLater(() => timeline.model.dropMaterial(key, x, y, alt))
                 }
             }
             Rectangle { // dónde caerá
@@ -257,8 +258,8 @@ Rectangle {
                 height: 40
                 z: 6
                 radius: 6
-                color: Qt.rgba(0.13, 0.77, 0.37, 0.22)
-                border.color: "#22c55e"
+                color: visible && materialDrop.hint.replace ? Qt.rgba(0.96, 0.62, 0.04, 0.25) : Qt.rgba(0.13, 0.77, 0.37, 0.22)
+                border.color: visible && materialDrop.hint.replace ? "#f59e0b" : "#22c55e"
             }
             Rectangle {
                 visible: !!materialDrop.hint && materialDrop.hint.newTrack

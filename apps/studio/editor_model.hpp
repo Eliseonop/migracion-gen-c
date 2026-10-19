@@ -142,6 +142,8 @@ public:
     // Marcas de la regla visibles: [{t, x, major, label}].
     Q_INVOKABLE QVariantList ticks(double scrollX, double viewWidth) const;
     Q_INVOKABLE QString formatTime(double t) const;
+    // Alt pulsado (soltar material encima de un clip lo reemplaza).
+    Q_INVOKABLE static bool altHeld();
 
 signals:
     void projectChanged();

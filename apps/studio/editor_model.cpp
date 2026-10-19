@@ -1,5 +1,6 @@
 #include "editor_model.hpp"
 
+#include <QGuiApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <algorithm>
@@ -562,6 +563,8 @@ QVariantMap EditorModel::previewMaterialDrop(const QString& key, double x, doubl
             {"replace", land.replace_id.has_value()},
             {"duration", std::max(0.1, std::isnan(d) || d == 0 ? 1 : d)}};
 }
+
+bool EditorModel::altHeld() { return QGuiApplication::keyboardModifiers().testFlag(Qt::AltModifier); }
 
 void EditorModel::dropMaterial(const QString& key, double x, double y, bool alt) {
     const auto plan = planMaterialDrop(key, x, y, alt);

@@ -70,7 +70,9 @@ struct Studio {
                                                                  {"filename", "m.mp3"},
                                                                  {"url", "/u"},
                                                                  {"duration", 5.0},
-                                                                 {"label", "Música"}}})}}})}}));
+                                                                 {"label", "Música"}}})},
+                                        {"images", Json::array({{{"id", "i1"}, {"filename", "logo.png"},
+                                                                 {"url", "/i"}, {"label", "Logo"}}})}}})}}));
         store = std::make_unique<core::ProjectsStore>(dir / "data" / "projects.json", dir / "clips");
         home = std::make_unique<studio::HomeModel>(*store, ids);
         editor = std::make_unique<studio::EditorModel>(*store);
@@ -117,12 +119,12 @@ struct Studio {
         QTest::mouseClick(window, Qt::LeftButton, {}, i->mapToScene(QPointF(i->width() / 2, i->height() / 2)).toPoint());
         QCoreApplication::processEvents();
     }
-    void drag(QPoint from, QPoint to) {
-        QTest::mousePress(window, Qt::LeftButton, {}, from);
+    void drag(QPoint from, QPoint to, Qt::KeyboardModifiers mods = {}) {
+        QTest::mousePress(window, Qt::LeftButton, mods, from);
         for (int i = 1; i <= 8; ++i) {
             QTest::mouseMove(window, from + (to - from) * i / 8);
         }
-        QTest::mouseRelease(window, Qt::LeftButton, {}, to);
+        QTest::mouseRelease(window, Qt::LeftButton, mods, to);
         QCoreApplication::processEvents(); // la timeline aplica el gesto con Qt.callLater
     }
     [[nodiscard]] QVariantMap view(const QString& id) const {
@@ -236,6 +238,21 @@ TEST_CASE("studio sin pantalla: arrastrar material del panel a la timeline crea 
     const QVariantMap made = s.editor->selectedClip();
     CHECK(made["kind"] == "audio");
     CHECK(std::abs(made["start"].toDouble() - (to.x() - lane.x()) / pps) < 0.1);
+}
+
+TEST_CASE("studio sin pantalla: con Alt el material soltado encima de un clip lo reemplaza", "[studio][ui]") {
+    Studio s;
+    QQuickItem* card = s.item("material:images:i1");
+    REQUIRE(card);
+    const QPoint to = s.at("b", 0.5);
+    s.drag(card->mapToScene(QPointF(20, card->height() / 2)).toPoint(), to, Qt::AltModifier);
+    QCoreApplication::processEvents();
+    REQUIRE(s.editor->clips().size() == 2);
+    CHECK(s.view("b").isEmpty());
+    const QVariantMap made = s.editor->selectedClip();
+    CHECK(made["kind"] == "image");
+    CHECK(made["start"] == 6.0);
+    CHECK(made["duration"] == 3.0); // toma la duración del clip al que reemplaza
 }
 
 TEST_CASE("studio sin pantalla: el rectángulo de selección elige los clips que corta", "[studio][ui]") {
