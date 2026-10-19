@@ -10,6 +10,9 @@ Rectangle {
     required property Item dragLayer
     property string filter: "all"
     property string source: "project"
+    property string query: ""
+    property string sfxCategory: ""
+    function words(text) { return text.toLowerCase().split(/\s+/).filter((w) => w) }
 
     radius: Theme.radiusLg
     color: Theme.card
@@ -62,6 +65,42 @@ Rectangle {
                 }
             }
         }
+        TextField {
+            objectName: "material:search"
+            Layout.fillWidth: true
+            placeholderText: panel.source === "sfx" ? "Buscar sonidos…" : "Buscar…"
+            color: Theme.text
+            background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
+            onTextChanged: {
+                panel.query = text
+                if (panel.source === "sfx")
+                    panel.model.searchSfx(text, panel.sfxCategory)
+            }
+        }
+        Flow {
+            visible: panel.source === "sfx" && panel.model.sfxCategories.length > 0
+            Layout.fillWidth: true
+            spacing: 4
+            Repeater {
+                model: [{ id: "", label: "Todo" }].concat(panel.model.sfxCategories)
+                Rectangle {
+                    required property var modelData
+                    readonly property bool on: panel.sfxCategory === modelData.id
+                    width: catLabel.implicitWidth + 14
+                    height: 22
+                    radius: 11
+                    color: on ? Qt.rgba(1, 0.23, 0.36, 0.25) : Theme.card2
+                    border.color: on ? Theme.accent : Theme.lineBright
+                    Label { id: catLabel; anchors.centerIn: parent; text: parent.modelData.label + (parent.modelData.count ? " " + parent.modelData.count : ""); color: Theme.text; font.pixelSize: 11 }
+                    TapHandler {
+                        onTapped: {
+                            panel.sfxCategory = parent.modelData.id
+                            panel.model.searchSfx(panel.query, panel.sfxCategory)
+                        }
+                    }
+                }
+            }
+        }
         Label {
             visible: list.count === 0
             Layout.fillWidth: true
@@ -77,7 +116,9 @@ Rectangle {
             Layout.fillHeight: true
             clip: true
             spacing: 6
-            model: panel.model.materials.filter((m) => m.source === panel.source && (panel.source === "sfx" || panel.filter === "all" || m.kind === panel.filter))
+            model: panel.model.materials.filter((m) => m.source === panel.source
+                && (panel.source === "sfx" || panel.filter === "all" || m.kind === panel.filter)
+                && (panel.source === "sfx" || panel.words(panel.query).every((w) => m.name.toLowerCase().includes(w))))
             delegate: Item {
                 id: slot
                 required property var modelData

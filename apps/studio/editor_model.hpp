@@ -41,6 +41,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
     Q_PROPERTY(QVariantList animationSlots READ animationSlots CONSTANT)
     Q_PROPERTY(QVariantList vfxCatalog READ vfxCatalog CONSTANT)
+    Q_PROPERTY(QVariantList sfxCategories READ sfxCategories NOTIFY projectChanged)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
@@ -77,6 +78,10 @@ public:
     [[nodiscard]] static QVariantList animationSlots();
     // Efectos animados del catálogo: [{id, name, category, description}].
     [[nodiscard]] static QVariantList vfxCatalog();
+    // Categorías de la carpeta de SFX ({id, name, count}; «Favoritos» delante).
+    [[nodiscard]] QVariantList sfxCategories() const { return sfx_categories_; }
+    // search de sfx_library: los sonidos que tienen todas las palabras de `q`, en `category`.
+    Q_INVOKABLE void searchSfx(const QString& q, const QString& category);
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
@@ -277,6 +282,8 @@ private:
     std::optional<core::TimelineClip> attr_clipboard_;
     std::optional<core::KeyframeBoard> kf_board_;
     std::string selected_track_;
+    QVariantList sfx_categories_;
+    void load_sfx(const std::string& q, const std::string& category);
     const core::SettingsFile* settings_ = nullptr;
     // changeTrackStyle / applyTrackPreset: el estilo de la pista y el de todos sus textos.
     template <class Restyle>

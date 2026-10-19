@@ -204,12 +204,7 @@ bool EditorModel::openProject(const QString& pid) {
             }
         }
     }
-    const Json settings = settings_ ? settings_->load() : Json::object();
-    const auto sfx = core::sfx_search(core::sfx_base(settings, data_dir.parent_path().parent_path() / "assets" / "sfx_library"),
-                                      settings);
-    for (const Json& item : sfx.value("items", Json::array())) {
-        add("sfx", "sfx", "sfx:" + qstr(item.value("id", "")), item, "audio");
-    }
+    load_sfx("", "");
     session_ = std::make_unique<core::EditSession>((*project)->timeline.value_or(default_timeline()));
     session_->subscribe([this](const core::TimelineSnapshot& tl, const core::Change&) {
         (void)ok(store_.save_timeline(project_id_, core::to_json(*tl)));
@@ -222,6 +217,39 @@ bool EditorModel::openProject(const QString& pid) {
     emit selectionChanged();
     emit playheadChanged();
     return true;
+}
+
+void EditorModel::load_sfx(const std::string& q, const std::string& category) {
+    materials_.erase(std::remove_if(materials_.begin(), materials_.end(),
+                                    [](const QVariant& m) { return m.toMap()["source"] == "sfx"; }),
+                     materials_.end());
+    const auto data_dir = store_.file().parent_path();
+    const Json settings = settings_ ? settings_->load() : Json::object();
+    const Json sfx = core::sfx_search(
+        core::sfx_base(settings, data_dir.parent_path().parent_path() / "assets" / "sfx_library"), settings, q, category);
+    for (const Json& item : sfx.value("items", Json::array())) {
+        const QString key = "sfx:" + qstr(item.value("id", ""));
+        const Json payload = core::drag_payload("sfx", item);
+        payloads_[key] = payload;
+        materials_ << QVariantMap{{"key", key},
+                                  {"source", "sfx"},
+                                  {"assetKind", "sfx"},
+                                  {"kind", "audio"},
+                                  {"name", qstr(item.value("name", ""))},
+                                  {"category", qstr(item.value("category", ""))},
+                                  {"duration", core::js_number(payload.value("duration", Json(0)))}};
+    }
+    sfx_categories_.clear();
+    for (const Json& c : sfx.value("categories", Json::array())) {
+        sfx_categories_ << to_variant(c);
+    }
+}
+
+void EditorModel::searchSfx(const QString& q, const QString& category) {
+    if (session_) {
+        load_sfx(q.toStdString(), category.toStdString());
+        emit projectChanged();
+    }
 }
 
 void EditorModel::closeProject() {

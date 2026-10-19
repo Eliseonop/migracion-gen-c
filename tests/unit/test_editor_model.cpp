@@ -713,4 +713,9 @@ TEST_CASE("editor: material de la biblioteca y de la carpeta de SFX", "[studio]"
     }
     CHECK(sources.contains("library:Tema"));
     CHECK(sources.contains("sfx:pum"));
+    CHECK_FALSE(m.sfxCategories().isEmpty());
+    m.searchSfx("nada que coincida", "");
+    CHECK(std::ranges::none_of(m.materials(), [](const QVariant& v) { return v.toMap()["source"] == "sfx"; }));
+    m.searchSfx("pum", "");
+    CHECK(std::ranges::any_of(m.materials(), [](const QVariant& v) { return v.toMap()["source"] == "sfx"; }));
 }
