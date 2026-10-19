@@ -9,6 +9,7 @@
 #include <iterator>
 #include <limits>
 #include <locale>
+#include <ranges>
 #include <span>
 #include <sstream>
 #include <system_error>
@@ -576,6 +577,28 @@ WinPath parse_win_path(std::string_view text) {
 }
 
 } // namespace
+
+std::string py_posix_path_str(std::string_view text) {
+    const bool unc = text.starts_with("//") && !text.starts_with("///");
+    std::string out = unc ? "//" : text.starts_with('/') ? "/" : "";
+    const std::size_t root = out.size();
+    for (const auto part : std::views::split(text, '/')) {
+        const std::string_view name(part.begin(), part.end());
+        if (!name.empty() && name != ".") {
+            out += (out.size() > root ? "/" : "");
+            out += name;
+        }
+    }
+    return out.empty() ? std::string(".") : out;
+}
+
+std::string py_native_path_str(std::string_view text) {
+#ifdef _WIN32
+    return py_path_str(text);
+#else
+    return py_posix_path_str(text);
+#endif
+}
 
 std::string py_path_str(std::string_view text) {
     const WinPath p = parse_win_path(text);

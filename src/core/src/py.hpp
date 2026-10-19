@@ -64,6 +64,10 @@ namespace gc::core::detail {
 // barra final; «\\servidor\recurso» gana la raíz («\\servidor\recurso\») y «» es «.».
 // La unidad es un carácter de UTF-16 (no uno de fuera del plano básico) + «:».
 [[nodiscard]] std::string py_path_str(std::string_view text);
+// str(PurePosixPath(x)): sin partes vacías ni «.» y sin la barra final; «//» al principio se queda.
+[[nodiscard]] std::string py_posix_path_str(std::string_view text);
+// str(Path(x)) del sistema en el que corre: py_path_str en Windows y py_posix_path_str en el resto.
+[[nodiscard]] std::string py_native_path_str(std::string_view text);
 // Path(x).name de Python 3.14 en Windows: el último componente, sin la unidad («C:x» → «x»)
 // ni el recurso UNC, y sin «.» (que no cuenta).
 [[nodiscard]] std::string py_path_name(std::string_view text);

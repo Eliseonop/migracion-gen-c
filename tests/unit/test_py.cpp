@@ -366,3 +366,10 @@ TEST_CASE("py_upper es str.upper() de Python (valores medidos en Python)", "[py]
     CHECK(py_upper("\xC4\xB1") == "I");                             // ı → I
     CHECK(py_upper("\xC7\xB0") == "J\xCC\x8C");                     // ǰ → J̌
 }
+
+TEST_CASE("py_posix_path_str es str(PurePosixPath)", "[py]") {
+    for (const auto& [in, out] : {std::pair{"", "."}, {".", "."}, {"/", "/"}, {"a//b/./c/", "a/b/c"}, {"//x/y", "//x/y"},
+                                  {"///x", "/x"}, {"./a", "a"}, {"a/..", "a/.."}, {"/tmp//m/", "/tmp/m"}}) {
+        CHECK(py_posix_path_str(in) == out);
+    }
+}

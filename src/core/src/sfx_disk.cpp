@@ -151,7 +151,7 @@ Json sfx_load_index(const std::optional<fs::path>& base) {
     }
     Json out = Json::object();
     out["available"] = true;
-    out["base"] = py_path_str(path_to_utf8(*base));
+    out["base"] = detail::py_native_path_str(path_to_utf8(*base));
     out["categories"] = std::move(categories);
     out["items"] = std::move(items);
     return out;

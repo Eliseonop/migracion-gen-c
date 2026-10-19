@@ -55,7 +55,7 @@ Json collections_meta(const Json& settings) {
 }
 
 // str(path) de Python.
-std::string path_str(const fs::path& p) { return py_path_str(path_to_utf8(p)); }
+std::string path_str(const fs::path& p) { return detail::py_native_path_str(path_to_utf8(p)); }
 
 // _first_image_url: la URL del primer medio que es imagen o GIF.
 std::string first_image_url(const std::vector<Json>& items) {
@@ -93,7 +93,7 @@ std::optional<fs::path> collections_root(const Json& settings, const fs::path& d
 }
 
 Result<std::optional<std::string>> set_collections_root(SettingsFile& settings, std::string_view path) {
-    const std::string text = py_path_str(py_strip(path)); // str(Path(path.strip())): «» es «.»
+    const std::string text = detail::py_native_path_str(py_strip(path)); // str(Path(path.strip())): «» es «.»
     std::error_code ec;
     if (text.contains('\0') || !fs::is_directory(path_from_utf8(text), ec)) {
         return std::optional<std::string>();
