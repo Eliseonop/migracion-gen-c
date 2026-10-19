@@ -486,3 +486,28 @@ TEST_CASE("editor: temas de subtítulos y estilos preestablecidos de un texto", 
     m.applyTextLook("");
     CHECK(m.selectedClip()["lookId"] == "none");
 }
+
+TEST_CASE("editor: filtros de color apilados", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    CHECK(studio::EditorModel::colorFilters().size() == 15);
+    m.select("a");
+    m.toggleFilter("sepia");
+    m.toggleFilter("cool");
+    m.setFilterAmount(1, 0.4);
+    m.moveFilter(1, -1);
+    QVariantList fs = m.selectedClip()["filters"].toList();
+    REQUIRE(fs.size() == 2);
+    CHECK(fs[0].toMap()["id"] == "cool");
+    CHECK(fs[0].toMap()["amount"] == 0.4);
+    m.toggleFilter("cool");
+    CHECK(m.selectedClip()["filters"].toList().size() == 1);
+    const core::Timeline tl = f.saved();
+    for (const auto& c : tl.clips) {
+        if (c->id == "a") {
+            CHECK(c->filters->size() == 1);
+            CHECK(c->look == "none");
+        }
+    }
+}

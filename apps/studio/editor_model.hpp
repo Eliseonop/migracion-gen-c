@@ -13,6 +13,7 @@
 #include <memory>
 #include <optional>
 
+#include "gc/core/clip_filters.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/session.hpp"
 #include "gc/core/timeline_drop.hpp"
@@ -35,6 +36,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList materials READ materials NOTIFY projectChanged)
     Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
     Q_PROPERTY(QVariantList textLooks READ textLooks CONSTANT)
+    Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
@@ -61,6 +63,8 @@ public:
     // Temas de subtítulos y estilos «Aa» con lo que pinta su muestra (color, trazo, fondo, brillo).
     [[nodiscard]] static QVariantList textThemes();
     [[nodiscard]] static QVariantList textLooks();
+    // FILTERS de clipFilters.js con su muestra (piel, cielo, vegetación y gris filtrados).
+    [[nodiscard]] static QVariantList colorFilters();
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
@@ -134,6 +138,10 @@ public:
     // Figura del catálogo en el cabezal (addAsset('shape')) y capa de ajuste (addAdjustmentLayer).
     Q_INVOKABLE void addShape(const QString& type, const QString& label);
     Q_INVOKABLE void addAdjustment();
+    // Filtros de color (EdFilters.jsx): clic añade o quita; intensidad y orden en la pila.
+    Q_INVOKABLE void toggleFilter(const QString& id);
+    Q_INVOKABLE void setFilterAmount(int index, double amount);
+    Q_INVOKABLE void moveFilter(int index, int step);
     // Inspector de figuras (EdShape.jsx).
     Q_INVOKABLE void changeShape(const QVariantMap& patch);
     Q_INVOKABLE void changeText(const QString& text);
@@ -172,6 +180,7 @@ signals:
     void errorChanged();
 
 private:
+    void set_filters(const std::vector<core::ClipFilter>& stack);
     void add_generated(core::Timeline next, Json clip, const char* cause);
     template <class Patch>
     void pose_each(const char* cause, Patch patch);

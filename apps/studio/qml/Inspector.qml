@@ -20,6 +20,13 @@ Rectangle {
     readonly property bool shape: has && clip.kind === "shape"
     readonly property var sh: shape ? clip.shape : ({})
     readonly property bool canFill: shape && ["line", "check", "x"].indexOf(sh.type) < 0 && !(sh.type === "path" && !sh.closed)
+    readonly property bool filterable: has && ["video", "image", "adjustment"].indexOf(clip.kind) >= 0
+    readonly property var applied: has ? clip.filters : []
+    function filterIndex(id) { return applied.findIndex((f) => f.id === id) }
+    function filterLabel(id) {
+        const f = model.colorFilters.find((x) => x.id === id)
+        return f ? f.label : id
+    }
     readonly property var swatches: ["#ffffff", "#111111", "#ffe400", "#ff2d2d", "#ff8a00", "#2ee83f", "#1e90ff", "#ff3d8b"]
     readonly property var blends: [
         ["normal", "Normal"], ["darken", "Oscurecer"], ["multiply", "Multiplicar"], ["color_burn", "Subexponer color"],
@@ -130,6 +137,13 @@ Rectangle {
             styleColor: tile.look.stroke || tile.look.glow || "transparent"
         }
         TapHandler { onTapped: tile.picked() }
+    }
+    component FilterSwatch: Row {
+        required property var colors
+        Repeater {
+            model: parent.colors
+            Rectangle { required property string modelData; width: 8; height: 14; color: modelData }
+        }
     }
     component Percent: RowLayout {
         id: row
@@ -600,6 +614,68 @@ Rectangle {
                 spacing: 6
                 Small { objectName: "insp:pitch"; text: panel.has && panel.clip.keepPitch ? "Tono ✓" : "Tono"; onClicked: panel.model.toggleKeepPitch() }
                 Small { objectName: "insp:reverse"; text: panel.has && panel.clip.reverse ? "Reversa ✓" : "Reversa"; onClicked: panel.model.toggleReverse() }
+            }
+
+            Section { visible: panel.filterable; text: "FILTROS" }
+            Repeater {
+                model: panel.filterable ? [["color", "Color"], ["cine", "Cine"], ["retro", "Retro"], ["bn", "Blanco y negro"]] : []
+                ColumnLayout {
+                    required property var modelData
+                    Layout.fillWidth: true
+                    spacing: 3
+                    Label { text: modelData[1]; color: Theme.muted; font.pixelSize: 11 }
+                    Flow {
+                        Layout.fillWidth: true
+                        spacing: 4
+                        Repeater {
+                            model: panel.model.colorFilters.filter((f) => f.group === modelData[0])
+                            Rectangle {
+                                id: card
+                                required property var modelData
+                                readonly property int order: panel.filterIndex(modelData.id)
+                                objectName: "insp:filter:" + modelData.id
+                                width: cardRow.implicitWidth + 12
+                                height: 24
+                                radius: Theme.radiusSm
+                                color: Theme.card2
+                                border.width: order >= 0 ? 2 : 1
+                                border.color: order >= 0 ? Theme.accent : Theme.lineBright
+                                Row {
+                                    id: cardRow
+                                    anchors.centerIn: parent
+                                    spacing: 5
+                                    FilterSwatch { anchors.verticalCenter: parent.verticalCenter; colors: card.modelData.swatch }
+                                    Label { text: card.modelData.label + (card.order >= 0 ? " " + (card.order + 1) : ""); color: Theme.text; font.pixelSize: 11 }
+                                }
+                                TapHandler { onTapped: panel.model.toggleFilter(card.modelData.id) }
+                            }
+                        }
+                    }
+                }
+            }
+            Repeater {
+                model: panel.filterable ? panel.applied : []
+                RowLayout {
+                    id: appliedRow
+                    required property var modelData
+                    required property int index
+                    Layout.fillWidth: true
+                    spacing: 4
+                    FilterSwatch { colors: appliedRow.modelData.swatch }
+                    Label { Layout.preferredWidth: 70; text: panel.filterLabel(appliedRow.modelData.id); color: Theme.textSecondary; elide: Text.ElideRight; font.pixelSize: 11 }
+                    Slider {
+                        objectName: "insp:filterAmount:" + appliedRow.index
+                        Layout.fillWidth: true
+                        from: 0
+                        to: 1
+                        value: appliedRow.modelData.amount
+                        onPressedChanged: if (!pressed) panel.model.setFilterAmount(appliedRow.index, Math.round(value * 100) / 100)
+                    }
+                    Label { text: Math.round(appliedRow.modelData.amount * 100) + " %"; color: Theme.text; font.pixelSize: 11 }
+                    Toggle { implicitWidth: 22; text: "↑"; enabled: appliedRow.index > 0; onClicked: panel.model.moveFilter(appliedRow.index, -1) }
+                    Toggle { implicitWidth: 22; text: "↓"; enabled: appliedRow.index < panel.applied.length - 1; onClicked: panel.model.moveFilter(appliedRow.index, 1) }
+                    Toggle { implicitWidth: 22; text: "×"; onClicked: panel.model.toggleFilter(appliedRow.modelData.id) }
+                }
             }
 
             Section { visible: panel.has; text: "ANIMACIÓN" }

@@ -1,5 +1,6 @@
 #include "editor_model.hpp"
 
+#include <QColor>
 #include <QGuiApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -8,6 +9,7 @@
 #include <unordered_map>
 #include <utility>
 
+#include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_layout_ui.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/keyframes.hpp"
@@ -30,6 +32,23 @@ Json to_json(const QVariantMap& map) {
 
 QVariantMap to_variant(const Json& json) {
     return QJsonDocument::fromJson(QByteArray::fromStdString(json.dump())).object().toVariantMap();
+}
+
+// SWATCH y applyMatrix de clipFilters.js.
+QStringList filter_swatch(std::string_view id, double amount) {
+    constexpr std::array<std::array<double, 3>, 4> kSwatch{{{0.87, 0.64, 0.52}, {0.36, 0.62, 0.9}, {0.3, 0.55, 0.25}, {0.5, 0.5, 0.5}}};
+    const core::AffineColorMatrix m = core::filter_matrix(id, amount);
+    QStringList out;
+    for (const auto& rgb : kSwatch) {
+        std::array<int, 3> c{};
+        for (std::size_t i = 0; i < 3; ++i) {
+            const auto& row = m.at(i);
+            const double v = row[0] * rgb[0] + row[1] * rgb[1] + row[2] * rgb[2] + row[3];
+            c.at(i) = static_cast<int>(std::lround(std::clamp(v, 0.0, 1.0) * 255));
+        }
+        out << QColor(c[0], c[1], c[2]).name();
+    }
+    return out;
 }
 
 } // namespace
@@ -279,6 +298,13 @@ QVariantMap EditorModel::selectedClip() const {
                                   {"scalePct", tv.scale_pct},
                                   {"degrees", tv.rotation_deg}}},
         {"text", qstr(c->text.value_or(""))},
+        {"filters", [&] {
+             QVariantList out;
+             for (const auto& f : core::clip_filters(*c)) {
+                 out << QVariantMap{{"id", qstr(f.id)}, {"amount", f.amount}, {"swatch", filter_swatch(f.id, f.amount)}};
+             }
+             return out;
+         }()},
         {"themeId", c->kind == "text" ? qstr(core::selected_subtitle_theme_id(c->style.value_or(Json())).value_or(""))
                                        : QString()},
         {"lookId", c->kind == "text" ? qstr(core::active_look_id(c->style.value_or(Json())).value_or("")) : QString()},
@@ -1100,6 +1126,63 @@ QVariantList EditorModel::textThemes() {
         out << swatch(t, t.at("style"));
     }
     return out;
+}
+
+QVariantList EditorModel::colorFilters() {
+    QVariantList out;
+    for (const auto& f : core::color_filters()) {
+        out << QVariantMap{{"id", QString::fromUtf8(f.id.data(), static_cast<qsizetype>(f.id.size()))},
+                           {"label", QString::fromUtf8(f.label.data(), static_cast<qsizetype>(f.label.size()))},
+                           {"group", QString::fromUtf8(f.group.data(), static_cast<qsizetype>(f.group.size()))},
+                           {"swatch", filter_swatch(f.id, 1)}};
+    }
+    return out;
+}
+
+// onChangeFx({filters, look: 'none'}): la pila del clip principal va a todos los seleccionados (no textos).
+void EditorModel::set_filters(const std::vector<core::ClipFilter>& stack) {
+    Json list = Json::array();
+    for (const auto& f : stack) {
+        list.push_back({{"id", f.id}, {"amount", f.amount}});
+    }
+    fx_each("filters", [&](core::TimelineClip& c) {
+        c.filters = list;
+        c.look = "none";
+    });
+}
+
+void EditorModel::toggleFilter(const QString& id) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c) {
+        return;
+    }
+    auto stack = core::clip_filters(*c);
+    const auto hit = std::ranges::find(stack, id.toStdString(), &core::ClipFilter::id);
+    if (hit != stack.end()) {
+        stack.erase(hit);
+    } else {
+        stack.push_back({id.toStdString(), 1});
+    }
+    set_filters(stack);
+}
+
+void EditorModel::setFilterAmount(int index, double amount) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    auto stack = c ? core::clip_filters(*c) : std::vector<core::ClipFilter>{};
+    if (index >= 0 && std::cmp_less(index, stack.size())) {
+        stack.at(static_cast<std::size_t>(index)).amount = amount;
+        set_filters(stack);
+    }
+}
+
+void EditorModel::moveFilter(int index, int step) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    auto stack = c ? core::clip_filters(*c) : std::vector<core::ClipFilter>{};
+    const int to = index + step;
+    if (index >= 0 && to >= 0 && std::cmp_less(index, stack.size()) && std::cmp_less(to, stack.size())) {
+        std::swap(stack.at(static_cast<std::size_t>(index)), stack.at(static_cast<std::size_t>(to)));
+        set_filters(stack);
+    }
 }
 
 QVariantList EditorModel::textLooks() {
