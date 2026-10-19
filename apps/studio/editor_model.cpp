@@ -16,12 +16,14 @@
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/keyframes.hpp"
+#include "gc/core/library.hpp"
 #include "gc/core/mask_edit.hpp"
 #include "gc/core/masks.hpp"
 #include "gc/core/material_drop.hpp"
 #include "gc/core/no_overlap.hpp"
 #include "gc/core/pose.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/sfx_disk.hpp"
 #include "gc/core/shapes.hpp"
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_rules.hpp"
@@ -141,7 +143,8 @@ QString speed_badge(const core::TimelineClip& c) {
 
 } // namespace
 
-EditorModel::EditorModel(core::ProjectsStore& store, QObject* parent) : QObject(parent), store_(store) {}
+EditorModel::EditorModel(core::ProjectsStore& store, const core::SettingsFile* settings, QObject* parent)
+    : QObject(parent), store_(store), settings_(settings) {}
 
 EditorModel::~EditorModel() = default;
 
@@ -171,24 +174,41 @@ bool EditorModel::openProject(const QString& pid) {
     project_name_ = qstr((*project)->name);
     materials_.clear();
     payloads_.clear();
-    const auto add = [&](const char* asset_kind, const QString& key, const Json& item, const char* kind) {
+    const auto add = [&](const char* source, const char* asset_kind, const QString& key, const Json& item,
+                         const char* kind) {
         const Json payload = core::drag_payload(asset_kind, item);
         payloads_[key] = payload;
         materials_ << QVariantMap{
             {"key", key},
+            {"source", source},
             {"assetKind", asset_kind},
             {"kind", kind},
             {"name", qstr(payload.value("name", Json("")).is_string() ? payload.value("name", "") : "")},
             {"duration", core::js_number(payload.value("duration", Json(0)))}};
     };
     for (const auto& c : (*project)->clips) {
-        add("clips", QString("clips:%1").arg(c.index), core::to_json(c), "video");
+        add("project", "clips", QString("clips:%1").arg(c.index), core::to_json(c), "video");
     }
     for (const auto& i : (*project)->images) {
-        add("images", "images:" + qstr(i.id), core::to_json(i), "image");
+        add("project", "images", "images:" + qstr(i.id), core::to_json(i), "image");
     }
     for (const auto& a : (*project)->audios) {
-        add("audios", "audios:" + qstr(a.id), core::to_json(a), "audio");
+        add("project", "audios", "audios:" + qstr(a.id), core::to_json(a), "audio");
+    }
+    // La biblioteca global (data/library) y los sonidos de la carpeta de SFX.
+    const auto data_dir = store_.file().parent_path();
+    if (const auto lib = core::LibraryFile(data_dir).list()) {
+        for (const auto& [list, kind] : {std::pair{"clips", "video"}, {"images", "image"}, {"audios", "audio"}}) {
+            for (const Json& item : lib->value(list, Json::array())) {
+                add("library", list, QString("lib:%1:").arg(list) + qstr(item.value("id", "")), item, kind);
+            }
+        }
+    }
+    const Json settings = settings_ ? settings_->load() : Json::object();
+    const auto sfx = core::sfx_search(core::sfx_base(settings, data_dir.parent_path().parent_path() / "assets" / "sfx_library"),
+                                      settings);
+    for (const Json& item : sfx.value("items", Json::array())) {
+        add("sfx", "sfx", "sfx:" + qstr(item.value("id", "")), item, "audio");
     }
     session_ = std::make_unique<core::EditSession>((*project)->timeline.value_or(default_timeline()));
     session_->subscribe([this](const core::TimelineSnapshot& tl, const core::Change&) {

@@ -2,13 +2,14 @@ import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
 
-// Material del proyecto (EdMaterial.jsx): vídeos, imágenes y audios. Cada tarjeta se arrastra a la
-// timeline (DropArea con la clave «material»).
+// Material (EdMaterial.jsx): el del proyecto, la biblioteca global y los SFX, con vídeos, imágenes y
+// audios. Cada tarjeta se arrastra a la timeline (DropArea con la clave «material»).
 Rectangle {
     id: panel
     required property var model
     required property Item dragLayer
     property string filter: "all"
+    property string source: "project"
 
     radius: Theme.radiusLg
     color: Theme.card
@@ -20,7 +21,25 @@ Rectangle {
         spacing: 8
 
         Label { text: "Material"; color: Theme.text; font.pixelSize: 15; font.bold: true }
+        TabBar {
+            Layout.fillWidth: true
+            background: Rectangle { color: "transparent" }
+            Repeater {
+                model: [["project", "Proyecto"], ["library", "Biblioteca"], ["sfx", "SFX"]]
+                TabButton {
+                    required property var modelData
+                    objectName: "material:source:" + modelData[0]
+                    text: modelData[1]
+                    font.pixelSize: 12
+                    checked: panel.source === modelData[0]
+                    onClicked: panel.source = modelData[0]
+                    contentItem: Label { text: parent.text; font: parent.font; color: parent.checked ? Theme.text : Theme.muted; horizontalAlignment: Text.AlignHCenter }
+                    background: Rectangle { color: "transparent"; Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 2; color: parent.parent.checked ? Theme.accent : "transparent" } }
+                }
+            }
+        }
         Row {
+            visible: panel.source !== "sfx"
             spacing: 4
             Repeater {
                 model: [["all", "Todo"], ["video", "Vídeos"], ["image", "Imágenes"], ["audio", "Audios"]]
@@ -47,7 +66,9 @@ Rectangle {
             visible: list.count === 0
             Layout.fillWidth: true
             wrapMode: Text.Wrap
-            text: "Este proyecto no tiene material todavía."
+            text: panel.source === "library" ? "La biblioteca está vacía: guarda material de un proyecto para usarlo en todos."
+                : panel.source === "sfx" ? "No hay sonidos: elige la carpeta de SFX en los ajustes."
+                : "Este proyecto no tiene material todavía."
             color: Theme.muted
         }
         ListView {
@@ -56,7 +77,7 @@ Rectangle {
             Layout.fillHeight: true
             clip: true
             spacing: 6
-            model: panel.model.materials.filter((m) => panel.filter === "all" || m.kind === panel.filter)
+            model: panel.model.materials.filter((m) => m.source === panel.source && (panel.source === "sfx" || panel.filter === "all" || m.kind === panel.filter))
             delegate: Item {
                 id: slot
                 required property var modelData

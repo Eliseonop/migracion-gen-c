@@ -51,8 +51,8 @@ int gc::studio::run(int argc, char* argv[]) {
     gc::core::ProjectsStore store(base / "data" / "projects.json", base / "clips");
     gc::core::RandomIdSource ids;
     gc::studio::HomeModel home(store, ids);
-    gc::studio::EditorModel editor(store);
     gc::core::SettingsFile settings_file(base / "data" / "settings.json");
+    gc::studio::EditorModel editor(store, &settings_file);
     gc::studio::SettingsModel settings(settings_file);
 
     QQmlApplicationEngine engine;

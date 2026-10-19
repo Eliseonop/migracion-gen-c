@@ -4,6 +4,7 @@
 #include <QAbstractItemModel>
 #include <QCoreApplication>
 #include <filesystem>
+#include <fstream>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
@@ -691,4 +692,25 @@ TEST_CASE("editor: el estilo general de una pista de texto", "[studio]") {
     CHECK(texts == 2);
     m.select("a"); // elegir un clip suelta la pista
     CHECK(m.selectedTrack().isEmpty());
+}
+
+TEST_CASE("editor: material de la biblioteca y de la carpeta de SFX", "[studio]") {
+    Fixture f;
+    REQUIRE(core::write_json_file(
+        f.dir / "data" / "library" / "library.json",
+        {{"version", 1},
+         {"items", Json::array({{{"id", "lib_1"}, {"resource_type", "audio"}, {"filename", "tema.mp3"},
+                                 {"label", "Tema"}, {"duration", 3.0}}})}}));
+    std::filesystem::create_directories(f.dir / "sfx" / "Golpes");
+    { std::ofstream(f.dir / "sfx" / "Golpes" / "pum.wav") << "RIFF"; }
+    core::SettingsFile settings(f.dir / "data" / "settings.json");
+    REQUIRE(settings.save({{"sfx_folder", core::path_to_utf8(f.dir / "sfx")}}));
+    studio::EditorModel m(f.store, &settings);
+    REQUIRE(m.openProject("p1"));
+    QStringList sources;
+    for (const QVariant& v : m.materials()) {
+        sources << v.toMap()["source"].toString() + ":" + v.toMap()["name"].toString();
+    }
+    CHECK(sources.contains("library:Tema"));
+    CHECK(sources.contains("sfx:pum"));
 }

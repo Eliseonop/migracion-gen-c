@@ -17,6 +17,7 @@
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/session.hpp"
+#include "gc/core/settings.hpp"
 #include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
 
@@ -52,7 +53,9 @@ class EditorModel : public QObject {
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
 
 public:
-    explicit EditorModel(core::ProjectsStore& store, QObject* parent = nullptr);
+    // `settings` (opcional) da la carpeta de los SFX; la biblioteca está junto a projects.json.
+    explicit EditorModel(core::ProjectsStore& store, const core::SettingsFile* settings = nullptr,
+                         QObject* parent = nullptr);
     ~EditorModel() override;
 
     [[nodiscard]] bool isOpen() const { return session_ != nullptr; }
@@ -274,6 +277,7 @@ private:
     std::optional<core::TimelineClip> attr_clipboard_;
     std::optional<core::KeyframeBoard> kf_board_;
     std::string selected_track_;
+    const core::SettingsFile* settings_ = nullptr;
     // changeTrackStyle / applyTrackPreset: el estilo de la pista y el de todos sus textos.
     template <class Restyle>
     bool restyle_track(Restyle restyle);
