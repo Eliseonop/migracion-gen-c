@@ -189,6 +189,8 @@ public:
     Q_INVOKABLE void removeVfx(int index);
     // setClipAnimation: la animación `id` del catálogo en la ranura (in, out, loop o combo); vacío la quita.
     Q_INVOKABLE void setAnimation(const QString& slot, const QString& id);
+    // La duración de la animación de la ranura (0,1–4 s; en bucle, cada cuánto: hasta 8 s).
+    Q_INVOKABLE void setAnimationDur(const QString& slot, double dur);
     // Intensidad de una capa de ajuste (su opacidad).
     Q_INVOKABLE void setAdjustIntensity(double value);
     Q_INVOKABLE void setFilterAmount(int index, double amount);
@@ -294,7 +296,7 @@ private:
     const core::SettingsFile* settings_ = nullptr;
     // changeTrackStyle / applyTrackPreset: el estilo de la pista y el de todos sus textos.
     template <class Restyle>
-    bool restyle_track(Restyle restyle);
+    bool restyle_track(Restyle restyle, bool theme = false);
     std::map<QString, Json> payloads_; // material → dragPayload
     ClipListModel clip_model_;
     core::ClipSelection selection_;

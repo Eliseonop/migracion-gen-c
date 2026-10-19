@@ -1338,9 +1338,32 @@ Decisión de Edu (§6):
   - Las funciones internas de `VideoEditor.jsx` (`applyStaticPose`, `placeAsset`, `newTextStyle`, `changeStyle`, `changeShape`) se extraen del código fuente.
   - Mutantes comprobados en cada tanda.
 - **Interfaz entera sin pantalla:** QTest con `QT_QPA_PLATFORM=offscreen` (ratón y teclado). Así salieron varios fallos de la timeline: delegados recreados al seleccionar, la coordenada del gesto y un delegado destruido dentro de su propio manejador.
-- **Linux:** 169/169 con GCC y 138/138 con Clang + libc++.
+- **Linux:** 184/184 con GCC y 138/138 con Clang + libc++ (sin el studio).
 - **Divergencias que se quedan:**
   - Un keyframe sin id es aleatorio en el JS, así que el rombo no lo puede quitar; en C++ sí se quita.
   - `t: null` en un keyframe de pose: el JS lo toma como t = 0 y la pose de Python (la del export) lo ignora. C++ sigue a la del export.
 
-**Siguiente:** el resto del texto (temas, trazo, fondo, sombra), máscaras y filtros en el inspector. El preview espera a `gc_render`, que en Linux sigue bloqueado por la red de vcpkg.
+**Segunda tanda del mismo día:**
+
+- **Inspector en pestañas** (Clip, Color, Audio, Máscara y Animar):
+  - Transformación con texto 3D y voltear. Velocidad; un audio estira sus subtítulos enlazados.
+  - Textos: temas de subtítulos y estilos «Aa», con tablas generadas desde el JS con `tools/gen/gen_text_themes.mjs`. Trazo, fondo, sombra, brillo, mayúsculas, espaciado y el estilo general de una pista.
+  - Figuras. Filtros de color, ajustes de color y capa de ajuste.
+  - Efectos sencillos y animados del catálogo (`vfx_stack.hpp`).
+  - Efectos de sonido. Máscaras (`mask_edit.hpp`). Animaciones de clip por ranura.
+  - Curva del keyframe.
+- **Timeline:**
+  - Keyframes que se arrastran.
+  - Alt+C/V/D: copiar, pegar y duplicar keyframes.
+  - Ctrl+Alt+C/V: copiar y pegar atributos.
+  - Marcadores que se mueven, nombran y quitan. Beats en el clip.
+  - Alt para reemplazar y autodesplazamiento.
+- **Material:** proyecto, biblioteca, colecciones y SFX, con búsqueda.
+- **Paridad:** la del editor pasa a unas 45 000 llamadas.
+- **Sin fixture del JS** (lógica dentro de componentes de React): `transform_view` y la lógica del `EditorModel` (efectos, filtros, atributos, animaciones…). Tienen tests propios y los ha revisado el revisor de la migración contra el JS.
+
+**Siguiente:**
+- El resto del texto (opacidades y desenfoques de fondo, sombra y brillo, curva, karaoke por palabra).
+- El historial de deshacer en disco en el studio.
+- Recortar.
+- El preview espera a `gc_render`.

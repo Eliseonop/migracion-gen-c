@@ -1032,7 +1032,7 @@ Rectangle {
             }
 
             Repeater {
-                model: panel.has && ["video", "image", "text", "shape"].indexOf(panel.clip.kind) >= 0 ? panel.model.animationSlots : []
+                model: panel.has && ["video", "image", "motion", "text", "shape"].indexOf(panel.clip.kind) >= 0 ? panel.model.animationSlots : []
                 RowLayout {
                     required property var modelData
                     Label { Layout.preferredWidth: 70; text: modelData.label; color: Theme.textSecondary }
@@ -1041,6 +1041,14 @@ Rectangle {
                         options: [["", "Ninguna"]].concat(modelData.items.map((a) => [a.id, a.name]))
                         current: panel.clip.animations[modelData.id] || ""
                         onPicked: (v) => panel.model.setAnimation(modelData.id, v)
+                    }
+                    Num {
+                        visible: !!panel.clip.animations[modelData.id] && modelData.id !== "combo"
+                        Layout.preferredWidth: 80
+                        title: ""
+                        suffix: "s"
+                        value: panel.clip.animations[modelData.id + "Dur"] ?? 0
+                        onCommitted: (v) => panel.model.setAnimationDur(modelData.id, v)
                     }
                 }
             }

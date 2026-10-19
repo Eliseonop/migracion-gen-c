@@ -624,6 +624,10 @@ TEST_CASE("editor: animaciones de clip del catálogo por ranura", "[studio]") {
     CHECK(m.selectedClip()["animations"].toMap()["in"] == "fade_in");
     const core::Timeline tl = f.saved();
     CHECK(tl.clips.front()->animations->at("in") == Json{{"id", "fade_in"}, {"dur", 0.5}});
+    m.setAnimationDur("in", 9);
+    CHECK(m.selectedClip()["animations"].toMap()["inDur"] == 4.0); // hasta 4 s
+    m.setAnimation("in", "zoom_in");
+    CHECK(m.selectedClip()["animations"].toMap()["inDur"] == 4.0); // otra animación conserva la duración
     m.setAnimation("in", "");
     CHECK(m.selectedClip()["animations"].toMap().isEmpty());
     CHECK_FALSE(f.saved().clips.front()->animations);

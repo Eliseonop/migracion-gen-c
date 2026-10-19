@@ -16,6 +16,7 @@
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/collections.hpp"
+#include "gc/core/io.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/library.hpp"
 #include "gc/core/mask_edit.hpp"
@@ -44,6 +45,12 @@ QVariantMap to_variant(const Json& json) {
 }
 
 double js_fixed1(double v) { return std::isfinite(v) ? core::js_fixed(v, 1) : 0.0; }
+
+// ASSETS_DIR de config.py: VIDEO_YT_ASSETS o «assets» junto a la carpeta raíz.
+std::filesystem::path assets_dir(const std::filesystem::path& data_dir) {
+    const QByteArray env = qgetenv("VIDEO_YT_ASSETS");
+    return env.isEmpty() ? data_dir.parent_path().parent_path() / "assets" : core::path_from_utf8(env.toStdString());
+}
 
 Json vfx_list(const core::TimelineClip* c) { return c && c->vfx && c->vfx->is_array() ? *c->vfx : Json::array(); }
 
@@ -228,7 +235,7 @@ void EditorModel::load_sfx(const std::string& q, const std::string& category) {
     const auto data_dir = store_.file().parent_path();
     const Json settings = settings_ ? settings_->load() : Json::object();
     const Json sfx = core::sfx_search(
-        core::sfx_base(settings, data_dir.parent_path().parent_path() / "assets" / "sfx_library"), settings, q, category);
+        core::sfx_base(settings, assets_dir(data_dir) / "sfx_library"), settings, q, category);
     for (const Json& item : sfx.value("items", Json::array())) {
         const QString key = "sfx:" + qstr(item.value("id", ""));
         const Json payload = core::drag_payload("sfx", item);
@@ -253,7 +260,7 @@ void EditorModel::load_collections(const std::string& q, const std::string& coll
                      materials_.end());
     const auto data_dir = store_.file().parent_path();
     const Json settings = settings_ ? settings_->load() : Json::object();
-    const auto root = core::collections_root(settings, data_dir.parent_path().parent_path() / "assets" / "material");
+    const auto root = core::collections_root(settings, assets_dir(data_dir) / "material");
     collections_.clear();
     if (const auto list = core::list_collections(root, settings)) {
         for (const Json& c : list->value("collections", Json::array())) {
@@ -474,6 +481,9 @@ QVariantMap EditorModel::selectedClip() const {
              if (c->animations && c->animations->is_object()) {
                  for (const auto& [slot, v] : c->animations->items()) {
                      out[qstr(slot)] = qstr(v.is_object() ? v.value("id", "") : "");
+                     if (v.is_object() && v.contains("dur") && v.at("dur").is_number()) {
+                         out[qstr(slot) + "Dur"] = v.at("dur").get<double>();
+                     }
                  }
              }
              return out;
@@ -622,7 +632,7 @@ QVariantMap EditorModel::selectedTrack() const {
 }
 
 template <class Restyle>
-bool EditorModel::restyle_track(Restyle restyle) {
+bool EditorModel::restyle_track(Restyle restyle, bool theme) {
     const core::TimelineTrack* t = selected_track_.empty() || !selection_.ids.empty() ? nullptr : track(qstr(selected_track_));
     if (!t || t->kind != "text") {
         return false;
@@ -631,7 +641,7 @@ bool EditorModel::restyle_track(Restyle restyle) {
     core::Timeline next = *session_->timeline();
     for (auto& tr : next.tracks) {
         if (tr.id == id) {
-            tr.style = restyle(tr.style.value_or(core::default_text_style()));
+            tr.style = restyle(tr.style.value_or(theme ? Json::object() : core::default_text_style()));
         }
     }
     std::vector<std::string> changed;
@@ -1325,7 +1335,9 @@ void EditorModel::addShape(const QString& type, const QString& label) {
     }
     core::Timeline next = *session_->timeline();
     const core::TimelineClip* sel = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
-    const core::TimelineTrack* own = sel ? track(qstr(sel->track_id)) : nullptr;
+    const core::TimelineTrack* own = !selected_track_.empty() ? track(qstr(selected_track_))
+                                     : sel                     ? track(qstr(sel->track_id))
+                                                               : nullptr; // selTrackId
     const auto usable = [](const core::TimelineTrack& t) { return t.kind == "video" && !t.locked; };
     const auto first = std::ranges::find_if(next.tracks, usable);
     const std::string tid = own && usable(*own) ? own->id : first != next.tracks.end() ? first->id : "";
@@ -1390,7 +1402,9 @@ void EditorModel::moveKeyframe(const QString& clipId, const QString& kfId, doubl
     const double t = local ? std::clamp(fraction * dur, 0.0, dur)
                            : std::clamp(c->in_point + fraction * (c->out_point - c->in_point), c->in_point, c->out_point);
     const double snapped = core::snap_to_frame(t, fps());
-    const double head = local ? c->start + snapped : c->start + (snapped - c->in_point) / core::ui_clip_speed(*c);
+    const double head = local        ? c->start + snapped // sourceToTimeline en el encuadre
+                        : c->reverse ? c->start + (c->out_point - snapped) / core::ui_clip_speed(*c)
+                                     : c->start + (snapped - c->in_point) / core::ui_clip_speed(*c);
     core::TimelineClip moved = *c;
     core::move_keyframe(moved, kfId.toStdString(), snapped, fps(), ids_);
     if (core::to_json(moved) != core::to_json(*c)) { // un clic sin arrastrar solo lleva el cabezal
@@ -1788,10 +1802,15 @@ void EditorModel::setAnimation(const QString& slot, const QString& id) {
     const auto catalog = core::fx_catalog();
     const Json* anim = catalog && !id.isEmpty() ? catalog->anim(id.toStdString()) : nullptr;
     Json value;
-    if (anim) {
+    if (anim) { // EdAnimPicker: la duración que ya tenía la ranura del clip principal se conserva
+        const core::TimelineClip* primary = clip(qstr(selection_.ids.front()));
+        const Json old = primary && primary->animations && primary->animations->is_object()
+                             ? primary->animations->value(slot.toStdString(), Json())
+                             : Json();
         value = {{"id", id.toStdString()}};
         if (slot != "combo") {
-            value["dur"] = anim->value("dur", Json());
+            value["dur"] = old.is_object() && old.contains("dur") && !old.at("dur").is_null() ? old.at("dur")
+                                                                                              : anim->value("dur", Json());
         }
     }
     core::Timeline next = *session_->timeline();
@@ -1808,6 +1827,26 @@ void EditorModel::setAnimation(const QString& slot, const QString& id) {
             anims[slot.toStdString()] = value;
         }
         c.mut().animations = anims.empty() ? std::nullopt : std::optional(anims);
+    }
+    commit(std::move(next), "animation", selection_.ids);
+}
+
+void EditorModel::setAnimationDur(const QString& slot, double dur) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const Json entry = c && c->animations && c->animations->is_object() ? c->animations->value(slot.toStdString(), Json())
+                                                                       : Json();
+    if (!entry.is_object() || !entry.contains("id") || slot == "combo") {
+        return;
+    }
+    const double max = slot == "loop" ? 8 : 4;
+    const Json value = {{"id", entry.at("id")}, {"dur", std::clamp(dur, 0.1, max)}};
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (std::ranges::find(selection_.ids, item->id) != selection_.ids.end() && item->animations) {
+            Json anims = *item->animations;
+            anims[slot.toStdString()] = value;
+            item.mut().animations = anims;
+        }
     }
     commit(std::move(next), "animation", selection_.ids);
 }
@@ -1868,9 +1907,12 @@ void EditorModel::applyTextTheme(const QString& id) {
     const core::TimelineTrack* t = selected_track_.empty() ? nullptr : track(qstr(selected_track_));
     if (!source && theme && t) { // applyTrackPreset: quitar si la pista ya lo tiene
         const bool clearing = core::selected_subtitle_theme_id(t->style.value_or(Json())) == id.toStdString();
-        restyle_track([&](const Json& style) {
-            return clearing ? core::clear_text_theme(style) : core::apply_theme_to_style(style, *theme);
-        });
+        restyle_track(
+            [&](const Json& style) {
+                return clearing ? core::clear_text_theme(style) : core::apply_theme_to_style(style, *theme);
+            },
+            true); // applyTrackPreset parte del estilo de la pista tal cual
+
         return;
     }
     if (!source || !theme) {
