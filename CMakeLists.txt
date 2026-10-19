@@ -41,7 +41,12 @@ endif()
 
 if(GC_BUILD_STUDIO)
     find_package(Qt6 6.4 QUIET COMPONENTS Quick QuickControls2)
-    if(Qt6_FOUND)
+    # Un Qt compilado con libstdc++ (el de las distribuciones Linux) no enlaza con libc++.
+    include(CheckCXXSourceCompiles)
+    check_cxx_source_compiles("#include <version>\n#ifndef _LIBCPP_VERSION\n#error\n#endif\nint main() {}" GC_LIBCXX)
+    if(Qt6_FOUND AND GC_LIBCXX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        message(STATUS "Qt ${Qt6_VERSION} encontrado, pero con libc++ no enlaza: genclip-studio no se compila")
+    elseif(Qt6_FOUND)
         message(STATUS "Qt ${Qt6_VERSION} encontrado: se compila genclip-studio")
         add_subdirectory(apps/studio)
     endif()
