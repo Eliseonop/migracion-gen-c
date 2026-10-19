@@ -52,6 +52,26 @@ QString clip_label(const core::TimelineClip& c) {
     return name.isEmpty() ? qstr(c.filename) : name;
 }
 
+// Puntos de keyframe del clip (ClipBlock de EdTimeline): fracción 0–1 de su ancho. Los de pose van
+// en tiempo local; sin ellos, los del encuadre, que van en tiempo de la fuente.
+QVariantList keyframe_marks(const core::TimelineClip& c) {
+    QVariantList out;
+    const double dur = core::ui_clip_duration(c);
+    if (core::keyframes_enabled(c) && c.keyframes->contains("items") && c.keyframes->at("items").is_array()) {
+        for (const Json& k : c.keyframes->at("items")) {
+            if (k.is_object() && k.contains("t") && k.at("t").is_number()) {
+                out << k.at("t").get<double>() / (dur > 0 ? dur : 1);
+            }
+        }
+    } else if (c.reframe && (c.kind == "video" || c.kind == "image")) {
+        const double src = std::max(0.0, c.out_point - c.in_point);
+        for (const core::Keyframe& k : c.reframe->keyframes) {
+            out << (k.t - c.in_point) / (src > 0 ? src : 1);
+        }
+    }
+    return out;
+}
+
 QString speed_badge(const core::TimelineClip& c) {
     const double sp = core::ui_clip_speed(c);
     if (c.kind == "text" || sp == 1) {
@@ -176,7 +196,8 @@ void EditorModel::rebuild() {
                             {"clipHeight", row->second.second - 2 * kClipInset},
                             {"muted", c->muted},
                             {"disabled", c->disabled},
-                            {"locked", locked[c->track_id]}});
+                            {"locked", locked[c->track_id]},
+                            {"kfs", keyframe_marks(*c)}});
         }
     }
     clip_model_.sync(std::move(rows));

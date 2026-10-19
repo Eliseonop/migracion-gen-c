@@ -299,6 +299,7 @@ Rectangle {
                     required property bool muted
                     required property bool disabled
                     required property bool locked
+                    required property var kfs
                     objectName: "clip:" + clipId
                     readonly property var palette3: timeline.colorsOf(kind)
                     readonly property var dp: timeline.drag
@@ -325,6 +326,21 @@ Rectangle {
                         GradientStop { position: 1; color: block.palette3[1] }
                     }
 
+                    Repeater { // keyframes del clip seleccionado, con los colores de kfColor
+                        model: block.selected ? block.kfs : []
+                        Rectangle {
+                            required property real modelData
+                            required property int index
+                            visible: x > -7 && x < block.width + 3
+                            x: modelData * block.width - 4
+                            y: block.height / 2 - 4
+                            width: 8
+                            height: 8
+                            rotation: 45
+                            z: 2
+                            color: ["#e8a34d", "#5aa9e6", "#67b99a", "#c98bb9", "#e0757c", "#8f8ff0", "#c9b458", "#6ac4c9"][index % 8]
+                        }
+                    }
                     Label {
                         anchors.fill: parent
                         anchors.leftMargin: 8
