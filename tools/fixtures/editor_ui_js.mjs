@@ -37,6 +37,31 @@ function extractFunction(file, name) {
 const applyStaticPose = new Function('clampVolume', 'AUDIO_FX_KEYS', 'newTransform', 'newReframe',
   `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'applyStaticPose')}`)(
   kf.clampVolume, kf.AUDIO_FX_KEYS, layout.newTransform, m.newReframe)
+const extract = await load('features/editor/clipExtract.js')
+const dragPayload = new Function('IMAGE_DEFAULT_DUR', 'materialDuration', 'segmentRange', 'hasFaceTrack',
+  `return ${extractFunction(`${root}/features/editor/MaterialClipGrid.jsx`, 'dragPayload')}`)(
+  m.IMAGE_DEFAULT_DUR, extract.materialDuration, extract.segmentRange, extract.hasFaceTrack)
+// placeAsset de VideoEditor.jsx con su setClips capturado (solo vídeo, imagen y audio).
+const placeAsset = (payload, trackId, start, fitDur) => {
+  let made = null
+  const setClips = (fn) => { made = fn([])[0] }
+  const fn = new Function('makeClip', 'isGeneratedDurationClip', 'clipDur', 'clipSpeed', 'setClips', 'setSelClipId',
+    'setSelClipIds', 'chromaBg', `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'placeAsset')}`)(
+    m.makeClip, m.isGeneratedDurationClip, m.clipDur, m.clipSpeed, setClips, () => {}, () => {}, () => ({}))
+  fn(payload, trackId, start, fitDur)
+  return made
+}
+// Sin ids (salen de la hora): el del clip y los de los keyframes del encuadre.
+const clipNoIds = (c) => {
+  if (!c) return c
+  const { id, ...rest } = c
+  if (rest.reframe) {
+    const strip = (arr) => (arr || []).map(({ id: _, ...k }) => k)
+    rest.reframe = { ...rest.reframe, keyframes: strip(rest.reframe.keyframes), keyframes2: strip(rest.reframe.keyframes2) }
+  }
+  return rest
+}
+
 // commitPose de VideoEditor.jsx para un clip (sus refs y la selección aparte).
 const commitPose = (c, patch, localT, fps) => {
   if (!kf.canKeyframe(c)) return c
@@ -117,6 +142,11 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     upsertKeyframeAt: (id, t, patch, interp, fps) => noIds(kf.upsertKeyframeAt(byId(id), t, patch, interp ?? undefined, fps)).keyframes,
     applyStaticPose: (id, patch) => poseView(applyStaticPose(byId(id), patch)),
     commitPose: (id, patch, t, fps) => poseView(commitPose(byId(id), patch, t, fps)),
+    dragPayload: (assetKind, item) => JSON.parse(dragPayload(assetKind, item)),
+    makeClip: (assetKind, item, track, start, dur) => clipNoIds(m.makeClip(assetKind, item, track, start, dur ?? undefined)),
+    placeAsset: (payload, track, start, fit) => clipNoIds(placeAsset(payload, track, start, fit ?? undefined)),
+    segmentRange: (item) => extract.segmentRange(item),
+    materialDuration: (item) => extract.materialDuration(item),
     emptiedTracks: (candidates) => m.emptiedTracks(tracks, clips, candidates),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)

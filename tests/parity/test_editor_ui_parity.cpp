@@ -11,6 +11,7 @@
 
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/material_drop.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
@@ -380,6 +381,32 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
             commit_pose(c, call.at(2), num(3), num(4), ids);
         }
         return pose_view(c);
+    }
+    if (fn == "segmentRange") {
+        const auto r = segment_range(call.at(1));
+        return r ? Json{{"in", r->first}, {"out", r->second}} : Json();
+    }
+    if (fn == "materialDuration") {
+        return material_duration(call.at(1));
+    }
+    if (fn == "dragPayload") {
+        return drag_payload(str(1), call.at(2));
+    }
+    if (fn == "makeClip" || fn == "placeAsset") {
+        SequentialIdSource ids;
+        Json c = fn == "makeClip"
+                     ? make_clip_json(str(1), call.at(2), str(3), num(4), call.at(5), ids)
+                     : place_asset_clip(call.at(1), str(2), num(3),
+                                        call.at(4).is_number() ? std::optional(num(4)) : std::nullopt, ids);
+        c.erase("id");
+        if (c.contains("reframe") && c["reframe"].is_object()) {
+            for (const char* key : {"keyframes", "keyframes2"}) {
+                for (Json& k : c["reframe"][key]) {
+                    k.erase("id");
+                }
+            }
+        }
+        return c;
     }
     if (fn == "emptiedTracks") {
         return emptied_tracks(tl.tracks, tl.clips, strings(call.at(1)));

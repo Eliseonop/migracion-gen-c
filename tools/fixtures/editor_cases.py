@@ -232,11 +232,55 @@ def _pose_calls(rng: random.Random) -> list:
     return calls
 
 
+MATERIALS = [
+    ("clips", {"index": 0, "filename": "c0.mp4", "start": 3.5, "end": 9.25, "label": "Entrevista", "created_at": "2026-01-01"}),
+    ("clips", {"index": 2, "filename": "c2.mp4", "duration": 12, "title": "sin etiqueta", "text": "dice algo"}),
+    ("clips", {"index": 5, "filename": "orig.mp4", "in_point": 10, "out_point": 14.5, "face_track": True,
+               "reframe": {"zoom": 0.7, "keyframes": [{"t": 10.5, "cx": 0.4, "cy": 0.5}, {"id": "k9", "t": 12, "cx": 0.6, "cy": 0.5}]}}),
+    ("clips", {"index": 6, "filename": "m.mp4", "start": 0, "end": 4, "reframe": {"master": True, "zoom": 0.5}}),
+    ("clips", {"index": 7, "filename": "s.mp4", "in_point": "3", "out_point": "", "start": None, "end": 3}),
+    ("clips", {"id": "lib_abc", "filename": "lib.mp4", "duration": 5, "scope": "library"}),
+    ("clips", {"id": "col_xyz", "filename": "col.mp4", "start": 1, "end": 2}),
+    ("images", {"id": "i1", "filename": "logo.png", "name": "Logo"}),
+    ("images", {"id": "i2", "filename": "loop.gif", "animated": True, "duration": 2.4}),
+    ("images", {"id": "i3", "filename": "x.gif", "animated": True, "duration": 0, "loop": False}),
+    ("audios", {"id": "a1", "filename": "musica.mp3", "duration": 92.5, "label": "Música", "description": "tema"}),
+    ("audios", {"id": "a2", "filename": "voz.wav", "duration": "7"}),
+    ("audios", {"id": "a3", "filename": "corto.wav", "duration": 0.1}),
+    ("sfx", {"id": "Whoosh/fast.mp3", "name": "fast", "duration": 1.2}),
+    ("sfx", {"id": "x.ogg", "chromaColor": "#00ff00"}),
+]
+
+
+def _material_calls(rng: random.Random) -> list:
+    calls: list = []
+    for kind, item in MATERIALS:
+        calls.append(["segmentRange", item])
+        calls.append(["materialDuration", item])
+        calls.append(["dragPayload", kind, item])
+        for start in (0, -2, 3.14159):
+            calls.append(["makeClip", kind, item, "V1", start, rng.choice([None, 0, 2, "3", 0.1, 4.5])])
+    for kind, item in MATERIALS:
+        if kind == "sfx" and "chromaColor" in item:
+            continue
+        payload = {"asset_kind": kind, "asset_id": str(item.get("index", item.get("id"))), "filename": item.get("filename", item.get("id")),
+                   "name": item.get("label") or item.get("name") or item.get("filename"), "duration": item.get("duration", 3),
+                   "scope": item.get("scope", "project"), "reframe": item.get("reframe"), "description": None,
+                   "media_version": None, "animated": item.get("animated"), "loop": item.get("loop")}
+        if "in_point" in item:
+            payload["in_point"], payload["out_point"] = item["in_point"], item["out_point"]
+        payload = {k: v for k, v in payload.items() if v is not None or k in ("reframe", "description", "media_version")}
+        for fit in (None, 0, 1.5, 100):
+            calls.append(["placeAsset", payload, "V2", rng.choice([0, 2.5, 7.0001]), fit])
+    return calls
+
+
 def cases() -> list[dict]:
     rng = random.Random(20261019)
     out = [{"name": "toFixed", "timeline": {"tracks": TRACKS, "clips": []},
             "calls": [["toFixed", x] for x in FIXED] + [["toFixed", rng.uniform(-100, 100)] for _ in range(300)]}]
     out.append({"name": "pose", "timeline": {"tracks": TRACKS, "clips": POSE_CLIPS}, "calls": _pose_calls(rng)})
+    out.append({"name": "material", "timeline": {"tracks": TRACKS, "clips": []}, "calls": _material_calls(rng)})
     out.append({"name": "vista", "timeline": {"tracks": TRACKS, "clips": []}, "calls": _view_calls(rng)})
     shuffled = [track("A2", "audio"), track("V1", "video"), track("A1", "audio"), track("T1", "text"),
                 track("V2", "video"), track("T2", "text")]

@@ -43,6 +43,7 @@ add_library(gc_core
     src/image_probe.cpp
     src/keyframes.cpp
     src/layers.cpp
+    src/material_drop.cpp
     src/library.cpp
     src/masks.cpp
     src/no_overlap.cpp
