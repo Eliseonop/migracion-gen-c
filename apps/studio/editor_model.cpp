@@ -15,6 +15,7 @@
 #include "gc/core/no_overlap.hpp"
 #include "gc/core/pose.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/shapes.hpp"
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_rules.hpp"
 #include "gc/core/timeline_view.hpp"
@@ -981,15 +982,60 @@ void EditorModel::addText() {
         core::insert_track(next.tracks, std::move(t));
     }
     const double dur = core::new_text_duration(next, playhead_);
-    auto made = core::clip_from_json(core::make_text_clip_json(tid, playhead_, dur, core::kDefaultText, style, ids_));
+    add_generated(std::move(next), core::make_text_clip_json(tid, playhead_, dur, core::kDefaultText, style, ids_), "add-text");
+}
+
+void EditorModel::add_generated(core::Timeline next, Json clip, const char* cause) {
+    auto made = core::clip_from_json(clip);
     if (!ok(made)) {
         return;
     }
     const std::string id = made->id;
     next.clips.emplace_back(std::move(*made));
     selection_ = {{id}, id};
-    commit(std::move(next), "add-text", {id});
+    commit(std::move(next), cause, {id});
     emit selectionChanged();
+}
+
+// targetTrackFor('video'): la pista del clip seleccionado si es de vídeo y no está bloqueada; si no,
+// la primera así. Si ahí hay un clip, settle sube la figura a la pista de encima.
+void EditorModel::addShape(const QString& type, const QString& label) {
+    if (!session_) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    const core::TimelineClip* sel = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const core::TimelineTrack* own = sel ? track(qstr(sel->track_id)) : nullptr;
+    const auto usable = [](const core::TimelineTrack& t) { return t.kind == "video" && !t.locked; };
+    const auto first = std::ranges::find_if(next.tracks, usable);
+    const std::string tid = own && usable(*own) ? own->id : first != next.tracks.end() ? first->id : "";
+    if (tid.empty()) {
+        return;
+    }
+    const Json preset = {{"type", type.toStdString()}, {"label", label.toStdString()}};
+    add_generated(std::move(next), core::make_shape_clip_json(tid, playhead_, core::kShapeDefaultDuration, preset, ids_), "add-shape");
+}
+
+// topFreeVideoTrack: la pista de vídeo de arriba si está libre en ese tramo; si no, una nueva encima.
+void EditorModel::addAdjustment() {
+    if (!session_) {
+        return;
+    }
+    constexpr double kDur = 5;
+    core::Timeline next = *session_->timeline();
+    const auto top = std::ranges::find_last(next.tracks, std::string("video"), &core::TimelineTrack::kind);
+    const bool busy = top.empty() || top.front().locked ||
+                      std::ranges::any_of(next.clips, [&](const auto& c) {
+                          return c->track_id == top.front().id && c->start < playhead_ + kDur - 1e-6 &&
+                                 core::ui_clip_end(*c) > playhead_ + 1e-6;
+                      });
+    std::string tid = busy ? "" : top.front().id;
+    if (busy) {
+        core::TimelineTrack t = core::build_track("video", next.tracks, ids_.hex32().substr(0, 8));
+        tid = t.id;
+        core::insert_track(next.tracks, std::move(t));
+    }
+    add_generated(std::move(next), core::make_adjustment_clip_json(tid, playhead_, kDur, ids_), "add-adjustment");
 }
 
 void EditorModel::changeText(const QString& text) {

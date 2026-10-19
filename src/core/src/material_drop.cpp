@@ -4,6 +4,7 @@
 #include <cmath>
 #include <initializer_list>
 
+#include "gc/core/shapes.hpp"
 #include "gc/core/timeline_ui.hpp"
 
 namespace gc::core {
@@ -288,6 +289,68 @@ Json make_clip_json(std::string_view asset_kind, const Json& item, std::string_v
     c["effects"] = Json::object();
     c["audio_fx"] = Json::object();
     c["description"] = *either({get(item, "description"), get(item, "text"), Json()});
+    c["dup_of"] = nullptr;
+    return c;
+}
+
+namespace {
+
+Json generated_clip(std::string_view kind, std::string_view track_id, double start, double span, IdSource& ids) {
+    Json c = Json::object();
+    c["id"] = make_uid(ids, "c");
+    c["track_id"] = track_id;
+    c["kind"] = kind;
+    c["asset_kind"] = kind;
+    c["asset_id"] = kind;
+    c["filename"] = "";
+    c["name"] = "";
+    c["start"] = js_fixed3(std::max(0.0, start));
+    c["in_point"] = 0;
+    c["out_point"] = span;
+    c["source_duration"] = span;
+    c["volume"] = 1;
+    c["muted"] = false;
+    c["speed"] = 1;
+    c["keep_pitch"] = true;
+    c["reverse"] = false;
+    c["speed_curve"] = nullptr;
+    c["reframe"] = nullptr;
+    c["appear"] = "none";
+    c["exit"] = "none";
+    c["look"] = "none";
+    c["effects"] = Json::object();
+    return c;
+}
+
+} // namespace
+
+Json make_shape_clip_json(std::string_view track_id, double start, double duration, const Json& preset, IdSource& ids) {
+    const Value nested = get(preset, "shape");
+    const Value type = either({get(preset, "type"), nested ? get(*nested, "type") : Value(), get(preset, "shape_type"),
+                               Json("rect")});
+    Json shape = default_shape(*type);
+    if (truthy(nested) && nested->is_object()) {
+        for (const auto& [key, value] : nested->items()) {
+            shape[key] = value;
+        }
+    }
+    Json c = generated_clip("shape", track_id, start, js_fixed3(std::max(0.3, duration != 0 && !std::isnan(duration) ? duration : kShapeDefaultDuration)), ids);
+    c["asset_id"] = *type;
+    c["name"] = *either({get(preset, "label"), get(preset, "name"), get(shape, "type")});
+    c["audio_fx"] = Json::object();
+    c["shape"] = shape;
+    c["description"] = nullptr;
+    c["dup_of"] = nullptr;
+    return c;
+}
+
+Json make_adjustment_clip_json(std::string_view track_id, double start, double duration, IdSource& ids) {
+    Json c = generated_clip("adjustment", track_id, start, js_fixed3(std::max(0.3, duration != 0 && !std::isnan(duration) ? duration : 5)), ids);
+    c["name"] = "Capa de ajuste";
+    c["filters"] = Json::array();
+    c["opacity"] = 1;
+    c["audio_fx"] = Json::object();
+    c["description"] = nullptr;
     c["dup_of"] = nullptr;
     return c;
 }

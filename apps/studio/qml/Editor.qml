@@ -72,6 +72,29 @@ Item {
                 elide: Text.ElideRight
             }
             IconButton { objectName: "editor:addText"; text: "T"; tip: "Añadir texto en el cabezal"; onClicked: editor.model.addText() }
+            IconButton {
+                objectName: "editor:addShape"
+                text: "◆"
+                tip: "Figuras y capa de ajuste"
+                onClicked: shapeMenu.popup()
+                Menu {
+                    id: shapeMenu
+                    Repeater {
+                        model: [["square", "Cuadrado"], ["circle", "Círculo"], ["rect", "Rectángulo"], ["line", "Línea"],
+                                ["arrow", "Flecha"], ["arrow_curve", "Flecha curva"], ["arrow_double", "Flecha doble"],
+                                ["triangle", "Triángulo"], ["star", "Estrella"], ["polygon", "Polígono"], ["speech", "Burbuja"],
+                                ["check", "Check"], ["x", "X"], ["marker", "Marcador"], ["heart", "Corazón"]]
+                        MenuItem {
+                            required property var modelData
+                            objectName: "shape:" + modelData[0]
+                            text: modelData[1]
+                            onTriggered: editor.model.addShape(modelData[0], modelData[1])
+                        }
+                    }
+                    MenuSeparator {}
+                    MenuItem { objectName: "shape:adjustment"; text: "Capa de ajuste"; onTriggered: editor.model.addAdjustment() }
+                }
+            }
             IconButton { text: "⚙"; tip: "Ajustes (Ctrl+,)"; onClicked: editor.openSettings() }
             IconButton { text: "↶"; tip: "Deshacer (Ctrl+Z)"; enabled: editor.model.canUndo; onClicked: editor.model.undo() }
             IconButton { text: "↷"; tip: "Rehacer (Ctrl+Y)"; enabled: editor.model.canRedo; onClicked: editor.model.redo() }

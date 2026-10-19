@@ -27,6 +27,11 @@ namespace gc::core {
 // Clip nuevo de vídeo, imagen o audio a partir de un material.
 [[nodiscard]] Json make_clip_json(std::string_view asset_kind, const Json& item, std::string_view track_id,
                                   double start, const Json& duration, IdSource& ids);
+// makeShapeClip: figura del catálogo (`preset` = {type, label, shape…}).
+[[nodiscard]] Json make_shape_clip_json(std::string_view track_id, double start, double duration, const Json& preset,
+                                        IdSource& ids);
+// makeAdjustmentClip: capa de ajuste (filtra lo que tiene debajo).
+[[nodiscard]] Json make_adjustment_clip_json(std::string_view track_id, double start, double duration, IdSource& ids);
 // El clip que crea soltar `payload` en `track_id` a `start`; `fit_duration` es la del clip al que
 // reemplaza (un vídeo o audio más largo se recorta; una imagen toma esa duración).
 [[nodiscard]] Json place_asset_clip(const Json& payload, std::string_view track_id, double start,

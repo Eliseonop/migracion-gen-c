@@ -23,6 +23,7 @@ const kf = await load('lib/clipKeyframes.js')
 const layout = await load('lib/clipLayout.js')
 const textstyles = await load('lib/textstyles.js')
 const karaoke = await load('lib/textKaraoke.js')
+const shapes = await load('lib/shapes.js')
 
 // applyStaticPose vive dentro de VideoEditor.jsx (no se exporta): se extrae su texto y se evalúa con
 // lo que usa. Es JS sin JSX.
@@ -208,6 +209,15 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     cropCursor: (hx, hy) => layout.cropCursor(hx, hy),
     freeFrameAt: (id, t, sw, sh, ow, oh) => layout.freeFrameAt(byId(id), t, sw, sh, ow, oh),
     hitTransformHandle: (px, py, dest) => layout.hitTransformHandle(px, py, dest),
+    defaultShape: (type) => shapes.defaultShape(type ?? undefined),
+    makeShapeClip: (track, start, dur, preset) => {
+      const { id, ...rest } = m.makeShapeClip(track, start, dur ?? undefined, preset ?? undefined)
+      return rest
+    },
+    makeAdjustmentClip: (track, start, dur) => {
+      const { id, ...rest } = m.makeAdjustmentClip(track, start, dur ?? undefined)
+      return rest
+    },
     defaultTextStyle: () => textstyles.defaultTextStyle(),
     subtitleStyle: () => textstyles.subtitleStyle(),
     newTextStyle: (trackStyle) => newTextStyle(trackStyle),

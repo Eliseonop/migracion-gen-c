@@ -368,6 +368,16 @@ def _text_calls(rng: random.Random) -> list:
     for text in ("hola", "", "Una frase bastante larga para el nombre", "ñandú 😀😀 emojis largos fin"):
         for start, dur in ((0, 3), (-1, 0.2), (2.0004, 7.12345)):
             calls.append(["makeTextClip", "T1", start, dur, text, rng.choice([None, {"size": 0.1}])])
+    types = ["square", "circle", "rect", "line", "arrow", "arrow_curve", "arrow_double", "triangle", "star", "polygon",
+             "speech", "check", "x", "marker", "heart", "path", "letterbox", "ellipse", None, "nada"]
+    for t in types:
+        calls.append(["defaultShape", t])
+    for preset in [{"type": "star", "label": "Estrella"}, {"shape": {"type": "circle", "fill": "#00ff00"}}, {"shape_type": "x"},
+                   {"name": "sin tipo"}, {"type": "path", "label": "Trazado", "shape": {"points": [[0, 0], [1, 1]]}}, None]:
+        for start, dur in ((0, None), (-2, 0.1), (3.0006, 7)):
+            calls.append(["makeShapeClip", "V2", start, dur, preset])
+    for start, dur in ((0, None), (-2, 0.1), (3.0006, 7), (1, 0)):
+        calls.append(["makeAdjustmentClip", "V2", start, dur])
     for ph in (0, 2.5, 30, 11.9996):
         calls.append(["newTextDuration", ph])
     for c in TEXT_CLIPS:

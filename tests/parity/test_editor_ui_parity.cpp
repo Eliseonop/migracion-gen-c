@@ -15,6 +15,7 @@
 #include "gc/core/io.hpp"
 #include "gc/core/material_drop.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/shapes.hpp"
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
@@ -542,6 +543,17 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
                                                d.at("dw").get<double>(), d.at("dh").get<double>(),
                                                d.at("rotation").get<double>()});
         return hit ? Json(*hit) : Json();
+    }
+    if (fn == "defaultShape") {
+        return default_shape(call.at(1));
+    }
+    if (fn == "makeShapeClip" || fn == "makeAdjustmentClip") {
+        SequentialIdSource ids;
+        const double dur = call.at(3).is_number() ? num(3) : 0;
+        Json c = fn == "makeShapeClip" ? make_shape_clip_json(str(1), num(2), dur, call.at(4), ids)
+                                       : make_adjustment_clip_json(str(1), num(2), dur, ids);
+        c.erase("id");
+        return c;
     }
     if (fn == "defaultTextStyle") {
         return default_text_style();

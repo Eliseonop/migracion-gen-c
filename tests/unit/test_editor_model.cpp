@@ -413,3 +413,23 @@ TEST_CASE("editor: añadir un texto crea su pista y se edita desde el inspector"
     m.addText(); // con un texto seleccionado, en su misma pista (si se solapara, settle lo subiría a otra)
     CHECK(m.selectedClip()["trackId"] == tid);
 }
+
+TEST_CASE("editor: figuras y capa de ajuste en el cabezal", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.setPlayhead(1);
+    m.addShape("star", "Estrella");
+    QVariantMap made = m.selectedClip();
+    CHECK(made["kind"] == "shape");
+    CHECK(made["label"] == "Estrella");
+    CHECK(made["duration"] == 5.0);
+    CHECK(made["trackId"] != "V1"); // en V1 hay un clip a esa altura: settle la sube
+    m.addAdjustment(); // la pista de vídeo de arriba está ocupada: una nueva encima
+    made = m.selectedClip();
+    CHECK(made["kind"] == "adjustment");
+    CHECK(made["start"] == 1.0);
+    m.undo();
+    m.undo();
+    CHECK(m.clips().size() == 3);
+}

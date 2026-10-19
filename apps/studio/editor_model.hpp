@@ -126,6 +126,9 @@ public:
     Q_INVOKABLE void setNote(const QString& note);
     // Textos (addText, changeText y changeStyle de VideoEditor.jsx).
     Q_INVOKABLE void addText();
+    // Figura del catálogo en el cabezal (addAsset('shape')) y capa de ajuste (addAdjustmentLayer).
+    Q_INVOKABLE void addShape(const QString& type, const QString& label);
+    Q_INVOKABLE void addAdjustment();
     Q_INVOKABLE void changeText(const QString& text);
     Q_INVOKABLE void changeStyle(const QVariantMap& patch, bool fixed = false);
     // El rombo (toggleKeyframeAtPlayhead) del clip seleccionado; fundido de volumen de entrada o
@@ -158,6 +161,7 @@ signals:
     void errorChanged();
 
 private:
+    void add_generated(core::Timeline next, Json clip, const char* cause);
     template <class Patch>
     void pose_each(const char* cause, Patch patch);
     template <class Edit>
