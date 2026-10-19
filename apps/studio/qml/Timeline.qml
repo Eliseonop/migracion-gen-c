@@ -124,28 +124,38 @@ Rectangle {
             }
 
             Repeater {
-                model: timeline.model.clips
+                model: timeline.model.clipModel
                 delegate: Rectangle {
                     id: block
-                    required property var modelData
-                    objectName: "clip:" + modelData.id
-                    readonly property var palette3: timeline.colorsOf(modelData.kind)
+                    required property string clipId
+                    required property string trackId
+                    required property string kind
+                    required property string label
+                    required property string speed
+                    required property real start
+                    required property real duration
+                    required property real clipY
+                    required property real clipHeight
+                    required property bool muted
+                    required property bool disabled
+                    objectName: "clip:" + clipId
+                    readonly property var palette3: timeline.colorsOf(kind)
                     readonly property var dp: timeline.drag
-                    readonly property bool selected: timeline.model.selection.indexOf(modelData.id) >= 0
+                    readonly property bool selected: timeline.model.selection.indexOf(clipId) >= 0
                     readonly property bool inGroup: !!dp && dp.group && selected
-                    readonly property bool lifted: !!dp && !dp.group && timeline.dragId === modelData.id
+                    readonly property bool lifted: !!dp && !dp.group && timeline.dragId === clipId
                     property string mode: ""
                     property real pressX
                     property real pressY
                     property var trim: null
 
-                    x: (inGroup ? modelData.start + dp.delta : lifted ? dp.start : trim ? trim.start : modelData.start) * timeline.pps
-                    y: !lifted ? modelData.y : dp.newTrack ? dp.lineY - height / 2 : timeline.rowY(dp.trackId) + 3
-                    width: Math.max(6, (trim ? trim.duration : modelData.duration) * timeline.pps)
-                    height: modelData.height
+                    x: (inGroup ? start + dp.delta : lifted ? dp.start : trim ? trim.start : start) * timeline.pps
+                    y: !lifted ? clipY : dp.newTrack ? dp.lineY - height / 2 : timeline.rowY(dp.trackId) + 3
+                    width: Math.max(6, (trim ? trim.duration : duration) * timeline.pps)
+                    height: clipHeight
                     z: mode ? 5 : 1
                     radius: 6
-                    opacity: modelData.disabled ? 0.45 : lifted ? 0.85 : 1
+                    opacity: disabled ? 0.45 : lifted ? 0.85 : 1
                     border.width: 1.5
                     border.color: selected ? palette3[2] : Qt.rgba(1, 1, 1, 0.14)
                     gradient: Gradient {
@@ -159,8 +169,8 @@ Rectangle {
                         anchors.leftMargin: 8
                         anchors.rightMargin: 8
                         verticalAlignment: Text.AlignVCenter
-                        text: (block.modelData.muted ? "🔇 " : "") + block.modelData.label
-                              + (block.modelData.speed ? "  " + block.modelData.speed : "")
+                        text: (block.muted ? "🔇 " : "") + block.label
+                              + (block.speed ? "  " + block.speed : "")
                         color: Theme.text
                         font.pixelSize: 12
                         elide: Text.ElideRight
@@ -174,14 +184,14 @@ Rectangle {
                         // En px del carril: el clip se mueve con el gesto y sus coordenadas también.
                         function lane(m) { return mapToItem(lanes, m.x, m.y) }
                         function delta(m) { return (lane(m).x - block.pressX) / timeline.pps }
-                        function centerY(m) { return block.modelData.y + block.height / 2 + lane(m).y - block.pressY }
+                        function centerY(m) { return block.clipY + block.height / 2 + lane(m).y - block.pressY }
                         onPressed: (m) => {
                             block.pressX = lane(m).x
                             block.pressY = lane(m).y
                             block.mode = m.x < 6 ? "trim-left" : m.x > width - 6 ? "trim-right" : "move"
                             const keep = block.selected && !(m.modifiers & (Qt.ControlModifier | Qt.ShiftModifier))
                             if (!keep)
-                                timeline.model.select(block.modelData.id, (m.modifiers & Qt.ControlModifier) !== 0,
+                                timeline.model.select(block.clipId, (m.modifiers & Qt.ControlModifier) !== 0,
                                                       (m.modifiers & Qt.ShiftModifier) !== 0)
                         }
                         onPositionChanged: (m) => {
@@ -190,11 +200,11 @@ Rectangle {
                             if (block.mode === "move") {
                                 if (!timeline.dragId && Math.hypot(lane(m).x - block.pressX, lane(m).y - block.pressY) < 3)
                                     return
-                                timeline.dragId = block.modelData.id
-                                timeline.drag = timeline.model.previewDrag(block.modelData.id, delta(m), centerY(m))
+                                timeline.dragId = block.clipId
+                                timeline.drag = timeline.model.previewDrag(block.clipId, delta(m), centerY(m))
                                 timeline.guides = timeline.drag.times || []
                             } else {
-                                block.trim = timeline.model.previewTrim(block.modelData.id, block.mode === "trim-left", delta(m))
+                                block.trim = timeline.model.previewTrim(block.clipId, block.mode === "trim-left", delta(m))
                                 timeline.guides = block.trim.times || []
                             }
                         }
@@ -202,7 +212,7 @@ Rectangle {
                         // delegado desaparece.
                         onReleased: (m) => {
                             const model = timeline.model
-                            const id = block.modelData.id
+                            const id = block.clipId
                             const d = delta(m)
                             const cy = centerY(m)
                             const left = block.mode === "trim-left"

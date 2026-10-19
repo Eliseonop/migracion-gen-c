@@ -4,7 +4,7 @@
 
 qt_standard_project_setup()
 
-add_library(gc_studio STATIC app.cpp editor_model.cpp home_model.cpp)
+add_library(gc_studio STATIC app.cpp clip_list_model.cpp editor_model.cpp home_model.cpp)
 target_include_directories(gc_studio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gc_studio PUBLIC gc::core Qt6::Core Qt6::Gui Qt6::Quick Qt6::QuickControls2)
 gc_set_warnings(gc_studio)

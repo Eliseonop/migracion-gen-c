@@ -108,7 +108,7 @@ struct Studio {
     }
     [[nodiscard]] QVariantMap view(const QString& id) const {
         for (const QVariant& v : editor->clips()) {
-            if (v.toMap()["id"] == id) {
+            if (v.toMap()["clipId"] == id) {
                 return v.toMap();
             }
         }

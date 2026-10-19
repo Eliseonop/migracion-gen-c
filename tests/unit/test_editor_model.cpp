@@ -1,6 +1,7 @@
 // El ViewModel del editor (apps/studio/editor_model.hpp): lo que hace cada gesto de la timeline y
 // que el resultado se guarda en projects.json.
 
+#include <QAbstractItemModel>
 #include <QCoreApplication>
 #include <filesystem>
 #include <string>
@@ -71,7 +72,7 @@ double start_of(const core::Timeline& tl, std::string_view id) {
 
 QVariantMap clip_view(const studio::EditorModel& m, const QString& id) {
     for (const QVariant& v : m.clips()) {
-        if (v.toMap()["id"] == id) {
+        if (v.toMap()["clipId"] == id) {
             return v.toMap();
         }
     }
@@ -186,4 +187,23 @@ TEST_CASE("editor: cortar en el cabezal solo corta la selección, que pasa a la 
     }
     m.undo();
     CHECK(m.clips().size() == 3);
+}
+
+TEST_CASE("editor: mover un clip solo avisa de su fila (QML no recrea los delegados)", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    auto* rows = qobject_cast<QAbstractItemModel*>(m.clipModel());
+    REQUIRE(rows);
+    int resets = 0;
+    int changed = 0;
+    QObject::connect(rows, &QAbstractItemModel::modelReset, [&] { ++resets; });
+    QObject::connect(rows, &QAbstractItemModel::dataChanged, [&] { ++changed; });
+    m.dropDrag("b", -1.5, 100);
+    m.dropDrag("b", 0, 48); // a otra pista: el orden de las filas es el del array, no cambia
+    CHECK(resets == 0);
+    CHECK(changed == 2);
+    m.select("b");
+    m.deleteSelection();
+    CHECK(resets == 1);
 }

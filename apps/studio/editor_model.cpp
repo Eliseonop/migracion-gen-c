@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <unordered_map>
 #include <utility>
 
 #include "gc/core/no_overlap.hpp"
@@ -101,9 +102,8 @@ void EditorModel::closeProject() {
     session_.reset();
     project_id_.clear();
     project_name_.clear();
-    tracks_.clear();
-    clips_.clear();
     selection_ = {};
+    rebuild();
     emit projectChanged();
     emit timelineChanged();
     emit selectionChanged();
@@ -111,44 +111,54 @@ void EditorModel::closeProject() {
 
 void EditorModel::rebuild() {
     tracks_.clear();
-    clips_.clear();
-    if (!session_) {
-        emit timelineChanged();
-        return;
-    }
-    const core::Timeline& tl = *session_->timeline();
-    std::erase_if(selection_.ids, [&](const std::string& id) { return !clip(qstr(id)); });
-    double y = kRulerHeight;
-    for (const core::TimelineTrack* t : core::display_tracks(tl.tracks)) {
-        const int h = core::track_row_height(t->kind, row_height_);
-        tracks_.push_back(QVariantMap{{"id", qstr(t->id)},
-                                      {"name", qstr(t->name)},
-                                      {"kind", qstr(t->kind)},
-                                      {"y", y},
-                                      {"height", h},
-                                      {"hidden", t->hidden},
-                                      {"muted", t->muted},
-                                      {"locked", t->locked},
-                                      {"magnetic", t->magnetic}});
-        for (const auto& c : tl.clips) {
-            if (c->track_id != t->id) {
+    QVector<QVariantMap> rows;
+    if (session_) {
+        const core::Timeline& tl = *session_->timeline();
+        std::erase_if(selection_.ids, [&](const std::string& id) { return !clip(qstr(id)); });
+        std::unordered_map<std::string, std::pair<double, int>> rows_of; // pista → (y, alto)
+        double y = kRulerHeight;
+        for (const core::TimelineTrack* t : core::display_tracks(tl.tracks)) {
+            const int h = core::track_row_height(t->kind, row_height_);
+            rows_of[t->id] = {y, h};
+            tracks_.push_back(QVariantMap{{"id", qstr(t->id)},
+                                          {"name", qstr(t->name)},
+                                          {"kind", qstr(t->kind)},
+                                          {"y", y},
+                                          {"height", h},
+                                          {"hidden", t->hidden},
+                                          {"muted", t->muted},
+                                          {"locked", t->locked},
+                                          {"magnetic", t->magnetic}});
+            y += h;
+        }
+        for (const auto& c : tl.clips) { // en el orden del array: el de después queda delante
+            const auto row = rows_of.find(c->track_id);
+            if (row == rows_of.end()) {
                 continue;
             }
-            clips_.push_back(QVariantMap{{"id", qstr(c->id)},
-                                         {"trackId", qstr(c->track_id)},
-                                         {"kind", qstr(c->kind)},
-                                         {"label", clip_label(*c)},
-                                         {"speed", speed_badge(*c)},
-                                         {"start", c->start},
-                                         {"duration", core::ui_clip_duration(*c)},
-                                         {"y", y + kClipInset},
-                                         {"height", h - 2 * kClipInset},
-                                         {"muted", c->muted},
-                                         {"disabled", c->disabled}});
+            rows.push_back({{"clipId", qstr(c->id)},
+                            {"trackId", qstr(c->track_id)},
+                            {"kind", qstr(c->kind)},
+                            {"label", clip_label(*c)},
+                            {"speed", speed_badge(*c)},
+                            {"start", c->start},
+                            {"duration", core::ui_clip_duration(*c)},
+                            {"clipY", row->second.first + kClipInset},
+                            {"clipHeight", row->second.second - 2 * kClipInset},
+                            {"muted", c->muted},
+                            {"disabled", c->disabled}});
         }
-        y += h;
     }
+    clip_model_.sync(std::move(rows));
     emit timelineChanged();
+}
+
+QVariantList EditorModel::clips() const {
+    QVariantList out;
+    for (const QVariantMap& row : clip_model_.rows()) {
+        out << row;
+    }
+    return out;
 }
 
 double EditorModel::duration() const {

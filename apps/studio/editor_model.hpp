@@ -17,6 +17,8 @@
 #include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
 
+#include "clip_list_model.hpp"
+
 namespace gc::studio {
 
 class EditorModel : public QObject {
@@ -24,7 +26,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(bool isOpen READ isOpen NOTIFY projectChanged)
     Q_PROPERTY(QString projectName READ projectName NOTIFY projectChanged)
     Q_PROPERTY(QVariantList tracks READ tracks NOTIFY timelineChanged)
-    Q_PROPERTY(QVariantList clips READ clips NOTIFY timelineChanged)
+    Q_PROPERTY(QObject* clipModel READ clipModel CONSTANT)
     Q_PROPERTY(double duration READ duration NOTIFY timelineChanged)
     Q_PROPERTY(int fps READ fps NOTIFY timelineChanged)
     Q_PROPERTY(double aspect READ aspect NOTIFY timelineChanged)
@@ -44,7 +46,9 @@ public:
     [[nodiscard]] bool isOpen() const { return session_ != nullptr; }
     [[nodiscard]] QString projectName() const { return project_name_; }
     [[nodiscard]] QVariantList tracks() const { return tracks_; }
-    [[nodiscard]] QVariantList clips() const { return clips_; }
+    [[nodiscard]] QObject* clipModel() { return &clip_model_; }
+    // Las filas de clipModel (para los tests).
+    [[nodiscard]] QVariantList clips() const;
     [[nodiscard]] double duration() const;
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
@@ -122,7 +126,7 @@ private:
     std::string project_id_;
     QString project_name_;
     QVariantList tracks_;
-    QVariantList clips_;
+    ClipListModel clip_model_;
     core::ClipSelection selection_;
     double playhead_ = 0;
     double pps_ = 40;
