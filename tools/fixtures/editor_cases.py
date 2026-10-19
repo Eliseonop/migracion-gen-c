@@ -357,6 +357,11 @@ TEXT_PATCHES = [{"color": "#ff0000"}, {"color": "nada"}, {"font": "Impact", "siz
 TEXT_CLIPS = POSE_CLIPS + [
     clip("shk", "V2", "shape", start=1, out=3, shape={"type": "star"},
          keyframes={"enabled": True, "items": [{"id": "q1", "t": 0.5, "props": {"x": 0.3}}]}),
+    clip("crv", "V1", start=20, out=4, keyframes={"enabled": True, "items": [
+        {"id": "c0", "t": 0, "props": {"x": 0.1}, "interpolation": "cubic-out"},
+        {"id": "c1", "t": 1.5, "props": {"x": 0.5}, "interpolation": "bezier", "bezier": [0.1, 0.9, 0.2, 1]},
+        {"id": "c2", "t": 2, "props": {"x": 0.7}, "interpolation": "bezier"},
+        {"id": "c3", "t": 3, "props": {"x": 0.9}, "interpolation": "hold"}]}),
     clip("ti", "T1", "text", start=13, out=4, text="curvas", style={"color": "#ffffff"},
          keyframes={"enabled": True, "items": [{"id": "h0", "t": 0, "props": {"color": "#111111"}, "interpolation": "hold"},
                                                {"id": "h2", "t": 1.6, "props": {"border_width": 2}, "interpolation": "ease_out"}]})]
@@ -407,6 +412,7 @@ def _text_calls(rng: random.Random) -> list:
     for c in [c for c in TEXT_CLIPS if c["id"] != "tk"]:  # «tk»: keyframe con t null (divergencia de la pose)
         for t in (0, 0.5, 1, 1.5, 2, 3, 0.51):
             fps = rng.choice([30, 24])
+            calls.append(["targetInterpItem", c["id"], t, fps])
             calls.append(["copyKeyframeAt", c["id"], t, fps])
             for board in boards:
                 calls.append(["pasteKeyframeAt", c["id"], t, board, rng.choice([None, [], ["transform"], ["audio", "text_style"], ["crop", "mask"]]), fps])

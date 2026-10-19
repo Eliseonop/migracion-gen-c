@@ -346,6 +346,10 @@ QVariantMap EditorModel::selectedClip() const {
         {"shape", c->kind == "shape" ? to_variant(core::normalize_shape(c->shape.value_or(Json::object()))
                                                       .value_or(Json::object()))
                                      : QVariantMap()},
+        {"curve", [&] {
+             const auto k = core::target_interp_item(*c, std::max(0.0, local), fps());
+             return k ? qstr(std::string(core::interp_name(core::normalize_interp(k->at("interpolation"))))) : QString();
+         }()},
         {"flipH", c->flip_h},
         {"flipV", c->flip_v},
         {"keepPitch", c->keep_pitch},
@@ -1171,6 +1175,26 @@ void EditorModel::addAdjustment() {
         core::insert_track(next.tracks, std::move(t));
     }
     add_generated(std::move(next), core::make_adjustment_clip_json(tid, playhead_, kDur, ids_), "add-adjustment");
+}
+
+void EditorModel::setCurve(const QString& mode) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const auto target = c ? core::target_interp_item(*c, std::max(0.0, playhead_ - c->start), fps()) : std::nullopt;
+    if (!target) {
+        return;
+    }
+    const auto bez = core::interp_bezier(*target);
+    const core::KeyframePatch patch{.t = {},
+                                    .interpolation = mode.toStdString(),
+                                    .bezier = mode == "bezier" ? Json(bez) : Json(),
+                                    .props = {}};
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == c->id) {
+            core::patch_keyframe(item.mut(), target->at("id").get<std::string>(), patch, fps(), ids_);
+        }
+    }
+    commit(std::move(next), "curve", {c->id});
 }
 
 // startKfDrag + moveKeyframe: `fraction` del ancho del clip; con keyframes en su tiempo local, si no

@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <map>
 
 #include "gc/core/keyframes.hpp"
 #include "gc/core/pose.hpp"
@@ -520,6 +521,32 @@ void with_bezier_at(TimelineClip& clip, double local_t, const Json& bezier, doub
 }
 
 } // namespace
+
+std::optional<Json> target_interp_item(const TimelineClip& clip, double local_t, double fps) {
+    SequentialIdSource ids;
+    const auto items = normalize_kf_items(clip.keyframes ? field(*clip.keyframes, "items") : Json(), ids);
+    if (items.empty()) {
+        return std::nullopt;
+    }
+    const auto next = std::ranges::find_if(
+        items, [&](const Json& k) { return k.at("t").get<double>() > local_t + frame_duration(fps) / 2; });
+    return next != items.end() ? *next : items.back();
+}
+
+std::array<double, 4> interp_bezier(const Json& item) {
+    const Interp kind = normalize_interp(field(item, "interpolation"));
+    if (kind == Interp::Bezier) {
+        const auto bez = normalize_bezier(field(item, "bezier"));
+        return bez ? std::array{(*bez)[0], (*bez)[1], (*bez)[2], (*bez)[3]} : std::array{0.42, 0.0, 0.58, 1.0};
+    }
+    static const std::map<std::string_view, std::array<double, 4>> kPresets{
+        {"linear", {0.25, 0.25, 0.75, 0.75}},          {"ease-in", {0.55, 0.085, 0.68, 0.53}},
+        {"ease-out", {0.25, 0.46, 0.45, 0.94}},        {"ease-in-out", {0.455, 0.03, 0.515, 0.955}},
+        {"cubic-in", {0.55, 0.055, 0.675, 0.19}},      {"cubic-out", {0.215, 0.61, 0.355, 1}},
+        {"cubic-in-out", {0.645, 0.045, 0.355, 1}},    {"back-out", {0.34, 1.56, 0.64, 1}}};
+    const auto it = kPresets.find(interp_name(kind));
+    return it != kPresets.end() ? it->second : kPresets.at("linear");
+}
 
 std::optional<KeyframeBoard> copy_keyframe_at(const TimelineClip& clip, double local_t, double fps) {
     SequentialIdSource ids;

@@ -621,6 +621,10 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         patch_keyframe(c, str(2), patch, num(4), ids);
         return c.keyframes ? without_ids(*c.keyframes) : Json();
     }
+    if (fn == "targetInterpItem") {
+        const auto k = target_interp_item(clip(call.at(1)), num(2), num(3));
+        return k ? Json{k->at("t"), interp_bezier(*k)} : Json();
+    }
     if (fn == "copyKeyframeAt") {
         const auto board = copy_keyframe_at(clip(call.at(1)), num(2), num(3));
         if (!board) {

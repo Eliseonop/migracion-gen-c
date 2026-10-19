@@ -9,6 +9,7 @@
 // medio fotograma son el mismo. La de las ops (keyframes.hpp, como Python) no ajusta al
 // fotograma y junta los que están a menos de 0,06 s.
 
+#include <array>
 #include <optional>
 #include <string>
 #include <vector>
@@ -83,6 +84,12 @@ struct KeyframePatch {
 void patch_keyframe(TimelineClip& clip, std::string_view id, const KeyframePatch& patch, double fps, IdSource& ids);
 // moveKeyframe de VideoEditor.jsx: con keyframes, patchKeyframe({t}); si no, el del encuadre (t de fuente).
 void move_keyframe(TimelineClip& clip, std::string_view id, double new_t, double fps, IdSource& ids);
+
+// targetInterpItem: el keyframe cuya curva describe cómo se llega al cabezal (el siguiente; si no
+// hay, el último). Nada sin keyframes.
+[[nodiscard]] std::optional<Json> target_interp_item(const TimelineClip& clip, double local_t, double fps);
+// interpBezier: los puntos de control de la curva del keyframe (su bézier o el preset aproximado).
+[[nodiscard]] std::array<double, 4> interp_bezier(const Json& item);
 
 // applyVolumeFade de clipKeyframes.js: fundido de volumen de entrada ("in") o salida ("out").
 void apply_volume_fade_ui(TimelineClip& clip, double duration, const std::string& side, IdSource& ids,

@@ -241,6 +241,10 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       const c = noIds(moveKeyframe(byId(id), kfId, newT, fps))
       return { keyframes: c.keyframes ?? null, reframe: (c.reframe?.keyframes || []).map((k) => [k.id ?? null, k.t]) }
     },
+    targetInterpItem: (id, t, fps) => {
+      const k = kf.targetInterpItem(byId(id), null, t, fps)
+      return k ? [k.t, kf.interpBezier(k)] : null
+    },
     copyKeyframeAt: (id, t, fps) => kf.copyKeyframeAt(byId(id), t, fps),
     pasteKeyframeAt: (id, t, board, groups, fps) => noIds(kf.pasteKeyframeAt(byId(id), t, board, groups ?? undefined, fps)).keyframes ?? null,
     duplicateKeyframeAt: (id, kfId, target, fps) => noIds(kf.duplicateKeyframeAt(byId(id), kfId, target, fps)).keyframes ?? null,

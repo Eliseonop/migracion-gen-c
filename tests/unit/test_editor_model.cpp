@@ -596,6 +596,11 @@ TEST_CASE("editor: copiar, pegar y duplicar el keyframe del cabezal", "[studio]"
     REQUIRE(m.pasteKeyframe());
     CHECK(m.selectedClip()["kf"] == "on");
     CHECK(m.selectedClip()["poseOpacity"] == 0.25);
+    m.setPlayhead(2);
+    CHECK(m.selectedClip()["curve"] == "linear"); // la del keyframe al que se llega (el de 3 s)
+    m.setCurve("bezier");
+    CHECK(m.selectedClip()["curve"] == "bezier");
+    m.setPlayhead(3);
     REQUIRE(m.duplicateKeyframe()); // del cabezal (3 s) a 4 s
     m.setPlayhead(4);
     CHECK(m.selectedClip()["kf"] == "on");

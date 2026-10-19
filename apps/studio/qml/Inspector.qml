@@ -603,6 +603,19 @@ Rectangle {
                 Toggle { objectName: "insp:flipV"; text: "⇵"; on: panel.has && panel.clip.flipV; onClicked: panel.model.toggleFlip("v") }
             }
 
+            RowLayout {
+                visible: panel.has && !!panel.clip.curve
+                Label { Layout.preferredWidth: 70; text: "Curva"; color: Theme.textSecondary }
+                Choice {
+                    objectName: "insp:curve"
+                    options: [["linear", "Linear"], ["ease-in", "Ease In"], ["ease-out", "Ease Out"], ["ease-in-out", "Ease In-Out"],
+                              ["cubic-in", "Cúbica In"], ["cubic-out", "Cúbica Out"], ["cubic-in-out", "Cúbica In-Out"],
+                              ["back-out", "Rebote"], ["bezier", "Personalizada"], ["hold", "Hold"]]
+                    current: panel.has ? panel.clip.curve : "linear"
+                    onPicked: (v) => panel.model.setCurve(v)
+                }
+            }
+
             Section { visible: panel.visual; text: "MEZCLA" + (panel.clip.animated ? " · ANIMADA" : "") }
             Percent {
                 visible: panel.visual
