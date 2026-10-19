@@ -107,6 +107,7 @@ Rectangle {
                 height: modelData.height
                 y: modelData.y - flick.contentY
                 color: timeline.trackDrop && timeline.trackDrop.targetId === modelData.id ? Qt.rgba(1, 0.23, 0.36, 0.12)
+                     : timeline.model.selectedTrack.id === modelData.id ? Qt.rgba(1, 1, 1, 0.07)
                      : modelData.kind === "audio" ? Qt.rgba(0.39, 0.4, 0.95, 0.06) : "transparent"
                 opacity: modelData.hidden ? 0.55 : 1
                 Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.line }
@@ -137,6 +138,8 @@ Rectangle {
                         timeline.trackDrop = null
                         if (drop)
                             Qt.callLater(() => timeline.model.reorderTrack(drop.id, drop.targetId, drop.below))
+                        else
+                            timeline.model.selectTrack(head.modelData.id)
                     }
                     onDoubleClicked: head.editing = true
                 }

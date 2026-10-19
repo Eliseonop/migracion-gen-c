@@ -470,6 +470,7 @@ void EditorModel::select(const QString& id, bool additive, bool range) {
     if (!session_) {
         return;
     }
+    selected_track_.clear();
     selection_ = core::next_clip_selection(session_->timeline()->clips, selection_, id.toStdString(),
                                            {.additive = additive, .range = range, .keep_group = false});
     emit selectionChanged(); // sin rebuild(): rehacer la lista recrearía el clip que se está pulsando
@@ -502,7 +503,55 @@ void EditorModel::selectInRect(double x0, double y0, double x1, double y1, bool 
 
 void EditorModel::clearSelection() {
     selection_ = {};
+    selected_track_.clear();
     emit selectionChanged();
+}
+
+void EditorModel::selectTrack(const QString& id) {
+    if (track(id)) {
+        selection_ = {};
+        selected_track_ = id.toStdString();
+        emit selectionChanged();
+    }
+}
+
+QVariantMap EditorModel::selectedTrack() const {
+    const core::TimelineTrack* t = selected_track_.empty() ? nullptr : track(qstr(selected_track_));
+    if (!t || !selection_.ids.empty()) {
+        return {};
+    }
+    const Json style = t->kind == "text" ? t->style.value_or(core::default_text_style()) : Json::object();
+    return {{"id", qstr(t->id)},
+            {"kind", qstr(t->kind)},
+            {"name", qstr(t->name)},
+            {"style", to_variant(style)},
+            {"themeId", qstr(core::selected_subtitle_theme_id(style).value_or(""))},
+            {"lookId", qstr(core::active_look_id(style).value_or(""))}};
+}
+
+template <class Restyle>
+bool EditorModel::restyle_track(Restyle restyle) {
+    const core::TimelineTrack* t = selected_track_.empty() || !selection_.ids.empty() ? nullptr : track(qstr(selected_track_));
+    if (!t || t->kind != "text") {
+        return false;
+    }
+    const std::string id = t->id;
+    core::Timeline next = *session_->timeline();
+    for (auto& tr : next.tracks) {
+        if (tr.id == id) {
+            tr.style = restyle(tr.style.value_or(core::default_text_style()));
+        }
+    }
+    std::vector<std::string> changed;
+    for (auto& c : next.clips) {
+        if (c->kind == "text" && c->track_id == id) {
+            c.mut().style = restyle(c->style.value_or(Json::object()));
+            changed.push_back(c->id);
+        }
+    }
+    commit(std::move(next), "track-style", changed);
+    emit selectionChanged();
+    return true;
 }
 
 struct EditorModel::DragPlan {
@@ -1724,6 +1773,14 @@ QVariantList EditorModel::textLooks() {
 void EditorModel::applyTextTheme(const QString& id) {
     const core::TimelineClip* source = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
     const Json* theme = core::theme_by_id(id.toStdString());
+    const core::TimelineTrack* t = selected_track_.empty() ? nullptr : track(qstr(selected_track_));
+    if (!source && theme && t) { // applyTrackPreset: quitar si la pista ya lo tiene
+        const bool clearing = core::selected_subtitle_theme_id(t->style.value_or(Json())) == id.toStdString();
+        restyle_track([&](const Json& style) {
+            return clearing ? core::clear_text_theme(style) : core::apply_theme_to_style(style, *theme);
+        });
+        return;
+    }
     if (!source || !theme) {
         return;
     }
@@ -1761,10 +1818,18 @@ void EditorModel::changeText(const QString& text) {
 }
 
 void EditorModel::changeStyle(const QVariantMap& patch, bool fixed) {
+    const Json json = to_json(patch);
+    if (restyle_track([&](Json style) {
+            for (const auto& [key, value] : json.items()) {
+                style[key] = value;
+            }
+            return style;
+        })) {
+        return;
+    }
     if (!session_ || selection_.ids.empty()) {
         return;
     }
-    const Json json = to_json(patch);
     core::Timeline next = *session_->timeline();
     for (auto& c : next.clips) {
         if (c->kind == "text" && std::ranges::find(selection_.ids, c->id) != selection_.ids.end()) {

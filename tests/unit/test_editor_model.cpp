@@ -666,3 +666,29 @@ TEST_CASE("editor: máscara del clip (añadir, cambiar de tipo, geometría y qui
     CHECK(m.selectedClip()["mask"].toMap().isEmpty());
     CHECK(f.saved().clips.front()->masks.empty());
 }
+
+TEST_CASE("editor: el estilo general de una pista de texto", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.addText();
+    const QString tid = m.selectedClip()["trackId"].toString();
+    m.setPlayhead(10);
+    m.addText(); // dos textos en la pista
+    m.selectTrack(tid);
+    CHECK(m.selectedClip().isEmpty());
+    CHECK(m.selectedTrack()["kind"] == "text");
+    m.changeStyle({{"color", "#00ff00"}});
+    m.applyTextTheme("fire");
+    CHECK(m.selectedTrack()["themeId"] == "fire");
+    int texts = 0;
+    for (const auto& c : f.saved().clips) {
+        if (c->kind == "text") {
+            ++texts;
+            CHECK(c->style->at("theme") == "fire");
+        }
+    }
+    CHECK(texts == 2);
+    m.select("a"); // elegir un clip suelta la pista
+    CHECK(m.selectedTrack().isEmpty());
+}

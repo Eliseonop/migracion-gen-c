@@ -44,6 +44,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
     Q_PROPERTY(QVariantMap selectedClip READ selectedClip NOTIFY selectionChanged)
+    // La pista elegida en su cabecera (sin clip seleccionado): {id, kind, name, style}.
+    Q_PROPERTY(QVariantMap selectedTrack READ selectedTrack NOTIFY selectionChanged)
     Q_PROPERTY(double playhead READ playhead WRITE setPlayhead NOTIFY playheadChanged)
     Q_PROPERTY(double pps READ pps WRITE setPps NOTIFY zoomChanged)
     Q_PROPERTY(int rowHeight READ rowHeight WRITE setRowHeight NOTIFY timelineChanged)
@@ -78,6 +80,7 @@ public:
     [[nodiscard]] bool canRedo() const { return session_ && session_->can_redo(); }
     [[nodiscard]] QStringList selection() const;
     [[nodiscard]] QVariantMap selectedClip() const;
+    [[nodiscard]] QVariantMap selectedTrack() const;
     [[nodiscard]] double playhead() const { return playhead_; }
     [[nodiscard]] double pps() const { return pps_; }
     [[nodiscard]] int rowHeight() const { return row_height_; }
@@ -92,6 +95,8 @@ public:
 
     Q_INVOKABLE void select(const QString& id, bool additive = false, bool range = false);
     Q_INVOKABLE void clearSelection();
+    // Clic en la cabecera: la pista (y nada de clips); en una de texto, el inspector edita su estilo general.
+    Q_INVOKABLE void selectTrack(const QString& id);
     // Selección por área (startMarquee de EdTimeline): los clips que corta el rectángulo, en px de
     // las filas; con `additive` se suman a los que había.
     Q_INVOKABLE void selectInRect(double x0, double y0, double x1, double y1, bool additive);
@@ -268,6 +273,10 @@ private:
     std::vector<std::pair<core::TimelineClip, double>> clipboard_; // clip y desfase con el primero
     std::optional<core::TimelineClip> attr_clipboard_;
     std::optional<core::KeyframeBoard> kf_board_;
+    std::string selected_track_;
+    // changeTrackStyle / applyTrackPreset: el estilo de la pista y el de todos sus textos.
+    template <class Restyle>
+    bool restyle_track(Restyle restyle);
     std::map<QString, Json> payloads_; // material → dragPayload
     ClipListModel clip_model_;
     core::ClipSelection selection_;

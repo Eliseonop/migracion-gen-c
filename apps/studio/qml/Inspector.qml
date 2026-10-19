@@ -21,8 +21,12 @@ Rectangle {
     readonly property string tabNow: tabList.some((t) => t[0] === tab) ? tab : "clip"
     readonly property var tf: has ? clip.transform : ({})
     readonly property var speeds: [0.3, 0.5, 1, 1.5, 2, 3, 5, 10]
-    readonly property bool text: has && clip.kind === "text"
-    readonly property var st: text ? clip.style : ({})
+    readonly property var trk: model.selectedTrack
+    readonly property bool trackText: !has && trk.kind === "text" // estilo general de una pista de texto
+    readonly property bool text: (has && clip.kind === "text") || trackText
+    readonly property var st: has && clip.kind === "text" ? clip.style : trackText ? trk.style : ({})
+    readonly property string themeNow: has ? clip.themeId : trackText ? trk.themeId : ""
+    readonly property string lookNow: has ? clip.lookId : trackText ? trk.lookId : ""
     readonly property var fonts: ["Arial", "Arial Black", "Anton", "Segoe UI", "Segoe UI Black", "Calibri", "Bahnschrift",
         "Tahoma", "Impact", "Georgia", "Verdana", "Times New Roman", "Courier New", "Consolas", "Trebuchet MS"]
     readonly property bool shape: has && clip.kind === "shape"
@@ -214,7 +218,8 @@ Rectangle {
                 visible: !panel.has
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
-                text: "Selecciona un elemento para editar sus propiedades."
+                text: panel.trackText ? "Pista " + panel.trk.name + " · General: lo que cambies aquí se aplica a todos los textos de la pista y a los nuevos."
+                                      : "Selecciona un elemento para editar sus propiedades."
                 color: Theme.muted
             }
             Label {
@@ -283,7 +288,7 @@ Rectangle {
 
             Section { visible: panel.text; text: "TEXTO" }
             TextArea {
-                visible: panel.text
+                visible: panel.text && panel.has
                 objectName: "insp:text"
                 Layout.fillWidth: true
                 Layout.preferredHeight: 64
@@ -395,7 +400,7 @@ Rectangle {
                 AaTile {
                     objectName: "insp:look:none"
                     look: ({ color: Theme.muted, stroke: "", bg: "none", glow: "" })
-                    on: panel.text && panel.clip.lookId === "none"
+                    on: panel.text && panel.lookNow === "none"
                     onPicked: panel.model.applyTextLook("")
                     Text { anchors.fill: parent; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; text: "⃠"; color: Theme.muted }
                 }
@@ -405,7 +410,7 @@ Rectangle {
                         required property var modelData
                         objectName: "insp:look:" + modelData.id
                         look: modelData
-                        on: panel.text && panel.clip.lookId === modelData.id
+                        on: panel.text && panel.lookNow === modelData.id
                         onPicked: panel.model.applyTextLook(modelData.id)
                     }
                 }
@@ -419,7 +424,7 @@ Rectangle {
                     model: panel.model.textThemes
                     Rectangle {
                         required property var modelData
-                        readonly property bool on: panel.text && panel.clip.themeId === modelData.id
+                        readonly property bool on: panel.text && panel.themeNow === modelData.id
                         objectName: "insp:theme:" + modelData.id
                         width: themeName.implicitWidth + 16
                         height: 24
