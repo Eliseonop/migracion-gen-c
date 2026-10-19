@@ -349,6 +349,38 @@ def _layout_calls(rng: random.Random) -> list:
     return calls
 
 
+TEXT_PATCHES = [{"color": "#ff0000"}, {"color": "nada"}, {"font": "Impact", "size": 0.06}, {"x": 0.2, "y": "0.3"},
+                {"border_width": 4, "shadow_color": "#00ff00"}, {"opacity": 0.5, "bold": False}, {"curve": 0.4, "scale": 2},
+                {"cx": 0.3}, {}]
+
+
+TEXT_CLIPS = POSE_CLIPS + [
+    clip("ti", "T1", "text", start=13, out=4, text="curvas", style={"color": "#ffffff"},
+         keyframes={"enabled": True, "items": [{"id": "h0", "t": 0, "props": {"color": "#111111"}, "interpolation": "hold"},
+                                               {"id": "h2", "t": 1.6, "props": {"border_width": 2}, "interpolation": "ease_out"}]})]
+
+
+def _text_calls(rng: random.Random) -> list:
+    """Textos del editor: crear (makeTextClip, newTextStyle) y cambiar su estilo (changeStyle)."""
+    calls: list = [["defaultTextStyle"], ["subtitleStyle"]]
+    for ts in (None, {}, {"font": "Anton", "y": 0.2, "color": "#123456"}, {"x": None}):
+        calls.append(["newTextStyle", ts])
+    for text in ("hola", "", "Una frase bastante larga para el nombre", "ñandú 😀😀 emojis largos fin"):
+        for start, dur in ((0, 3), (-1, 0.2), (2.0004, 7.12345)):
+            calls.append(["makeTextClip", "T1", start, dur, text, rng.choice([None, {"size": 0.1}])])
+    for ph in (0, 2.5, 30, 11.9996):
+        calls.append(["newTextDuration", ph])
+    for c in TEXT_CLIPS:
+        if c["kind"] != "text":
+            continue
+        for patch in TEXT_PATCHES:
+            for t in (0, 0.5, 0.51, 1.7, -1):
+                fps = rng.choice([30, 24, 60])
+                calls.append(["upsertStyleKf", c["id"], t, patch, fps])
+                calls.append(["changeStyle", c["id"], patch, t, fps, rng.random() < 0.3])
+    return calls
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -369,4 +401,5 @@ def cases() -> list[dict]:
         tl = _random_timeline(rng)
         out.append({"name": f"aleatoria {n}", "timeline": tl, "calls": _calls(rng, tl)})
     out.append({"name": "encuadre", "timeline": {"tracks": TRACKS, "clips": POSE_CLIPS}, "calls": _layout_calls(rng)})
+    out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
     return out

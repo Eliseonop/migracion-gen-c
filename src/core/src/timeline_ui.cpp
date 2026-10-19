@@ -86,6 +86,23 @@ std::string js_to_fixed(double x, int digits) {
     return text;
 }
 
+std::string slice_utf16(const std::string& s, std::size_t n) {
+    std::size_t units = 0;
+    std::size_t i = 0;
+    while (i < s.size()) {
+        const auto lead = static_cast<unsigned char>(s[i]);
+        const std::size_t len = lead < 0x80 ? 1 : lead < 0xE0 ? 2 : lead < 0xF0 ? 3 : 4;
+        const std::size_t width = len == 4 ? 2 : 1;
+        if (units + width > n) {
+            break;
+        }
+        units += width;
+        i += len;
+    }
+    return s.substr(0, std::min(i, s.size()));
+}
+
+
 double js_fixed(double x, int digits) {
     return std::isfinite(x) ? std::strtod(js_to_fixed(x, digits).c_str(), nullptr) : x;
 }

@@ -21,6 +21,8 @@ const noOverlap = await load('features/editor/noOverlap.js')
 const beats = await load('lib/beats.js')
 const kf = await load('lib/clipKeyframes.js')
 const layout = await load('lib/clipLayout.js')
+const textstyles = await load('lib/textstyles.js')
+const karaoke = await load('lib/textKaraoke.js')
 
 // applyStaticPose vive dentro de VideoEditor.jsx (no se exporta): se extrae su texto y se evalúa con
 // lo que usa. Es JS sin JSX.
@@ -49,6 +51,22 @@ const placeAsset = (payload, trackId, start, fitDur) => {
     'setSelClipIds', 'chromaBg', `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'placeAsset')}`)(
     m.makeClip, m.isGeneratedDurationClip, m.clipDur, m.clipSpeed, setClips, () => {}, () => {}, () => ({}))
   fn(payload, trackId, start, fitDur)
+  return made
+}
+// newTextStyle y changeStyle de VideoEditor.jsx con sus refs de React como argumentos.
+const newTextStyle = (trackStyle) => new Function('tracksRef', 'defaultTextStyle', 'subtitleStyle', 'applyThemeToStyle',
+  `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'newTextStyle')}`)(
+  { current: [{ id: 'T', style: trackStyle ?? undefined }] }, textstyles.defaultTextStyle, textstyles.subtitleStyle,
+  karaoke.applyThemeToStyle)('T')
+const changeStyle = (clip, patch, t, fps, fixed) => {
+  let made = clip
+  const setClips = (fn) => { made = fn([clip])[0] }
+  new Function('setClips', 'selIdsRef', 'patchClipsStyle', 'localTOf', 'flattenPatch', 'shouldKeyframe', 'upsertKf',
+    'textStyleKfKeys', 'upsertStyleKf', 'fpsRef', 'markKf',
+    `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'changeStyle')}`)(
+    setClips, { current: [clip.id] }, m.patchClipsStyle, () => Math.max(0, t), kf.flattenPatch, kf.shouldKeyframe,
+    (c, tt, p, i) => kf.upsertKeyframeAt(c, tt, p, i, fps), kf.textStyleKfKeys, kf.upsertStyleKf, { current: fps },
+    () => {})(clip.id, patch, fixed ? { fixed: true } : undefined)
   return made
 }
 // Sin ids (salen de la hora): el del clip y los de los keyframes del encuadre.
@@ -190,6 +208,22 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     cropCursor: (hx, hy) => layout.cropCursor(hx, hy),
     freeFrameAt: (id, t, sw, sh, ow, oh) => layout.freeFrameAt(byId(id), t, sw, sh, ow, oh),
     hitTransformHandle: (px, py, dest) => layout.hitTransformHandle(px, py, dest),
+    defaultTextStyle: () => textstyles.defaultTextStyle(),
+    subtitleStyle: () => textstyles.subtitleStyle(),
+    newTextStyle: (trackStyle) => newTextStyle(trackStyle),
+    makeTextClip: (track, start, dur, text, style) => {
+      const { id, asset_id, ...rest } = m.makeTextClip(track, start, dur, text, style ?? undefined)
+      return rest
+    },
+    newTextDuration: (playhead) => {
+      const end = clips.reduce((acc, c) => Math.max(acc, m.clipEnd(c)), 0)
+      return Math.max(3, +(end - playhead).toFixed(3))
+    },
+    upsertStyleKf: (id, t, patch, fps) => noIds(kf.upsertStyleKf(byId(id), t, patch, fps)).keyframes ?? null,
+    changeStyle: (id, patch, t, fps, fixed) => {
+      const c = noIds(changeStyle(byId(id), patch, t, fps, fixed))
+      return { style: c.style ?? null, keyframes: c.keyframes ?? null }
+    },
     emptiedTracks: (candidates) => m.emptiedTracks(tracks, clips, candidates),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)

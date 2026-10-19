@@ -26,6 +26,8 @@ using ClipList = std::vector<Cow<TimelineClip>>;
 // +x.toFixed(digits).
 [[nodiscard]] double js_fixed(double x, int digits);
 [[nodiscard]] double js_fixed3(double x);
+// .slice(0, n) de JS en unidades UTF-16 (un carácter fuera del plano básico cuenta 2 y no se parte).
+[[nodiscard]] std::string slice_utf16(const std::string& s, std::size_t n);
 // Number(x) de JS para un valor de JSON (null = 0, texto con espacios = su número, lo demás NaN).
 [[nodiscard]] double js_number(const Json& v);
 

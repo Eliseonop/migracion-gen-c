@@ -15,6 +15,7 @@
 #include "gc/core/io.hpp"
 #include "gc/core/material_drop.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
 #include "gc/core/timeline_view.hpp"
@@ -541,6 +542,35 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
                                                d.at("dw").get<double>(), d.at("dh").get<double>(),
                                                d.at("rotation").get<double>()});
         return hit ? Json(*hit) : Json();
+    }
+    if (fn == "defaultTextStyle") {
+        return default_text_style();
+    }
+    if (fn == "subtitleStyle") {
+        return subtitle_style();
+    }
+    if (fn == "newTextStyle") {
+        return new_text_style(call.at(1));
+    }
+    if (fn == "makeTextClip") {
+        SequentialIdSource ids;
+        Json c = make_text_clip_json(str(1), num(2), num(3), str(4), call.at(5).is_null() ? Json() : call.at(5), ids);
+        c.erase("id");
+        c.erase("asset_id");
+        return c;
+    }
+    if (fn == "newTextDuration") {
+        return new_text_duration(tl, num(1));
+    }
+    if (fn == "upsertStyleKf" || fn == "changeStyle") {
+        SequentialIdSource ids;
+        TimelineClip c = clip(call.at(1));
+        if (fn == "upsertStyleKf") {
+            upsert_style_kf(c, num(2), call.at(3), num(4), ids);
+            return c.keyframes ? without_ids(*c.keyframes) : Json();
+        }
+        change_text_style(c, call.at(2), num(3), num(4), call.at(5).get<bool>(), ids);
+        return {{"style", c.style ? *c.style : Json()}, {"keyframes", c.keyframes ? without_ids(*c.keyframes) : Json()}};
     }
     if (fn == "emptiedTracks") {
         return emptied_tracks(tl.tracks, tl.clips, strings(call.at(1)));
