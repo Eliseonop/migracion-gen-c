@@ -39,6 +39,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList textLooks READ textLooks CONSTANT)
     Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
     Q_PROPERTY(QVariantList animationSlots READ animationSlots CONSTANT)
+    Q_PROPERTY(QVariantList vfxCatalog READ vfxCatalog CONSTANT)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
@@ -69,6 +70,8 @@ public:
     [[nodiscard]] static QVariantList colorFilters();
     // Ranuras de las animaciones de clip del catálogo: [{id, label, items: [{id, name, dur}]}].
     [[nodiscard]] static QVariantList animationSlots();
+    // Efectos animados del catálogo: [{id, name, category, description}].
+    [[nodiscard]] static QVariantList vfxCatalog();
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
@@ -154,6 +157,12 @@ public:
     Q_INVOKABLE void setEffect(const QString& key, const QVariant& value);
     // Efecto o filtro de sonido (setFx de EdEffects.jsx): 0–1; con keyframes, en el del cabezal.
     Q_INVOKABLE void setAudioFx(const QString& id, double value);
+    // Pila de efectos animados (addVfx y EdVfxStack): añadir, parámetros, activar, rango, orden y quitar.
+    Q_INVOKABLE void addVfx(const QString& effectId);
+    Q_INVOKABLE void setVfxParam(int index, const QString& param, const QVariant& value);
+    Q_INVOKABLE void patchVfx(int index, const QVariantMap& patch);
+    Q_INVOKABLE void moveVfx(int index, int step);
+    Q_INVOKABLE void removeVfx(int index);
     // setClipAnimation: la animación `id` del catálogo en la ranura (in, out, loop o combo); vacío la quita.
     Q_INVOKABLE void setAnimation(const QString& slot, const QString& id);
     // Intensidad de una capa de ajuste (su opacidad).
@@ -213,6 +222,7 @@ signals:
 
 private:
     void patch_marker(const QString& id, const std::optional<Json>& patch);
+    void set_vfx(Json list);
     void set_filters(const std::vector<core::ClipFilter>& stack);
     void add_generated(core::Timeline next, Json clip, const char* cause);
     template <class Patch>

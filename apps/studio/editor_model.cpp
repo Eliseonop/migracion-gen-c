@@ -24,6 +24,7 @@
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_rules.hpp"
 #include "gc/core/timeline_view.hpp"
+#include "gc/core/vfx_stack.hpp"
 
 namespace gc::studio {
 
@@ -36,6 +37,8 @@ Json to_json(const QVariantMap& map) {
 QVariantMap to_variant(const Json& json) {
     return QJsonDocument::fromJson(QByteArray::fromStdString(json.dump())).object().toVariantMap();
 }
+
+Json vfx_list(const core::TimelineClip* c) { return c && c->vfx && c->vfx->is_array() ? *c->vfx : Json::array(); }
 
 // SWATCH y applyMatrix de clipFilters.js.
 QStringList filter_swatch(std::string_view id, double amount) {
@@ -347,6 +350,22 @@ QVariantMap EditorModel::selectedClip() const {
         {"shape", c->kind == "shape" ? to_variant(core::normalize_shape(c->shape.value_or(Json::object()))
                                                       .value_or(Json::object()))
                                      : QVariantMap()},
+        {"vfx", [&] { // la pila con lo que pinta el inspector: nombre y parámetros del catálogo
+             QVariantList out;
+             const auto catalog = core::fx_catalog();
+             for (const Json& e : vfx_list(c)) {
+                 const Json* fx = catalog ? catalog->effect(e.value("effect", Json())) : nullptr;
+                 QVariantMap row = to_variant(e);
+                 row["name"] = fx ? qstr(fx->value("name", "")) : "Desconocido (" + qstr(e.value("effect", "")) + ")";
+                 QVariantList specs;
+                 for (const Json& p : fx ? fx->value("params", Json::array()) : Json::array()) {
+                     specs << to_variant(p);
+                 }
+                 row["specs"] = specs;
+                 out << row;
+             }
+             return out;
+         }()},
         {"animations", [&] {
              QVariantMap out;
              if (c->animations && c->animations->is_object()) {
@@ -1456,6 +1475,99 @@ void EditorModel::setAudioFx(const QString& id, double value) {
     Json fx = c->audio_fx && c->audio_fx->is_object() ? *c->audio_fx : Json::object();
     fx[id.toStdString()] = n;
     fx_each("audio-fx", [&](core::TimelineClip& item) { item.audio_fx = fx; });
+}
+
+QVariantList EditorModel::vfxCatalog() {
+    QVariantList out;
+    const auto catalog = core::fx_catalog();
+    if (!catalog) {
+        return out;
+    }
+    std::map<std::string, std::string> cats;
+    for (const Json& c : catalog->data().value("categories", Json::array())) {
+        cats[c.value("id", "")] = c.value("label", "");
+    }
+    for (const Json& e : catalog->data().value("effects", Json::array())) {
+        out << QVariantMap{{"id", qstr(e.value("id", ""))},
+                           {"name", qstr(e.value("name", ""))},
+                           {"category", qstr(cats[e.value("category", "")])},
+                           {"description", qstr(e.value("description", ""))}};
+    }
+    return out;
+}
+
+// addVfx: el efecto al final de la pila de los clips visuales seleccionados.
+void EditorModel::addVfx(const QString& effectId) {
+    if (!session_ || selection_.ids.empty()) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& c : next.clips) {
+        const bool visual = c->kind == "video" || c->kind == "image" || c->kind == "motion";
+        if (!visual || std::ranges::find(selection_.ids, c->id) == selection_.ids.end()) {
+            continue;
+        }
+        if (auto entry = core::make_vfx_entry(effectId.toStdString(), ids_)) {
+            Json list = c->vfx && c->vfx->is_array() ? *c->vfx : Json::array();
+            list.push_back(std::move(*entry));
+            c.mut().vfx = std::move(list);
+        }
+    }
+    commit(std::move(next), "vfx", selection_.ids);
+}
+
+// setClipVfx: la pila del clip principal; vacía, nula.
+void EditorModel::set_vfx(Json list) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c) {
+        return;
+    }
+    const std::string id = c->id;
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == id) {
+            item.mut().vfx = list.empty() ? std::nullopt : std::optional(std::move(list));
+            break;
+        }
+    }
+    commit(std::move(next), "vfx", {id});
+}
+
+void EditorModel::setVfxParam(int index, const QString& param, const QVariant& value) {
+    Json list = vfx_list(selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front())));
+    if (index >= 0 && std::cmp_less(index, list.size())) {
+        const Json v = to_json(QVariantMap{{param, value}});
+        list[static_cast<std::size_t>(index)]["params"][param.toStdString()] = v.at(param.toStdString());
+        set_vfx(std::move(list));
+    }
+}
+
+void EditorModel::patchVfx(int index, const QVariantMap& patch) {
+    Json list = vfx_list(selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front())));
+    if (index >= 0 && std::cmp_less(index, list.size())) {
+        const Json p = to_json(patch);
+        for (const auto& [key, value] : p.items()) {
+            list[static_cast<std::size_t>(index)][key] = value;
+        }
+        set_vfx(std::move(list));
+    }
+}
+
+void EditorModel::moveVfx(int index, int step) {
+    Json list = vfx_list(selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front())));
+    const int to = index + step;
+    if (index >= 0 && to >= 0 && std::cmp_less(index, list.size()) && std::cmp_less(to, list.size())) {
+        std::swap(list[static_cast<std::size_t>(index)], list[static_cast<std::size_t>(to)]);
+        set_vfx(std::move(list));
+    }
+}
+
+void EditorModel::removeVfx(int index) {
+    Json list = vfx_list(selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front())));
+    if (index >= 0 && std::cmp_less(index, list.size())) {
+        list.erase(static_cast<std::size_t>(index));
+        set_vfx(std::move(list));
+    }
 }
 
 QVariantList EditorModel::animationSlots() {

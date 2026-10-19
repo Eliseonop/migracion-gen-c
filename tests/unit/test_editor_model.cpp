@@ -624,4 +624,17 @@ TEST_CASE("editor: animaciones de clip del catálogo por ranura", "[studio]") {
     m.setAnimation("in", "");
     CHECK(m.selectedClip()["animations"].toMap().isEmpty());
     CHECK_FALSE(f.saved().clips.front()->animations);
+
+    m.addVfx("glitch_rgb"); // la pila de efectos animados
+    m.addVfx("nada");
+    QVariantList vfx = m.selectedClip()["vfx"].toList();
+    REQUIRE(vfx.size() == 1);
+    CHECK(vfx[0].toMap()["name"] == "Glitch RGB");
+    m.setVfxParam(0, "amount", 0.25);
+    m.patchVfx(0, {{"enabled", false}, {"from", 1.0}});
+    vfx = m.selectedClip()["vfx"].toList();
+    CHECK(vfx[0].toMap()["params"].toMap()["amount"] == 0.25);
+    CHECK(vfx[0].toMap()["enabled"] == false);
+    m.removeVfx(0);
+    CHECK_FALSE(f.saved().clips.front()->vfx);
 }
