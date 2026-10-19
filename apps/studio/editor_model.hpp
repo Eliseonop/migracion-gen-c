@@ -154,6 +154,12 @@ public:
     Q_INVOKABLE void setAdjustIntensity(double value);
     Q_INVOKABLE void setFilterAmount(int index, double amount);
     Q_INVOKABLE void moveFilter(int index, int step);
+    // Copiar y pegar atributos (Ctrl+Alt+C / Ctrl+Alt+V): se copia el clip y al pegar se eligen los
+    // grupos (posición, animación, audio…) que van a los seleccionados.
+    Q_INVOKABLE bool copyAttributes();
+    // pasteableGroups: [{id, label, count, total}] para la selección actual.
+    Q_INVOKABLE QVariantList pasteableGroups() const;
+    Q_INVOKABLE void pasteAttributes(const QStringList& groups);
     // Inspector de figuras (EdShape.jsx).
     Q_INVOKABLE void changeShape(const QVariantMap& patch);
     Q_INVOKABLE void changeText(const QString& text);
@@ -228,6 +234,7 @@ private:
     QVariantList tracks_;
     QVariantList materials_;
     std::vector<std::pair<core::TimelineClip, double>> clipboard_; // clip y desfase con el primero
+    std::optional<core::TimelineClip> attr_clipboard_;
     std::map<QString, Json> payloads_; // material → dragPayload
     ClipListModel clip_model_;
     core::ClipSelection selection_;

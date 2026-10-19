@@ -6,9 +6,11 @@
 #include <QJsonObject>
 #include <algorithm>
 #include <cmath>
+#include <map>
 #include <unordered_map>
 #include <utility>
 
+#include "gc/core/clip_attrs.hpp"
 #include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_layout_ui.hpp"
 #include "gc/core/clip_pose_edit.hpp"
@@ -1167,6 +1169,87 @@ void EditorModel::addAdjustment() {
         core::insert_track(next.tracks, std::move(t));
     }
     add_generated(std::move(next), core::make_adjustment_clip_json(tid, playhead_, kDur, ids_), "add-adjustment");
+}
+
+bool EditorModel::copyAttributes() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c) {
+        return false;
+    }
+    attr_clipboard_ = *c;
+    return true;
+}
+
+QVariantList EditorModel::pasteableGroups() const {
+    static const std::map<std::string_view, const char*> kLabels{
+        {"transform", "Posición, escala y giro"},       {"flip", "Voltear"},
+        {"blend", "Opacidad y modo de fusión"},          {"animation", "Animación (keyframes)"},
+        {"transitions", "Entrada y salida"},             {"animations", "Animaciones (entrada, salida, bucle)"},
+        {"crop", "Recorte y encuadre"},                  {"effects", "Filtro, efectos y ajustes"},
+        {"vfx", "Efectos animados"},                     {"mask", "Máscara"},
+        {"chroma", "Croma y contorno"},                  {"style", "Estilo"},
+        {"speed", "Velocidad"},                          {"audio", "Volumen y efectos de audio"}};
+    QVariantList out;
+    if (!attr_clipboard_) {
+        return out;
+    }
+    std::vector<const core::TimelineClip*> targets;
+    for (const auto& id : selection_.ids) {
+        const core::TimelineClip* t = clip(qstr(id));
+        if (t && t->id != attr_clipboard_->id) {
+            targets.push_back(t);
+        }
+    }
+    for (const auto group : core::kAttrGroupIds) {
+        const auto count = std::ranges::count_if(
+            targets, [&](const core::TimelineClip* t) { return core::group_applies(group, *attr_clipboard_, *t); });
+        if (count > 0) {
+            out << QVariantMap{{"id", QString::fromUtf8(group.data(), static_cast<qsizetype>(group.size()))},
+                               {"label", QString::fromUtf8(kLabels.at(group))},
+                               {"count", static_cast<int>(count)},
+                               {"total", static_cast<int>(targets.size())}};
+        }
+    }
+    return out;
+}
+
+// applyPasteAttrs: los subtítulos enlazados de un audio siguen la velocidad pegada.
+void EditorModel::pasteAttributes(const QStringList& groups) {
+    if (!session_ || !attr_clipboard_ || groups.isEmpty()) {
+        return;
+    }
+    std::vector<std::string> picked;
+    for (const QString& g : groups) {
+        picked.push_back(g.toStdString());
+    }
+    const core::TimelineClip& src = *attr_clipboard_;
+    const auto target = [&](const core::TimelineClip& c) {
+        return c.id != src.id && std::ranges::find(selection_.ids, c.id) != selection_.ids.end();
+    };
+    core::Timeline next = *session_->timeline();
+    if (std::ranges::find(picked, "speed") != picked.end()) {
+        const auto before = next.clips;
+        for (const auto& c : before) {
+            if (target(*c) && c->kind == "audio" && core::group_applies("speed", src, *c)) {
+                core::apply_audio_speed_to_linked_text(next.clips, next.tracks, *c, src.speed);
+            }
+        }
+    }
+    for (auto& c : next.clips) {
+        if (!target(*c)) {
+            continue;
+        }
+        auto pasted = core::paste_attributes(*c, src, picked, ids_);
+        if (!ok(pasted)) {
+            return;
+        }
+        auto made = core::clip_from_json(*pasted);
+        if (!ok(made)) {
+            return;
+        }
+        c = std::move(*made);
+    }
+    commit(std::move(next), "paste-attrs", selection_.ids);
 }
 
 void EditorModel::changeShape(const QVariantMap& patch) {

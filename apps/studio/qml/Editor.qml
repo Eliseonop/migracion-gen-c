@@ -17,6 +17,8 @@ Item {
     Shortcut { sequences: [StandardKey.Copy]; enabled: editor.visible; onActivated: editor.model.copySelection() }
     Shortcut { sequences: [StandardKey.Cut]; enabled: editor.visible; onActivated: editor.model.cutSelection() }
     Shortcut { sequences: [StandardKey.Paste]; enabled: editor.visible; onActivated: editor.model.paste() }
+    Shortcut { sequence: "Ctrl+Alt+C"; enabled: editor.visible; onActivated: editor.model.copyAttributes() }
+    Shortcut { sequence: "Ctrl+Alt+V"; enabled: editor.visible; onActivated: pasteAttrs.openFor(editor.model.pasteableGroups()) }
     Shortcut { sequence: "Escape"; enabled: editor.visible; onActivated: editor.model.clearSelection() }
     Shortcut { sequence: "Space"; enabled: editor.visible; onActivated: editor.playing = !editor.playing }
     Shortcut { sequence: "Left"; enabled: editor.visible; onActivated: editor.model.nudgePlayhead(-0.1) }
@@ -177,4 +179,65 @@ Item {
     }
 
     Item { id: overlay; anchors.fill: parent; z: 100 }
+
+    // «Pegar atributos» (EdPasteAttrs.jsx): qué grupos del clip copiado van a los seleccionados.
+    Popup {
+        id: pasteAttrs
+        objectName: "pasteAttrs"
+        property var groups: []
+        property var picked: ({})
+        function openFor(list) {
+            if (!list.length)
+                return
+            groups = list
+            const all = {}
+            for (const g of list)
+                all[g.id] = true
+            picked = all
+            open()
+        }
+        function chosen() { return groups.filter((g) => picked[g.id]).map((g) => g.id) }
+        anchors.centerIn: parent
+        width: 360
+        modal: true
+        padding: 20
+        background: Rectangle { radius: Theme.radiusLg; color: Theme.card; border.color: Theme.lineBright }
+        contentItem: ColumnLayout {
+            spacing: 8
+            Label { text: "Pegar atributos"; color: Theme.text; font.pixelSize: 16; font.bold: true }
+            Label {
+                text: pasteAttrs.groups.length ? (pasteAttrs.groups[0].total === 1 ? "En 1 clip" : "En " + pasteAttrs.groups[0].total + " clips") : ""
+                color: Theme.muted
+            }
+            Repeater {
+                model: pasteAttrs.groups
+                CheckBox {
+                    required property var modelData
+                    objectName: "attr:" + modelData.id
+                    text: modelData.label + (modelData.count < modelData.total ? "  (" + modelData.count + " de " + modelData.total + ")" : "")
+                    checked: !!pasteAttrs.picked[modelData.id]
+                    palette.windowText: Theme.text
+                    onToggled: {
+                        const next = Object.assign({}, pasteAttrs.picked)
+                        next[modelData.id] = checked
+                        pasteAttrs.picked = next
+                    }
+                }
+            }
+            RowLayout {
+                Layout.alignment: Qt.AlignRight
+                Button { text: "Cancelar"; onClicked: pasteAttrs.close() }
+                Button {
+                    objectName: "attr:paste"
+                    text: "Pegar"
+                    enabled: pasteAttrs.chosen().length > 0
+                    onClicked: {
+                        const groups = pasteAttrs.chosen()
+                        pasteAttrs.close()
+                        editor.model.pasteAttributes(groups)
+                    }
+                }
+            }
+        }
+    }
 }

@@ -556,3 +556,28 @@ TEST_CASE("editor: los beats del clip como fracción de su ancho", "[studio]") {
     REQUIRE(beats.size() == 3); // el de 12 s cae fuera del recorte (0–10)
     CHECK(beats[1].toDouble() == 0.25);
 }
+
+TEST_CASE("editor: copiar y pegar atributos entre clips", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    CHECK_FALSE(m.copyAttributes()); // sin selección
+    m.select("a");
+    m.setPose({{"opacity", 0.3}});
+    m.setBlend("screen");
+    m.toggleFlip("h");
+    REQUIRE(m.copyAttributes());
+    m.select("b");
+    QStringList ids;
+    for (const QVariant& g : m.pasteableGroups()) {
+        ids << g.toMap()["id"].toString();
+    }
+    CHECK(ids.contains("blend"));
+    CHECK_FALSE(ids.contains("style")); // solo entre textos o figuras
+    m.pasteAttributes({"blend"});
+    CHECK(m.selectedClip()["blend"] == "screen");
+    CHECK(m.selectedClip()["poseOpacity"] == 0.3);
+    CHECK(m.selectedClip()["flipH"] == false); // «Voltear» no se eligió
+    m.undo();
+    CHECK(m.selectedClip()["blend"] == "normal");
+}

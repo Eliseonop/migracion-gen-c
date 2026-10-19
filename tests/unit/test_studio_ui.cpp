@@ -342,3 +342,15 @@ TEST_CASE("studio sin pantalla: los marcadores se arrastran y se quitan con el b
     QCoreApplication::processEvents();
     CHECK(s.editor->markers().isEmpty());
 }
+
+TEST_CASE("studio sin pantalla: Ctrl+Alt+C y Ctrl+Alt+V pegan los atributos elegidos", "[studio][ui]") {
+    Studio s;
+    s.editor->select("a");
+    s.editor->setBlend("multiply");
+    QTest::keyClick(s.window, Qt::Key_C, Qt::ControlModifier | Qt::AltModifier);
+    s.editor->select("b");
+    QTest::keyClick(s.window, Qt::Key_V, Qt::ControlModifier | Qt::AltModifier);
+    QTest::qWait(50); // el diálogo se abre con una transición
+    s.click("attr:paste");
+    CHECK(s.editor->selectedClip()["blend"] == "multiply");
+}
