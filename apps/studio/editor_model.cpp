@@ -40,6 +40,8 @@ QVariantMap to_variant(const Json& json) {
     return QJsonDocument::fromJson(QByteArray::fromStdString(json.dump())).object().toVariantMap();
 }
 
+double js_fixed1(double v) { return std::isfinite(v) ? core::js_fixed(v, 1) : 0.0; }
+
 Json vfx_list(const core::TimelineClip* c) { return c && c->vfx && c->vfx->is_array() ? *c->vfx : Json::array(); }
 
 // SWATCH y applyMatrix de clipFilters.js.
@@ -319,7 +321,9 @@ QVariantMap EditorModel::selectedClip() const {
                                   {"x", tv.x},
                                   {"y", tv.y},
                                   {"scalePct", tv.scale_pct},
-                                  {"degrees", tv.rotation_deg}}},
+                                  {"degrees", tv.rotation_deg},
+                                  {"rotX", c->kind == "text" ? js_fixed1(core::ui_props_at(*c, std::max(0.0, local)).get("rot_x")) : 0.0},
+                                  {"rotY", c->kind == "text" ? js_fixed1(core::ui_props_at(*c, std::max(0.0, local)).get("rot_y")) : 0.0}}},
         {"text", qstr(c->text.value_or(""))},
         {"effects", to_variant(c->effects.value_or(Json::object()))},
         {"audioFx", [&] { // valueOf de EdEffects: el valor animado si hay keyframes

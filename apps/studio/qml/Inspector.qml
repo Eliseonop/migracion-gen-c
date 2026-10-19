@@ -634,6 +634,21 @@ Rectangle {
                     onCommitted: (v) => panel.model.setRotation(v)
                 }
             }
+            RowLayout { // texto 3D (#4): inclinar y girar en X/Y con perspectiva, animables
+                visible: panel.text
+                spacing: 8
+                Num { objectName: "insp:rotX"; title: "3D↕"; suffix: "°"; value: panel.tf.rotX ?? 0
+                      onCommitted: (v) => panel.model.setPose({ rot_x: Math.max(-75, Math.min(75, v)) }) }
+                Num { title: "3D↔"; suffix: "°"; value: panel.tf.rotY ?? 0
+                      onCommitted: (v) => panel.model.setPose({ rot_y: Math.max(-75, Math.min(75, v)) }) }
+            }
+            Num {
+                visible: panel.text && (!!panel.tf.rotX || !!panel.tf.rotY)
+                title: "Persp."
+                suffix: "%"
+                value: { const p = Number(panel.st.perspective); return Math.round((isFinite(p) ? p : 0.5) * 100) }
+                onCommitted: (v) => panel.model.changeStyle({ perspective: Math.max(0, Math.min(100, v)) / 100 })
+            }
             RowLayout {
                 visible: !!panel.tf.show
                 spacing: 4

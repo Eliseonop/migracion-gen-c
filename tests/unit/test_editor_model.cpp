@@ -490,6 +490,8 @@ TEST_CASE("editor: temas de subtítulos y estilos preestablecidos de un texto", 
     CHECK(m.selectedClip()["lookId"] == "black-yellow");
     m.applyTextLook("");
     CHECK(m.selectedClip()["lookId"] == "none");
+    m.setPose({{"rot_x", 30}}); // texto 3D
+    CHECK(m.selectedClip()["transform"].toMap()["rotX"] == 30);
 }
 
 TEST_CASE("editor: filtros de color apilados y ajustes de color", "[studio]") {
