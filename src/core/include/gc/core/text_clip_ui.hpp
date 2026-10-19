@@ -45,6 +45,11 @@ inline constexpr std::string_view kDefaultText = "Texto predeterminado"; // DEFA
 
 [[nodiscard]] Json make_text_clip_json(std::string_view track_id, double start, double duration, std::string_view text,
                                        const Json& style, IdSource& ids);
+inline constexpr double kTextDefaultDuration = 3.0; // TEXT_DEFAULT_DUR
+// La rama de texto de placeAsset: el texto (o un tema, `theme_id`) soltado en la pista, con el
+// estilo de la pista (`track_style`, nulo si no tiene) y la duración `fit` si reemplaza a un clip.
+[[nodiscard]] Json place_text_clip(const Json& payload, const Json& track_style, std::string_view track_id,
+                                   double start, std::optional<double> fit, IdSource& ids);
 // addText: del cabezal al final de la timeline, al menos 3 s.
 [[nodiscard]] double new_text_duration(const Timeline& tl, double playhead);
 // changeText: el texto y el nombre (sus 22 primeras unidades de UTF-16).

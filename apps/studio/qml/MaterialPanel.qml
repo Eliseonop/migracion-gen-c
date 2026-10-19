@@ -34,7 +34,7 @@ Rectangle {
             spacing: 2
             Repeater {
                 model: [["project", "Proyecto"], ["library", "Biblioteca"], ["collection", "Colecciones"], ["sfx", "SFX"],
-                        ["fx", "Efectos"], ["shapes", "Figuras"]]
+                        ["text", "Texto"], ["fx", "Efectos"], ["shapes", "Figuras"]]
                 TabButton {
                     required property var modelData
                     objectName: "material:source:" + modelData[0]
@@ -73,7 +73,7 @@ Rectangle {
             }
         }
         TextField {
-            visible: panel.source !== "shapes"
+            visible: panel.source !== "shapes" && panel.source !== "text"
             objectName: "material:search"
             Layout.fillWidth: true
             placeholderText: panel.source === "sfx" ? "Buscar sonidos…" : panel.source === "fx" ? "Buscar: glitch, papel, temblor…" : "Buscar…"
@@ -174,7 +174,7 @@ Rectangle {
             }
         }
         Label {
-            visible: list.count === 0 && panel.source !== "fx" && panel.source !== "shapes"
+            visible: list.count === 0 && ["fx", "shapes", "text"].indexOf(panel.source) < 0
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             text: panel.source === "library" ? "La biblioteca está vacía: guarda material de un proyecto para usarlo en todos."
@@ -240,6 +240,89 @@ Rectangle {
             }
         }
         Flickable {
+            visible: panel.source === "text"
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            contentHeight: textColumn.implicitHeight
+            Column {
+                id: textColumn
+                width: parent.width
+                spacing: 6
+                readonly property var textMaterials: panel.model.materials.filter((m) => m.source === "text")
+                // EdFxLibrary (texto): sobre un texto (o su pista) el tema se aplica; si no, añade un texto con él.
+                function pick(themeId) {
+                    const c = panel.model.selectedClip
+                    if (themeId && (c.kind === "text" || panel.model.selectedTrack.kind === "text"))
+                        panel.model.applyTextTheme(themeId)
+                    else
+                        panel.model.addText(themeId)
+                }
+                Label { text: "Añadir texto"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
+                MaterialTile {
+                    width: parent.width
+                    height: 40
+                    materialKey: "text:default"
+                    dragLayer: panel.dragLayer
+                    tip: "Arrástralo a la timeline, o clic para añadirlo en el cursor"
+                    onTapped: textColumn.pick("")
+                    Label { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: "Texto predeterminado"; color: Theme.text }
+                    Label { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: "＋"; color: Theme.muted }
+                }
+                Label { text: "Temas"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
+                Flow {
+                    width: parent.width
+                    spacing: 4
+                    Repeater {
+                        model: panel.model.textThemes
+                        MaterialTile {
+                            id: themeTile
+                            required property var modelData
+                            width: 74
+                            height: 54
+                            materialKey: "text:" + modelData.id
+                            dragLayer: panel.dragLayer
+                            tip: modelData.name
+                            onTapped: textColumn.pick(modelData.id)
+                            Rectangle {
+                                x: 6; y: 6
+                                width: parent.width - 12
+                                height: 26
+                                radius: 6
+                                color: themeTile.modelData.bg && themeTile.modelData.bg !== "none" ? themeTile.modelData.bg : "#0b0d14"
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Repeater {
+                                        model: [themeTile.modelData.color, themeTile.modelData.hot || themeTile.modelData.color]
+                                        Text {
+                                            required property string modelData
+                                            text: "Aa"
+                                            font.pixelSize: 13
+                                            font.bold: true
+                                            color: modelData
+                                            style: themeTile.modelData.stroke ? Text.Outline : Text.Normal
+                                            styleColor: themeTile.modelData.stroke || "transparent"
+                                        }
+                                    }
+                                }
+                            }
+                            Label {
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 3
+                                width: parent.width
+                                horizontalAlignment: Text.AlignHCenter
+                                text: themeTile.modelData.name
+                                elide: Text.ElideRight
+                                color: Theme.textSecondary
+                                font.pixelSize: 10
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Flickable {
             visible: panel.source === "shapes"
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -271,7 +354,7 @@ Rectangle {
         }
         ListView {
             id: list
-            visible: panel.source !== "fx" && panel.source !== "shapes"
+            visible: ["fx", "shapes", "text"].indexOf(panel.source) < 0
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true

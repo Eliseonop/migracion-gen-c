@@ -293,6 +293,14 @@ def _material_calls(rng: random.Random) -> list:
         for fit, dur in ((None, 5), (2.5, 5), (None, 0), (0, None), (None, 0.1)):
             calls.append(["placeAsset", {**payload, "duration": dur}, "V1", rng.choice([0, 3.25]), fit])
     calls.append(["placeAsset", {"kind": "shape", "asset_kind": "clips", "type": "heart", "duration": 2}, "V1", 1, None])
+    for theme in (None, "neon", "box", "nada"):
+        payload = {"asset_kind": "text", "kind": "text", "asset_id": theme or "text", "filename": "",
+                   "name": theme or "Texto predeterminado", "text": "hola mundo" if theme else "Texto predeterminado",
+                   "duration": 3, "theme_id": theme}
+        for track_style in (None, {}, {"color": "#ff0000", "size": 0.07, "x": 0.3}):
+            for fit, dur, text in ((None, 3, None), (2.25, 3, ""), (None, 0, "  "), (-1, "4", "otro")):
+                p = {**payload, "duration": dur, **({"text": text} if text is not None else {})}
+                calls.append(["placeText", p, "T1", rng.choice([0, 1.5]), fit, track_style])
     return calls
 
 

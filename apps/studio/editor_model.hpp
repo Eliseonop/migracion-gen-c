@@ -190,7 +190,7 @@ public:
     Q_INVOKABLE void setTransition(const QString& appear, const QString& exit);
     Q_INVOKABLE void setNote(const QString& note);
     // Textos (addText, changeText y changeStyle de VideoEditor.jsx).
-    Q_INVOKABLE void addText();
+    Q_INVOKABLE void addText(const QString& themeId = {}); // con un tema: su estilo y su texto de muestra
     // Figura del catálogo en el cabezal (addAsset('shape')) y capa de ajuste (addAdjustmentLayer).
     Q_INVOKABLE void addShape(const QString& type, const QString& label);
     Q_INVOKABLE void addAdjustment();

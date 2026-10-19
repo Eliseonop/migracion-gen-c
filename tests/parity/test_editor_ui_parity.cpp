@@ -453,6 +453,14 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "dragPayload") {
         return drag_payload(str(1), call.at(2));
     }
+    if (fn == "placeText") {
+        SequentialIdSource ids;
+        Json c = place_text_clip(call.at(1), call.at(5), str(2), num(3),
+                                 call.at(4).is_number() ? std::optional(num(4)) : std::nullopt, ids);
+        c.erase("id");
+        c.erase("asset_id");
+        return c;
+    }
     if (fn == "makeClip" || fn == "placeAsset") {
         SequentialIdSource ids;
         Json c = fn == "makeClip"

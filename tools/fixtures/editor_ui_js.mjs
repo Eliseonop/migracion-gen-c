@@ -83,15 +83,21 @@ const extract = await load('features/editor/clipExtract.js')
 const dragPayload = new Function('IMAGE_DEFAULT_DUR', 'materialDuration', 'segmentRange', 'hasFaceTrack',
   `return ${extractFunction(`${root}/features/editor/MaterialClipGrid.jsx`, 'dragPayload')}`)(
   m.IMAGE_DEFAULT_DUR, extract.materialDuration, extract.segmentRange, extract.hasFaceTrack)
-// placeAsset de VideoEditor.jsx con su setClips capturado (vídeo, imagen, audio y figuras).
-const placeAsset = (payload, trackId, start, fitDur) => {
+// placeAsset de VideoEditor.jsx con su setClips capturado (vídeo, imagen, audio, figuras y textos).
+const placeAsset = (payload, trackId, start, fitDur, trackStyle) => {
   let made = null
   const setClips = (fn) => { made = fn([])[0] }
+  const styleFor = new Function('tracksRef', 'defaultTextStyle', 'subtitleStyle', 'applyThemeToStyle',
+    `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'newTextStyle')}`)(
+    { current: [{ id: trackId, style: trackStyle ?? undefined }] }, textstyles.defaultTextStyle, textstyles.subtitleStyle,
+    karaoke.applyThemeToStyle)
   const fn = new Function('makeClip', 'isGeneratedDurationClip', 'clipDur', 'clipSpeed', 'setClips', 'setSelClipId',
-    'setSelClipIds', 'chromaBg', 'makeShapeClip', 'SHAPE_DEFAULT_DUR',
+    'setSelClipIds', 'chromaBg', 'makeShapeClip', 'SHAPE_DEFAULT_DUR', 'themeById', 'TEXT_DEFAULT_DUR', 'DEFAULT_TEXT',
+    'selectNewText', 'makeTextClip', 'newTextStyle',
     `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'placeAsset')}`)(
     m.makeClip, m.isGeneratedDurationClip, m.clipDur, m.clipSpeed, setClips, () => {}, () => {}, () => ({}),
-    m.makeShapeClip, shapes.SHAPE_DEFAULT_DUR)
+    m.makeShapeClip, shapes.SHAPE_DEFAULT_DUR, themes.themeById, m.TEXT_DEFAULT_DUR, m.DEFAULT_TEXT,
+    (clip) => { made = clip }, m.makeTextClip, styleFor)
   fn(payload, trackId, start, fitDur)
   return made
 }
@@ -250,6 +256,10 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     dragPayload: (assetKind, item) => JSON.parse(dragPayload(assetKind, item)),
     makeClip: (assetKind, item, track, start, dur) => clipNoIds(m.makeClip(assetKind, item, track, start, dur ?? undefined)),
     placeAsset: (payload, track, start, fit) => clipNoIds(placeAsset(payload, track, start, fit ?? undefined)),
+    placeText: (payload, track, start, fit, trackStyle) => {
+      const { asset_id, ...rest } = clipNoIds(placeAsset(payload, track, start, fit ?? undefined, trackStyle))
+      return rest
+    },
     segmentRange: (item) => extract.segmentRange(item),
     materialDuration: (item) => extract.materialDuration(item),
     kfState: (id, t, fps) => kf.kfState(byId(id), t, fps),

@@ -239,6 +239,21 @@ bool EditorModel::openProject(const QString& pid) {
     for (const auto& a : (*project)->audios) {
         add("project", "audios", "audios:" + qstr(a.id), core::to_json(a), "audio");
     }
+    const auto add_text = [&](const Json* theme) { // dragTextPayload
+        const std::string id = theme ? theme->value("id", std::string()) : std::string();
+        const std::string name = theme ? theme->value("name", std::string()) : std::string(core::kDefaultText);
+        const QString key = "text:" + qstr(id.empty() ? "default" : id);
+        payloads_[key] = Json{{"asset_kind", "text"}, {"kind", "text"}, {"asset_id", id.empty() ? "text" : id},
+                              {"filename", ""}, {"name", name},
+                              {"text", theme ? theme->value("sample", std::string(core::kDefaultText)) : std::string(core::kDefaultText)},
+                              {"duration", core::kTextDefaultDuration}, {"theme_id", id.empty() ? Json() : Json(id)}};
+        materials_ << QVariantMap{{"key", key},   {"source", "text"}, {"assetKind", "text"}, {"kind", "text"},
+                                  {"themeId", qstr(id)}, {"name", qstr(name)}, {"duration", core::kTextDefaultDuration}};
+    };
+    add_text(nullptr);
+    for (const Json& theme : core::subtitle_themes()) {
+        add_text(&theme);
+    }
     for (const auto& [category, items] : kShapeCatalog) { // EdShapes: dragShapePayload
         for (const auto& [type, label] : items) {
             const QString key = QString("shape:") + type;
@@ -1114,7 +1129,14 @@ void EditorModel::dropMaterial(const QString& key, double x, double y, bool alt)
         }
         std::erase_if(next.clips, [&](const auto& c) { return c->id == *land.replace_id; });
     }
-    auto made = core::clip_from_json(core::place_asset_clip(payload, track_id, land.start, fit, ids_));
+    const core::TimelineTrack* lane = nullptr;
+    for (const auto& t : next.tracks) {
+        lane = t.id == track_id ? &t : lane;
+    }
+    auto made = core::clip_from_json(
+        payload.value("asset_kind", std::string()) == "text"
+            ? core::place_text_clip(payload, lane && lane->style ? *lane->style : Json(), track_id, land.start, fit, ids_)
+            : core::place_asset_clip(payload, track_id, land.start, fit, ids_));
     if (!ok(made)) {
         return;
     }
@@ -1598,7 +1620,7 @@ void EditorModel::toggleReverse() {
     }
 }
 
-void EditorModel::addText() {
+void EditorModel::addText(const QString& themeId) {
     if (!session_) {
         return;
     }
@@ -1622,7 +1644,12 @@ void EditorModel::addText() {
         core::insert_track(next.tracks, std::move(t));
     }
     const double dur = core::new_text_duration(next, playhead_);
-    add_generated(std::move(next), core::make_text_clip_json(tid, playhead_, dur, core::kDefaultText, style, ids_), "add-text");
+    const Json* preset = core::theme_by_id(themeId.toStdString());
+    const std::string sample = preset ? preset->value("sample", std::string()) : std::string();
+    add_generated(std::move(next),
+                  core::make_text_clip_json(tid, playhead_, dur, sample.empty() ? core::kDefaultText : sample,
+                                            preset ? core::apply_theme_to_style(style, *preset) : style, ids_),
+                  "add-text");
 }
 
 void EditorModel::add_generated(core::Timeline next, Json clip, const char* cause) {
@@ -1911,7 +1938,8 @@ QVariantMap swatch(const Json& item, const Json& style) {
                            ? text("border_color", "#000000")
                            : QString()},
             {"bg", text("bg", "none")},
-            {"glow", style.value("glow", false) ? text("glow_color", "") : QString()}};
+            {"glow", style.value("glow", false) ? text("glow_color", "") : QString()},
+            {"hot", text("highlight_color", "")}};
 }
 
 } // namespace

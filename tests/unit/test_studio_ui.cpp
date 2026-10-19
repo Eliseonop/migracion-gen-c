@@ -468,3 +468,25 @@ TEST_CASE("studio sin pantalla: una figura del material se añade con un clic o 
     CHECK(s.editor->selectedClip()["kind"] == "shape");
     CHECK(s.editor->selectedClip()["duration"] == 5.0);
 }
+
+TEST_CASE("studio sin pantalla: los textos del material se añaden, cambian de tema y se arrastran", "[studio][ui]") {
+    Studio s;
+    s.click("material:source:text");
+    s.click("material:text:neon");
+    QVariantMap made = s.editor->selectedClip();
+    CHECK(made["kind"] == "text");
+    CHECK(made["text"] == "hola mundo");
+    CHECK(made["themeId"] == "neon");
+    s.click("material:text:fire"); // con un texto elegido, el tema se aplica
+    CHECK(s.editor->selectedClip()["themeId"] == "fire");
+    CHECK(s.editor->selectedClip()["clipId"] == made["clipId"]);
+    const auto count = s.editor->clips().size();
+    QQuickItem* tile = s.item("material:text:box");
+    REQUIRE(tile);
+    const QPoint to = s.at("a", 0.5);
+    s.drag(tile->mapToScene(QPointF(tile->width() / 2, tile->height() / 2)).toPoint(), to);
+    QCoreApplication::processEvents();
+    CHECK(s.editor->clips().size() == count + 1);
+    CHECK(s.editor->selectedClip()["kind"] == "text");
+    CHECK(s.editor->selectedClip()["themeId"] == "box");
+}

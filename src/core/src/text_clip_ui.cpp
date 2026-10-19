@@ -20,7 +20,6 @@ namespace gc::core {
 
 namespace {
 
-constexpr double kTextDefaultDuration = 3; // TEXT_DEFAULT_DUR
 constexpr std::array<std::string_view, 9> kLookKeys{"color",  "border_width", "border_color", "bg",       "bg_opacity",
                                                     "shadow", "shadow_color", "glow",         "glow_color"};
 
@@ -247,6 +246,20 @@ Json new_text_style(const Json& track_style) {
         style[key] = sub.at(key);
     }
     return style;
+}
+
+Json place_text_clip(const Json& payload, const Json& track_style, std::string_view track_id, double start,
+                     std::optional<double> fit, IdSource& ids) {
+    const Json& theme_id = field(payload, "theme_id");
+    const Json* preset = theme_id.is_string() ? theme_by_id(theme_id.get_ref<const std::string&>()) : nullptr;
+    const Json& duration = field(payload, "duration");
+    const double dur = fit && *fit > 0           ? *fit
+                       : truthy(duration)        ? js_number(duration)
+                                                 : kTextDefaultDuration;
+    const Json& text = field(payload, "text");
+    const Json base = new_text_style(truthy(track_style) ? track_style : Json());
+    return make_text_clip_json(track_id, start, dur, truthy(text) ? js_string(text) : std::string(kDefaultText),
+                               preset ? apply_theme_to_style(base, *preset) : base, ids);
 }
 
 Json make_text_clip_json(std::string_view track_id, double start, double duration, std::string_view text,
