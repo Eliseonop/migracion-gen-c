@@ -9,6 +9,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/timeline_drop.hpp"
@@ -65,6 +66,30 @@ Json patch_json(const ClipPatch& p) {
     put("out_point", p.out_point);
     put("source_duration", p.source_duration);
     return out;
+}
+
+Json without_ids(Json keyframes) {
+    if (keyframes.contains("items")) {
+        for (Json& k : keyframes["items"]) {
+            k.erase("id");
+        }
+    }
+    return keyframes;
+}
+
+// Lo que cambia commitPose, como lo devuelve editor_ui_js.mjs (poseView).
+Json pose_view(const TimelineClip& c) {
+    const Json dumped = to_json(c);
+    const auto get = [&](const char* key) { return dumped.contains(key) ? dumped.at(key) : Json(); };
+    return {{"keyframes", c.keyframes ? without_ids(*c.keyframes) : Json()},
+            {"style", get("style")},
+            {"shape", get("shape")},
+            {"transform", get("transform")},
+            {"opacity", get("opacity")},
+            {"volume", get("volume")},
+            {"audio_fx", get("audio_fx")},
+            {"frame", get("frame")},
+            {"zoom", c.reframe ? Json(c.reframe->zoom) : Json()}};
 }
 
 Json slot_json(const std::optional<TrackSlot>& slot) {
@@ -334,6 +359,27 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "nextSnapTime") {
         const auto t = next_snap_time(tl.markers, tl.clips, num(1), call.at(2).get<int>());
         return t ? Json(*t) : Json();
+    }
+    if (fn == "poseKeyframed") {
+        return pose_keyframed(clip(call.at(1)));
+    }
+    if (fn == "shouldKeyframe") {
+        return should_keyframe(clip(call.at(1)), call.at(2));
+    }
+    if (fn == "upsertKeyframeAt" || fn == "applyStaticPose" || fn == "commitPose") {
+        TimelineClip c = clip(call.at(1));
+        SequentialIdSource ids;
+        if (fn == "upsertKeyframeAt") {
+            upsert_keyframe_ui(c, num(2), call.at(3),
+                               call.at(4).is_string() ? std::optional(str(4)) : std::nullopt, num(5), ids);
+            return without_ids(*c.keyframes);
+        }
+        if (fn == "applyStaticPose") {
+            apply_static_pose(c, call.at(2));
+        } else {
+            commit_pose(c, call.at(2), num(3), num(4), ids);
+        }
+        return pose_view(c);
     }
     if (fn == "emptiedTracks") {
         return emptied_tracks(tl.tracks, tl.clips, strings(call.at(1)));

@@ -22,6 +22,7 @@ add_library(gc_core
     src/clip_layout.cpp
     src/clip_motion.cpp
     src/clip_media.cpp
+    src/clip_pose_edit.cpp
     src/collections.cpp
     src/disk_scan.cpp
     src/edit_commands.cpp

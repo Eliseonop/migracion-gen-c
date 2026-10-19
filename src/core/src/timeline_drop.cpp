@@ -28,33 +28,6 @@ bool excluded(std::span<const std::string> exclude, std::string_view id) {
     return std::ranges::find(exclude, id) != exclude.end();
 }
 
-// Number(x) de JS para lo que llega en un JSON.
-double js_number(const Json& v) {
-    if (v.is_number()) {
-        return v.get<double>();
-    }
-    if (v.is_null()) {
-        return 0;
-    }
-    if (v.is_boolean()) {
-        return v.get<bool>() ? 1 : 0;
-    }
-    if (v.is_string()) {
-        const std::string s = v.get<std::string>();
-        const auto first = s.find_first_not_of(" \t\n\r");
-        if (first == std::string::npos) {
-            return 0;
-        }
-        char* end = nullptr;
-        const double n = std::strtod(s.c_str() + first, &end);
-        return end != s.c_str() + first &&
-                       std::string_view(end).find_first_not_of(" \t\n\r") == std::string_view::npos
-                   ? n
-                   : std::numeric_limits<double>::quiet_NaN();
-    }
-    return std::numeric_limits<double>::quiet_NaN();
-}
-
 double source_to_timeline(const TimelineClip& c, double src) {
     const double sp = ui_clip_speed(c);
     return c.reverse ? c.start + (c.out_point - src) / sp : c.start + (src - c.in_point) / sp;

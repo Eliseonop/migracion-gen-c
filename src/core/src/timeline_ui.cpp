@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <limits>
 #include <map>
 #include <ranges>
 
@@ -91,6 +92,31 @@ double js_fixed(double x, int digits) {
 
 double js_fixed3(double x) {
     return js_fixed(x, 3);
+}
+
+double js_number(const Json& v) {
+    if (v.is_number()) {
+        return v.get<double>();
+    }
+    if (v.is_null()) {
+        return 0;
+    }
+    if (v.is_boolean()) {
+        return v.get<bool>() ? 1 : 0;
+    }
+    if (v.is_string()) {
+        const std::string& s = v.get_ref<const std::string&>();
+        const auto first = s.find_first_not_of(" \t\n\r");
+        if (first == std::string::npos) {
+            return 0;
+        }
+        char* end = nullptr;
+        const double n = std::strtod(s.c_str() + first, &end);
+        const bool whole = end != s.c_str() + first &&
+                           std::string_view(end).find_first_not_of(" \t\n\r") == std::string_view::npos;
+        return whole ? n : std::numeric_limits<double>::quiet_NaN();
+    }
+    return std::numeric_limits<double>::quiet_NaN();
 }
 
 std::string lane_kind(std::string_view clip_kind) {

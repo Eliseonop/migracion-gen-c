@@ -19,6 +19,38 @@ const drop = await load('features/editor/dropIntent.js')
 const magnetic = await load('features/editor/magnetic.js')
 const noOverlap = await load('features/editor/noOverlap.js')
 const beats = await load('lib/beats.js')
+const kf = await load('lib/clipKeyframes.js')
+const layout = await load('lib/clipLayout.js')
+
+// applyStaticPose vive dentro de VideoEditor.jsx (no se exporta): se extrae su texto y se evalúa con
+// lo que usa. Es JS sin JSX.
+function extractFunction(file, name) {
+  const src = readFileSync(file, 'utf8')
+  const start = src.indexOf(`function ${name}(`)
+  let depth = 0
+  for (let i = src.indexOf('{', start); i < src.length; i++) {
+    if (src[i] === '{') depth++
+    else if (src[i] === '}' && --depth === 0) return src.slice(start, i + 1)
+  }
+  throw new Error(`no encuentro ${name}`)
+}
+const applyStaticPose = new Function('clampVolume', 'AUDIO_FX_KEYS', 'newTransform', 'newReframe',
+  `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'applyStaticPose')}`)(
+  kf.clampVolume, kf.AUDIO_FX_KEYS, layout.newTransform, m.newReframe)
+// commitPose de VideoEditor.jsx para un clip (sus refs y la selección aparte).
+const commitPose = (c, patch, localT, fps) => {
+  if (!kf.canKeyframe(c)) return c
+  const next = applyStaticPose(c, patch)
+  return kf.shouldKeyframe(c, patch) ? kf.upsertKeyframeAt(next, Math.max(0, localT), patch, undefined, fps) : next
+}
+// Sin los ids de los keyframes (salen de la hora).
+const noIds = (c) => ({ ...c, keyframes: c.keyframes && { ...c.keyframes, items: (c.keyframes.items || []).map(({ id, ...k }) => k) } })
+const poseView = (c) => {
+  const { keyframes, style, shape, transform, opacity, volume, audio_fx, frame, reframe } = noIds(c)
+  return { keyframes: keyframes ?? null, style: style ?? null, shape: shape ?? null, transform: transform ?? null,
+    opacity: opacity ?? null, volume: volume ?? null, audio_fx: audio_fx ?? null, frame: frame ?? null,
+    zoom: reframe?.zoom ?? null }
+}
 
 const inf = (x) => (x === Infinity ? 'inf' : x)
 const cases = JSON.parse(readFileSync(0, 'utf8'))
@@ -80,6 +112,11 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     normalizeMarkers: (list) => beats.normalizeMarkers(list).map((x) => [x.t, x.label ?? null, x.color ?? null]),
     toggleMarkerAt: (t, fps) => beats.toggleMarkerAt(markers, t, fps).map((x) => x.t),
     nextSnapTime: (t, dir) => beats.nextSnapTime(markers, clips, t, dir),
+    poseKeyframed: (id) => kf.poseKeyframed(byId(id)),
+    shouldKeyframe: (id, patch) => kf.shouldKeyframe(byId(id), patch),
+    upsertKeyframeAt: (id, t, patch, interp, fps) => noIds(kf.upsertKeyframeAt(byId(id), t, patch, interp ?? undefined, fps)).keyframes,
+    applyStaticPose: (id, patch) => poseView(applyStaticPose(byId(id), patch)),
+    commitPose: (id, patch, t, fps) => poseView(commitPose(byId(id), patch, t, fps)),
     emptiedTracks: (candidates) => m.emptiedTracks(tracks, clips, candidates),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)

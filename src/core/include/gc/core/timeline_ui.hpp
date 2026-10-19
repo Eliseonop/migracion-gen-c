@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "gc/core/cow.hpp"
+#include "gc/core/json.hpp"
 #include "gc/core/model.hpp"
 
 namespace gc::core {
@@ -25,6 +26,8 @@ using ClipList = std::vector<Cow<TimelineClip>>;
 // +x.toFixed(digits).
 [[nodiscard]] double js_fixed(double x, int digits);
 [[nodiscard]] double js_fixed3(double x);
+// Number(x) de JS para un valor de JSON (null = 0, texto con espacios = su número, lo demás NaN).
+[[nodiscard]] double js_number(const Json& v);
 
 // clipSpeed, clipDur y clipEnd de editorModel.js.
 [[nodiscard]] double ui_clip_speed(const TimelineClip& clip);

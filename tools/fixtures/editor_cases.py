@@ -197,10 +197,46 @@ def _view_calls(rng: random.Random) -> list:
     return calls
 
 
+POSE_CLIPS = [
+    clip("v", "V1", start=1, out=4, layout="overlay", transform={"x": 0.3}),
+    clip("vk", "V1", start=6, out=4, keyframes={"enabled": True, "items": [
+        {"id": "k1", "t": 0, "props": {"x": 0.2}},
+        {"id": "k2", "t": 1.5, "props": {"opacity": 0.5}, "interpolation": "ease_in", "bezier": [0.1, 0.2, 0.3, 1.4]},
+        {"id": "k3", "t": 3.0, "props": {"font_size": 40}, "ease": "step"}]}),
+    clip("img", "V2", "image", start=0, out=5, reframe={"zoom": 0.8, "keyframes": [{"t": 0.5, "cx": 0.3, "cy": 0.6}]}),
+    clip("t", "T1", "text", start=0, out=3, text="hola", style={"x": 0.4, "font_size": 50},
+         keyframes={"enabled": True, "items": [{"id": "s1", "t": 0.5, "props": {"font_size": 40}}]}),
+    clip("tk", "T1", "text", start=4, out=3, text="adiós", style={"y": 0.7},
+         keyframes={"enabled": True, "items": [{"id": "p1", "t": 1, "props": {"y": 0.2}}, {"t": None, "props": {"x": 1}},
+                                               {"t": "2", "props": {"scale": 2}, "interpolation": ""}]}),
+    clip("sh", "V2", "shape", start=6, out=2, shape={"type": "rect", "x": 0.5, "draw": 0.5},
+         keyframes={"enabled": False, "items": [{"t": 0.2, "props": {"x": 0.1}}]}),
+    clip("au", "A1", "audio", start=0, out=8, volume=1.5, audio_fx={"eq": True, "reverb": 0.3}),
+    clip("adj", "V2", "adjustment", start=9, out=2, asset_kind="shape"),
+]
+POSE_PATCHES = [{"opacity": 0.4}, {"volume": 1.8}, {"x": 0.1, "y": 0.9}, {"scale": "2"}, {"cx": 0.3}, {"zoom": 0.5},
+                {"draw": 1.4}, {"eq": 0.5, "reverb": True}, {"rot_x": 10, "rotation": 45}, {"opacity": None}, {}]
+
+
+def _pose_calls(rng: random.Random) -> list:
+    calls: list = []
+    for c in POSE_CLIPS:
+        calls.append(["poseKeyframed", c["id"]])
+        for patch in POSE_PATCHES:
+            calls.append(["shouldKeyframe", c["id"], patch])
+            calls.append(["applyStaticPose", c["id"], patch])
+            for t in (0, 0.4, 0.51, 1.5, 1.49, 3.3333, -1, round(rng.uniform(0, 4), 4)):
+                fps = rng.choice([30, 24, 60, 0])
+                calls.append(["commitPose", c["id"], patch, t, fps])
+                calls.append(["upsertKeyframeAt", c["id"], t, patch, rng.choice([None, "hold", "ease_out", "nada"]), fps])
+    return calls
+
+
 def cases() -> list[dict]:
     rng = random.Random(20261019)
     out = [{"name": "toFixed", "timeline": {"tracks": TRACKS, "clips": []},
             "calls": [["toFixed", x] for x in FIXED] + [["toFixed", rng.uniform(-100, 100)] for _ in range(300)]}]
+    out.append({"name": "pose", "timeline": {"tracks": TRACKS, "clips": POSE_CLIPS}, "calls": _pose_calls(rng)})
     out.append({"name": "vista", "timeline": {"tracks": TRACKS, "clips": []}, "calls": _view_calls(rng)})
     shuffled = [track("A2", "audio"), track("V1", "video"), track("A1", "audio"), track("T1", "text"),
                 track("V2", "video"), track("T2", "text")]
