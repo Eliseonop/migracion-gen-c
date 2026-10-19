@@ -174,6 +174,7 @@ public:
     Q_INVOKABLE void toggleKeyframe();
     // Alt+C / Alt+V / Alt+D: copiar el keyframe del cabezal, pegarlo en el cabezal y duplicarlo
     // (al cabezal si está libre; si no, un segundo después).
+    Q_INVOKABLE void moveKeyframe(const QString& clipId, const QString& kfId, double fraction);
     Q_INVOKABLE bool copyKeyframe();
     Q_INVOKABLE bool pasteKeyframe();
     Q_INVOKABLE bool duplicateKeyframe();

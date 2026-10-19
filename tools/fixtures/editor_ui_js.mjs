@@ -80,6 +80,14 @@ const changeShape = (clip, patch, t, fps) => {
     (c, tt, p, i) => kf.upsertKeyframeAt(c, tt, p, i, fps), () => {})(clip.id, patch)
   return made
 }
+const moveKeyframe = (clip, kfId, newT, fps) => {
+  let made = clip
+  const setClips = (fn) => { made = fn([clip])[0] }
+  new Function('setClips', 'patchKeyframe', 'fpsRef', 'seek', 'clipsRef', 'clips', 'sourceToTimeline',
+    `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'moveKeyframe')}`)(
+    setClips, kf.patchKeyframe, { current: fps }, () => {}, { current: [clip] }, [clip], m.sourceToTimeline)(clip.id, kfId, newT)
+  return made
+}
 // Sin ids (salen de la hora): el del clip y los de los keyframes del encuadre.
 const clipNoIds = (c) => {
   if (!c) return c
@@ -227,6 +235,11 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     makeAdjustmentClip: (track, start, dur) => {
       const { id, ...rest } = m.makeAdjustmentClip(track, start, dur ?? undefined)
       return rest
+    },
+    patchKeyframe: (id, kfId, patch, fps) => noIds(kf.patchKeyframe(byId(id), kfId, patch, fps)).keyframes ?? null,
+    moveKeyframe: (id, kfId, newT, fps) => {
+      const c = noIds(moveKeyframe(byId(id), kfId, newT, fps))
+      return { keyframes: c.keyframes ?? null, reframe: (c.reframe?.keyframes || []).map((k) => [k.id ?? null, k.t]) }
     },
     copyKeyframeAt: (id, t, fps) => kf.copyKeyframeAt(byId(id), t, fps),
     pasteKeyframeAt: (id, t, board, groups, fps) => noIds(kf.pasteKeyframeAt(byId(id), t, board, groups ?? undefined, fps)).keyframes ?? null,

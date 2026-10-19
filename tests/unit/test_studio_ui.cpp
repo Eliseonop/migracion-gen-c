@@ -354,3 +354,24 @@ TEST_CASE("studio sin pantalla: Ctrl+Alt+C y Ctrl+Alt+V pegan los atributos eleg
     s.click("attr:paste");
     CHECK(s.editor->selectedClip()["blend"] == "multiply");
 }
+
+TEST_CASE("studio sin pantalla: un rombo de keyframe se arrastra y un clic lleva el cabezal a él", "[studio][ui]") {
+    Studio s;
+    s.editor->select("a");
+    s.editor->setPlayhead(1);
+    s.editor->toggleKeyframe();
+    QCoreApplication::processEvents();
+    QQuickItem* dot = s.item("kf:a:0");
+    REQUIRE(dot);
+    const QPoint from = dot->mapToScene(QPointF(dot->width() / 2, dot->height() / 2)).toPoint();
+    s.drag(from, from + QPoint(static_cast<int>(2 * s.editor->pps()), 0));
+    CHECK(std::abs(s.editor->playhead() - 3) < 0.1); // el cabezal sigue al keyframe
+    CHECK(s.editor->selectedClip()["kf"] == "on");
+    s.editor->setPlayhead(0);
+    const bool undo = s.editor->canUndo();
+    QQuickItem* moved = s.item("kf:a:0");
+    QTest::mouseClick(s.window, Qt::LeftButton, {}, moved->mapToScene(QPointF(moved->width() / 2, moved->height() / 2)).toPoint());
+    QCoreApplication::processEvents();
+    CHECK(std::abs(s.editor->playhead() - 3) < 0.1);
+    CHECK(s.editor->canUndo() == undo);
+}

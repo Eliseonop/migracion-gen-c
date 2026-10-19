@@ -466,23 +466,57 @@ Json pick_props(const Json& props, const std::optional<std::vector<std::string>>
     return out;
 }
 
-// withBezierAt: la curva propia al keyframe que hay en `local_t` (patchKeyframe con bezier).
-void with_bezier_at(TimelineClip& clip, double local_t, const Json& bezier, double fps, IdSource& ids) {
-    const auto bez = normalize_bezier(bezier);
-    const auto id = bez ? keyframe_id_at(clip, local_t, fps) : std::nullopt;
-    if (!id) {
-        return;
-    }
+} // namespace
+
+void patch_keyframe(TimelineClip& clip, std::string_view id, const KeyframePatch& patch, double fps, IdSource& ids) {
     std::vector<Json> items = normalize_kf_items(clip.keyframes ? field(*clip.keyframes, "items") : Json(), ids);
+    const auto bez = normalize_bezier(patch.bezier);
     for (Json& k : items) {
-        if (k.at("id") == *id) {
+        if (k.at("id") != id) {
+            continue;
+        }
+        if (patch.t) {
+            k["t"] = js_fixed(snap_to_frame(*patch.t, fps), 6);
+        }
+        if (patch.interpolation && !patch.interpolation->empty()) {
+            k["interpolation"] = interp_name(normalize_interp(*patch.interpolation));
+        }
+        if (bez) {
             k["bezier"] = Json::array({(*bez)[0], (*bez)[1], (*bez)[2], (*bez)[3]});
+        }
+        for (const auto key : kKfPropKeys) { // mergeProps
+            const Json& v = field(patch.props, key);
+            if (!v.is_null() && std::isfinite(js_number(v))) {
+                k["props"][std::string(key)] = js_number(v);
+            }
         }
     }
     std::ranges::stable_sort(items, {}, [](const Json& k) { return k.at("t").get<double>(); });
     Json kf = clip.keyframes && clip.keyframes->is_object() ? *clip.keyframes : Json::object();
     kf["items"] = items;
     clip.keyframes = std::move(kf);
+}
+
+void move_keyframe(TimelineClip& clip, std::string_view id, double new_t, double fps, IdSource& ids) {
+    if (keyframes_enabled(clip)) {
+        patch_keyframe(clip, id, {.t = new_t, .interpolation = {}, .bezier = {}, .props = {}}, fps, ids);
+    } else if (clip.reframe) {
+        for (Keyframe& k : clip.reframe->keyframes) {
+            if (k.extra.value("id", Json()) == id) {
+                k.t = new_t;
+            }
+        }
+    }
+}
+
+namespace {
+
+// withBezierAt: la curva propia al keyframe que hay en `local_t`.
+void with_bezier_at(TimelineClip& clip, double local_t, const Json& bezier, double fps, IdSource& ids) {
+    const auto id = normalize_bezier(bezier) ? keyframe_id_at(clip, local_t, fps) : std::nullopt;
+    if (id) {
+        patch_keyframe(clip, *id, {.t = {}, .interpolation = {}, .bezier = bezier, .props = {}}, fps, ids);
+    }
 }
 
 } // namespace

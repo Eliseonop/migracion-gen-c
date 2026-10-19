@@ -73,6 +73,17 @@ void paste_keyframe_at(TimelineClip& clip, double local_t, const KeyframeBoard& 
 // duplicateKeyframeAt: el keyframe `id` copiado en `target_t` con todos sus valores.
 void duplicate_keyframe_at(TimelineClip& clip, std::string_view id, double target_t, double fps, IdSource& ids);
 
+// patchKeyframe: el keyframe `id` en otro instante (al fotograma), con otra curva o con valores.
+struct KeyframePatch {
+    std::optional<double> t;
+    std::optional<std::string> interpolation;
+    Json bezier;
+    Json props;
+};
+void patch_keyframe(TimelineClip& clip, std::string_view id, const KeyframePatch& patch, double fps, IdSource& ids);
+// moveKeyframe de VideoEditor.jsx: con keyframes, patchKeyframe({t}); si no, el del encuadre (t de fuente).
+void move_keyframe(TimelineClip& clip, std::string_view id, double new_t, double fps, IdSource& ids);
+
 // applyVolumeFade de clipKeyframes.js: fundido de volumen de entrada ("in") o salida ("out").
 void apply_volume_fade_ui(TimelineClip& clip, double duration, const std::string& side, IdSource& ids,
                           double fade = 0.5);

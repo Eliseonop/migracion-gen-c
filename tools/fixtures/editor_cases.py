@@ -415,6 +415,13 @@ def _text_calls(rng: random.Random) -> list:
             if k.get("id"):
                 for target in (0, 0.7, 2.25, 9):
                     calls.append(["duplicateKeyframeAt", c["id"], k["id"], target, 30])
+                for patch in ({"t": 1.234}, {"interpolation": "ease_in"}, {"interpolation": ""}, {"bezier": [0.1, 0.2, 0.3, 0.4]},
+                              {"props": {"volume": 1.7, "color": "#fff", "x": "0.3"}}, {"t": -1, "props": {"opacity": None}}):
+                    calls.append(["patchKeyframe", c["id"], k["id"], patch, rng.choice([30, 24])])
+                calls.append(["moveKeyframe", c["id"], k["id"], 2.5, 30])
+        for k in ((c.get("reframe") or {}).get("keyframes") or []):
+            if k.get("id"):
+                calls.append(["moveKeyframe", c["id"], k["id"], 4.1, 30])
     shape_patches = [{"fill": "#00ff00"}, {"x": 0.2, "rotation": 30}, {"w": 0.5, "h": "0.2"}, {"opacity": 0.3},
                      {"sides": 7, "dash": "dot"}, {"cx": 0.1}, {}]
     for c in TEXT_CLIPS:

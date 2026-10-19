@@ -602,6 +602,25 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "newTextDuration") {
         return new_text_duration(tl, num(1));
     }
+    if (fn == "patchKeyframe" || fn == "moveKeyframe") {
+        SequentialIdSource ids;
+        TimelineClip c = clip(call.at(1));
+        if (fn == "moveKeyframe") {
+            move_keyframe(c, str(2), num(3), num(4), ids);
+            Json reframe = Json::array();
+            for (const Keyframe& k : c.reframe ? c.reframe->keyframes : std::vector<Keyframe>{}) {
+                reframe.push_back({k.extra.value("id", Json()), k.t});
+            }
+            return {{"keyframes", c.keyframes ? without_ids(*c.keyframes) : Json()}, {"reframe", reframe}};
+        }
+        const Json& p = call.at(3);
+        KeyframePatch patch{p.contains("t") ? std::optional(p.at("t").get<double>()) : std::nullopt,
+                            p.contains("interpolation") ? std::optional(p.at("interpolation").get<std::string>())
+                                                        : std::nullopt,
+                            p.value("bezier", Json()), p.value("props", Json())};
+        patch_keyframe(c, str(2), patch, num(4), ids);
+        return c.keyframes ? without_ids(*c.keyframes) : Json();
+    }
     if (fn == "copyKeyframeAt") {
         const auto board = copy_keyframe_at(clip(call.at(1)), num(2), num(3));
         if (!board) {

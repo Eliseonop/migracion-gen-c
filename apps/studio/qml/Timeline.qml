@@ -393,19 +393,45 @@ Rectangle {
                             color: Qt.rgba(1, 1, 1, 0.55)
                         }
                     }
-                    Repeater { // keyframes del clip seleccionado, con los colores de kfColor
+                    Repeater { // keyframes del clip seleccionado, con los colores de kfColor: clic va a él, arrastrar lo mueve
                         model: block.selected ? block.kfs : []
                         Rectangle {
-                            required property real modelData
+                            id: kfDot
+                            required property var modelData
                             required property int index
+                            property real dragF: -1
+                            readonly property real f: dragF >= 0 ? dragF : modelData.f
+                            objectName: "kf:" + block.clipId + ":" + index
                             visible: x > -7 && x < block.width + 3
-                            x: modelData * block.width - 4
-                            y: block.height / 2 - 4
-                            width: 8
-                            height: 8
+                            x: f * block.width - 5
+                            y: block.height / 2 - 5
+                            width: 10
+                            height: 10
                             rotation: 45
-                            z: 2
+                            z: 6
+                            border.width: dragF >= 0 ? 1.5 : 0
+                            border.color: "white"
                             color: ["#e8a34d", "#5aa9e6", "#67b99a", "#c98bb9", "#e0757c", "#8f8ff0", "#c9b458", "#6ac4c9"][index % 8]
+                            MouseArea {
+                                anchors.fill: parent
+                                anchors.margins: -3
+                                cursorShape: Qt.SizeHorCursor
+                                property real pressX
+                                onPressed: (m) => pressX = mapToItem(block, m.x, m.y).x
+                                onPositionChanged: (m) => {
+                                    const x = mapToItem(block, m.x, m.y).x
+                                    if (pressed && (kfDot.dragF >= 0 || Math.abs(x - pressX) >= 3))
+                                        kfDot.dragF = Math.max(0, Math.min(1, kfDot.modelData.f + (x - pressX) / block.width))
+                                }
+                                onReleased: {
+                                    const model = timeline.model
+                                    const clipId = block.clipId
+                                    const id = kfDot.modelData.id
+                                    const f = kfDot.dragF >= 0 ? kfDot.dragF : kfDot.modelData.f
+                                    kfDot.dragF = -1
+                                    Qt.callLater(() => model.moveKeyframe(clipId, id, f))
+                                }
+                            }
                         }
                     }
                     Label {

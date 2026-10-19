@@ -103,19 +103,21 @@ QVariantList beat_marks(const core::TimelineClip& c) {
     return out;
 }
 
+// Rombos de keyframe del clip: {id, f} con f la fracción de su ancho (los del encuadre, sin keyframes).
 QVariantList keyframe_marks(const core::TimelineClip& c) {
     QVariantList out;
     const double dur = core::ui_clip_duration(c);
+    const auto id_of = [](const Json& extra) { return qstr(extra.is_object() ? extra.value("id", "") : ""); };
     if (core::keyframes_enabled(c) && c.keyframes->contains("items") && c.keyframes->at("items").is_array()) {
         for (const Json& k : c.keyframes->at("items")) {
             if (k.is_object() && k.contains("t") && k.at("t").is_number()) {
-                out << k.at("t").get<double>() / (dur > 0 ? dur : 1);
+                out << QVariantMap{{"id", id_of(k)}, {"f", k.at("t").get<double>() / (dur > 0 ? dur : 1)}};
             }
         }
     } else if (c.reframe && (c.kind == "video" || c.kind == "image")) {
         const double src = std::max(0.0, c.out_point - c.in_point);
         for (const core::Keyframe& k : c.reframe->keyframes) {
-            out << (k.t - c.in_point) / (src > 0 ? src : 1);
+            out << QVariantMap{{"id", id_of(k.extra)}, {"f", (k.t - c.in_point) / (src > 0 ? src : 1)}};
         }
     }
     return out;
@@ -1169,6 +1171,34 @@ void EditorModel::addAdjustment() {
         core::insert_track(next.tracks, std::move(t));
     }
     add_generated(std::move(next), core::make_adjustment_clip_json(tid, playhead_, kDur, ids_), "add-adjustment");
+}
+
+// startKfDrag + moveKeyframe: `fraction` del ancho del clip; con keyframes en su tiempo local, si no
+// en el de la fuente (encuadre). El cabezal va al keyframe.
+void EditorModel::moveKeyframe(const QString& clipId, const QString& kfId, double fraction) {
+    const core::TimelineClip* c = clip(clipId);
+    if (!c || kfId.isEmpty()) {
+        return;
+    }
+    const bool local = core::keyframes_enabled(*c);
+    const double dur = core::ui_clip_duration(*c);
+    const double t = local ? std::clamp(fraction * dur, 0.0, dur)
+                           : std::clamp(c->in_point + fraction * (c->out_point - c->in_point), c->in_point, c->out_point);
+    const double snapped = core::snap_to_frame(t, fps());
+    const double head = local ? c->start + snapped : c->start + (snapped - c->in_point) / core::ui_clip_speed(*c);
+    core::TimelineClip moved = *c;
+    core::move_keyframe(moved, kfId.toStdString(), snapped, fps(), ids_);
+    if (core::to_json(moved) != core::to_json(*c)) { // un clic sin arrastrar solo lleva el cabezal
+        core::Timeline next = *session_->timeline();
+        for (auto& item : next.clips) {
+            if (item->id == moved.id) {
+                item = std::move(moved);
+                break;
+            }
+        }
+        commit(std::move(next), "move-keyframe", {clipId.toStdString()});
+    }
+    setPlayhead(head);
 }
 
 bool EditorModel::copyKeyframe() {
