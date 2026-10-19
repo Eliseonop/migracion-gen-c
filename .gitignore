@@ -27,3 +27,8 @@ __pycache__/
 /.claude/autopiloto/activo
 /.claude/autopiloto/bloqueado.md
 /.claude/autopiloto/estado.json
+/.claude/autopiloto/activo.pausado
+/.claude/autopiloto/pausa-*.md
+
+# graphify: grafo de conocimiento local (se regenera con `graphify update .`)
+/graphify-out/
