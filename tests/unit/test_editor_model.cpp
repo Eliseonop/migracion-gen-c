@@ -519,3 +519,20 @@ TEST_CASE("editor: filtros de color apilados y ajustes de color", "[studio]") {
         }
     }
 }
+
+TEST_CASE("editor: efectos de sonido, fijos o en el keyframe del cabezal", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.select("m");
+    m.setAudioFx("reverb", 0.6);
+    CHECK(m.selectedClip()["audioFx"].toMap()["reverb"] == 0.6);
+    CHECK(f.saved().clips.back()->audio_fx->at("reverb") == 0.6);
+    m.setPlayhead(2);
+    m.toggleKeyframe(); // con keyframes, el cambio cae en el del cabezal
+    m.setPlayhead(5);
+    m.setAudioFx("reverb", 1.5);
+    CHECK(m.selectedClip()["audioFx"].toMap()["reverb"] == 1.0);
+    m.setPlayhead(2);
+    CHECK(m.selectedClip()["audioFx"].toMap()["reverb"] == 0.6);
+}

@@ -142,6 +142,8 @@ public:
     Q_INVOKABLE void toggleFilter(const QString& id);
     // patchEffects: un valor de `effects` (Brillo, Contraste, Exposición…) sobre los del clip principal.
     Q_INVOKABLE void setEffect(const QString& key, const QVariant& value);
+    // Efecto o filtro de sonido (setFx de EdEffects.jsx): 0–1; con keyframes, en el del cabezal.
+    Q_INVOKABLE void setAudioFx(const QString& id, double value);
     // Intensidad de una capa de ajuste (su opacidad).
     Q_INVOKABLE void setAdjustIntensity(double value);
     Q_INVOKABLE void setFilterAmount(int index, double amount);

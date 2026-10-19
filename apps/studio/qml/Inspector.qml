@@ -44,6 +44,10 @@ Rectangle {
         const v = has && clip.effects ? clip.effects[id] : undefined
         return v === true || (v !== false && v != null && Number(v) > 0)
     }
+    readonly property var audioFx: [["eq", "Brillo (EQ)", "effect"], ["compressor", "Compresor", "effect"],
+        ["reverb", "Reverberación", "effect"], ["echo", "Eco", "effect"], ["denoise", "Reducir ruido", "effect"],
+        ["distortion", "Distorsión", "effect"], ["underwater", "Bajo el agua", "filter"], ["telephone", "Teléfono", "filter"],
+        ["radio", "Radio antigua", "filter"], ["megaphone", "Megáfono", "filter"], ["muffled", "Amortiguado", "filter"]]
     readonly property var swatches: ["#ffffff", "#111111", "#ffe400", "#ff2d2d", "#ff8a00", "#2ee83f", "#1e90ff", "#ff3d8b"]
     readonly property var blends: [
         ["normal", "Normal"], ["darken", "Oscurecer"], ["multiply", "Multiplicar"], ["color_burn", "Subexponer color"],
@@ -589,6 +593,31 @@ Rectangle {
                 maxValue: 2
                 value: panel.has ? panel.clip.volumeAt : 1
                 onCommitted: (v) => panel.model.setPose({ volume: Math.round(v * 100) / 100 })
+            }
+            Flow {
+                visible: panel.sound
+                Layout.fillWidth: true
+                spacing: 4
+                Repeater {
+                    model: panel.sound ? panel.audioFx : []
+                    Toggle {
+                        required property var modelData
+                        objectName: "insp:afx:" + modelData[0]
+                        implicitWidth: implicitContentWidth + 16
+                        text: modelData[1]
+                        on: panel.clip.audioFx[modelData[0]] > 0
+                        onClicked: panel.model.setAudioFx(modelData[0], on ? 0 : 1)
+                    }
+                }
+            }
+            Repeater {
+                model: panel.sound ? panel.audioFx.filter((f) => panel.clip.audioFx[f[0]] > 0) : []
+                Percent {
+                    required property var modelData
+                    title: modelData[1]
+                    value: panel.clip.audioFx[modelData[0]]
+                    onCommitted: (v) => panel.model.setAudioFx(modelData[0], Math.round(v * 20) / 20)
+                }
             }
             RowLayout {
                 visible: panel.sound

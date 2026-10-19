@@ -299,6 +299,20 @@ QVariantMap EditorModel::selectedClip() const {
                                   {"degrees", tv.rotation_deg}}},
         {"text", qstr(c->text.value_or(""))},
         {"effects", to_variant(c->effects.value_or(Json::object()))},
+        {"audioFx", [&] { // valueOf de EdEffects: el valor animado si hay keyframes
+             const core::KfProps live = core::clip_props_at(*c, std::max(0.0, local));
+             const Json fx = c->audio_fx.value_or(Json::object());
+             QVariantMap out;
+             for (const char* key : {"eq", "compressor", "reverb", "echo", "denoise", "distortion", "underwater",
+                                     "telephone", "radio", "megaphone", "muffled"}) {
+                 const Json& v = fx.contains(key) ? fx.at(key) : Json();
+                 const double raw = core::keyframes_enabled(*c) ? live.get(key)
+                                    : v.is_boolean()              ? (v.get<bool>() ? 1.0 : 0.0)
+                                                                  : core::js_number(v);
+                 out[key] = std::isfinite(raw) ? std::clamp(raw, 0.0, 1.0) : 0.0;
+             }
+             return out;
+         }()},
         {"filters", [&] {
              QVariantList out;
              for (const auto& f : core::clip_filters(*c)) {
@@ -1163,6 +1177,21 @@ void EditorModel::setEffect(const QString& key, const QVariant& value) {
         effects[k] = v;
     }
     fx_each("effects", [&](core::TimelineClip& item) { item.effects = effects; });
+}
+
+void EditorModel::setAudioFx(const QString& id, double value) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c) {
+        return;
+    }
+    const double n = std::isfinite(value) ? std::clamp(value, 0.0, 1.0) : 0;
+    if (core::keyframes_enabled(*c)) {
+        setPose({{id, n}});
+        return;
+    }
+    Json fx = c->audio_fx && c->audio_fx->is_object() ? *c->audio_fx : Json::object();
+    fx[id.toStdString()] = n;
+    fx_each("audio-fx", [&](core::TimelineClip& item) { item.audio_fx = fx; });
 }
 
 void EditorModel::setAdjustIntensity(double value) {
