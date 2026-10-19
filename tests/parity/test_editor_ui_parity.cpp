@@ -197,6 +197,21 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "trimClipPatch") {
         return patch_json(trim_clip_patch(clip(call.at(1)), edge(call.at(2)), num(3)));
     }
+    if (fn == "canLayerClip") {
+        const auto c = std::ranges::find(tl.clips, str(1), [](const auto& x) { return x->id; });
+        return c != tl.clips.end() && can_layer_clip(**c);
+    }
+    if (fn == "clipLayerInfo") {
+        const LayerInfo info = clip_layer_info(tl.clips, str(1));
+        return Json{{"index", info.index}, {"count", info.count}, {"canBack", info.can_back}, {"canFront", info.can_front}};
+    }
+    if (fn == "moveClipLayer") {
+        Json out = Json::array();
+        for (const auto& c : move_clip_layer(tl.clips, str(1), str(2))) {
+            out.push_back(c->id);
+        }
+        return out;
+    }
     if (fn == "rangeSelectOnTrack") {
         return range_select_on_track(tl.clips, call.at(1).get<std::string>(), call.at(2).get<std::string>(),
                                      call.at(3).get<std::string>());

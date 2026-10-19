@@ -458,4 +458,57 @@ void apply_audio_speed_to_linked_text(ClipList& clips, const std::vector<Timelin
     }
 }
 
+bool can_layer_clip(const TimelineClip& clip) {
+    return clip.kind == "video" || clip.kind == "image" || clip.kind == "shape" || clip.kind == "text";
+}
+
+LayerInfo clip_layer_info(const ClipList& clips, std::string_view clip_id) {
+    const auto clip = std::ranges::find(clips, clip_id, [](const auto& c) -> std::string_view { return c->id; });
+    if (clip == clips.end()) {
+        return {};
+    }
+    int count = 0;
+    int at = -1;
+    for (const auto& c : clips) {
+        if (c->track_id == (*clip)->track_id) {
+            at = c->id == clip_id ? count : at;
+            ++count;
+        }
+    }
+    return {at + 1, count, at > 0, at >= 0 && at < count - 1};
+}
+
+ClipList move_clip_layer(const ClipList& clips, std::string_view clip_id, std::string_view action) {
+    const auto clip = std::ranges::find(clips, clip_id, [](const auto& c) -> std::string_view { return c->id; });
+    if (clip == clips.end()) {
+        return clips;
+    }
+    std::vector<std::size_t> slots; // dónde están los de la pista en la lista
+    for (std::size_t i = 0; i < clips.size(); ++i) {
+        if (clips[i]->track_id == (*clip)->track_id) {
+            slots.push_back(i);
+        }
+    }
+    std::vector<std::size_t> order = slots;
+    const auto p = static_cast<std::size_t>(std::ranges::find(slots, static_cast<std::size_t>(clip - clips.begin())) -
+                                            slots.begin());
+    const std::size_t last = slots.size() - 1;
+    if (action == "backward" && p > 0) {
+        std::swap(order[p - 1], order[p]);
+    } else if (action == "forward" && p < last) {
+        std::swap(order[p + 1], order[p]);
+    } else if (action == "back" && p > 0) {
+        std::rotate(order.begin(), order.begin() + static_cast<std::ptrdiff_t>(p), order.begin() + static_cast<std::ptrdiff_t>(p) + 1);
+    } else if (action == "front" && p < last) {
+        std::rotate(order.begin() + static_cast<std::ptrdiff_t>(p), order.begin() + static_cast<std::ptrdiff_t>(p) + 1, order.end());
+    } else {
+        return clips;
+    }
+    ClipList out = clips;
+    for (std::size_t k = 0; k < slots.size(); ++k) {
+        out[slots[k]] = clips[order[k]];
+    }
+    return out;
+}
+
 } // namespace gc::core

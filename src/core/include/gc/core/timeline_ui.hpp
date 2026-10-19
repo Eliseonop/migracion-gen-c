@@ -116,4 +116,18 @@ void apply_audio_speed_to_linked_text(ClipList& clips, const std::vector<Timelin
 [[nodiscard]] std::vector<std::pair<std::string, double>>
 group_move_starts(std::span<const std::pair<std::string, double>> originals, double delta);
 
+// canLayerClip: los que se ordenan en capas dentro de su pista (vídeo, imagen, figura y texto).
+[[nodiscard]] bool can_layer_clip(const TimelineClip& clip);
+// clipLayerInfo: la capa del clip en su pista (1 = fondo, `count` = frente).
+struct LayerInfo {
+    int index = 1;
+    int count = 1;
+    bool can_back = false;
+    bool can_front = false;
+};
+[[nodiscard]] LayerInfo clip_layer_info(const ClipList& clips, std::string_view clip_id);
+// moveClipLayer: «back» al fondo, «backward» una capa atrás, «forward» una adelante y «front» al
+// frente, cambiando el orden de los clips de la pista en la lista.
+[[nodiscard]] ClipList move_clip_layer(const ClipList& clips, std::string_view clip_id, std::string_view action);
+
 } // namespace gc::core

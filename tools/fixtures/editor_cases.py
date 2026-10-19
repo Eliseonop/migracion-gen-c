@@ -158,6 +158,11 @@ def _calls(rng: random.Random, tl: dict) -> list:
         origs = [{"id": i, "start": next(c["start"] for c in tl["clips"] if c["id"] == i)}
                  for i in rng.sample(ids, k=rng.randint(1, min(4, len(ids))))]
         calls.append(["groupMoveFromOrig", origs, rng.choice([-30.0, -1.25, 0.0, 0.7, round(rng.uniform(-5, 5), 3)])])
+    for i in ids + ["zz"]:  # capas en la pista (clipLayerInfo, moveClipLayer)
+        calls.append(["canLayerClip", i])
+        calls.append(["clipLayerInfo", i])
+        for action in ("back", "backward", "forward", "front", "otra"):
+            calls.append(["moveClipLayer", i, action])
     return calls
 
 
