@@ -17,6 +17,9 @@ Item {
     Shortcut { sequences: [StandardKey.Copy]; enabled: editor.visible; onActivated: editor.model.copySelection() }
     Shortcut { sequences: [StandardKey.Cut]; enabled: editor.visible; onActivated: editor.model.cutSelection() }
     Shortcut { sequences: [StandardKey.Paste]; enabled: editor.visible; onActivated: editor.model.paste() }
+    Shortcut { sequence: "Alt+C"; enabled: editor.visible; onActivated: editor.model.copyKeyframe() }
+    Shortcut { sequence: "Alt+V"; enabled: editor.visible; onActivated: editor.model.pasteKeyframe() }
+    Shortcut { sequence: "Alt+D"; enabled: editor.visible; onActivated: editor.model.duplicateKeyframe() }
     Shortcut { sequence: "Ctrl+Alt+C"; enabled: editor.visible; onActivated: editor.model.copyAttributes() }
     Shortcut { sequence: "Ctrl+Alt+V"; enabled: editor.visible; onActivated: pasteAttrs.openFor(editor.model.pasteableGroups()) }
     Shortcut { sequence: "Escape"; enabled: editor.visible; onActivated: editor.model.clearSelection() }

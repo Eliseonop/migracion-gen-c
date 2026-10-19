@@ -1171,6 +1171,56 @@ void EditorModel::addAdjustment() {
     add_generated(std::move(next), core::make_adjustment_clip_json(tid, playhead_, kDur, ids_), "add-adjustment");
 }
 
+bool EditorModel::copyKeyframe() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c || c->kind == "adjustment") {
+        return false;
+    }
+    const auto board =
+        core::copy_keyframe_at(*c, std::clamp(playhead_ - c->start, 0.0, core::ui_clip_duration(*c)), fps());
+    if (board) {
+        kf_board_ = board;
+    }
+    return board.has_value();
+}
+
+bool EditorModel::pasteKeyframe() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c || c->kind == "adjustment" || !kf_board_) {
+        return false;
+    }
+    const std::string id = c->id;
+    const double t = std::clamp(playhead_ - c->start, 0.0, core::ui_clip_duration(*c));
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == id) {
+            core::paste_keyframe_at(item.mut(), t, *kf_board_, std::nullopt, fps(), ids_);
+        }
+    }
+    commit(std::move(next), "paste-keyframe", {id});
+    return true;
+}
+
+bool EditorModel::duplicateKeyframe() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const double dur = c ? core::ui_clip_duration(*c) : 0;
+    const double head = c ? std::clamp(playhead_ - c->start, 0.0, dur) : 0;
+    const auto kf = c ? core::keyframe_id_at(*c, head, fps()) : std::nullopt;
+    if (!kf) {
+        return false;
+    }
+    const std::string id = c->id;
+    const double target = std::clamp(head + 1, 0.0, dur); // el cabezal no está libre: un segundo después
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == id) {
+            core::duplicate_keyframe_at(item.mut(), *kf, target, fps(), ids_);
+        }
+    }
+    commit(std::move(next), "duplicate-keyframe", {id});
+    return true;
+}
+
 bool EditorModel::copyAttributes() {
     const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
     if (!c) {

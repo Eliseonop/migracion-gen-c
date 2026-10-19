@@ -228,6 +228,9 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       const { id, ...rest } = m.makeAdjustmentClip(track, start, dur ?? undefined)
       return rest
     },
+    copyKeyframeAt: (id, t, fps) => kf.copyKeyframeAt(byId(id), t, fps),
+    pasteKeyframeAt: (id, t, board, groups, fps) => noIds(kf.pasteKeyframeAt(byId(id), t, board, groups ?? undefined, fps)).keyframes ?? null,
+    duplicateKeyframeAt: (id, kfId, target, fps) => noIds(kf.duplicateKeyframeAt(byId(id), kfId, target, fps)).keyframes ?? null,
     changeShape: (id, patch, t, fps) => {
       const c = noIds(changeShape(byId(id), patch, t, fps))
       return { shape: c.shape ?? null, keyframes: c.keyframes ?? null }

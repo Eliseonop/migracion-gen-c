@@ -14,6 +14,7 @@
 #include <optional>
 
 #include "gc/core/clip_filters.hpp"
+#include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/session.hpp"
 #include "gc/core/timeline_drop.hpp"
@@ -171,6 +172,11 @@ public:
     // El rombo (toggleKeyframeAtPlayhead) del clip seleccionado; fundido de volumen de entrada o
     // salida y silenciar, en la selección.
     Q_INVOKABLE void toggleKeyframe();
+    // Alt+C / Alt+V / Alt+D: copiar el keyframe del cabezal, pegarlo en el cabezal y duplicarlo
+    // (al cabezal si está libre; si no, un segundo después).
+    Q_INVOKABLE bool copyKeyframe();
+    Q_INVOKABLE bool pasteKeyframe();
+    Q_INVOKABLE bool duplicateKeyframe();
     Q_INVOKABLE void fadeVolume(const QString& side);
     Q_INVOKABLE void toggleMuted();
     // Ctrl+C / Ctrl+X / Ctrl+V (copySelectedClips y pasteClips de VideoEditor.jsx): se pega en el
@@ -235,6 +241,7 @@ private:
     QVariantList materials_;
     std::vector<std::pair<core::TimelineClip, double>> clipboard_; // clip y desfase con el primero
     std::optional<core::TimelineClip> attr_clipboard_;
+    std::optional<core::KeyframeBoard> kf_board_;
     std::map<QString, Json> payloads_; // material → dragPayload
     ClipListModel clip_model_;
     core::ClipSelection selection_;

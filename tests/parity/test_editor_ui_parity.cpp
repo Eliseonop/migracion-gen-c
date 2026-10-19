@@ -602,6 +602,31 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "newTextDuration") {
         return new_text_duration(tl, num(1));
     }
+    if (fn == "copyKeyframeAt") {
+        const auto board = copy_keyframe_at(clip(call.at(1)), num(2), num(3));
+        if (!board) {
+            return nullptr;
+        }
+        return {{"type", "keyframe"},
+                {"props", board->props},
+                {"interpolation", board->interpolation},
+                {"bezier", board->bezier},
+                {"srcKind", board->src_kind}};
+    }
+    if (fn == "pasteKeyframeAt" || fn == "duplicateKeyframeAt") {
+        SequentialIdSource ids;
+        TimelineClip c = clip(call.at(1));
+        if (fn == "duplicateKeyframeAt") {
+            duplicate_keyframe_at(c, str(2), num(3), num(4), ids);
+        } else if (call.at(3).value("type", "") == "keyframe") { // pasteKeyframeAt ignora otro portapapeles
+            const Json& b = call.at(3);
+            KeyframeBoard board{b.at("props"), b.value("interpolation", "linear"), b.value("bezier", Json()),
+                                b.value("srcKind", "")};
+            const auto groups = call.at(4).is_array() ? std::optional(strings(call.at(4))) : std::nullopt;
+            paste_keyframe_at(c, num(2), board, groups, num(5), ids);
+        }
+        return c.keyframes ? without_ids(*c.keyframes) : Json();
+    }
     if (fn == "changeShape") {
         SequentialIdSource ids;
         TimelineClip c = clip(call.at(1));

@@ -15,6 +15,7 @@
 
 #include "gc/core/ids.hpp"
 #include "gc/core/json.hpp"
+#include "gc/core/keyframes.hpp"
 #include "gc/core/model.hpp"
 
 namespace gc::core {
@@ -51,6 +52,27 @@ void commit_pose(TimelineClip& clip, const Json& patch, double local_t, double f
 // Pone o quita el keyframe de pose en `local_t` (el rombo). En un texto con estilo animado, quitarlo
 // le deja el estilo a ese keyframe.
 void toggle_keyframe_at(TimelineClip& clip, double local_t, double fps, IdSource& ids);
+// --- Copiar, pegar y duplicar keyframes (Alt+C / Alt+V / Alt+D) -----------------------------
+
+// snapshotProps y clipPropsAt de clipKeyframes.js: lo estático con el encuadre del reframe en el
+// instante (en la fuente, in_point + t) y, si hay keyframes, interpolado.
+[[nodiscard]] KfProps snapshot_props(const TimelineClip& clip, double local_t);
+[[nodiscard]] KfProps ui_props_at(const TimelineClip& clip, double local_t);
+// El portapapeles de un keyframe: todos sus valores (pose y estilo), su curva y el tipo del clip.
+struct KeyframeBoard {
+    Json props = Json::object();
+    std::string interpolation = "linear";
+    Json bezier;
+    std::string src_kind;
+};
+// copyKeyframeAt: el keyframe del fotograma de `local_t`; nada si no hay.
+[[nodiscard]] std::optional<KeyframeBoard> copy_keyframe_at(const TimelineClip& clip, double local_t, double fps);
+// pasteKeyframeAt: los valores de los grupos `groups` (KF_GROUPS; nada = todos) en `local_t`.
+void paste_keyframe_at(TimelineClip& clip, double local_t, const KeyframeBoard& board,
+                       const std::optional<std::vector<std::string>>& groups, double fps, IdSource& ids);
+// duplicateKeyframeAt: el keyframe `id` copiado en `target_t` con todos sus valores.
+void duplicate_keyframe_at(TimelineClip& clip, std::string_view id, double target_t, double fps, IdSource& ids);
+
 // applyVolumeFade de clipKeyframes.js: fundido de volumen de entrada ("in") o salida ("out").
 void apply_volume_fade_ui(TimelineClip& clip, double duration, const std::string& side, IdSource& ids,
                           double fade = 0.5);

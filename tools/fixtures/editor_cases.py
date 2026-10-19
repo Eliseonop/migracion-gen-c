@@ -400,6 +400,21 @@ def _text_calls(rng: random.Random) -> list:
             calls.append(["makeShapeClip", "V2", start, dur, preset])
     for start, dur in ((0, None), (-2, 0.1), (3.0006, 7), (1, 0)):
         calls.append(["makeAdjustmentClip", "V2", start, dur])
+    boards = [{"type": "keyframe", "props": {"x": 0.2, "opacity": 0.5, "volume": 1.5, "mx": 0.3, "color": "#ff0000", "zoom": 0.7},
+               "interpolation": "ease_out", "bezier": [0.2, 0.1, 0.3, 1.2], "srcKind": "video"},
+              {"type": "keyframe", "props": {"y": "0.8", "border_width": 3, "eq": 0.4}, "interpolation": "hold", "bezier": None},
+              {"type": "otro", "props": {"x": 0.1}}]
+    for c in [c for c in TEXT_CLIPS if c["id"] != "tk"]:  # «tk»: keyframe con t null (divergencia de la pose)
+        for t in (0, 0.5, 1, 1.5, 2, 3, 0.51):
+            fps = rng.choice([30, 24])
+            calls.append(["copyKeyframeAt", c["id"], t, fps])
+            for board in boards:
+                calls.append(["pasteKeyframeAt", c["id"], t, board, rng.choice([None, [], ["transform"], ["audio", "text_style"], ["crop", "mask"]]), fps])
+        items = (c.get("keyframes") or {}).get("items") or []
+        for k in items:
+            if k.get("id"):
+                for target in (0, 0.7, 2.25, 9):
+                    calls.append(["duplicateKeyframeAt", c["id"], k["id"], target, 30])
     shape_patches = [{"fill": "#00ff00"}, {"x": 0.2, "rotation": 30}, {"w": 0.5, "h": "0.2"}, {"opacity": 0.3},
                      {"sides": 7, "dash": "dot"}, {"cx": 0.1}, {}]
     for c in TEXT_CLIPS:

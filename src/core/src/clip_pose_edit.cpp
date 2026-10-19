@@ -5,6 +5,7 @@
 
 #include "gc/core/keyframes.hpp"
 #include "gc/core/pose.hpp"
+#include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_ui.hpp"
 #include "gc/core/timeline_view.hpp"
 
@@ -113,6 +114,23 @@ bool should_keyframe(const TimelineClip& clip, const Json& patch) {
     return given(patch, "cx") || given(patch, "cy");
 }
 
+KfProps snapshot_props(const TimelineClip& clip, double local_t) {
+    KfProps base = static_props(clip);
+    if (clip.reframe) {
+        const Reframe& rf = *clip.reframe;
+        const Frame fr = frame_at(rf.keyframes, clip.in_point + local_t, rf.zoom, rf.pan_mode);
+        base.set("cx", std::isfinite(fr.cx) ? fr.cx : 0.5);
+        base.set("cy", std::isfinite(fr.cy) ? fr.cy : 0.5);
+        base.set("zoom", std::isfinite(fr.zoom) ? fr.zoom : rf.zoom);
+    }
+    return base;
+}
+
+KfProps ui_props_at(const TimelineClip& clip, double local_t) {
+    const KfProps base = snapshot_props(clip, local_t);
+    return clip_props_over(clip, local_t, base).value_or(base);
+}
+
 void upsert_keyframe_ui(TimelineClip& clip, double local_t, const Json& patch,
                         const std::optional<std::string>& interpolation, double fps, IdSource& ids) {
     const double t = js_fixed(snap_to_frame(local_t, fps), 6);
@@ -121,15 +139,7 @@ void upsert_keyframe_ui(TimelineClip& clip, double local_t, const Json& patch,
         normalize_kf_items(clip.keyframes ? field(*clip.keyframes, "items") : Json(), ids);
     TimelineClip enabled = clip;
     enabled.keyframes = Json{{"enabled", true}, {"items", Json(items)}};
-    KfProps base = static_props(enabled); // snapshotProps: el encuadre animado manda en cx, cy y zoom
-    if (enabled.reframe) {
-        const Reframe& rf = *enabled.reframe;
-        const Frame fr = frame_at(rf.keyframes, enabled.in_point + t, rf.zoom, rf.pan_mode);
-        base.set("cx", std::isfinite(fr.cx) ? fr.cx : 0.5);
-        base.set("cy", std::isfinite(fr.cy) ? fr.cy : 0.5);
-        base.set("zoom", std::isfinite(fr.zoom) ? fr.zoom : rf.zoom);
-    }
-    KfProps current = clip_props_over(enabled, t, base).value_or(base);
+    KfProps current = ui_props_at(enabled, t); // el encuadre animado manda en cx, cy y zoom
     for (const auto key : kKfPropKeys) {
         const Json& v = field(patch, key);
         if (!v.is_null() && std::isfinite(js_number(v))) {
@@ -410,6 +420,125 @@ void toggle_keyframe_at(TimelineClip& clip, double local_t, double fps, IdSource
         clip.keyframes = Json{{"enabled", true}, {"items", items}};
     }
     upsert_keyframe_ui(clip, t, Json::object(), std::nullopt, fps, ids);
+}
+
+namespace {
+
+// styleKfValues: los valores de estilo del texto válidos de un keyframe.
+Json style_kf_values(const Json& props) {
+    Json out = Json::object();
+    for (const auto key : kTextStyleKfKeys) {
+        if (kf_value_valid(key, field(props, key))) {
+            out[std::string(key)] = field(props, key);
+        }
+    }
+    return out;
+}
+
+// pickProps: lo de `props` que es de los grupos dados (KF_GROUPS).
+Json pick_props(const Json& props, const std::optional<std::vector<std::string>>& groups) {
+    static const std::vector<std::pair<std::string_view, std::vector<std::string_view>>> kGroups{
+        {"transform", {"x", "y", "scale", "rotation", "opacity", "rot_x", "rot_y"}},
+        {"crop", {"cx", "cy", "zoom"}},
+        {"mask", {"mx", "my", "mw", "mh", "msx", "msy", "mrot", "mfeather"}},
+        {"audio", {"volume", "eq", "compressor", "reverb", "echo", "denoise", "distortion", "underwater", "telephone",
+                   "radio", "megaphone", "muffled"}},
+        {"text_style", {kTextStyleKfKeys.begin(), kTextStyleKfKeys.end()}}};
+    std::vector<std::string_view> keys;
+    for (const auto& [id, list] : kGroups) {
+        if (!groups || std::ranges::find(*groups, id) != groups->end()) {
+            keys.insert(keys.end(), list.begin(), list.end());
+        }
+    }
+    const auto wanted = [&](std::string_view k) { return std::ranges::find(keys, k) != keys.end(); };
+    Json out = Json::object();
+    for (const auto key : kKfPropKeys) {
+        const Json& v = field(props, key);
+        if (wanted(key) && !v.is_null() && std::isfinite(js_number(v))) {
+            out[std::string(key)] = js_number(v);
+        }
+    }
+    for (const auto key : kTextStyleKfKeys) {
+        if (wanted(key) && kf_value_valid(key, field(props, key))) {
+            out[std::string(key)] = field(props, key);
+        }
+    }
+    return out;
+}
+
+// withBezierAt: la curva propia al keyframe que hay en `local_t` (patchKeyframe con bezier).
+void with_bezier_at(TimelineClip& clip, double local_t, const Json& bezier, double fps, IdSource& ids) {
+    const auto bez = normalize_bezier(bezier);
+    const auto id = bez ? keyframe_id_at(clip, local_t, fps) : std::nullopt;
+    if (!id) {
+        return;
+    }
+    std::vector<Json> items = normalize_kf_items(clip.keyframes ? field(*clip.keyframes, "items") : Json(), ids);
+    for (Json& k : items) {
+        if (k.at("id") == *id) {
+            k["bezier"] = Json::array({(*bez)[0], (*bez)[1], (*bez)[2], (*bez)[3]});
+        }
+    }
+    std::ranges::stable_sort(items, {}, [](const Json& k) { return k.at("t").get<double>(); });
+    Json kf = clip.keyframes && clip.keyframes->is_object() ? *clip.keyframes : Json::object();
+    kf["items"] = items;
+    clip.keyframes = std::move(kf);
+}
+
+} // namespace
+
+std::optional<KeyframeBoard> copy_keyframe_at(const TimelineClip& clip, double local_t, double fps) {
+    SequentialIdSource ids;
+    const double t = js_fixed(snap_to_frame(local_t, fps), 6);
+    const auto items = normalize_kf_items(clip.keyframes ? field(*clip.keyframes, "items") : Json(), ids);
+    const auto it = std::ranges::find_if(
+        items, [&](const Json& k) { return std::abs(k.at("t").get<double>() - t) < frame_duration(fps) / 2; });
+    if (it == items.end()) {
+        return std::nullopt;
+    }
+    KeyframeBoard board;
+    board.props = ui_props_at(clip, it->at("t").get<double>()).to_json();
+    const Json style = style_kf_values(it->at("props"));
+    for (const auto& [key, value] : style.items()) {
+        board.props[key] = value;
+    }
+    board.interpolation = std::string(interp_name(normalize_interp(it->at("interpolation"))));
+    board.bezier = it->contains("bezier") ? it->at("bezier") : Json();
+    board.src_kind = clip.kind;
+    return board;
+}
+
+void paste_keyframe_at(TimelineClip& clip, double local_t, const KeyframeBoard& board,
+                       const std::optional<std::vector<std::string>>& groups, double fps, IdSource& ids) {
+    const Json props = pick_props(board.props, groups);
+    if (props.empty()) {
+        return;
+    }
+    const Json style = style_kf_values(props);
+    Json pose = Json::object();
+    for (const auto& [key, value] : props.items()) {
+        if (!style.contains(key)) {
+            pose[key] = value;
+        }
+    }
+    if (!pose.empty()) {
+        upsert_keyframe_ui(clip, local_t, pose, board.interpolation, fps, ids);
+    }
+    upsert_style_kf(clip, local_t, style, fps, ids);
+    with_bezier_at(clip, local_t, board.bezier, fps, ids);
+}
+
+void duplicate_keyframe_at(TimelineClip& clip, std::string_view id, double target_t, double fps, IdSource& ids) {
+    const auto items = normalize_kf_items(clip.keyframes ? field(*clip.keyframes, "items") : Json(), ids);
+    const auto it = std::ranges::find_if(items, [&](const Json& k) { return k.at("id") == id; });
+    if (it == items.end()) {
+        return;
+    }
+    const Json item = *it;
+    const Json props = ui_props_at(clip, item.at("t").get<double>()).to_json();
+    upsert_keyframe_ui(clip, target_t, props, item.at("interpolation").get<std::string>(), fps, ids);
+    upsert_style_kf(clip, target_t, style_kf_values(item.at("props")), fps, ids);
+    with_bezier_at(clip, target_t, item.contains("bezier") ? item.at("bezier") : Json(), fps, ids);
 }
 
 void apply_volume_fade_ui(TimelineClip& clip, double duration, const std::string& side, IdSource& ids,

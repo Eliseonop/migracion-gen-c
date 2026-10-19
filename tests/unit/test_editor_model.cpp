@@ -581,3 +581,23 @@ TEST_CASE("editor: copiar y pegar atributos entre clips", "[studio]") {
     m.undo();
     CHECK(m.selectedClip()["blend"] == "normal");
 }
+
+TEST_CASE("editor: copiar, pegar y duplicar el keyframe del cabezal", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    m.select("a");
+    CHECK_FALSE(m.copyKeyframe()); // sin keyframes
+    m.setPlayhead(1);
+    m.toggleKeyframe();
+    m.setPose({{"opacity", 0.25}});
+    REQUIRE(m.copyKeyframe());
+    m.setPlayhead(3);
+    REQUIRE(m.pasteKeyframe());
+    CHECK(m.selectedClip()["kf"] == "on");
+    CHECK(m.selectedClip()["poseOpacity"] == 0.25);
+    REQUIRE(m.duplicateKeyframe()); // del cabezal (3 s) a 4 s
+    m.setPlayhead(4);
+    CHECK(m.selectedClip()["kf"] == "on");
+    CHECK(m.selectedClip()["poseOpacity"] == 0.25);
+}
