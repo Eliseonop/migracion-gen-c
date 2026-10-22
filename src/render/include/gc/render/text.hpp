@@ -22,6 +22,7 @@
 #include "gc/core/model.hpp"
 #include "gc/core/text_metrics.hpp"
 #include "gc/render/canvas.hpp"
+#include "gc/render/compose.hpp"
 
 namespace gc::render {
 
@@ -69,13 +70,24 @@ struct PillowText {
 [[nodiscard]] std::optional<PillowText> pillow_text(const TextFonts& fonts, std::string_view font, bool bold,
                                                     int size, std::string_view text, std::string_view anchor);
 
-// Dibuja encima de lo que haya en el lienzo los textos del .ass global en el fotograma `k` de la
-// timeline (a sus fps): los que libass dibujaría en ese instante, en el orden del .ass. Un texto
-// visible que aún no se sabe dibujar da Unsupported; con `omit`, se salta y su motivo va a
-// `warnings`. Los textos de capa propia (máscara, 3D, fusión) o de una pista con vídeo encima
-// también son Unsupported por ahora.
+// Dibuja encima de lo que haya en el lienzo los textos que el export pone encima de todo el vídeo
+// en el fotograma `k` de la timeline (a sus fps): primero los de capa propia (máscara, 3D o
+// fusión) por orden de inicio y después los del .ass global, los que libass dibujaría en ese
+// instante, en su orden. Un texto visible que aún no se sabe dibujar da Unsupported; con `omit`,
+// se salta y su motivo va a `warnings`. No dibuja los de una pista con vídeo encima, que van en la
+// cadena de vídeo (compose_with_buried_texts).
 [[nodiscard]] Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline, std::int64_t k,
                                                const TextFonts& fonts, bool omit = false,
                                                std::vector<std::string>* warnings = nullptr);
+
+// El compuesto del fotograma `k` como el export: compose_into (las capas sin los textos) con los
+// textos de las pistas de texto que tienen vídeo encima (buried_text_track_ids) metidos en la
+// cadena de vídeo, por (capa de la pila, inicio, índice en la lista), como build_command: cada
+// texto de capa propia en su sitio y los demás de la pista en una capa, en el sitio del clip más
+// temprano de la pista. Después, draw_timeline_texts pone encima el resto.
+[[nodiscard]] Result<void> compose_with_buried_texts(Canvas& canvas, const core::Timeline& timeline,
+                                                     const std::vector<core::FrameLayer>& layers, std::int64_t k,
+                                                     const SourceFn& source, const TextFonts& fonts,
+                                                     bool omit = false, std::vector<std::string>* warnings = nullptr);
 
 } // namespace gc::render

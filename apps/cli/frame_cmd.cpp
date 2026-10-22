@@ -187,8 +187,10 @@ int cmd_frame(std::span<const std::string> args) {
     if (!canvas) {
         return fail_with(canvas.error().to_string());
     }
-    if (auto ok = gc::render::compose_into(
-            *canvas, *layers,
+    // Las capas, con los textos de las pistas con vídeo encima en su sitio, y el resto de textos encima.
+    std::vector<std::string> warnings;
+    if (auto ok = gc::render::compose_with_buried_texts(
+            *canvas, timeline, *layers, tick,
             [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
                 const auto* img = frame_of(*layer.clip);
                 if (img == nullptr) {
@@ -196,12 +198,10 @@ int cmd_frame(std::span<const std::string> args) {
                 }
                 return img;
             },
-            &fonts);
+            fonts, skip, &warnings);
         !ok) {
         return fail_with(ok.error().to_string());
     }
-    // Los textos encima.
-    std::vector<std::string> warnings;
     if (auto ok = gc::render::draw_timeline_texts(*canvas, timeline, tick, fonts, skip, &warnings); !ok) {
         return fail_with(ok.error().to_string());
     }

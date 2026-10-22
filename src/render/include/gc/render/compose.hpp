@@ -36,9 +36,14 @@ using SourceFn = std::function<Result<const Image*>(const core::FrameLayer&)>;
 [[nodiscard]] Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int width, int height,
                                           const SourceFn& source, const TextFonts* fonts = nullptr);
 
+// Lo que se dibuja entre las capas: se llama antes de cada capa (con ella) y al final (con
+// nullptr). Así van en su sitio de la pila los textos que el export mete en la cadena de vídeo.
+using BetweenFn = std::function<Result<void>(Canvas&, const core::FrameLayer* next)>;
+
 // Lo mismo, pero sobre un lienzo que ya existe (se borra a negro opaco): para poner encima los
 // textos y reutilizar el lienzo de un fotograma al siguiente. El resultado es opaco.
 [[nodiscard]] Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers,
-                                        const SourceFn& source, const TextFonts* fonts = nullptr);
+                                        const SourceFn& source, const TextFonts* fonts = nullptr,
+                                        const BetweenFn& between = {});
 
 } // namespace gc::render

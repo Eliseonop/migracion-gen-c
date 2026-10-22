@@ -261,12 +261,15 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
                 }
                 return &it->second;
             };
-            if (auto ok = render::compose_into(*canvas, job.layers, source, &fonts); !ok) {
+            // Las capas, con los textos de las pistas con vídeo encima en su sitio, y el resto encima.
+            std::vector<std::string> warnings;
+            if (auto ok = render::compose_with_buried_texts(*canvas, timeline, job.layers, job.tick, source, fonts,
+                                                            skip, &warnings);
+                !ok) {
                 fail_all(ok.error());
                 break;
             }
             lap.emplace(mine.text);
-            std::vector<std::string> warnings;
             if (auto ok = render::draw_timeline_texts(*canvas, timeline, job.tick, fonts, skip, &warnings); !ok) {
                 fail_all(ok.error());
                 break;

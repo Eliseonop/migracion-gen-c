@@ -1896,8 +1896,8 @@ def synthetic_text_render_fixtures(ctx: Ctx) -> list[dict]:
         cmd = real_build(*args, **kwargs)
         i = cmd.index("-filter_complex")
         graph = cmd[i + 1]
-        if ".mt0.ass" in graph:
-            graph = re.sub(r"format=rgba,(?P<ass>ass='[^']*\.mt\d+\.ass'(?::fontsdir='[^']*')?:alpha=1)",
+        if ".mt0.ass" in graph or ".tt0.ass" in graph:  # capa propia o de una pista con vídeo encima
+            graph = re.sub(r"format=rgba,(?P<ass>ass='[^']*\.(?:mt|tt)\d+\.ass'(?::fontsdir='[^']*')?:alpha=1)",
                            r"format=yuva444p,\g<ass>,format=rgba", graph)
             graph = re.sub(r"\[(?P<lab>[^\]]+)\](?P<ass>ass='[^']*'(?::fontsdir='[^']*')?)\[txass\]",
                            r"[\g<lab>]format=yuv444p,\g<ass>[txass]", graph)
@@ -1938,6 +1938,28 @@ def synthetic_text_render_fixtures(ctx: Ctx) -> list[dict]:
                     case["loose"] = mc.RENDER_TEXT_LOOSE[name]
                 if name in mc.RENDER_TEXT_PENDING:
                     case["pending"] = True
+                cases.append(case)
+        # Pistas de texto con vídeo encima: cada texto en la pila de su escena (PNG y<escena>_<ms>.png).
+        for i, (name, tracks, scene_clips, times) in enumerate(mc.RENDER_TEXT_STACKS):
+            clips = [c if c["kind"] == "text" else
+                     {**c, "source_duration": _REAL_SFX["probe_duration"](files / c["filename"])
+                      if c["filename"].endswith(".mp4") else 0.0} for c in scene_clips]
+            # En el esquema actual: migrar desde uno viejo pondría las pistas de texto arriba del todo.
+            raw = {"version": 2, "schema_version": ctx.migrations.CURRENT_SCHEMA_VERSION, "width": 540, "height": 960,
+                   "fps": 30, "tracks": tracks, "clips": clips}
+            timeline = ctx.schemas.Timeline.model_validate(ctx.migrations.migrate_timeline(raw))
+            assert [t.id for t in timeline.tracks] == [t["id"] for t in tracks], name
+            for t in times:
+                png = f"y{i:02d}_{int(round(t * 1000)):05d}.png"
+                compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
+                (RENDER_DIR / png).with_suffix(".ass").unlink(missing_ok=True)
+                for extra in RENDER_DIR.glob(f"{Path(png).stem}.*.ass"):  # capa propia y de pista (.tt0.ass…)
+                    extra.unlink()
+                case = {"name": name, "t": t, "frame": png, "timeline": _pure(timeline.model_dump())}
+                for key, table in (("divergence", mc.RENDER_TEXT_DIVERGENCES), ("min_psnr", mc.RENDER_TEXT_FLOORS),
+                                   ("loose", mc.RENDER_TEXT_LOOSE)):
+                    if name in table:
+                        case[key] = table[name]
                 cases.append(case)
         return cases
     finally:

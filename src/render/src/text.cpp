@@ -13,11 +13,13 @@
 #include <numbers>
 #include <set>
 #include <tuple>
+#include <unordered_map>
 #include <utility>
 
 #include <hb.h>
 
 #include "gc/core/blend.hpp"
+#include "gc/core/clip_adjust.hpp"
 #include "gc/core/masks.hpp"
 #include "gc/core/text3d.hpp"
 #include "gc/core/text_events.hpp"
@@ -1146,8 +1148,8 @@ double pos_frac(const Json& v) { return std::clamp(core::detail::py_num(v, 0.5),
 // `now`. El giro va alrededor del centro del bloque (_anim_center) y la aparición desplaza y escala
 // desde él.
 Result<void> draw_animated_text(SkCanvas* sk, const core::TimelineClip& c, Json base, std::int64_t k, std::int64_t now,
-                                double fps, double width, double height, const TextFonts& fonts, bool buried,
-                                bool omit, std::vector<std::string>* warnings) {
+                                double fps, double width, double height, const TextFonts& fonts, bool omit,
+                                std::vector<std::string>* warnings) {
     const double dur = core::text_clip_duration(c);
     if (!(dur > 0)) {
         return {};
@@ -1194,12 +1196,7 @@ Result<void> draw_animated_text(SkCanvas* sk, const core::TimelineClip& c, Json 
         return {};
     }
     // La máscara, la fusión y el giro 3D los pone quien llama (capa propia): aquí, el texto plano.
-    std::optional<std::string> reason;
-    if (buried) {
-        reason = "pista de texto con vídeo encima";
-    } else {
-        reason = common_reason(st);
-    }
+    const std::optional<std::string> reason = common_reason(st);
     // El tamaño del fotograma: el de la letra con la escala de la aparición (\fs con 2 decimales).
     const double size = core::text_font_px(st, height);
     const double s = fx.scale;
@@ -1328,7 +1325,7 @@ struct TextFrame {
 
 // Los eventos de un texto (quieto o animado) en `sk`, como los dibujaría libass con su .ass.
 Result<void> draw_clip_text(SkCanvas* sk, const core::TimelineClip& clip, const core::TimelineTrack& track,
-                            const TextFrame& fr, bool buried) {
+                            const TextFrame& fr) {
     const double width = fr.width;
     const double height = fr.height;
     const std::int64_t now = fr.now;
@@ -1339,8 +1336,7 @@ Result<void> draw_clip_text(SkCanvas* sk, const core::TimelineClip& clip, const 
         c.text = core::apply_text_case(c.text.value_or(""), base.at("text_case"));
     }
     if (core::text_animates(c, fr.fps)) {
-        return draw_animated_text(sk, c, base, fr.k, now, fr.fps, width, height, *fr.fonts, buried, fr.omit,
-                                  fr.warnings);
+        return draw_animated_text(sk, c, base, fr.k, now, fr.fps, width, height, *fr.fonts, fr.omit, fr.warnings);
     }
     const Json st = core::posed_text_style(c, base, 0.0);
     const double start = std::max(0.0, c.start);
@@ -1363,12 +1359,7 @@ Result<void> draw_clip_text(SkCanvas* sk, const core::TimelineClip& clip, const 
     if (!any_text && !any_under) {
         return {};
     }
-    std::optional<std::string> reason;
-    if (buried) {
-        reason = "pista de texto con vídeo encima";
-    } else {
-        reason = static_reason(st);
-    }
+    const std::optional<std::string> reason = static_reason(st);
     Result<TextParams> tp = reason ? Result<TextParams>(fail(ErrorCode::Unsupported, *reason))
                                    : text_params(st, height, *fr.fonts);
     if (!tp) {
@@ -1432,8 +1423,10 @@ SkMatrix warp_matrix(const core::WarpRegion& r, const core::Corners& corners) {
 // Un texto en capa propia (text_layer de compose.py): su .ass en una capa transparente del cuadro;
 // si es 3D, la región de text_warp_spec deformada con `perspective`; con máscara, su alfa por el
 // de la máscara; y fundida con lo de debajo con su modo (o encima).
+// `in_chain`: un texto de una pista con vídeo encima, que el export compone aunque no tenga ni
+// máscara, ni 3D, ni fusión (los de arriba del todo, sin eso, no los compone).
 Result<void> draw_own_layer(Canvas& canvas, const core::TimelineClip& c, const core::TimelineTrack& track,
-                            const TextFrame& fr) {
+                            const TextFrame& fr, bool in_chain) {
     const Json base = core::effective_text_style(track.style.value_or(Json()), c.style.value_or(Json()));
     const auto warp = core::text_warp_spec(c, base, fr.width, fr.height, fr.fps);
     const std::string blend(core::clip_blend(c));
@@ -1456,14 +1449,15 @@ Result<void> draw_own_layer(Canvas& canvas, const core::TimelineClip& c, const c
         mask = std::move(*alpha);
     }
     if (!mask && !warp && blend == "normal") {
-        return {}; // como el export, que no la compone (no pasa con un texto de capa propia)
+        // Arriba del todo, el export no la compone; en la cadena, va tal cual.
+        return in_chain ? draw_clip_text(CanvasAccess::sk(canvas), c, track, fr) : Result<void>{};
     }
     auto layer = Canvas::make(canvas.width(), canvas.height());
     if (!layer) {
         return std::unexpected(layer.error());
     }
     layer->clear({0, 0, 0, 0});
-    if (auto ok = draw_clip_text(CanvasAccess::sk(*layer), c, track, fr, false); !ok) {
+    if (auto ok = draw_clip_text(CanvasAccess::sk(*layer), c, track, fr); !ok) {
         return ok;
     }
     const sk_sp<SkImage> image = CanvasAccess::image(*layer);
@@ -1492,11 +1486,8 @@ Result<void> draw_own_layer(Canvas& canvas, const core::TimelineClip& c, const c
     return {};
 }
 
-} // namespace
-
-Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline, std::int64_t k,
-                                 const TextFonts& fonts, bool omit, std::vector<std::string>* warnings) {
-    const core::ScopedTextWidth measure(fonts.width_fn()); // la de Pillow, solo mientras dibuja
+TextFrame make_frame(const core::Timeline& timeline, std::int64_t k, const TextFonts& fonts, bool omit,
+                     std::vector<std::string>* warnings) {
     TextFrame fr;
     fr.k = k;
     fr.width = static_cast<double>(timeline.width - timeline.width % 2);
@@ -1506,15 +1497,18 @@ Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline,
     fr.fonts = &fonts;
     fr.omit = omit;
     fr.warnings = warnings;
-    const auto buried = core::buried_text_track_ids(timeline.tracks);
+    return fr;
+}
 
-    // Los textos que van al .ass (con su pista visible) y si van en capa propia.
-    struct Entry {
-        const core::TimelineClip* clip;
-        const core::TimelineTrack* track;
-        bool own;
-    };
-    std::vector<Entry> texts;
+// Los textos que van a algún .ass (con su pista visible) y si van en capa propia.
+struct TextEntry {
+    const core::TimelineClip* clip;
+    const core::TimelineTrack* track;
+    bool own;
+};
+
+std::vector<TextEntry> ass_texts(const core::Timeline& timeline, double fps) {
+    std::vector<TextEntry> texts;
     for (const auto& cow : timeline.clips) {
         const core::TimelineClip& clip = *cow;
         if (clip.kind != "text" || !core::text_in_ass(clip)) {
@@ -1524,33 +1518,153 @@ Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline,
         if (track == nullptr || track->hidden) {
             continue;
         }
-        texts.push_back({&clip, track, core::text_own_layer(clip, fr.fps)});
+        texts.push_back({&clip, track, core::text_own_layer(clip, fps)});
     }
-    // Primero los de capa propia sin vídeo encima, por orden de inicio (encima de todo el vídeo y
-    // por debajo del .ass global); después, el .ass global en el orden de la lista.
-    std::vector<const Entry*> own;
-    for (const Entry& e : texts) {
+    return texts;
+}
+
+// El sitio de algo en la cadena de vídeo del export (build_command): la capa de su pista en la
+// pila (stack_layers), su inicio (≥ 0) y su índice en la lista de clips.
+struct ChainKey {
+    std::size_t layer = 0;
+    double start = 0.0;
+    std::size_t index = 0;
+    friend bool operator<(const ChainKey& a, const ChainKey& b) {
+        return std::tie(a.layer, a.start, a.index) < std::tie(b.layer, b.start, b.index);
+    }
+};
+
+class ChainKeys {
+public:
+    explicit ChainKeys(const core::Timeline& timeline) : layers_(core::stack_layers(timeline.tracks)) {
+        for (std::size_t i = 0; i < timeline.clips.size(); ++i) {
+            index_[timeline.clips[i]->id] = i; // como el dict de Python: con ids repetidos, el último
+        }
+    }
+    // La de un clip (una pasada fantasma de la máscara de ajuste, la de su clip).
+    [[nodiscard]] ChainKey of(const core::TimelineClip& clip) const {
+        std::string id = clip.id;
+        if (id.ends_with(core::kGhostSuffix)) {
+            id.resize(id.size() - core::kGhostSuffix.size());
+        }
+        const auto layer = layers_.find(clip.track_id);
+        const auto index = index_.find(id);
+        return {layer != layers_.end() ? layer->second : 0, std::max(0.0, clip.start),
+                index != index_.end() ? index->second : 0};
+    }
+
+private:
+    std::unordered_map<std::string, std::size_t> layers_;
+    std::unordered_map<std::string, std::size_t> index_;
+};
+
+// Lo que el export mete en la cadena de vídeo por una pista de texto con vídeo encima: cada texto
+// de capa propia en su sitio y una capa con los textos normales de la pista en el sitio de su clip
+// más temprano. Antes en la lista los de capa propia, que con la misma clave van primero.
+struct ChainText {
+    ChainKey key;
+    const core::TimelineTrack* track = nullptr;
+    const core::TimelineClip* own = nullptr;      // un texto de capa propia
+    std::vector<const core::TimelineClip*> plain; // o los textos normales de la pista
+};
+
+std::vector<ChainText> chain_texts(const core::Timeline& timeline, double fps) {
+    const auto buried = core::buried_text_track_ids(timeline.tracks);
+    const ChainKeys keys(timeline);
+    std::vector<ChainText> out;
+    std::vector<ChainText> tracks; // en el orden en que sale su primer texto (by_track)
+    for (const TextEntry& e : ass_texts(timeline, fps)) {
+        if (!buried.contains(e.clip->track_id)) {
+            continue;
+        }
+        if (e.own) {
+            out.push_back({keys.of(*e.clip), e.track, e.clip, {}});
+            continue;
+        }
+        auto it = std::ranges::find(tracks, e.track, &ChainText::track);
+        if (it == tracks.end()) {
+            // El más temprano de TODOS los clips de la pista (el primero de la lista si empatan).
+            const core::TimelineClip* first = nullptr;
+            for (const auto& cow : timeline.clips) {
+                if (cow->track_id == e.clip->track_id && (first == nullptr || cow->start < first->start)) {
+                    first = &*cow;
+                }
+            }
+            tracks.push_back({keys.of(*first), e.track, nullptr, {}});
+            it = std::prev(tracks.end());
+        }
+        it->plain.push_back(e.clip);
+    }
+    std::ranges::move(tracks, std::back_inserter(out));
+    std::ranges::stable_sort(out, [](const ChainText& a, const ChainText& b) { return a.key < b.key; });
+    return out;
+}
+
+} // namespace
+
+Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline, std::int64_t k,
+                                 const TextFonts& fonts, bool omit, std::vector<std::string>* warnings) {
+    const core::ScopedTextWidth measure(fonts.width_fn()); // la de Pillow, solo mientras dibuja
+    const TextFrame fr = make_frame(timeline, k, fonts, omit, warnings);
+    const auto buried = core::buried_text_track_ids(timeline.tracks);
+    const std::vector<TextEntry> texts = ass_texts(timeline, fr.fps);
+    // Primero los de capa propia, por orden de inicio (encima de todo el vídeo y por debajo del
+    // .ass global); después, el .ass global en el orden de la lista. Los de una pista con vídeo
+    // encima van en la cadena de vídeo (compose_with_buried_texts).
+    std::vector<const TextEntry*> own;
+    for (const TextEntry& e : texts) {
         if (e.own && !buried.contains(e.clip->track_id)) {
             own.push_back(&e);
         }
     }
-    std::ranges::stable_sort(own, {}, [](const Entry* e) { return e->clip->start; });
-    for (const Entry* e : own) {
-        if (auto ok = draw_own_layer(canvas, *e->clip, *e->track, fr); !ok) {
+    std::ranges::stable_sort(own, {}, [](const TextEntry* e) { return e->clip->start; });
+    for (const TextEntry* e : own) {
+        if (auto ok = draw_own_layer(canvas, *e->clip, *e->track, fr, false); !ok) {
             return ok;
         }
     }
     SkCanvas* sk = CanvasAccess::sk(canvas);
-    for (const Entry& e : texts) {
-        const bool is_buried = buried.contains(e.clip->track_id);
-        if (e.own && !is_buried) {
+    for (const TextEntry& e : texts) {
+        if (e.own || buried.contains(e.clip->track_id)) {
             continue;
         }
-        if (auto ok = draw_clip_text(sk, *e.clip, *e.track, fr, is_buried); !ok) {
+        if (auto ok = draw_clip_text(sk, *e.clip, *e.track, fr); !ok) {
             return ok;
         }
     }
     return {};
+}
+
+Result<void> compose_with_buried_texts(Canvas& canvas, const core::Timeline& timeline,
+                                       const std::vector<core::FrameLayer>& layers, std::int64_t k,
+                                       const SourceFn& source, const TextFonts& fonts, bool omit,
+                                       std::vector<std::string>* warnings) {
+    const TextFrame fr = make_frame(timeline, k, fonts, omit, warnings);
+    const std::vector<ChainText> chain = chain_texts(timeline, fr.fps);
+    const ChainKeys keys(timeline);
+    std::size_t next_text = 0;
+    // Antes de cada capa, los textos de la cadena que van detrás de ella; al final, los que quedan.
+    const auto between = [&](Canvas& c, const core::FrameLayer* next) -> Result<void> {
+        const core::ScopedTextWidth measure(fonts.width_fn());
+        const std::optional<ChainKey> limit = next != nullptr ? std::optional(keys.of(*next->clip)) : std::nullopt;
+        for (; next_text < chain.size() && (!limit || chain[next_text].key < *limit); ++next_text) {
+            const ChainText& t = chain[next_text];
+            if (t.own != nullptr) {
+                if (auto ok = draw_own_layer(c, *t.own, *t.track, fr, true); !ok) {
+                    return ok;
+                }
+                continue;
+            }
+            // La capa de la pista: sus textos en el orden de su .ass, como el global.
+            for (const core::TimelineClip* clip : t.plain) {
+                if (auto ok = draw_clip_text(CanvasAccess::sk(c), *clip, *t.track, fr); !ok) {
+                    return ok;
+                }
+            }
+        }
+        return {};
+    };
+    return compose_into(canvas, layers, source, &fonts, between);
 }
 
 } // namespace gc::render

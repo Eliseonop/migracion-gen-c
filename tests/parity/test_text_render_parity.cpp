@@ -1,6 +1,7 @@
-// Paridad del TEXTO en el render con el export de video-yt: los textos que dibuja
-// gc::render::draw_timeline_texts frente a los de compose.render_frame (el .ass de text_ass.py
-// dibujado por libass encima del vídeo).
+// Paridad del TEXTO en el render con el export de video-yt: los textos que dibujan
+// gc::render::compose_with_buried_texts (los de una pista con vídeo encima, en su sitio de la pila)
+// y draw_timeline_texts (el resto, encima) frente a los de compose.render_frame (el .ass de
+// text_ass.py dibujado por libass).
 //
 // Solo se compila con FFmpeg y Skia (gc_media y gc_render, presets msvc-vcpkg-*).
 // Fixture (tools/fixtures/export_fixtures.py → synthetic_text_render_fixtures):
@@ -18,6 +19,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
+#include <deque>
 #include <filesystem>
 #include <limits>
 #include <map>
@@ -160,9 +162,8 @@ TEST_CASE("paridad del render: el texto frente al de libass en el export", "[par
         const auto media_path = [](const TimelineClip& clip) {
             return kFixtures / "render" / "files" / path_from_utf8(clip.filename);
         };
-        // El fondo (el material, si hay), como en la paridad del render.
-        std::vector<gc::render::Image> frames;
-        frames.reserve(4);
+        // El fondo (el material, si hay, sin los textos), como en la paridad del render.
+        std::deque<gc::render::Image> frames; // los punteros siguen valiendo al añadir
         auto layers = evaluate(*timeline, t, FrameSpec{static_cast<double>(w), static_cast<double>(h), kRenderLayers},
                                [&](const TimelineClip& clip) -> std::optional<MediaSize> {
                                    const auto img = load(media_path(clip));
@@ -170,22 +171,24 @@ TEST_CASE("paridad del render: el texto frente al de libass en el export", "[par
                                });
         REQUIRE(layers);
         std::erase_if(*layers, [](const FrameLayer& l) { return l.clip->kind == "text"; }); // el texto va aparte
-        auto bg = gc::render::compose_frame(
-            *layers, w, h, [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
-                auto got = gc::media::export_frame_at(*layer.clip, media_path(*layer.clip), fps, tick);
-                if (!got) {
-                    return std::unexpected(got.error());
-                }
-                REQUIRE(got->has_value());
-                frames.push_back({(*got)->width, (*got)->height, std::move((*got)->pixels)});
-                return &frames.back();
-            });
+        const gc::render::SourceFn source = [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
+            auto got = gc::media::export_frame_at(*layer.clip, media_path(*layer.clip), fps, tick);
+            if (!got) {
+                return std::unexpected(got.error());
+            }
+            REQUIRE(got->has_value());
+            frames.push_back({(*got)->width, (*got)->height, std::move((*got)->pixels)});
+            return &frames.back();
+        };
+        auto bg = gc::render::compose_frame(*layers, w, h, source);
         REQUIRE(bg);
+        // El fotograma: las capas con los textos de las pistas con vídeo encima y el resto encima.
         auto canvas = gc::render::Canvas::make(w, h);
         REQUIRE(canvas);
-        REQUIRE(canvas->draw_image(*bg, SourceCrop{0, 0, static_cast<double>(w), static_cast<double>(h)},
-                                   Affine{1, 0, 0, 1, 0, 0}));
-        const auto drawn = gc::render::draw_timeline_texts(*canvas, *timeline, tick, fonts);
+        auto drawn = gc::render::compose_with_buried_texts(*canvas, *timeline, *layers, tick, source, fonts);
+        if (drawn) {
+            drawn = gc::render::draw_timeline_texts(*canvas, *timeline, tick, fonts);
+        }
         INFO((drawn ? std::string() : drawn.error().message));
         if (!drawn && c.value("pending", false) && drawn.error().code == gc::ErrorCode::Unsupported) {
             ++pending; // escena de una etapa siguiente: aún no se dibuja

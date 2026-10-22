@@ -1054,6 +1054,12 @@ RENDER_TEXT_FLOORS = {
     "3D, máscara y diferencia sobre un vídeo": 29,
     "capa propia debajo del texto normal (el .ass global va encima)": 26,
     "dos en capa propia: manda el inicio, no la lista": 26,
+    # Pistas de texto con vídeo encima (RENDER_TEXT_STACKS, 2026-10-22).
+    "pista de texto con una imagen encima": 23,
+    "pista de texto enterrada y otra encima de todo": 23,
+    "karaoke enterrado que empieza tarde": 23,
+    "dos textos en una pista enterrada, uno en pantalla (capa propia)": 26,
+    "imagen encima que aparece después": 23,
 }
 
 # Escenas de RENDER_TEXT en las que el export se aparta solo un poco (decisión de Edu): el test las
@@ -1067,6 +1073,42 @@ RENDER_TEXT_LOOSE = {
 # Escenas de RENDER_TEXT de una etapa siguiente, que el render aún no dibuja: si da Unsupported, el
 # test las salta; si ya las dibuja, las compara.
 RENDER_TEXT_PENDING: set[str] = set()
+
+# Pistas de texto con vídeo encima (build_command las mete en la cadena de vídeo, en su sitio de la
+# pila, en vez de encima de todo): (nombre, pistas de abajo arriba, clips, instantes). 540×960 a 30
+# fps; de fondo, el vídeo en V1, y encima del texto, las ondas pequeñas en V2, tapando el centro.
+_BG30 = {**_V, "id": "bg", "track_id": "V1", "asset_id": "bg", "filename": "moving30.mp4", "start": 0.0,
+         "in_point": 0.0, "out_point": 2.0, "transform": {"x": 0.5, "y": 0.5, "scale": 1.0}}
+_OVER = {**_I, "id": "ov", "track_id": "V2", "asset_id": "ov", "filename": "waves.png", "start": 0.0,
+         "in_point": 0.0, "out_point": 2.0, "transform": {"x": 0.5, "y": 0.5, "scale": 0.45}}
+
+
+def _stack(*ids: str) -> list[dict]:
+    return [{"id": i, "kind": "video" if i.startswith("V") else "text", "name": i} for i in ids]
+
+
+def _txt(cid: str, track: str, text: str, style: dict, **fields) -> dict:
+    return {"id": cid, "track_id": track, "kind": "text", "asset_kind": "text", "asset_id": cid, "filename": "",
+            "text": text, "style": style, "start": 0.0, "in_point": 0.0, "out_point": 2.0, **fields}
+
+
+RENDER_TEXT_STACKS = [
+    ("pista de texto con una imagen encima", _stack("V1", "T1", "V2"),
+     [_BG30, _txt("t1", "T1", _HOLA, _PLAIN), _OVER], [0.5]),
+    ("pista de texto enterrada y otra encima de todo", _stack("V1", "T1", "V2", "T2"),
+     [_BG30, _txt("t1", "T1", _HOLA, _PLAIN), _OVER,
+      _txt("t2", "T2", "ENCIMA", {**_PLAIN, "y": 0.53})], [0.5]),
+    # Sin nada semitransparente: en la capa de la pista (`ass=…:alpha=1`, como en capa propia) el
+    # export lo oscurece a c·α³ (_ALPHA_CUBED) y el C++ pinta c·α.
+    ("karaoke enterrado que empieza tarde", _stack("V1", "T1", "V2"),
+     [_BG30, _OVER, _txt("t1", "T1", _HOLA, {**_CLASSIC_TXT, "y": 0.5, "inactive_opacity": 1,
+                                              "block_appear": "none"}, start=0.3)], [0.2, 0.45, 1.2]),
+    ("dos textos en una pista enterrada, uno en pantalla (capa propia)", _stack("V1", "T1", "V2"),
+     [_BG30, _txt("t1", "T1", "arriba del todo", {**_PLAIN, "y": 0.35}),
+      _txt("t2", "T1", _HOLA, {**_PLAIN, "color": "#ff4040"}, blend_mode="screen"), _OVER], [0.5]),
+    ("imagen encima que aparece después", _stack("V1", "T1", "V2"),
+     [_BG30, _txt("t1", "T1", _HOLA, _PLAIN), {**_OVER, "start": 0.6, "out_point": 1.4}], [0.3, 0.9]),
+]
 
 
 # --- Export entero (compose.render): vídeo y audio en un MP4 ----------------------------------

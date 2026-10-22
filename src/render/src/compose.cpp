@@ -158,7 +158,7 @@ Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int wid
 }
 
 Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers, const SourceFn& source,
-                          const TextFonts* fonts) {
+                          const TextFonts* fonts, const BetweenFn& between) {
     const int width = canvas.width();
     const int height = canvas.height();
     canvas.clear({0, 0, 0, 255});
@@ -166,6 +166,11 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
         const std::string& id = layer.clip->id;
         if (auto reason = unsupported_reason(layer, fonts)) {
             return fail(ErrorCode::Unsupported, std::format("{} (clip {})", *reason, id));
+        }
+        if (between) {
+            if (auto ok = between(canvas, &layer); !ok) {
+                return ok;
+            }
         }
         // Capa de ajuste (compose.py, #19): su matriz de color sobre todo lo compuesto debajo
         // durante su tramo, sin material ni máscaras (el export no las aplica).
@@ -247,6 +252,9 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
         } else if (blended) {
             canvas.end_layer();
         }
+    }
+    if (between) {
+        return between(canvas, nullptr);
     }
     return {};
 }

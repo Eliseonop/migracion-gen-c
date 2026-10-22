@@ -1394,5 +1394,14 @@ Decisión de Edu (§6):
 - **Divergencia que se queda:** numpy calcula la curva de ataque en float32 y el C++ en double; con el mismo audio, en tu voz de 2 min, 2 de 253 beats caen un fotograma de análisis (23,2 ms) al lado. El test lo admite en hasta el 1 % de los beats.
 - **MSVC:** 177/177.
 
+**Segunda tanda del mismo día: la pista de texto con vídeo encima (F3)**
+
+- Lo último que faltaba del texto básico del render. El export mete esos textos en la cadena de vídeo, en su sitio de la pila: cada texto de capa propia por su clave y los demás de la pista en una capa, con la clave de su clip más temprano. La clave es (capa de la pila, inicio ≥ 0, índice en la lista).
+- **`compose_with_buried_texts`** (`gc_render`, text.hpp) compone con `compose_into` y un gancho antes de cada capa (`BetweenFn` en compose.hpp) que dibuja los textos que van antes; `draw_timeline_texts` ya no los da por Unsupported, los deja para la cadena. `gc_export` y `genclip frame` lo usan, con los tiempos de compuesto y texto separados como antes.
+- **Paridad:** 5 escenas nuevas (`RENDER_TEXT_STACKS`, 8 fotogramas) frente a `compose.render_frame`: 25–28 dB en la zona del texto, 44–60 perdonando 1 px. El mutante «encima de todo» falla 12 aserciones. Las escenas van en el esquema actual: con `version: 2` la migración subía las pistas de texto arriba del todo y no había nada enterrado.
+- **Divergencia:** la capa de la pista va con `ass=…:alpha=1`, igual que la de capa propia: lo semitransparente sale c·α³ en el export (pendiente de Edu; el C++ pinta c·α). Ninguna de tus pistas con textos está enterrada (la única es de un proyecto de prueba y está vacía).
+- **MSVC:** 177/177.
+
 **Siguiente:**
 - El «Detectar beats» del menú del clip, en el studio (con Qt, en Linux).
+- En el render quedan los efectos de vídeo (`vfx`, F4), el matte automático (F6) y el contorno.
