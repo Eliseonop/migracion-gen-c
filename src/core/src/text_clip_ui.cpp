@@ -133,7 +133,7 @@ const Json& subtitle_themes() {
 
 const Json* theme_by_id(std::string_view id) {
     const auto& list = subtitle_themes();
-    const auto it = std::ranges::find_if(list, [&](const Json& t) { return t.at("id") == id; });
+    const auto it = std::ranges::find_if(list, [&](const Json& t) { return t.at("id") == Json(std::string(id)); });
     return it == list.end() ? nullptr : &*it;
 }
 

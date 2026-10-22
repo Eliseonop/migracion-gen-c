@@ -229,7 +229,7 @@ std::optional<double> crop_ratio_norm(std::string_view ratio_id, double src_aspe
                                               {"3:4", 3.0 / 4},
                                               {"4:5", 4.0 / 5},
                                               {"2.35:1", 2.35}}};
-    const auto* r = std::ranges::find(kRatios, ratio_id, &Ratio::id);
+    const auto r = std::ranges::find(kRatios, ratio_id, &Ratio::id);
     if (r == kRatios.end() || r->aspect == 0 || !(src_aspect > 0)) {
         return std::nullopt;
     }

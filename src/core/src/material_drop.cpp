@@ -228,7 +228,7 @@ Json make_clip_json(std::string_view asset_kind, const Json& item, std::string_v
         kind == "video" && reframe && reframe->is_object() && get(*reframe, "master") == Value(true);
     const bool gif = kind == "image" && truthy(get(item, "animated"));
     const double gif_dur = gif && number(get(item, "duration")) > 0 ? number(get(item, "duration")) : 0;
-    const Value dur = truthy(duration)
+    const Value dur = truthy(Value(duration))
                           ? Value(duration)
                           : Value(Json(kind == "image" ? (gif_dur ? gif_dur : kImageDefaultDuration) : 1));
     const double span = js_fixed3(std::max(0.3, number(dur)));

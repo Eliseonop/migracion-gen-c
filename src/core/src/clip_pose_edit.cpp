@@ -473,7 +473,7 @@ void patch_keyframe(TimelineClip& clip, std::string_view id, const KeyframePatch
     std::vector<Json> items = normalize_kf_items(clip.keyframes ? field(*clip.keyframes, "items") : Json(), ids);
     const auto bez = normalize_bezier(patch.bezier);
     for (Json& k : items) {
-        if (k.at("id") != id) {
+        if (k.at("id") != Json(std::string(id))) {
             continue;
         }
         if (patch.t) {
@@ -503,7 +503,7 @@ void move_keyframe(TimelineClip& clip, std::string_view id, double new_t, double
         patch_keyframe(clip, id, {.t = new_t, .interpolation = {}, .bezier = {}, .props = {}}, fps, ids);
     } else if (clip.reframe) {
         for (Keyframe& k : clip.reframe->keyframes) {
-            if (k.extra.value("id", Json()) == id) {
+            if (k.extra.value("id", Json()) == Json(std::string(id))) {
                 k.t = new_t;
             }
         }
@@ -530,7 +530,7 @@ std::optional<Json> target_interp_item(const TimelineClip& clip, double local_t,
     }
     const auto next = std::ranges::find_if(
         items, [&](const Json& k) { return k.at("t").get<double>() > local_t + frame_duration(fps) / 2; });
-    return next != items.end() ? *next : items.back();
+    return std::optional<Json>(std::in_place, next != items.end() ? *next : items.back());
 }
 
 std::array<double, 4> interp_bezier(const Json& item) {
@@ -591,7 +591,7 @@ void paste_keyframe_at(TimelineClip& clip, double local_t, const KeyframeBoard& 
 
 void duplicate_keyframe_at(TimelineClip& clip, std::string_view id, double target_t, double fps, IdSource& ids) {
     const auto items = normalize_kf_items(clip.keyframes ? field(*clip.keyframes, "items") : Json(), ids);
-    const auto it = std::ranges::find_if(items, [&](const Json& k) { return k.at("id") == id; });
+    const auto it = std::ranges::find_if(items, [&](const Json& k) { return k.at("id") == Json(std::string(id)); });
     if (it == items.end()) {
         return;
     }

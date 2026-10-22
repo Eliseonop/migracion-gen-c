@@ -7,6 +7,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <numbers>
@@ -48,7 +49,9 @@ std::vector<float> synth(const Json& c) {
                              : amp * noise[s + i] * std::exp(-80 * tau);
         }
     }
-    return {y.begin(), y.end()};
+    std::vector<float> out(n); // astype(np.float32)
+    std::ranges::transform(y, out.begin(), [](double v) { return static_cast<float>(v); });
+    return out;
 }
 
 } // namespace
