@@ -392,6 +392,25 @@ bool py_equal(const Json& a, const Json& b) {
     return a == b; // texto, None o tipos distintos
 }
 
+double py_floordiv(double x, double y) {
+    // _float_div_mod de CPython
+    double mod = std::fmod(x, y);
+    double div = (x - mod) / y;
+    if (mod != 0.0) {
+        if ((y < 0) != (mod < 0)) {
+            div -= 1.0;
+        }
+    }
+    if (div != 0.0) {
+        double floordiv = std::floor(div);
+        if (div - floordiv > 0.5) {
+            floordiv += 1.0;
+        }
+        return floordiv;
+    }
+    return std::copysign(0.0, x / y);
+}
+
 double py_mod(double x, double y) {
     // float_rem de CPython
     double mod = std::fmod(x, y);

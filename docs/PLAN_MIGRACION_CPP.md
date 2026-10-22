@@ -1409,6 +1409,12 @@ Decisión de Edu (§6):
 - Las escenas nuevas van al final de `RENDER_SCENES`: las PNG se nombran por su posición y en medio renumeraban las de detrás.
 - **MSVC:** 178/178.
 
+**Cuarta tanda: segmentos por referencia y seguimiento de caras (`segments.py`)**
+
+- `segments.hpp`: «Crear clip» del Clip Editor (`create_segments`, materiales que apuntan al archivo del original con in/out_point) y el seguimiento de caras cacheado del material (`face_track_material`, `seed_face_keyframes`, `cached_face_track`), sobre `ProjectsStore`. La sonda de duración (gc_media) y el detector de caras (YuNet, F6) se inyectan; `py_floordiv` es el `//` de reales de CPython.
+- **Paridad:** 38 pasos nuevos en la fixture del almacén de proyectos, con `segments.py` real y la sonda y `detect.face_track` sustituidos por lo que pide cada paso: rangos al revés, negativos, recortados al final del archivo, como texto o bool, demasiado cortos, sin lista, que no son objetos, con fin infinito (con y sin etiqueta: m:ss de infinito falla), desde un segmento (hereda el padre), sin archivo, y el seguimiento del propio rango, de la caché (±0,05 s), forzado, de otro rango, vacío, largo (ventanas de 2,5 s) y con el detector fallando. 14/14 mutaciones; la del índice desde 99999 pedía un proyecto con índices bajos.
+- **MSVC:** 178/178; **MinGW:** 143/143.
+
 **Siguiente:**
-- El «Detectar beats» del menú del clip, en el studio (con Qt, en Linux).
+- El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
 - En el render quedan los efectos de vídeo (`vfx`, F4) y el matte automático (F6).

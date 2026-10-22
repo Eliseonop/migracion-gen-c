@@ -34,6 +34,11 @@ los clips por defecto es «{TMP}/clips».
   blueprint pid doc            save_visual_blueprint(pid, doc)
   retarget pid tipo id fn id2 fn2 por_nombre    retarget_timeline_asset(...)
   tree                         los archivos bajo {TMP}/clips (ruta relativa y contenido)
+  segments pid id rangos dur   segments.create_segments(pid, id, rangos), con la sonda de duración
+                               dando `dur` (None: falla, y vale 0)
+  face_track pid id a b muestras forzar info
+                               segments.face_track_material(...), con detect.face_track dando
+                               `info` (None: falla)
 
 Tras cada paso que puede escribir se guarda también el texto de projects.json tal cual (en
 Windows, con los CRLF de write_text).
@@ -286,3 +291,83 @@ STEPS += [
              '"zoom": Infinity}]}]}'),
     ("duplicate", "p1"), ("data",),
 ]
+
+# --- Segmentos por referencia y seguimiento de caras (segments.py) --------------------------
+# «Crear clip» del Clip Editor: materiales que apuntan al archivo de otro con in/out_point, sin
+# render. El índice nuevo pasa de 99999; la etiqueta por defecto lleva m:ss–m:ss.
+_SEG_SRC = material(0, id="src0", url="/api/media/s1/video/clip_0.mp4", label="  Entrevista ",
+                    description="desc origen", source="external", provider="pexels", author="Ana",
+                    license_info="CC-BY", source_url="https://ejemplo/v")
+_SEG_START = {"projects": [project("s1", name="Segmentos", clips=[
+    _SEG_SRC,
+    material(3, filename="sin_label.mp4"),
+    material(100005, id="seg", filename="clip_0.mp4", in_point=2.0, out_point=5.5, parent_id="src0"),
+    material(4, filename="falta.mp4"),
+    material(8, id="largo", filename="largo.mp4", start=100, end=130),
+    material(9, id="cache", filename="clip_0.mp4", in_point=1.0, out_point=4.0,
+             face_track={"start": 1.0, "end": 4.0, "width": 640, "height": 360, "fps": 25,
+                         "samples": 3, "track": [{"t": 1.0, "cx": 0.4, "cy": 0.5, "w": 0.1, "h": 0.2}],
+                         "keyframes": [{"t": 1.0, "cx": 0.4, "cy": 0.5}], "created_at": T0}),
+    ]), project("s2", name="Índices bajos", clips=[material(0), material(5, filename="clip_0.mp4")])]}
+
+
+def _track(a: float, b: float, n: int, wobble: float = 0.08) -> list[dict]:
+    """Detecciones deterministas entre a y b: un centro que se mueve despacio (y a veces nada)."""
+    import math
+    out = []
+    for i in range(n):
+        t = a + (b - a) * i / max(1, n - 1)
+        out.append({"t": round(t, 3), "cx": round(0.5 + wobble * math.sin(t * 1.7), 4),
+                    "cy": round(0.45 + 0.5 * wobble * math.cos(t * 0.9), 4), "w": 0.12, "h": 0.2})
+    return out
+
+
+def _info(track: list[dict]) -> dict:
+    return {"width": 1920, "height": 1080, "fps": 29.97, "samples": len(track), "track": track}
+
+
+STEPS_SEG = [
+    ("file", _SEG_START),
+    ("disk", ["clips/s1/video/clip_0.mp4", "clips/s1/video/sin_label.mp4", "clips/s1/video/largo.mp4",
+              "clips/s2/video/clip_0.mp4"]),
+    ("segments", "s2", "0", [{"start": 0, "end": 1}, {"start": 1, "end": 2}], 5.0),  # del 100000 en adelante
+    # Varios rangos: al revés, con etiqueta y descripción propias, negativos y recortados al final.
+    ("segments", "s1", "src0", [{"start": 1, "end": 3.4567}, {"start": 10, "end": 8, "label": " Mi corte ",
+                                                              "description": "  d  ", "extra": 1},
+                                {"start": -1, "end": 0.5}, {"start": 7.5, "end": 20}], 9.0),
+    ("segments", "s1", "0", [{"start": " 2.5 ", "end": "4"}, {"start": True, "end": 3}], 30.0),
+    ("segments", "s1", "3", [{"start": 59.5, "end": 125.2}], None),       # sin etiqueta: el nombre
+    ("segments", "s1", "seg", [{"start": 2, "end": 3}], 0.0),             # de un segmento: su origen
+    ("segments", "s1", "src0", [{"start": 1, "end": 1.2}], 9.0),
+    ("segments", "s1", "src0", [{"start": 1, "end": 2}, {"start": 3, "end": 3.1}], 9.0),
+    ("segments", "s1", "src0", [{"start": "x", "end": 2}], 9.0),
+    ("segments", "s1", "src0", [{"end": 2}], 9.0),
+    ("segments", "s1", "src0", [{"start": [1], "end": 2}], 9.0),
+    ("segments", "s1", "src0", [], 9.0),
+    ("segments", "s1", "src0", None, 9.0),
+    ("segments", "s1", "src0", ["a"], 9.0),
+    ("segments", "s1", "src0", [{"start": 1, "end": float("inf"), "label": "infinito"}], None),
+    ("segments", "s1", "src0", [{"start": 1, "end": float("inf")}], None),  # m:ss de infinito: falla
+    ("segments", "s1", "zz", [{"start": 1, "end": 2}], 9.0),
+    ("segments", "nada", "0", [{"start": 1, "end": 2}], 9.0),
+    ("segments", "s1", "4", [{"start": 1, "end": 2}], 9.0),               # sin archivo
+    ("get", "s1"),
+    # Seguimiento de caras: el del propio rango se guarda (y siembra el reframe); el mismo rango
+    # sale de la caché salvo que se fuerce; otro rango no se guarda.
+    ("face_track", "s1", "seg", None, None, 0, False, _info(_track(2.0, 5.5, 36))),
+    ("face_track", "s1", "seg", None, None, 0, False, _info(_track(2.0, 5.5, 5))),
+    ("face_track", "s1", "seg", 2.03, 5.47, 0, False, _info(_track(2.0, 5.5, 5))),
+    ("face_track", "s1", "seg", None, None, 12, True, _info(_track(2.0, 5.5, 12, wobble=0.01))),
+    ("face_track", "s1", "seg", 2.5, 4.0, 0, False, _info(_track(2.5, 4.0, 8))),
+    ("face_track", "s1", "seg", -3, 4.0, 0, False, _info(_track(0.0, 4.0, 8))),
+    ("face_track", "s1", "seg", 3.0, 3.2, 0, False, _info([])),
+    ("face_track", "s1", "cache", None, None, 0, False, _info(_track(1.0, 4.0, 4))),
+    ("face_track", "s1", "cache", 1.0, 4.2, 0, False, _info([])),
+    ("face_track", "s1", "largo", None, None, 0, False, _info(_track(-1.0, 31.0, 90, wobble=0.2))),
+    ("face_track", "s1", "3", None, None, 0, False, None),               # el detector falla
+    ("face_track", "s1", "4", None, None, 0, False, _info([])),          # sin archivo
+    ("face_track", "s1", "zz", None, None, 0, False, _info([])),
+    ("face_track", "nada", "0", None, None, 0, False, _info([])),
+    ("get", "s1"),
+]
+STEPS += [("remove",), *STEPS_SEG]

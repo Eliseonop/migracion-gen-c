@@ -4,7 +4,7 @@
 
 `grupo`: eval (evaluación por clip), layers (capas de un instante), frame (fotograma), sfx
 (biblioteca de SFX en disco), collections (colecciones de material), projects (almacén de
-proyectos), json (JSON como Python), library («Guardar en la biblioteca»), stick (personajes
+proyectos), segments (segmentos por referencia y caras), json (JSON como Python), library («Guardar en la biblioteca»), stick (personajes
 stick), motion (envolvente de un sonido, clip_motion) o media (cabeceras de imagen). Cada uno pasa los
 tests de su etiqueta (GROUPS).
 `preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los mutantes cuyo
@@ -611,11 +611,34 @@ FILTERS = [
     ("ajuste: sin la intensidad", CF, "const double k = clip.opacity ? clamp01(*clip.opacity) : 1.0;", "const double k = 1.0;"),
 ]
 
+SG = "src/core/src/segments.cpp"
+SEGMENTS = [
+    ("índice nuevo desde 99998", SG, "std::int64_t index = 99999;", "std::int64_t index = 99998;"),
+    ("ventana de dur/10", SG, "dur / 12.0 > 1.0 ? dur / 12.0 : 1.0", "dur / 10.0 > 1.0 ? dur / 10.0 : 1.0"),
+    ("sin zona muerta", SG, "&& std::abs(cy - out.back().cy) < kDeadzone) {", "&& false) {"),
+    ("el central en vez de la mediana", SG,
+     "return n % 2 == 1 ? v[n / 2] : (v[(n / 2) - 1] + v[n / 2]) / 2;", "return v[n / 2];"),
+    ("sin el ancla del final", SG, "if (out.back().t < end - 0.01) {", "if (false) {"),
+    ("caché sin tolerancia", SG, "constexpr double kCacheEps = 0.05;", "constexpr double kCacheEps = 0.0;"),
+    ("sin acotar al final del archivo", SG, "b = file_dur < b ? file_dur : b; // min(b, file_dur)", ""),
+    ("mínimo de 0,2 s", "src/core/include/gc/core/segments.hpp", "kMinSegment = 0.3;", "kMinSegment = 0.2;"),
+    ("padre: el id antes que el padre", SG, "src->parent_id && !src->parent_id->empty() ? *src->parent_id",
+     "false ? *src->parent_id"),
+    ("etiqueta sin quitar espacios", SG, "return py_truthy(v) ? py_strip(py_str(v)) : std::string();",
+     "return py_truthy(v) ? py_str(v) : std::string();"),
+    ("m:ss truncando", SG, "static_cast<std::int64_t>(py_round(seconds, 0))", "static_cast<std::int64_t>(seconds)"),
+    ("reframe sin guardar", SG, "if (std::abs(a - own_a) <= kCacheEps && std::abs(b - own_b) <= kCacheEps) {",
+     "if (false) {"),
+    ("rango al revés sin girar", SG, "if (b < a) {\n            std::swap(a, b);", "if (false) {\n            std::swap(a, b);"),
+    ("descripción sin la del origen", SG, "description.empty() ? src->description : std::optional(description)",
+     "std::optional(description)"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

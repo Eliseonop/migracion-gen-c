@@ -44,6 +44,11 @@ enum class DumpMode {
 [[nodiscard]] Json to_json(const AudioInfo& audio, DumpMode mode = DumpMode::Model);
 [[nodiscard]] Json to_json(const ImageInfo& image, DumpMode mode = DumpMode::Model);
 [[nodiscard]] Json to_json(const Transcript& transcript, DumpMode mode = DumpMode::Model);
+// El seguimiento de caras de un material, sus puntos y el encuadre (segments.py).
+[[nodiscard]] Result<FaceTrack> face_track_from_json(const Json& raw);
+[[nodiscard]] Result<TrackPoint> track_point_from_json(const Json& raw);
+[[nodiscard]] Json to_json(const FaceTrack& track, DumpMode mode = DumpMode::Model);
+[[nodiscard]] Json to_json(const Reframe& reframe, DumpMode mode = DumpMode::Model);
 
 // Timeline cruda (p. ej. la que manda el editor): migración + validación.
 [[nodiscard]] Result<Timeline> timeline_from_json(const Json& raw);

@@ -116,6 +116,8 @@ namespace gc::core::detail {
 // x % y de Python con reales: el resultado lleva el signo del divisor
 // ((-90.0) % 360 == 270.0), no el del dividendo como fmod.
 [[nodiscard]] double py_mod(double x, double y);
+// x // y de Python con reales (float_floor_div): el cociente de fmod, corregido como CPython.
+[[nodiscard]] double py_floordiv(double x, double y);
 
 // Letras y cifras ASCII sin depender del locale. std::isalnum y std::tolower sí dependen:
 // con un locale de un byte (Qt fija el del sistema en Linux y macOS) cambiarían los bytes

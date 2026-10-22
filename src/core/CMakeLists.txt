@@ -57,6 +57,7 @@ add_library(gc_core
     src/text_style.cpp
     src/py.cpp
     src/session.cpp
+    src/segments.cpp
     src/settings.cpp
     src/sfx_disk.cpp
     src/sfx_name.cpp

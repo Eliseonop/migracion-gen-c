@@ -1069,12 +1069,16 @@ def synthetic_json_fixtures() -> dict:
 # --- Almacén de proyectos (projects.py) --------------------------------------------------------
 
 # Los mensajes de los errores que ve el usuario (ValueError de projects.py): se comparan.
-_PROJECTS_MESSAGES = {"El nombre no puede estar vacío.", "La carpeta no existe."}
+_PROJECTS_MESSAGES = {"El nombre no puede estar vacío.", "La carpeta no existe.",
+                      # segments.py
+                      "Proyecto no encontrado.", "Material de vídeo no encontrado.",
+                      "El archivo del vídeo no existe en el proyecto.", "No hay segmentos.",
+                      "El rango es demasiado corto para analizar caras."}
 # Los pasos que pueden escribir projects.json: tras ellos se guarda su texto.
 _PROJECTS_WRITES = {"create", "create_group", "rename_group", "delete_group", "move", "rename", "duplicate",
                     "set_folder", "delete", "add_clips", "add_transcript", "add_audio", "add_image", "update",
                     "remove_material", "manifest", "timeline", "motion", "delete_motion", "scenes", "blueprint",
-                    "retarget"}
+                    "retarget", "segments", "face_track"}
 
 
 class _FixedNow:
@@ -1092,22 +1096,42 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
     """Ejecuta los pasos con el projects.py REAL sobre un projects.json temporal (y los clips por
     defecto en {TMP}/clips), con uuid4 y _now fijados. «{TMP}» es la carpeta temporal (con «/»)
     en los argumentos, y vuelve a serlo en los resultados y en el texto de projects.json."""
-    from app import config
+    from app import config, detect, segments, youtube_audio
     projects, schemas = ctx.projects, ctx.schemas
     tmp = Path(tempfile.mkdtemp(prefix="gc_prj_"))
     posix = tmp.as_posix()
     saved = (projects._FILE, config.OUTPUT_DIR, uuid.uuid4, projects._now)
+    saved_seg = (segments._now, detect.face_track, youtube_audio.probe_duration)
     projects._FILE = tmp / "data" / "projects.json"
     config.OUTPUT_DIR = tmp / "clips"
     uuid.uuid4 = _SequentialUuid()
     projects._now = _FixedNow()
+    segments._now = projects._now  # la misma hora que el almacén (una sola secuencia)
 
     def dump(value):
-        if isinstance(value, (schemas.Project, schemas.ProjectGroup)):
+        if hasattr(value, "model_dump"):
             return value.model_dump()
-        if isinstance(value, list):
+        if isinstance(value, (list, tuple)):
             return [dump(v) for v in value]
         return value
+
+    # La sonda de duración de segments._file_duration y el detector de caras, sustituidos por lo
+    # que dice cada paso (None: fallan).
+    def create_segments(pid, ident, raw, dur):
+        def probe(_path):
+            if dur is None:
+                raise RuntimeError("sin sonda")
+            return dur
+        youtube_audio.probe_duration = probe
+        return segments.create_segments(pid, ident, raw)
+
+    def face_track(pid, ident, start, end, samples, force, info):
+        def fake(_path, samples=0, on_progress=None, start=None, end=None, progress_base=0.0):
+            if info is None:
+                raise RuntimeError("el detector falla")
+            return copy.deepcopy(info)
+        detect.face_track = fake
+        return segments.face_track_material(pid, ident, lambda *_a: None, start, end, samples, force)
 
     def tmp_of(value):
         return json.loads(json.dumps(value, ensure_ascii=False).replace(posix, "{TMP}"))
@@ -1129,6 +1153,7 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
         "add_transcript": lambda pid, t: projects.add_transcript(pid, schemas.Transcript(**t)),
         "add_audio": lambda pid, a: projects.add_audio(pid, schemas.AudioInfo(**a)),
         "add_image": lambda pid, i: projects.add_image(pid, schemas.ImageInfo(**i)),
+        "segments": create_segments, "face_track": face_track,
     }
     out = []
     try:
@@ -1164,7 +1189,7 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
                 entry["result"] = tmp_of(result)
             except Exception as e:  # noqa: BLE001
                 entry["error"] = type(e).__name__
-                if str(e) in _PROJECTS_MESSAGES:
+                if str(e) in _PROJECTS_MESSAGES or re.match(r"Segmento \d+: ", str(e)):
                     entry["message"] = str(e)
             if record_file and kind in _PROJECTS_WRITES:
                 f = projects._FILE
@@ -1172,6 +1197,7 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
             out.append(entry)
     finally:
         projects._FILE, config.OUTPUT_DIR, uuid.uuid4, projects._now = saved
+        segments._now, detect.face_track, youtube_audio.probe_duration = saved_seg
         shutil.rmtree(tmp, ignore_errors=True)
     return _pure(out)
 

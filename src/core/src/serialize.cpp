@@ -660,6 +660,12 @@ Json to_json(const ClipInfo& clip, DumpMode mode) { return detail::write_value(c
 Json to_json(const AudioInfo& audio, DumpMode mode) { return detail::write_value(audio, mode); }
 Json to_json(const ImageInfo& image, DumpMode mode) { return detail::write_value(image, mode); }
 Json to_json(const Transcript& transcript, DumpMode mode) { return detail::write_value(transcript, mode); }
+Result<FaceTrack> face_track_from_json(const Json& raw) { return detail::parse_model<FaceTrack>(raw, detail::kAsIs); }
+Result<TrackPoint> track_point_from_json(const Json& raw) {
+    return detail::parse_model<TrackPoint>(raw, detail::kAsIs);
+}
+Json to_json(const FaceTrack& track, DumpMode mode) { return detail::write_value(track, mode); }
+Json to_json(const Reframe& reframe, DumpMode mode) { return detail::write_value(reframe, mode); }
 
 Result<Timeline> timeline_from_json(const Json& raw) {
     return detail::parse_model<Timeline>(raw, [](const Json& tl) { return migrate_timeline(tl); });

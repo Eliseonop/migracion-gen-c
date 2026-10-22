@@ -24,6 +24,7 @@
 #include "gc/core/ids.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/projects_store.hpp"
+#include "gc/core/segments.hpp"
 #include "gc/core/serialize.hpp"
 #include "json_diff.hpp"
 
@@ -56,6 +57,7 @@ Json dump(const Json& v) { return v; }
 Json dump(bool v) { return v; }
 Json dump(const Project& v) { return to_json(v); }
 Json dump(const ProjectGroup& v) { return to_json(v); }
+Json dump(const ClipInfo& v) { return to_json(v); }
 template <class T>
 Json dump(const std::optional<T>& v) {
     return v ? dump(*v) : Json();
@@ -183,6 +185,38 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
             take(store.save_scene_directions(text(1), a[2]));
         } else if (kind == "blueprint") {
             take(store.save_visual_blueprint(text(1), a[2]));
+        } else if (kind == "segments") { // la sonda de duración da a[4] (null: falla)
+            const Json dur = a[4];
+            const DurationProbe probe = [&dur](const fs::path&) -> std::optional<double> {
+                return dur.is_null() ? std::nullopt : std::optional(dur.get<double>());
+            };
+            take(create_segments(store, text(1), text(2), a[3], probe, ids));
+        } else if (kind == "face_track") { // el detector da a[7] (null: falla)
+            const Json info = a[7];
+            const FaceDetector detect = [&info](const fs::path&, double, double, int) -> gc::Result<FaceDetection> {
+                if (info.is_null()) {
+                    return gc::fail(gc::ErrorCode::Internal, "el detector falla");
+                }
+                FaceDetection d;
+                d.width = info.at("width").get<std::int64_t>();
+                d.height = info.at("height").get<std::int64_t>();
+                d.fps = info.at("fps").get<double>();
+                d.samples = info.at("samples").get<std::int64_t>();
+                for (const Json& p : info.at("track")) {
+                    auto point = track_point_from_json(p);
+                    REQUIRE(point);
+                    d.track.push_back(std::move(*point));
+                }
+                return d;
+            };
+            const auto opt = [](const Json& v) { return v.is_null() ? std::nullopt : std::optional(v.get<double>()); };
+            auto r = face_track_material(store, text(1), text(2), opt(a[3]), opt(a[4]), a[5].get<int>(), a[6].get<bool>(),
+                                         detect, [&clock] { return clock(); });
+            if (r) {
+                result = Json::array({to_json(r->track), r->from_cache});
+            } else {
+                ok = std::unexpected(r.error());
+            }
         } else if (kind == "retarget") {
             ok = store.retarget_timeline_asset(text(1), text(2), a[3], a[4], a[5], a[6], a[7].get<bool>());
         } else {
