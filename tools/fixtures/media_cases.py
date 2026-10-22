@@ -812,6 +812,36 @@ RENDER_SCENES = [
                   "masks": [{"type": "text", "invert": True, "feather": 0.005,
                              "text": {"content": "HUECO", "font": "Arial Black", "size": 0.1}}]})],
      [0.5]),
+    # Al final, para no renumerar las de antes. Contorno del sujeto recortado (outline_ffmpeg_steps): la silueta difuminada y umbralizada,
+    # del color del contorno, detrás del sujeto, en el espacio del material.
+    ("croma con contorno blanco en una imagen", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyed.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "bg_removal": {"enabled": True, "mode": "chroma", "chroma": {"enabled": True},
+                                          "outline": {"enabled": True, "width": 0.5}}})],
+     [0.5]),
+    ("croma con contorno rojo difuminado y semitransparente", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyed.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "bg_removal": {"enabled": True, "mode": "chroma", "chroma": {"enabled": True},
+                                          "outline": {"enabled": True, "color": "#ff3300", "width": 0.8,
+                                                      "soft": 0.6, "opacity": 0.7}}})],
+     [0.5]),
+    ("croma con limpieza del borde y contorno", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyedbars.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                             "bg_removal": {"enabled": True, "mode": "chroma",
+                                            "chroma": {"enabled": True, "edge": 0.2, "shrink": -0.3},
+                                            "outline": {"enabled": True, "color": "#202020", "width": 0.3}}})],
+     [0.5]),
+    ("croma con contorno en un vídeo", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyed30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                             "transform": {"x": 0.5, "y": 0.5, "scale": 0.8},
+                             "bg_removal": {"enabled": True, "mode": "chroma", "chroma": {"enabled": True},
+                                            "outline": {"enabled": True, "color": "#00ccff", "width": 0.4,
+                                                        "soft": 0.2}}})],
+     [0.5, 1.0]),
 ]
 
 # Texto (el .ass global de text_ass.py, dibujado por libass): escenas de 540×960 a 30 fps.
@@ -1019,6 +1049,19 @@ CHROMA = [
     {},
 ]
 CHROMA_HEIGHTS = [0, 180, 512, 1080, 2160]
+
+# Contorno del sujeto: los dict crudos de bg_removal.outline que se normalizan y se pasan a
+# outline_params y outline_ffmpeg_steps, con los altos de OUTLINE_HEIGHTS (0 = el que da
+# detect.dims cuando no sabe: sin contorno; 7 y 13 rozan el mínimo de 0,5 px).
+OUTLINE = [
+    {}, {"enabled": True}, {"enabled": True, "width": 0}, {"enabled": True, "opacity": 0},
+    {"enabled": True, "color": "#f30", "width": 0.8, "soft": 0.6, "opacity": 0.7},
+    {"enabled": True, "color": "0x00ccff", "width": 0.4, "soft": 0.2},
+    {"enabled": True, "width": 1.0, "soft": 1.0}, {"enabled": True, "width": 2, "soft": -1, "opacity": 3},
+    {"enabled": True, "width": "0.5", "color": "rojo"}, {"enabled": 1, "width": 0.05, "soft": 0.1},
+    {"enabled": True, "width": float("nan"), "opacity": float("inf")},
+]
+OUTLINE_HEIGHTS = [0, 7, 13, 180, 1080, 2160]
 
 # Escenas de RENDER_TEXT en las que el export se aparta de lo que pide el texto (decisión de Edu):
 # el test las dibuja pero no compara.

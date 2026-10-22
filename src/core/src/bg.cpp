@@ -284,6 +284,49 @@ std::string chroma_source_chain(const Json& chroma, std::int64_t height) {
                        chain, amorph);
 }
 
+namespace {
+
+constexpr double kOutlineWidthMax = 0.05; // OUTLINE_WIDTH_MAX (unidades de alto)
+constexpr int kOutlineLevel = 17;         // OUTLINE_LEVEL: Φ(−1,5)·255
+constexpr double kOutlineSpread = 1.5;    // OUTLINE_SPREAD: grosor = 1,5·σ
+constexpr double kOutlineEdgePx = 1.5;    // OUTLINE_EDGE_PX: rampa antialias del borde
+
+} // namespace
+
+std::optional<OutlineParams> outline_params(const Json& outline, double height) {
+    const double width_px = num(outline, "width") * kOutlineWidthMax * height;
+    if (!py_truthy(field(outline, "enabled")) || width_px < 0.5 || num(outline, "opacity") <= 0) {
+        return std::nullopt;
+    }
+    const double sigma = width_px / kOutlineSpread;
+    // Pendiente del alfa difuminado en el cruce: φ(1,5)/σ ≈ 0,1295/σ por px.
+    const double gain = std::max(1.0, 1.0 / (kOutlineEdgePx * 0.1295 / sigma));
+    const Json& color = field(outline, "color");
+    return OutlineParams{width_px,
+                         sigma,
+                         gain,
+                         num(outline, "soft") * width_px,
+                         num(outline, "opacity"),
+                         color.is_string() ? color.get<std::string>() : std::string()};
+}
+
+std::string outline_source_chain(const Json& outline, std::int64_t height) {
+    const auto p = outline_params(outline, static_cast<double>(height));
+    if (!p) {
+        return "";
+    }
+    const auto [r, g, b] = hex_rgb(p->color);
+    std::string alpha = std::format("alphaextract,gblur=sigma={:.4f}:steps=3,lut=y='clip((val-{})*{:.4f}\\,0\\,255)*{:.4f}'",
+                                    p->sigma, kOutlineLevel, p->gain, p->opacity);
+    if (p->halo > 0.3) {
+        alpha += std::format(",gblur=sigma={:.4f}:steps=3", p->halo);
+    }
+    // El sujeto (ols) encima de su silueta del color del contorno (olk + ola).
+    return std::format("format=gbrap,split=3[olc][ols][olf];[olc]{}[ola];[olf]lutrgb=r={}:g={}:b={}[olk];"
+                       "[olk][ola]alphamerge[oll];[oll][ols]overlay=0:0:format=auto,format=gbrap",
+                       alpha, r, g, b);
+}
+
 bool bg_capable(const TimelineClip& clip) { return clip.kind == "video" || clip.kind == "image"; }
 
 std::string recommended_bg_provider(const TimelineClip& clip) {

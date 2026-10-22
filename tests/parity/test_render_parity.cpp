@@ -311,6 +311,10 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         UNSCOPED_INFO(name << " en " << at << ": PSNR de luma " << psnr << " dB sin la banda del borde (" << whole
                            << " dB con ella); de crominancia " << chroma << " dB");
         CHECK(psnr >= 35.0);
+        if (name.starts_with("croma con") && name.contains("contorno")) {
+            // El contorno del sujeto es fino: sin él, alguna escena aún pasaría de 35 dB (miden ~50,5).
+            CHECK(psnr >= 45.0);
+        }
         if (name.starts_with("efecto: ")) {
             const auto floor = kEffectFloors.find(name);
             REQUIRE(floor != kEffectFloors.end()); // una escena de efectos nueva necesita su suelo

@@ -12,6 +12,7 @@
 //    outline: {enabled, color, width, soft, opacity}}
 
 #include <cstdint>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -49,6 +50,24 @@ namespace gc::core {
 // que procesar el alfa, el subgrafo que lo separa (alphaextract), lo procesa y lo vuelve a unir
 // (alphamerge). "" si el croma está apagado.
 [[nodiscard]] std::string chroma_source_chain(const Json& chroma, std::int64_t height);
+
+// --- Contorno del sujeto recortado (#9) ---------------------------------------------------
+// outline_params: el contorno en px de un material de `height` px de alto (el normalizado,
+// normalize_bg(…)["outline"]), o nada si no se ve (apagado, de menos de 0,5 px o transparente).
+// `gain` lleva el alfa difuminado (0–1) al del contorno, clamp((v − 17/255)·gain); `halo` es la σ
+// del difuminado final.
+struct OutlineParams {
+    double width = 0.0;
+    double sigma = 0.0;
+    double gain = 0.0;
+    double halo = 0.0;
+    double opacity = 0.0;
+    std::string color;
+};
+[[nodiscard]] std::optional<OutlineParams> outline_params(const Json& outline, double height);
+// outline_ffmpeg_steps como continuación de la cadena del clip (tras el alfa del croma): el alfa
+// difuminado y umbralizado, del color del contorno, DETRÁS del sujeto. "" si no hay contorno.
+[[nodiscard]] std::string outline_source_chain(const Json& outline, std::int64_t height);
 
 // ¿Es uno de los motores de «Eliminar fondo» (BG_PROVIDER_IDS)?
 [[nodiscard]] bool is_bg_provider(std::string_view provider);

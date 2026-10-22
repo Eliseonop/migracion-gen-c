@@ -20,6 +20,7 @@ Salida (al repo):
   tests/fixtures/media/decode.json         decode como el export: media_cases.DECODE (MD5 por fotograma del ffmpeg del PATH)
   tests/fixtures/media/seek.json           seek exacto de frame_grab.extract_frame: media_cases.SEEK
   tests/fixtures/media/chroma.json         cadenas de FFmpeg del croma (clip_bg.py): media_cases.CHROMA
+  tests/fixtures/media/outline.json        contorno del sujeto (clip_bg.outline_ffmpeg_steps): media_cases.OUTLINE
   tests/fixtures/render/synthetic.json     fotogramas del compuesto real (compose.render_frame): media_cases.RENDER
   tests/fixtures/export/synthetic.json     el export entero (compose.render, MP4 con audio): media_cases.EXPORT
   tests/fixtures/shapes/geometry.json      geometría de las figuras (shapes.py): shape_cases.py
@@ -2067,6 +2068,26 @@ def synthetic_chroma_fixtures() -> list[dict]:
     return cases
 
 
+def synthetic_outline_fixtures() -> list[dict]:
+    """El contorno del sujeto con las funciones REALES de clip_bg.py (normalize_outline,
+    outline_params y outline_ffmpeg_steps) para media_cases.OUTLINE. Los pasos van como la
+    continuación de la cadena del clip que arma el C++ (outline_source_chain): unidos con «;», sin
+    la etiqueta de entrada del primero ni la de salida del último y sin el número de clip."""
+    import media_cases as mc
+    from app import clip_bg
+    cases = []
+    for raw in mc.OUTLINE:
+        outline = clip_bg.normalize_outline(raw)
+        by_height = []
+        for h in mc.OUTLINE_HEIGHTS:
+            params = clip_bg.outline_params(outline, h)
+            steps, out = clip_bg.outline_ffmpeg_steps(outline, h, "src", 0)
+            chain = ";".join(steps).removeprefix("[src]").removesuffix(f"[{out}]") if steps else ""
+            by_height.append({"height": h, "params": params, "chain": re.sub(r"\[(ol[a-z])0\]", r"[\1]", chain)})
+        cases.append({"raw": _nan_safe(raw), "outline": outline, "heights": by_height})
+    return _pure(cases)
+
+
 def _probe(path: Path) -> dict:
     """Las tres sondas REALES de video-yt (ffprobe del PATH; probe_duration, la original y no
     la falsa de _install_fakes)."""
@@ -3076,7 +3097,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats", "keywords", "mono"],
+                                       "sfx_escritura", "beats", "keywords", "mono", "contorno"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3139,6 +3160,14 @@ def main() -> None:
 
     if args.solo == "mono":
         mono_group()
+        return
+
+    def outline_group() -> None:
+        ol = synthetic_outline_fixtures()
+        write(REPO / "tests" / "fixtures" / "media" / "outline.json", ol, sum(len(c["heights"]) for c in ol), 0)
+
+    if args.solo == "contorno":
+        outline_group()
         return
 
     def shapes_group() -> None:
@@ -3207,6 +3236,7 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "media" / "seek.json", seek, len(seek), 0)
     chroma = synthetic_chroma_fixtures()
     write(REPO / "tests" / "fixtures" / "media" / "chroma.json", chroma, len(chroma), 0)
+    outline_group()
     txt = synthetic_text_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "text" / "synthetic.json", txt,
           len(txt["styles"]) + len(txt["clips"]) + len(txt["effective"]) + len(txt["alpha"]) + len(txt["case"]) + len(txt["active_word"])

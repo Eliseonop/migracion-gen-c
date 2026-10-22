@@ -1402,6 +1402,13 @@ Decisión de Edu (§6):
 - **Divergencia:** la capa de la pista va con `ass=…:alpha=1`, igual que la de capa propia: lo semitransparente sale c·α³ en el export (pendiente de Edu; el C++ pinta c·α). Ninguna de tus pistas con textos está enterrada (la única es de un proyecto de prueba y está vacía).
 - **MSVC:** 177/177.
 
+**Tercera tanda: el contorno del sujeto con el croma (F4)**
+
+- `outline_params` y `outline_source_chain` (`gc_core/bg.hpp`): la cadena de `outline_ffmpeg_steps` (alfa difuminado y umbralizado en Φ(−1,5), del color del contorno, con su halo, y el sujeto encima) como continuación de la del clip, detrás del croma y antes del encuadre, como `_bg_source_chain`. El grosor va en px del alto del material (`detect.dims`; sin saberlo, 0 y no hay contorno), que el decode lee del primer fotograma. `compose` ya no lo da por Unsupported.
+- **Paridad:** las cadenas frente a las funciones reales (`media/outline.json`: 11 contornos, con crudos raros, NaN e infinitos, × 6 altos, también los que rozan el mínimo de 0,5 px) y 5 fotogramas nuevos del render (imagen, rojo difuminado y semitransparente, con limpieza del borde y en vídeo): 50,5–51 dB de luma y 54–59 de crominancia. Como el contorno es fino, un render sin él aún pasaba de 35 dB en tres escenas: esas escenas llevan un suelo de 45 dB y el mutante falla en las cinco.
+- Las escenas nuevas van al final de `RENDER_SCENES`: las PNG se nombran por su posición y en medio renumeraban las de detrás.
+- **MSVC:** 178/178.
+
 **Siguiente:**
 - El «Detectar beats» del menú del clip, en el studio (con Qt, en Linux).
-- En el render quedan los efectos de vídeo (`vfx`, F4), el matte automático (F6) y el contorno.
+- En el render quedan los efectos de vídeo (`vfx`, F4) y el matte automático (F6).

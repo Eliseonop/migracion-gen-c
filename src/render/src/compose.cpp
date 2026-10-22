@@ -30,9 +30,8 @@ bool is_adjustment(const core::TimelineClip& clip) { return clip.kind == "adjust
 
 bool is_shape(const core::TimelineClip& clip) { return clip.kind == "shape"; }
 
-// Lo de «Eliminar fondo» que el render aún no hace: el matte automático listo (auto_active) y,
-// con el croma activo, el contorno (outline_params: ancho y opacidad mayores que 0). El croma
-// solo ya lo hace el decode (export_frame_at).
+// Lo de «Eliminar fondo» que el render aún no hace: el matte automático listo (auto_active). El
+// croma y su contorno ya los hace el decode (export_frame_at).
 std::optional<std::string> bg_unsupported(const core::TimelineClip& clip) {
     if (!clip.bg_removal || !core::bg_capable(clip)) {
         return std::nullopt;
@@ -40,12 +39,6 @@ std::optional<std::string> bg_unsupported(const core::TimelineClip& clip) {
     const Json bg = core::normalize_bg(*clip.bg_removal);
     if (core::bg_auto_active(bg)) {
         return std::string("el render aún no aplica el matte automático de «Eliminar fondo»");
-    }
-    if (core::bg_chroma_active(bg)) {
-        const Json& o = bg["outline"];
-        if (o.value("enabled", false) && o.value("width", 0.0) > 0 && o.value("opacity", 0.0) > 0) {
-            return std::string("el render aún no dibuja el contorno de «Eliminar fondo»");
-        }
     }
     return std::nullopt;
 }

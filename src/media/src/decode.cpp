@@ -481,15 +481,21 @@ Result<ClipChain> clip_chain(const core::TimelineClip& clip, const std::filesyst
             return fail(ErrorCode::Unsupported, std::format("el matte automático del clip {} aún no se aplica", clip.id));
         }
         if (core::bg_chroma_active(bg)) {
-            // El desenfoque del borde va en px del alto del material (detect.dims; 512 si no se sabe).
-            std::int64_t height = 512;
-            if (!core::chroma_alpha_ffmpeg(bg["chroma"], 512).empty()) {
+            // El desenfoque del borde y el grosor del contorno van en px del alto del material
+            // (detect.dims). Sin saberlo, el croma toma 512 y el contorno 0 (no se dibuja).
+            std::optional<std::int64_t> height;
+            if (!core::chroma_alpha_ffmpeg(bg["chroma"], 512).empty() || core::outline_params(bg["outline"], 1e9)) {
                 auto first = frame_at(path, 0.0);
                 if (first && first->has_value() && (*first)->height > 0) {
                     height = (*first)->height;
                 }
             }
-            c.spec.chain += "," + core::chroma_source_chain(bg["chroma"], height);
+            c.spec.chain += "," + core::chroma_source_chain(bg["chroma"], height.value_or(512));
+            // El contorno del sujeto (outline_ffmpeg_steps), detrás de él y antes del encuadre.
+            if (const std::string outline = core::outline_source_chain(bg["outline"], height.value_or(0));
+                !outline.empty()) {
+                c.spec.chain += "," + outline;
+            }
         }
     }
     c.spec.chain += std::format(",fps={}", fps); // el fps=F que va tras el cropscale (un GIF a 10 fps → F)

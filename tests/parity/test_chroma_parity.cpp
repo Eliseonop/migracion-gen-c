@@ -50,3 +50,58 @@ TEST_CASE("croma: la cadena del clip, sola o con el alfa aparte", "[chroma]") {
           "split=2[bgcka][bgckb];[bgcka]alphaextract,gblur=sigma=9.7200,lutyuv=y=clip(val+-38\\,0\\,255)"
           "[bgckalpha];[bgckb][bgckalpha]alphamerge");
 }
+
+namespace {
+
+// El crudo de la fixture con los "nan" e "inf" de _nan_safe vueltos a números.
+Json unsafe(const Json& v) {
+    if (v.is_string()) {
+        const auto& s = v.get_ref<const std::string&>();
+        if (s == "nan" || s == "inf" || s == "-inf") {
+            return std::stod(s);
+        }
+        return v;
+    }
+    if (v.is_object()) {
+        Json out = Json::object();
+        for (const auto& [k, x] : v.items()) {
+            out[k] = unsafe(x);
+        }
+        return out;
+    }
+    return v;
+}
+
+} // namespace
+
+TEST_CASE("paridad del contorno del sujeto: outline_params y outline_ffmpeg_steps", "[parity][chroma]") {
+    // Fixture: tests/fixtures/media/outline.json (export_fixtures.py --solo contorno), media_cases.OUTLINE.
+    const auto path = path_from_utf8(GC_FIXTURES_DIR) / "media" / "outline.json";
+    REQUIRE(std::filesystem::exists(path)); // faltan: ejecuta tools/fixtures/export_fixtures.py --solo contorno
+    auto file = read_json_file(path);
+    REQUIRE(file);
+    std::size_t cases = 0;
+    for (const Json& c : *file) {
+        INFO(c.at("raw").dump());
+        const Json outline = normalize_bg(Json{{"outline", unsafe(c.at("raw"))}})["outline"];
+        CHECK(outline == c.at("outline"));
+        for (const Json& h : c.at("heights")) {
+            const auto height = h.at("height").get<std::int64_t>();
+            INFO("alto " << height);
+            const auto p = outline_params(outline, static_cast<double>(height));
+            const Json& want = h.at("params");
+            REQUIRE(p.has_value() == !want.is_null());
+            if (p) {
+                CHECK(p->width == want.at("width").get<double>());
+                CHECK(p->sigma == want.at("sigma").get<double>());
+                CHECK(p->gain == want.at("gain").get<double>());
+                CHECK(p->halo == want.at("halo").get<double>());
+                CHECK(p->opacity == want.at("opacity").get<double>());
+                CHECK(p->color == want.at("color").get<std::string>());
+            }
+            CHECK(outline_source_chain(outline, height) == h.at("chain").get<std::string>());
+            ++cases;
+        }
+    }
+    CHECK(cases >= 60);
+}
