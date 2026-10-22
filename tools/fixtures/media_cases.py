@@ -204,6 +204,38 @@ AUDIO_MEDIA = [
                  "aevalsrc=0.3*sin(2*PI*330*t)*(1+sin(0.9*t))/2|0.3*sin(2*PI*550*t):s=48000:d=8", "-t", "8",
                  "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k"]),
 ]
+# Audio mono para los beats y la envolvente (gc_media::decode_mono): una base de batería a 120 BPM
+# (bombo a 55 Hz en cada negra y un «charles» de 7 kHz a contratiempo) en AAC estéreo a 44,1 kHz,
+# con el retardo del codificador al principio (las comas de mod() van escapadas para lavfi). Se genera UNA vez.
+MONO_MEDIA = [
+    ("drums120.m4a", ["-f", "lavfi", "-i",
+                      "aevalsrc=0.8*sin(2*PI*55*mod(t\\,0.5))*exp(-25*mod(t\\,0.5))"
+                      "+0.15*sin(2*PI*7000*t)*exp(-60*mod(t+0.25\\,0.5))|"
+                      "0.7*sin(2*PI*55*mod(t\\,0.5))*exp(-25*mod(t\\,0.5))"
+                      "+0.2*sin(2*PI*7100*t)*exp(-60*mod(t+0.25\\,0.5)):s=44100:d=12",
+                      "-c:a", "aac", "-b:a", "128k"]),
+]
+# Lo que lee beats.decode_mono (`-i archivo -t 1200.0`, 22 050 Hz): (archivo, frecuencia). Además
+# de la batería, los audios de la mezcla, un vídeo con audio, MP3, AAC, Opus en un MKV con el audio
+# primero, un MP4 que no empieza en 0, PCM en un AVI y un vídeo sin audio (el CLI falla).
+MONO_BEATS = ["drums120.m4a", "tones44.wav", "voice22.mp3", "va8.mp4", "a.m4a", "a.mp3", "av_audio_first.mkv",
+              "va_offset.mp4", "mjpeg_vbr.avi", "v_untagged.mp4", "no_existe.wav"]
+# Lo que lee clip_motion.sample_rms_envelope (`-ss` y `-t` antes de `-i`, 400 Hz):
+# (archivo, src_start, duración, rate). Seeks en mitad de un paquete, pasado el final, negativos,
+# una duración de menos de 0,05 s y otra frecuencia.
+MONO_RMS = [
+    ("drums120.m4a", 0.0, 4.0, 20),
+    ("drums120.m4a", 1.234, 2.5, 20),
+    ("drums120.m4a", 10.5, 5.0, 20),
+    ("tones44.wav", 3.3337, 1.7, 20),
+    ("tones44.wav", -2.0, 1.0, 10),
+    ("voice22.mp3", 0.5, 3.0, 20),
+    ("voice22.mp3", 2.0, 0.01, 20),
+    ("va8.mp4", 6.25, 1.3, 40),
+    ("va_offset.mp4", 0.1, 0.5, 20),
+    ("tones44.wav", 20.0, 1.0, 20),
+    ("v_untagged.mp4", 0.0, 1.0, 20),
+]
 _AT = [{"id": "V1", "kind": "video", "name": "V1"}, {"id": "A1", "kind": "audio", "name": "A1"},
        {"id": "A2", "kind": "audio", "name": "A2"}]
 _AV = {"kind": "video", "asset_kind": "clips", "filename": "va8.mp4", "layout": "overlay",

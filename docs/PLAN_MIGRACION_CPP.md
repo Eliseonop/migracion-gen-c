@@ -1381,3 +1381,18 @@ Decisión de Edu (§6):
 
 **Siguiente:**
 - El preview espera a `gc_render`.
+
+### 2026-10-22 — F0 con MSVC de nuevo y F6/F2: el audio mono de los beats y la envolvente
+
+- **MSVC:** lo escrito en Linux el 19 no compilaba con MSVC 14.50 (`Json == string_view` ambiguo, un iterador de `std::array` usado como puntero y `Json` → `optional<Json>` con dos conversiones, en `clip_layout_ui`, `clip_pose_edit`, `material_drop` y `text_clip_ui`). Arreglado sin cambiar nada de lo que hacen; `msvc-vcpkg-debug` vuelve a 0 warnings.
+- **`gc::media::decode_mono`:** el `ffmpeg [-ss s -t d] -i x -ac 1 -ar N [-t m] -f f32le -` con el que leen el audio `beats.decode_mono` (22 050 Hz, hasta 20 min) y `clip_motion.sample_rms_envelope` (400 Hz), sobre la maquinaria de `mix_audio`. Encima, `gc::media::detect_beats(ruta)` y `gc::media::sample_rms_envelope(ruta, inicio, duración)`: con esto, beats y envolvente ya no esperan a nada.
+- **Lo que hace el CLI y hubo que copiar** (lo destapó la fixture):
+  - Con `-ss` de entrada: salta al instante, resta también el `-ss` de las marcas y pone `atrim=starti=0`; con `-t` de entrada, un `atrim` con `durationi` antes del grafo.
+  - **El orden en que se crean los filtros decide dónde se inserta el `aresample` automático.** El CLI crea el grafo, luego cada entrada (abuffer y su recorte) y al final la salida (abuffersink, aformat y el recorte del `-t`). Creando la cola antes de las entradas, el remuestreo a 400 Hz caía delante del `atrim` de la entrada y el resultado era otro (hasta 60 dB en algún bloque). `mix_audio` usa ahora el mismo orden y sigue saliendo igual que el CLI.
+  - **El `-t` de salida también corta en el codificador** (`check_recording_time`): un bloque que empieza en o después de `-t` no sale. Solo se nota si el audio no empieza en 0: en una grabación tuya de 28 min con el AAC a 0,023 s, el CLI da 368 muestras menos que el `atrim` solo.
+- **Paridad** (`export_fixtures.py --solo mono [--real]`, `tests/fixtures/audio/mono.json`): `beats.detect_beats` y `sample_rms_envelope` REALES grabando lo que devuelve el ffmpeg del PATH. 22 casos sobre los medios de prueba (una base de batería nueva a 120 BPM en AAC, tonos, voz en MP3, vídeos con audio, un MP4 que empieza en 0,3 s, Opus, PCM en AVI; seeks pasado el final, negativos y de menos de 0,05 s; sin audio y sin archivo) y 80 de tus audios (40 archivos con sus beats y 40 ventanas de envolvente). El mismo PCM (MD5) en 90 de 96 decodificaciones y el resto a menos de 0,001 dB por décima de segundo (MP3 y AAC del FFmpeg de vcpkg frente al del PATH, como en la mezcla).
+- **Divergencia que se queda:** numpy calcula la curva de ataque en float32 y el C++ en double; con el mismo audio, en tu voz de 2 min, 2 de 253 beats caen un fotograma de análisis (23,2 ms) al lado. El test lo admite en hasta el 1 % de los beats.
+- **MSVC:** 177/177.
+
+**Siguiente:**
+- El «Detectar beats» del menú del clip, en el studio (con Qt, en Linux).

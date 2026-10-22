@@ -1,5 +1,6 @@
 #include "gc/media/audio.hpp"
 
+#include <algorithm>
 #include <array>
 #include <charconv>
 #include <climits>
@@ -10,6 +11,7 @@
 #include <string_view>
 #include <utility>
 
+#include "gc/core/io.hpp"
 #include "input_args.hpp"
 
 extern "C" {
@@ -79,9 +81,16 @@ public:
             return fail(ErrorCode::NotFound, "el material no tiene audio", opts_.path);
         }
         const AVStream* st = fmt_->streams[stream_];
-        // Como en el vídeo: el CLI desplaza los paquetes con −start_time del contenedor.
+        // Como en el vídeo: el CLI desplaza los paquetes con −start_time del contenedor y, con -ss,
+        // salta a ese instante y lo resta también (lo de antes sale negativo y el atrim lo quita).
         const std::int64_t start = fmt_->start_time != AV_NOPTS_VALUE ? fmt_->start_time : 0;
-        ts_offset_ = av_rescale_q(-start, AV_TIME_BASE_Q, st->time_base);
+        const std::int64_t seek = opts_.seek_us.value_or(0);
+        if (opts_.seek_us) {
+            const std::int64_t ts = seek + start;
+            // Si falla, el CLI solo avisa y sigue desde el principio.
+            static_cast<void>(avformat_seek_file(fmt_.get(), -1, INT64_MIN, ts, ts, 0));
+        }
+        ts_offset_ = av_rescale_q(-(seek + start), AV_TIME_BASE_Q, st->time_base);
         dec_.reset(avcodec_alloc_context3(codec));
         if (!dec_ || avcodec_parameters_to_context(dec_.get(), st->codecpar) < 0) {
             return fail(ErrorCode::Internal, "no se pudo preparar el decodificador de audio");
@@ -135,6 +144,7 @@ public:
     }
 
     [[nodiscard]] const std::string& path() const { return opts_.path; }
+    [[nodiscard]] const InputOptions& options() const { return opts_; }
 
 private:
     // audio_ts_process y audio_samplerate_update de ffmpeg_dec.c: la base de tiempos interna es
@@ -213,10 +223,45 @@ struct Feed {
     bool done = false;
 };
 
-} // namespace
+// insert_trim de ffmpeg_filter.c: un atrim con la duración y el inicio en µs (puestos con
+// av_opt_set_int, como el CLI), o nada si no hay ninguno de los dos.
+Result<AVFilterContext*> make_trim(AVFilterGraph* g, std::optional<std::int64_t> duration_us,
+                                   std::optional<std::int64_t> start_us) {
+    if (!duration_us && !start_us) {
+        return nullptr;
+    }
+    AVFilterContext* trim = avfilter_graph_alloc_filter(g, avfilter_get_by_name("atrim"), nullptr);
+    if (trim == nullptr) {
+        return fail(ErrorCode::Internal, "falta el filtro atrim");
+    }
+    int r = 0;
+    if (duration_us) {
+        r = av_opt_set_int(trim, "durationi", *duration_us, AV_OPT_SEARCH_CHILDREN);
+    }
+    if (r >= 0 && start_us) {
+        r = av_opt_set_int(trim, "starti", *start_us, AV_OPT_SEARCH_CHILDREN);
+    }
+    if (r < 0 || avfilter_init_str(trim, nullptr) < 0) {
+        return fail(ErrorCode::Internal, "no se pudo preparar el recorte del audio");
+    }
+    return trim;
+}
 
-Result<std::int64_t> mix_audio(const std::vector<std::vector<std::string>>& inputs,
-                               const std::vector<std::string>& graph, double total, const AudioSink& sink) {
+// Lo que el CLI pone a la salida: un aformat con lo que pide el codificador y el `-t` de la
+// salida, que es un atrim y además el corte del codificador (check_recording_time de
+// ffmpeg_enc.c: un bloque que empieza en o después de `-t` ya no sale).
+struct OutputSpec {
+    std::string format;                      // los argumentos del aformat
+    std::optional<std::int64_t> duration_us; // -t
+};
+
+// Ejecuta los pasos de `graph` (el último termina en «[aout]») con la salida `spec` y pasa a
+// `sink` bloques de `channels` canales entrelazados. Los filtros se crean en el orden del CLI
+// (configure_filtergraph: el grafo, luego cada entrada con su recorte y al final la salida), que
+// decide en qué enlace se inserta el aresample automático: delante o detrás de un recorte.
+Result<std::int64_t> run_audio_graph(const std::vector<std::vector<std::string>>& inputs,
+                                     const std::vector<std::string>& graph, const OutputSpec& spec, int channels,
+                                     const AudioSink& sink) {
     if (graph.empty()) {
         return fail(ErrorCode::InvalidArgument, "el grafo de audio está vacío");
     }
@@ -224,15 +269,10 @@ Result<std::int64_t> mix_audio(const std::vector<std::vector<std::string>>& inpu
     if (!g) {
         return fail(ErrorCode::Internal, "sin memoria para el grafo de audio");
     }
-    // Lo que el CLI pone a la salida para el codificador AAC (`-ar 48000`, estéreo, float planar)
-    // y el `-t` de la salida (un atrim con la duración en µs: el CLI la pone con av_opt_set_int;
-    // escrita como texto hace falta el sufijo «us», porque un número suelto son segundos).
     std::string desc;
     for (const auto& step : graph) {
-        desc += step + ";";
+        desc += (desc.empty() ? "" : ";") + step;
     }
-    desc += std::format("[aout]aformat=sample_fmts=fltp:sample_rates={}:channel_layouts=stereo,atrim=duration={}us",
-                        kExportSampleRate, std::llround(total * 1e6));
     AVFilterInOut* open_in = nullptr;
     AVFilterInOut* open_out = nullptr;
     if (const int r = avfilter_graph_parse2(g.get(), desc.c_str(), &open_in, &open_out); r < 0) {
@@ -291,19 +331,53 @@ Result<std::int64_t> mix_audio(const std::vector<std::vector<std::string>>& inpu
         if (pr < 0 || avfilter_init_str(src, nullptr) < 0) {
             return fail(ErrorCode::Internal, "no se pudo preparar la entrada del grafo de audio", f.source->path());
         }
-        if (const int r = avfilter_link(src, 0, io->filter_ctx, static_cast<unsigned>(io->pad_idx)); r < 0) {
+        // Con -ss o -t antes de -i, el recorte de la entrada (con el seek exacto, desde 0).
+        const InputOptions& io_opts = f.source->options();
+        auto trim = make_trim(g.get(), io_opts.duration_us,
+                              io_opts.seek_us ? std::optional<std::int64_t>(0) : std::nullopt);
+        if (!trim) {
+            return std::unexpected(trim.error());
+        }
+        AVFilterContext* head = src;
+        if (*trim != nullptr) {
+            if (const int r = avfilter_link(src, 0, *trim, 0); r < 0) {
+                return fail(ErrorCode::Internal, "no se pudo conectar la entrada del grafo de audio: " + av_err(r));
+            }
+            head = *trim;
+        }
+        if (const int r = avfilter_link(head, 0, io->filter_ctx, static_cast<unsigned>(io->pad_idx)); r < 0) {
             return fail(ErrorCode::Internal, "no se pudo conectar la entrada del grafo de audio: " + av_err(r));
         }
         f.src = src;
         f.done = fr == nullptr;
         feeds.push_back(std::move(f));
     }
+    // La salida, como configure_output_audio_filter: abuffersink, aformat y el recorte del -t.
     AVFilterContext* out = avfilter_graph_alloc_filter(g.get(), avfilter_get_by_name("abuffersink"), "out");
     if (out == nullptr || avfilter_init_str(out, nullptr) < 0) {
         return fail(ErrorCode::Internal, "no se pudo preparar la salida del grafo de audio");
     }
-    if (const int r = avfilter_link(outs->filter_ctx, static_cast<unsigned>(outs->pad_idx), out, 0); r < 0) {
+    AVFilterContext* format = nullptr;
+    if (avfilter_graph_create_filter(&format, avfilter_get_by_name("aformat"), "format_out", spec.format.c_str(),
+                                     nullptr, g.get()) < 0) {
+        return fail(ErrorCode::Internal, "no se pudo preparar el formato de salida del audio");
+    }
+    auto out_trim = make_trim(g.get(), spec.duration_us, std::nullopt);
+    if (!out_trim) {
+        return std::unexpected(out_trim.error());
+    }
+    std::vector<AVFilterContext*> chain{format};
+    if (*out_trim != nullptr) {
+        chain.push_back(*out_trim);
+    }
+    chain.push_back(out);
+    if (const int r = avfilter_link(outs->filter_ctx, static_cast<unsigned>(outs->pad_idx), chain[0], 0); r < 0) {
         return fail(ErrorCode::Internal, "no se pudo conectar la salida del grafo de audio: " + av_err(r));
+    }
+    for (std::size_t i = 0; i + 1 < chain.size(); ++i) {
+        if (const int r = avfilter_link(chain[i], 0, chain[i + 1], 0); r < 0) {
+            return fail(ErrorCode::Internal, "no se pudo conectar la salida del grafo de audio: " + av_err(r));
+        }
     }
     if (const int r = avfilter_graph_config(g.get(), nullptr); r < 0) {
         return fail(ErrorCode::Internal, "no se pudo configurar el grafo de audio: " + av_err(r));
@@ -331,13 +405,24 @@ Result<std::int64_t> mix_audio(const std::vector<std::vector<std::string>>& inpu
             if (r < 0) {
                 return fail(ErrorCode::Internal, "error en el grafo de audio: " + av_err(r));
             }
+            if (spec.duration_us && got->pts != AV_NOPTS_VALUE &&
+                av_compare_ts(got->pts, av_buffersink_get_time_base(out), *spec.duration_us, AV_TIME_BASE_Q) >= 0) {
+                av_frame_unref(got.get());
+                return true; // el corte del codificador
+            }
             const int n = got->nb_samples;
-            block.resize(static_cast<std::size_t>(n) * kExportChannels);
-            const auto* left = reinterpret_cast<const float*>(got->extended_data[0]);
-            const auto* right = reinterpret_cast<const float*>(got->extended_data[1]);
-            for (int i = 0; i < n; ++i) {
-                block[static_cast<std::size_t>(i) * 2] = left[i];
-                block[(static_cast<std::size_t>(i) * 2) + 1] = right[i];
+            const auto ch = static_cast<std::size_t>(channels);
+            block.resize(static_cast<std::size_t>(n) * ch);
+            if (av_sample_fmt_is_planar(static_cast<AVSampleFormat>(got->format)) != 0) {
+                for (std::size_t c = 0; c < ch; ++c) {
+                    const auto* plane = reinterpret_cast<const float*>(got->extended_data[c]);
+                    for (std::size_t i = 0; i < static_cast<std::size_t>(n); ++i) {
+                        block[(i * ch) + c] = plane[i];
+                    }
+                }
+            } else {
+                const auto* data = reinterpret_cast<const float*>(got->extended_data[0]);
+                std::copy_n(data, block.size(), block.begin());
             }
             av_frame_unref(got.get());
             samples += n;
@@ -409,10 +494,12 @@ Result<std::int64_t> mix_audio(const std::vector<std::vector<std::string>>& inpu
     return samples;
 }
 
-Result<std::vector<float>> mix_audio(const std::vector<std::vector<std::string>>& inputs,
-                                     const std::vector<std::string>& graph, double total) {
+// Un `-t` en µs, como av_parse_time del CLI.
+std::int64_t to_us(double seconds) { return std::llround(seconds * 1e6); }
+
+Result<std::vector<float>> collect(const std::function<Result<std::int64_t>(const AudioSink&)>& run) {
     std::vector<float> all;
-    auto n = mix_audio(inputs, graph, total, [&](std::span<const float> block) {
+    auto n = run([&](std::span<const float> block) {
         all.insert(all.end(), block.begin(), block.end());
         return true;
     });
@@ -420,6 +507,56 @@ Result<std::vector<float>> mix_audio(const std::vector<std::vector<std::string>>
         return std::unexpected(n.error());
     }
     return all;
+}
+
+// El `{:.3f}` de Python con `max(0.0, x)` delante (un NaN se queda en 0).
+std::string seconds_arg(double s) { return std::format("{:.3f}", s > 0.0 ? s : 0.0); }
+
+} // namespace
+
+Result<std::int64_t> mix_audio(const std::vector<std::vector<std::string>>& inputs,
+                               const std::vector<std::string>& graph, double total, const AudioSink& sink) {
+    // Lo que el CLI pone a la salida para el codificador AAC (`-ar 48000`, estéreo, float planar).
+    const OutputSpec spec{
+        std::format("sample_fmts=fltp:sample_rates={}:channel_layouts=stereo", kExportSampleRate), to_us(total)};
+    return run_audio_graph(inputs, graph, spec, kExportChannels, sink);
+}
+
+Result<std::vector<float>> mix_audio(const std::vector<std::vector<std::string>>& inputs,
+                                     const std::vector<std::string>& graph, double total) {
+    return collect([&](const AudioSink& sink) { return mix_audio(inputs, graph, total, sink); });
+}
+
+Result<std::vector<float>> decode_mono(const std::vector<std::string>& input, int rate,
+                                       std::optional<double> max_seconds) {
+    if (rate <= 0) {
+        return fail(ErrorCode::InvalidArgument, std::format("frecuencia de muestreo no válida: {}", rate));
+    }
+    // Sin -af, el grafo simple del CLI es «anull»; a la salida, lo que pide pcm_f32le con -ac y -ar.
+    const OutputSpec spec{std::format("sample_fmts=flt:sample_rates={}:channel_layouts=mono", rate),
+                          max_seconds ? std::optional(to_us(*max_seconds)) : std::nullopt};
+    return collect(
+        [&](const AudioSink& sink) { return run_audio_graph({input}, {"[0:a]anull[aout]"}, spec, 1, sink); });
+}
+
+Result<core::Beats> detect_beats(const std::filesystem::path& path) {
+    auto mono = decode_mono({"-i", core::path_to_utf8(path)}, core::kBeatSampleRate, core::kBeatMaxSeconds);
+    if (!mono) {
+        return std::unexpected(mono.error());
+    }
+    return core::detect_beats(*mono);
+}
+
+Result<core::Envelope> sample_rms_envelope(const std::filesystem::path& path, double src_start, double duration,
+                                           int rate) {
+    const double dur = std::max(0.05, std::isnan(duration) ? 0.0 : duration);
+    auto mono = decode_mono({"-ss", seconds_arg(src_start), "-t", std::format("{:.3f}", dur), "-i",
+                             core::path_to_utf8(path)},
+                            core::kRmsSampleRate);
+    if (!mono) {
+        return std::unexpected(mono.error());
+    }
+    return core::rms_envelope(*mono, duration, rate);
 }
 
 } // namespace gc::media

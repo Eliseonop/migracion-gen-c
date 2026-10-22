@@ -35,6 +35,7 @@ Salida (al repo):
   tests/fixtures/sfx/write.json            alta, edición y categorías de SFX (sfx_cases.WRITE_STEPS)
   tests/fixtures/beats/synthetic.json      beats automáticos (beats.py) sobre las señales de beats_cases.py
   tests/fixtures/keywords/synthetic.json   palabras clave locales de Explorar (explore_keywords.py)
+  tests/fixtures/audio/mono.json           audio mono de beats.py y sample_rms_envelope: media_cases.MONO_* (--solo mono)
   tests/fixtures/collections/synthetic.json  colecciones de material: pasos de collections_cases.py
   tests/fixtures/stick/synthetic.json      personajes stick: pasos de stick_cases.py
   tests/fixtures/projects/synthetic.json   almacén de proyectos: pasos de projects_cases.py
@@ -1671,7 +1672,7 @@ def _ensure_probe_media() -> None:
         sys.exit("Hace falta ffmpeg en el PATH para generar tests/fixtures/media/files")
     PROBE_DIR.mkdir(parents=True, exist_ok=True)
     for name, args in (mc.PROBE_MEDIA + mc.PROBE_MEDIA_VFR + mc.PROBE_MEDIA_2S + mc.PROBE_MEDIA_ALPHA
-                       + mc.PROBE_MEDIA_CODECS + mc.AUDIO_MEDIA):
+                       + mc.PROBE_MEDIA_CODECS + mc.AUDIO_MEDIA + mc.MONO_MEDIA):
         out = PROBE_DIR / name
         if not out.exists():
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args,
@@ -2330,6 +2331,102 @@ def _audio_reference(inputs: list[list[str]], graph: list[str], total: str, bloc
     return {"samples": n, "md5": hashlib.md5(data).hexdigest(), "block": block, "rms": rms}
 
 
+def _recorded_mono(call, path: Path):
+    """Ejecuta `call()` (beats.detect_beats o clip_motion.sample_rms_envelope REALES) grabando lo
+    que devuelve el ffmpeg del PATH: el comando (con la ruta como el nombre del archivo), el número
+    de muestras, su MD5 y el RMS por décimas de segundo. Si falla, el tipo de la excepción."""
+    import array
+    import hashlib
+    import math
+    real_run = subprocess.run
+    runs: list = []
+
+    def recording_run(cmd, *args, **kwargs):
+        r = real_run(cmd, *args, **kwargs)
+        runs.append((cmd, r))
+        return r
+
+    subprocess.run = recording_run
+    try:
+        try:
+            out = {"out": call()}
+        except Exception as e:  # noqa: BLE001
+            out = {"error": type(e).__name__}
+    finally:
+        subprocess.run = real_run
+    if not runs:
+        return out
+    cmd, r = runs[-1]
+    rate = int(cmd[cmd.index("-ar") + 1])
+    rec = {"cmd": [path.name if a == str(path) else a for a in cmd[1:]], "returncode": r.returncode}
+    if r.returncode == 0:
+        data = r.stdout or b""
+        pcm = array.array("f")
+        pcm.frombytes(data[: len(data) // 4 * 4])
+        block = rate // 10
+        rec.update({"samples": len(pcm), "md5": hashlib.md5(data).hexdigest(), "block": block,
+                    "rms": [math.sqrt(sum(v * v for v in pcm[b:b + block]) / len(pcm[b:b + block]))
+                            for b in range(0, len(pcm), block)]})
+    return {**rec, **out}
+
+
+def synthetic_audio_mono_fixtures(ctx: Ctx) -> dict:
+    """media_cases.MONO_BEATS y MONO_RMS: beats.detect_beats y clip_motion.sample_rms_envelope
+    REALES sobre tests/fixtures/media/files, con el audio mono que les da el ffmpeg del PATH."""
+    import media_cases as mc
+    from app import beats
+    from app import clip_motion as cm
+    _ensure_probe_media()
+    beats._cache.clear()
+    out = {"beats": [], "rms": []}
+    for name in mc.MONO_BEATS:
+        path = PROBE_DIR / name
+        out["beats"].append({"file": name, **_recorded_mono(lambda p=path: beats.detect_beats(p), path)})
+    for name, src, dur, rate in mc.MONO_RMS:
+        path = PROBE_DIR / name
+        rec = _recorded_mono(lambda p=path, s=src, d=dur, r=rate: [list(q) for q in cm.sample_rms_envelope(p, s, d, r)],
+                             path)
+        out["rms"].append({"file": name, "src_start": src, "duration": dur, "rate": rate, **rec})
+    return _pure(out)
+
+
+def real_audio_mono_fixtures(ctx: Ctx, data: dict, max_files: int = 40) -> dict:
+    """Tus audios: los beats de cada archivo de audio o vídeo con audio de tus timelines (como el
+    «Detectar beats» del clip) y la envolvente de la ventana de cada clip que se solapa con otro
+    (como animate_clip con follow_audio_id), con el ffmpeg REAL. Rutas absolutas: es local."""
+    from app import beats
+    from app import clip_motion as cm
+    from app import compose
+    beats._cache.clear()
+    out = {"beats": [], "rms": []}
+    seen: set = set()
+    for p in data.get("projects", []):
+        proj = ctx.projects._project_from_dict(p)
+        if proj.timeline is None:
+            continue
+        for a in proj.timeline.clips:
+            if a.kind not in ("audio", "video"):
+                continue
+            path = compose._clip_path(proj, a)
+            if path is None or not path.exists():
+                continue
+            if str(path) not in seen and len(out["beats"]) < max_files:
+                seen.add(str(path))
+                rec = _recorded_mono(lambda q=path: beats.detect_beats(q), path)
+                out["beats"].append({"name": f"{proj.id} · {a.id}", "path": str(path), **rec})
+            visual = next((v for v in proj.timeline.clips if v.id != a.id and cm.overlap_window(v, a)), None)
+            if visual is None or len(out["rms"]) >= max_files:
+                continue
+            lo, hi = cm.overlap_window(visual, a)
+            if hi - lo > 30:
+                continue
+            src = cm.audio_src_at(a, lo)
+            rec = _recorded_mono(lambda q=path, s=src, d=hi - lo: [list(x) for x in cm.sample_rms_envelope(q, s, d)], path)
+            out["rms"].append({"name": f"{proj.id} · {a.id}", "path": str(path), "src_start": src, "duration": hi - lo,
+                               "rate": 20, **rec})
+    return _pure(out)
+
+
 def synthetic_audio_mix_fixtures(ctx: Ctx) -> list[dict]:
     """media_cases.AUDIO_MIX: las entradas y el grafo de audio del build_command REAL (con el
     material de tests/fixtures/media/files) y el audio que da el CLI con ellos."""
@@ -2957,7 +3054,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats", "keywords"],
+                                       "sfx_escritura", "beats", "keywords", "mono"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3006,6 +3103,22 @@ def main() -> None:
     if args.solo == "keywords":
         keywords_group()
         return
+
+    def mono_group() -> None:
+        mono = synthetic_audio_mono_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "audio" / "mono.json", mono, len(mono["beats"]) + len(mono["rms"]),
+              sum("error" in c for c in mono["beats"] + mono["rms"]))
+        if args.real:
+            data = json.loads((args.video_yt / "backend" / "data" / "projects.json").read_text(encoding="utf-8"))
+            mono_real = real_audio_mono_fixtures(ctx, data)
+            write(REPO / "tests" / "fixtures" / "local" / "audio" / "mono.json", mono_real,
+                  len(mono_real["beats"]) + len(mono_real["rms"]),
+                  sum("error" in c for c in mono_real["beats"] + mono_real["rms"]))
+
+    if args.solo == "mono":
+        mono_group()
+        return
+
     def shapes_group() -> None:
         shp = synthetic_shape_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "shapes" / "geometry.json", shp,
@@ -3103,6 +3216,7 @@ def main() -> None:
     sfx_write_group()
     beats_group()
     keywords_group()
+    mono_group()
     js = synthetic_json_fixtures()
     write(REPO / "tests" / "fixtures" / "json" / "synthetic.json", js,
           len(js["floats"]) + len(js["dumps"]) + len(js["loads"]), sum("error" in c for c in js["loads"]))

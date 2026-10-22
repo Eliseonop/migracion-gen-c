@@ -56,7 +56,7 @@ gc_set_warnings(gc_tests)
 if(TARGET gc_media)
     target_sources(gc_tests PRIVATE parity/test_probe_parity.cpp parity/test_decode_parity.cpp
                    parity/test_seek_parity.cpp parity/test_audio_mix_parity.cpp
-                   parity/test_clip_frames.cpp unit/test_encode.cpp)
+                   parity/test_audio_mono_parity.cpp parity/test_clip_frames.cpp unit/test_encode.cpp)
     target_link_libraries(gc_tests PRIVATE gc::media)
 endif()
 # Con Skia (vcpkg), los de gc_render.
