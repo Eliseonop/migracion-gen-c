@@ -1943,6 +1943,10 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args, "-map_metadata", "-1",
                             "-fflags", "+bitexact", str(files / name)], check=True)
     real_clip_path = compose._clip_path
+    # Los horneados de los efectos de vídeo (fx_bake), a una carpeta temporal: no en data/ de video-yt.
+    from app import fx_bake
+    real_cache = fx_bake.CACHE_DIR
+    fx_bake.CACHE_DIR = Path(tempfile.mkdtemp(prefix="gc_fxcache_"))
     # El material de las fixtures; las figuras, su PNG rasterizado (shape_files), como el real.
     compose._clip_path = lambda project, clip, shape_files=None: (
         (shape_files or {}).get(clip.id) if clip.kind == "shape" else files / clip.filename)
@@ -1980,6 +1984,8 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
         return cases
     finally:
         compose._clip_path = real_clip_path
+        shutil.rmtree(fx_bake.CACHE_DIR, ignore_errors=True)
+        fx_bake.CACHE_DIR = real_cache
 
 
 def synthetic_text_mask_fixtures() -> dict:

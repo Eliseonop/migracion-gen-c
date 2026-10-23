@@ -23,14 +23,18 @@
 #include <cstdint>
 #include <cstdlib>
 #include <filesystem>
+#include <format>
 #include <functional>
 #include <limits>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "gc/core/font_metrics.hpp"
 #include "gc/core/frame.hpp"
+#include "gc/core/fx_bake.hpp"
+#include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/media/decode.hpp"
@@ -38,6 +42,7 @@
 #include "gc/render/compose.hpp"
 #include "gc/render/png.hpp"
 #include "gc/render/text.hpp"
+#include "gc/render/vfx.hpp"
 
 using gc::Json;
 using namespace gc::core;
@@ -216,6 +221,60 @@ NoiseStats noise_stats(const gc::render::Image& a, const gc::render::Image& b, c
             std::sqrt(var_a / static_cast<double>(pixels)), std::sqrt(var_b / static_cast<double>(pixels))};
 }
 
+// Clips horneados con efectos de vídeo: el horneado del export (BT.601 de rango TV, Chromium y VP9)
+// deja el clip más oscuro (medido: 3–4 niveles de luma, también sin ningún efecto activo). Se mide
+// ese sesgo en la zona del clip (`covered`: donde el material en blanco cubre el cuadro) y se
+// compara el PSNR de las medias de 8×8 sin él.
+struct BakedStats {
+    double bias = 0.0; // luma media del C++ menos la del export, en la zona del clip
+    double psnr = 0.0; // medias de 8×8, con el sesgo quitado en la zona del clip
+};
+
+BakedStats baked_stats(const gc::render::Image& a, const gc::render::Image& b, const std::vector<bool>& skip,
+                       const gc::render::Image& covered) {
+    const auto n = static_cast<std::size_t>(a.width) * static_cast<std::size_t>(a.height);
+    const auto in_clip = [&](std::size_t k) { return covered.pixels[(k * 4) + 1] > 250; };
+    double sum = 0.0;
+    std::size_t count = 0;
+    for (std::size_t k = 0; k < n; ++k) {
+        if (in_clip(k) && !skip[k]) {
+            sum += luma(a, k) - luma(b, k);
+            ++count;
+        }
+    }
+    BakedStats st;
+    st.bias = count > 0 ? sum / static_cast<double>(count) : 0.0;
+    constexpr int kBlock = 8;
+    double mse = 0.0;
+    std::size_t blocks = 0;
+    for (int by = 0; by + kBlock <= a.height; by += kBlock) {
+        for (int bx = 0; bx + kBlock <= a.width; bx += kBlock) {
+            double d = 0.0;
+            bool skipped = false;
+            for (int y = by; y < by + kBlock && !skipped; ++y) {
+                for (int x = bx; x < bx + kBlock; ++x) {
+                    const std::size_t k = (static_cast<std::size_t>(y) * static_cast<std::size_t>(a.width)) +
+                                          static_cast<std::size_t>(x);
+                    if (skip[k]) {
+                        skipped = true;
+                        break;
+                    }
+                    d += luma(a, k) - luma(b, k) - (in_clip(k) ? st.bias : 0.0);
+                }
+            }
+            if (skipped) {
+                continue;
+            }
+            d /= kBlock * kBlock;
+            mse += d * d;
+            ++blocks;
+        }
+    }
+    mse /= static_cast<double>(std::max<std::size_t>(blocks, 1));
+    st.psnr = mse == 0.0 ? std::numeric_limits<double>::infinity() : 10.0 * std::log10(255.0 * 255.0 / mse);
+    return st;
+}
+
 } // namespace
 
 TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[parity][render]") {
@@ -224,6 +283,10 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
     auto file = read_json_file(path);
     REQUIRE(file);
     gc::media::silence_ffmpeg_log();
+    // Los efectos de vídeo (vfx) salen del catálogo de la app.
+    auto catalog = FxCatalog::load(path_from_utf8(GC_RESOURCES_DIR) / "fx" / "catalog.json");
+    REQUIRE(catalog);
+    set_fx_catalog(std::make_shared<FxCatalog>(std::move(*catalog)));
     std::map<std::string, gc::render::Image> sources;
     std::map<std::string, gc::render::Image> blanks; // el material en blanco opaco, para la banda
     const char* dump = std::getenv("GC_RENDER_DUMP"); // carpeta donde dejar los PNG del C++ (para mirarlos)
@@ -248,6 +311,28 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
             }
             return it->second;
         };
+        // Los clips con efectos de vídeo, horneados como fx_bake: en la timeline va el clip horneado.
+        std::map<std::string, gc::render::VfxBakePlan> bakes;
+        for (auto& cow : timeline->clips) {
+            if (!has_vfx(*cow)) {
+                continue;
+            }
+            const auto& src = source_of(*cow);
+            auto plan = gc::render::plan_vfx_bake(*cow, src.width, src.height, static_cast<int>(timeline->width),
+                                                  static_cast<int>(timeline->height), static_cast<int>(timeline->fps));
+            REQUIRE(plan);
+            if (*plan) {
+                cow = (*plan)->baked;
+                bakes.emplace(cow->id, std::move(**plan));
+            }
+        }
+        const auto material_size = [&](const TimelineClip& clip) {
+            const auto& img = source_of(clip);
+            if (const auto it = bakes.find(clip.id); it != bakes.end()) {
+                return gc::render::vfx_baked_size(it->second, img.width, img.height);
+            }
+            return std::pair{img.width, img.height};
+        };
         // El fotograma que el export compone en `t` (export_frame_at), uno por capa.
         std::vector<gc::render::Image> frames;
         frames.reserve(timeline->clips.size() * 2);
@@ -259,14 +344,32 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         const auto out_h = static_cast<double>(timeline->height - timeline->height % 2);
         auto layers = evaluate(*timeline, t, FrameSpec{out_w, out_h, kRenderLayers},
                                [&](const TimelineClip& clip) -> std::optional<MediaSize> {
-                                   const auto& img = source_of(clip);
-                                   return MediaSize{static_cast<double>(img.width), static_cast<double>(img.height)};
+                                   const auto [mw, mh] = material_size(clip);
+                                   return MediaSize{static_cast<double>(mw), static_cast<double>(mh)};
                                });
         REQUIRE(layers);
         const int w = static_cast<int>(out_w);
         const int h = static_cast<int>(out_h);
         auto frame = gc::render::compose_frame(
             *layers, w, h, [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
+                const auto bake = bakes.find(layer.clip->id);
+                if (bake != bakes.end()) {
+                    // El fotograma m del tramo del clip original, con sus efectos.
+                    const auto& plan = bake->second;
+                    const std::int64_t m = gc::render::vfx_baked_index(plan, tick, fps);
+                    auto got = gc::media::export_frame_at(plan.source, media_path(plan.source), fps, m);
+                    if (!got) {
+                        return std::unexpected(got.error());
+                    }
+                    REQUIRE(got->has_value());
+                    auto baked = gc::render::vfx_baked_frame(
+                        plan, {(*got)->width, (*got)->height, std::move((*got)->pixels)}, m, fps);
+                    if (!baked) {
+                        return std::unexpected(baked.error());
+                    }
+                    frames.push_back(std::move(*baked));
+                    return &frames.back();
+                }
                 auto got = gc::media::export_frame_at(*layer.clip, media_path(*layer.clip), fps, tick);
                 if (!got) {
                     return std::unexpected(got.error());
@@ -279,10 +382,10 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         REQUIRE(frame);
         auto coverage = gc::render::compose_frame(
             *layers, w, h, [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
-                const auto& src = source_of(*layer.clip); // mismas dimensiones
-                auto [it, fresh] = blanks.try_emplace(layer.clip->filename);
+                const auto [mw, mh] = material_size(*layer.clip); // mismas dimensiones
+                auto [it, fresh] = blanks.try_emplace(std::format("{}:{}x{}", layer.clip->filename, mw, mh));
                 if (fresh) {
-                    it->second = {src.width, src.height, std::vector<std::uint8_t>(src.pixels.size(), 255)};
+                    it->second = {mw, mh, std::vector<std::uint8_t>(static_cast<std::size_t>(mw) * mh * 4, 255)};
                 }
                 return &it->second;
             },
@@ -302,6 +405,24 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
             CHECK(st.psnr >= 35.0);
             CHECK(st.noise_a >= 0.75 * st.noise_b);
             CHECK(st.noise_a <= 1.33 * st.noise_b);
+            ++cases;
+            continue;
+        }
+        if (name.starts_with("efecto de vídeo")) {
+            // El export hornea el clip en un VP9 4:2:0 intermedio (16 Mb/s, BT.601 de rango TV) y lo
+            // vuelve a decodificar: pierde detalle y oscurece el clip (divergencia anotada en el TODO;
+            // el C++ no lo copia). Se comparan las medias de 8×8 sin ese sesgo, que tiene que estar en
+            // lo medido (0–6 niveles más oscuro), y píxel a píxel se pide un suelo menor.
+            const BakedStats st = baked_stats(*frame, expected, band, *coverage);
+            const double px = psnr_luma(*frame, expected, &band);
+            UNSCOPED_INFO(name << " en " << at << ": medias de 8×8 sin el sesgo " << st.psnr << " dB (sesgo "
+                               << st.bias << "); píxel a píxel " << px << " dB");
+            // Sin el sesgo, el vídeo con CRT queda en 55–57 dB y la sombra en 47; las texturas de color
+            // saturado (ondas, degradado), en 33,7–38: el error del horneado depende del color.
+            CHECK(st.psnr >= 33.0);
+            CHECK(st.bias >= 0.0);
+            CHECK(st.bias <= 6.0);
+            CHECK(px >= 30.0);
             ++cases;
             continue;
         }

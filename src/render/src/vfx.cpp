@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <format>
 #include <map>
 #include <mutex>
@@ -11,7 +12,10 @@
 #include <string_view>
 #include <vector>
 
+#include "gc/core/export_input.hpp"
+#include "gc/core/fx_bake.hpp"
 #include "gc/core/fx_catalog.hpp"
+#include "gc/core/timeline_rules.hpp"
 #include "gc/core/ids.hpp"
 #include "gc/core/vfx_stack.hpp"
 #include "include/core/SkCanvas.h"
@@ -290,6 +294,77 @@ Json clip_vfx(const Json& vfx) {
 }
 
 Result<std::string> vfx_sksl(std::string_view effect_id) { return sksl_of(effect_id); }
+
+Result<std::optional<VfxBakePlan>> plan_vfx_bake(const core::TimelineClip& clip, int iw, int ih, int W, int H,
+                                                 int fps) {
+    if (!core::has_vfx(clip)) {
+        return std::optional<VfxBakePlan>{};
+    }
+    if (!core::is_still_clip(clip) && (std::abs(core::clip_speed(clip) - 1.0) > 1e-9 || clip.reverse)) {
+        return fail(ErrorCode::Unsupported,
+                    std::format("el render aún no hornea efectos de vídeo con otra velocidad o al revés (clip {})", clip.id));
+    }
+    VfxBakePlan plan;
+    plan.entries = core::active_vfx(clip);
+    plan.pad = core::vfx_pad_fraction(plan.entries) > 0 && core::vfx_pad_allowed(clip, iw, ih, W, H);
+    plan.dur = std::max(0.05, core::clip_timeline_duration(clip));
+    plan.frames = std::max<std::int64_t>(1, std::llround(plan.dur * fps));
+    plan.baked = core::baked_clip(clip, clip.filename);
+    plan.source = clip;
+    plan.source.start = 0.0;
+    return std::optional<VfxBakePlan>(std::move(plan));
+}
+
+std::pair<int, int> vfx_baked_size(const VfxBakePlan& plan, int iw, int ih) {
+    const int w = iw - (iw % 2); // crop=trunc(iw/2)*2:trunc(ih/2)*2
+    const int h = ih - (ih % 2);
+    const VfxLayout L = vfx_layout(w, h, plan.pad ? vfx_pad_frac(plan.entries) : 0.0, 1e300);
+    return {L.cw, L.ch};
+}
+
+std::int64_t vfx_baked_index(const VfxBakePlan& plan, std::int64_t tick, int fps) {
+    // Las setpts del export: pts = trunc(m + inicio/TB), con el inicio a 3 decimales (clip_chain de
+    // gc_media). El trim del clip horneado adelanta el final (ffmpeg_trim_window): quedan los
+    // fotogramas con m/F antes de la salida.
+    const double start = std::strtod(std::format("{:.3f}", std::max(0.0, plan.baked.start)).c_str(), nullptr);
+    const double offset = start / (1.0 / static_cast<double>(fps));
+    const double out = core::ffmpeg_trim_window(plan.baked, fps).second;
+    std::int64_t n = 0;
+    while (n < plan.frames && static_cast<double>(n) / fps < out) {
+        ++n;
+    }
+    n = std::max<std::int64_t>(n, 1);
+    std::int64_t chosen = 0;
+    for (std::int64_t m = 0; m < n; ++m) {
+        if (static_cast<std::int64_t>(static_cast<double>(m) + offset) <= tick) {
+            chosen = m;
+        } else {
+            break;
+        }
+    }
+    return chosen;
+}
+
+Result<Image> vfx_baked_frame(const VfxBakePlan& plan, const Image& source_frame, std::int64_t m, int fps) {
+    Image even;
+    even.width = source_frame.width - (source_frame.width % 2);
+    even.height = source_frame.height - (source_frame.height % 2);
+    if (even.width <= 0 || even.height <= 0) {
+        return fail(ErrorCode::InvalidArgument, "vfx_baked_frame: el material no tiene tamaño");
+    }
+    even.pixels.resize(static_cast<std::size_t>(even.width) * static_cast<std::size_t>(even.height) * 4);
+    const auto src_row = static_cast<std::size_t>(source_frame.width) * 4;
+    const auto dst_row = static_cast<std::size_t>(even.width) * 4;
+    for (int y = 0; y < even.height; ++y) {
+        std::copy_n(source_frame.pixels.begin() + static_cast<std::ptrdiff_t>(static_cast<std::size_t>(y) * src_row),
+                    dst_row, even.pixels.begin() + static_cast<std::ptrdiff_t>(static_cast<std::size_t>(y) * dst_row));
+    }
+    auto out = render_vfx(even, plan.entries, static_cast<double>(m) / fps, plan.dur, plan.pad, 1e300);
+    if (!out) {
+        return std::unexpected(out.error());
+    }
+    return std::move(out->image);
+}
 
 Result<VfxFrame> render_vfx(const Image& source, const Json& entries, double t, double clip_dur, bool pad_allowed,
                             double max_side) {

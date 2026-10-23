@@ -1454,8 +1454,15 @@ Decisión de Edu (§6):
 - `gc_core/fx_bake.hpp`: `active_vfx` (Python normaliza distinto que el JS: solo quita `enabled` si es `False`, y `from`/`to` pasan por `float()`), `has_vfx`, `pad_frac`, `pad_allowed` y `baked_clip` con `_remap_reframe`. Es el primer paso para meter los efectos en el compuesto (plan en las notas de F4 del TODO). 14 clips; 15/15 mutaciones.
 - **MinGW:** 147/147 y **MSVC:** 184/184, 0 warnings.
 
+**Octava tanda: los efectos de vídeo en el compuesto (F4), en el test de render**
+
+- `plan_vfx_bake` y compañía (`gc_render/vfx.hpp`): como `fx_bake`, el clip con efectos se cambia en la timeline por su `baked_clip`, su material mide lo del original recortado a par más el margen, y el fotograma que enseña en cada tick (el overlay con `setpts` truncando, y el trim que adelanta el final) es `render_vfx` del fotograma m del tramo original en t = m/F. Sin archivo intermedio.
+- **Paridad:** 6 escenas nuevas en `RENDER_SCENES` (12 fotogramas) contra `compose.render_frame` con el horneado real en Chromium (la caché de `fx_bake` va a una carpeta temporal). El horneado del export pierde detalle (VP9 4:2:0) y **oscurece el clip 3–4 niveles** también sin efecto activo (BT.601 de rango TV y la ida y vuelta por el navegador): divergencia para Edu. El test mide ese sesgo en la zona del clip (tiene que estar entre 0 y 6) y compara las medias de 8×8 sin él: el vídeo con CRT da 55–57 dB, la sombra 47 y las texturas de color saturado 33,7–38 (el error depende del color); suelo de 33, y ≥ 30 dB píxel a píxel.
+- **Trampas de la fixture:** una sombra sobre un PNG con borde transparente no necesita el margen (cae dentro); con un material opaco, sí. Y un degradado suave no nota el zoom ni el desplazamiento de un terremoto: con ondas, la duración mal puesta (el progreso) falla.
+- 5/5 mutaciones a mano con MSVC.
+
 **Siguiente:**
-- La fuente del clip horneado en `gc_render`/`gc_export` y las escenas con efectos en `RENDER_SCENES` (notas de F4).
+- Los efectos en `gc_export` y `genclip frame` (lo mismo que hace el test), y luego velocidad ≠ 1 y revés.
 - `heatmap.analyze` y la descarga del vídeo completo, con yt-dlp como sidecar (F7).
 - Meter los efectos en el compuesto (`compose`/`gc_export`), con el tramo en tiempo de fuente como `fx_bake.prepare_input`.
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).

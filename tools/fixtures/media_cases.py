@@ -842,6 +842,31 @@ RENDER_SCENES = [
                                             "outline": {"enabled": True, "color": "#00ccff", "width": 0.4,
                                                         "soft": 0.2}}})],
      [0.5, 1.0]),
+    # Efectos de vídeo (`vfx`): el export hornea el clip en Chromium (fx_bake) y compone el horneado.
+    ("efecto de vídeo: glitch rgb en una imagen", 30, ["V1"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "vfx": [{"effect": "glitch_rgb", "params": {"amount": 0.8}}]})],
+     [0.5, 1.0]),
+    ("efecto de vídeo: crt en un vídeo con in_point y start", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.2, "in_point": 0.3, "out_point": 1.7, "transform": _CENTER,
+                              "vfx": [{"effect": "crt"}]})],
+     [0.5, 1.2]),
+    ("efecto de vídeo: térmica solo a mitad del clip", 30, ["V1"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "vfx": [{"effect": "thermal", "from": 0.5, "to": 1.2}]})],
+     [0.3, 0.8, 1.5]),
+    # El material es opaco: la sombra cae en el margen, que solo existe si se reserva.
+    ("efecto de vídeo con margen: sombra flotante en un objeto libre", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                           "transform": {"x": 0.5, "y": 0.5, "scale": 0.5},
+                           "vfx": [{"effect": "float_shadow", "params": {"distance": 0.08, "opacity": 0.9}}]})],
+     [0.5]),
+    # Terremoto: el desplazamiento cambia en cada fotograma (uFrame) y se apaga con el progreso.
+    ("efecto de vídeo: terremoto en una imagen", 30, ["V1"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "vfx": [{"effect": "earthquake", "params": {"amount": 1.0}}]})],
+     [0.4, 1.1, 1.8]),
 ]
 
 # Texto (el .ass global de text_ass.py, dibujado por libass): escenas de 540×960 a 30 fps.

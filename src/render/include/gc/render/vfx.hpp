@@ -18,6 +18,7 @@
 
 #include "gc/core/error.hpp"
 #include "gc/core/json.hpp"
+#include "gc/core/model.hpp"
 #include "gc/render/canvas.hpp"
 
 namespace gc::render {
@@ -56,6 +57,40 @@ struct VfxFrame {
 // compila, o si la fuente no es de w×h.
 [[nodiscard]] Result<VfxFrame> render_vfx(const Image& source, const Json& entries, double t, double clip_dur,
                                           bool pad_allowed, double max_side = 1e300);
+
+// --- El horneado de un clip, como fx_bake.py (sin archivo intermedio) --------------------------
+//
+// El export compone `baked`, la copia del clip que usa el horneado como material (fx_bake.baked_clip);
+// el fotograma m del horneado es renderVfx del fotograma m del tramo del clip original (el que
+// prepara `prepare_input`: el material recortado a dimensiones pares) en t = m/F. Quien compone
+// pone `baked` en la timeline, mide su material con vfx_baked_size y, en cada tick, pide al
+// decodificador el fotograma vfx_baked_index de `source` (el clip original desde 0) y lo pasa por
+// vfx_baked_frame.
+struct VfxBakePlan {
+    core::TimelineClip baked;  // lo que se compone (el `filename` sigue siendo el del material)
+    core::TimelineClip source; // el tramo que se hornea: el clip original empezando en 0
+    Json entries;              // core::active_vfx del clip
+    bool pad = false;          // el margen de los efectos se ve
+    double dur = 0.0;          // la duración del clip en la timeline
+    std::int64_t frames = 0;   // fotogramas del horneado: max(1, round(dur·F))
+};
+
+// nullopt si el clip no se hornea (sin efectos aplicables o de un tipo sin ellos). `iw`×`ih`: el
+// material; `W`×`H` y `fps`: la salida. La velocidad distinta de 1 y el revés aún no (Unsupported).
+[[nodiscard]] Result<std::optional<VfxBakePlan>> plan_vfx_bake(const core::TimelineClip& clip, int iw, int ih,
+                                                               int W, int H, int fps);
+
+// El material del clip horneado: el original recortado a par y con el margen a cada lado.
+[[nodiscard]] std::pair<int, int> vfx_baked_size(const VfxBakePlan& plan, int iw, int ih);
+
+// El fotograma del horneado que el overlay enseña en el tick `tick` (el del pts del tick o, si no
+// hay, el último anterior; antes del principio, el primero; pasado el final, el último).
+[[nodiscard]] std::int64_t vfx_baked_index(const VfxBakePlan& plan, std::int64_t tick, int fps);
+
+// El fotograma `m` del horneado a partir del fotograma `m` del tramo (`source_frame`, del tamaño del
+// material): recorte a par y los efectos en t = m/F.
+[[nodiscard]] Result<Image> vfx_baked_frame(const VfxBakePlan& plan, const Image& source_frame, std::int64_t m,
+                                            int fps);
 
 // Para el test del catálogo: el SkSL de un efecto, o error si no es de motor «shader».
 [[nodiscard]] Result<std::string> vfx_sksl(std::string_view effect_id);
