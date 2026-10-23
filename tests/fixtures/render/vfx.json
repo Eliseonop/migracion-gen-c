@@ -1,0 +1,2114 @@
+[
+ {
+  "effect": "glitch_rgb",
+  "v": 1,
+  "params": {
+   "amount": 0.6,
+   "speed": 1,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glitch_rgb_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glitch_rgb",
+  "v": 1,
+  "params": {
+   "amount": 0.6,
+   "speed": 1,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glitch_rgb_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glitch_rgb",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "speed": 1.075,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glitch_rgb_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glitch_blocks",
+  "v": 1,
+  "params": {
+   "amount": 0.6,
+   "speed": 1,
+   "size": 0.06,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glitch_blocks_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glitch_blocks",
+  "v": 1,
+  "params": {
+   "amount": 0.6,
+   "speed": 1,
+   "size": 0.06,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glitch_blocks_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glitch_blocks",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "speed": 1.075,
+   "size": 0.065,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glitch_blocks_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glitch_tear",
+  "v": 1,
+  "params": {
+   "amount": 0.6,
+   "speed": 1,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glitch_tear_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glitch_tear",
+  "v": 1,
+  "params": {
+   "amount": 0.6,
+   "speed": 1,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glitch_tear_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glitch_tear",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "speed": 1.075,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glitch_tear_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "tv_static",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "bursts": true,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/tv_static_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "tv_static",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "bursts": true,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/tv_static_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "tv_static",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "bursts": false,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/tv_static_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "pixel_drift",
+  "v": 1,
+  "params": {
+   "amount": 0.6,
+   "threshold": 0.6,
+   "speed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/pixel_drift_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "pixel_drift",
+  "v": 1,
+  "params": {
+   "amount": 0.6,
+   "threshold": 0.6,
+   "speed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/pixel_drift_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "pixel_drift",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "threshold": 0.25,
+   "speed": 1.075
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/pixel_drift_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "vhs",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "noise": 0.5,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/vhs_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "vhs",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "noise": 0.5,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/vhs_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "vhs",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "noise": 0.25,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/vhs_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "film_8mm",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "grain": 0.5,
+   "scratches": 0.6,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/film_8mm_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "film_8mm",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "grain": 0.5,
+   "scratches": 0.6,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/film_8mm_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "film_8mm",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "grain": 0.25,
+   "scratches": 0.25,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/film_8mm_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "old_film",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/old_film_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "old_film",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/old_film_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "old_film",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/old_film_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "crt",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "curve": 0.5,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/crt_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "crt",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "curve": 0.5,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/crt_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "crt",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "curve": 0.25,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/crt_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "scanlines",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "lines": 360,
+   "flicker": 0.4,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/scanlines_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "scanlines",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "lines": 360,
+   "flicker": 0.4,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/scanlines_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "scanlines",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "lines": 275.0,
+   "flicker": 0.25,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/scanlines_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "wave",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "freq": 3,
+   "speed": 1,
+   "dir": "h"
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/wave_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "wave",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "freq": 3,
+   "speed": 1,
+   "dir": "h"
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/wave_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "wave",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "freq": 3.375,
+   "speed": 1.0,
+   "dir": "v"
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/wave_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "bulge",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "pulse": 0,
+   "rate": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/bulge_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "bulge",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "pulse": 0,
+   "rate": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/bulge_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "bulge",
+  "v": 1,
+  "params": {
+   "amount": -0.5,
+   "pulse": 0.25,
+   "rate": 1.075
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/bulge_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "swirl",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "radius": 0.6,
+   "speed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/swirl_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "swirl",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "radius": 0.6,
+   "speed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/swirl_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "swirl",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "radius": 0.375,
+   "speed": 1.0
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/swirl_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "ripple",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "freq": 8,
+   "speed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/ripple_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "ripple",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "freq": 8,
+   "speed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/ripple_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "ripple",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "freq": 5.75,
+   "speed": 1.0
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/ripple_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "mirror",
+  "v": 1,
+  "params": {
+   "mode": "lr",
+   "drift": 0
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/mirror_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "mirror",
+  "v": 1,
+  "params": {
+   "mode": "lr",
+   "drift": 0
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/mirror_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "mirror",
+  "v": 1,
+  "params": {
+   "mode": "quad",
+   "drift": -0.5
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/mirror_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "kaleidoscope",
+  "v": 1,
+  "params": {
+   "segments": 6,
+   "speed": 0.3,
+   "zoom": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/kaleidoscope_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "kaleidoscope",
+  "v": 1,
+  "params": {
+   "segments": 6,
+   "speed": 0.3,
+   "zoom": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/kaleidoscope_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "kaleidoscope",
+  "v": 1,
+  "params": {
+   "segments": 5.5,
+   "speed": 1.0,
+   "zoom": 0.725
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/kaleidoscope_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "split_screen",
+  "v": 1,
+  "params": {
+   "count": "3"
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/split_screen_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "split_screen",
+  "v": 1,
+  "params": {
+   "count": "3"
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/split_screen_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "split_screen",
+  "v": 1,
+  "params": {
+   "count": "9"
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/split_screen_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "flash",
+  "v": 1,
+  "params": {
+   "amount": 0.9,
+   "rate": 1,
+   "color": "#ffffff"
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/flash_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "flash",
+  "v": 1,
+  "params": {
+   "amount": 0.9,
+   "rate": 1,
+   "color": "#ffffff"
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/flash_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "flash",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "rate": 2.15,
+   "color": "#33cc99"
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/flash_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "strobe",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "rate": 6,
+   "mode": "black"
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/strobe_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "strobe",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "rate": 6,
+   "mode": "black"
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/strobe_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "strobe",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "rate": 2.15,
+   "mode": "invert"
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/strobe_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "light_leak",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "speed": 1,
+   "color": "#ff8a3d",
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/light_leak_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "light_leak",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "speed": 1,
+   "color": "#ff8a3d",
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/light_leak_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "light_leak",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "speed": 0.75,
+   "color": "#33cc99",
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/light_leak_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glow_pulse",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "rate": 1,
+   "radius": 0.8
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glow_pulse_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glow_pulse",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "rate": 1,
+   "radius": 0.8
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glow_pulse_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "glow_pulse",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "rate": 2.15,
+   "radius": 0.575
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/glow_pulse_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "rainbow",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "speed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/rainbow_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "rainbow",
+  "v": 1,
+  "params": {
+   "amount": 0.7,
+   "speed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/rainbow_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "rainbow",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "speed": 1.0
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/rainbow_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "zoom_blur",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "pulse": 0,
+   "rate": 1.5
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/zoom_blur_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "zoom_blur",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "pulse": 0,
+   "rate": 1.5
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/zoom_blur_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "zoom_blur",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "pulse": 0.25,
+   "rate": 1.0
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/zoom_blur_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "chromatic",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "rate": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/chromatic_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "chromatic",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "rate": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/chromatic_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "chromatic",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "rate": 1.0
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/chromatic_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "vignette_pulse",
+  "v": 1,
+  "params": {
+   "amount": 0.8,
+   "rate": 1,
+   "color": "#000000"
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/vignette_pulse_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "vignette_pulse",
+  "v": 1,
+  "params": {
+   "amount": 0.8,
+   "rate": 1,
+   "color": "#000000"
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/vignette_pulse_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "vignette_pulse",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "rate": 1.0,
+   "color": "#33cc99"
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/vignette_pulse_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "defocus",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "rate": 0.5
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/defocus_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "defocus",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "rate": 0.5
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/defocus_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "defocus",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "rate": 1.0
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/defocus_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "shake",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "speed": 1,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/shake_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "shake",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "speed": 1,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/shake_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "shake",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "speed": 1.15,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/shake_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "heartbeat",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "bpm": 90
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/heartbeat_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "heartbeat",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "bpm": 90
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/heartbeat_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "heartbeat",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "bpm": 75.0
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/heartbeat_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "earthquake",
+  "v": 1,
+  "params": {
+   "amount": 0.8,
+   "decay": 0.6,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/earthquake_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "earthquake",
+  "v": 1,
+  "params": {
+   "amount": 0.8,
+   "decay": 0.6,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/earthquake_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "earthquake",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "decay": 0.25,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/earthquake_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "drift",
+  "v": 1,
+  "params": {
+   "amount": 0.4,
+   "speed": 0.3,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/drift_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "drift",
+  "v": 1,
+  "params": {
+   "amount": 0.4,
+   "speed": 0.3,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/drift_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "drift",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "speed": 0.5375,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/drift_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "halftone",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "size": 0.014,
+   "spin": 0
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/halftone_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "halftone",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "size": 0.014,
+   "spin": 0
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/halftone_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "halftone",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "size": 0.01625,
+   "spin": 0.25
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/halftone_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "neon_edges",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "color": "#22d3ee",
+   "pulse": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/neon_edges_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "neon_edges",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "color": "#22d3ee",
+   "pulse": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/neon_edges_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "neon_edges",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "color": "#33cc99",
+   "pulse": 1.0
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/neon_edges_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "cartoon",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "levels": 5,
+   "boil": 0.4
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/cartoon_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "cartoon",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "levels": 5,
+   "boil": 0.4
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/cartoon_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "cartoon",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "levels": 4.5,
+   "boil": 0.25
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/cartoon_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "pixel_pulse",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "rate": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/pixel_pulse_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "pixel_pulse",
+  "v": 1,
+  "params": {
+   "amount": 0.5,
+   "rate": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/pixel_pulse_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "pixel_pulse",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "rate": 1.0
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/pixel_pulse_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "sketch",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "boil": 0.5
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/sketch_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "sketch",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "boil": 0.5
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/sketch_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "sketch",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "boil": 0.25
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/sketch_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "sticker",
+  "v": 1,
+  "params": {
+   "width": 0.025,
+   "color": "#ffffff",
+   "wobble": 0
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/sticker_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "sticker",
+  "v": 1,
+  "params": {
+   "width": 0.025,
+   "color": "#ffffff",
+   "wobble": 0
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/sticker_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "sticker",
+  "v": 1,
+  "params": {
+   "width": 0.01875,
+   "color": "#33cc99",
+   "wobble": 0.25
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/sticker_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "sticker",
+  "v": 1,
+  "params": {
+   "width": 0.025,
+   "color": "#ffffff",
+   "wobble": 0
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "vfx_in.png",
+  "frame": "vfx/sticker_3.png",
+  "width": 140,
+  "height": 108,
+  "pad": 6
+ },
+ {
+  "effect": "float_shadow",
+  "v": 1,
+  "params": {
+   "distance": 0.03,
+   "blur": 0.02,
+   "opacity": 0.5,
+   "color": "#000000",
+   "float": 0.5
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/float_shadow_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "float_shadow",
+  "v": 1,
+  "params": {
+   "distance": 0.03,
+   "blur": 0.02,
+   "opacity": 0.5,
+   "color": "#000000",
+   "float": 0.5
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/float_shadow_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "float_shadow",
+  "v": 1,
+  "params": {
+   "distance": 0.025,
+   "blur": 0.015,
+   "opacity": 0.25,
+   "color": "#33cc99",
+   "float": 0.25
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/float_shadow_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "float_shadow",
+  "v": 1,
+  "params": {
+   "distance": 0.03,
+   "blur": 0.02,
+   "opacity": 0.5,
+   "color": "#000000",
+   "float": 0.5
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "vfx_in.png",
+  "frame": "vfx/float_shadow_3.png",
+  "width": 152,
+  "height": 120,
+  "pad": 12
+ },
+ {
+  "effect": "thermal",
+  "v": 1,
+  "params": {
+   "amount": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/thermal_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "thermal",
+  "v": 1,
+  "params": {
+   "amount": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/thermal_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "thermal",
+  "v": 1,
+  "params": {
+   "amount": 0.25
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/thermal_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "night_vision",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "seed": 1
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/night_vision_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "night_vision",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "seed": 1
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/night_vision_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "night_vision",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "seed": 7
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/night_vision_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "duotone",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "dark": "#2b1055",
+   "light": "#ff5e7e",
+   "swap": 0
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/duotone_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "duotone",
+  "v": 1,
+  "params": {
+   "amount": 1,
+   "dark": "#2b1055",
+   "light": "#ff5e7e",
+   "swap": 0
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/duotone_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "duotone",
+  "v": 1,
+  "params": {
+   "amount": 0.25,
+   "dark": "#33cc99",
+   "light": "#33cc99",
+   "swap": 1.0
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/duotone_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "color_pop",
+  "v": 1,
+  "params": {
+   "hue": 0,
+   "range": 0.08,
+   "cycle": 0
+  },
+  "t": 0.37,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/color_pop_0.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "color_pop",
+  "v": 1,
+  "params": {
+   "hue": 0,
+   "range": 0.08,
+   "cycle": 0
+  },
+  "t": 1.53,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/color_pop_1.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ },
+ {
+  "effect": "color_pop",
+  "v": 1,
+  "params": {
+   "hue": 90.0,
+   "range": 0.09,
+   "cycle": 0.5
+  },
+  "t": 0.9,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "vfx_in.png",
+  "frame": "vfx/color_pop_2.png",
+  "width": 128,
+  "height": 96,
+  "pad": 0
+ }
+]

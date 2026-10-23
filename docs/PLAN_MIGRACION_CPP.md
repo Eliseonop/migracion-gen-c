@@ -1429,6 +1429,14 @@ Decisión de Edu (§6):
 - **Trampa:** `owner not in olds` de Python compara con la igualdad de Pydantic (mismos campos), no por identidad: el C++ compara el `to_json` de cada material.
 - **MinGW:** 145/145 y **MSVC:** 180/180, 0 warnings y 0 avisos de clang-tidy.
 
+**Quinta tanda: los efectos de vídeo animados (F4), como efecto suelto**
+
+- `gc_render/vfx.hpp`: los 41 efectos de motor «shader» del runtime de video-yt (`frontend/src/fx`) traducidos a SkSL sin tocar su GLSL (`tools/gen/gen_vfx_shaders.mjs` lo extrae del registro real a `vfx_shaders.inc`). El preludio de `gl.js` se traduce de forma mecánica: si cambia, el render falla en vez de dibujar otra cosa. `render_vfx` hace lo de `renderVfx` (efectos activos, margen, una pasada por efecto) con lienzos raster de Skia.
+- **Paridad con el Chromium real:** la fixture llama a `window.__fx.renderVfx` en la página de `fx_bake.FxBaker` (Playwright, la RTX 4060 por ANGLE/D3D11) sobre una imagen con alfa y guarda el PNG: 125 fotogramas en 7 s. Mediana de 64 dB; suelo de 35 dB (el del plan para el render). Lo peor son los efectos con ruido (`sin` y hashes, aproximados en la GPU) y bordes: sketch 37,8, pixel_pulse 39,8, tv_static y night_vision 42–45.
+- **Trampas:** los `select` van al shader como el ÍNDICE de la opción (el catálogo trae objetos {id, label}); el SkSL de los runtime effects es ES 2 (sin `transpose`); la GPU filtra en bilineal con pesos de 8 bits y Skia con pesos exactos: imitándolo en el SkSL mejora 26 de 105 casos. `pixel_drift` elige la muestra con un umbral duro sobre la luma sin premultiplicar: un nivel de diferencia en el borde semitransparente cambia el píxel entero (0,8 % del cuadro); se mide por píxeles distintos.
+- **MSVC:** 182/182; **MinGW:** 145/145 (gc_render solo se compila con vcpkg).
+
 **Siguiente:**
+- Meter los efectos en el compuesto (`compose`/`gc_export`), con el tramo en tiempo de fuente como `fx_bake.prepare_input`.
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
 - En el render quedan los efectos de vídeo (`vfx`, F4) y el matte automático (F6).

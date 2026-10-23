@@ -1973,6 +1973,53 @@ def synthetic_text_mask_fixtures() -> dict:
     return {"masks": masks, "metrics": metrics}
 
 
+_VFX_JS = """async ([url, w, h, entries, t, clipDur, pad]) => {
+  const img = new Image();
+  img.src = url;
+  await img.decode();
+  const c = document.createElement('canvas');
+  const r = window.__fx.renderVfx({ source: img, w, h, entries, t, clipDur, padAllowed: pad,
+                                    key: 'fixture', maxSide: Infinity, target: c });
+  return { url: c.toDataURL('image/png'), width: c.width, height: c.height, pad: r ? r.layout.P : null };
+}"""
+
+
+def synthetic_vfx_fixtures() -> list[dict]:
+    """Los efectos de vídeo de motor «shader» con el runtime REAL de video-yt en Chromium (el de
+    fx_bake.FxBaker, el que hornea el export): `window.__fx.renderVfx` sobre la imagen de prueba
+    de vfx_cases.py. Los PNG van a tests/fixtures/render/vfx/."""
+    import base64
+    sys.path.insert(0, str(HERE))
+    import vfx_cases as vc
+    from app import fx_bake, fx_catalog
+    files = RENDER_DIR / "files"
+    src = files / "vfx_in.png"
+    if not src.exists():
+        vc.make_input(src)
+    url = "data:image/png;base64," + base64.b64encode(src.read_bytes()).decode()
+    out_dir = RENDER_DIR / "vfx"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    effects = [e for e in fx_catalog.effects() if e["engine"] == "shader"]
+    cases = []
+    with fx_bake.FxBaker() as baker:
+        baker._ensure()
+        page = baker._page
+        for e in effects:
+            defaults = {p["id"]: p["def"] for p in e["params"]}
+            runs = [(defaults, t, False) for t in vc.TIMES] + [(vc.variant_params(e["params"]), vc.VARIANT_T, False)]
+            if e["pad"]:
+                runs.append((defaults, vc.TIMES[0], True))
+            for n, (params, t, pad) in enumerate(runs):
+                entries = [{"effect": e["id"], "v": e["v"], "params": params, "from": 0, "to": None}]
+                r = page.evaluate(_VFX_JS, [url, 128, 96, entries, t, vc.CLIP_DUR, pad])
+                name = f"{e['id']}_{n}.png"
+                (out_dir / name).write_bytes(base64.b64decode(r["url"].split(",", 1)[1]))
+                cases.append({"effect": e["id"], "v": e["v"], "params": params, "t": t, "clip_dur": vc.CLIP_DUR,
+                              "pad_allowed": pad, "input": "vfx_in.png", "frame": f"vfx/{name}",
+                              "width": r["width"], "height": r["height"], "pad": r["pad"]})
+    return cases
+
+
 def synthetic_effect_chains() -> list[dict]:
     """La cadena de FFmpeg de effects_ffmpeg (clip_fx.py) para media_cases.EFFECT_CHAINS, en un
     cuadro de 360×640: el C++ comprueba que lee de cada `effects` lo mismo que FFmpeg."""
@@ -3205,7 +3252,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url"],
+                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3312,6 +3359,11 @@ def main() -> None:
 
     if args.solo == "url":
         url_group()
+        return
+
+    if args.solo == "vfx":
+        vfx = synthetic_vfx_fixtures()
+        write(RENDER_DIR / "vfx.json", vfx, len(vfx), 0)
         return
 
     def shapes_group() -> None:
