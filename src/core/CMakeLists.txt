@@ -74,6 +74,7 @@ add_library(gc_core
     src/vfx_stack.cpp
     src/timeline_view.cpp
     src/yt_history.cpp
+    src/heatmap.cpp
 )
 add_library(gc::core ALIAS gc_core)
 

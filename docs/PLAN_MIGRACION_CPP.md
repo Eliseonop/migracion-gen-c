@@ -1420,9 +1420,9 @@ Decisión de Edu (§6):
 - **Revisión de `segments`:** GCC daba un `-Wnull-dereference` en Release en `seed_face_keyframes` (`out.front()` sin ver que `out` nunca queda vacío): con la guarda, `verificar.sh` vuelve a 0 warnings. Y un tiempo infinito del detector era UB al pasar a entero; ahora es un error, como el `int(nan)` de Python (`seed_face_keyframes` devuelve `Result`). Dos pasos nuevos en la fixture, con inf y NaN. `export_fixtures.py --solo proyectos`.
 - **`yt_history.hpp`** (espejo de `yt_history.py`): `yt_history_record` y `yt_history_remove` sobre `SettingsFile`. 52 pasos nuevos en la fixture de ajustes (`--solo ajustes`), con los `str()` e `int()` de Python sobre entradas raras; 9/9 mutaciones.
 - **Trampa:** con un `video` de texto, `getattr("x", "title")` de Python es el método `str.title` y se guardaría su `repr` («<built-in method title…>», con una dirección de memoria). No es determinista: el caso va con un número, y C++ trata un texto como sin vídeo.
-- **MinGW:** 143/143, 0 warnings en Debug y Release.
+- **`heatmap.hpp`** (espejo de `heatmap._pick_segments`): los tramos de alto interés de «Analizar» a partir del heatmap de yt-dlp. 38 casos contra la función real (`--solo heatmap`), con los empates estables de `sorted` y `sort(reverse=True)` y el `[:max_clips]` de Python; 11/11 mutaciones. `analyze` sigue en Python hasta que llegue el sidecar de yt-dlp.
+- **MinGW:** 144/144, 0 warnings en Debug y Release; **MSVC:** 179/179.
 
 **Siguiente:**
-- `heatmap._pick_segments` (F7, la parte pura de «Analizar» de YouTube).
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
 - En el render quedan los efectos de vídeo (`vfx`, F4) y el matte automático (F6).

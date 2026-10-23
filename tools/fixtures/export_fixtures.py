@@ -1037,6 +1037,15 @@ def synthetic_keyword_fixtures(ctx: Ctx) -> dict:
         ek._llm_keywords = saved
 
 
+def synthetic_heatmap_fixtures(ctx: Ctx) -> list:
+    """heatmap._pick_segments real: [heatmap, duration, min_score, max_clips, max_duration, padding, tramos]."""
+    sys.path.insert(0, str(HERE))
+    import heatmap_cases as hc
+    from app import heatmap as hm
+    return [[*c, [s.model_dump(exclude={"label", "description"}) for s in hm._pick_segments(*c)]]
+            for c in hc.CASES]
+
+
 def real_sfx_fixtures(ctx: Ctx) -> dict:
     """Tu carpeta de SFX (la de fábrica de video-yt) con tus favoritos: índice, escaneo,
     búsquedas por categoría y la biblioteca de sound_design con la ruta de cada sonido."""
@@ -3132,7 +3141,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes"],
+                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3221,6 +3230,14 @@ def main() -> None:
 
     if args.solo == "ajustes":
         settings_group()
+        return
+
+    def heatmap_group() -> None:
+        hmp = synthetic_heatmap_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "heatmap" / "synthetic.json", hmp, len(hmp), 0)
+
+    if args.solo == "heatmap":
+        heatmap_group()
         return
 
     def shapes_group() -> None:
@@ -3319,6 +3336,7 @@ def main() -> None:
     sfx_write_group()
     beats_group()
     keywords_group()
+    heatmap_group()
     mono_group()
     js = synthetic_json_fixtures()
     write(REPO / "tests" / "fixtures" / "json" / "synthetic.json", js,

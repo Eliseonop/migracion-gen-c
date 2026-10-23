@@ -650,11 +650,28 @@ YT_HISTORY = [
      "    if (needle.empty()) {\n        return out;\n    }"),
 ]
 
+HM = "src/core/src/heatmap.cpp"
+HEATMAP = [
+    ("umbral estricto", HM, "if (p.value >= min_score) {", "if (p.value > min_score) {"),
+    ("sin ordenar por inicio", HM, "std::ranges::stable_sort(points,", "(void)std::ranges::stable_sort; (void)("),
+    ("orden no estable", HM, "std::ranges::stable_sort(segments, [](const HeatSegment& x, const HeatSegment& y) { return x.score > y.score; });",
+     "std::ranges::sort(segments, [](const HeatSegment& x, const HeatSegment& y) { return x.score >= y.score; });"),
+    ("sin acotar a 0", HM, "const double start = a > 0.0 ? a : 0.0;", "const double start = a;"),
+    ("sin acotar a la duración", HM, "double end = b < duration ? b : duration;", "double end = b;"),
+    ("recorte desde el final", HM, "end = start + max_duration;", "end = end - max_duration;"),
+    ("duración con lo redondeado", HM, "py_round(end - start, 2)});", "py_round(py_round(end, 2) - py_round(start, 2), 2)});"),
+    ("score con 3 decimales", HM, "py_round(score, 4)", "py_round(score, 3)"),
+    ("max_clips negativo como 0", HM, "max_clips < 0 ? n + max_clips : max_clips", "max_clips"),
+    ("índices desde 0", HM, "static_cast<std::int64_t>(i) + 1;", "static_cast<std::int64_t>(i);"),
+    ("el último grupo se pierde", HM, "    if (!current.empty()) {\n        runs.push_back(std::move(current));\n    }\n\n",
+     "\n"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 
