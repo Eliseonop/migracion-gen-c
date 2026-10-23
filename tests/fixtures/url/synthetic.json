@@ -1066,6 +1066,54 @@
    ]
   ],
   [
+   "https://[::1%.YOUTUBE.COM]/x",
+   [
+    "https",
+    "[::1%.YOUTUBE.COM]",
+    "/x",
+    "",
+    "",
+    "",
+    "::1%.YOUTUBE.COM"
+   ]
+  ],
+  [
+   "https://[::1%YOUTU.BE]/abc",
+   [
+    "https",
+    "[::1%YOUTU.BE]",
+    "/abc",
+    "",
+    "",
+    "",
+    "::1%YOUTU.BE"
+   ]
+  ],
+  [
+   "https://x%FF.YOUTUBE.COM/",
+   [
+    "https",
+    "x%FF.YOUTUBE.COM",
+    "/",
+    "",
+    "",
+    "",
+    "x%FF.YOUTUBE.COM"
+   ]
+  ],
+  [
+   "https://[fe80::1%25Eth0.YouTube.com]/watch?v=zona",
+   [
+    "https",
+    "[fe80::1%25Eth0.YouTube.com]",
+    "/watch",
+    "",
+    "v=zona",
+    "",
+    "fe80::1%25Eth0.YouTube.com"
+   ]
+  ],
+  [
    "https://you;tube.com/x",
    [
     "https",
@@ -2130,6 +2178,54 @@
    ]
   ],
   [
+   "https://[::1%.YOUTUBE.COM]/x",
+   [
+    "https",
+    "[::1%.YOUTUBE.COM]",
+    "/x",
+    "",
+    "",
+    "",
+    "::1%.YOUTUBE.COM"
+   ]
+  ],
+  [
+   "https://[::1%YOUTU.BE]/abc",
+   [
+    "https",
+    "[::1%YOUTU.BE]",
+    "/abc",
+    "",
+    "",
+    "",
+    "::1%YOUTU.BE"
+   ]
+  ],
+  [
+   "https://x%FF.YOUTUBE.COM/",
+   [
+    "https",
+    "x%FF.YOUTUBE.COM",
+    "/",
+    "",
+    "",
+    "",
+    "x%FF.YOUTUBE.COM"
+   ]
+  ],
+  [
+   "https://[fe80::1%25Eth0.YouTube.com]/watch?v=zona",
+   [
+    "https",
+    "[fe80::1%25Eth0.YouTube.com]",
+    "/watch",
+    "",
+    "v=zona",
+    "",
+    "fe80::1%25Eth0.YouTube.com"
+   ]
+  ],
+  [
    "https://you;tube.com/x",
    [
     "https",
@@ -2679,6 +2775,26 @@
    "https://youtube.com:abc/x",
    true,
    null
+  ],
+  [
+   "https://[::1%.YOUTUBE.COM]/x",
+   true,
+   null
+  ],
+  [
+   "https://[::1%YOUTU.BE]/abc",
+   false,
+   "abc"
+  ],
+  [
+   "https://x%FF.YOUTUBE.COM/",
+   true,
+   null
+  ],
+  [
+   "https://[fe80::1%25Eth0.YouTube.com]/watch?v=zona",
+   true,
+   "zona"
   ],
   [
    "https://you;tube.com/x",
@@ -3361,6 +3477,22 @@
   ],
   [
    "https://youtube.com:abc/x",
+   false
+  ],
+  [
+   "https://[::1%.YOUTUBE.COM]/x",
+   false
+  ],
+  [
+   "https://[::1%YOUTU.BE]/abc",
+   false
+  ],
+  [
+   "https://x%FF.YOUTUBE.COM/",
+   false
+  ],
+  [
+   "https://[fe80::1%25Eth0.YouTube.com]/watch?v=zona",
    false
   ],
   [

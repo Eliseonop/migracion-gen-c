@@ -36,7 +36,8 @@ bool is_youtube_url(std::string_view url) {
     if (!parts) {
         return false;
     }
-    std::string host = py_url_hostname(parts->netloc).value_or(""); // .lower() ya hecho
+    // (hostname or "").lower(): otra vez, porque .hostname deja la zona «%…» de un IPv6 como está.
+    std::string host = detail::py_lower(py_url_hostname(parts->netloc).value_or(""));
     if (host.starts_with("www.")) {
         host = host.substr(4);
     }
@@ -52,7 +53,7 @@ std::optional<std::string> youtube_id_from_url(std::string_view url) {
     if (!parts) {
         return std::nullopt;
     }
-    const std::string host = py_url_hostname(parts->netloc).value_or("");
+    const std::string host = detail::py_lower(py_url_hostname(parts->netloc).value_or(""));
     if (ends_with(host, "youtu.be")) {
         // parsed.path.strip("/").split("/")[0]
         std::string_view path = parts->path;

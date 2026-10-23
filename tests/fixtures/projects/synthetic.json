@@ -26935,6 +26935,371 @@
     },
     1080
    ]
+  },
+  {
+   "step": [
+    "file",
+    {
+     "projects": [
+      {
+       "id": "n1",
+       "name": "NaN",
+       "created_at": "2026-10-06T00:00:00+00:00",
+       "clips": [
+        {
+         "index": 0,
+         "filename": "hq.mp4",
+         "url": "/api/media/u1/video/hq.mp4",
+         "start": 0,
+         "end": 600,
+         "id": "hq",
+         "label": "HQ",
+         "provider": "youtube",
+         "external_id": "VID1",
+         "created_at": "2026-02-02T00:00:00+00:00"
+        },
+        {
+         "index": 1,
+         "filename": "nan.mp4",
+         "url": "/api/media/n1/video/nan.mp4",
+         "start": NaN,
+         "end": 600,
+         "provider": "youtube",
+         "external_id": "VID1"
+        },
+        {
+         "index": 2,
+         "filename": "nan.mp4",
+         "url": "/api/media/n1/video/nan.mp4",
+         "start": 1,
+         "end": 2,
+         "id": "segnan",
+         "in_point": 1,
+         "out_point": 2
+        }
+       ],
+       "timeline": {
+        "schema_version": 5,
+        "tracks": [
+         {
+          "id": "T1",
+          "kind": "text",
+          "name": "Texto 1"
+         },
+         {
+          "id": "V1",
+          "kind": "video",
+          "name": "Vídeo 1"
+         },
+         {
+          "id": "A1",
+          "kind": "audio",
+          "name": "Audio 1"
+         },
+         {
+          "id": "V2",
+          "kind": "video",
+          "name": "Vídeo 2"
+         },
+         {
+          "id": "T2",
+          "kind": "text",
+          "name": "Texto 2"
+         }
+        ],
+        "clips": [
+         {
+          "id": "n1c",
+          "track_id": "V1",
+          "kind": "video",
+          "asset_kind": "clips",
+          "asset_id": "1",
+          "filename": "nan.mp4",
+          "start": 0,
+          "duration": 1,
+          "in_point": 0,
+          "out_point": 1
+         }
+        ]
+       }
+      }
+     ]
+    }
+   ],
+   "text": "{\"projects\": [{\"id\": \"n1\", \"name\": \"NaN\", \"created_at\": \"2026-10-06T00:00:00+00:00\", \"clips\": [{\"index\": 0, \"filename\": \"hq.mp4\", \"url\": \"/api/media/u1/video/hq.mp4\", \"start\": 0, \"end\": 600, \"id\": \"hq\", \"label\": \"HQ\", \"provider\": \"youtube\", \"external_id\": \"VID1\", \"created_at\": \"2026-02-02T00:00:00+00:00\"}, {\"index\": 1, \"filename\": \"nan.mp4\", \"url\": \"/api/media/n1/video/nan.mp4\", \"start\": NaN, \"end\": 600, \"provider\": \"youtube\", \"external_id\": \"VID1\"}, {\"index\": 2, \"filename\": \"nan.mp4\", \"url\": \"/api/media/n1/video/nan.mp4\", \"start\": 1, \"end\": 2, \"id\": \"segnan\", \"in_point\": 1, \"out_point\": 2}], \"timeline\": {\"schema_version\": 5, \"tracks\": [{\"id\": \"T1\", \"kind\": \"text\", \"name\": \"Texto 1\"}, {\"id\": \"V1\", \"kind\": \"video\", \"name\": \"Vídeo 1\"}, {\"id\": \"A1\", \"kind\": \"audio\", \"name\": \"Audio 1\"}, {\"id\": \"V2\", \"kind\": \"video\", \"name\": \"Vídeo 2\"}, {\"id\": \"T2\", \"kind\": \"text\", \"name\": \"Texto 2\"}], \"clips\": [{\"id\": \"n1c\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"1\", \"filename\": \"nan.mp4\", \"start\": 0, \"duration\": 1, \"in_point\": 0, \"out_point\": 1}]}}]}",
+   "result": null
+  },
+  {
+   "step": [
+    "disk",
+    [
+     "clips/n1/video/hq.mp4",
+     "clips/n1/video/nan.mp4"
+    ]
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "upgrade",
+    "n1",
+    "hq",
+    [
+     "segnan",
+     "1"
+    ],
+    {
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "nan.mp4": [
+      854,
+      480
+     ]
+    }
+   ],
+   "result": {
+    "ok": true,
+    "replaced": 1,
+    "changed": [
+     "n1c"
+    ],
+    "warnings": [],
+    "versions": [
+     {
+      "index": 1,
+      "label": null,
+      "offset": 0.0
+     }
+    ],
+    "segments": 1,
+    "can_undo": true
+   },
+   "file": "{\r\n  \"projects\": [\r\n    {\r\n      \"id\": \"n1\",\r\n      \"name\": \"NaN\",\r\n      \"created_at\": \"2026-10-06T00:00:00+00:00\",\r\n      \"clips\": [\r\n        {\r\n          \"index\": 0,\r\n          \"filename\": \"hq.mp4\",\r\n          \"url\": \"/api/media/u1/video/hq.mp4\",\r\n          \"start\": 0,\r\n          \"end\": 600,\r\n          \"id\": \"hq\",\r\n          \"label\": \"HQ\",\r\n          \"provider\": \"youtube\",\r\n          \"external_id\": \"VID1\",\r\n          \"created_at\": \"2026-02-02T00:00:00+00:00\"\r\n        },\r\n        {\r\n          \"index\": 1,\r\n          \"filename\": \"nan.mp4\",\r\n          \"url\": \"/api/media/n1/video/nan.mp4\",\r\n          \"start\": NaN,\r\n          \"end\": 600,\r\n          \"provider\": \"youtube\",\r\n          \"external_id\": \"VID1\"\r\n        },\r\n        {\r\n          \"index\": 2,\r\n          \"filename\": \"hq.mp4\",\r\n          \"url\": \"/api/media/u1/video/hq.mp4\",\r\n          \"start\": 1.0,\r\n          \"end\": 2.0,\r\n          \"id\": \"segnan\",\r\n          \"in_point\": 1.0,\r\n          \"out_point\": 2.0,\r\n          \"parent_id\": \"hq\"\r\n        }\r\n      ],\r\n      \"timeline\": {\r\n        \"version\": 1,\r\n        \"schema_version\": 5,\r\n        \"fps\": 30,\r\n        \"width\": 720,\r\n        \"height\": 1280,\r\n        \"audio_target_db\": -14.0,\r\n        \"tracks\": [\r\n          {\r\n            \"id\": \"T1\",\r\n            \"kind\": \"text\",\r\n            \"name\": \"Texto 1\",\r\n            \"hidden\": false,\r\n            \"muted\": false,\r\n            \"locked\": false,\r\n            \"style\": null,\r\n            \"linked_track_id\": null,\r\n            \"magnetic\": false\r\n          },\r\n          {\r\n            \"id\": \"V1\",\r\n            \"kind\": \"video\",\r\n            \"name\": \"Vídeo 1\",\r\n            \"hidden\": false,\r\n            \"muted\": false,\r\n            \"locked\": false,\r\n            \"style\": null,\r\n            \"linked_track_id\": null,\r\n            \"magnetic\": false\r\n          },\r\n          {\r\n            \"id\": \"A1\",\r\n            \"kind\": \"audio\",\r\n            \"name\": \"Audio 1\",\r\n            \"hidden\": false,\r\n            \"muted\": false,\r\n            \"locked\": false,\r\n            \"style\": null,\r\n            \"linked_track_id\": null,\r\n            \"magnetic\": false\r\n          },\r\n          {\r\n            \"id\": \"V2\",\r\n            \"kind\": \"video\",\r\n            \"name\": \"Vídeo 2\",\r\n            \"hidden\": false,\r\n            \"muted\": false,\r\n            \"locked\": false,\r\n            \"style\": null,\r\n            \"linked_track_id\": null,\r\n            \"magnetic\": false\r\n          },\r\n          {\r\n            \"id\": \"T2\",\r\n            \"kind\": \"text\",\r\n            \"name\": \"Texto 2\",\r\n            \"hidden\": false,\r\n            \"muted\": false,\r\n            \"locked\": false,\r\n            \"style\": null,\r\n            \"linked_track_id\": null,\r\n            \"magnetic\": false\r\n          }\r\n        ],\r\n        \"clips\": [\r\n          {\r\n            \"id\": \"n1c\",\r\n            \"track_id\": \"V1\",\r\n            \"kind\": \"video\",\r\n            \"asset_kind\": \"clips\",\r\n            \"asset_id\": \"0\",\r\n            \"filename\": \"hq.mp4\",\r\n            \"name\": null,\r\n            \"start\": 0.0,\r\n            \"in_point\": 0.0,\r\n            \"out_point\": 1.0,\r\n            \"source_duration\": 600.0,\r\n            \"ref_segment\": true,\r\n            \"volume\": 1.0,\r\n            \"media_version\": \"2026-02-02T00:00:00+00:00\",\r\n            \"reframe\": null,\r\n            \"text\": null,\r\n            \"style\": null,\r\n            \"layout\": \"fill\",\r\n            \"transform\": null,\r\n            \"frame\": \"full\",\r\n            \"appear\": \"none\",\r\n            \"exit\": \"none\",\r\n            \"look\": \"none\",\r\n            \"effects\": null,\r\n            \"filters\": null,\r\n            \"audio_fx\": null,\r\n            \"muted\": false,\r\n            \"speed\": 1.0,\r\n            \"keep_pitch\": true,\r\n            \"reverse\": false,\r\n            \"speed_curve\": null,\r\n            \"opacity\": null,\r\n            \"flip_h\": false,\r\n            \"flip_v\": false,\r\n            \"blend_mode\": null,\r\n            \"disabled\": false,\r\n            \"beats\": null,\r\n            \"loop\": null,\r\n            \"words\": [],\r\n            \"origin\": null,\r\n            \"text_role\": null,\r\n            \"shape\": null,\r\n            \"masks\": [],\r\n            \"bg_removal\": null,\r\n            \"anim\": null,\r\n            \"vfx\": null,\r\n            \"animations\": null,\r\n            \"keyframes\": null,\r\n            \"asset_scope\": \"project\",\r\n            \"description\": null,\r\n            \"note\": null,\r\n            \"note_source\": null,\r\n            \"dup_of\": null,\r\n            \"composition_id\": null\r\n          }\r\n        ],\r\n        \"markers\": []\r\n      }\r\n    }\r\n  ]\r\n}"
+  },
+  {
+   "step": [
+    "get",
+    "n1"
+   ],
+   "result": {
+    "id": "n1",
+    "name": "NaN",
+    "created_at": "2026-10-06T00:00:00+00:00",
+    "folder": null,
+    "group_id": null,
+    "clips": [
+     {
+      "index": 0,
+      "filename": "hq.mp4",
+      "url": "/api/media/u1/video/hq.mp4",
+      "start": 0.0,
+      "end": 600.0,
+      "id": "hq",
+      "source_url": null,
+      "created_at": "2026-02-02T00:00:00+00:00",
+      "label": "HQ",
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": "youtube",
+      "external_id": "VID1",
+      "author": null,
+      "license_info": null,
+      "in_point": null,
+      "out_point": null,
+      "parent_id": null,
+      "face_track": null
+     },
+     {
+      "index": 1,
+      "filename": "nan.mp4",
+      "url": "/api/media/n1/video/nan.mp4",
+      "start": NaN,
+      "end": 600.0,
+      "id": "1",
+      "source_url": null,
+      "created_at": null,
+      "label": null,
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": "youtube",
+      "external_id": "VID1",
+      "author": null,
+      "license_info": null,
+      "in_point": null,
+      "out_point": null,
+      "parent_id": null,
+      "face_track": null
+     },
+     {
+      "index": 2,
+      "filename": "hq.mp4",
+      "url": "/api/media/u1/video/hq.mp4",
+      "start": 1.0,
+      "end": 2.0,
+      "id": "segnan",
+      "source_url": null,
+      "created_at": null,
+      "label": null,
+      "description": null,
+      "description_ai": null,
+      "semantic": null,
+      "reframe": null,
+      "transcript": null,
+      "origin": null,
+      "source": null,
+      "provider": null,
+      "external_id": null,
+      "author": null,
+      "license_info": null,
+      "in_point": 1.0,
+      "out_point": 2.0,
+      "parent_id": "hq",
+      "face_track": null
+     }
+    ],
+    "transcripts": [],
+    "audios": [],
+    "images": [],
+    "timeline": {
+     "version": 1,
+     "schema_version": 5,
+     "fps": 30,
+     "width": 720,
+     "height": 1280,
+     "audio_target_db": -14.0,
+     "tracks": [
+      {
+       "id": "T1",
+       "kind": "text",
+       "name": "Texto 1",
+       "hidden": false,
+       "muted": false,
+       "locked": false,
+       "style": null,
+       "linked_track_id": null,
+       "magnetic": false
+      },
+      {
+       "id": "V1",
+       "kind": "video",
+       "name": "Vídeo 1",
+       "hidden": false,
+       "muted": false,
+       "locked": false,
+       "style": null,
+       "linked_track_id": null,
+       "magnetic": false
+      },
+      {
+       "id": "A1",
+       "kind": "audio",
+       "name": "Audio 1",
+       "hidden": false,
+       "muted": false,
+       "locked": false,
+       "style": null,
+       "linked_track_id": null,
+       "magnetic": false
+      },
+      {
+       "id": "V2",
+       "kind": "video",
+       "name": "Vídeo 2",
+       "hidden": false,
+       "muted": false,
+       "locked": false,
+       "style": null,
+       "linked_track_id": null,
+       "magnetic": false
+      },
+      {
+       "id": "T2",
+       "kind": "text",
+       "name": "Texto 2",
+       "hidden": false,
+       "muted": false,
+       "locked": false,
+       "style": null,
+       "linked_track_id": null,
+       "magnetic": false
+      }
+     ],
+     "clips": [
+      {
+       "id": "n1c",
+       "track_id": "V1",
+       "kind": "video",
+       "asset_kind": "clips",
+       "asset_id": "0",
+       "filename": "hq.mp4",
+       "name": null,
+       "start": 0.0,
+       "in_point": 0.0,
+       "out_point": 1.0,
+       "source_duration": 600.0,
+       "ref_segment": true,
+       "volume": 1.0,
+       "media_version": "2026-02-02T00:00:00+00:00",
+       "reframe": null,
+       "text": null,
+       "style": null,
+       "layout": "fill",
+       "transform": null,
+       "frame": "full",
+       "appear": "none",
+       "exit": "none",
+       "look": "none",
+       "effects": null,
+       "filters": null,
+       "audio_fx": null,
+       "muted": false,
+       "speed": 1.0,
+       "keep_pitch": true,
+       "reverse": false,
+       "speed_curve": null,
+       "opacity": null,
+       "flip_h": false,
+       "flip_v": false,
+       "blend_mode": null,
+       "disabled": false,
+       "beats": null,
+       "loop": null,
+       "words": [],
+       "origin": null,
+       "text_role": null,
+       "shape": null,
+       "masks": [],
+       "bg_removal": null,
+       "anim": null,
+       "vfx": null,
+       "animations": null,
+       "keyframes": null,
+       "asset_scope": "project",
+       "description": null,
+       "note": null,
+       "note_source": null,
+       "dup_of": null,
+       "composition_id": null
+      }
+     ],
+     "markers": []
+    },
+    "motion_compositions": [],
+    "scene_directions": {},
+    "visual_blueprint": {}
+   }
   }
  ]
 }

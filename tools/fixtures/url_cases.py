@@ -34,6 +34,8 @@ URLS = [
     "https://youtube.com/watch?v=one;v=two", "https://youtube.com/watch?=x&v=empty-name", "https://youtube.com/watch?v==eq",
     "1http://youtube.com/x", "h.t-t+p://youtube.com/x", "ht_tp://youtube.com/watch?v=bad", "a b://youtube.com/x",
     "youtube.com/watch?v=1://", "mailto:youtube.com", "javascript://youtube.com/%0Aalert(1)", "https://youtube.com:abc/x",
+    "https://[::1%.YOUTUBE.COM]/x", "https://[::1%YOUTU.BE]/abc", "https://x%FF.YOUTUBE.COM/",
+    "https://[fe80::1%25Eth0.YouTube.com]/watch?v=zona",
     "https://you;tube.com/x", "https://[v.a]/x", "https://[v1a]/x", "https://www.youtu.be/www", "https://m.youtu.be/m",
 ]
 

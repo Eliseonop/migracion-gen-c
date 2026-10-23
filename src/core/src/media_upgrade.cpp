@@ -372,9 +372,10 @@ Result<Json> replace_media_with(ProjectsStore& store, std::string_view pid, std:
                 const std::string name = owner->label && !owner->label->empty() ? *owner->label : owner->filename;
                 return fail(ErrorCode::InvalidArgument, std::format("«{}» no se puede cambiar: {}.", name, *reason));
             }
-            // `owner not in olds`: la igualdad de Pydantic (los mismos campos), no la identidad.
+            // `owner not in olds`: la identidad o la igualdad de Pydantic (los mismos campos; con un
+            // NaN, un material solo es igual a sí mismo por identidad).
             const Json key = to_json(*owner);
-            if (std::ranges::none_of(olds, [&](const ClipInfo* o) { return to_json(*o) == key; })) {
+            if (std::ranges::none_of(olds, [&](const ClipInfo* o) { return o == owner || to_json(*o) == key; })) {
                 olds.push_back(owner);
             }
         }

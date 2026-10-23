@@ -474,5 +474,18 @@ STEPS_UPG = [
     ("best_full", "u1", "NADA", _UPG_DIMS), ("best_full", "nada", "VID1", _UPG_DIMS),
     # La parcial (offset 100) y la que no es de provider youtube no cuentan aunque sean mayores.
     ("best_full", "u1", "VID1", {"partial.mp4": [7680, 4320], "hq.mp4": [1920, 1080], "lq480.mp4": [3000, 2000]}),
+    # El mismo dueño dos veces (por su segmento y por él) con un NaN: `owner not in olds` lo encuentra
+    # por identidad aunque NaN != NaN.
+    ("file", {"projects": [project("n1", name="NaN", clips=[
+        _UPG_CLIPS[0],
+        material(1, filename="nan.mp4", url="/api/media/n1/video/nan.mp4", start=float("nan"), end=600,
+                 provider="youtube", external_id="VID1"),
+        material(2, id="segnan", filename="nan.mp4", url="/api/media/n1/video/nan.mp4", start=1, end=2,
+                 in_point=1, out_point=2)],
+        timeline={"schema_version": 5, "tracks": TRACKS_V4, "clips": [
+            clip("n1c", start=0, duration=1, asset_id="1", filename="nan.mp4", in_point=0, out_point=1)]})]}),
+    ("disk", ["clips/n1/video/hq.mp4", "clips/n1/video/nan.mp4"]),
+    ("upgrade", "n1", "hq", ["segnan", "1"], {"hq.mp4": [1920, 1080], "nan.mp4": [854, 480]}),
+    ("get", "n1"),
 ]
 STEPS += STEPS_UPG

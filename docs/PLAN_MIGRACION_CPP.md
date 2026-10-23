@@ -1418,14 +1418,14 @@ Decisión de Edu (§6):
 ### 2026-10-23 — F1, revisión, y F7: el historial de YouTube
 
 - **Revisión de `segments`:** GCC daba un `-Wnull-dereference` en Release en `seed_face_keyframes` (`out.front()` sin ver que `out` nunca queda vacío): con la guarda, `verificar.sh` vuelve a 0 warnings. Y un tiempo infinito del detector era UB al pasar a entero; ahora es un error, como el `int(nan)` de Python (`seed_face_keyframes` devuelve `Result`). Dos pasos nuevos en la fixture, con inf y NaN. `export_fixtures.py --solo proyectos`.
-- **`yt_history.hpp`** (espejo de `yt_history.py`): `yt_history_record` y `yt_history_remove` sobre `SettingsFile`. 52 pasos nuevos en la fixture de ajustes (`--solo ajustes`), con los `str()` e `int()` de Python sobre entradas raras; 9/9 mutaciones.
+- **`yt_history.hpp`** (espejo de `yt_history.py`): `yt_history_record` y `yt_history_remove` sobre `SettingsFile`. 48 pasos nuevos en la fixture de ajustes (`--solo ajustes`), con los `str()` e `int()` de Python sobre entradas raras; 9/9 mutaciones.
 - **Trampa:** con un `video` de texto, `getattr("x", "title")` de Python es el método `str.title` y se guardaría su `repr` («<built-in method title…>», con una dirección de memoria). No es determinista: el caso va con un número, y C++ trata un texto como sin vídeo.
 - **`heatmap.hpp`** (espejo de `heatmap._pick_segments`): los tramos de alto interés de «Analizar» a partir del heatmap de yt-dlp. 38 casos contra la función real (`--solo heatmap`), con los empates estables de `sorted` y `sort(reverse=True)` y el `[:max_clips]` de Python; 11/11 mutaciones. `analyze` sigue en Python hasta que llegue el sidecar de yt-dlp.
-- **Enlaces de YouTube** (`youtube_url.hpp`): `is_youtube_url` y `youtube_id_from_url`, que hacen falta para `media_upgrade` y las descargas. Debajo, `py_url.hpp` con lo que usan de `urllib.parse`: `urlparse` (C0 y tabuladores fuera, esquema, netloc, params solo en los esquemas de `uses_params`), la validación de los corchetes (IPv6 como `ipaddress`, con zona y un IPv4 al final; IPvFuture; un IPv4 entre corchetes es un error) y el `_checknetloc` de NFKC (19 caracteres, tabla generada con el `unicodedata` 16.0 del Python de video-yt y comprobada por la fixture), `.hostname`, `parse_qsl` y `unquote` (cada trozo ASCII se descodifica por su lado, con el «replace» de CPython: un U+FFFD por trozo inválido más largo). 356 casos (`--solo url`); 22/22 mutaciones.
+- **Enlaces de YouTube** (`youtube_url.hpp`): `is_youtube_url` y `youtube_id_from_url`, que hacen falta para `media_upgrade` y las descargas. Debajo, `py_url.hpp` con lo que usan de `urllib.parse`: `urlparse` (C0 y tabuladores fuera, esquema, netloc, params solo en los esquemas de `uses_params`), la validación de los corchetes (IPv6 como `ipaddress`, con zona y un IPv4 al final; IPvFuture; un IPv4 entre corchetes es un error) y el `_checknetloc` de NFKC (19 caracteres, tabla generada con el `unicodedata` 16.0 del Python de video-yt y comprobada por la fixture), `.hostname`, `parse_qsl` y `unquote` (cada trozo ASCII se descodifica por su lado, con el «replace» de CPython: un U+FFFD por trozo inválido más largo). 368 casos (`--solo url`); 22/22 mutaciones.
 - **MinGW:** 145/145, 0 warnings en Debug y Release y 0 avisos de clang-tidy en lo nuevo; **MSVC:** 180/180.
 
 - **`media_upgrade.hpp`** (espejo de `media_upgrade.py`): buscar las otras versiones del mismo vídeo de YouTube y cambiarlas en la timeline por la de más calidad (`replace_media` por un `TimelineOpApplier` inyectado: en el estudio, la `EditSession`; en el test, `apply_command` y `save_timeline`), con los segmentos por referencia al archivo nuevo. 26 pasos en la fixture del almacén; 16/16 mutaciones (dos más eran equivalentes: el id de un segmento no se usa en lo portado y el redondeo del delta lo absorbe el de `replace_media`).
-- **También** `youtube_sources` y `best_full_version` de `media_upgrade.py` (26 pasos más; 21/21 mutaciones en total) y `asset_import.allowed_download_url` (`asset_import.hpp`, sobre `py_url`; 3/3 mutaciones).
+- **También** `youtube_sources` y `best_full_version` de `media_upgrade.py` (57 pasos en total en `STEPS_UPG`; 21/21 mutaciones) y `asset_import.allowed_download_url` (`asset_import.hpp`, sobre `py_url`; 3/3 mutaciones).
 - **Trampa:** `owner not in olds` de Python compara con la igualdad de Pydantic (mismos campos), no por identidad: el C++ compara el `to_json` de cada material.
 - **MinGW:** 145/145 y **MSVC:** 180/180, 0 warnings y 0 avisos de clang-tidy.
 
@@ -1436,7 +1436,15 @@ Decisión de Edu (§6):
 - **Trampas:** los `select` van al shader como el ÍNDICE de la opción (el catálogo trae objetos {id, label}); el SkSL de los runtime effects es ES 2 (sin `transpose`); la GPU filtra en bilineal con pesos de 8 bits y Skia con pesos exactos: imitándolo en el SkSL mejora 26 de 105 casos. `pixel_drift` elige la muestra con un umbral duro sobre la luma sin premultiplicar: un nivel de diferencia en el borde semitransparente cambia el píxel entero (0,8 % del cuadro); se mide por píxeles distintos.
 - **MSVC:** 182/182; **MinGW:** 145/145 (gc_render solo se compila con vcpkg).
 
+**Revisión de la tanda**
+
+- `is_youtube_url` y `youtube_id_from_url` no volvían a pasar a minúsculas el host: `.hostname` deja la zona «%…» de un IPv6 como está y Python hace otro `.lower()` (`https://[::1%.YOUTUBE.COM]/x` es de YouTube). 4 URLs nuevas en la fixture; sin el arreglo, el test falla.
+- `replace_media_with`: `owner not in olds` de Python mira primero la identidad; con un NaN en el material, la igualdad de los JSON no bastaba y el mismo dueño (pedido por su segmento y por él) salía dos veces. Caso nuevo con `start` NaN.
+- **Aviso para F7** (copiado tal cual de Python): `allowed_download_url("http://[::1%.pexels.com]/x")` da true porque el hostname lleva la zona. Antes de descargar de verdad, hay que rechazar hosts con «[» o «%» en los dos lados.
+- Cifras de los docs corregidas (48 pasos del historial, 57 de `STEPS_UPG`, 368 URLs).
+
 **Siguiente:**
+- La parte pura de `youtube_video.py` (`quality_of`, `available_qualities`, `resolve_quality`, `format_spec`…), que deja `analyze` a falta de la llamada a yt-dlp.
 - Meter los efectos en el compuesto (`compose`/`gc_export`), con el tramo en tiempo de fuente como `fx_bake.prepare_input`.
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
 - En el render quedan los efectos de vídeo (`vfx`, F4) y el matte automático (F6).
