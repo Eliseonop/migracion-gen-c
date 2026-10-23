@@ -157,10 +157,12 @@ TEST_CASE("efectos de vídeo: el plan de horneado rechaza antes lo que el render
     plan = gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30);
     REQUIRE(plan);
     CHECK(plan->has_value());
-    clip.speed = 1.5;
+    clip.speed = 1.5; // con la velocidad y el revés antes del fps, como prepare_input
+    clip.reverse = true;
     plan = gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30);
-    REQUIRE_FALSE(plan);
-    CHECK(plan.error().code == gc::ErrorCode::Unsupported);
+    REQUIRE(plan);
+    CHECK(plan->has_value());
+    clip.reverse = false;
     clip.vfx = Json::array({Json{{"effect", "crt"}, {"v", "abc"}}}); // int("abc") de Python
     clip.speed = 1.0;
     CHECK_FALSE(gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30));

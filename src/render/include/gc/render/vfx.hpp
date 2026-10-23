@@ -64,11 +64,11 @@ struct VfxFrame {
 // el fotograma m del horneado es renderVfx del fotograma m del tramo del clip original (el que
 // prepara `prepare_input`: el material recortado a dimensiones pares) en t = m/F. Quien compone
 // pone `baked` en la timeline, mide su material con vfx_baked_size y, en cada tick, pide al
-// decodificador el fotograma vfx_baked_index de `source` (el clip original desde 0) y lo pasa por
-// vfx_baked_frame.
+// decodificador el fotograma vfx_baked_index del tramo de `source` (gc::media::bake_input_frame_at o
+// ClipFrames::open_bake_input: con la velocidad y el revés antes del fps) y lo pasa por vfx_baked_frame.
 struct VfxBakePlan {
     core::TimelineClip baked;  // lo que se compone (el `filename` sigue siendo el del material)
-    core::TimelineClip source; // el tramo que se hornea: el clip original empezando en 0
+    core::TimelineClip source; // el clip original: su tramo (gc::media bake_input) es lo que se hornea
     Json entries;              // core::active_vfx del clip
     bool pad = false;          // el margen de los efectos se ve
     double dur = 0.0;          // la duración del clip en la timeline
@@ -76,7 +76,7 @@ struct VfxBakePlan {
 };
 
 // nullopt si el clip no se hornea (sin efectos aplicables o de un tipo sin ellos). `iw`×`ih`: el
-// material; `W`×`H` y `fps`: la salida. La velocidad distinta de 1 y el revés aún no (Unsupported).
+// material; `W`×`H` y `fps`: la salida. Unsupported si algún efecto no es de motor «shader».
 [[nodiscard]] Result<std::optional<VfxBakePlan>> plan_vfx_bake(const core::TimelineClip& clip, int iw, int ih,
                                                                int W, int H, int fps);
 

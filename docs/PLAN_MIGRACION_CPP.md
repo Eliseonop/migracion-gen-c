@@ -1464,8 +1464,14 @@ Decisión de Edu (§6):
 - **En el export:** `gc_export/vfx_bake.hpp` (`ensure_fx_catalog` con el catálogo de `<raíz>/app/fx_assets`, como `fx_catalog.CATALOG_PATH`, y `plan_timeline_vfx`, los clips de `bake_timeline`: activos, en una pista de vídeo visible y con material). `genclip render` lee el tramo original con `ClipFrames` en el fotograma m y `genclip frame` con `export_frame_at`. Probados con tres escenas de la fixture en un proyecto de prueba: lo mismo que el test (41,9 dB el CRT en `frame`, 42,2 en el MP4 de `render`).
 - **Trampa:** `fx_catalog()` nunca es nulo (hasta que se fija es un catálogo vacío): para saber si hay que cargarlo hay que mirar si tiene efectos.
 
+**Novena tanda: revisión y efectos con velocidad y al revés (F4)**
+
+- **Revisión:** `plan_vfx_bake` rechaza antes `paper_cutout` (de Canvas 2D; antes abortaba `genclip render` a mitad y `--omitir` no lo saltaba), la velocidad va con la tolerancia de 1e-3 de `video_speed_filters`, `active_vfx` falla como el `int(v)` de Python y `from_chars` en vez de `strtod`.
+- **Velocidad y revés:** en vez de imitar qué fotogramas elige el `fps=F` tras la velocidad, `gc_media` ejecuta el mismo grafo que `prepare_input`: la cadena del clip sin su `fps` final y después `reverse`, `setpts=PTS/sp` y `fps=F` (`bake_input_frame_at`, `ClipFrames::open_bake_input`); el fotograma n es el n-ésimo que sale. 6 escenas nuevas (velocidad 2 y 0,5, al revés, inicio a 0,215 s, hasta el final del archivo y 25 fps): 55–57 dB; 3/3 mutaciones a mano.
+- **MinGW:** 147/147 y **MSVC:** 185/185, 0 warnings.
+
 **Siguiente:**
-- Los efectos con velocidad ≠ 1 y al revés (el `fps` de `prepare_input` va tras la velocidad).
+- `paper_cutout` (Canvas 2D: borde rasgado, sombra, pliegue), con fotogramas de `renderVfx` en Chromium.
 - `heatmap.analyze` y la descarga del vídeo completo, con yt-dlp como sidecar (F7).
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
 - En el render quedan los efectos de vídeo con velocidad ≠ 1, al revés y `paper_cutout` (F4) y el matte automático (F6).

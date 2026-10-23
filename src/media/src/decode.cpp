@@ -502,7 +502,54 @@ Result<ClipChain> clip_chain(const core::TimelineClip& clip, const std::filesyst
     return c;
 }
 
+// El tramo de fx_bake.prepare_input: la misma cadena hasta el croma y, en vez del fps=F y la velocidad
+// del overlay, `{spd},fps=F` (la velocidad ANTES del fps: el fotograma n es el instante local n/F).
+// Sale un fotograma por tick desde 0, así que el n-ésimo tiene pts n.
+Result<ClipChain> bake_input_chain(const core::TimelineClip& clip, const std::filesystem::path& path, int fps,
+                                   bool preroll) {
+    core::TimelineClip at_zero = clip;
+    at_zero.start = 0.0;
+    auto chain = clip_chain(at_zero, path, fps, preroll);
+    if (!chain) {
+        return chain;
+    }
+    ClipChain c = std::move(*chain);
+    const std::string tail = std::format(",fps={}", fps);
+    if (c.spec.chain.ends_with(tail)) {
+        c.spec.chain.resize(c.spec.chain.size() - tail.size());
+    }
+    if (c.reverse) {
+        c.spec.chain += ",reverse";
+    }
+    if (c.speed) {
+        c.spec.chain += std::format(",setpts=PTS/{:.6f}", *c.speed);
+    }
+    c.spec.chain += tail;
+    c.reverse = false;
+    c.speed.reset();
+    c.offset = 0.0;
+    return c;
+}
+
 } // namespace
+
+Result<std::optional<RgbaFrame>> bake_input_frame_at(const core::TimelineClip& clip, const std::filesystem::path& path,
+                                                     int fps, std::int64_t n) {
+    auto chain = bake_input_chain(clip, path, fps, false);
+    if (!chain) {
+        return std::unexpected(chain.error());
+    }
+    std::optional<RgbaFrame> out;
+    std::int64_t m = 0;
+    auto count = decode_frames(chain->spec, [&](const RgbaFrame& f) {
+        out = f; // pasado el final, se queda el último
+        return m++ < n;
+    });
+    if (!count) {
+        return std::unexpected(count.error());
+    }
+    return out;
+}
 
 Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip, const std::filesystem::path& path,
                                                  int fps, std::int64_t tick) {
@@ -719,6 +766,23 @@ Result<ClipFrames> ClipFrames::open(const core::TimelineClip& clip, const std::f
         if (auto r = impl->restart(); !r) {
             return std::unexpected(r.error());
         }
+    }
+    return ClipFrames(std::move(impl));
+}
+
+Result<ClipFrames> ClipFrames::open_bake_input(const core::TimelineClip& clip, const std::filesystem::path& path,
+                                               int fps) {
+    auto chain = bake_input_chain(clip, path, fps, true);
+    if (!chain) {
+        return std::unexpected(chain.error());
+    }
+    auto impl = std::make_unique<Impl>();
+    impl->clip = clip;
+    impl->path = path;
+    impl->fps = fps;
+    impl->chain = std::move(*chain);
+    if (auto r = impl->restart(); !r) {
+        return std::unexpected(r.error());
     }
     return ClipFrames(std::move(impl));
 }

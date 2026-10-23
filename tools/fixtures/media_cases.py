@@ -867,6 +867,32 @@ RENDER_SCENES = [
      [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
                            "vfx": [{"effect": "earthquake", "params": {"amount": 1.0}}]})],
      [0.4, 1.1, 1.8]),
+    # Con velocidad, al revés y con el inicio fuera de la rejilla: el tramo que hornea prepare_input
+    # lleva la velocidad ANTES del fps=F.
+    ("efecto de vídeo: crt a velocidad 2", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "speed": 2.0,
+                              "transform": _CENTER, "vfx": [{"effect": "crt"}]})],
+     [0.3, 0.8]),
+    ("efecto de vídeo: crt a velocidad 0,5", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.2, "out_point": 1.0, "speed": 0.5,
+                              "transform": _CENTER, "vfx": [{"effect": "crt"}]})],
+     [0.5, 1.3]),
+    ("efecto de vídeo: crt al revés", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.2, "out_point": 1.6, "reverse": True,
+                              "transform": _CENTER, "vfx": [{"effect": "crt"}]})],
+     [0.3, 1.0]),
+    ("efecto de vídeo: crt con el inicio fuera de la rejilla", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.215, "in_point": 0.3, "out_point": 1.5, "transform": _CENTER,
+                              "vfx": [{"effect": "crt"}]})],
+     [0.5, 1.2]),
+    ("efecto de vídeo: crt hasta el final del archivo", 30, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 1.0, "out_point": 2.0, "transform": _CENTER,
+                              "vfx": [{"effect": "crt"}]})],
+     [0.5, 0.95]),
+    ("efecto de vídeo: crt en una timeline de 25 fps", 25, ["V1"],
+     [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 1.6, "transform": _CENTER,
+                              "vfx": [{"effect": "crt"}]})],
+     [0.6, 1.2]),
 ]
 
 # Texto (el .ass global de text_ass.py, dibujado por libass): escenas de 540×960 a 30 fps.

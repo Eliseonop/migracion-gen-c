@@ -84,6 +84,11 @@ class ClipFrames {
 public:
     [[nodiscard]] static Result<ClipFrames> open(const core::TimelineClip& clip, const std::filesystem::path& path,
                                                  int fps);
+    // El tramo que hornea fx_bake.prepare_input para los efectos de vídeo: la cadena del clip (trim,
+    // croma) y después la velocidad (`reverse`, `setpts=PTS/sp`) y `fps=F`. at(n) da su fotograma n
+    // (pasado el final, el último), sin el desplazamiento del inicio del clip.
+    [[nodiscard]] static Result<ClipFrames> open_bake_input(const core::TimelineClip& clip,
+                                                            const std::filesystem::path& path, int fps);
 
     ClipFrames(ClipFrames&&) noexcept;
     ClipFrames& operator=(ClipFrames&&) noexcept;
@@ -99,6 +104,12 @@ private:
     explicit ClipFrames(std::unique_ptr<Impl> impl);
     std::unique_ptr<Impl> impl_;
 };
+
+// El fotograma n del tramo que hornea fx_bake.prepare_input (ClipFrames::open_bake_input), decodificando
+// desde el principio: la referencia de los tests y de `genclip frame`.
+[[nodiscard]] Result<std::optional<RgbaFrame>> bake_input_frame_at(const core::TimelineClip& clip,
+                                                                   const std::filesystem::path& path, int fps,
+                                                                   std::int64_t n);
 
 // MD5 en hexadecimal (av_md5): para comparar fotogramas con las fixtures.
 [[nodiscard]] std::string md5_hex(std::span<const std::uint8_t> data);

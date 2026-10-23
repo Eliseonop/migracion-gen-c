@@ -304,11 +304,6 @@ Result<std::optional<VfxBakePlan>> plan_vfx_bake(const core::TimelineClip& clip,
     if (!*has) {
         return std::optional<VfxBakePlan>{};
     }
-    // video_speed_filters: la velocidad solo cuenta si se aleja de 1 más de 1e-3 (como clip_chain).
-    if (!core::is_still_clip(clip) && (std::abs(core::clip_speed(clip) - 1.0) > 1e-3 || clip.reverse)) {
-        return fail(ErrorCode::Unsupported,
-                    std::format("el render aún no hornea efectos de vídeo con otra velocidad o al revés (clip {})", clip.id));
-    }
     VfxBakePlan plan;
     auto entries = core::active_vfx(clip);
     if (!entries) {
@@ -330,7 +325,6 @@ Result<std::optional<VfxBakePlan>> plan_vfx_bake(const core::TimelineClip& clip,
     plan.frames = std::max<std::int64_t>(1, std::llround(plan.dur * fps));
     plan.baked = core::baked_clip(clip, clip.filename);
     plan.source = clip;
-    plan.source.start = 0.0;
     return std::optional<VfxBakePlan>(std::move(plan));
 }
 

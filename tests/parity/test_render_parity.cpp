@@ -357,7 +357,7 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
                     // El fotograma m del tramo del clip original, con sus efectos.
                     const auto& plan = bake->second;
                     const std::int64_t m = gc::render::vfx_baked_index(plan, tick, fps);
-                    auto got = gc::media::export_frame_at(plan.source, media_path(plan.source), fps, m);
+                    auto got = gc::media::bake_input_frame_at(plan.source, media_path(plan.source), fps, m);
                     if (!got) {
                         return std::unexpected(got.error());
                     }

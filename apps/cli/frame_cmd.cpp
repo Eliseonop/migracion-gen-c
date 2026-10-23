@@ -156,7 +156,8 @@ int cmd_frame(std::span<const std::string> args) {
         // Un clip horneado: el fotograma m de su tramo original, con sus efectos (vfx.hpp).
         const auto bake = vfx->find(id);
         const std::int64_t m = bake != vfx->end() ? gc::render::vfx_baked_index(bake->second, tick, fps) : tick;
-        auto got = gc::media::export_frame_at(bake != vfx->end() ? bake->second.source : clip, p->second, fps, m);
+        auto got = bake != vfx->end() ? gc::media::bake_input_frame_at(bake->second.source, p->second, fps, m)
+                                      : gc::media::export_frame_at(clip, p->second, fps, m);
         if (!got || !got->has_value()) {
             media_error = got ? gc::Error{gc::ErrorCode::Io, std::format("el clip {} no da fotograma en {}", id, t)}
                               : got.error();

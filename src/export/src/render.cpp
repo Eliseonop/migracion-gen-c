@@ -399,7 +399,8 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             const std::int64_t at = bake != vfx_plans.end() ? render::vfx_baked_index(bake->second, tick, fps) : tick;
             auto r = readers.find(id);
             if (r == readers.end()) {
-                auto opened = media::ClipFrames::open(read, p->second, fps);
+                auto opened = bake != vfx_plans.end() ? media::ClipFrames::open_bake_input(read, p->second, fps)
+                                                      : media::ClipFrames::open(read, p->second, fps);
                 if (!opened) {
                     media_error = opened.error();
                     return nullptr;
