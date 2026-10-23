@@ -33,7 +33,14 @@ Result<VfxPlans> plan_timeline_vfx(core::Timeline& timeline, const std::map<std:
         const auto track = tracks.find(clip.track_id);
         const auto path = paths.find(clip.id);
         if (clip.disabled || track == tracks.end() || track->second->hidden || track->second->kind != "video" ||
-            path == paths.end() || !core::has_vfx(clip)) {
+            path == paths.end()) {
+            continue;
+        }
+        auto has = core::has_vfx(clip);
+        if (!has) {
+            return std::unexpected(has.error());
+        }
+        if (!*has) {
             continue;
         }
         // detect.dims: el tamaño del material (su primer fotograma).

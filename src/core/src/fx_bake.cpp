@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <format>
 #include <string>
 
 #include "gc/core/clip_layout.hpp"
@@ -30,7 +31,7 @@ const Json& get(const Json& obj, std::string_view key) {
 
 } // namespace
 
-Json active_vfx(const TimelineClip& clip) {
+Result<Json> active_vfx(const TimelineClip& clip) {
     Json out = Json::array();
     if (!clip.vfx || !clip.vfx->is_array()) {
         return out;
@@ -56,10 +57,15 @@ Json active_vfx(const TimelineClip& clip) {
         }
         // int(e.get("v") or man.get("v") or 1): lo que no se pasa a entero es la versión del catálogo.
         std::int64_t v = 1;
-        if (const Json& raw_v = get(e, "v"); py_truthy(raw_v)) {
-            v = py_int(raw_v).value_or(1);
-        } else if (const Json& man_v = get(*man, "v"); py_truthy(man_v)) {
-            v = py_int(man_v).value_or(1);
+        const Json& raw_v = get(e, "v");
+        const Json& man_v = get(*man, "v");
+        if (const Json& pick = py_truthy(raw_v) ? raw_v : man_v; py_truthy(pick)) {
+            const auto as_int = py_int(pick);
+            if (!as_int) {
+                return fail(ErrorCode::InvalidArgument,
+                            std::format("la versión del efecto no es un entero: {}", pick.dump()));
+            }
+            v = *as_int;
         }
         auto params = FxCatalog::resolve_params(*man, get(e, "params"));
         Json entry = Json::object();
@@ -75,8 +81,15 @@ Json active_vfx(const TimelineClip& clip) {
     return out;
 }
 
-bool has_vfx(const TimelineClip& clip) {
-    return std::ranges::find(kFxKinds, clip.kind) != kFxKinds.end() && !active_vfx(clip).empty();
+Result<bool> has_vfx(const TimelineClip& clip) {
+    if (std::ranges::find(kFxKinds, clip.kind) == kFxKinds.end()) {
+        return false;
+    }
+    auto entries = active_vfx(clip);
+    if (!entries) {
+        return std::unexpected(entries.error());
+    }
+    return !entries->empty();
 }
 
 double vfx_pad_fraction(const Json& entries) {

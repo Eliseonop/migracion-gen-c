@@ -136,3 +136,32 @@ TEST_CASE("paridad de los efectos de vídeo con el runtime de video-yt en Chromi
     INFO("peor: " << worst << " dB");
     CHECK(worst >= 35.0);
 }
+
+TEST_CASE("efectos de vídeo: el plan de horneado rechaza antes lo que el render aún no sabe", "[render][vfx]") {
+    auto catalog = FxCatalog::load(path_from_utf8(GC_RESOURCES_DIR) / "fx" / "catalog.json");
+    REQUIRE(catalog);
+    set_fx_catalog(std::make_shared<FxCatalog>(std::move(*catalog)));
+    TimelineClip clip;
+    clip.id = "c1";
+    clip.kind = "video";
+    clip.asset_kind = "clips";
+    clip.in_point = 0.0;
+    clip.out_point = 2.0;
+    clip.source_duration = 2.0;
+    clip.vfx = Json::array({Json{{"effect", "paper_cutout"}}}); // de Canvas 2D: antes de codificar nada
+    auto plan = gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30);
+    REQUIRE_FALSE(plan);
+    CHECK(plan.error().code == gc::ErrorCode::Unsupported);
+    clip.vfx = Json::array({Json{{"effect", "crt"}}});
+    clip.speed = 1.0005; // video_speed_filters: a menos de 1e-3 de 1 es velocidad 1
+    plan = gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30);
+    REQUIRE(plan);
+    CHECK(plan->has_value());
+    clip.speed = 1.5;
+    plan = gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30);
+    REQUIRE_FALSE(plan);
+    CHECK(plan.error().code == gc::ErrorCode::Unsupported);
+    clip.vfx = Json::array({Json{{"effect", "crt"}, {"v", "abc"}}}); // int("abc") de Python
+    clip.speed = 1.0;
+    CHECK_FALSE(gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30));
+}

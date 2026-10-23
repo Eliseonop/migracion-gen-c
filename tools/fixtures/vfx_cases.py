@@ -87,7 +87,12 @@ BAKE_CLIPS = [
     _clip("margen_recorte", vfx=[_PAD], layout="overlay",
           reframe={"crop_w": 0.5, "crop_h": 1.0}, transform={"x": 0.5, "y": 0.5, "scale": 0.5}),
     _clip("margen_lleno", vfx=[_PAD]),
-    _clip("margen_cinco", vfx=[_PAD] * 5, **_FREE),                        # 0,6 → 0,5
+    _clip("margen_cinco", vfx=[_PAD] * 5, **_FREE),
+    # int(v) de Python fuera del try: lanza.
+    _clip("version_texto", vfx=[{"effect": "crt", "v": "abc"}]),
+    _clip("version_decimal", vfx=[{"effect": "crt", "v": "2.5"}]),
+    _clip("version_nan", vfx=[{"effect": "crt", "v": float("nan")}]),
+    _clip("version_lista", vfx=[{"effect": "crt", "v": [1]}]),                        # 0,6 → 0,5
     # Enseña la imagen entera salvo al final (el encuadre hace zoom en el último instante).
     _clip("margen_final", vfx=[_PAD], layout="overlay", transform={"x": 0.5, "y": 0.5, "scale": 0.5},
           reframe={"keyframes": [{"t": 2.0, "cx": 0.5, "zoom": 1.0}, {"t": 5.9, "cx": 0.5, "zoom": 1.0},

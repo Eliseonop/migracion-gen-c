@@ -2170,6 +2170,92 @@
  },
  {
   "clip": {
+   "id": "version_texto",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "crt",
+     "v": "abc"
+    }
+   ]
+  },
+  "error": "ValueError"
+ },
+ {
+  "clip": {
+   "id": "version_decimal",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "crt",
+     "v": "2.5"
+    }
+   ]
+  },
+  "error": "ValueError"
+ },
+ {
+  "clip": {
+   "id": "version_nan",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "crt",
+     "v": NaN
+    }
+   ]
+  },
+  "error": "ValueError"
+ },
+ {
+  "clip": {
+   "id": "version_lista",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "crt",
+     "v": [
+      1
+     ]
+    }
+   ]
+  },
+  "error": "TypeError"
+ },
+ {
+  "clip": {
    "id": "margen_final",
    "track_id": "V1",
    "kind": "video",

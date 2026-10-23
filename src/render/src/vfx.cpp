@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
-#include <cstdlib>
+#include <charconv>
 #include <format>
 #include <map>
 #include <mutex>
@@ -297,15 +297,34 @@ Result<std::string> vfx_sksl(std::string_view effect_id) { return sksl_of(effect
 
 Result<std::optional<VfxBakePlan>> plan_vfx_bake(const core::TimelineClip& clip, int iw, int ih, int W, int H,
                                                  int fps) {
-    if (!core::has_vfx(clip)) {
+    auto has = core::has_vfx(clip);
+    if (!has) {
+        return std::unexpected(has.error());
+    }
+    if (!*has) {
         return std::optional<VfxBakePlan>{};
     }
-    if (!core::is_still_clip(clip) && (std::abs(core::clip_speed(clip) - 1.0) > 1e-9 || clip.reverse)) {
+    // video_speed_filters: la velocidad solo cuenta si se aleja de 1 más de 1e-3 (como clip_chain).
+    if (!core::is_still_clip(clip) && (std::abs(core::clip_speed(clip) - 1.0) > 1e-3 || clip.reverse)) {
         return fail(ErrorCode::Unsupported,
                     std::format("el render aún no hornea efectos de vídeo con otra velocidad o al revés (clip {})", clip.id));
     }
     VfxBakePlan plan;
-    plan.entries = core::active_vfx(clip);
+    auto entries = core::active_vfx(clip);
+    if (!entries) {
+        return std::unexpected(entries.error());
+    }
+    plan.entries = std::move(*entries);
+    // Solo los de motor «shader»: el resto (paper_cutout, de Canvas 2D) aún no, y mejor saberlo antes
+    // de empezar a codificar.
+    const auto cat = core::fx_catalog();
+    for (const Json& e : plan.entries) {
+        const Json* man = cat ? cat->effect(e["effect"]) : nullptr;
+        if (man == nullptr || man->value("engine", Json()) != Json("shader")) {
+            return fail(ErrorCode::Unsupported,
+                        std::format("el render aún no aplica el efecto de vídeo {} (clip {})", e["effect"].dump(), clip.id));
+        }
+    }
     plan.pad = core::vfx_pad_fraction(plan.entries) > 0 && core::vfx_pad_allowed(clip, iw, ih, W, H);
     plan.dur = std::max(0.05, core::clip_timeline_duration(clip));
     plan.frames = std::max<std::int64_t>(1, std::llround(plan.dur * fps));
@@ -326,7 +345,9 @@ std::int64_t vfx_baked_index(const VfxBakePlan& plan, std::int64_t tick, int fps
     // Las setpts del export: pts = trunc(m + inicio/TB), con el inicio a 3 decimales (clip_chain de
     // gc_media). El trim del clip horneado adelanta el final (ffmpeg_trim_window): quedan los
     // fotogramas con m/F antes de la salida.
-    const double start = std::strtod(std::format("{:.3f}", std::max(0.0, plan.baked.start)).c_str(), nullptr);
+    const std::string start_text = std::format("{:.3f}", std::max(0.0, plan.baked.start));
+    double start = 0.0;
+    (void)std::from_chars(start_text.data(), start_text.data() + start_text.size(), start);
     const double offset = start / (1.0 / static_cast<double>(fps));
     const double out = core::ffmpeg_trim_window(plan.baked, fps).second;
     std::int64_t n = 0;

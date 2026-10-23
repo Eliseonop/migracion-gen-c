@@ -27,11 +27,21 @@ TEST_CASE("paridad de fx_bake: efectos aplicables, margen y clip horneado", "[pa
         INFO("clip " << c["clip"]["id"]);
         auto clip = clip_from_json(c["clip"]);
         REQUIRE(clip);
-        const Json active = active_vfx(*clip);
+        auto got = active_vfx(*clip);
+        if (c.contains("error")) { // int() de Python
+            INFO("Python: " << c["error"]);
+            CHECK_FALSE(got);
+            CHECK_FALSE(has_vfx(*clip));
+            continue;
+        }
+        REQUIRE(got);
+        const Json& active = *got;
         auto diff = gc::test::json_diff(c["active"], active);
         INFO("active_vfx: " << diff.value_or(""));
         CHECK_FALSE(diff);
-        CHECK(has_vfx(*clip) == c["has"].get<bool>());
+        const auto has = has_vfx(*clip);
+        REQUIRE(has);
+        CHECK(*has == c["has"].get<bool>());
         CHECK(vfx_pad_fraction(active) == c["pad_frac"].get<double>());
         for (const Json& p : c["pad_allowed"]) {
             INFO("pad_allowed " << p.dump());

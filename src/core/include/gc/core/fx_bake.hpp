@@ -10,17 +10,19 @@
 #include <optional>
 #include <string_view>
 
+#include "gc/core/error.hpp"
 #include "gc/core/json.hpp"
 #include "gc/core/model.hpp"
 
 namespace gc::core {
 
 // active_vfx: las entradas aplicables (objetos activos de un efecto del catálogo que no es un
-// generador), normalizadas como Python: {uid, effect, v, enabled, params, from, to}.
-[[nodiscard]] Json active_vfx(const TimelineClip& clip);
+// generador), normalizadas como Python: {uid, effect, v, enabled, params, from, to}. Error si la
+// versión (`v`) no se pasa a entero, como el int() de Python.
+[[nodiscard]] Result<Json> active_vfx(const TimelineClip& clip);
 
 // has_vfx: un vídeo, una imagen o un motion con algún efecto aplicable.
-[[nodiscard]] bool has_vfx(const TimelineClip& clip);
+[[nodiscard]] Result<bool> has_vfx(const TimelineClip& clip);
 
 // pad_frac: el margen de la pila (la suma de los `pad` de sus efectos, como mucho 0,5).
 [[nodiscard]] double vfx_pad_fraction(const Json& entries);

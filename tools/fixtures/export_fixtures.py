@@ -2033,7 +2033,11 @@ def synthetic_fx_bake_fixtures() -> list[dict]:
     out = []
     for raw in vc.BAKE_CLIPS:
         clip = TimelineClip(**raw)
-        entries = fx_bake.active_vfx(clip)
+        try:
+            entries = fx_bake.active_vfx(clip)
+        except (TypeError, ValueError, OverflowError) as e:
+            out.append({"clip": raw, "error": type(e).__name__})
+            continue
         rf = fx_bake._remap_reframe(clip)
         out.append({
             "clip": raw,

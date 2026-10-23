@@ -314,7 +314,7 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         // Los clips con efectos de vídeo, horneados como fx_bake: en la timeline va el clip horneado.
         std::map<std::string, gc::render::VfxBakePlan> bakes;
         for (auto& cow : timeline->clips) {
-            if (!has_vfx(*cow)) {
+            if (const auto has = has_vfx(*cow); !has || !*has) {
                 continue;
             }
             const auto& src = source_of(*cow);
