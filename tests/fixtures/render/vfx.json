@@ -2110,5 +2110,204 @@
   "width": 128,
   "height": 96,
   "pad": 0
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {},
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_0.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {},
+  "t": 1.1,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_1.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {},
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": false,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_2.png",
+  "width": 320,
+  "height": 180,
+  "pad": 0
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {},
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "waves.png",
+  "frame": "vfx/paper_cutout_3.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "border": false
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_4.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "shadow": false,
+   "jitter": false
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_5.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "jitter": false,
+   "shadowBlur": 20,
+   "shadowX": -12,
+   "shadowY": 8,
+   "shadowColor": "#3355ff",
+   "shadowOpacity": 80
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_6.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "blend": "screen",
+   "wrinkles": 30
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_7.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "blend": "normal",
+   "wrinkleSpeed": 0
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_8.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "width": 60,
+   "roughness": 70,
+   "detail": 0.05,
+   "seed": 3
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_9.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "fold": "open"
+  },
+  "t": 0.1,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_10.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "fold": "both"
+  },
+  "t": 2.75,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_11.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "jitterSpeed": 2.5,
+   "jitterStrength": 3
+  },
+  "t": 0.62,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_12.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
  }
 ]

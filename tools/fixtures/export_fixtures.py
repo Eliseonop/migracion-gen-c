@@ -2056,6 +2056,7 @@ def synthetic_vfx_fixtures() -> list[dict]:
     fx_bake.FxBaker, el que hornea el export): `window.__fx.renderVfx` sobre la imagen de prueba
     de vfx_cases.py. Los PNG van a tests/fixtures/render/vfx/."""
     import base64
+    from PIL import Image
     sys.path.insert(0, str(HERE))
     import vfx_cases as vc
     from app import fx_bake, fx_catalog
@@ -2067,6 +2068,15 @@ def synthetic_vfx_fixtures() -> list[dict]:
     out_dir = RENDER_DIR / "vfx"
     out_dir.mkdir(parents=True, exist_ok=True)
     effects = [e for e in fx_catalog.effects() if e["engine"] == "shader"]
+    # Las texturas de los efectos (paper_cutout), recurso de la app como el catálogo: de la raíz
+    # pública del frontend de video-yt a resources/fx, con la misma ruta relativa.
+    for e in fx_catalog.effects():
+        for rel in e.get("assets") or []:
+            src_asset, dst_asset = fx_bake.PUBLIC_DIR / rel, REPO / "resources" / "fx" / rel
+            if not dst_asset.exists() or dst_asset.read_bytes() != src_asset.read_bytes():
+                dst_asset.parent.mkdir(parents=True, exist_ok=True)
+                dst_asset.write_bytes(src_asset.read_bytes())
+                print(f"{dst_asset.relative_to(REPO)}: actualizado desde video-yt")
     cases = []
     with fx_bake.FxBaker() as baker:
         baker._ensure()
@@ -2084,6 +2094,21 @@ def synthetic_vfx_fixtures() -> list[dict]:
                 cases.append({"effect": e["id"], "v": e["v"], "params": params, "t": t, "clip_dur": vc.CLIP_DUR,
                               "pad_allowed": pad, "input": "vfx_in.png", "frame": f"vfx/{name}",
                               "width": r["width"], "height": r["height"], "pad": r["pad"]})
+        # paper_cutout (Canvas 2D): con sus texturas cargadas, como hace el horneado (preloadFxAssets).
+        paper = next(e for e in fx_catalog.effects() if e["id"] == "paper_cutout")
+        page.evaluate("async (assets) => { window.__fx.setAssetBase(location.origin + '/assets/');"
+                      " await window.__fx.preload(assets); }", paper["assets"])
+        for n, (file, params, t, dur, pad) in enumerate(vc.PAPER):
+            img = files / file
+            w, h = Image.open(img).size
+            purl = "data:image/png;base64," + base64.b64encode(img.read_bytes()).decode()
+            entries = [{"effect": "paper_cutout", "v": paper["v"], "params": params, "from": 0, "to": None}]
+            r = page.evaluate(_VFX_JS, [purl, w, h, entries, t, dur, pad])
+            name = f"paper_cutout_{n}.png"
+            (out_dir / name).write_bytes(base64.b64decode(r["url"].split(",", 1)[1]))
+            cases.append({"effect": "paper_cutout", "v": paper["v"], "params": params, "t": t, "clip_dur": dur,
+                          "pad_allowed": pad, "input": file, "frame": f"vfx/{name}",
+                          "width": r["width"], "height": r["height"], "pad": r["pad"]})
     return cases
 
 

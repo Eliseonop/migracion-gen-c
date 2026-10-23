@@ -13,6 +13,7 @@
 // parámetros, del catálogo activo (gc::core::fx_catalog()).
 
 #include <array>
+#include <filesystem>
 #include <optional>
 #include <string_view>
 
@@ -76,7 +77,8 @@ struct VfxBakePlan {
 };
 
 // nullopt si el clip no se hornea (sin efectos aplicables o de un tipo sin ellos). `iw`×`ih`: el
-// material; `W`×`H` y `fps`: la salida. Unsupported si algún efecto no es de motor «shader».
+// material; `W`×`H` y `fps`: la salida. Unsupported si algún efecto no sabe dibujarse (todos los de
+// motor «shader» y, de «canvas», paper_cutout).
 [[nodiscard]] Result<std::optional<VfxBakePlan>> plan_vfx_bake(const core::TimelineClip& clip, int iw, int ih,
                                                                int W, int H, int fps);
 
@@ -91,6 +93,10 @@ struct VfxBakePlan {
 // material): recorte a par y los efectos en t = m/F.
 [[nodiscard]] Result<Image> vfx_baked_frame(const VfxBakePlan& plan, const Image& source_frame, std::int64_t m,
                                             int fps);
+
+// Dónde están las texturas de los efectos (paper-animator/assets/texture/*.webp): la raíz pública del
+// frontend de video-yt o resources/fx de GenClipPro. Sin fijarla, un efecto que las use falla.
+void set_vfx_assets_dir(std::filesystem::path dir);
 
 // Para el test del catálogo: el SkSL de un efecto, o error si no es de motor «shader».
 [[nodiscard]] Result<std::string> vfx_sksl(std::string_view effect_id);

@@ -101,3 +101,23 @@ BAKE_CLIPS = [
 # (iw, ih, W, H) para pad_allowed
 PAD_DIMS = [(1920, 1080, 1080, 1920), (1080, 1920, 1080, 1920), (640, 480, 1280, 720), (0, 480, 1280, 720),
             (640, 480, 0, 720)]
+
+
+# --- «Papel recortado» (paper_cutout, motor canvas) ------------------------------------------
+# (imagen de render/files, parámetros, t, duración del efecto, con margen)
+PAPER = [
+    ("alpha.png", {}, 0.3, 3.0, True),
+    ("alpha.png", {}, 1.1, 3.0, True),
+    ("alpha.png", {}, 0.3, 3.0, False),
+    ("waves.png", {}, 0.3, 3.0, True),
+    ("alpha.png", {"border": False}, 0.3, 3.0, True),
+    ("alpha.png", {"shadow": False, "jitter": False}, 0.3, 3.0, True),
+    ("alpha.png", {"jitter": False, "shadowBlur": 20, "shadowX": -12, "shadowY": 8, "shadowColor": "#3355ff",
+                   "shadowOpacity": 80}, 0.3, 3.0, True),
+    ("alpha.png", {"blend": "screen", "wrinkles": 30}, 0.3, 3.0, True),
+    ("alpha.png", {"blend": "normal", "wrinkleSpeed": 0}, 0.3, 3.0, True),
+    ("alpha.png", {"width": 60, "roughness": 70, "detail": 0.05, "seed": 3}, 0.3, 3.0, True),
+    ("alpha.png", {"fold": "open"}, 0.1, 3.0, True),
+    ("alpha.png", {"fold": "both"}, 2.75, 3.0, True),
+    ("alpha.png", {"jitterSpeed": 2.5, "jitterStrength": 3}, 0.62, 3.0, True),
+]

@@ -1470,8 +1470,15 @@ Decisión de Edu (§6):
 - **Velocidad y revés:** en vez de imitar qué fotogramas elige el `fps=F` tras la velocidad, `gc_media` ejecuta el mismo grafo que `prepare_input`: la cadena del clip sin su `fps` final y después `reverse`, `setpts=PTS/sp` y `fps=F` (`bake_input_frame_at`, `ClipFrames::open_bake_input`); el fotograma n es el n-ésimo que sale. 6 escenas nuevas (velocidad 2 y 0,5, al revés, inicio a 0,215 s, hasta el final del archivo y 25 fps): 55–57 dB; 3/3 mutaciones a mano.
 - **MinGW:** 147/147 y **MSVC:** 185/185, 0 warnings.
 
+**Décima tanda: «Papel recortado» (paper_cutout, F4)**
+
+- `gc_render/paper.cpp`: el único efecto de motor «canvas», paso a paso como `paper.js`. Chrome dibuja el Canvas 2D y el filtro SVG con Skia, así que las mismas primitivas dan casi lo mismo: `Dilate` (radio entero, como `FEMorphology`), `MakeFractalNoise` con la semilla de `TORN_SEEDS`, `DisplacementMap` R/G, el blanco con `SrcIn` y `Merge` con la imagen; las arrugas aclaradas con el redondeo al par de `Uint8ClampedArray` y su modo de fusión; la sombra en una capa sin la transformación (la de Canvas va en px del lienzo) con sigma = la mitad de `shadowBlur` (medido: 55,7 dB; con el difuminado entero, 46,4); el `rand` de Murmur3 de `fx/core/rand.js` con la aritmética de 32 bits de JS.
+- **Paridad:** 13 fotogramas de `renderVfx` en Chromium con las texturas cargadas (`preloadFxAssets`): 37,7–61 dB. 11/11 mutaciones a mano.
+- Las texturas (16 WebP, 392 KB) van en `resources/fx/paper-animator/assets/texture`; `genclip` las lee de `frontend/public` de video-yt, como `fx_bake.PUBLIC_DIR`.
+- **MinGW:** 147/147 y **MSVC:** 185/185, 0 warnings.
+
 **Siguiente:**
-- `paper_cutout` (Canvas 2D: borde rasgado, sombra, pliegue), con fotogramas de `renderVfx` en Chromium.
+- Con F4 casi entero, lo que queda sin Edu: la medida real del texto (FreeType/HarfBuzz en `set_text_width`), las transiciones y looks, y la caché de fotogramas de F3.
 - `heatmap.analyze` y la descarga del vídeo completo, con yt-dlp como sidecar (F7).
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
 - En el render quedan los efectos de vídeo con velocidad ≠ 1, al revés y `paper_cutout` (F4) y el matte automático (F6).

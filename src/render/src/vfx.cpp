@@ -25,6 +25,7 @@
 #include "include/core/SkSamplingOptions.h"
 #include "include/core/SkSurface.h"
 #include "include/effects/SkRuntimeEffect.h"
+#include "paper.hpp"
 
 namespace gc::render {
 
@@ -33,6 +34,21 @@ namespace {
 #include "vfx_shaders.inc"
 
 constexpr double kFxFps = 30.0; // cadencia de `frame` (el azar por fotograma), fija para todos
+
+std::mutex& assets_mutex() {
+    static std::mutex m;
+    return m;
+}
+std::filesystem::path& assets_dir() {
+    static std::filesystem::path dir;
+    return dir;
+}
+
+// Los efectos que el render sabe dibujar: los de motor «shader» y paper_cutout.
+bool drawable(const Json& manifest) {
+    const Json engine = manifest.value("engine", Json());
+    return engine == Json("shader") || (engine == Json("canvas") && manifest.value("id", Json()) == Json("paper_cutout"));
+}
 
 // --- El GLSL de los efectos y su traducción a SkSL ----------------------------------------------
 
@@ -295,6 +311,11 @@ Json clip_vfx(const Json& vfx) {
 
 Result<std::string> vfx_sksl(std::string_view effect_id) { return sksl_of(effect_id); }
 
+void set_vfx_assets_dir(std::filesystem::path dir) {
+    const std::scoped_lock lock(assets_mutex());
+    assets_dir() = std::move(dir);
+}
+
 Result<std::optional<VfxBakePlan>> plan_vfx_bake(const core::TimelineClip& clip, int iw, int ih, int W, int H,
                                                  int fps) {
     auto has = core::has_vfx(clip);
@@ -315,7 +336,7 @@ Result<std::optional<VfxBakePlan>> plan_vfx_bake(const core::TimelineClip& clip,
     const auto cat = core::fx_catalog();
     for (const Json& e : plan.entries) {
         const Json* man = cat ? cat->effect(e["effect"]) : nullptr;
-        if (man == nullptr || man->value("engine", Json()) != Json("shader")) {
+        if (man == nullptr || !drawable(*man)) {
             return fail(ErrorCode::Unsupported,
                         std::format("el render aún no aplica el efecto de vídeo {} (clip {})", e["effect"].dump(), clip.id));
         }
@@ -421,13 +442,44 @@ Result<VfxFrame> render_vfx(const Image& source, const Json& entries, double t, 
             if (manifest == nullptr) {
                 return fail(ErrorCode::NotFound, std::format("efecto desconocido: {}", id));
             }
-            auto fx = runtime_effect(id);
-            if (!fx) {
-                return std::unexpected(fx.error());
-            }
             auto params = core::FxCatalog::resolve_params(*manifest, entry["params"]);
             if (!params) {
                 return std::unexpected(params.error());
+            }
+            if (manifest->value("engine", Json()) == Json("canvas")) {
+                if (!drawable(*manifest)) {
+                    return fail(ErrorCode::Unsupported, std::format("el render aún no dibuja el efecto {}", id));
+                }
+                // effect.render de paper.js sobre el lienzo, con el contenido en su sitio.
+                const double to = entry["to"].is_null() ? clip_dur : std::min(clip_dur, entry["to"].get<double>());
+                const double from = std::min(entry["from"].get<double>(), clip_dur);
+                const double time = std::max(0.0, t - from);
+                const double dur = std::max(1e-3, to - from);
+                const double seed_raw = num(params->value("seed", Json(1)), 1.0);
+                std::filesystem::path assets;
+                {
+                    const std::scoped_lock lock(assets_mutex());
+                    assets = assets_dir();
+                }
+                const auto sw = static_cast<float>(stage.input->width());
+                const auto sh = static_cast<float>(stage.input->height());
+                const SkRect src = SkRect::MakeLTRB(static_cast<float>(stage.src_rect[0]) * sw,
+                                                    static_cast<float>(stage.src_rect[1]) * sh,
+                                                    static_cast<float>(stage.src_rect[2]) * sw,
+                                                    static_cast<float>(stage.src_rect[3]) * sh);
+                const SkRect content = SkRect::MakeXYWH(static_cast<float>(L.pad), static_cast<float>(L.pad),
+                                                        static_cast<float>(L.cw0), static_cast<float>(L.ch0));
+                if (auto ok = detail::paper_cutout(g, stage.input, src, content, time, dur, *params,
+                                                   seed_raw != 0.0 ? seed_raw : 1.0, assets);
+                    !ok) {
+                    return std::unexpected(ok.error());
+                }
+                stage = Stage{out->makeImageSnapshot(), L.content};
+                continue;
+            }
+            auto fx = runtime_effect(id);
+            if (!fx) {
+                return std::unexpected(fx.error());
             }
             const double to = entry["to"].is_null() ? clip_dur : std::min(clip_dur, entry["to"].get<double>());
             const double from = std::min(entry["from"].get<double>(), clip_dur);

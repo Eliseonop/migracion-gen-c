@@ -102,6 +102,7 @@ TEST_CASE("paridad de los efectos de vídeo con el runtime de video-yt en Chromi
     set_fx_catalog(std::make_shared<FxCatalog>(std::move(*catalog)));
     const auto fixture = read_json_file(kFixtures / "render" / "vfx.json");
     REQUIRE(fixture); // faltan: export_fixtures.py --solo vfx
+    gc::render::set_vfx_assets_dir(path_from_utf8(GC_RESOURCES_DIR) / "fx");
     const auto dump = std::getenv("GC_VFX_DUMP"); // carpeta para dejar los fotogramas de C++
     double worst = 99.0;
     for (const Json& c : *fixture) {
@@ -131,13 +132,22 @@ TEST_CASE("paridad de los efectos de vídeo con el runtime de video-yt en Chromi
             continue;
         }
         worst = std::min(worst, db);
+        if (c["effect"] == "paper_cutout") {
+            // Papel recortado (Canvas 2D y el filtro SVG, también con Skia en el navegador): 44–61 dB;
+            // la sombra de color, 55,7 (con el difuminado entero en vez de la mitad, 46,4); el borde
+            // rasgado ancho, 37,7 (el ruido fractal desplaza muchos píxeles del borde).
+            const Json& params = c["params"];
+            const double floor = params.contains("shadowBlur") ? 50.0 : params.contains("width") ? 35.0 : 40.0;
+            CHECK(db >= floor);
+            continue;
+        }
         CHECK(db >= 35.0); // el suelo de las fixtures de render del plan
     }
     INFO("peor: " << worst << " dB");
     CHECK(worst >= 35.0);
 }
 
-TEST_CASE("efectos de vídeo: el plan de horneado rechaza antes lo que el render aún no sabe", "[render][vfx]") {
+TEST_CASE("efectos de vídeo: el plan de horneado (velocidad, revés, paper_cutout y versión rara)", "[render][vfx]") {
     auto catalog = FxCatalog::load(path_from_utf8(GC_RESOURCES_DIR) / "fx" / "catalog.json");
     REQUIRE(catalog);
     set_fx_catalog(std::make_shared<FxCatalog>(std::move(*catalog)));
@@ -148,10 +158,10 @@ TEST_CASE("efectos de vídeo: el plan de horneado rechaza antes lo que el render
     clip.in_point = 0.0;
     clip.out_point = 2.0;
     clip.source_duration = 2.0;
-    clip.vfx = Json::array({Json{{"effect", "paper_cutout"}}}); // de Canvas 2D: antes de codificar nada
+    clip.vfx = Json::array({Json{{"effect", "paper_cutout"}}}); // de Canvas 2D: también se dibuja
     auto plan = gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30);
-    REQUIRE_FALSE(plan);
-    CHECK(plan.error().code == gc::ErrorCode::Unsupported);
+    REQUIRE(plan);
+    CHECK(plan->has_value());
     clip.vfx = Json::array({Json{{"effect", "crt"}}});
     clip.speed = 1.0005; // video_speed_filters: a menos de 1e-3 de 1 es velocidad 1
     plan = gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30);
