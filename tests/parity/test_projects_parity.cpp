@@ -259,6 +259,24 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
                 }
                 take(replace_media_with(store, text(1), text(2), olds, dims, apply));
             }
+        } else if (kind == "yt_sources") {
+            take(youtube_upgrade_sources(store, text(1), a[2].is_null() ? std::string() : text(2)));
+        } else if (kind == "best_full") {
+            const Json& dims_map = a[3];
+            const VideoDimsProbe dims = [&dims_map](const fs::path& p)
+                -> std::optional<std::pair<std::int64_t, std::int64_t>> {
+                const auto name = path_to_utf8(p.filename());
+                if (!dims_map.contains(name)) {
+                    return std::nullopt;
+                }
+                return std::pair{dims_map[name][0].get<std::int64_t>(), dims_map[name][1].get<std::int64_t>()};
+            };
+            auto r = best_full_youtube_version(store, text(1), text(2), dims);
+            if (!r) {
+                ok = std::unexpected(r.error());
+            } else if (*r) {
+                result = Json::array({to_json((*r)->clip), (*r)->quality ? Json(*(*r)->quality) : Json()});
+            }
         } else if (kind == "retarget") {
             ok = store.retarget_timeline_asset(text(1), text(2), a[3], a[4], a[5], a[6], a[7].get<bool>());
         } else {

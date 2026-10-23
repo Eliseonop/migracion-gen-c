@@ -71,6 +71,21 @@ std::map<std::string, std::int64_t> timeline_uses(const Project& project) {
     return uses;
 }
 
+// Los archivos de _timeline_uses en el orden de un dict de Python: el de su primer uso.
+std::vector<std::string> used_files_in_order(const Project& project) {
+    std::vector<std::string> out;
+    if (project.timeline) {
+        for (const auto& cow : project.timeline->clips) {
+            const TimelineClip& c = *cow;
+            if (c.asset_kind == "clips" && (c.asset_scope.empty() || c.asset_scope == "project") &&
+                std::ranges::find(out, c.filename) == out.end()) {
+                out.push_back(c.filename);
+            }
+        }
+    }
+    return out;
+}
+
 std::int64_t uses_of(const std::map<std::string, std::int64_t>& uses, const std::string& filename) {
     const auto it = uses.find(filename);
     return it == uses.end() ? 0 : it->second;
@@ -261,6 +276,67 @@ Result<Json> find_media_versions(const ProjectsStore& store, std::string_view pi
         return std::unexpected(project.error());
     }
     return versions_of(store, *project, ident, dims);
+}
+
+Result<Json> youtube_upgrade_sources(const ProjectsStore& store, std::string_view pid, std::string_view url) {
+    if (!url.empty()) {
+        const auto vid = is_youtube_url(url) ? youtube_id_from_url(url) : std::nullopt;
+        if (!vid || vid->empty()) {
+            return fail(ErrorCode::InvalidArgument, "URL de YouTube no válida.");
+        }
+        Json out = Json::object();
+        out[*vid] = detail::py_strip(url);
+        return out;
+    }
+    auto project = project_of(store, pid);
+    if (!project) {
+        return std::unexpected(project.error());
+    }
+    Json out = Json::object();
+    for (const std::string& fname : used_files_in_order(*project)) {
+        const ClipInfo* owner = file_owner(*project, fname);
+        if (owner == nullptr) {
+            continue;
+        }
+        const auto vid = material_youtube_id(*project, *owner);
+        if (vid && !vid->empty() && !out.contains(*vid)) {
+            const bool yt = owner->source_url && !owner->source_url->empty() && is_youtube_url(*owner->source_url);
+            out[*vid] = yt ? *owner->source_url : "https://www.youtube.com/watch?v=" + *vid;
+        }
+    }
+    return out;
+}
+
+Result<std::optional<FullVersion>> best_full_youtube_version(const ProjectsStore& store, std::string_view pid,
+                                                              std::string_view vid, const VideoDimsProbe& dims) {
+    auto loaded = store.get_project(pid);
+    if (!loaded) {
+        return std::unexpected(loaded.error());
+    }
+    if (!*loaded) {
+        return std::optional<FullVersion>{};
+    }
+    const Project& project = **loaded;
+    const ClipInfo* best = nullptr;
+    std::optional<std::int64_t> best_q;
+    for (const ClipInfo& c : project.clips) {
+        if (c.in_point || c.provider != "youtube" || material_file_offset(c) > 0.05) {
+            continue;
+        }
+        if (material_youtube_id(project, c) != vid) {
+            continue;
+        }
+        const Json q = short_side(dims_of(store, project, c, dims));
+        const std::int64_t qv = q.is_null() ? 0 : q.get<std::int64_t>();
+        if (best == nullptr || qv > best_q.value_or(0)) { // (q or 0) > (best[1] or 0)
+            best = &c;
+            best_q = q.is_null() ? std::nullopt : std::optional<std::int64_t>(qv);
+        }
+    }
+    if (best == nullptr) {
+        return std::optional<FullVersion>{};
+    }
+    return std::optional<FullVersion>{FullVersion{*best, best_q}};
 }
 
 Result<Json> replace_media_with(ProjectsStore& store, std::string_view pid, std::string_view ident,

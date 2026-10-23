@@ -7,6 +7,7 @@
 
 #include <vector>
 
+#include "gc/core/asset_import.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/youtube_url.hpp"
 #include "py_url.hpp"
@@ -57,5 +58,15 @@ TEST_CASE("paridad de las URLs: urllib.parse y los enlaces de YouTube", "[parity
             got.push_back({k, v});
         }
         CHECK(got == c[1]);
+    }
+    for (const Json& c : fixture->at("download")) { // asset_import.allowed_download_url
+        INFO("allowed_download_url(" << c[0].dump() << ")");
+        const auto r = allowed_download_url(c[0].get<std::string>());
+        if (c[1].is_null()) {
+            CHECK_FALSE(r);
+        } else {
+            REQUIRE(r);
+            CHECK(*r == c[1].get<bool>());
+        }
     }
 }

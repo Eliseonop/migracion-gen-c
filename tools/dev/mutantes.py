@@ -691,6 +691,9 @@ URL = [
     ("youtube: sin quitar www.", YU, "if (host.starts_with(\"www.\")) {", "if (false) {"),
     ("youtube: sin subdominios", YU, "|| ends_with(host, \".youtube.com\");", ";"),
     ("youtube: sin https delante", YU, "raw = \"https://\" + raw;", "raw = raw;"),
+    ("descarga: sin lstrip", "src/core/src/asset_import.cpp", "substr(std::min(host.find_first_not_of(\"w.\"), host.size()))", "substr(0)"),
+    ("descarga: solo https", "src/core/src/asset_import.cpp", "(parsed->scheme != \"http\" && parsed->scheme != \"https\")", "parsed->scheme != \"https\""),
+    ("descarga: subdominio sin punto", "src/core/src/asset_import.cpp", " && h[h.size() - d.size() - 1] == '.'", ""),
     ("id: sin live/", YU, "|| segs[0] == \"live\" ", ""),
 ]
 
@@ -711,6 +714,11 @@ MEDIA_UPGRADE = [
     ("dueño: el propio segmento", MU, "                owner = f != nullptr ? f : c;", "                owner = c;"),
     ("sin quitar repetidos", MU, "if (std::ranges::none_of(olds, [&](const ClipInfo* o) { return to_json(*o) == key; })) {", "if (true) {"),
     ("op aunque nadie lo use", MU, "return uses_of(uses, o->filename) != 0; })) {", "return true; })) {"),
+    ("fuente sin quitar espacios", MU, "out[*vid] = detail::py_strip(url);", "out[*vid] = std::string(url);"),
+    ("fuente sin el enlace watch", MU, ": \"https://www.youtube.com/watch?v=\" + *vid;", ": *vid;"),
+    ("mejor: con los parciales", MU, "|| material_file_offset(c) > 0.05) {", ") {"),
+    ("mejor: sin mirar el provider", MU, "|| c.provider != \"youtube\" ", ""),
+    ("mejor: el último de los iguales", MU, "qv > best_q.value_or(0)", "qv >= best_q.value_or(0)"),
     ("offset de las versiones redondeado", MU, "{\"offset\", material_file_offset(*o)}", "{\"offset\", py_round(material_file_offset(*o), 0)}"),
 ]
 

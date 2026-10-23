@@ -20617,6 +20617,496 @@
   },
   {
    "step": [
+    "yt_sources",
+    "u1",
+    null
+   ],
+   "result": {
+    "VID1": "https://www.youtube.com/watch?v=VID1"
+   }
+  },
+  {
+   "step": [
+    "yt_sources",
+    "u1",
+    ""
+   ],
+   "result": {
+    "VID1": "https://www.youtube.com/watch?v=VID1"
+   }
+  },
+  {
+   "step": [
+    "yt_sources",
+    "u1",
+    " https://youtu.be/ABC "
+   ],
+   "result": {
+    "ABC": "https://youtu.be/ABC"
+   }
+  },
+  {
+   "step": [
+    "yt_sources",
+    "u1",
+    "https://vimeo.com/1"
+   ],
+   "error": "ValueError",
+   "message": "URL de YouTube no válida."
+  },
+  {
+   "step": [
+    "yt_sources",
+    "u1",
+    "  "
+   ],
+   "error": "ValueError",
+   "message": "URL de YouTube no válida."
+  },
+  {
+   "step": [
+    "yt_sources",
+    "nada",
+    null
+   ],
+   "error": "LookupError",
+   "message": "Proyecto no encontrado."
+  },
+  {
+   "step": [
+    "yt_sources",
+    "nada",
+    "youtube.com/watch?v=Z"
+   ],
+   "result": {
+    "Z": "youtube.com/watch?v=Z"
+   }
+  },
+  {
+   "step": [
+    "best_full",
+    "u1",
+    "VID1",
+    {
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "lq480.mp4": [
+      854,
+      480
+     ],
+     "tramo.mp4": [
+      1280,
+      720
+     ],
+     "crop.mp4": [
+      854,
+      480
+     ],
+     "vert.mp4": [
+      1080,
+      1920
+     ],
+     "long.mp4": [
+      640,
+      360
+     ],
+     "otro.mp4": [
+      640,
+      360
+     ],
+     "local.mp4": [
+      1280,
+      720
+     ],
+     "hq2.mp4": [
+      3840,
+      2160
+     ],
+     "kfzoom.mp4": [
+      854,
+      480
+     ],
+     "master.mp4": [
+      854,
+      480
+     ],
+     "partial.mp4": [
+      854,
+      480
+     ],
+     "near.mp4": [
+      1900,
+      1100
+     ],
+     "edge.mp4": [
+      854,
+      480
+     ],
+     "near0.mp4": [
+      854,
+      480
+     ]
+    }
+   ],
+   "result": [
+    {
+     "index": 10,
+     "filename": "hq2.mp4",
+     "url": "/clips/p1/clip_10.mp4",
+     "start": 0.0,
+     "end": 600.0,
+     "id": "10",
+     "source_url": null,
+     "created_at": null,
+     "label": null,
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": "youtube",
+     "external_id": "VID1",
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    2160
+   ]
+  },
+  {
+   "step": [
+    "best_full",
+    "u1",
+    "VID1",
+    {}
+   ],
+   "result": [
+    {
+     "index": 0,
+     "filename": "hq.mp4",
+     "url": "/api/media/u1/video/hq.mp4",
+     "start": 0.0,
+     "end": 600.0,
+     "id": "hq",
+     "source_url": null,
+     "created_at": "2026-02-02T00:00:00+00:00",
+     "label": "HQ",
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": "youtube",
+     "external_id": "VID1",
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    null
+   ]
+  },
+  {
+   "step": [
+    "best_full",
+    "u1",
+    "VID2",
+    {
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "lq480.mp4": [
+      854,
+      480
+     ],
+     "tramo.mp4": [
+      1280,
+      720
+     ],
+     "crop.mp4": [
+      854,
+      480
+     ],
+     "vert.mp4": [
+      1080,
+      1920
+     ],
+     "long.mp4": [
+      640,
+      360
+     ],
+     "otro.mp4": [
+      640,
+      360
+     ],
+     "local.mp4": [
+      1280,
+      720
+     ],
+     "hq2.mp4": [
+      3840,
+      2160
+     ],
+     "kfzoom.mp4": [
+      854,
+      480
+     ],
+     "master.mp4": [
+      854,
+      480
+     ],
+     "partial.mp4": [
+      854,
+      480
+     ],
+     "near.mp4": [
+      1900,
+      1100
+     ],
+     "edge.mp4": [
+      854,
+      480
+     ],
+     "near0.mp4": [
+      854,
+      480
+     ]
+    }
+   ],
+   "result": [
+    {
+     "index": 8,
+     "filename": "otro.mp4",
+     "url": "/clips/p1/clip_8.mp4",
+     "start": 0.0,
+     "end": 60.0,
+     "id": "8",
+     "source_url": null,
+     "created_at": null,
+     "label": null,
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": "youtube",
+     "external_id": "VID2",
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    360
+   ]
+  },
+  {
+   "step": [
+    "best_full",
+    "u1",
+    "NADA",
+    {
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "lq480.mp4": [
+      854,
+      480
+     ],
+     "tramo.mp4": [
+      1280,
+      720
+     ],
+     "crop.mp4": [
+      854,
+      480
+     ],
+     "vert.mp4": [
+      1080,
+      1920
+     ],
+     "long.mp4": [
+      640,
+      360
+     ],
+     "otro.mp4": [
+      640,
+      360
+     ],
+     "local.mp4": [
+      1280,
+      720
+     ],
+     "hq2.mp4": [
+      3840,
+      2160
+     ],
+     "kfzoom.mp4": [
+      854,
+      480
+     ],
+     "master.mp4": [
+      854,
+      480
+     ],
+     "partial.mp4": [
+      854,
+      480
+     ],
+     "near.mp4": [
+      1900,
+      1100
+     ],
+     "edge.mp4": [
+      854,
+      480
+     ],
+     "near0.mp4": [
+      854,
+      480
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "best_full",
+    "nada",
+    "VID1",
+    {
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "lq480.mp4": [
+      854,
+      480
+     ],
+     "tramo.mp4": [
+      1280,
+      720
+     ],
+     "crop.mp4": [
+      854,
+      480
+     ],
+     "vert.mp4": [
+      1080,
+      1920
+     ],
+     "long.mp4": [
+      640,
+      360
+     ],
+     "otro.mp4": [
+      640,
+      360
+     ],
+     "local.mp4": [
+      1280,
+      720
+     ],
+     "hq2.mp4": [
+      3840,
+      2160
+     ],
+     "kfzoom.mp4": [
+      854,
+      480
+     ],
+     "master.mp4": [
+      854,
+      480
+     ],
+     "partial.mp4": [
+      854,
+      480
+     ],
+     "near.mp4": [
+      1900,
+      1100
+     ],
+     "edge.mp4": [
+      854,
+      480
+     ],
+     "near0.mp4": [
+      854,
+      480
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "best_full",
+    "u1",
+    "VID1",
+    {
+     "partial.mp4": [
+      7680,
+      4320
+     ],
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "lq480.mp4": [
+      3000,
+      2000
+     ]
+    }
+   ],
+   "result": [
+    {
+     "index": 0,
+     "filename": "hq.mp4",
+     "url": "/api/media/u1/video/hq.mp4",
+     "start": 0.0,
+     "end": 600.0,
+     "id": "hq",
+     "source_url": null,
+     "created_at": "2026-02-02T00:00:00+00:00",
+     "label": "HQ",
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": "youtube",
+     "external_id": "VID1",
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    1080
+   ]
+  },
+  {
+   "step": [
     "versions",
     "u1",
     "hq",
@@ -25955,6 +26445,496 @@
     "scene_directions": {},
     "visual_blueprint": {}
    }
+  },
+  {
+   "step": [
+    "yt_sources",
+    "u1",
+    null
+   ],
+   "result": {
+    "VID1": "https://www.youtube.com/watch?v=VID1"
+   }
+  },
+  {
+   "step": [
+    "yt_sources",
+    "u1",
+    ""
+   ],
+   "result": {
+    "VID1": "https://www.youtube.com/watch?v=VID1"
+   }
+  },
+  {
+   "step": [
+    "yt_sources",
+    "u1",
+    " https://youtu.be/ABC "
+   ],
+   "result": {
+    "ABC": "https://youtu.be/ABC"
+   }
+  },
+  {
+   "step": [
+    "yt_sources",
+    "u1",
+    "https://vimeo.com/1"
+   ],
+   "error": "ValueError",
+   "message": "URL de YouTube no válida."
+  },
+  {
+   "step": [
+    "yt_sources",
+    "u1",
+    "  "
+   ],
+   "error": "ValueError",
+   "message": "URL de YouTube no válida."
+  },
+  {
+   "step": [
+    "yt_sources",
+    "nada",
+    null
+   ],
+   "error": "LookupError",
+   "message": "Proyecto no encontrado."
+  },
+  {
+   "step": [
+    "yt_sources",
+    "nada",
+    "youtube.com/watch?v=Z"
+   ],
+   "result": {
+    "Z": "youtube.com/watch?v=Z"
+   }
+  },
+  {
+   "step": [
+    "best_full",
+    "u1",
+    "VID1",
+    {
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "lq480.mp4": [
+      854,
+      480
+     ],
+     "tramo.mp4": [
+      1280,
+      720
+     ],
+     "crop.mp4": [
+      854,
+      480
+     ],
+     "vert.mp4": [
+      1080,
+      1920
+     ],
+     "long.mp4": [
+      640,
+      360
+     ],
+     "otro.mp4": [
+      640,
+      360
+     ],
+     "local.mp4": [
+      1280,
+      720
+     ],
+     "hq2.mp4": [
+      3840,
+      2160
+     ],
+     "kfzoom.mp4": [
+      854,
+      480
+     ],
+     "master.mp4": [
+      854,
+      480
+     ],
+     "partial.mp4": [
+      854,
+      480
+     ],
+     "near.mp4": [
+      1900,
+      1100
+     ],
+     "edge.mp4": [
+      854,
+      480
+     ],
+     "near0.mp4": [
+      854,
+      480
+     ]
+    }
+   ],
+   "result": [
+    {
+     "index": 10,
+     "filename": "hq2.mp4",
+     "url": "/clips/p1/clip_10.mp4",
+     "start": 0.0,
+     "end": 600.0,
+     "id": "10",
+     "source_url": null,
+     "created_at": null,
+     "label": null,
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": "youtube",
+     "external_id": "VID1",
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    2160
+   ]
+  },
+  {
+   "step": [
+    "best_full",
+    "u1",
+    "VID1",
+    {}
+   ],
+   "result": [
+    {
+     "index": 0,
+     "filename": "hq.mp4",
+     "url": "/api/media/u1/video/hq.mp4",
+     "start": 0.0,
+     "end": 600.0,
+     "id": "hq",
+     "source_url": null,
+     "created_at": "2026-02-02T00:00:00+00:00",
+     "label": "HQ",
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": "youtube",
+     "external_id": "VID1",
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    null
+   ]
+  },
+  {
+   "step": [
+    "best_full",
+    "u1",
+    "VID2",
+    {
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "lq480.mp4": [
+      854,
+      480
+     ],
+     "tramo.mp4": [
+      1280,
+      720
+     ],
+     "crop.mp4": [
+      854,
+      480
+     ],
+     "vert.mp4": [
+      1080,
+      1920
+     ],
+     "long.mp4": [
+      640,
+      360
+     ],
+     "otro.mp4": [
+      640,
+      360
+     ],
+     "local.mp4": [
+      1280,
+      720
+     ],
+     "hq2.mp4": [
+      3840,
+      2160
+     ],
+     "kfzoom.mp4": [
+      854,
+      480
+     ],
+     "master.mp4": [
+      854,
+      480
+     ],
+     "partial.mp4": [
+      854,
+      480
+     ],
+     "near.mp4": [
+      1900,
+      1100
+     ],
+     "edge.mp4": [
+      854,
+      480
+     ],
+     "near0.mp4": [
+      854,
+      480
+     ]
+    }
+   ],
+   "result": [
+    {
+     "index": 8,
+     "filename": "otro.mp4",
+     "url": "/clips/p1/clip_8.mp4",
+     "start": 0.0,
+     "end": 60.0,
+     "id": "8",
+     "source_url": null,
+     "created_at": null,
+     "label": null,
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": "youtube",
+     "external_id": "VID2",
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    360
+   ]
+  },
+  {
+   "step": [
+    "best_full",
+    "u1",
+    "NADA",
+    {
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "lq480.mp4": [
+      854,
+      480
+     ],
+     "tramo.mp4": [
+      1280,
+      720
+     ],
+     "crop.mp4": [
+      854,
+      480
+     ],
+     "vert.mp4": [
+      1080,
+      1920
+     ],
+     "long.mp4": [
+      640,
+      360
+     ],
+     "otro.mp4": [
+      640,
+      360
+     ],
+     "local.mp4": [
+      1280,
+      720
+     ],
+     "hq2.mp4": [
+      3840,
+      2160
+     ],
+     "kfzoom.mp4": [
+      854,
+      480
+     ],
+     "master.mp4": [
+      854,
+      480
+     ],
+     "partial.mp4": [
+      854,
+      480
+     ],
+     "near.mp4": [
+      1900,
+      1100
+     ],
+     "edge.mp4": [
+      854,
+      480
+     ],
+     "near0.mp4": [
+      854,
+      480
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "best_full",
+    "nada",
+    "VID1",
+    {
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "lq480.mp4": [
+      854,
+      480
+     ],
+     "tramo.mp4": [
+      1280,
+      720
+     ],
+     "crop.mp4": [
+      854,
+      480
+     ],
+     "vert.mp4": [
+      1080,
+      1920
+     ],
+     "long.mp4": [
+      640,
+      360
+     ],
+     "otro.mp4": [
+      640,
+      360
+     ],
+     "local.mp4": [
+      1280,
+      720
+     ],
+     "hq2.mp4": [
+      3840,
+      2160
+     ],
+     "kfzoom.mp4": [
+      854,
+      480
+     ],
+     "master.mp4": [
+      854,
+      480
+     ],
+     "partial.mp4": [
+      854,
+      480
+     ],
+     "near.mp4": [
+      1900,
+      1100
+     ],
+     "edge.mp4": [
+      854,
+      480
+     ],
+     "near0.mp4": [
+      854,
+      480
+     ]
+    }
+   ],
+   "result": null
+  },
+  {
+   "step": [
+    "best_full",
+    "u1",
+    "VID1",
+    {
+     "partial.mp4": [
+      7680,
+      4320
+     ],
+     "hq.mp4": [
+      1920,
+      1080
+     ],
+     "lq480.mp4": [
+      3000,
+      2000
+     ]
+    }
+   ],
+   "result": [
+    {
+     "index": 0,
+     "filename": "hq.mp4",
+     "url": "/api/media/u1/video/hq.mp4",
+     "start": 0.0,
+     "end": 600.0,
+     "id": "hq",
+     "source_url": null,
+     "created_at": "2026-02-02T00:00:00+00:00",
+     "label": "HQ",
+     "description": null,
+     "description_ai": null,
+     "semantic": null,
+     "reframe": null,
+     "transcript": null,
+     "origin": null,
+     "source": null,
+     "provider": "youtube",
+     "external_id": "VID1",
+     "author": null,
+     "license_info": null,
+     "in_point": null,
+     "out_point": null,
+     "parent_id": null,
+     "face_track": null
+    },
+    1080
+   ]
   }
  ]
 }

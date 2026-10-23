@@ -435,6 +435,13 @@ STEPS_UPG = [
     ("file", {"projects": [project("u1", name="Mejorar", clips=_UPG_CLIPS, timeline=_UPG_TL),
                            project("u2", name="Sin timeline", clips=[_UPG_CLIPS[0], _UPG_CLIPS[1]])]}),
     ("disk", _UPG_FILES),
+    ("yt_sources", "u1", None), ("yt_sources", "u1", ""), ("yt_sources", "u1", " https://youtu.be/ABC "),
+    ("yt_sources", "u1", "https://vimeo.com/1"), ("yt_sources", "u1", "  "), ("yt_sources", "nada", None),
+    ("yt_sources", "nada", "youtube.com/watch?v=Z"),
+    ("best_full", "u1", "VID1", _UPG_DIMS), ("best_full", "u1", "VID1", {}), ("best_full", "u1", "VID2", _UPG_DIMS),
+    ("best_full", "u1", "NADA", _UPG_DIMS), ("best_full", "nada", "VID1", _UPG_DIMS),
+    # La parcial (offset 100) y la que no es de provider youtube no cuentan aunque sean mayores.
+    ("best_full", "u1", "VID1", {"partial.mp4": [7680, 4320], "hq.mp4": [1920, 1080], "lq480.mp4": [3000, 2000]}),
     ("versions", "u1", "hq", _UPG_DIMS),
     ("versions", "u1", "0", _UPG_DIMS),
     ("versions", "u1", "hq", {}),                         # sin medidas: nada es «lower»
@@ -460,5 +467,12 @@ STEPS_UPG = [
     ("upgrade", "u1", "partial", ["near0"], _UPG_DIMS),   # sin usos: solo la lista, con su offset
     ("upgrade", "u1", "10", ["local", 9, "hq"], _UPG_DIMS),  # a mano: un archivo local y el viejo HQ
     ("get", "u1"),
+    ("yt_sources", "u1", None), ("yt_sources", "u1", ""), ("yt_sources", "u1", " https://youtu.be/ABC "),
+    ("yt_sources", "u1", "https://vimeo.com/1"), ("yt_sources", "u1", "  "), ("yt_sources", "nada", None),
+    ("yt_sources", "nada", "youtube.com/watch?v=Z"),
+    ("best_full", "u1", "VID1", _UPG_DIMS), ("best_full", "u1", "VID1", {}), ("best_full", "u1", "VID2", _UPG_DIMS),
+    ("best_full", "u1", "NADA", _UPG_DIMS), ("best_full", "nada", "VID1", _UPG_DIMS),
+    # La parcial (offset 100) y la que no es de provider youtube no cuentan aunque sean mayores.
+    ("best_full", "u1", "VID1", {"partial.mp4": [7680, 4320], "hq.mp4": [1920, 1080], "lq480.mp4": [3000, 2000]}),
 ]
 STEPS += STEPS_UPG

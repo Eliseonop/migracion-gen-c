@@ -1044,7 +1044,14 @@ def synthetic_url_fixtures(ctx: Ctx) -> dict:
     import unicodedata
     import urllib.parse as up
     import url_cases as uc
+    from app import asset_import as ai
     from app import youtube_audio as ya
+
+    def download(u):
+        try:
+            return ai.allowed_download_url(u)
+        except ValueError:
+            return None
 
     def parsed(u):
         try:
@@ -1061,6 +1068,7 @@ def synthetic_url_fixtures(ctx: Ctx) -> dict:
         "youtube": [[u, ya.is_youtube_url(u), ya.youtube_id_from_url(u)] for u in uc.URLS],
         "unquote": [[s, up.unquote(s), up.unquote_plus(s)] for s in uc.UNQUOTE],
         "qsl": [[q, [list(p) for p in up.parse_qsl(q)]] for q in uc.QUERIES],
+        "download": [[u, download(u)] for u in uc.URLS + uc.DOWNLOADS],
     }
 
 
@@ -1121,7 +1129,7 @@ _PROJECTS_MESSAGES = {"El nombre no puede estar vacío.", "La carpeta no existe.
                       "El rango es demasiado corto para analizar caras.",
                       # media_upgrade.py
                       "Material de vídeo no encontrado (usa el vídeo completo, no un segmento).",
-                      "No se puede reemplazar un material por sí mismo."}
+                      "No se puede reemplazar un material por sí mismo.", "URL de YouTube no válida."}
 # Los pasos que pueden escribir projects.json: tras ellos se guarda su texto.
 _PROJECTS_WRITES = {"create", "create_group", "rename_group", "delete_group", "move", "rename", "duplicate",
                     "set_folder", "delete", "add_clips", "add_transcript", "add_audio", "add_image", "update",
@@ -1200,6 +1208,10 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
         with_dims(dims)
         return media_upgrade.replace_with(pid, ident, olds)
 
+    def best_full(pid, vid, dims):
+        with_dims(dims)
+        return media_upgrade.best_full_version(pid, vid)
+
     def tmp_of(value):
         return json.loads(json.dumps(value, ensure_ascii=False).replace(posix, "{TMP}"))
 
@@ -1221,6 +1233,7 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
         "add_audio": lambda pid, a: projects.add_audio(pid, schemas.AudioInfo(**a)),
         "add_image": lambda pid, i: projects.add_image(pid, schemas.ImageInfo(**i)),
         "segments": create_segments, "face_track": face_track, "versions": versions, "upgrade": upgrade,
+        "yt_sources": media_upgrade.youtube_sources, "best_full": best_full,
     }
     out = []
     try:

@@ -43,6 +43,16 @@ UNQUOTE = [
     "\u00f1%41\u00f1%C3%B1", "%C3\u00f1%B1", "+%2B+", "%2b%2B", "%00x", "%7f%80%bf",
 ]
 
+DOWNLOADS = [
+    "https://www.pexels.com/video/1.mp4", "https://videos.pexels.com/x.mp4", "http://pexels.com/a", "https://PEXELS.COM/a",
+    "https://media.giphy.com/m.gif", "https://player.vimeo.com/v", "https://vod-progressive.vimeocdn.com/x",
+    "https://cdn.pixabay.com/x", "https://images.unsplash.com/x", "https://unsplash.com.evil.com/x",
+    "https://evilpexels.com/x", "https://wpexels.com/x", "https://w.w.pexels.com/x", "https://web.pexels.com/x",
+    "https://wwwgiphy.com/x", "https://www.www.giphy.com/x", "ftp://pexels.com/x", "pexels.com/x", "//pexels.com/x",
+    "https:///x", "https://user@giphy.com:8443/x", "https://[::1]/x", "https://[::1/x", "  https://giphy.com/x  ",
+    "https://pexels.com./x", "https://.pexels.com/x", "HTTPS://pixabay.com/x", "https://xn--pexels.com/x",
+]
+
 QUERIES = [
     "", "&", "a", "a=", "a=1", "a=1&b=2&a=3", "=x", "a=b=c", "a+b=c+d", "a%3Db=c", "a=1;b=2", "&&a=1&&",
     "v=%E2%82", "%76=x&v=y",

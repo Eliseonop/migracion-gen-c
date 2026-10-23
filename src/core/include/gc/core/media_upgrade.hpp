@@ -56,4 +56,20 @@ using TimelineOpApplier = std::function<Result<Json>(std::string_view pid, std::
                                               const std::vector<std::string>& old_idents, const VideoDimsProbe& dims,
                                               const TimelineOpApplier& apply_op);
 
+// youtube_sources: {id de YouTube: url} que mejorar: el de `url` (error si no es de YouTube) o,
+// sin url, los de los vídeos que usa la timeline (su source_url de YouTube o el enlace watch?v=).
+[[nodiscard]] Result<Json> youtube_upgrade_sources(const ProjectsStore& store, std::string_view pid,
+                                                   std::string_view url);
+
+// best_full_version: el vídeo COMPLETO de YouTube `vid` de más resolución del proyecto
+// («Agregar vídeo completo»: sin segmento y con offset 0) y su calidad; nullopt si no hay.
+struct FullVersion {
+    ClipInfo clip;
+    std::optional<std::int64_t> quality; // el lado corto, o nullopt sin medidas
+};
+[[nodiscard]] Result<std::optional<FullVersion>> best_full_youtube_version(const ProjectsStore& store,
+                                                                            std::string_view pid,
+                                                                            std::string_view vid,
+                                                                            const VideoDimsProbe& dims);
+
 } // namespace gc::core

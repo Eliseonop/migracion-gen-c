@@ -1425,6 +1425,7 @@ Decisión de Edu (§6):
 - **MinGW:** 145/145, 0 warnings en Debug y Release y 0 avisos de clang-tidy en lo nuevo; **MSVC:** 180/180.
 
 - **`media_upgrade.hpp`** (espejo de `media_upgrade.py`): buscar las otras versiones del mismo vídeo de YouTube y cambiarlas en la timeline por la de más calidad (`replace_media` por un `TimelineOpApplier` inyectado: en el estudio, la `EditSession`; en el test, `apply_command` y `save_timeline`), con los segmentos por referencia al archivo nuevo. 26 pasos en la fixture del almacén; 16/16 mutaciones (dos más eran equivalentes: el id de un segmento no se usa en lo portado y el redondeo del delta lo absorbe el de `replace_media`).
+- **También** `youtube_sources` y `best_full_version` de `media_upgrade.py` (26 pasos más; 21/21 mutaciones en total) y `asset_import.allowed_download_url` (`asset_import.hpp`, sobre `py_url`; 3/3 mutaciones).
 - **Trampa:** `owner not in olds` de Python compara con la igualdad de Pydantic (mismos campos), no por identidad: el C++ compara el `to_json` de cada material.
 - **MinGW:** 145/145 y **MSVC:** 180/180, 0 warnings y 0 avisos de clang-tidy.
 
