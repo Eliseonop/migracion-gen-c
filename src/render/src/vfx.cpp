@@ -343,7 +343,8 @@ Result<std::optional<VfxBakePlan>> plan_vfx_bake(const core::TimelineClip& clip,
     }
     plan.pad = core::vfx_pad_fraction(plan.entries) > 0 && core::vfx_pad_allowed(clip, iw, ih, W, H);
     plan.dur = std::max(0.05, core::clip_timeline_duration(clip));
-    plan.frames = std::max<std::int64_t>(1, std::llround(plan.dur * fps));
+    // int(round(dur * fps)) de Python: al par en los medios exactos (0,35 s a 30 fps → 10).
+    plan.frames = std::max<std::int64_t>(1, static_cast<std::int64_t>(std::nearbyint(plan.dur * fps)));
     plan.baked = core::baked_clip(clip, clip.filename);
     plan.source = clip;
     return std::optional<VfxBakePlan>(std::move(plan));

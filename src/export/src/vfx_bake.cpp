@@ -12,8 +12,14 @@ namespace gc::exporter {
 namespace fs = std::filesystem;
 
 void ensure_fx_catalog(const LoadedProject& project) {
-    // Las texturas de los efectos: las que sirve el horneado (fx_bake.PUBLIC_DIR = frontend/public).
-    render::set_vfx_assets_dir(project.root.parent_path() / "frontend" / "public");
+    // Las texturas de los efectos: las que sirve el horneado (fx_bake.PUBLIC_DIR = frontend/public) o,
+    // si esa carpeta no está, las de la app (resources/fx, junto al ejecutable o en el árbol de fuentes).
+    std::error_code ec;
+    if (const fs::path pub = project.root.parent_path() / "frontend" / "public"; fs::is_directory(pub, ec)) {
+        render::set_vfx_assets_dir(pub);
+    } else {
+        render::set_vfx_assets_dir(fs::path(GC_RESOURCES_DIR) / "fx");
+    }
     // fx_catalog() nunca es nulo: hasta que se fija, es un catálogo vacío.
     if (const auto cat = core::fx_catalog(); cat && cat->data().contains("effects")) {
         return;

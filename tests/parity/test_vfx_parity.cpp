@@ -105,6 +105,7 @@ TEST_CASE("paridad de los efectos de vídeo con el runtime de video-yt en Chromi
     gc::render::set_vfx_assets_dir(path_from_utf8(GC_RESOURCES_DIR) / "fx");
     const auto dump = std::getenv("GC_VFX_DUMP"); // carpeta para dejar los fotogramas de C++
     double worst = 99.0;
+    std::size_t papers = 0;
     for (const Json& c : *fixture) {
         const std::string what = std::format("{} {} t={}{}", c["effect"].get<std::string>(), c["params"].dump(),
                                              c["t"].get<double>(), c["pad_allowed"].get<bool>() ? " con margen" : "");
@@ -134,15 +135,16 @@ TEST_CASE("paridad de los efectos de vídeo con el runtime de video-yt en Chromi
         worst = std::min(worst, db);
         if (c["effect"] == "paper_cutout") {
             // Papel recortado (Canvas 2D y el filtro SVG, también con Skia en el navegador): 44–61 dB;
-            // la sombra de color, 55,7 (con el difuminado entero en vez de la mitad, 46,4); el borde
-            // rasgado ancho, 37,7 (el ruido fractal desplaza muchos píxeles del borde).
+            // la sombra de color, 55,7 (con el difuminado entero en vez de la mitad, 46,4).
+            ++papers;
             const Json& params = c["params"];
-            const double floor = params.contains("shadowBlur") ? 50.0 : params.contains("width") ? 35.0 : 40.0;
+            const double floor = params.contains("shadowBlur") ? 50.0 : 40.0;
             CHECK(db >= floor);
             continue;
         }
         CHECK(db >= 35.0); // el suelo de las fixtures de render del plan
     }
+    CHECK(papers >= 20); // los casos de vfx_cases.PAPER
     INFO("peor: " << worst << " dB");
     CHECK(worst >= 35.0);
 }
@@ -173,6 +175,13 @@ TEST_CASE("efectos de vídeo: el plan de horneado (velocidad, revés, paper_cuto
     REQUIRE(plan);
     CHECK(plan->has_value());
     clip.reverse = false;
+    clip.speed = 1.0;
+    clip.out_point = 0.35; // int(round(0,35 · 30)) = 10: al par
+    clip.source_duration = 0.35;
+    plan = gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30);
+    REQUIRE(plan);
+    REQUIRE(plan->has_value());
+    CHECK((*plan)->frames == 10);
     clip.vfx = Json::array({Json{{"effect", "crt"}, {"v", "abc"}}}); // int("abc") de Python
     clip.speed = 1.0;
     CHECK_FALSE(gc::render::plan_vfx_bake(clip, 64, 48, 360, 640, 30));

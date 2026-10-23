@@ -2309,5 +2309,142 @@
   "width": 392,
   "height": 252,
   "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "width": 26
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_13.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "width": 28,
+   "roughness": 5
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "waves.png",
+  "frame": "vfx/paper_cutout_14.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "fold": "open"
+  },
+  "t": 0.5,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_15.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "fold": "open"
+  },
+  "t": 0.8,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_16.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "fold": "close"
+  },
+  "t": 2.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_17.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "fold": "both"
+  },
+  "t": 2.55,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_18.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "fold": "both"
+  },
+  "t": 0.4,
+  "clip_dur": 1.5,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_19.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "wrinkleSpeed": 7
+  },
+  "t": 0.5,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_20.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "jitterSpeed": 3,
+   "seed": 9
+  },
+  "t": 2.9,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_21.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
  }
 ]

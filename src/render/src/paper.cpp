@@ -271,7 +271,8 @@ Result<void> paper_cutout(SkCanvas& g, const sk_sp<SkImage>& src, const SkRect& 
     //    paper.js con las mismas primitivas de Skia que usa el navegador.
     sk_sp<SkImageFilter> torn;
     if (flag(p, "border", true) && width > 0) {
-        const auto radius = static_cast<float>(std::trunc(width * k)); // FEMorphology: entero
+        // Skia redondea el radio al aplicarlo (SkMorphologyImageFilter: round), como el navegador.
+        const auto radius = static_cast<float>(width * k);
         auto dilated = SkImageFilters::Dilate(radius, radius, nullptr);
         const auto freq = static_cast<float>(num(p, "detail", 0.02) / std::max(1e-3, k));
         auto noise = SkImageFilters::Shader(SkShaders::MakeFractalNoise(

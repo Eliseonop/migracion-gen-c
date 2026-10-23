@@ -87,12 +87,12 @@ BAKE_CLIPS = [
     _clip("margen_recorte", vfx=[_PAD], layout="overlay",
           reframe={"crop_w": 0.5, "crop_h": 1.0}, transform={"x": 0.5, "y": 0.5, "scale": 0.5}),
     _clip("margen_lleno", vfx=[_PAD]),
-    _clip("margen_cinco", vfx=[_PAD] * 5, **_FREE),
+    _clip("margen_cinco", vfx=[_PAD] * 5, **_FREE),                        # 5 × 0,12 = 0,6 → 0,5
     # int(v) de Python fuera del try: lanza.
     _clip("version_texto", vfx=[{"effect": "crt", "v": "abc"}]),
     _clip("version_decimal", vfx=[{"effect": "crt", "v": "2.5"}]),
     _clip("version_nan", vfx=[{"effect": "crt", "v": float("nan")}]),
-    _clip("version_lista", vfx=[{"effect": "crt", "v": [1]}]),                        # 0,6 → 0,5
+    _clip("version_lista", vfx=[{"effect": "crt", "v": [1]}]),
     # Enseña la imagen entera salvo al final (el encuadre hace zoom en el último instante).
     _clip("margen_final", vfx=[_PAD], layout="overlay", transform={"x": 0.5, "y": 0.5, "scale": 0.5},
           reframe={"keyframes": [{"t": 2.0, "cx": 0.5, "zoom": 1.0}, {"t": 5.9, "cx": 0.5, "zoom": 1.0},
@@ -120,4 +120,15 @@ PAPER = [
     ("alpha.png", {"fold": "open"}, 0.1, 3.0, True),
     ("alpha.png", {"fold": "both"}, 2.75, 3.0, True),
     ("alpha.png", {"jitterSpeed": 2.5, "jitterStrength": 3}, 0.62, 3.0, True),
+    # Revisión: el radio de dilatación se redondea (26 · 320/1080 = 7,70 → 8).
+    ("alpha.png", {"width": 26}, 0.3, 3.0, True),
+    ("waves.png", {"width": 28, "roughness": 5}, 0.3, 3.0, True),          # 8,30 → 8
+    # Los fotogramas 2–5 del pliegue al abrir y al cerrar, y un efecto corto (fd = dur/2).
+    ("alpha.png", {"fold": "open"}, 0.5, 3.0, True),
+    ("alpha.png", {"fold": "open"}, 0.8, 3.0, True),
+    ("alpha.png", {"fold": "close"}, 2.3, 3.0, True),
+    ("alpha.png", {"fold": "both"}, 2.55, 3.0, True),
+    ("alpha.png", {"fold": "both"}, 0.4, 1.5, True),
+    ("alpha.png", {"wrinkleSpeed": 7}, 0.5, 3.0, True),
+    ("alpha.png", {"jitterSpeed": 3, "seed": 9}, 2.9, 3.0, True),
 ]

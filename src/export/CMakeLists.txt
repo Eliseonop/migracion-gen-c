@@ -8,4 +8,6 @@ add_library(gc::export ALIAS gc_export)
 target_include_directories(gc_export PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(gc_export PUBLIC gc::core gc::media gc::render)
 target_compile_features(gc_export PUBLIC cxx_std_23)
+# Las texturas de los efectos, si la raíz de video-yt no trae frontend/public.
+target_compile_definitions(gc_export PRIVATE GC_RESOURCES_DIR="${PROJECT_SOURCE_DIR}/resources")
 gc_set_warnings(gc_export)
