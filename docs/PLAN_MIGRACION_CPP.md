@@ -1449,7 +1449,13 @@ Decisión de Edu (§6):
 - **Divergencia que se queda:** con NaN en `fps`, `tbr` o `filesize`, Python compara las tuplas de `_rank` con la identidad de cada float; aquí un NaN nunca gana. yt-dlp no los da.
 - **MinGW:** 146/146 y **MSVC:** 183/183, 0 warnings.
 
+**Séptima tanda: lo que decide fx_bake antes de hornear (F4)**
+
+- `gc_core/fx_bake.hpp`: `active_vfx` (Python normaliza distinto que el JS: solo quita `enabled` si es `False`, y `from`/`to` pasan por `float()`), `has_vfx`, `pad_frac`, `pad_allowed` y `baked_clip` con `_remap_reframe`. Es el primer paso para meter los efectos en el compuesto (plan en las notas de F4 del TODO). 14 clips; 15/15 mutaciones.
+- **MinGW:** 147/147 y **MSVC:** 184/184, 0 warnings.
+
 **Siguiente:**
+- La fuente del clip horneado en `gc_render`/`gc_export` y las escenas con efectos en `RENDER_SCENES` (notas de F4).
 - `heatmap.analyze` y la descarga del vídeo completo, con yt-dlp como sidecar (F7).
 - Meter los efectos en el compuesto (`compose`/`gc_export`), con el tramo en tiempo de fuente como `fx_bake.prepare_input`.
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
