@@ -1475,11 +1475,11 @@ Decisión de Edu (§6):
 - `gc_render/paper.cpp`: el único efecto de motor «canvas», paso a paso como `paper.js`. Chrome dibuja el Canvas 2D y el filtro SVG con Skia, así que las mismas primitivas dan casi lo mismo: `Dilate` (Skia redondea el radio, como en el navegador; la primera versión lo truncaba y la revisión lo encontró), `MakeFractalNoise` con la semilla de `TORN_SEEDS`, `DisplacementMap` R/G, el blanco con `SrcIn` y `Merge` con la imagen; las arrugas aclaradas con el redondeo al par de `Uint8ClampedArray` y su modo de fusión; la sombra en una capa sin la transformación (la de Canvas va en px del lienzo) con sigma = la mitad de `shadowBlur` (medido: 55,7 dB; con el difuminado entero, 46,4); el `rand` de Murmur3 de `fx/core/rand.js` con la aritmética de 32 bits de JS.
 - **Paridad:** 13 fotogramas de `renderVfx` en Chromium con las texturas cargadas (`preloadFxAssets`): 37,7–61 dB. 11/11 mutaciones a mano.
 - **Revisión:** radio de dilatación redondeado (el borde ancho pasa de 37,7 a 51,7 dB), fotogramas del horneado con el redondeo al par de Python, 9 casos más (22 en total, 42–61 dB, suelos de 50 y 40) y la caída a `resources/fx` si la raíz no trae `frontend/public`.
-- Las texturas (16 WebP, 392 KB) van en `resources/fx/paper-animator/assets/texture`; `genclip` las lee de `frontend/public` de video-yt, como `fx_bake.PUBLIC_DIR`.
+- Las texturas (16 WebP, 392 KB) van en `resources/fx/paper-animator/assets/texture`; `genclip` las lee de `frontend/public` de video-yt, como `fx_bake.PUBLIC_DIR`, y si no está, de `resources/fx` (de momento con la ruta del árbol de fuentes: en F9, relativa al ejecutable).
 - **MinGW:** 147/147 y **MSVC:** 185/185, 0 warnings.
 
 **Siguiente:**
 - Con F4 casi entero, lo que queda sin Edu: la medida real del texto (FreeType/HarfBuzz en `set_text_width`), las transiciones y looks, y la caché de fotogramas de F3.
 - `heatmap.analyze` y la descarga del vídeo completo, con yt-dlp como sidecar (F7).
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
-- En el render quedan los efectos de vídeo con velocidad ≠ 1, al revés y `paper_cutout` (F4) y el matte automático (F6).
+- En el render queda el matte automático (F6); los efectos de vídeo ya están todos (F4).

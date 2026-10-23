@@ -13,7 +13,8 @@ namespace fs = std::filesystem;
 
 void ensure_fx_catalog(const LoadedProject& project) {
     // Las texturas de los efectos: las que sirve el horneado (fx_bake.PUBLIC_DIR = frontend/public) o,
-    // si esa carpeta no está, las de la app (resources/fx, junto al ejecutable o en el árbol de fuentes).
+    // si esa carpeta no está, las de la app (resources/fx; de momento, la del árbol de fuentes: en F9,
+    // relativa al ejecutable).
     std::error_code ec;
     if (const fs::path pub = project.root.parent_path() / "frontend" / "public"; fs::is_directory(pub, ec)) {
         render::set_vfx_assets_dir(pub);

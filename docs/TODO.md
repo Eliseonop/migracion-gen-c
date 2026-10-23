@@ -521,6 +521,7 @@ Decidido el 2026-10-08 (plan §6). No hay tareas:
 - [ ] Modelos descargados en el primer uso (sustituye a `setup/nucleo.py`)
 - [ ] Actualizaciones e informes de fallos (Crashpad)
 - [ ] Firma de código
+- [ ] `resources/` relativo al ejecutable (`<exe>/../resources` o `<exe>/resources`): hoy `gc_export` lleva `GC_RESOURCES_DIR` con la ruta ABSOLUTA del árbol de fuentes, que solo vale en desarrollo (la usa para las texturas de los efectos si la raíz de video-yt no trae `frontend/public`); dejarla solo para tests
 - [ ] **Se retira la app Python**
 
 ## F10 — Móvil → **M4**
