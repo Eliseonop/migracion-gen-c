@@ -1,4 +1,5 @@
-// Paridad del ALMACÉN DE PROYECTOS con video-yt (projects.py).
+// Paridad del ALMACÉN DE PROYECTOS con video-yt (projects.py, y lo que va encima: segments.py y
+// media_upgrade.py).
 //
 // Fixtures (tools/fixtures/export_fixtures.py):
 //   tests/fixtures/projects/synthetic.json   projects_cases.py (en el repo)
@@ -21,8 +22,10 @@
 #include <vector>
 
 #include "disk_steps.hpp"
+#include "gc/core/edit.hpp"
 #include "gc/core/ids.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/media_upgrade.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/segments.hpp"
 #include "gc/core/serialize.hpp"
@@ -186,13 +189,13 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
         } else if (kind == "blueprint") {
             take(store.save_visual_blueprint(text(1), a[2]));
         } else if (kind == "segments") { // la sonda de duración da a[4] (null: falla)
-            const Json dur = a[4];
+            const Json& dur = a[4];
             const DurationProbe probe = [&dur](const fs::path&) -> std::optional<double> {
                 return dur.is_null() ? std::nullopt : std::optional(dur.get<double>());
             };
             take(create_segments(store, text(1), text(2), a[3], probe, ids));
         } else if (kind == "face_track") { // el detector da a[7] (null: falla)
-            const Json info = a[7];
+            const Json& info = a[7];
             const FaceDetector detect = [&info](const fs::path&, double, double, int) -> gc::Result<FaceDetection> {
                 if (info.is_null()) {
                     return gc::fail(gc::ErrorCode::Internal, "el detector falla");
@@ -216,6 +219,45 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
                 result = Json::array({to_json(r->track), r->from_cache});
             } else {
                 ok = std::unexpected(r.error());
+            }
+        } else if (kind == "versions" || kind == "upgrade") { // detect.dims da dims[nombre]
+            const Json& dims_map = kind == "versions" ? a[3] : a[4];
+            const VideoDimsProbe dims = [&dims_map](const fs::path& p)
+                -> std::optional<std::pair<std::int64_t, std::int64_t>> {
+                const auto name = path_to_utf8(p.filename());
+                if (!dims_map.contains(name)) {
+                    return std::nullopt;
+                }
+                return std::pair{dims_map[name][0].get<std::int64_t>(), dims_map[name][1].get<std::int64_t>()};
+            };
+            if (kind == "versions") {
+                take(find_media_versions(store, text(1), text(2), dims));
+            } else {
+                // timeline_store.apply_op: la op sobre la timeline guardada, con settle y validación.
+                const TimelineOpApplier apply = [&](std::string_view pid, std::string_view op,
+                                                    const Json& params) -> gc::Result<Json> {
+                    auto proj = store.get_project(pid);
+                    REQUIRE(proj);
+                    REQUIRE(*proj);
+                    REQUIRE((*proj)->timeline);
+                    auto cmd = parse_command(op, params);
+                    if (!cmd) {
+                        return std::unexpected(cmd.error());
+                    }
+                    auto res = apply_command(*(*proj)->timeline, *cmd, ids);
+                    if (!res) {
+                        return std::unexpected(res.error());
+                    }
+                    if (auto saved = store.save_timeline(pid, to_json(res->timeline)); !saved) {
+                        return std::unexpected(saved.error());
+                    }
+                    return Json{{"changed", res->changed}, {"warnings", res->warnings}, {"can_undo", true}};
+                };
+                std::vector<std::string> olds;
+                for (const Json& o : a[3]) {
+                    olds.push_back(o.is_string() ? o.get<std::string>() : o.dump()); // str(oid)
+                }
+                take(replace_media_with(store, text(1), text(2), olds, dims, apply));
             }
         } else if (kind == "retarget") {
             ok = store.retarget_timeline_asset(text(1), text(2), a[3], a[4], a[5], a[6], a[7].get<bool>());

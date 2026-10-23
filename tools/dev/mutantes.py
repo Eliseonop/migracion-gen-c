@@ -694,11 +694,31 @@ URL = [
     ("id: sin live/", YU, "|| segs[0] == \"live\" ", ""),
 ]
 
+MU = "src/core/src/media_upgrade.cpp"
+MEDIA_UPGRADE = [
+    ("proporción al 5 %", MU, "constexpr double kAspectTol = 0.02;", "constexpr double kAspectTol = 0.05;"),
+    ("sin margen de 1 s al final", MU, "constexpr double kRangeTol = 1.0;", "constexpr double kRangeTol = 0.0;"),
+    ("empieza antes sin margen", MU, "if (start < -0.05) {", "if (start < 0.0) {"),
+    ("master no cuenta", MU, "if (!rf || rf->master) {", "if (!rf) {"),
+    ("sin mirar el zoom de los keyframes", MU, "return std::ranges::all_of(rf->keyframes,", "return true || std::ranges::all_of(rf->keyframes,"),
+    ("sin mirar el zoom", MU, "if (!(rf->zoom >= 0.999)) {", "if (false) {"),
+    ("usos de la biblioteca también", MU, "(c.asset_scope.empty() || c.asset_scope == \"project\")", "true"),
+    ("orden sin los usos", MU, "        if (ua != ub) {\n            return ua > ub;\n        }\n", ""),
+    ("lower con <=", MU, "q.get<std::int64_t>() < new_q.get<std::int64_t>()", "q.get<std::int64_t>() <= new_q.get<std::int64_t>()"),
+    ("id: sin source_url", MU, "if (clip.source_url && !clip.source_url->empty() && is_youtube_url(*clip.source_url)) {", "if (false) {"),
+    ("parent_id: el índice", MU, "fields[\"parent_id\"] = next.id && !next.id->empty() ? *next.id : std::to_string(next.index);", "fields[\"parent_id\"] = std::to_string(next.index);"),
+    ("sin mover el face_track", MU, "        if (c.face_track) {", "        if (false) {"),
+    ("dueño: el propio segmento", MU, "                owner = f != nullptr ? f : c;", "                owner = c;"),
+    ("sin quitar repetidos", MU, "if (std::ranges::none_of(olds, [&](const ClipInfo* o) { return to_json(*o) == key; })) {", "if (true) {"),
+    ("op aunque nadie lo use", MU, "return uses_of(uses, o->filename) != 0; })) {", "return true; })) {"),
+    ("offset de las versiones redondeado", MU, "{\"offset\", material_file_offset(*o)}", "{\"offset\", py_round(material_file_offset(*o), 0)}"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

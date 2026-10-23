@@ -377,3 +377,88 @@ STEPS_SEG = [
     ("get", "s1"),
 ]
 STEPS += [("remove",), *STEPS_SEG]
+
+# --- Cambiar la versión ligera por la de más calidad (media_upgrade.py) ----------------------
+# versions pid id dims / upgrade pid id viejos dims: detect.dims da dims[nombre] ([w, h]; si no
+# está, falla y vale (0, 0)) y timeline_store.apply_op guarda el historial en {TMP}/data/history.
+_FT = {"start": 10.0, "end": 20.0, "width": 854, "height": 480, "fps": 25, "samples": 2,
+       "track": [{"t": 10.5, "cx": 0.4, "cy": 0.5, "w": 0.1, "h": 0.2}, {"t": 19.25, "cx": 0.6, "cy": 0.5}],
+       "keyframes": [{"t": 10.0, "cx": 0.4, "cy": 0.5}, {"t": 20.0, "cx": 0.6, "cy": 0.5, "zoom": 0.9}],
+       "created_at": T0}
+_UPG_CLIPS = [
+    material(0, id="hq", filename="hq.mp4", url="/api/media/u1/video/hq.mp4", start=0, end=600, label="HQ",
+             provider="youtube", external_id="VID1", created_at="2026-02-02T00:00:00+00:00"),
+    material(1, filename="lq480.mp4", url="/api/media/u1/video/lq480.mp4", start=0, end=600, label="480p",
+             source_url="https://www.youtube.com/watch?v=VID1"),
+    material(2, id="tramo", filename="tramo.mp4", url="/api/media/u1/video/tramo.mp4", start=120, end=180,
+             source_url="youtu.be/VID1", label=""),
+    material(3, id="segref", filename="lq480.mp4", url="/api/media/u1/video/lq480.mp4", start=10, end=20,
+             in_point=10, out_point=20, parent_id="1", face_track=_FT),
+    material(4, filename="crop.mp4", start=0, end=600, provider="youtube", external_id="VID1",
+             reframe={"zoom": 0.8}),
+    material(5, filename="vert.mp4", start=0, end=600, provider="youtube", external_id="VID1"),
+    material(7, filename="long.mp4", start=590, end=700, provider="youtube", external_id="VID1"),
+    material(8, filename="otro.mp4", start=0, end=60, provider="youtube", external_id="VID2"),
+    material(9, id="local", filename="local.mp4", start=0, end=600, label="Local"),
+    material(10, filename="hq2.mp4", start=0, end=600, provider="youtube", external_id="VID1"),
+    material(11, filename="nodims.mp4", start=0, end=600, provider="youtube", external_id="VID1"),
+    material(12, filename="kfzoom.mp4", start=0, end=600, provider="youtube", external_id="VID1",
+             reframe={"keyframes": [{"t": 0, "cx": 0.5, "zoom": 0.5}]}),
+    material(13, filename="master.mp4", start=0, end=600, provider="youtube", external_id="VID1",
+             reframe={"zoom": 0.5, "master": True}),
+    material(14, filename="segtramo.mp4", start=0, end=30, in_point=2, out_point=8),   # segmento sin dueño
+    material(15, id="partial", filename="partial.mp4", start=100, end=400, provider="youtube",
+             external_id="VID1"),
+    material(16, filename="near.mp4", start=0, end=600, provider="youtube", external_id="VID1"),   # 2,8 %
+    material(17, filename="edge.mp4", start=0, end=600.5, provider="youtube", external_id="VID1"),  # +0,5 s
+    material(18, id="near0", filename="near0.mp4", start=99.97, end=300, provider="youtube",
+             external_id="VID1"),                                                                  # −0,03 s
+]
+_UPG_TL = {"schema_version": 5, "tracks": TRACKS_V4, "clips": [
+    clip("u1", start=0, duration=5, asset_id="1", filename="lq480.mp4", in_point=30, out_point=35,
+         reframe={"keyframes": [{"t": 31, "cx": 0.3}]}, beats={"times": [30.5, 32, "x"]}),
+    clip("u2", start=5, duration=4, asset_id="1", filename="lq480.mp4", in_point=590, out_point=594),
+    clip("u3", start=9, duration=3, asset_id="2", filename="tramo.mp4", in_point=1, out_point=4),
+    clip("u4", start=12, duration=2, asset_id="4", filename="crop.mp4", in_point=0, out_point=2),
+    clip("u5", start=14, duration=2, asset_id="9", filename="local.mp4", in_point=0, out_point=2),
+    clip("u6", track_id="V2", start=0, duration=2, asset_id="lib1", filename="lq480.mp4", asset_scope="library",
+         in_point=0, out_point=2),
+    clip("u7", track_id="V2", start=3, duration=2, asset_id="1", filename="lq480.mp4", in_point=1, out_point=3,
+         bg_removal={"auto": {"enabled": True, "base_key": "k", "status": "ready", "edits": [{"t": 1.5}]}}),
+]}
+_UPG_DIMS = {"hq.mp4": [1920, 1080], "lq480.mp4": [854, 480], "tramo.mp4": [1280, 720], "crop.mp4": [854, 480],
+             "vert.mp4": [1080, 1920], "long.mp4": [640, 360], "otro.mp4": [640, 360], "local.mp4": [1280, 720],
+             "hq2.mp4": [3840, 2160], "kfzoom.mp4": [854, 480], "master.mp4": [854, 480],
+             "partial.mp4": [854, 480], "near.mp4": [1900, 1100], "edge.mp4": [854, 480], "near0.mp4": [854, 480]}
+_UPG_FILES = [f"clips/u1/video/{c['filename']}" for c in _UPG_CLIPS if c["filename"] != "nodims.mp4"]
+STEPS_UPG = [
+    ("file", {"projects": [project("u1", name="Mejorar", clips=_UPG_CLIPS, timeline=_UPG_TL),
+                           project("u2", name="Sin timeline", clips=[_UPG_CLIPS[0], _UPG_CLIPS[1]])]}),
+    ("disk", _UPG_FILES),
+    ("versions", "u1", "hq", _UPG_DIMS),
+    ("versions", "u1", "0", _UPG_DIMS),
+    ("versions", "u1", "hq", {}),                         # sin medidas: nada es «lower»
+    ("versions", "u1", "10", _UPG_DIMS),                # 4K: el HQ también es «lower»
+    ("versions", "u1", "hq2", _UPG_DIMS),                 # sin id propio: el suyo es «10»
+    ("versions", "u1", "local", _UPG_DIMS),               # sin YouTube: sin versiones
+    ("versions", "u1", "partial", _UPG_DIMS),             # empieza en 100: las de 0 «empiezan antes»
+    ("versions", "u1", "segref", _UPG_DIMS),              # un segmento no vale
+    ("versions", "u1", "99", _UPG_DIMS),
+    ("versions", "nada", "hq", _UPG_DIMS),
+    ("upgrade", "u1", "hq", ["segref"], _UPG_DIMS),       # el dueño del segmento es lq480
+    ("upgrade", "u1", "hq", ["hq"], _UPG_DIMS),           # por sí mismo
+    ("upgrade", "u1", "hq", ["4"], _UPG_DIMS),            # encuadre horneado
+    ("upgrade", "u1", "hq", ["5"], _UPG_DIMS),            # otra proporción
+    ("upgrade", "u1", "hq", ["7"], _UPG_DIMS),            # dura más
+    ("upgrade", "u1", "hq", ["zz"], _UPG_DIMS),
+    ("upgrade", "u1", "segref", [], _UPG_DIMS),
+    ("upgrade", "u2", "hq", [], _UPG_DIMS),               # sin timeline: solo segmentos (no hay)
+    ("upgrade", "u1", "hq", [], _UPG_DIMS),               # las de menos calidad compatibles
+    ("get", "u1"),
+    ("versions", "u1", "hq", _UPG_DIMS),
+    ("upgrade", "u1", "hq", [], _UPG_DIMS),               # ya no queda nada
+    ("upgrade", "u1", "partial", ["near0"], _UPG_DIMS),   # sin usos: solo la lista, con su offset
+    ("upgrade", "u1", "10", ["local", 9, "hq"], _UPG_DIMS),  # a mano: un archivo local y el viejo HQ
+    ("get", "u1"),
+]
+STEPS += STEPS_UPG

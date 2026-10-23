@@ -77,6 +77,7 @@ add_library(gc_core
     src/heatmap.cpp
     src/py_url.cpp
     src/youtube_url.cpp
+    src/media_upgrade.cpp
 )
 add_library(gc::core ALIAS gc_core)
 

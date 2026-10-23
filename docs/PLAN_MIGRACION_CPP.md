@@ -1424,7 +1424,10 @@ Decisión de Edu (§6):
 - **Enlaces de YouTube** (`youtube_url.hpp`): `is_youtube_url` y `youtube_id_from_url`, que hacen falta para `media_upgrade` y las descargas. Debajo, `py_url.hpp` con lo que usan de `urllib.parse`: `urlparse` (C0 y tabuladores fuera, esquema, netloc, params solo en los esquemas de `uses_params`), la validación de los corchetes (IPv6 como `ipaddress`, con zona y un IPv4 al final; IPvFuture; un IPv4 entre corchetes es un error) y el `_checknetloc` de NFKC (19 caracteres, tabla generada con el `unicodedata` 16.0 del Python de video-yt y comprobada por la fixture), `.hostname`, `parse_qsl` y `unquote` (cada trozo ASCII se descodifica por su lado, con el «replace» de CPython: un U+FFFD por trozo inválido más largo). 356 casos (`--solo url`); 22/22 mutaciones.
 - **MinGW:** 145/145, 0 warnings en Debug y Release y 0 avisos de clang-tidy en lo nuevo; **MSVC:** 180/180.
 
+- **`media_upgrade.hpp`** (espejo de `media_upgrade.py`): buscar las otras versiones del mismo vídeo de YouTube y cambiarlas en la timeline por la de más calidad (`replace_media` por un `TimelineOpApplier` inyectado: en el estudio, la `EditSession`; en el test, `apply_command` y `save_timeline`), con los segmentos por referencia al archivo nuevo. 26 pasos en la fixture del almacén; 16/16 mutaciones (dos más eran equivalentes: el id de un segmento no se usa en lo portado y el redondeo del delta lo absorbe el de `replace_media`).
+- **Trampa:** `owner not in olds` de Python compara con la igualdad de Pydantic (mismos campos), no por identidad: el C++ compara el `to_json` de cada material.
+- **MinGW:** 145/145 y **MSVC:** 180/180, 0 warnings y 0 avisos de clang-tidy.
+
 **Siguiente:**
-- `media_upgrade.py` (cambiar la versión ligera de un vídeo por la de más calidad), sobre `youtube_url`, `ProjectsStore` y `replace_media`.
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
 - En el render quedan los efectos de vídeo (`vfx`, F4) y el matte automático (F6).
