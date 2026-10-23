@@ -1,0 +1,2408 @@
+[
+ {
+  "clip": {
+   "id": "sin",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0
+  },
+  "active": [],
+  "has": false,
+  "pad_frac": 0.0,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": null,
+  "baked": {
+   "id": "sin",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": null,
+   "text": null,
+   "style": null,
+   "layout": "fill",
+   "transform": null,
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "uno",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "glitch_rgb",
+     "params": {
+      "amount": 0.3
+     }
+    }
+   ]
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "glitch_rgb",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "amount": 0.3,
+     "speed": 1,
+     "seed": 1
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.0,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": null,
+  "baked": {
+   "id": "uno",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": null,
+   "text": null,
+   "style": null,
+   "layout": "fill",
+   "transform": null,
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "raros",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    null,
+    3,
+    "x",
+    {
+     "effect": "no_existe"
+    },
+    {
+     "effect": "glitch_rgb",
+     "enabled": false
+    },
+    {
+     "effect": "glitch_rgb",
+     "enabled": 0,
+     "from": "1.5",
+     "to": "x",
+     "uid": 7,
+     "v": "3"
+    },
+    {
+     "effect": "crt",
+     "from": -2,
+     "to": -5,
+     "v": 2.7,
+     "params": {
+      "amount": "9",
+      "zz": 1
+     }
+    },
+    {
+     "effect": "crt",
+     "from": NaN,
+     "to": NaN,
+     "v": 0
+    },
+    {
+     "effect": "crt",
+     "from": "abc",
+     "to": null,
+     "params": null
+    }
+   ]
+  },
+  "active": [
+   {
+    "uid": "7",
+    "effect": "glitch_rgb",
+    "v": 3,
+    "enabled": true,
+    "params": {
+     "amount": 0.6,
+     "speed": 1,
+     "seed": 1
+    },
+    "from": 1.5,
+    "to": null
+   },
+   {
+    "uid": "",
+    "effect": "crt",
+    "v": 2,
+    "enabled": true,
+    "params": {
+     "amount": 1.0,
+     "curve": 0.5,
+     "seed": 1
+    },
+    "from": 0.0,
+    "to": 0.0
+   },
+   {
+    "uid": "",
+    "effect": "crt",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "amount": 0.7,
+     "curve": 0.5,
+     "seed": 1
+    },
+    "from": 0.0,
+    "to": 0.0
+   },
+   {
+    "uid": "",
+    "effect": "crt",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "amount": 0.7,
+     "curve": 0.5,
+     "seed": 1
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.0,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": null,
+  "baked": {
+   "id": "raros",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": null,
+   "text": null,
+   "style": null,
+   "layout": "fill",
+   "transform": null,
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "imagen",
+   "track_id": "V1",
+   "kind": "image",
+   "asset_kind": "images",
+   "asset_id": "0",
+   "filename": "a.png",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "loop": true,
+   "vfx": [
+    {
+     "effect": "glitch_rgb",
+     "params": {
+      "amount": 0.3
+     }
+    }
+   ]
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "glitch_rgb",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "amount": 0.3,
+     "speed": 1,
+     "seed": 1
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.0,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": null,
+  "baked": {
+   "id": "imagen",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": null,
+   "text": null,
+   "style": null,
+   "layout": "fill",
+   "transform": null,
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "texto",
+   "track_id": "V1",
+   "kind": "text",
+   "asset_kind": "text",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "glitch_rgb",
+     "params": {
+      "amount": 0.3
+     }
+    }
+   ]
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "glitch_rgb",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "amount": 0.3,
+     "speed": 1,
+     "seed": 1
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": false,
+  "pad_frac": 0.0,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": null,
+  "baked": {
+   "id": "texto",
+   "track_id": "V1",
+   "kind": "text",
+   "asset_kind": "text",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": null,
+   "text": null,
+   "style": null,
+   "layout": "fill",
+   "transform": null,
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "motion",
+   "track_id": "V1",
+   "kind": "motion",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "glitch_rgb",
+     "params": {
+      "amount": 0.3
+     }
+    }
+   ]
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "glitch_rgb",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "amount": 0.3,
+     "speed": 1,
+     "seed": 1
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.0,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": null,
+  "baked": {
+   "id": "motion",
+   "track_id": "V1",
+   "kind": "motion",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": null,
+   "text": null,
+   "style": null,
+   "layout": "fill",
+   "transform": null,
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "encuadre",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "glitch_rgb",
+     "params": {
+      "amount": 0.3
+     }
+    }
+   ],
+   "reframe": {
+    "zoom": 1.0,
+    "keyframes": [
+     {
+      "t": 2.5,
+      "cx": 0.4
+     },
+     {
+      "t": 5.0,
+      "cx": 0.6,
+      "zoom": 0.8
+     },
+     {
+      "t": 1.0,
+      "cx": 0.5
+     }
+    ]
+   },
+   "speed": 2.0
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "glitch_rgb",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "amount": 0.3,
+     "speed": 1,
+     "seed": 1
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.0,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": {
+   "zoom": 1.0,
+   "keyframes": [
+    {
+     "t": 0.25,
+     "cx": 0.4,
+     "cy": 0.5,
+     "zoom": null,
+     "pan_mode": null,
+     "fit": null
+    },
+    {
+     "t": 1.5,
+     "cx": 0.6,
+     "cy": 0.5,
+     "zoom": 0.8,
+     "pan_mode": null,
+     "fit": null
+    },
+    {
+     "t": 0.0,
+     "cx": 0.5,
+     "cy": 0.5,
+     "zoom": null,
+     "pan_mode": null,
+     "fit": null
+    }
+   ],
+   "pan_mode": "smooth",
+   "dual_crop": false,
+   "split_orientation": "vertical",
+   "zoom2": null,
+   "keyframes2": [],
+   "crop_w": null,
+   "crop_h": null,
+   "master": false,
+   "split_layout": "auto",
+   "face_track_mode": null
+  },
+  "baked": {
+   "id": "encuadre",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 2.0,
+   "source_duration": 2.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": {
+    "zoom": 1.0,
+    "keyframes": [
+     {
+      "t": 0.25,
+      "cx": 0.4,
+      "cy": 0.5,
+      "zoom": null,
+      "pan_mode": null,
+      "fit": null
+     },
+     {
+      "t": 1.5,
+      "cx": 0.6,
+      "cy": 0.5,
+      "zoom": 0.8,
+      "pan_mode": null,
+      "fit": null
+     },
+     {
+      "t": 0.0,
+      "cx": 0.5,
+      "cy": 0.5,
+      "zoom": null,
+      "pan_mode": null,
+      "fit": null
+     }
+    ],
+    "pan_mode": "smooth",
+    "dual_crop": false,
+    "split_orientation": "vertical",
+    "zoom2": null,
+    "keyframes2": [],
+    "crop_w": null,
+    "crop_h": null,
+    "master": false,
+    "split_layout": "auto",
+    "face_track_mode": null
+   },
+   "text": null,
+   "style": null,
+   "layout": "fill",
+   "transform": null,
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "reves",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "glitch_rgb",
+     "params": {
+      "amount": 0.3
+     }
+    }
+   ],
+   "reframe": {
+    "zoom": 1.0,
+    "keyframes": [
+     {
+      "t": 2.5,
+      "cx": 0.4
+     },
+     {
+      "t": 5.0,
+      "cx": 0.6,
+      "zoom": 0.8
+     },
+     {
+      "t": 1.0,
+      "cx": 0.5
+     }
+    ]
+   },
+   "speed": 0.5,
+   "reverse": true,
+   "bg_removal": {
+    "chroma": {
+     "enabled": true
+    }
+   }
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "glitch_rgb",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "amount": 0.3,
+     "speed": 1,
+     "seed": 1
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.0,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": {
+   "zoom": 1.0,
+   "keyframes": [
+    {
+     "t": 7.0,
+     "cx": 0.4,
+     "cy": 0.5,
+     "zoom": null,
+     "pan_mode": null,
+     "fit": null
+    },
+    {
+     "t": 2.0,
+     "cx": 0.6,
+     "cy": 0.5,
+     "zoom": 0.8,
+     "pan_mode": null,
+     "fit": null
+    },
+    {
+     "t": 10.0,
+     "cx": 0.5,
+     "cy": 0.5,
+     "zoom": null,
+     "pan_mode": null,
+     "fit": null
+    }
+   ],
+   "pan_mode": "smooth",
+   "dual_crop": false,
+   "split_orientation": "vertical",
+   "zoom2": null,
+   "keyframes2": [],
+   "crop_w": null,
+   "crop_h": null,
+   "master": false,
+   "split_layout": "auto",
+   "face_track_mode": null
+  },
+  "baked": {
+   "id": "reves",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 8.0,
+   "source_duration": 8.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": {
+    "zoom": 1.0,
+    "keyframes": [
+     {
+      "t": 7.0,
+      "cx": 0.4,
+      "cy": 0.5,
+      "zoom": null,
+      "pan_mode": null,
+      "fit": null
+     },
+     {
+      "t": 2.0,
+      "cx": 0.6,
+      "cy": 0.5,
+      "zoom": 0.8,
+      "pan_mode": null,
+      "fit": null
+     },
+     {
+      "t": 10.0,
+      "cx": 0.5,
+      "cy": 0.5,
+      "zoom": null,
+      "pan_mode": null,
+      "fit": null
+     }
+    ],
+    "pan_mode": "smooth",
+    "dual_crop": false,
+    "split_orientation": "vertical",
+    "zoom2": null,
+    "keyframes2": [],
+    "crop_w": null,
+    "crop_h": null,
+    "master": false,
+    "split_layout": "auto",
+    "face_track_mode": null
+   },
+   "text": null,
+   "style": null,
+   "layout": "fill",
+   "transform": null,
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "margen",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "float_shadow"
+    },
+    {
+     "effect": "glitch_rgb",
+     "params": {
+      "amount": 0.3
+     }
+    }
+   ],
+   "layout": "overlay",
+   "transform": {
+    "x": 0.5,
+    "y": 0.5,
+    "scale": 0.5
+   }
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   },
+   {
+    "uid": "",
+    "effect": "glitch_rgb",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "amount": 0.3,
+     "speed": 1,
+     "seed": 1
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.12,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    true
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    true
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": null,
+  "baked": {
+   "id": "margen",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": null,
+   "text": null,
+   "style": null,
+   "layout": "overlay",
+   "transform": {
+    "x": 0.5,
+    "y": 0.5,
+    "scale": 0.5
+   },
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "margen_dos",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "float_shadow"
+    },
+    {
+     "effect": "float_shadow"
+    },
+    {
+     "effect": "float_shadow"
+    }
+   ],
+   "layout": "overlay",
+   "transform": {
+    "x": 0.5,
+    "y": 0.5,
+    "scale": 0.5
+   }
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   },
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   },
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.36,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    true
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    true
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": null,
+  "baked": {
+   "id": "margen_dos",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": null,
+   "text": null,
+   "style": null,
+   "layout": "overlay",
+   "transform": {
+    "x": 0.5,
+    "y": 0.5,
+    "scale": 0.5
+   },
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "margen_recorte",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "float_shadow"
+    }
+   ],
+   "layout": "overlay",
+   "reframe": {
+    "crop_w": 0.5,
+    "crop_h": 1.0
+   },
+   "transform": {
+    "x": 0.5,
+    "y": 0.5,
+    "scale": 0.5
+   }
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.12,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": {
+   "zoom": 1.0,
+   "keyframes": [],
+   "pan_mode": "smooth",
+   "dual_crop": false,
+   "split_orientation": "vertical",
+   "zoom2": null,
+   "keyframes2": [],
+   "crop_w": 0.5,
+   "crop_h": 1.0,
+   "master": false,
+   "split_layout": "auto",
+   "face_track_mode": null
+  },
+  "baked": {
+   "id": "margen_recorte",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": {
+    "zoom": 1.0,
+    "keyframes": [],
+    "pan_mode": "smooth",
+    "dual_crop": false,
+    "split_orientation": "vertical",
+    "zoom2": null,
+    "keyframes2": [],
+    "crop_w": 0.5,
+    "crop_h": 1.0,
+    "master": false,
+    "split_layout": "auto",
+    "face_track_mode": null
+   },
+   "text": null,
+   "style": null,
+   "layout": "overlay",
+   "transform": {
+    "x": 0.5,
+    "y": 0.5,
+    "scale": 0.5
+   },
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "margen_lleno",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "float_shadow"
+    }
+   ]
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.12,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": null,
+  "baked": {
+   "id": "margen_lleno",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": null,
+   "text": null,
+   "style": null,
+   "layout": "fill",
+   "transform": null,
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "margen_cinco",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "float_shadow"
+    },
+    {
+     "effect": "float_shadow"
+    },
+    {
+     "effect": "float_shadow"
+    },
+    {
+     "effect": "float_shadow"
+    },
+    {
+     "effect": "float_shadow"
+    }
+   ],
+   "layout": "overlay",
+   "transform": {
+    "x": 0.5,
+    "y": 0.5,
+    "scale": 0.5
+   }
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   },
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   },
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   },
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   },
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.5,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    true
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    true
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": null,
+  "baked": {
+   "id": "margen_cinco",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": null,
+   "text": null,
+   "style": null,
+   "layout": "overlay",
+   "transform": {
+    "x": 0.5,
+    "y": 0.5,
+    "scale": 0.5
+   },
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ },
+ {
+  "clip": {
+   "id": "margen_final",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "a.mp4",
+   "start": 1.0,
+   "in_point": 2.0,
+   "out_point": 6.0,
+   "source_duration": 10.0,
+   "vfx": [
+    {
+     "effect": "float_shadow"
+    }
+   ],
+   "layout": "overlay",
+   "transform": {
+    "x": 0.5,
+    "y": 0.5,
+    "scale": 0.5
+   },
+   "reframe": {
+    "keyframes": [
+     {
+      "t": 2.0,
+      "cx": 0.5,
+      "zoom": 1.0
+     },
+     {
+      "t": 5.9,
+      "cx": 0.5,
+      "zoom": 1.0
+     },
+     {
+      "t": 6.0,
+      "cx": 0.5,
+      "zoom": 0.5
+     }
+    ]
+   }
+  },
+  "active": [
+   {
+    "uid": "",
+    "effect": "float_shadow",
+    "v": 1,
+    "enabled": true,
+    "params": {
+     "distance": 0.03,
+     "blur": 0.02,
+     "opacity": 0.5,
+     "color": "#000000",
+     "float": 0.5
+    },
+    "from": 0.0,
+    "to": null
+   }
+  ],
+  "has": true,
+  "pad_frac": 0.12,
+  "pad_allowed": [
+   [
+    1920,
+    1080,
+    1080,
+    1920,
+    false
+   ],
+   [
+    1080,
+    1920,
+    1080,
+    1920,
+    false
+   ],
+   [
+    640,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    0,
+    480,
+    1280,
+    720,
+    false
+   ],
+   [
+    640,
+    480,
+    0,
+    720,
+    false
+   ]
+  ],
+  "reframe": {
+   "zoom": 1.0,
+   "keyframes": [
+    {
+     "t": 0.0,
+     "cx": 0.5,
+     "cy": 0.5,
+     "zoom": 1.0,
+     "pan_mode": null,
+     "fit": null
+    },
+    {
+     "t": 3.9,
+     "cx": 0.5,
+     "cy": 0.5,
+     "zoom": 1.0,
+     "pan_mode": null,
+     "fit": null
+    },
+    {
+     "t": 4.0,
+     "cx": 0.5,
+     "cy": 0.5,
+     "zoom": 0.5,
+     "pan_mode": null,
+     "fit": null
+    }
+   ],
+   "pan_mode": "smooth",
+   "dual_crop": false,
+   "split_orientation": "vertical",
+   "zoom2": null,
+   "keyframes2": [],
+   "crop_w": null,
+   "crop_h": null,
+   "master": false,
+   "split_layout": "auto",
+   "face_track_mode": null
+  },
+  "baked": {
+   "id": "margen_final",
+   "track_id": "V1",
+   "kind": "video",
+   "asset_kind": "clips",
+   "asset_id": "0",
+   "filename": "horneado.webm",
+   "name": null,
+   "start": 1.0,
+   "in_point": 0.0,
+   "out_point": 4.0,
+   "source_duration": 4.0,
+   "ref_segment": null,
+   "volume": 1.0,
+   "media_version": null,
+   "reframe": {
+    "zoom": 1.0,
+    "keyframes": [
+     {
+      "t": 0.0,
+      "cx": 0.5,
+      "cy": 0.5,
+      "zoom": 1.0,
+      "pan_mode": null,
+      "fit": null
+     },
+     {
+      "t": 3.9,
+      "cx": 0.5,
+      "cy": 0.5,
+      "zoom": 1.0,
+      "pan_mode": null,
+      "fit": null
+     },
+     {
+      "t": 4.0,
+      "cx": 0.5,
+      "cy": 0.5,
+      "zoom": 0.5,
+      "pan_mode": null,
+      "fit": null
+     }
+    ],
+    "pan_mode": "smooth",
+    "dual_crop": false,
+    "split_orientation": "vertical",
+    "zoom2": null,
+    "keyframes2": [],
+    "crop_w": null,
+    "crop_h": null,
+    "master": false,
+    "split_layout": "auto",
+    "face_track_mode": null
+   },
+   "text": null,
+   "style": null,
+   "layout": "overlay",
+   "transform": {
+    "x": 0.5,
+    "y": 0.5,
+    "scale": 0.5
+   },
+   "frame": "full",
+   "appear": "none",
+   "exit": "none",
+   "look": "none",
+   "effects": null,
+   "filters": null,
+   "audio_fx": null,
+   "muted": false,
+   "speed": 1.0,
+   "keep_pitch": true,
+   "reverse": false,
+   "speed_curve": null,
+   "opacity": null,
+   "flip_h": false,
+   "flip_v": false,
+   "blend_mode": null,
+   "disabled": false,
+   "beats": null,
+   "loop": null,
+   "words": [],
+   "origin": null,
+   "text_role": null,
+   "shape": null,
+   "masks": [],
+   "bg_removal": null,
+   "anim": null,
+   "vfx": null,
+   "animations": null,
+   "keyframes": null,
+   "asset_scope": "project",
+   "description": null,
+   "note": null,
+   "note_source": null,
+   "dup_of": null,
+   "composition_id": null
+  }
+ }
+]

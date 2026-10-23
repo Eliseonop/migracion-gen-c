@@ -2017,6 +2017,30 @@ _VFX_JS = """async ([url, w, h, entries, t, clipDur, pad]) => {
 }"""
 
 
+def synthetic_fx_bake_fixtures() -> list[dict]:
+    """fx_bake.py sin hornear: active_vfx, has_vfx, pad_frac, pad_allowed, _remap_reframe y
+    baked_clip con las funciones reales, sobre los clips de vfx_cases.BAKE_CLIPS."""
+    sys.path.insert(0, str(HERE))
+    import vfx_cases as vc
+    from app import fx_bake
+    from app.schemas import TimelineClip
+    out = []
+    for raw in vc.BAKE_CLIPS:
+        clip = TimelineClip(**raw)
+        entries = fx_bake.active_vfx(clip)
+        rf = fx_bake._remap_reframe(clip)
+        out.append({
+            "clip": raw,
+            "active": entries,
+            "has": fx_bake.has_vfx(clip),
+            "pad_frac": fx_bake.pad_frac(entries),
+            "pad_allowed": [[*d, fx_bake.pad_allowed(clip, *d)] for d in vc.PAD_DIMS],
+            "reframe": rf.model_dump() if rf is not None else None,
+            "baked": fx_bake.baked_clip(clip, Path("horneado.webm")).model_dump(),
+        })
+    return out
+
+
 def synthetic_vfx_fixtures() -> list[dict]:
     """Los efectos de vídeo de motor «shader» con el runtime REAL de video-yt en Chromium (el de
     fx_bake.FxBaker, el que hornea el export): `window.__fx.renderVfx` sobre la imagen de prueba
@@ -3285,7 +3309,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video"],
+                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3409,6 +3433,14 @@ def main() -> None:
         write(RENDER_DIR / "vfx.json", vfx, len(vfx), 0)
         return
 
+    def fx_bake_group() -> None:
+        bake = synthetic_fx_bake_fixtures()
+        write(REPO / "tests" / "fixtures" / "fx" / "bake.json", bake, len(bake), 0)
+
+    if args.solo == "fx_bake":
+        fx_bake_group()
+        return
+
     def shapes_group() -> None:
         shp = synthetic_shape_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "shapes" / "geometry.json", shp,
@@ -3507,6 +3539,7 @@ def main() -> None:
     keywords_group()
     heatmap_group()
     youtube_video_group()
+    fx_bake_group()
     url_group()
     mono_group()
     js = synthetic_json_fixtures()

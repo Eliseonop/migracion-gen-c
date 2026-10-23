@@ -743,11 +743,31 @@ YOUTUBE_VIDEO = [
     ("protocolo raro sin error", YV, "        return invalid(\"protocol no es iterable\");\n", ""),
 ]
 
+FB = "src/core/src/fx_bake.cpp"
+FX_BAKE = [
+    ("enabled 0 también fuera", FB, "get(e, \"enabled\") == Json(false)", "!py_truthy(get(e, \"enabled\"))"),
+    ("from negativo", FB, "const double from = f > 0.0 ? f : 0.0;", "const double from = f;"),
+    ("to sin el mínimo", FB, "to = *t > from ? *t : from;", "to = *t;"),
+    ("v sin la del efecto", FB, "v = py_int(raw_v).value_or(1);", "v = 1;"),
+    ("uid sin texto", FB, "py_truthy(get(e, \"uid\")) ? py_str(get(e, \"uid\")) : std::string()", "std::string()"),
+    ("texto con efectos", FB, "constexpr std::array<std::string_view, 3> kFxKinds{\"video\", \"image\", \"motion\"};",
+     "constexpr std::array<std::string_view, 4> kFxKinds{\"video\", \"image\", \"motion\", \"text\"};"),
+    ("margen sin tope", FB, "return total < 0.5 ? total : 0.5;", "return total;"),
+    ("margen sin mirar el final", FB, "constexpr std::array<double, 3> kAt{0.0, 0.5, 1.0};", "constexpr std::array<double, 2> kAt{0.0, 0.5};"),
+    ("margen en un clip lleno", FB, "if (!is_overlay(clip) || iw <= 0", "if (iw <= 0"),
+    ("encuadre sin el revés", FB, "clip.reverse ? (out - k.t) / spd : (k.t - inp) / spd", "(k.t - inp) / spd"),
+    ("encuadre sin la velocidad", FB, "(k.t - inp) / spd;", "(k.t - inp);"),
+    ("encuadre negativo", FB, "k.t = py_round(t > 0.0 ? t : 0.0, 4);", "k.t = py_round(t, 4);"),
+    ("horneado con su bg", FB, "c.bg_removal = std::nullopt;", ""),
+    ("imagen sigue siendo imagen", FB, "        c.kind = \"video\";\n", ""),
+    ("horneado con su velocidad", FB, "    c.speed = 1.0;\n", ""),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

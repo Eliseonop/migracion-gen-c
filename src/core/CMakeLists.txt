@@ -80,6 +80,7 @@ add_library(gc_core
     src/media_upgrade.cpp
     src/asset_import.cpp
     src/youtube_video.cpp
+    src/fx_bake.cpp
 )
 add_library(gc::core ALIAS gc_core)
 

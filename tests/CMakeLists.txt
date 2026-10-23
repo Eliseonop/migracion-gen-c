@@ -31,6 +31,7 @@ add_executable(gc_tests
     parity/test_heatmap_parity.cpp
     parity/test_url_parity.cpp
     parity/test_youtube_video_parity.cpp
+    parity/test_fx_bake_parity.cpp
     parity/test_keyframes_parity.cpp
     parity/test_layers_parity.cpp
     parity/test_layout_parity.cpp
