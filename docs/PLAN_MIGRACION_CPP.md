@@ -1461,8 +1461,11 @@ Decisión de Edu (§6):
 - **Trampas de la fixture:** una sombra sobre un PNG con borde transparente no necesita el margen (cae dentro); con un material opaco, sí. Y un degradado suave no nota el zoom ni el desplazamiento de un terremoto: con ondas, la duración mal puesta (el progreso) falla.
 - 5/5 mutaciones a mano con MSVC.
 
+- **En el export:** `gc_export/vfx_bake.hpp` (`ensure_fx_catalog` con el catálogo de `<raíz>/app/fx_assets`, como `fx_catalog.CATALOG_PATH`, y `plan_timeline_vfx`, los clips de `bake_timeline`: activos, en una pista de vídeo visible y con material). `genclip render` lee el tramo original con `ClipFrames` en el fotograma m y `genclip frame` con `export_frame_at`. Probados con tres escenas de la fixture en un proyecto de prueba: lo mismo que el test (41,9 dB el CRT en `frame`, 42,2 en el MP4 de `render`).
+- **Trampa:** `fx_catalog()` nunca es nulo (hasta que se fija es un catálogo vacío): para saber si hay que cargarlo hay que mirar si tiene efectos.
+
 **Siguiente:**
-- Los efectos en `gc_export` y `genclip frame` (lo mismo que hace el test), y luego velocidad ≠ 1 y revés.
+- Los efectos con velocidad ≠ 1 y al revés (el `fps` de `prepare_input` va tras la velocidad).
 - `heatmap.analyze` y la descarga del vídeo completo, con yt-dlp como sidecar (F7).
 - Meter los efectos en el compuesto (`compose`/`gc_export`), con el tramo en tiempo de fuente como `fx_bake.prepare_input`.
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).

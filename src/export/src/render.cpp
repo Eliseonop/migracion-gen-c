@@ -33,6 +33,7 @@
 #include "gc/render/canvas.hpp"
 #include "gc/render/compose.hpp"
 #include "gc/render/text.hpp"
+#include "gc/export/vfx_bake.hpp"
 
 namespace gc::exporter {
 
@@ -166,6 +167,13 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
         }
         warn(msg + ": se omite");
     }
+    // Los efectos de vídeo: como bake_timeline, el clip horneado en la timeline (vfx_bake.hpp).
+    ensure_fx_catalog(project);
+    auto vfx = plan_timeline_vfx(timeline, paths, w, h, fps, skip, warn);
+    if (!vfx) {
+        return std::unexpected(vfx.error());
+    }
+    const VfxPlans& vfx_plans = *vfx;
 
     const auto [crf, preset] = encoder_quality(project.settings);
     media::EncodeSettings settings;
@@ -385,22 +393,34 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             if (p == paths.end()) {
                 return nullptr;
             }
+            // Un clip horneado lee su tramo original (desde 0) y pide su fotograma m (vfx.hpp).
+            const auto bake = vfx_plans.find(id);
+            const TimelineClip& read = bake != vfx_plans.end() ? bake->second.source : clip;
+            const std::int64_t at = bake != vfx_plans.end() ? render::vfx_baked_index(bake->second, tick, fps) : tick;
             auto r = readers.find(id);
             if (r == readers.end()) {
-                auto opened = media::ClipFrames::open(clip, p->second, fps);
+                auto opened = media::ClipFrames::open(read, p->second, fps);
                 if (!opened) {
                     media_error = opened.error();
                     return nullptr;
                 }
                 r = readers.emplace(id, std::move(*opened)).first;
             }
-            auto got = r->second.at(tick);
+            auto got = r->second.at(at);
             if (!got || *got == nullptr) {
                 media_error =
                     got ? Error{ErrorCode::Io, std::format("el clip {} no da fotograma en el {}", id, tick)} : got.error();
                 return nullptr;
             }
             const auto& f = **got;
+            if (bake != vfx_plans.end()) {
+                auto baked = render::vfx_baked_frame(bake->second, render::Image{f.width, f.height, f.pixels}, at, fps);
+                if (!baked) {
+                    media_error = baked.error();
+                    return nullptr;
+                }
+                return &job.images.emplace(id, std::move(*baked)).first->second;
+            }
             return &job.images.emplace(id, render::Image{f.width, f.height, f.pixels}).first->second;
         };
         const double t = static_cast<double>(tick) / fps;

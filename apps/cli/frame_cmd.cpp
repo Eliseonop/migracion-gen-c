@@ -8,6 +8,7 @@
 #include <iostream>
 #include <map>
 #include <optional>
+#include <string>
 #include <string_view>
 #include <vector>
 
@@ -24,6 +25,7 @@
 #include "gc/render/png.hpp"
 #include "gc/render/text.hpp"
 #include "gc/export/project.hpp"
+#include "gc/export/vfx_bake.hpp"
 
 namespace genclip {
 
@@ -129,6 +131,13 @@ int cmd_frame(std::span<const std::string> args) {
     if (motion) {
         std::cerr << std::format("aviso: el render aún no dibuja motion graphics (clip {}): se omite\n", *motion);
     }
+    // Los efectos de vídeo: como bake_timeline, el clip horneado en la timeline.
+    gc::exporter::ensure_fx_catalog(lp);
+    auto vfx = gc::exporter::plan_timeline_vfx(timeline, paths, w, h, fps, skip,
+                                               [](const std::string& m) { std::cerr << "aviso: " << m << "\n"; });
+    if (!vfx) {
+        return fail_with(vfx.error().to_string());
+    }
 
     // El fotograma de cada clip en t, decodificado una vez (también da sus dimensiones). Las
     // pasadas fantasma (kGhostSuffix) usan el material de su clip.
@@ -144,14 +153,26 @@ int cmd_frame(std::span<const std::string> args) {
         if (p == paths.end()) {
             return nullptr;
         }
-        auto got = gc::media::export_frame_at(clip, p->second, fps, tick);
+        // Un clip horneado: el fotograma m de su tramo original, con sus efectos (vfx.hpp).
+        const auto bake = vfx->find(id);
+        const std::int64_t m = bake != vfx->end() ? gc::render::vfx_baked_index(bake->second, tick, fps) : tick;
+        auto got = gc::media::export_frame_at(bake != vfx->end() ? bake->second.source : clip, p->second, fps, m);
         if (!got || !got->has_value()) {
             media_error = got ? gc::Error{gc::ErrorCode::Io, std::format("el clip {} no da fotograma en {}", id, t)}
                               : got.error();
             return nullptr;
         }
         auto& f = **got;
-        return &frames.emplace(id, gc::render::Image{f.width, f.height, std::move(f.pixels)}).first->second;
+        gc::render::Image img{f.width, f.height, std::move(f.pixels)};
+        if (bake != vfx->end()) {
+            auto baked = gc::render::vfx_baked_frame(bake->second, img, m, fps);
+            if (!baked) {
+                media_error = baked.error();
+                return nullptr;
+            }
+            img = std::move(*baked);
+        }
+        return &frames.emplace(id, std::move(img)).first->second;
     };
 
     gc::media::silence_ffmpeg_log();
