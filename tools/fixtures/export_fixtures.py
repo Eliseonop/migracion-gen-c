@@ -59,6 +59,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import types
 import time
 import uuid
 from pathlib import Path
@@ -596,9 +597,11 @@ def real_history_fixtures(ctx: Ctx, data: dict) -> dict:
 def _run_settings_steps(steps: list) -> list[dict]:
     """Ejecuta los pasos con settings.py sobre un settings.json temporal."""
     from app import settings as st
+    from app import yt_history as yh
     tmp_dir = Path(tempfile.mkdtemp(prefix="gc_settings_"))
     tmp = tmp_dir / "settings.json"
     saved = st._FILE
+    saved_time = yh.time
     st._FILE = tmp
     out = []
     try:
@@ -619,6 +622,11 @@ def _run_settings_steps(steps: list) -> list[dict]:
                     result["api_keys_counts"] = dict(sorted(result["api_keys_counts"].items()))
                 elif kind == "save":
                     result = st.save(args[0])
+                elif kind == "yt_record":   # url, video, limit, int(time.time())
+                    yh.time = types.SimpleNamespace(time=lambda: args[3])
+                    result = yh.record(args[0], args[1], args[2])
+                elif kind == "yt_remove":
+                    result = yh.remove(args[0])
                 else:   # api_key, keys_for, add_key, set_key, remove_key
                     result = getattr(st, kind)(*args)
                 entry["result"] = result
@@ -634,6 +642,7 @@ def _run_settings_steps(steps: list) -> list[dict]:
             out.append(entry)
     finally:
         st._FILE = saved
+        yh.time = saved_time
         for f in tmp_dir.iterdir():
             f.unlink()
         tmp_dir.rmdir()
@@ -3123,7 +3132,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos"],
+                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3203,6 +3212,15 @@ def main() -> None:
 
     if args.solo == "proyectos":
         projects_group()
+        return
+
+    def settings_group() -> None:
+        sett = synthetic_settings_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "settings" / "synthetic.json", sett, len(sett["steps"]),
+              sum("error" in s for s in sett["steps"]))
+
+    if args.solo == "ajustes":
+        settings_group()
         return
 
     def shapes_group() -> None:
@@ -3294,9 +3312,7 @@ def main() -> None:
     write(REPO / "tests" / "fixtures" / "library" / "synthetic.json", libr,
           len(libr["steps"]) + len(libr["dto"]) + len(libr["save"]),
           sum("error" in s for s in libr["steps"] + libr["dto"] + libr["save"]))
-    sett = synthetic_settings_fixtures(ctx)
-    write(REPO / "tests" / "fixtures" / "settings" / "synthetic.json", sett, len(sett["steps"]),
-          sum("error" in s for s in sett["steps"]))
+    settings_group()
     sfx_syn = synthetic_sfx_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "sfx" / "synthetic.json", sfx_syn, len(sfx_syn["steps"]),
           sum("error" in s for s in sfx_syn["steps"]))

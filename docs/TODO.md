@@ -2,7 +2,7 @@
 
 > Lista de tareas con checks de **todas las fases** del [plan](PLAN_MIGRACION_CPP.md).
 > El detalle de cada tanda (qué se hizo, cómo se verificó, cifras) está en el §14 del plan.
-> Arquitectura: [ARQUITECTURA.md](ARQUITECTURA.md). Actualizado: **2026-10-22**.
+> Arquitectura: [ARQUITECTURA.md](ARQUITECTURA.md). Actualizado: **2026-10-23**.
 
 Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 
@@ -493,7 +493,7 @@ F0, F1 y F2 están hechas: lo que queda de F1 llega con la interfaz (F5). La eva
 - [ ] Stock: Pexels, Giphy, Pixabay y Unsplash *(las palabras clave locales de «Explorar», hechas, 2026-10-19: `keywords.hpp`, espejo de la parte sin IA de `explore_keywords.py` (las más repetidas sin muletillas, con frases de 2 y 3 palabras; leer la lista que devuelve una IA; el texto del proyecto). Paridad con el Python real, `export_fixtures.py --solo keywords`)*
 - [ ] Chat IA con streaming y confirmaciones
 - [ ] Servidor MCP en `:8000/mcp` con los 50 tools, DTO semántico, errores estructurados y resources (`capabilities://`, `help://`, `config://`, `project://`)
-- [ ] YouTube con el sidecar `yt-dlp` (solo escritorio)
+- [ ] YouTube con el sidecar `yt-dlp` (solo escritorio) *(el historial de enlaces analizados, hecho (2026-10-23): `yt_history.hpp`, espejo de `yt_history.py` sobre `SettingsFile` (clave `yt_history`): `yt_history_record` (al principio, quita el mismo vídeo o la misma url, `max(1, limit or 40)`, la hora inyectada) y `yt_history_remove`. Paridad: 52 pasos nuevos en la fixture de ajustes (`settings_cases.STEPS_YT`, `export_fixtures.py --solo ajustes`) con entradas que no son objetos, urls y títulos que no son texto (`str()` de Python), `at` como texto, real, bool o inválido (ValueError, TypeError y OverflowError de `int()`) y el resto de ajustes intacto; 9/9 mutaciones (`tools/dev/mutantes.py yt_history`). Divergencias: un `video` de texto (Python guardaría el `repr` del método `str.title`) va como sin vídeo, y un `at` de más de 64 bits es un error)*
 - [ ] Dirección de escena, Generar escena y Generar recurso
 - [ ] Prompts y plantillas movidos a `resources/prompts` y `resources/templates`
 - [ ] Decidir si gc_cloud/gc_agent se hacen en Rust (`rmcp`) o en C++

@@ -1415,6 +1415,14 @@ Decisión de Edu (§6):
 - **Paridad:** 38 pasos nuevos en la fixture del almacén de proyectos, con `segments.py` real y la sonda y `detect.face_track` sustituidos por lo que pide cada paso: rangos al revés, negativos, recortados al final del archivo, como texto o bool, demasiado cortos, sin lista, que no son objetos, con fin infinito (con y sin etiqueta: m:ss de infinito falla), desde un segmento (hereda el padre), sin archivo, y el seguimiento del propio rango, de la caché (±0,05 s), forzado, de otro rango, vacío, largo (ventanas de 2,5 s) y con el detector fallando. 14/14 mutaciones; la del índice desde 99999 pedía un proyecto con índices bajos.
 - **MSVC:** 178/178; **MinGW:** 143/143.
 
+### 2026-10-23 — F1, revisión, y F7: el historial de YouTube
+
+- **Revisión de `segments`:** GCC daba un `-Wnull-dereference` en Release en `seed_face_keyframes` (`out.front()` sin ver que `out` nunca queda vacío): con la guarda, `verificar.sh` vuelve a 0 warnings. Y un tiempo infinito del detector era UB al pasar a entero; ahora es un error, como el `int(nan)` de Python (`seed_face_keyframes` devuelve `Result`). Dos pasos nuevos en la fixture, con inf y NaN. `export_fixtures.py --solo proyectos`.
+- **`yt_history.hpp`** (espejo de `yt_history.py`): `yt_history_record` y `yt_history_remove` sobre `SettingsFile`. 52 pasos nuevos en la fixture de ajustes (`--solo ajustes`), con los `str()` e `int()` de Python sobre entradas raras; 9/9 mutaciones.
+- **Trampa:** con un `video` de texto, `getattr("x", "title")` de Python es el método `str.title` y se guardaría su `repr` («<built-in method title…>», con una dirección de memoria). No es determinista: el caso va con un número, y C++ trata un texto como sin vídeo.
+- **MinGW:** 143/143, 0 warnings en Debug y Release.
+
 **Siguiente:**
+- `heatmap._pick_segments` (F7, la parte pura de «Analizar» de YouTube).
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
 - En el render quedan los efectos de vídeo (`vfx`, F4) y el matte automático (F6).

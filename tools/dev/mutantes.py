@@ -634,11 +634,27 @@ SEGMENTS = [
      "std::optional(description)"),
 ]
 
+YH = "src/core/src/yt_history.cpp"
+YT_HISTORY = [
+    ("límite mínimo 2", YH, "(limit > 1 ? limit : 1)", "(limit > 2 ? limit : 2)"),
+    ("límite 0 sin el 40", YH, "limit == 0 ? kYtHistoryLimit :", "false ? kYtHistoryLimit :"),
+    ("la url antes que el vídeo", YH, "return id.empty() ? py_strip", "return !id.empty() ? py_strip"),
+    ("sin quitar por url", YH, "key_of(x) != key && url_of(x) != url", "key_of(x) != key"),
+    ("título falso sin la url", YH, "py_truthy(title) ? py_str(title) : url", "py_str(title)"),
+    ("key del vídeo sin espacios", YH, "const std::string key = video_id.empty() ? u : video_id;",
+     "const std::string key = py_strip(video_id.empty() ? u : video_id);"),
+    ("un «at» malo se salta", YH, "return invalid(\"yt_history: «at» no es un entero\");", "continue;"),
+    ("al principio no, al final", YH, "out.insert(out.begin(), std::move(entry));", "out.push_back(std::move(entry));"),
+    ("remove vacío no guarda", YH, "Json out = needle.empty() ? std::move(*items) : without(*items, needle, needle);",
+     "Json out = needle.empty() ? std::move(*items) : without(*items, needle, needle);\n"
+     "    if (needle.empty()) {\n        return out;\n    }"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

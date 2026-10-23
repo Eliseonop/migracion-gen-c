@@ -4137,6 +4137,3004 @@
      Infinity
     ]
    }
+  },
+  {
+   "step": [
+    "write",
+    {}
+   ],
+   "result": null,
+   "file": {}
+  },
+  {
+   "step": [
+    "yt_record",
+    "",
+    null,
+    40,
+    1000
+   ],
+   "result": [],
+   "file": {}
+  },
+  {
+   "step": [
+    "yt_record",
+    "   ",
+    {
+     "id": "a1",
+     "title": "Vídeo A"
+    },
+    40,
+    1000
+   ],
+   "result": [],
+   "file": {}
+  },
+  {
+   "step": [
+    "yt_record",
+    " https://y/a ",
+    {
+     "id": "a1",
+     "title": "Vídeo A"
+    },
+    40,
+    1001
+   ],
+   "result": [
+    {
+     "url": "https://y/a",
+     "title": "Vídeo A",
+     "video_id": "a1",
+     "at": 1001
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "title": "Vídeo A",
+      "video_id": "a1",
+      "at": 1001
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/b",
+    null,
+    40,
+    1002
+   ],
+   "result": [
+    {
+     "url": "https://y/b",
+     "title": "https://y/b",
+     "video_id": "",
+     "at": 1002
+    },
+    {
+     "url": "https://y/a",
+     "title": "Vídeo A",
+     "video_id": "a1",
+     "at": 1001
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/b",
+      "title": "https://y/b",
+      "video_id": "",
+      "at": 1002
+     },
+     {
+      "url": "https://y/a",
+      "title": "Vídeo A",
+      "video_id": "a1",
+      "at": 1001
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/a2",
+    {
+     "id": "a1"
+    },
+    40,
+    1003
+   ],
+   "result": [
+    {
+     "url": "https://y/a2",
+     "title": "https://y/a2",
+     "video_id": "a1",
+     "at": 1003
+    },
+    {
+     "url": "https://y/b",
+     "title": "https://y/b",
+     "video_id": "",
+     "at": 1002
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/a2",
+      "title": "https://y/a2",
+      "video_id": "a1",
+      "at": 1003
+     },
+     {
+      "url": "https://y/b",
+      "title": "https://y/b",
+      "video_id": "",
+      "at": 1002
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/b",
+    {
+     "id": "b1",
+     "title": "B"
+    },
+    40,
+    1004
+   ],
+   "result": [
+    {
+     "url": "https://y/b",
+     "title": "B",
+     "video_id": "b1",
+     "at": 1004
+    },
+    {
+     "url": "https://y/a2",
+     "title": "https://y/a2",
+     "video_id": "a1",
+     "at": 1003
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/b",
+      "title": "B",
+      "video_id": "b1",
+      "at": 1004
+     },
+     {
+      "url": "https://y/a2",
+      "title": "https://y/a2",
+      "video_id": "a1",
+      "at": 1003
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/c",
+    {
+     "id": 0,
+     "title": ""
+    },
+    40,
+    1005
+   ],
+   "result": [
+    {
+     "url": "https://y/c",
+     "title": "https://y/c",
+     "video_id": "",
+     "at": 1005
+    },
+    {
+     "url": "https://y/b",
+     "title": "B",
+     "video_id": "b1",
+     "at": 1004
+    },
+    {
+     "url": "https://y/a2",
+     "title": "https://y/a2",
+     "video_id": "a1",
+     "at": 1003
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/c",
+      "title": "https://y/c",
+      "video_id": "",
+      "at": 1005
+     },
+     {
+      "url": "https://y/b",
+      "title": "B",
+      "video_id": "b1",
+      "at": 1004
+     },
+     {
+      "url": "https://y/a2",
+      "title": "https://y/a2",
+      "video_id": "a1",
+      "at": 1003
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/d",
+    {
+     "id": 12,
+     "title": 3.5
+    },
+    40,
+    1006
+   ],
+   "result": [
+    {
+     "url": "https://y/d",
+     "title": "3.5",
+     "video_id": "12",
+     "at": 1006
+    },
+    {
+     "url": "https://y/c",
+     "title": "https://y/c",
+     "video_id": "",
+     "at": 1005
+    },
+    {
+     "url": "https://y/b",
+     "title": "B",
+     "video_id": "b1",
+     "at": 1004
+    },
+    {
+     "url": "https://y/a2",
+     "title": "https://y/a2",
+     "video_id": "a1",
+     "at": 1003
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/d",
+      "title": "3.5",
+      "video_id": "12",
+      "at": 1006
+     },
+     {
+      "url": "https://y/c",
+      "title": "https://y/c",
+      "video_id": "",
+      "at": 1005
+     },
+     {
+      "url": "https://y/b",
+      "title": "B",
+      "video_id": "b1",
+      "at": 1004
+     },
+     {
+      "url": "https://y/a2",
+      "title": "https://y/a2",
+      "video_id": "a1",
+      "at": 1003
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/e",
+    7,
+    40,
+    1007
+   ],
+   "result": [
+    {
+     "url": "https://y/e",
+     "title": "https://y/e",
+     "video_id": "",
+     "at": 1007
+    },
+    {
+     "url": "https://y/d",
+     "title": "3.5",
+     "video_id": "12",
+     "at": 1006
+    },
+    {
+     "url": "https://y/c",
+     "title": "https://y/c",
+     "video_id": "",
+     "at": 1005
+    },
+    {
+     "url": "https://y/b",
+     "title": "B",
+     "video_id": "b1",
+     "at": 1004
+    },
+    {
+     "url": "https://y/a2",
+     "title": "https://y/a2",
+     "video_id": "a1",
+     "at": 1003
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/e",
+      "title": "https://y/e",
+      "video_id": "",
+      "at": 1007
+     },
+     {
+      "url": "https://y/d",
+      "title": "3.5",
+      "video_id": "12",
+      "at": 1006
+     },
+     {
+      "url": "https://y/c",
+      "title": "https://y/c",
+      "video_id": "",
+      "at": 1005
+     },
+     {
+      "url": "https://y/b",
+      "title": "B",
+      "video_id": "b1",
+      "at": 1004
+     },
+     {
+      "url": "https://y/a2",
+      "title": "https://y/a2",
+      "video_id": "a1",
+      "at": 1003
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/f",
+    [
+     1,
+     2
+    ],
+    40,
+    1008
+   ],
+   "result": [
+    {
+     "url": "https://y/f",
+     "title": "https://y/f",
+     "video_id": "",
+     "at": 1008
+    },
+    {
+     "url": "https://y/e",
+     "title": "https://y/e",
+     "video_id": "",
+     "at": 1007
+    },
+    {
+     "url": "https://y/d",
+     "title": "3.5",
+     "video_id": "12",
+     "at": 1006
+    },
+    {
+     "url": "https://y/c",
+     "title": "https://y/c",
+     "video_id": "",
+     "at": 1005
+    },
+    {
+     "url": "https://y/b",
+     "title": "B",
+     "video_id": "b1",
+     "at": 1004
+    },
+    {
+     "url": "https://y/a2",
+     "title": "https://y/a2",
+     "video_id": "a1",
+     "at": 1003
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/f",
+      "title": "https://y/f",
+      "video_id": "",
+      "at": 1008
+     },
+     {
+      "url": "https://y/e",
+      "title": "https://y/e",
+      "video_id": "",
+      "at": 1007
+     },
+     {
+      "url": "https://y/d",
+      "title": "3.5",
+      "video_id": "12",
+      "at": 1006
+     },
+     {
+      "url": "https://y/c",
+      "title": "https://y/c",
+      "video_id": "",
+      "at": 1005
+     },
+     {
+      "url": "https://y/b",
+      "title": "B",
+      "video_id": "b1",
+      "at": 1004
+     },
+     {
+      "url": "https://y/a2",
+      "title": "https://y/a2",
+      "video_id": "a1",
+      "at": 1003
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    " https://y/g ",
+    {
+     "id": " v9 ",
+     "title": "G"
+    },
+    40,
+    1009
+   ],
+   "result": [
+    {
+     "url": "https://y/g",
+     "title": "G",
+     "video_id": " v9 ",
+     "at": 1009
+    },
+    {
+     "url": "https://y/f",
+     "title": "https://y/f",
+     "video_id": "",
+     "at": 1008
+    },
+    {
+     "url": "https://y/e",
+     "title": "https://y/e",
+     "video_id": "",
+     "at": 1007
+    },
+    {
+     "url": "https://y/d",
+     "title": "3.5",
+     "video_id": "12",
+     "at": 1006
+    },
+    {
+     "url": "https://y/c",
+     "title": "https://y/c",
+     "video_id": "",
+     "at": 1005
+    },
+    {
+     "url": "https://y/b",
+     "title": "B",
+     "video_id": "b1",
+     "at": 1004
+    },
+    {
+     "url": "https://y/a2",
+     "title": "https://y/a2",
+     "video_id": "a1",
+     "at": 1003
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/g",
+      "title": "G",
+      "video_id": " v9 ",
+      "at": 1009
+     },
+     {
+      "url": "https://y/f",
+      "title": "https://y/f",
+      "video_id": "",
+      "at": 1008
+     },
+     {
+      "url": "https://y/e",
+      "title": "https://y/e",
+      "video_id": "",
+      "at": 1007
+     },
+     {
+      "url": "https://y/d",
+      "title": "3.5",
+      "video_id": "12",
+      "at": 1006
+     },
+     {
+      "url": "https://y/c",
+      "title": "https://y/c",
+      "video_id": "",
+      "at": 1005
+     },
+     {
+      "url": "https://y/b",
+      "title": "B",
+      "video_id": "b1",
+      "at": 1004
+     },
+     {
+      "url": "https://y/a2",
+      "title": "https://y/a2",
+      "video_id": "a1",
+      "at": 1003
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/h",
+    {
+     "id": "v9"
+    },
+    40,
+    1010
+   ],
+   "result": [
+    {
+     "url": "https://y/h",
+     "title": "https://y/h",
+     "video_id": "v9",
+     "at": 1010
+    },
+    {
+     "url": "https://y/f",
+     "title": "https://y/f",
+     "video_id": "",
+     "at": 1008
+    },
+    {
+     "url": "https://y/e",
+     "title": "https://y/e",
+     "video_id": "",
+     "at": 1007
+    },
+    {
+     "url": "https://y/d",
+     "title": "3.5",
+     "video_id": "12",
+     "at": 1006
+    },
+    {
+     "url": "https://y/c",
+     "title": "https://y/c",
+     "video_id": "",
+     "at": 1005
+    },
+    {
+     "url": "https://y/b",
+     "title": "B",
+     "video_id": "b1",
+     "at": 1004
+    },
+    {
+     "url": "https://y/a2",
+     "title": "https://y/a2",
+     "video_id": "a1",
+     "at": 1003
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/h",
+      "title": "https://y/h",
+      "video_id": "v9",
+      "at": 1010
+     },
+     {
+      "url": "https://y/f",
+      "title": "https://y/f",
+      "video_id": "",
+      "at": 1008
+     },
+     {
+      "url": "https://y/e",
+      "title": "https://y/e",
+      "video_id": "",
+      "at": 1007
+     },
+     {
+      "url": "https://y/d",
+      "title": "3.5",
+      "video_id": "12",
+      "at": 1006
+     },
+     {
+      "url": "https://y/c",
+      "title": "https://y/c",
+      "video_id": "",
+      "at": 1005
+     },
+     {
+      "url": "https://y/b",
+      "title": "B",
+      "video_id": "b1",
+      "at": 1004
+     },
+     {
+      "url": "https://y/a2",
+      "title": "https://y/a2",
+      "video_id": "a1",
+      "at": 1003
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/i",
+    {
+     "id": " v9 "
+    },
+    40,
+    1011
+   ],
+   "result": [
+    {
+     "url": "https://y/i",
+     "title": "https://y/i",
+     "video_id": " v9 ",
+     "at": 1011
+    },
+    {
+     "url": "https://y/h",
+     "title": "https://y/h",
+     "video_id": "v9",
+     "at": 1010
+    },
+    {
+     "url": "https://y/f",
+     "title": "https://y/f",
+     "video_id": "",
+     "at": 1008
+    },
+    {
+     "url": "https://y/e",
+     "title": "https://y/e",
+     "video_id": "",
+     "at": 1007
+    },
+    {
+     "url": "https://y/d",
+     "title": "3.5",
+     "video_id": "12",
+     "at": 1006
+    },
+    {
+     "url": "https://y/c",
+     "title": "https://y/c",
+     "video_id": "",
+     "at": 1005
+    },
+    {
+     "url": "https://y/b",
+     "title": "B",
+     "video_id": "b1",
+     "at": 1004
+    },
+    {
+     "url": "https://y/a2",
+     "title": "https://y/a2",
+     "video_id": "a1",
+     "at": 1003
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/i",
+      "title": "https://y/i",
+      "video_id": " v9 ",
+      "at": 1011
+     },
+     {
+      "url": "https://y/h",
+      "title": "https://y/h",
+      "video_id": "v9",
+      "at": 1010
+     },
+     {
+      "url": "https://y/f",
+      "title": "https://y/f",
+      "video_id": "",
+      "at": 1008
+     },
+     {
+      "url": "https://y/e",
+      "title": "https://y/e",
+      "video_id": "",
+      "at": 1007
+     },
+     {
+      "url": "https://y/d",
+      "title": "3.5",
+      "video_id": "12",
+      "at": 1006
+     },
+     {
+      "url": "https://y/c",
+      "title": "https://y/c",
+      "video_id": "",
+      "at": 1005
+     },
+     {
+      "url": "https://y/b",
+      "title": "B",
+      "video_id": "b1",
+      "at": 1004
+     },
+     {
+      "url": "https://y/a2",
+      "title": "https://y/a2",
+      "video_id": "a1",
+      "at": 1003
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/j",
+    null,
+    3,
+    1012
+   ],
+   "result": [
+    {
+     "url": "https://y/j",
+     "title": "https://y/j",
+     "video_id": "",
+     "at": 1012
+    },
+    {
+     "url": "https://y/i",
+     "title": "https://y/i",
+     "video_id": " v9 ",
+     "at": 1011
+    },
+    {
+     "url": "https://y/h",
+     "title": "https://y/h",
+     "video_id": "v9",
+     "at": 1010
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/j",
+      "title": "https://y/j",
+      "video_id": "",
+      "at": 1012
+     },
+     {
+      "url": "https://y/i",
+      "title": "https://y/i",
+      "video_id": " v9 ",
+      "at": 1011
+     },
+     {
+      "url": "https://y/h",
+      "title": "https://y/h",
+      "video_id": "v9",
+      "at": 1010
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/k",
+    null,
+    -5,
+    1013
+   ],
+   "result": [
+    {
+     "url": "https://y/k",
+     "title": "https://y/k",
+     "video_id": "",
+     "at": 1013
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/k",
+      "title": "https://y/k",
+      "video_id": "",
+      "at": 1013
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/l",
+    null,
+    0,
+    1014
+   ],
+   "result": [
+    {
+     "url": "https://y/l",
+     "title": "https://y/l",
+     "video_id": "",
+     "at": 1014
+    },
+    {
+     "url": "https://y/k",
+     "title": "https://y/k",
+     "video_id": "",
+     "at": 1013
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/l",
+      "title": "https://y/l",
+      "video_id": "",
+      "at": 1014
+     },
+     {
+      "url": "https://y/k",
+      "title": "https://y/k",
+      "video_id": "",
+      "at": 1013
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/m",
+    null,
+    1,
+    1015
+   ],
+   "result": [
+    {
+     "url": "https://y/m",
+     "title": "https://y/m",
+     "video_id": "",
+     "at": 1015
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/m",
+      "title": "https://y/m",
+      "video_id": "",
+      "at": 1015
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/m",
+      "title": "https://y/m",
+      "video_id": "",
+      "at": 1015
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/m",
+      "title": "https://y/m",
+      "video_id": "",
+      "at": 1015
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "yt_history": [
+      "no es un objeto",
+      7,
+      null,
+      {
+       "url": ""
+      },
+      {
+       "url": "   "
+      },
+      {
+       "title": "sin url"
+      },
+      {
+       "url": 5,
+       "title": null,
+       "video_id": 7,
+       "at": "12"
+      },
+      {
+       "url": true,
+       "title": 0,
+       "at": 3.9
+      },
+      {
+       "url": " https://y/n ",
+       "title": [
+        1,
+        "a"
+       ],
+       "video_id": " n1 ",
+       "at": true
+      },
+      {
+       "url": "https://y/o",
+       "title": {
+        "k": "v"
+       },
+       "video_id": "",
+       "at": " 42 "
+      },
+      {
+       "url": "https://y/p",
+       "at": -1.5
+      },
+      {
+       "url": "https://y/q",
+       "at": ""
+      },
+      {
+       "url": "https://y/r",
+       "at": 0.0
+      },
+      {
+       "url": "https://y/s",
+       "at": false
+      },
+      {
+       "url": "https://y/t",
+       "at": "-7"
+      },
+      {
+       "url": "https://y/n",
+       "video_id": "dup"
+      },
+      {
+       "url": "https://y/u",
+       "video_id": "n1"
+      }
+     ]
+    }
+   ],
+   "result": null,
+   "file": {
+    "yt_history": [
+     "no es un objeto",
+     7,
+     null,
+     {
+      "url": ""
+     },
+     {
+      "url": "   "
+     },
+     {
+      "title": "sin url"
+     },
+     {
+      "url": 5,
+      "title": null,
+      "video_id": 7,
+      "at": "12"
+     },
+     {
+      "url": true,
+      "title": 0,
+      "at": 3.9
+     },
+     {
+      "url": " https://y/n ",
+      "title": [
+       1,
+       "a"
+      ],
+      "video_id": " n1 ",
+      "at": true
+     },
+     {
+      "url": "https://y/o",
+      "title": {
+       "k": "v"
+      },
+      "video_id": "",
+      "at": " 42 "
+     },
+     {
+      "url": "https://y/p",
+      "at": -1.5
+     },
+     {
+      "url": "https://y/q",
+      "at": ""
+     },
+     {
+      "url": "https://y/r",
+      "at": 0.0
+     },
+     {
+      "url": "https://y/s",
+      "at": false
+     },
+     {
+      "url": "https://y/t",
+      "at": "-7"
+     },
+     {
+      "url": "https://y/n",
+      "video_id": "dup"
+     },
+     {
+      "url": "https://y/u",
+      "video_id": "n1"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    ""
+   ],
+   "result": [
+    {
+     "url": "5",
+     "title": "5",
+     "video_id": "7",
+     "at": 12
+    },
+    {
+     "url": "True",
+     "title": "True",
+     "video_id": "",
+     "at": 3
+    },
+    {
+     "url": "https://y/n",
+     "title": "[1, 'a']",
+     "video_id": " n1 ",
+     "at": 1
+    },
+    {
+     "url": "https://y/o",
+     "title": "{'k': 'v'}",
+     "video_id": "",
+     "at": 42
+    },
+    {
+     "url": "https://y/p",
+     "title": "https://y/p",
+     "video_id": "",
+     "at": -1
+    },
+    {
+     "url": "https://y/q",
+     "title": "https://y/q",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/r",
+     "title": "https://y/r",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/s",
+     "title": "https://y/s",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/t",
+     "title": "https://y/t",
+     "video_id": "",
+     "at": -7
+    },
+    {
+     "url": "https://y/n",
+     "title": "https://y/n",
+     "video_id": "dup",
+     "at": 0
+    },
+    {
+     "url": "https://y/u",
+     "title": "https://y/u",
+     "video_id": "n1",
+     "at": 0
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "5",
+      "title": "5",
+      "video_id": "7",
+      "at": 12
+     },
+     {
+      "url": "True",
+      "title": "True",
+      "video_id": "",
+      "at": 3
+     },
+     {
+      "url": "https://y/n",
+      "title": "[1, 'a']",
+      "video_id": " n1 ",
+      "at": 1
+     },
+     {
+      "url": "https://y/o",
+      "title": "{'k': 'v'}",
+      "video_id": "",
+      "at": 42
+     },
+     {
+      "url": "https://y/p",
+      "title": "https://y/p",
+      "video_id": "",
+      "at": -1
+     },
+     {
+      "url": "https://y/q",
+      "title": "https://y/q",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/r",
+      "title": "https://y/r",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/s",
+      "title": "https://y/s",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/t",
+      "title": "https://y/t",
+      "video_id": "",
+      "at": -7
+     },
+     {
+      "url": "https://y/n",
+      "title": "https://y/n",
+      "video_id": "dup",
+      "at": 0
+     },
+     {
+      "url": "https://y/u",
+      "title": "https://y/u",
+      "video_id": "n1",
+      "at": 0
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    " n1 "
+   ],
+   "result": [
+    {
+     "url": "5",
+     "title": "5",
+     "video_id": "7",
+     "at": 12
+    },
+    {
+     "url": "True",
+     "title": "True",
+     "video_id": "",
+     "at": 3
+    },
+    {
+     "url": "https://y/o",
+     "title": "{'k': 'v'}",
+     "video_id": "",
+     "at": 42
+    },
+    {
+     "url": "https://y/p",
+     "title": "https://y/p",
+     "video_id": "",
+     "at": -1
+    },
+    {
+     "url": "https://y/q",
+     "title": "https://y/q",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/r",
+     "title": "https://y/r",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/s",
+     "title": "https://y/s",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/t",
+     "title": "https://y/t",
+     "video_id": "",
+     "at": -7
+    },
+    {
+     "url": "https://y/n",
+     "title": "https://y/n",
+     "video_id": "dup",
+     "at": 0
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "5",
+      "title": "5",
+      "video_id": "7",
+      "at": 12
+     },
+     {
+      "url": "True",
+      "title": "True",
+      "video_id": "",
+      "at": 3
+     },
+     {
+      "url": "https://y/o",
+      "title": "{'k': 'v'}",
+      "video_id": "",
+      "at": 42
+     },
+     {
+      "url": "https://y/p",
+      "title": "https://y/p",
+      "video_id": "",
+      "at": -1
+     },
+     {
+      "url": "https://y/q",
+      "title": "https://y/q",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/r",
+      "title": "https://y/r",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/s",
+      "title": "https://y/s",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/t",
+      "title": "https://y/t",
+      "video_id": "",
+      "at": -7
+     },
+     {
+      "url": "https://y/n",
+      "title": "https://y/n",
+      "video_id": "dup",
+      "at": 0
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    "https://y/n"
+   ],
+   "result": [
+    {
+     "url": "5",
+     "title": "5",
+     "video_id": "7",
+     "at": 12
+    },
+    {
+     "url": "True",
+     "title": "True",
+     "video_id": "",
+     "at": 3
+    },
+    {
+     "url": "https://y/o",
+     "title": "{'k': 'v'}",
+     "video_id": "",
+     "at": 42
+    },
+    {
+     "url": "https://y/p",
+     "title": "https://y/p",
+     "video_id": "",
+     "at": -1
+    },
+    {
+     "url": "https://y/q",
+     "title": "https://y/q",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/r",
+     "title": "https://y/r",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/s",
+     "title": "https://y/s",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/t",
+     "title": "https://y/t",
+     "video_id": "",
+     "at": -7
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "5",
+      "title": "5",
+      "video_id": "7",
+      "at": 12
+     },
+     {
+      "url": "True",
+      "title": "True",
+      "video_id": "",
+      "at": 3
+     },
+     {
+      "url": "https://y/o",
+      "title": "{'k': 'v'}",
+      "video_id": "",
+      "at": 42
+     },
+     {
+      "url": "https://y/p",
+      "title": "https://y/p",
+      "video_id": "",
+      "at": -1
+     },
+     {
+      "url": "https://y/q",
+      "title": "https://y/q",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/r",
+      "title": "https://y/r",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/s",
+      "title": "https://y/s",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/t",
+      "title": "https://y/t",
+      "video_id": "",
+      "at": -7
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    "5"
+   ],
+   "result": [
+    {
+     "url": "True",
+     "title": "True",
+     "video_id": "",
+     "at": 3
+    },
+    {
+     "url": "https://y/o",
+     "title": "{'k': 'v'}",
+     "video_id": "",
+     "at": 42
+    },
+    {
+     "url": "https://y/p",
+     "title": "https://y/p",
+     "video_id": "",
+     "at": -1
+    },
+    {
+     "url": "https://y/q",
+     "title": "https://y/q",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/r",
+     "title": "https://y/r",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/s",
+     "title": "https://y/s",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/t",
+     "title": "https://y/t",
+     "video_id": "",
+     "at": -7
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "True",
+      "title": "True",
+      "video_id": "",
+      "at": 3
+     },
+     {
+      "url": "https://y/o",
+      "title": "{'k': 'v'}",
+      "video_id": "",
+      "at": 42
+     },
+     {
+      "url": "https://y/p",
+      "title": "https://y/p",
+      "video_id": "",
+      "at": -1
+     },
+     {
+      "url": "https://y/q",
+      "title": "https://y/q",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/r",
+      "title": "https://y/r",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/s",
+      "title": "https://y/s",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/t",
+      "title": "https://y/t",
+      "video_id": "",
+      "at": -7
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    "True"
+   ],
+   "result": [
+    {
+     "url": "https://y/o",
+     "title": "{'k': 'v'}",
+     "video_id": "",
+     "at": 42
+    },
+    {
+     "url": "https://y/p",
+     "title": "https://y/p",
+     "video_id": "",
+     "at": -1
+    },
+    {
+     "url": "https://y/q",
+     "title": "https://y/q",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/r",
+     "title": "https://y/r",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/s",
+     "title": "https://y/s",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/t",
+     "title": "https://y/t",
+     "video_id": "",
+     "at": -7
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/o",
+      "title": "{'k': 'v'}",
+      "video_id": "",
+      "at": 42
+     },
+     {
+      "url": "https://y/p",
+      "title": "https://y/p",
+      "video_id": "",
+      "at": -1
+     },
+     {
+      "url": "https://y/q",
+      "title": "https://y/q",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/r",
+      "title": "https://y/r",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/s",
+      "title": "https://y/s",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/t",
+      "title": "https://y/t",
+      "video_id": "",
+      "at": -7
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    "no-existe"
+   ],
+   "result": [
+    {
+     "url": "https://y/o",
+     "title": "{'k': 'v'}",
+     "video_id": "",
+     "at": 42
+    },
+    {
+     "url": "https://y/p",
+     "title": "https://y/p",
+     "video_id": "",
+     "at": -1
+    },
+    {
+     "url": "https://y/q",
+     "title": "https://y/q",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/r",
+     "title": "https://y/r",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/s",
+     "title": "https://y/s",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/t",
+     "title": "https://y/t",
+     "video_id": "",
+     "at": -7
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/o",
+      "title": "{'k': 'v'}",
+      "video_id": "",
+      "at": 42
+     },
+     {
+      "url": "https://y/p",
+      "title": "https://y/p",
+      "video_id": "",
+      "at": -1
+     },
+     {
+      "url": "https://y/q",
+      "title": "https://y/q",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/r",
+      "title": "https://y/r",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/s",
+      "title": "https://y/s",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/t",
+      "title": "https://y/t",
+      "video_id": "",
+      "at": -7
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/o",
+    {
+     "id": "dup"
+    },
+    40,
+    2000
+   ],
+   "result": [
+    {
+     "url": "https://y/o",
+     "title": "https://y/o",
+     "video_id": "dup",
+     "at": 2000
+    },
+    {
+     "url": "https://y/p",
+     "title": "https://y/p",
+     "video_id": "",
+     "at": -1
+    },
+    {
+     "url": "https://y/q",
+     "title": "https://y/q",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/r",
+     "title": "https://y/r",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/s",
+     "title": "https://y/s",
+     "video_id": "",
+     "at": 0
+    },
+    {
+     "url": "https://y/t",
+     "title": "https://y/t",
+     "video_id": "",
+     "at": -7
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/o",
+      "title": "https://y/o",
+      "video_id": "dup",
+      "at": 2000
+     },
+     {
+      "url": "https://y/p",
+      "title": "https://y/p",
+      "video_id": "",
+      "at": -1
+     },
+     {
+      "url": "https://y/q",
+      "title": "https://y/q",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/r",
+      "title": "https://y/r",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/s",
+      "title": "https://y/s",
+      "video_id": "",
+      "at": 0
+     },
+     {
+      "url": "https://y/t",
+      "title": "https://y/t",
+      "video_id": "",
+      "at": -7
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "yt_history": "x"
+    }
+   ],
+   "result": null,
+   "file": {
+    "yt_history": "x"
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    "a"
+   ],
+   "result": [],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "yt_history": {
+      "url": "https://y/a"
+     }
+    }
+   ],
+   "result": null,
+   "file": {
+    "yt_history": {
+     "url": "https://y/a"
+    }
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/a",
+    null,
+    40,
+    3000
+   ],
+   "result": [
+    {
+     "url": "https://y/a",
+     "title": "https://y/a",
+     "video_id": "",
+     "at": 3000
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "title": "https://y/a",
+      "video_id": "",
+      "at": 3000
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "yt_history": [
+      {
+       "url": "https://y/a",
+       "at": "abc"
+      }
+     ]
+    }
+   ],
+   "result": null,
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": "abc"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/b",
+    null,
+    40,
+    3001
+   ],
+   "error": "ValueError",
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": "abc"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    "x"
+   ],
+   "error": "ValueError",
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": "abc"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "",
+    null,
+    40,
+    3002
+   ],
+   "error": "ValueError",
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": "abc"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "yt_history": [
+      {
+       "url": "https://y/a",
+       "at": "1.5"
+      }
+     ]
+    }
+   ],
+   "result": null,
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": "1.5"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    ""
+   ],
+   "error": "ValueError",
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": "1.5"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "yt_history": [
+      {
+       "url": "https://y/a",
+       "at": [
+        1
+       ]
+      }
+     ]
+    }
+   ],
+   "result": null,
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": [
+       1
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    ""
+   ],
+   "error": "TypeError",
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": [
+       1
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "write",
+    "{\"yt_history\": [{\"url\": \"https://y/a\", \"at\": NaN}]}"
+   ],
+   "result": null,
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": NaN
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    ""
+   ],
+   "error": "ValueError",
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": NaN
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "write",
+    "{\"yt_history\": [{\"url\": \"https://y/a\", \"at\": Infinity}]}"
+   ],
+   "result": null,
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": Infinity
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    ""
+   ],
+   "error": "OverflowError",
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": Infinity
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "yt_history": [
+      {
+       "url": "https://y/a",
+       "at": "1_000"
+      },
+      {
+       "url": "https://y/b",
+       "at": "+8"
+      }
+     ]
+    }
+   ],
+   "result": null,
+   "file": {
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "at": "1_000"
+     },
+     {
+      "url": "https://y/b",
+      "at": "+8"
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "yt_remove",
+    ""
+   ],
+   "result": [
+    {
+     "url": "https://y/a",
+     "title": "https://y/a",
+     "video_id": "",
+     "at": 1000
+    },
+    {
+     "url": "https://y/b",
+     "title": "https://y/b",
+     "video_id": "",
+     "at": 8
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "ef_dora",
+     "speed": 1.0
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/a",
+      "title": "https://y/a",
+      "video_id": "",
+      "at": 1000
+     },
+     {
+      "url": "https://y/b",
+      "title": "https://y/b",
+      "video_id": "",
+      "at": 8
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "write",
+    {
+     "tts": {
+      "voice": "x"
+     },
+     "yt_history": [
+      {
+       "url": "https://y/z",
+       "at": 5
+      }
+     ]
+    }
+   ],
+   "result": null,
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "yt_history": [
+     {
+      "url": "https://y/z",
+      "at": 5
+     }
+    ]
+   }
+  },
+  {
+   "step": [
+    "yt_record",
+    "https://y/y",
+    {
+     "id": "y1",
+     "title": "Y"
+    },
+    40,
+    4000
+   ],
+   "result": [
+    {
+     "url": "https://y/y",
+     "title": "Y",
+     "video_id": "y1",
+     "at": 4000
+    },
+    {
+     "url": "https://y/z",
+     "title": "https://y/z",
+     "video_id": "",
+     "at": 5
+    }
+   ],
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/y",
+      "title": "Y",
+      "video_id": "y1",
+      "at": 4000
+     },
+     {
+      "url": "https://y/z",
+      "title": "https://y/z",
+      "video_id": "",
+      "at": 5
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
+  },
+  {
+   "step": [
+    "load"
+   ],
+   "result": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/y",
+      "title": "Y",
+      "video_id": "y1",
+      "at": 4000
+     },
+     {
+      "url": "https://y/z",
+      "title": "https://y/z",
+      "video_id": "",
+      "at": 5
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   },
+   "file": {
+    "tts": {
+     "voice": "x"
+    },
+    "favorites": {
+     "sfx": [],
+     "audios": [],
+     "textStyles": []
+    },
+    "yt_history": [
+     {
+      "url": "https://y/y",
+      "title": "Y",
+      "video_id": "y1",
+      "at": 4000
+     },
+     {
+      "url": "https://y/z",
+      "title": "https://y/z",
+      "video_id": "",
+      "at": 5
+     }
+    ],
+    "api_keys": {},
+    "export": {
+     "fps": 30,
+     "quality": "standard"
+    },
+    "transcribe": {
+     "model": "base"
+    },
+    "bg_removal": {
+     "device": "auto",
+     "provider": "u2net"
+    },
+    "models": {
+     "idle_minutes": 5
+    }
+   }
   }
  ]
 }

@@ -73,6 +73,7 @@ add_library(gc_core
     src/mask_edit.cpp
     src/vfx_stack.cpp
     src/timeline_view.cpp
+    src/yt_history.cpp
 )
 add_library(gc::core ALIAS gc_core)
 

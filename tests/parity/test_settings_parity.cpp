@@ -1,4 +1,5 @@
-// Paridad de los AJUSTES con video-yt (settings.py, export_settings.py, transcribe_settings.py).
+// Paridad de los AJUSTES con video-yt (settings.py, export_settings.py, transcribe_settings.py y
+// el historial de YouTube de yt_history.py).
 //
 // Fixtures (tools/fixtures/export_fixtures.py):
 //   tests/fixtures/settings/synthetic.json   settings_cases.py (claves falsas; en el repo)
@@ -17,6 +18,7 @@
 
 #include "gc/core/io.hpp"
 #include "gc/core/settings.hpp"
+#include "gc/core/yt_history.hpp"
 #include "json_diff.hpp"
 
 using gc::Json;
@@ -70,6 +72,16 @@ std::size_t run_steps(const Json& steps, const std::string& fname) {
         } else if (kind == "set_key") {
             const auto r = settings.set_key(step[1].get<std::string>(), step[2].get<std::int64_t>(),
                                             step[3].get<std::string>());
+            ok = r.has_value();
+            result = to_result(r);
+        } else if (kind == "yt_record") {
+            const std::int64_t at = step[4].get<std::int64_t>();
+            const auto r = yt_history_record(settings, step[1].get<std::string>(), step[2],
+                                             step[3].get<std::int64_t>(), [at] { return at; });
+            ok = r.has_value();
+            result = to_result(r);
+        } else if (kind == "yt_remove") {
+            const auto r = yt_history_remove(settings, step[1].get<std::string>());
             ok = r.has_value();
             result = to_result(r);
         } else if (kind == "remove_key") {
