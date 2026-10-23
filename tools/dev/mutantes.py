@@ -667,11 +667,38 @@ HEATMAP = [
      "\n"),
 ]
 
+PU = "src/core/src/py_url.cpp"
+YU = "src/core/src/youtube_url.cpp"
+URL = [
+    ("sin quitar los C0 delante", PU, "static_cast<unsigned char>(raw[lead]) <= 0x20", "static_cast<unsigned char>(raw[lead]) < 0x20"),
+    ("sin quitar tabuladores", PU, r"if (c != '\t' && c != '\r' && c != '\n') {", r"if (c != '\r' && c != '\n') {"),
+    ("esquema con «_»", PU, "c == '+' || c == '-' || c == '.'; }", "c == '+' || c == '-' || c == '.' || c == '_'; }"),
+    ("netloc hasta «;»", PU, "rest.find_first_of(\"/?#\", 2)", "rest.find_first_of(\"/?#;\", 2)"),
+    ("sin params", PU, "if (std::ranges::find(kUsesParams, p.scheme) != kUsesParams.end() && rest.contains(';')) {", "if (false) {"),
+    ("params desde el primer «;»", PU, "i = rest.find(';', slash);", "i = rest.find(';');"),
+    ("sin comprobar NFKC", PU, "if (!valid_netloc_nfkc(p.netloc)) {", "if (false) {"),
+    ("IPv4 con ceros delante", PU, "|| (o != \"0\" && o[0] == '0')", ""),
+    ("IPvFuture sin hex", PU, "return i > 1 && i < h.size()", "return i < h.size()"),
+    ("hostname sin el usuario", PU, "const std::string_view hp = rpartition_after(netloc, '@');\n    const auto [_, have", "const std::string_view hp = netloc;\n    const auto [_, have"),
+    ("hostname con la zona en minúsculas", PU, "std::string out = py_lower(name);\n    if (pct) {\n        out += '%';\n        out += zone;\n    }", "std::string out = py_lower(host);"),
+    ("qsl con valores vacíos", PU, "if (!value.empty()) {\n            out.emplace_back", "if (true) {\n            out.emplace_back"),
+    ("qsl sin descodificar el nombre", PU, "out.emplace_back(py_unquote_plus(name), py_unquote_plus(value));", "out.emplace_back(std::string(name), py_unquote_plus(value));"),
+    ("«+» sin cambiar", PU, "std::ranges::replace(t, '+', ' ');", ""),
+    ("unquote sin trozos no ASCII", PU, "(static_cast<unsigned char>(s[j]) < 0x80) == ascii", "true"),
+    ("UTF-8: E0 80 vale", PU, "lo = b == 0xE0 ? 0xA0 : 0x80;", "lo = 0x80;"),
+    ("UTF-8: surrogados valen", PU, "hi = b == 0xED ? 0x9F : 0xBF;", "hi = 0xBF;"),
+    ("UTF-8: un FFFD por byte", PU, "            out += \"\\xEF\\xBF\\xBD\";\n            i += k;", "            out += \"\\xEF\\xBF\\xBD\";\n            i += 1;"),
+    ("youtube: sin quitar www.", YU, "if (host.starts_with(\"www.\")) {", "if (false) {"),
+    ("youtube: sin subdominios", YU, "|| ends_with(host, \".youtube.com\");", ";"),
+    ("youtube: sin https delante", YU, "raw = \"https://\" + raw;", "raw = raw;"),
+    ("id: sin live/", YU, "|| segs[0] == \"live\" ", ""),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

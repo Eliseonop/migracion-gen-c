@@ -32,7 +32,7 @@ Result<Json> as_items(const Json& raw) {
         if (!x.is_object()) {
             continue;
         }
-        std::string url = py_strip(text_or_empty(field(x, "url")));
+        const std::string url = py_strip(text_or_empty(field(x, "url")));
         if (url.empty()) {
             continue;
         }
@@ -58,7 +58,7 @@ Result<Json> as_items(const Json& raw) {
 
 // _key: el vídeo o, si no lo hay, la url.
 std::string key_of(const Json& item) {
-    std::string id = py_strip(item["video_id"].get_ref<const std::string&>());
+    const std::string id = py_strip(item["video_id"].get_ref<const std::string&>());
     return id.empty() ? py_strip(item["url"].get_ref<const std::string&>()) : id;
 }
 

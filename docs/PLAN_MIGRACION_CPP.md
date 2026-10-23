@@ -1421,8 +1421,10 @@ Decisión de Edu (§6):
 - **`yt_history.hpp`** (espejo de `yt_history.py`): `yt_history_record` y `yt_history_remove` sobre `SettingsFile`. 52 pasos nuevos en la fixture de ajustes (`--solo ajustes`), con los `str()` e `int()` de Python sobre entradas raras; 9/9 mutaciones.
 - **Trampa:** con un `video` de texto, `getattr("x", "title")` de Python es el método `str.title` y se guardaría su `repr` («<built-in method title…>», con una dirección de memoria). No es determinista: el caso va con un número, y C++ trata un texto como sin vídeo.
 - **`heatmap.hpp`** (espejo de `heatmap._pick_segments`): los tramos de alto interés de «Analizar» a partir del heatmap de yt-dlp. 38 casos contra la función real (`--solo heatmap`), con los empates estables de `sorted` y `sort(reverse=True)` y el `[:max_clips]` de Python; 11/11 mutaciones. `analyze` sigue en Python hasta que llegue el sidecar de yt-dlp.
-- **MinGW:** 144/144, 0 warnings en Debug y Release; **MSVC:** 179/179.
+- **Enlaces de YouTube** (`youtube_url.hpp`): `is_youtube_url` y `youtube_id_from_url`, que hacen falta para `media_upgrade` y las descargas. Debajo, `py_url.hpp` con lo que usan de `urllib.parse`: `urlparse` (C0 y tabuladores fuera, esquema, netloc, params solo en los esquemas de `uses_params`), la validación de los corchetes (IPv6 como `ipaddress`, con zona y un IPv4 al final; IPvFuture; un IPv4 entre corchetes es un error) y el `_checknetloc` de NFKC (19 caracteres, tabla generada con el `unicodedata` 16.0 del Python de video-yt y comprobada por la fixture), `.hostname`, `parse_qsl` y `unquote` (cada trozo ASCII se descodifica por su lado, con el «replace» de CPython: un U+FFFD por trozo inválido más largo). 356 casos (`--solo url`); 22/22 mutaciones.
+- **MinGW:** 145/145, 0 warnings en Debug y Release y 0 avisos de clang-tidy en lo nuevo; **MSVC:** 180/180.
 
 **Siguiente:**
+- `media_upgrade.py` (cambiar la versión ligera de un vídeo por la de más calidad), sobre `youtube_url`, `ProjectsStore` y `replace_media`.
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
 - En el render quedan los efectos de vídeo (`vfx`, F4) y el matte automático (F6).

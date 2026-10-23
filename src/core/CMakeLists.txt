@@ -75,6 +75,8 @@ add_library(gc_core
     src/timeline_view.cpp
     src/yt_history.cpp
     src/heatmap.cpp
+    src/py_url.cpp
+    src/youtube_url.cpp
 )
 add_library(gc::core ALIAS gc_core)
 

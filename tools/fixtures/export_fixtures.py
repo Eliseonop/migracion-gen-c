@@ -1037,6 +1037,33 @@ def synthetic_keyword_fixtures(ctx: Ctx) -> dict:
         ek._llm_keywords = saved
 
 
+def synthetic_url_fixtures(ctx: Ctx) -> dict:
+    """urllib.parse (urlparse, hostname, parse_qsl, unquote) y los enlaces de YouTube de
+    youtube_audio.py, con el Python de video-yt."""
+    sys.path.insert(0, str(HERE))
+    import unicodedata
+    import urllib.parse as up
+    import url_cases as uc
+    from app import youtube_audio as ya
+
+    def parsed(u):
+        try:
+            r = up.urlparse(u)
+        except ValueError:
+            return None
+        return [r.scheme, r.netloc, r.path, r.params, r.query, r.fragment, r.hostname]
+
+    raws = list(uc.URLS) + [("https://" + u if "://" not in u else u) for u in uc.URLS if u.strip()]
+    return {
+        "nfkc": [c for c in range(0x80, 0x110000) if not 0xD800 <= c < 0xE000
+                 and any(x in unicodedata.normalize("NFKC", chr(c)) for x in "/?#@:")],
+        "parse": [[u, parsed(u)] for u in raws],
+        "youtube": [[u, ya.is_youtube_url(u), ya.youtube_id_from_url(u)] for u in uc.URLS],
+        "unquote": [[s, up.unquote(s), up.unquote_plus(s)] for s in uc.UNQUOTE],
+        "qsl": [[q, [list(p) for p in up.parse_qsl(q)]] for q in uc.QUERIES],
+    }
+
+
 def synthetic_heatmap_fixtures(ctx: Ctx) -> list:
     """heatmap._pick_segments real: [heatmap, duration, min_score, max_clips, max_duration, padding, tramos]."""
     sys.path.insert(0, str(HERE))
@@ -3141,7 +3168,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap"],
+                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3238,6 +3265,16 @@ def main() -> None:
 
     if args.solo == "heatmap":
         heatmap_group()
+        return
+
+    def url_group() -> None:
+        urls = synthetic_url_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "url" / "synthetic.json", urls,
+              len(urls["parse"]) + len(urls["youtube"]) + len(urls["unquote"]) + len(urls["qsl"]),
+              sum(p[1] is None for p in urls["parse"]))
+
+    if args.solo == "url":
+        url_group()
         return
 
     def shapes_group() -> None:
@@ -3337,6 +3374,7 @@ def main() -> None:
     beats_group()
     keywords_group()
     heatmap_group()
+    url_group()
     mono_group()
     js = synthetic_json_fixtures()
     write(REPO / "tests" / "fixtures" / "json" / "synthetic.json", js,
