@@ -368,6 +368,12 @@ STEPS_SEG = [
     ("face_track", "s1", "4", None, None, 0, False, _info([])),          # sin archivo
     ("face_track", "s1", "zz", None, None, 0, False, _info([])),
     ("face_track", "nada", "0", None, None, 0, False, _info([])),
+    # Tiempos no finitos del detector: inf // ventana es NaN e int() falla; NaN cae en la ventana 0.
+    ("face_track", "s1", "seg", 2.5, 4.0, 0, True,
+     _info([{"t": float("inf"), "cx": 0.5, "cy": 0.5, "w": 0.1, "h": 0.1}])),
+    ("face_track", "s1", "seg", 2.5, 4.0, 0, True,
+     _info([{"t": float("nan"), "cx": 0.3, "cy": 0.6, "w": 0.1, "h": 0.1},
+            {"t": 3.0, "cx": 0.7, "cy": 0.4, "w": 0.1, "h": 0.1}])),
     ("get", "s1"),
 ]
 STEPS += [("remove",), *STEPS_SEG]

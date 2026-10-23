@@ -3123,7 +3123,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats", "keywords", "mono", "contorno"],
+                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3194,6 +3194,15 @@ def main() -> None:
 
     if args.solo == "contorno":
         outline_group()
+        return
+
+    def projects_group() -> None:
+        prj_syn = synthetic_projects_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "projects" / "synthetic.json", prj_syn, len(prj_syn["steps"]),
+              sum("error" in s for s in prj_syn["steps"]))
+
+    if args.solo == "proyectos":
+        projects_group()
         return
 
     def shapes_group() -> None:
@@ -3298,9 +3307,7 @@ def main() -> None:
     js = synthetic_json_fixtures()
     write(REPO / "tests" / "fixtures" / "json" / "synthetic.json", js,
           len(js["floats"]) + len(js["dumps"]) + len(js["loads"]), sum("error" in c for c in js["loads"]))
-    prj_syn = synthetic_projects_fixtures(ctx)
-    write(REPO / "tests" / "fixtures" / "projects" / "synthetic.json", prj_syn, len(prj_syn["steps"]),
-          sum("error" in s for s in prj_syn["steps"]))
+    projects_group()
     col_syn = synthetic_collections_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "collections" / "synthetic.json", col_syn, len(col_syn["steps"]),
           sum("error" in s for s in col_syn["steps"]))

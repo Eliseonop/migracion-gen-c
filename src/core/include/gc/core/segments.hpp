@@ -58,8 +58,9 @@ using DurationProbe = std::function<std::optional<double>(const std::filesystem:
 
 // seed_keyframes: el seguimiento denso → pocos keyframes estables: ventanas de ~1 s (como mucho
 // ~12), la mediana de cada una, una zona muerta de 0,025 y los extremos anclados.
-[[nodiscard]] std::vector<Keyframe> seed_face_keyframes(std::span<const TrackPoint> track, double start,
-                                                        double end);
+// Un tiempo infinito en el seguimiento es un error (el int(nan) de Python).
+[[nodiscard]] Result<std::vector<Keyframe>> seed_face_keyframes(std::span<const TrackPoint> track, double start,
+                                                                double end);
 
 // cached_track: el seguimiento guardado del material si es del mismo rango (±0,05 s).
 [[nodiscard]] const FaceTrack* cached_face_track(const ClipInfo& clip, double start, double end);

@@ -226,7 +226,7 @@ Result<std::vector<ClipInfo>> create_segments(ProjectsStore& store, std::string_
     return out;
 }
 
-std::vector<Keyframe> seed_face_keyframes(std::span<const TrackPoint> track, double start, double end) {
+Result<std::vector<Keyframe>> seed_face_keyframes(std::span<const TrackPoint> track, double start, double end) {
     const auto key = [](double t, double cx, double cy) {
         Keyframe k;
         k.t = t;
@@ -236,13 +236,18 @@ std::vector<Keyframe> seed_face_keyframes(std::span<const TrackPoint> track, dou
     };
     const double dur = end - start > 0.0 ? end - start : 0.0;
     if (track.empty()) {
-        return {key(py_round(start, 3), 0.5, 0.5)};
+        return std::vector<Keyframe>{key(py_round(start, 3), 0.5, 0.5)};
     }
     const double window = dur / 12.0 > 1.0 ? dur / 12.0 : 1.0; // max(1.0, dur / 12)
     std::map<std::int64_t, std::vector<const TrackPoint*>> buckets;
     for (const TrackPoint& p : track) {
         const double since = p.t - start > 0.0 ? p.t - start : 0.0;
-        buckets[static_cast<std::int64_t>(detail::py_floordiv(since, window))].push_back(&p);
+        const double bucket = detail::py_floordiv(since, window);
+        // int(…) de Python: con un tiempo infinito, ValueError. Más allá de 64 bits, divergencia.
+        if (!std::isfinite(bucket) || std::abs(bucket) >= 9.2e18) {
+            return fail(ErrorCode::InvalidArgument, "no se puede pasar a entero un tiempo infinito o NaN");
+        }
+        buckets[static_cast<std::int64_t>(bucket)].push_back(&p);
     }
     std::vector<Keyframe> out;
     for (const auto& [k, pts] : buckets) {
@@ -260,6 +265,9 @@ std::vector<Keyframe> seed_face_keyframes(std::span<const TrackPoint> track, dou
             continue;
         }
         out.push_back(key(py_round(t, 3), py_round(cx, 4), py_round(cy, 4)));
+    }
+    if (out.empty()) { // no pasa: la primera ventana siempre entra
+        return out;
     }
     // Extremos anclados: el clip empieza y acaba encuadrado.
     if (out.front().t > start + 0.01) {
@@ -318,7 +326,11 @@ Result<FaceTrackResult> face_track_material(ProjectsStore& store, std::string_vi
     ft.fps = info->fps;
     ft.samples = info->samples;
     ft.track = info->track;
-    ft.keyframes = seed_face_keyframes(info->track, a, b);
+    auto keys = seed_face_keyframes(info->track, a, b);
+    if (!keys) {
+        return std::unexpected(keys.error());
+    }
+    ft.keyframes = std::move(*keys);
     ft.created_at = now();
     if (std::abs(a - own_a) <= kCacheEps && std::abs(b - own_b) <= kCacheEps) {
         // El rango del material: se guarda en él con el reframe sembrado.
