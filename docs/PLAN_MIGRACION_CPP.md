@@ -1443,8 +1443,14 @@ Decisión de Edu (§6):
 - **Aviso para F7** (copiado tal cual de Python): `allowed_download_url("http://[::1%.pexels.com]/x")` da true porque el hostname lleva la zona. Antes de descargar de verdad, hay que rechazar hosts con «[» o «%» en los dos lados.
 - Cifras de los docs corregidas (48 pasos del historial, 57 de `STEPS_UPG`, 368 URLs).
 
+**Sexta tanda: las calidades de YouTube (F7)**
+
+- `youtube_video.hpp`: la parte sin red de `youtube_video.py`. La regex `(\d{3,4})p` de `format_note` va a mano con los dígitos de cualquier sistema (el `\d` de Python es Unicode e `int()` los lee: «١٠٨٠p» es 1080), y el mejor formato de cada calidad es el `max` de Python con la tupla de `_rank` (el primero de los iguales). 78 casos contra las funciones reales; 17/17 mutaciones (una más era equivalente: el `int()` de un infinito ya lo para el límite de 64 bits).
+- **Divergencia que se queda:** con NaN en `fps`, `tbr` o `filesize`, Python compara las tuplas de `_rank` con la identidad de cada float; aquí un NaN nunca gana. yt-dlp no los da.
+- **MinGW:** 146/146 y **MSVC:** 183/183, 0 warnings.
+
 **Siguiente:**
-- La parte pura de `youtube_video.py` (`quality_of`, `available_qualities`, `resolve_quality`, `format_spec`…), que deja `analyze` a falta de la llamada a yt-dlp.
+- `heatmap.analyze` y la descarga del vídeo completo, con yt-dlp como sidecar (F7).
 - Meter los efectos en el compuesto (`compose`/`gc_export`), con el tramo en tiempo de fuente como `fx_bake.prepare_input`.
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).
 - En el render quedan los efectos de vídeo (`vfx`, F4) y el matte automático (F6).

@@ -722,11 +722,32 @@ MEDIA_UPGRADE = [
     ("offset de las versiones redondeado", MU, "{\"offset\", material_file_offset(*o)}", "{\"offset\", py_round(material_file_offset(*o), 0)}"),
 ]
 
+YV = "src/core/src/youtube_video.cpp"
+YOUTUBE_VIDEO = [
+    ("nota: 4 cifras antes que 3, no", YV, "for (std::size_t len = run; len >= 3; --len) {", "for (std::size_t len = 3; len >= 3 && len <= run; --len) {"),
+    ("nota: dígitos solo ASCII", YV, "py_isdecimal(cps[i + run])", "(cps[i + run] >= U'0' && cps[i + run] <= U'9')"),
+    ("calidad: el ancho", YV, "return *h != 0 ? std::optional<std::int64_t>(*h) : std::nullopt;", "return *w != 0 ? std::optional<std::int64_t>(*w) : std::nullopt;"),
+    ("sin quitar los storyboards", YV, "|| or_default(field(f, \"ext\"), kEmpty) == Json(\"mhtml\")", ""),
+    ("sin quitar el DRM", YV, "py_truthy(field(f, \"has_drm\")) || ", ""),
+    ("HDR antes que SDR", YV, "        return a.sdr;\n", "        return b.sdr;\n"),
+    ("HLS antes", YV, "        return a.direct;\n", "        return b.direct;\n"),
+    ("códec sin orden", YV, "        return a.codec > b.codec;\n", "        return a.codec < b.codec;\n"),
+    ("max: el último de los iguales", YV, "if (best == nullptr || greater(*r, best_rank)) {", "if (best == nullptr || !greater(best_rank, *r)) {"),
+    ("audio: sin preferir m4a", YV, "or_default(field(f, \"ext\"), kEmpty) == Json(\"m4a\"),", "false,"),
+    ("tamaño sin el aproximado", YV, "return int_of(size != 0.0 ? size : pnum(field(*f, \"filesize_approx\")));", "return int_of(size);"),
+    ("fps redondeando hacia arriba", YV, "std::nearbyint(pnum(field(*f, \"fps\")))", "std::round(pnum(field(*f, \"fps\")))"),
+    ("sin el mínimo de 360", YV, "if (q >= kYoutubeMinQuality) {", "if (q >= 0) {"),
+    ("resolve: sin la peor", YV, "    return avail.back();\n}", "    return avail.front();\n}"),
+    ("spec: sin el audio aparte", YV, "if (or_default(field(f, \"acodec\"), kEmpty) != kNone) {", "if (true) {"),
+    ("MB: siempre un decimal", YV, "return mb < 10 ? std::format", "return true ? std::format"),
+    ("protocolo raro sin error", YV, "        return invalid(\"protocol no es iterable\");\n", ""),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

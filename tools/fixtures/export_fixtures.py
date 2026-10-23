@@ -1072,6 +1072,39 @@ def synthetic_url_fixtures(ctx: Ctx) -> dict:
     }
 
 
+def synthetic_youtube_video_fixtures(ctx: Ctx) -> dict:
+    """La parte sin red de youtube_video.py, con las funciones reales: quality_of de cada formato,
+    available_qualities, resolve_quality y format_spec de cada info, y _mb. null = lanza."""
+    sys.path.insert(0, str(HERE))
+    import youtube_video_cases as yc
+    from app import youtube_video as yv
+
+    def attempt(fn, *a):
+        try:
+            return {"ok": fn(*a)}
+        except Exception as e:  # noqa: BLE001
+            return {"error": type(e).__name__, "message": str(e)}
+
+    formats = [f for info in yc.INFOS if isinstance(info.get("formats"), list) for f in info["formats"]
+               if isinstance(f, dict)]
+    infos = []
+    for info in yc.INFOS:
+        qs = attempt(yv.available_qualities, info)
+        entry = {"info": info, "qualities": qs}
+        if "ok" in qs:
+            entry["resolve"] = [[w, yv.resolve_quality(qs["ok"], w)] for w in yc.WANTED]
+            wanted = sorted({x["quality"] for x in qs["ok"]} | {144, 180, 300, 1081})
+            entry["spec"] = [[q, attempt(yv.format_spec, info, q)] for q in wanted]
+        else:
+            entry["spec"] = [[720, attempt(yv.format_spec, info, 720)]]
+        infos.append(entry)
+    return {
+        "quality": [[f, attempt(yv.quality_of, f)] for f in formats],
+        "infos": infos,
+        "mb": [[n, yv._mb(n)] for n in yc.MB],
+    }
+
+
 def synthetic_heatmap_fixtures(ctx: Ctx) -> list:
     """heatmap._pick_segments real: [heatmap, duration, min_score, max_clips, max_duration, padding, tramos]."""
     sys.path.insert(0, str(HERE))
@@ -3252,7 +3285,7 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx"],
+                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3349,6 +3382,16 @@ def main() -> None:
 
     if args.solo == "heatmap":
         heatmap_group()
+        return
+
+    def youtube_video_group() -> None:
+        ytv = synthetic_youtube_video_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "youtube" / "video.json", ytv,
+              len(ytv["quality"]) + len(ytv["infos"]) + len(ytv["mb"]),
+              sum("error" in q[1] for q in ytv["quality"]) + sum("error" in i["qualities"] for i in ytv["infos"]))
+
+    if args.solo == "youtube_video":
+        youtube_video_group()
         return
 
     def url_group() -> None:
@@ -3463,6 +3506,7 @@ def main() -> None:
     beats_group()
     keywords_group()
     heatmap_group()
+    youtube_video_group()
     url_group()
     mono_group()
     js = synthetic_json_fixtures()

@@ -79,6 +79,7 @@ add_library(gc_core
     src/youtube_url.cpp
     src/media_upgrade.cpp
     src/asset_import.cpp
+    src/youtube_video.cpp
 )
 add_library(gc::core ALIAS gc_core)
 

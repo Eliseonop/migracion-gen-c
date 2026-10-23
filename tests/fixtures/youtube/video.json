@@ -1,0 +1,2125 @@
+{
+ "quality": [
+  [
+   {
+    "format_id": "sb0",
+    "format_note": "storyboard",
+    "ext": "mhtml",
+    "vcodec": "none",
+    "acodec": "none",
+    "width": 48,
+    "height": 27
+   },
+   {
+    "ok": 27
+   }
+  ],
+  [
+   {
+    "format_id": "140",
+    "vcodec": "none",
+    "acodec": "mp4a.40.2",
+    "ext": "m4a",
+    "abr": 129.5,
+    "filesize": 3000000
+   },
+   {
+    "ok": null
+   }
+  ],
+  [
+   {
+    "format_id": "251",
+    "vcodec": "none",
+    "acodec": "opus",
+    "ext": "webm",
+    "abr": 160,
+    "filesize": 3500000
+   },
+   {
+    "ok": null
+   }
+  ],
+  [
+   {
+    "format_id": "140-drc",
+    "vcodec": "none",
+    "acodec": "mp4a.40.2",
+    "ext": "m4a",
+    "abr": 200,
+    "filesize": 3100000
+   },
+   {
+    "ok": null
+   }
+  ],
+  [
+   {
+    "format_id": "160",
+    "format_note": "144p",
+    "vcodec": "avc1.4d400c",
+    "acodec": "none",
+    "width": 256,
+    "height": 144,
+    "fps": 30,
+    "tbr": 80,
+    "filesize": 900000
+   },
+   {
+    "ok": 144
+   }
+  ],
+  [
+   {
+    "format_id": "134",
+    "format_note": "360p",
+    "vcodec": "avc1.4d401e",
+    "acodec": "none",
+    "width": 640,
+    "height": 360,
+    "fps": 30,
+    "tbr": 300,
+    "filesize": 6000000
+   },
+   {
+    "ok": 360
+   }
+  ],
+  [
+   {
+    "format_id": "243",
+    "format_note": "360p",
+    "vcodec": "vp9",
+    "acodec": "none",
+    "width": 640,
+    "height": 360,
+    "fps": 30,
+    "tbr": 280,
+    "filesize": 5000000
+   },
+   {
+    "ok": 360
+   }
+  ],
+  [
+   {
+    "format_id": "18",
+    "format_note": "360p",
+    "vcodec": "avc1.42001E",
+    "acodec": "mp4a.40.2",
+    "width": 640,
+    "height": 360,
+    "fps": 30,
+    "tbr": 500,
+    "filesize_approx": 9000000
+   },
+   {
+    "ok": 360
+   }
+  ],
+  [
+   {
+    "format_id": "136",
+    "format_note": "720p",
+    "vcodec": "avc1.4d401f",
+    "acodec": "none",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "tbr": 1500,
+    "filesize": 30000000
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "298",
+    "format_note": "720p60",
+    "vcodec": "avc1.4d4020",
+    "acodec": "none",
+    "width": 1280,
+    "height": 720,
+    "fps": 60,
+    "tbr": 2500,
+    "filesize": 50000000
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "302",
+    "format_note": "720p60",
+    "vcodec": "vp9",
+    "acodec": "none",
+    "width": 1280,
+    "height": 720,
+    "fps": 60,
+    "tbr": 2400
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "299",
+    "format_note": "1080p60",
+    "vcodec": "avc1.64002a",
+    "acodec": "none",
+    "width": 1920,
+    "height": 1080,
+    "fps": 60,
+    "tbr": 4500,
+    "filesize": 95000000
+   },
+   {
+    "ok": 1080
+   }
+  ],
+  [
+   {
+    "format_id": "337",
+    "format_note": "1080p60 HDR",
+    "vcodec": "vp09.02.51.10",
+    "acodec": "none",
+    "width": 1920,
+    "height": 1080,
+    "fps": 60,
+    "tbr": 6000,
+    "dynamic_range": "HDR10",
+    "filesize": 150000000
+   },
+   {
+    "ok": 1080
+   }
+  ],
+  [
+   {
+    "format_id": "hls-1080",
+    "format_note": "1080p60",
+    "vcodec": "avc1.64002a",
+    "acodec": "none",
+    "width": 1920,
+    "height": 1080,
+    "fps": 60,
+    "tbr": 4600,
+    "protocol": "m3u8_native"
+   },
+   {
+    "ok": 1080
+   }
+  ],
+  [
+   {
+    "format_id": "401",
+    "format_note": "2160p60",
+    "vcodec": "av01.0.13M.08",
+    "acodec": "none",
+    "width": 3840,
+    "height": 2160,
+    "fps": 59.94,
+    "tbr": 18000,
+    "filesize_approx": 400000000
+   },
+   {
+    "ok": 2160
+   }
+  ],
+  [
+   {
+    "format_id": "drm",
+    "format_note": "2160p",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "width": 3840,
+    "height": 2160,
+    "has_drm": true
+   },
+   {
+    "ok": 2160
+   }
+  ],
+  [
+   {
+    "format_id": "a",
+    "vcodec": "h264",
+    "acodec": "aac",
+    "width": 1080,
+    "height": 1920,
+    "fps": "29.97",
+    "tbr": "3100.5",
+    "filesize": "12345678"
+   },
+   {
+    "ok": 1080
+   }
+  ],
+  [
+   {
+    "format_id": "b",
+    "vcodec": "h264",
+    "acodec": "aac",
+    "width": 720,
+    "height": 1280,
+    "fps": 29.5
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "c",
+    "vcodec": "h264",
+    "acodec": "aac",
+    "width": null,
+    "height": 480,
+    "fps": 30.5
+   },
+   {
+    "ok": 480
+   }
+  ],
+  [
+   {
+    "format_id": "d",
+    "vcodec": "H264",
+    "acodec": "aac",
+    "width": "abc",
+    "height": "360",
+    "fps": true
+   },
+   {
+    "ok": 360
+   }
+  ],
+  [
+   {
+    "format_id": "e",
+    "vcodec": "vp9",
+    "acodec": "opus",
+    "width": 0,
+    "height": 0
+   },
+   {
+    "ok": null
+   }
+  ],
+  [
+   {
+    "format_id": "",
+    "vcodec": "avc1",
+    "acodec": "aac",
+    "width": 640,
+    "height": 360
+   },
+   {
+    "ok": 360
+   }
+  ],
+  [
+   {
+    "format_id": "1",
+    "format_note": "240p",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "height": 240,
+    "filesize": 1000000
+   },
+   {
+    "ok": 240
+   }
+  ],
+  [
+   {
+    "format_id": "2",
+    "format_note": "144p",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "height": 144
+   },
+   {
+    "ok": 144
+   }
+  ],
+  [
+   {
+    "format_id": "140",
+    "vcodec": "none",
+    "acodec": "mp4a.40.2",
+    "ext": "m4a",
+    "abr": 129.5,
+    "filesize": 3000000
+   },
+   {
+    "ok": null
+   }
+  ],
+  [
+   {
+    "format_id": "sb",
+    "format_note": "storyboard",
+    "ext": "mhtml",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "width": 320,
+    "height": 180
+   },
+   {
+    "ok": 180
+   }
+  ],
+  [
+   {
+    "format_id": "drm",
+    "format_note": "300p",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "has_drm": true
+   },
+   {
+    "ok": 300
+   }
+  ],
+  [
+   {
+    "format_id": "n1",
+    "format_note": "١٠٨٠p",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "width": 1920,
+    "height": 1080
+   },
+   {
+    "ok": 1080
+   }
+  ],
+  [
+   {
+    "format_id": "n2",
+    "format_note": "12345p",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "width": 10,
+    "height": 10
+   },
+   {
+    "ok": 2345
+   }
+  ],
+  [
+   {
+    "format_id": "n3",
+    "format_note": "x99p 480p 720p",
+    "vcodec": "avc1",
+    "acodec": "none"
+   },
+   {
+    "ok": 480
+   }
+  ],
+  [
+   {
+    "format_id": "n4",
+    "format_note": 720,
+    "vcodec": "avc1",
+    "acodec": "none",
+    "width": 100,
+    "height": 50
+   },
+   {
+    "ok": 50
+   }
+  ],
+  [
+   {
+    "format_id": "n5",
+    "format_note": "𝟳𝟮𝟬p",
+    "vcodec": "avc1",
+    "acodec": "none"
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "n6",
+    "format_note": [
+     "1080p"
+    ],
+    "vcodec": "avc1",
+    "acodec": "none"
+   },
+   {
+    "ok": 1080
+   }
+  ],
+  [
+   {
+    "format_id": "n7",
+    "format_note": "",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "width": -640,
+    "height": 360
+   },
+   {
+    "ok": -640
+   }
+  ],
+  [
+   {
+    "format_id": "n8",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "width": 640,
+    "height": -360
+   },
+   {
+    "ok": -360
+   }
+  ],
+  [
+   {
+    "format_id": "n9",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "width": 1000.0,
+    "height": 7.9
+   },
+   {
+    "ok": 7
+   }
+  ],
+  [
+   {
+    "format_id": "140",
+    "vcodec": "none",
+    "acodec": "mp4a.40.2",
+    "ext": "m4a",
+    "abr": 129.5,
+    "filesize": 3000000
+   },
+   {
+    "ok": null
+   }
+  ],
+  [
+   {
+    "format_id": "x",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "height": 720,
+    "fps": "nan"
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "x",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "height": "inf"
+   },
+   {
+    "error": "OverflowError",
+    "message": "cannot convert float infinity to integer"
+   }
+  ],
+  [
+   {
+    "format_id": "x",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "height": 720,
+    "filesize": "nan"
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "x",
+    "vcodec": 5,
+    "acodec": "none",
+    "height": 720
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "x",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "height": 720,
+    "dynamic_range": 1
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "x",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "height": 720,
+    "protocol": [
+     "m3u8",
+     "x"
+    ]
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "y",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "height": 720,
+    "protocol": 7
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "x",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "height": 720,
+    "protocol": [
+     "https"
+    ],
+    "tbr": 1
+   },
+   {
+    "ok": 720
+   }
+  ],
+  [
+   {
+    "format_id": "y",
+    "vcodec": "avc1",
+    "acodec": "none",
+    "height": 720,
+    "protocol": {
+     "m3u8": 1
+    },
+    "tbr": 2
+   },
+   {
+    "ok": 720
+   }
+  ]
+ ],
+ "infos": [
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "sb0",
+      "format_note": "storyboard",
+      "ext": "mhtml",
+      "vcodec": "none",
+      "acodec": "none",
+      "width": 48,
+      "height": 27
+     },
+     {
+      "format_id": "140",
+      "vcodec": "none",
+      "acodec": "mp4a.40.2",
+      "ext": "m4a",
+      "abr": 129.5,
+      "filesize": 3000000
+     },
+     {
+      "format_id": "251",
+      "vcodec": "none",
+      "acodec": "opus",
+      "ext": "webm",
+      "abr": 160,
+      "filesize": 3500000
+     },
+     {
+      "format_id": "140-drc",
+      "vcodec": "none",
+      "acodec": "mp4a.40.2",
+      "ext": "m4a",
+      "abr": 200,
+      "filesize": 3100000
+     },
+     {
+      "format_id": "160",
+      "format_note": "144p",
+      "vcodec": "avc1.4d400c",
+      "acodec": "none",
+      "width": 256,
+      "height": 144,
+      "fps": 30,
+      "tbr": 80,
+      "filesize": 900000
+     },
+     {
+      "format_id": "134",
+      "format_note": "360p",
+      "vcodec": "avc1.4d401e",
+      "acodec": "none",
+      "width": 640,
+      "height": 360,
+      "fps": 30,
+      "tbr": 300,
+      "filesize": 6000000
+     },
+     {
+      "format_id": "243",
+      "format_note": "360p",
+      "vcodec": "vp9",
+      "acodec": "none",
+      "width": 640,
+      "height": 360,
+      "fps": 30,
+      "tbr": 280,
+      "filesize": 5000000
+     },
+     {
+      "format_id": "18",
+      "format_note": "360p",
+      "vcodec": "avc1.42001E",
+      "acodec": "mp4a.40.2",
+      "width": 640,
+      "height": 360,
+      "fps": 30,
+      "tbr": 500,
+      "filesize_approx": 9000000
+     },
+     {
+      "format_id": "136",
+      "format_note": "720p",
+      "vcodec": "avc1.4d401f",
+      "acodec": "none",
+      "width": 1280,
+      "height": 720,
+      "fps": 30,
+      "tbr": 1500,
+      "filesize": 30000000
+     },
+     {
+      "format_id": "298",
+      "format_note": "720p60",
+      "vcodec": "avc1.4d4020",
+      "acodec": "none",
+      "width": 1280,
+      "height": 720,
+      "fps": 60,
+      "tbr": 2500,
+      "filesize": 50000000
+     },
+     {
+      "format_id": "302",
+      "format_note": "720p60",
+      "vcodec": "vp9",
+      "acodec": "none",
+      "width": 1280,
+      "height": 720,
+      "fps": 60,
+      "tbr": 2400
+     },
+     {
+      "format_id": "299",
+      "format_note": "1080p60",
+      "vcodec": "avc1.64002a",
+      "acodec": "none",
+      "width": 1920,
+      "height": 1080,
+      "fps": 60,
+      "tbr": 4500,
+      "filesize": 95000000
+     },
+     {
+      "format_id": "337",
+      "format_note": "1080p60 HDR",
+      "vcodec": "vp09.02.51.10",
+      "acodec": "none",
+      "width": 1920,
+      "height": 1080,
+      "fps": 60,
+      "tbr": 6000,
+      "dynamic_range": "HDR10",
+      "filesize": 150000000
+     },
+     {
+      "format_id": "hls-1080",
+      "format_note": "1080p60",
+      "vcodec": "avc1.64002a",
+      "acodec": "none",
+      "width": 1920,
+      "height": 1080,
+      "fps": 60,
+      "tbr": 4600,
+      "protocol": "m3u8_native"
+     },
+     {
+      "format_id": "401",
+      "format_note": "2160p60",
+      "vcodec": "av01.0.13M.08",
+      "acodec": "none",
+      "width": 3840,
+      "height": 2160,
+      "fps": 59.94,
+      "tbr": 18000,
+      "filesize_approx": 400000000
+     },
+     {
+      "format_id": "drm",
+      "format_note": "2160p",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "width": 3840,
+      "height": 2160,
+      "has_drm": true
+     }
+    ]
+   },
+   "qualities": {
+    "ok": [
+     {
+      "quality": 2160,
+      "fps": 60,
+      "size": 403000000
+     },
+     {
+      "quality": 1080,
+      "fps": 60,
+      "size": 98000000
+     },
+     {
+      "quality": 720,
+      "fps": 60,
+      "size": 53000000
+     },
+     {
+      "quality": 360,
+      "fps": 30,
+      "size": 9000000
+     }
+    ]
+   },
+   "resolve": [
+    [
+     null,
+     2160
+    ],
+    [
+     0,
+     2160
+    ],
+    [
+     4320,
+     2160
+    ],
+    [
+     1080,
+     1080
+    ],
+    [
+     1000,
+     720
+    ],
+    [
+     720,
+     720
+    ],
+    [
+     361,
+     360
+    ],
+    [
+     360,
+     360
+    ],
+    [
+     100,
+     360
+    ],
+    [
+     -5,
+     360
+    ]
+   ],
+   "spec": [
+    [
+     144,
+     {
+      "ok": "160+bestaudio[ext=m4a]/160+bestaudio/160"
+     }
+    ],
+    [
+     180,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 180p."
+     }
+    ],
+    [
+     300,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 300p."
+     }
+    ],
+    [
+     360,
+     {
+      "ok": "18"
+     }
+    ],
+    [
+     720,
+     {
+      "ok": "298+bestaudio[ext=m4a]/298+bestaudio/298"
+     }
+    ],
+    [
+     1080,
+     {
+      "ok": "299+bestaudio[ext=m4a]/299+bestaudio/299"
+     }
+    ],
+    [
+     1081,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 1081p."
+     }
+    ],
+    [
+     2160,
+     {
+      "ok": "401+bestaudio[ext=m4a]/401+bestaudio/401"
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "a",
+      "vcodec": "h264",
+      "acodec": "aac",
+      "width": 1080,
+      "height": 1920,
+      "fps": "29.97",
+      "tbr": "3100.5",
+      "filesize": "12345678"
+     },
+     {
+      "format_id": "b",
+      "vcodec": "h264",
+      "acodec": "aac",
+      "width": 720,
+      "height": 1280,
+      "fps": 29.5
+     },
+     {
+      "format_id": "c",
+      "vcodec": "h264",
+      "acodec": "aac",
+      "width": null,
+      "height": 480,
+      "fps": 30.5
+     },
+     {
+      "format_id": "d",
+      "vcodec": "H264",
+      "acodec": "aac",
+      "width": "abc",
+      "height": "360",
+      "fps": true
+     },
+     {
+      "format_id": "e",
+      "vcodec": "vp9",
+      "acodec": "opus",
+      "width": 0,
+      "height": 0
+     },
+     {
+      "format_id": "",
+      "vcodec": "avc1",
+      "acodec": "aac",
+      "width": 640,
+      "height": 360
+     }
+    ]
+   },
+   "qualities": {
+    "ok": [
+     {
+      "quality": 1080,
+      "fps": 30,
+      "size": 12345678
+     },
+     {
+      "quality": 720,
+      "fps": 30,
+      "size": null
+     },
+     {
+      "quality": 480,
+      "fps": 30,
+      "size": null
+     },
+     {
+      "quality": 360,
+      "fps": 1,
+      "size": null
+     }
+    ]
+   },
+   "resolve": [
+    [
+     null,
+     1080
+    ],
+    [
+     0,
+     1080
+    ],
+    [
+     4320,
+     1080
+    ],
+    [
+     1080,
+     1080
+    ],
+    [
+     1000,
+     720
+    ],
+    [
+     720,
+     720
+    ],
+    [
+     361,
+     360
+    ],
+    [
+     360,
+     360
+    ],
+    [
+     100,
+     360
+    ],
+    [
+     -5,
+     360
+    ]
+   ],
+   "spec": [
+    [
+     144,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 144p."
+     }
+    ],
+    [
+     180,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 180p."
+     }
+    ],
+    [
+     300,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 300p."
+     }
+    ],
+    [
+     360,
+     {
+      "ok": "d"
+     }
+    ],
+    [
+     480,
+     {
+      "ok": "c"
+     }
+    ],
+    [
+     720,
+     {
+      "ok": "b"
+     }
+    ],
+    [
+     1080,
+     {
+      "ok": "a"
+     }
+    ],
+    [
+     1081,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 1081p."
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "1",
+      "format_note": "240p",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "height": 240,
+      "filesize": 1000000
+     },
+     {
+      "format_id": "2",
+      "format_note": "144p",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "height": 144
+     },
+     {
+      "format_id": "140",
+      "vcodec": "none",
+      "acodec": "mp4a.40.2",
+      "ext": "m4a",
+      "abr": 129.5,
+      "filesize": 3000000
+     },
+     {
+      "format_id": "sb",
+      "format_note": "storyboard",
+      "ext": "mhtml",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "width": 320,
+      "height": 180
+     },
+     {
+      "format_id": "drm",
+      "format_note": "300p",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "has_drm": true
+     }
+    ]
+   },
+   "qualities": {
+    "ok": [
+     {
+      "quality": 240,
+      "fps": null,
+      "size": 4000000
+     },
+     {
+      "quality": 144,
+      "fps": null,
+      "size": null
+     }
+    ]
+   },
+   "resolve": [
+    [
+     null,
+     240
+    ],
+    [
+     0,
+     240
+    ],
+    [
+     4320,
+     240
+    ],
+    [
+     1080,
+     240
+    ],
+    [
+     1000,
+     240
+    ],
+    [
+     720,
+     240
+    ],
+    [
+     361,
+     240
+    ],
+    [
+     360,
+     240
+    ],
+    [
+     100,
+     144
+    ],
+    [
+     -5,
+     144
+    ]
+   ],
+   "spec": [
+    [
+     144,
+     {
+      "ok": "2+bestaudio[ext=m4a]/2+bestaudio/2"
+     }
+    ],
+    [
+     180,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 180p."
+     }
+    ],
+    [
+     240,
+     {
+      "ok": "1+bestaudio[ext=m4a]/1+bestaudio/1"
+     }
+    ],
+    [
+     300,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 300p."
+     }
+    ],
+    [
+     1081,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 1081p."
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "n1",
+      "format_note": "١٠٨٠p",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "width": 1920,
+      "height": 1080
+     },
+     {
+      "format_id": "n2",
+      "format_note": "12345p",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "width": 10,
+      "height": 10
+     },
+     {
+      "format_id": "n3",
+      "format_note": "x99p 480p 720p",
+      "vcodec": "avc1",
+      "acodec": "none"
+     },
+     {
+      "format_id": "n4",
+      "format_note": 720,
+      "vcodec": "avc1",
+      "acodec": "none",
+      "width": 100,
+      "height": 50
+     },
+     {
+      "format_id": "n5",
+      "format_note": "𝟳𝟮𝟬p",
+      "vcodec": "avc1",
+      "acodec": "none"
+     },
+     {
+      "format_id": "n6",
+      "format_note": [
+       "1080p"
+      ],
+      "vcodec": "avc1",
+      "acodec": "none"
+     },
+     {
+      "format_id": "n7",
+      "format_note": "",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "width": -640,
+      "height": 360
+     },
+     {
+      "format_id": "n8",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "width": 640,
+      "height": -360
+     },
+     {
+      "format_id": "n9",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "width": 1000.0,
+      "height": 7.9
+     }
+    ]
+   },
+   "qualities": {
+    "ok": [
+     {
+      "quality": 2345,
+      "fps": null,
+      "size": null
+     },
+     {
+      "quality": 1080,
+      "fps": null,
+      "size": null
+     },
+     {
+      "quality": 720,
+      "fps": null,
+      "size": null
+     },
+     {
+      "quality": 480,
+      "fps": null,
+      "size": null
+     }
+    ]
+   },
+   "resolve": [
+    [
+     null,
+     2345
+    ],
+    [
+     0,
+     2345
+    ],
+    [
+     4320,
+     2345
+    ],
+    [
+     1080,
+     1080
+    ],
+    [
+     1000,
+     720
+    ],
+    [
+     720,
+     720
+    ],
+    [
+     361,
+     480
+    ],
+    [
+     360,
+     480
+    ],
+    [
+     100,
+     480
+    ],
+    [
+     -5,
+     480
+    ]
+   ],
+   "spec": [
+    [
+     144,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 144p."
+     }
+    ],
+    [
+     180,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 180p."
+     }
+    ],
+    [
+     300,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 300p."
+     }
+    ],
+    [
+     480,
+     {
+      "ok": "n3+bestaudio[ext=m4a]/n3+bestaudio/n3"
+     }
+    ],
+    [
+     720,
+     {
+      "ok": "n5+bestaudio[ext=m4a]/n5+bestaudio/n5"
+     }
+    ],
+    [
+     1080,
+     {
+      "ok": "n1+bestaudio[ext=m4a]/n1+bestaudio/n1"
+     }
+    ],
+    [
+     1081,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 1081p."
+     }
+    ],
+    [
+     2345,
+     {
+      "ok": "n2+bestaudio[ext=m4a]/n2+bestaudio/n2"
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": []
+   },
+   "qualities": {
+    "ok": []
+   },
+   "resolve": [
+    [
+     null,
+     null
+    ],
+    [
+     0,
+     null
+    ],
+    [
+     4320,
+     null
+    ],
+    [
+     1080,
+     null
+    ],
+    [
+     1000,
+     null
+    ],
+    [
+     720,
+     null
+    ],
+    [
+     361,
+     null
+    ],
+    [
+     360,
+     null
+    ],
+    [
+     100,
+     null
+    ],
+    [
+     -5,
+     null
+    ]
+   ],
+   "spec": [
+    [
+     144,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 144p."
+     }
+    ],
+    [
+     180,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 180p."
+     }
+    ],
+    [
+     300,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 300p."
+     }
+    ],
+    [
+     1081,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 1081p."
+     }
+    ]
+   ]
+  },
+  {
+   "info": {},
+   "qualities": {
+    "ok": []
+   },
+   "resolve": [
+    [
+     null,
+     null
+    ],
+    [
+     0,
+     null
+    ],
+    [
+     4320,
+     null
+    ],
+    [
+     1080,
+     null
+    ],
+    [
+     1000,
+     null
+    ],
+    [
+     720,
+     null
+    ],
+    [
+     361,
+     null
+    ],
+    [
+     360,
+     null
+    ],
+    [
+     100,
+     null
+    ],
+    [
+     -5,
+     null
+    ]
+   ],
+   "spec": [
+    [
+     144,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 144p."
+     }
+    ],
+    [
+     180,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 180p."
+     }
+    ],
+    [
+     300,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 300p."
+     }
+    ],
+    [
+     1081,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 1081p."
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": null
+   },
+   "qualities": {
+    "ok": []
+   },
+   "resolve": [
+    [
+     null,
+     null
+    ],
+    [
+     0,
+     null
+    ],
+    [
+     4320,
+     null
+    ],
+    [
+     1080,
+     null
+    ],
+    [
+     1000,
+     null
+    ],
+    [
+     720,
+     null
+    ],
+    [
+     361,
+     null
+    ],
+    [
+     360,
+     null
+    ],
+    [
+     100,
+     null
+    ],
+    [
+     -5,
+     null
+    ]
+   ],
+   "spec": [
+    [
+     144,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 144p."
+     }
+    ],
+    [
+     180,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 180p."
+     }
+    ],
+    [
+     300,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 300p."
+     }
+    ],
+    [
+     1081,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 1081p."
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "140",
+      "vcodec": "none",
+      "acodec": "mp4a.40.2",
+      "ext": "m4a",
+      "abr": 129.5,
+      "filesize": 3000000
+     }
+    ]
+   },
+   "qualities": {
+    "ok": []
+   },
+   "resolve": [
+    [
+     null,
+     null
+    ],
+    [
+     0,
+     null
+    ],
+    [
+     4320,
+     null
+    ],
+    [
+     1080,
+     null
+    ],
+    [
+     1000,
+     null
+    ],
+    [
+     720,
+     null
+    ],
+    [
+     361,
+     null
+    ],
+    [
+     360,
+     null
+    ],
+    [
+     100,
+     null
+    ],
+    [
+     -5,
+     null
+    ]
+   ],
+   "spec": [
+    [
+     144,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 144p."
+     }
+    ],
+    [
+     180,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 180p."
+     }
+    ],
+    [
+     300,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 300p."
+     }
+    ],
+    [
+     1081,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 1081p."
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "x",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "height": 720,
+      "fps": "nan"
+     }
+    ]
+   },
+   "qualities": {
+    "error": "ValueError",
+    "message": "cannot convert float NaN to integer"
+   },
+   "spec": [
+    [
+     720,
+     {
+      "ok": "x+bestaudio[ext=m4a]/x+bestaudio/x"
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "x",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "height": "inf"
+     }
+    ]
+   },
+   "qualities": {
+    "error": "OverflowError",
+    "message": "cannot convert float infinity to integer"
+   },
+   "spec": [
+    [
+     720,
+     {
+      "error": "OverflowError",
+      "message": "cannot convert float infinity to integer"
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "x",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "height": 720,
+      "filesize": "nan"
+     }
+    ]
+   },
+   "qualities": {
+    "error": "ValueError",
+    "message": "cannot convert float NaN to integer"
+   },
+   "spec": [
+    [
+     720,
+     {
+      "ok": "x+bestaudio[ext=m4a]/x+bestaudio/x"
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "x",
+      "vcodec": 5,
+      "acodec": "none",
+      "height": 720
+     }
+    ]
+   },
+   "qualities": {
+    "error": "AttributeError",
+    "message": "'int' object has no attribute 'lower'"
+   },
+   "spec": [
+    [
+     720,
+     {
+      "error": "AttributeError",
+      "message": "'int' object has no attribute 'lower'"
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "x",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "height": 720,
+      "dynamic_range": 1
+     }
+    ]
+   },
+   "qualities": {
+    "error": "AttributeError",
+    "message": "'int' object has no attribute 'upper'"
+   },
+   "spec": [
+    [
+     720,
+     {
+      "error": "AttributeError",
+      "message": "'int' object has no attribute 'upper'"
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "x",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "height": 720,
+      "protocol": [
+       "m3u8",
+       "x"
+      ]
+     },
+     {
+      "format_id": "y",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "height": 720,
+      "protocol": 7
+     }
+    ]
+   },
+   "qualities": {
+    "error": "TypeError",
+    "message": "argument of type 'int' is not a container or iterable"
+   },
+   "spec": [
+    [
+     720,
+     {
+      "error": "TypeError",
+      "message": "argument of type 'int' is not a container or iterable"
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     {
+      "format_id": "x",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "height": 720,
+      "protocol": [
+       "https"
+      ],
+      "tbr": 1
+     },
+     {
+      "format_id": "y",
+      "vcodec": "avc1",
+      "acodec": "none",
+      "height": 720,
+      "protocol": {
+       "m3u8": 1
+      },
+      "tbr": 2
+     }
+    ]
+   },
+   "qualities": {
+    "ok": [
+     {
+      "quality": 720,
+      "fps": null,
+      "size": null
+     }
+    ]
+   },
+   "resolve": [
+    [
+     null,
+     720
+    ],
+    [
+     0,
+     720
+    ],
+    [
+     4320,
+     720
+    ],
+    [
+     1080,
+     720
+    ],
+    [
+     1000,
+     720
+    ],
+    [
+     720,
+     720
+    ],
+    [
+     361,
+     720
+    ],
+    [
+     360,
+     720
+    ],
+    [
+     100,
+     720
+    ],
+    [
+     -5,
+     720
+    ]
+   ],
+   "spec": [
+    [
+     144,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 144p."
+     }
+    ],
+    [
+     180,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 180p."
+     }
+    ],
+    [
+     300,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 300p."
+     }
+    ],
+    [
+     720,
+     {
+      "ok": "x+bestaudio[ext=m4a]/x+bestaudio/x"
+     }
+    ],
+    [
+     1081,
+     {
+      "error": "ValueError",
+      "message": "El vídeo no tiene calidad 1081p."
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": [
+     "no es un objeto"
+    ]
+   },
+   "qualities": {
+    "error": "AttributeError",
+    "message": "'str' object has no attribute 'get'"
+   },
+   "spec": [
+    [
+     720,
+     {
+      "error": "AttributeError",
+      "message": "'str' object has no attribute 'get'"
+     }
+    ]
+   ]
+  },
+  {
+   "info": {
+    "formats": {
+     "a": 1
+    }
+   },
+   "qualities": {
+    "error": "AttributeError",
+    "message": "'str' object has no attribute 'get'"
+   },
+   "spec": [
+    [
+     720,
+     {
+      "error": "AttributeError",
+      "message": "'str' object has no attribute 'get'"
+     }
+    ]
+   ]
+  }
+ ],
+ "mb": [
+  [
+   0,
+   "0.0 MB"
+  ],
+  [
+   1,
+   "0.0 MB"
+  ],
+  [
+   1048575,
+   "1.0 MB"
+  ],
+  [
+   1048576,
+   "1.0 MB"
+  ],
+  [
+   5000000,
+   "4.8 MB"
+  ],
+  [
+   10485759,
+   "10.0 MB"
+  ],
+  [
+   10485760,
+   "10 MB"
+  ],
+  [
+   10485761,
+   "10 MB"
+  ],
+  [
+   15204352,
+   "14 MB"
+  ],
+  [
+   1000000000000.0,
+   "953674 MB"
+  ],
+  [
+   1572864.0,
+   "1.5 MB"
+  ],
+  [
+   10433331.2,
+   "9.9 MB"
+  ],
+  [
+   10432282.624,
+   "9.9 MB"
+  ],
+  [
+   52428.8,
+   "0.1 MB"
+  ],
+  [
+   262144.0,
+   "0.2 MB"
+  ]
+ ]
+}
