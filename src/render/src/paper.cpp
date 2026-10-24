@@ -310,18 +310,30 @@ Result<void> paper_cutout(SkCanvas& g, const sk_sp<SkImage>& src, const SkRect& 
         j = paper_jitter(t_ms, num(p, "jitterSpeed", 1), num(p, "jitterStrength", 1), seed);
     }
     const double jk = big / 1000;
-    g.save();
+    // Canvas 2D solo dibuja la sombra si su color no es transparente y hay difuminado o
+    // desplazamiento (ShouldDrawShadows); si no, el DropShadow de Skia oscurecería igual el borde
+    // semitransparente. Como sus setters, un valor no finito (o un difuminado negativo) deja el 0.
+    SkPaint layer;
+    bool shadow = false;
     if (flag(p, "shadow", true)) {
         const std::string hex = text(p, "shadowColor", "#000000");
         const unsigned long n = hex.size() == 7 ? std::stoul(hex.substr(1), nullptr, 16) : 0;
         const double alpha = num(p, "shadowOpacity", 50) / 100;
         const SkColor color = SkColorSetARGB(static_cast<U8CPU>(std::lround(std::clamp(alpha, 0.0, 1.0) * 255)),
                                              (n >> 16U) & 255U, (n >> 8U) & 255U, n & 255U);
-        const auto sigma = static_cast<float>(num(p, "shadowBlur", 5) * jk / 2); // la mitad del difuminado
-        SkPaint layer;
-        layer.setImageFilter(SkImageFilters::DropShadow(static_cast<float>(num(p, "shadowX", 5) * jk),
-                                                        static_cast<float>(-num(p, "shadowY", -5) * jk), sigma, sigma,
-                                                        color, nullptr));
+        const auto finite_or_0 = [](double v) { return std::isfinite(v) ? v : 0.0; };
+        const double blur = std::max(0.0, finite_or_0(num(p, "shadowBlur", 5) * jk));
+        const double dx = finite_or_0(num(p, "shadowX", 5) * jk);
+        const double dy = finite_or_0(-num(p, "shadowY", -5) * jk);
+        shadow = SkColorGetA(color) != 0 && (blur != 0 || dx != 0 || dy != 0);
+        if (shadow) {
+            const auto sigma = static_cast<float>(blur / 2); // la mitad del difuminado
+            layer.setImageFilter(SkImageFilters::DropShadow(static_cast<float>(dx), static_cast<float>(dy), sigma,
+                                                            sigma, color, nullptr));
+        }
+    }
+    g.save();
+    if (shadow) {
         g.saveLayer(nullptr, &layer);
     }
     g.translate(static_cast<float>(cx + (j.offset_x * jk)), static_cast<float>(cy - (j.offset_y * jk)));
@@ -332,7 +344,7 @@ Result<void> paper_cutout(SkCanvas& g, const sk_sp<SkImage>& src, const SkRect& 
     paint.setAntiAlias(j.rotation != 0);
     g.drawImage(stamp, static_cast<float>(-cx), static_cast<float>(-cy), kSmooth, &paint);
     g.restore();
-    if (flag(p, "shadow", true)) {
+    if (shadow) {
         g.restore();
     }
     return {};

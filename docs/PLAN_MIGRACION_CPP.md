@@ -1494,8 +1494,13 @@ Decisión de Edu (§6):
 - **Divergencia que se queda:** con un em no finito (o em·4 = inf), Python lanza en el `round()`, fuera del `try`; el C++ estima.
 - **MinGW:** 147/147 y **MSVC:** 189/189, 0 warnings.
 
+**Revisión: los hallazgos del revisor**
+
+- **Sombra de `paper_cutout`:** Canvas 2D no dibuja la sombra si su color es transparente o si no hay difuminado ni desplazamiento (`ShouldDrawShadows`), y el `DropShadow` de Skia oscurecía igual el borde semitransparente (28,6–34,6 dB). Ahora no se dibuja, y como sus setters un valor no finito o un difuminado negativo deja el 0. 4 casos nuevos en `vfx_cases.PAPER` (sin difuminado ni desplazamiento, con opacidad 100, sombra dura solo desplazada y opacidad 0): 58,5–59,1 dB; sin el arreglo, 3 fallan.
+- **`ClipFrames::open_bake_input`** (la lectura en orden de `genclip render` con efectos) tiene test: los mismos fotogramas (MD5) que `bake_input_frame_at` en 11 configuraciones, también al revés y con el salto previo a un fotograma clave. Al revés no pasa por `export_frame_at`: `bake_input_chain` mete el `reverse` en el grafo y deja `reverse = false`. Leer la cadena del overlay (mutación) da 175 fallos.
+- **MinGW:** 147/147 y **MSVC:** 190/190, 0 warnings.
+
 **Siguiente:**
-- Los hallazgos del revisor: la sombra de `paper_cutout` sin desenfoque ni desplazamiento, el test de `open_bake_input` y clang-tidy sobre la build de MSVC.
 - La caché de fotogramas de F3 (con el preview de F5) y el resto de F4: el alfa de «Eliminar fondo» desde la caché, el marco de TikTok/Shorts del preview y la salida de F4 (todo lo de `docs/` de video-yt sin libass ni Chromium).
 - `heatmap.analyze` y la descarga del vídeo completo, con yt-dlp como sidecar (F7).
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).

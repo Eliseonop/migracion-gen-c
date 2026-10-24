@@ -2446,5 +2446,74 @@
   "width": 392,
   "height": 252,
   "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "shadowBlur": 0,
+   "shadowX": 0,
+   "shadowY": 0
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_22.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "shadowBlur": 0,
+   "shadowX": 0,
+   "shadowY": 0,
+   "shadowOpacity": 100
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_23.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "shadowBlur": 0,
+   "shadowX": 6,
+   "shadowY": 0,
+   "shadowOpacity": 100
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_24.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
+ },
+ {
+  "effect": "paper_cutout",
+  "v": 1,
+  "params": {
+   "shadowBlur": 12,
+   "shadowOpacity": 0
+  },
+  "t": 0.3,
+  "clip_dur": 3.0,
+  "pad_allowed": true,
+  "input": "alpha.png",
+  "frame": "vfx/paper_cutout_25.png",
+  "width": 392,
+  "height": 252,
+  "pad": 36
  }
 ]

@@ -131,4 +131,10 @@ PAPER = [
     ("alpha.png", {"fold": "both"}, 0.4, 1.5, True),
     ("alpha.png", {"wrinkleSpeed": 7}, 0.5, 3.0, True),
     ("alpha.png", {"jitterSpeed": 3, "seed": 9}, 2.9, 3.0, True),
+    # Revisión (2026-10-24): Canvas no dibuja la sombra sin difuminado ni desplazamiento, ni con opacidad 0
+    # (ShouldDrawShadows); con desplazamiento y sin difuminado, sí, dura.
+    ("alpha.png", {"shadowBlur": 0, "shadowX": 0, "shadowY": 0}, 0.3, 3.0, True),
+    ("alpha.png", {"shadowBlur": 0, "shadowX": 0, "shadowY": 0, "shadowOpacity": 100}, 0.3, 3.0, True),
+    ("alpha.png", {"shadowBlur": 0, "shadowX": 6, "shadowY": 0, "shadowOpacity": 100}, 0.3, 3.0, True),
+    ("alpha.png", {"shadowBlur": 12, "shadowOpacity": 0}, 0.3, 3.0, True),
 ]
