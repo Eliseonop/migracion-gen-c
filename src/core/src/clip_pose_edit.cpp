@@ -595,7 +595,7 @@ void duplicate_keyframe_at(TimelineClip& clip, std::string_view id, double targe
     if (it == items.end()) {
         return;
     }
-    const Json item = *it;
+    const Json& item = *it; // `items` es una copia que no cambia
     const Json props = ui_props_at(clip, item.at("t").get<double>()).to_json();
     upsert_keyframe_ui(clip, target_t, props, item.at("interpolation").get<std::string>(), fps, ids);
     upsert_style_kf(clip, target_t, style_kf_values(item.at("props")), fps, ids);

@@ -289,7 +289,7 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
     set_fx_catalog(std::make_shared<FxCatalog>(std::move(*catalog)));
     std::map<std::string, gc::render::Image> sources;
     std::map<std::string, gc::render::Image> blanks; // el material en blanco opaco, para la banda
-    const char* dump = std::getenv("GC_RENDER_DUMP"); // carpeta donde dejar los PNG del C++ (para mirarlos)
+    const char* dump = std::getenv("GC_RENDER_DUMP"); // NOLINT(concurrency-mt-unsafe): carpeta donde dejar los PNG del C++
     // Las fuentes de las máscaras de texto.
     const gc::render::TextFonts fonts(
         FontDirs{default_system_font_dir(), path_from_utf8(GC_RESOURCES_DIR) / "fonts"});

@@ -76,7 +76,7 @@ double number(const Value& v) {
 
 // num() de clipExtract.js: un número finito (ni null ni texto vacío) o nada.
 std::optional<double> finite(const Value& v) {
-    if (!v || v->is_null() || *v == "") {
+    if (!v || v->is_null() || (v->is_string() && v->get_ref<const std::string&>().empty())) {
         return std::nullopt;
     }
     const double n = js_number(*v);
@@ -230,7 +230,7 @@ Json make_clip_json(std::string_view asset_kind, const Json& item, std::string_v
     const double gif_dur = gif && number(get(item, "duration")) > 0 ? number(get(item, "duration")) : 0;
     const Value dur = truthy(Value(duration))
                           ? Value(duration)
-                          : Value(Json(kind == "image" ? (gif_dur ? gif_dur : kImageDefaultDuration) : 1));
+                          : Value(Json(kind == "image" ? (gif_dur != 0 ? gif_dur : kImageDefaultDuration) : 1));
     const double span = js_fixed3(std::max(0.3, number(dur)));
     const Value in = get(item, "in_point");
     const Value out = get(item, "out_point");

@@ -264,6 +264,7 @@ Result<std::vector<std::int64_t>> track_beats(std::span<const double> envelope, 
         window.push_back(w);
     }
     std::vector<double> txwt;
+    txwt.reserve(window.size());
     for (const std::int64_t w : window) {
         txwt.push_back(-kTightness * std::pow(std::log(static_cast<double>(-w) / period), 2));
     }
@@ -305,6 +306,7 @@ Result<std::vector<std::int64_t>> track_beats(std::span<const double> envelope, 
         return std::vector<std::int64_t>{};
     }
     std::vector<double> peaks;
+    peaks.reserve(maxes.size());
     for (const std::size_t m : maxes) {
         peaks.push_back(cum[m]);
     }

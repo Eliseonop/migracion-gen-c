@@ -43,7 +43,7 @@ TEST_CASE("lienzo: limpiar y rellenar un rectángulo", "[render]") {
     const Image img = canvas->snapshot();
     REQUIRE(img.width == 8);
     REQUIRE(img.height == 6);
-    REQUIRE(img.pixels.size() == std::size_t{8 * 6 * 4});
+    REQUIRE(img.pixels.size() == std::size_t{8} * 6 * 4);
 
     std::size_t red = 0;
     for (int y = 0; y < 6; ++y) {

@@ -394,7 +394,7 @@ bool py_equal(const Json& a, const Json& b) {
 
 double py_floordiv(double x, double y) {
     // _float_div_mod de CPython
-    double mod = std::fmod(x, y);
+    const double mod = std::fmod(x, y);
     double div = (x - mod) / y;
     if (mod != 0.0) {
         if ((y < 0) != (mod < 0)) {

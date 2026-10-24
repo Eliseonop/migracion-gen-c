@@ -69,7 +69,7 @@ TEST_CASE("Mp4Writer: vídeo y audio que se vuelven a leer", "[media][encode]") 
         for (int k = 0; k < kFps; ++k) {
             REQUIRE(w->video(frame(k)));
         }
-        std::vector<float> tone(48000 * 2);
+        std::vector<float> tone(std::size_t{48000} * 2);
         for (std::size_t i = 0; i < 48000; ++i) {
             const auto v = static_cast<float>(0.3 * std::sin(2 * std::numbers::pi * 440 * static_cast<double>(i) / 48000));
             tone[2 * i] = v;

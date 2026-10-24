@@ -52,6 +52,7 @@ bool drawable(const Json& manifest) {
 
 // --- El GLSL de los efectos y su traducción a SkSL ----------------------------------------------
 
+// NOLINTNEXTLINE(bugprone-exception-escape): el move de std::map de MSVC reserva su nodo (bad_alloc)
 struct ShaderTable {
     std::string prelude_sksl;
     std::optional<std::string> error; // el preludio cambió y ya no se sabe traducir
@@ -103,7 +104,7 @@ std::string prelude_to_sksl(const std::string& glsl, std::optional<std::string>&
             std::string name;
             std::string value;
             def >> name >> value;
-            out += "const float " + name + " = " + value + ";\n";
+            out += std::format("const float {} = {};\n", name, value);
             continue;
         }
         if (const auto at = line.find("return texture(uSrc, t);"); at != std::string::npos) {
@@ -216,14 +217,14 @@ double num(const Json& v, double fallback) {
 // uniformValue de params.js para un parámetro ya resuelto.
 void set_param_uniform(SkRuntimeShaderBuilder& b, const SkRuntimeEffect& fx, const Json& spec, const Json& value) {
     const std::string name = "u_" + spec["id"].get<std::string>();
-    if (fx.findUniform(name.c_str()) == nullptr) {
+    if (fx.findUniform(name) == nullptr) {
         return;
     }
     const std::string type = spec["type"].get<std::string>();
     if (type == "color") { // hexToRgb01
         const std::string hex = value.is_string() ? value.get<std::string>() : "#ffffff";
         const unsigned long n = std::stoul(hex.substr(1), nullptr, 16);
-        b.uniform(name.c_str()) = SkV3{static_cast<float>((n >> 16U) & 255U) / 255.0F,
+        b.uniform(name) = SkV3{static_cast<float>((n >> 16U) & 255U) / 255.0F,
                                        static_cast<float>((n >> 8U) & 255U) / 255.0F,
                                        static_cast<float>(n & 255U) / 255.0F};
         return;
@@ -242,7 +243,7 @@ void set_param_uniform(SkRuntimeShaderBuilder& b, const SkRuntimeEffect& fx, con
     } else {
         f = static_cast<float>(num(value, 0.0)); // Number(v) || 0
     }
-    b.uniform(name.c_str()) = f;
+    b.uniform(name) = f;
 }
 
 struct Stage {

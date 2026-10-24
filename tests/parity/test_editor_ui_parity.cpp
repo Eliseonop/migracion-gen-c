@@ -47,7 +47,7 @@ Json ids(const std::vector<const TimelineClip*>& clips) {
 
 // Number(raw) de JS para el alto de fila: null y "" son «sin valor»; un texto que no es número, NaN.
 std::optional<double> row_raw(const Json& v) {
-    if (v.is_null() || v == "") {
+    if (v.is_null() || (v.is_string() && v.get_ref<const std::string&>().empty())) {
         return std::nullopt;
     }
     if (v.is_string()) {
@@ -293,6 +293,7 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "timelineAlignHits") {
         const auto ids_ = strings(call.at(1));
         std::vector<AlignClip> moving;
+        moving.reserve(ids_.size());
         for (const auto& id : ids_) {
             moving.push_back(as_align_clip(clip(Json(id))));
         }
@@ -357,7 +358,7 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "dropTarget") {
         const Json& q = call.at(1);
         const auto exclude = strings(q.at("excludeIds"));
-        DropQuery dq{
+        const DropQuery dq{
             .kind = q.at("kind").get_ref<const std::string&>(),
             .y = q.at("y").get<double>(),
             .time = q.at("time").get<double>(),
@@ -751,7 +752,7 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
             return {{"keyframes", c.keyframes ? without_ids(*c.keyframes) : Json()}, {"reframe", reframe}};
         }
         const Json& p = call.at(3);
-        KeyframePatch patch{p.contains("t") ? std::optional(p.at("t").get<double>()) : std::nullopt,
+        const KeyframePatch patch{p.contains("t") ? std::optional(p.at("t").get<double>()) : std::nullopt,
                             p.contains("interpolation") ? std::optional(p.at("interpolation").get<std::string>())
                                                         : std::nullopt,
                             p.value("bezier", Json()), p.value("props", Json())};
@@ -780,8 +781,8 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
             duplicate_keyframe_at(c, str(2), num(3), num(4), ids);
         } else if (call.at(3).value("type", "") == "keyframe") { // pasteKeyframeAt ignora otro portapapeles
             const Json& b = call.at(3);
-            KeyframeBoard board{b.at("props"), b.value("interpolation", "linear"), b.value("bezier", Json()),
-                                b.value("srcKind", "")};
+            const KeyframeBoard board{b.at("props"), b.value("interpolation", "linear"), b.value("bezier", Json()),
+                                      b.value("srcKind", "")};
             const auto groups = call.at(4).is_array() ? std::optional(strings(call.at(4))) : std::nullopt;
             paste_keyframe_at(c, num(2), board, groups, num(5), ids);
         }
@@ -861,7 +862,7 @@ TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]
             INFO(c.at("name").get<std::string>() << " :: " << calls[i].dump());
             const Json got = run(*tl, geo, calls[i]);
             if (calls[i].at(0) == "confirmCrop") { // el JS da el objeto tal cual; guardado pasaría por el modelo
-                Json j = to_json([&]() -> const TimelineClip& {
+                Json j = to_json([&] -> const TimelineClip& {
                     for (const auto& x : tl->clips) {
                         if (x->id == calls[i].at(1).get<std::string>()) {
                             return *x;

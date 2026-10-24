@@ -265,7 +265,7 @@ Result<std::int64_t> run_audio_graph(const std::vector<std::vector<std::string>>
     if (graph.empty()) {
         return fail(ErrorCode::InvalidArgument, "el grafo de audio está vacío");
     }
-    std::unique_ptr<AVFilterGraph, GraphFree> g(avfilter_graph_alloc());
+    const std::unique_ptr<AVFilterGraph, GraphFree> g(avfilter_graph_alloc());
     if (!g) {
         return fail(ErrorCode::Internal, "sin memoria para el grafo de audio");
     }
@@ -280,15 +280,15 @@ Result<std::int64_t> run_audio_graph(const std::vector<std::vector<std::string>>
         avfilter_inout_free(&open_out);
         return fail(ErrorCode::InvalidArgument, "grafo de audio no válido: " + av_err(r));
     }
-    std::unique_ptr<AVFilterInOut, InOutFree> ins(open_in);
-    std::unique_ptr<AVFilterInOut, InOutFree> outs(open_out);
+    const std::unique_ptr<AVFilterInOut, InOutFree> ins(open_in);
+    const std::unique_ptr<AVFilterInOut, InOutFree> outs(open_out);
     if (outs == nullptr || outs->next != nullptr) {
         return fail(ErrorCode::InvalidArgument, "el grafo de audio debe tener una sola salida");
     }
 
     // Una fuente por cada entrada abierta del grafo, con los parámetros de su primer fotograma.
     std::vector<Feed> feeds;
-    for (AVFilterInOut* io = ins.get(); io != nullptr; io = io->next) {
+    for (const AVFilterInOut* io = ins.get(); io != nullptr; io = io->next) {
         const auto k = input_index(io->name != nullptr ? io->name : "");
         if (!k || *k >= inputs.size()) {
             return fail(ErrorCode::InvalidArgument, std::format("entrada del grafo de audio desconocida: «{}»",
@@ -383,7 +383,7 @@ Result<std::int64_t> run_audio_graph(const std::vector<std::vector<std::string>>
         return fail(ErrorCode::Internal, "no se pudo configurar el grafo de audio: " + av_err(r));
     }
     // Una entrada sin audio decodificable se cierra al momento.
-    for (Feed& f : feeds) {
+    for (const Feed& f : feeds) {
         if (f.done) {
             static_cast<void>(av_buffersrc_add_frame_flags(f.src, nullptr, 0));
         }
@@ -393,7 +393,7 @@ Result<std::int64_t> run_audio_graph(const std::vector<std::vector<std::string>>
     bool stop = false;
     FramePtr got(av_frame_alloc());
     std::vector<float> block;
-    const auto drain = [&]() -> Result<bool> { // true: el grafo terminó
+    const auto drain = [&] -> Result<bool> { // true: el grafo terminó
         while (!stop) {
             const int r = av_buffersink_get_frame(out, got.get());
             if (r == AVERROR(EAGAIN)) {
@@ -416,7 +416,7 @@ Result<std::int64_t> run_audio_graph(const std::vector<std::vector<std::string>>
             if (av_sample_fmt_is_planar(static_cast<AVSampleFormat>(got->format)) != 0) {
                 for (std::size_t c = 0; c < ch; ++c) {
                     const auto* plane = reinterpret_cast<const float*>(got->extended_data[c]);
-                    for (std::size_t i = 0; i < static_cast<std::size_t>(n); ++i) {
+                    for (std::size_t i = 0; std::cmp_less(i, n); ++i) {
                         block[(i * ch) + c] = plane[i];
                     }
                 }
@@ -485,7 +485,7 @@ Result<std::int64_t> run_audio_graph(const std::vector<std::vector<std::string>>
             return samples;
         }
     }
-    for (Feed& f : feeds) {
+    for (const Feed& f : feeds) {
         static_cast<void>(av_buffersrc_add_frame_flags(f.src, nullptr, 0));
     }
     if (auto finished = drain(); !finished) {

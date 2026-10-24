@@ -18,7 +18,9 @@ constexpr std::array<std::pair<std::string_view, std::string_view>, 8> kMaskFiel
      {"mrot", "rotation"}, {"mfeather", "feather"}}};
 
 Json with_id(Json mask, IdSource& ids) {
-    if (!mask.contains("id") || mask.at("id").is_null() || mask.at("id") == "" || mask.at("id") == "m0") {
+    const Json* id = mask.contains("id") ? &mask.at("id") : nullptr;
+    if (id == nullptr || id->is_null() || (id->is_string() && id->get_ref<const std::string&>().empty()) ||
+        *id == "m0") {
         mask["id"] = make_uid(ids, "m");
     }
     return mask;

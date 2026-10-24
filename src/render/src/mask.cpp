@@ -89,6 +89,8 @@ std::vector<Point> to_canvas(const std::vector<Point>& local, const Geometry& g)
 std::vector<Point> rect_points(const Json& m, const Geometry& g) {
     const double hw = g.hw;
     const double hh = g.hh;
+    // El min() anidado de clip_mask.py: con un NaN, una lista no daría lo mismo.
+    // NOLINTNEXTLINE(modernize-min-max-use-initializer-list)
     const double r = std::min(num(m, "radius", 0.0) * std::min(hw, hh) * 2.0, std::min(hw, hh));
     if (r < 0.5) {
         return {{-hw, -hh}, {hw, -hh}, {hw, hh}, {-hw, hh}};
@@ -144,6 +146,7 @@ std::vector<Point> heart_points(double hw, double hh) {
     const auto [min_x, max_x] = std::ranges::minmax(raw | std::views::keys);
     const auto [min_y, max_y] = std::ranges::minmax(raw | std::views::values);
     std::vector<Point> pts;
+    pts.reserve(raw.size());
     for (const auto& [x, y] : raw) {
         pts.emplace_back(((x - min_x) / (max_x - min_x) * 2 - 1) * hw, ((y - min_y) / (max_y - min_y) * 2 - 1) * hh);
     }
@@ -304,7 +307,7 @@ std::vector<std::vector<std::pair<int, double>>> area_weights(int src, int dst) 
             w.emplace_back(s, 1.0 / cell);
         }
         if (f2 - s2 > 1e-3) {
-            w.emplace_back(s2, std::min(std::min(f2 - s2, 1.0), cell) / cell);
+            w.emplace_back(s2, std::min({f2 - s2, 1.0, cell}) / cell);
         }
     }
     return out;

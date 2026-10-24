@@ -197,6 +197,7 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
     const int workers = options.threads > 0 ? options.threads : static_cast<int>(std::clamp(hw, 3U, 10U) - 2);
     const int in_flight = (2 * workers) + 2;
 
+    // NOLINTNEXTLINE(bugprone-exception-escape): el move de std::map de MSVC reserva su nodo (bad_alloc)
     struct Job {
         std::int64_t tick = 0;
         std::vector<FrameLayer> layers;

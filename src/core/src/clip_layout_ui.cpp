@@ -229,8 +229,14 @@ std::optional<double> crop_ratio_norm(std::string_view ratio_id, double src_aspe
                                               {"3:4", 3.0 / 4},
                                               {"4:5", 4.0 / 5},
                                               {"2.35:1", 2.35}}};
-    const auto r = std::ranges::find(kRatios, ratio_id, &Ratio::id);
-    if (r == kRatios.end() || r->aspect == 0 || !(src_aspect > 0)) {
+    const Ratio* r = nullptr; // con un bucle: en MSVC el iterador de std::array no es un puntero
+    for (const Ratio& x : kRatios) {
+        if (x.id == ratio_id) {
+            r = &x;
+            break;
+        }
+    }
+    if (r == nullptr || r->aspect == 0 || !(src_aspect > 0)) {
         return std::nullopt;
     }
     const double aspect = r->aspect == -1 ? src_aspect : r->aspect == -2 ? out_aspect : r->aspect;
@@ -383,7 +389,7 @@ Result<TimelineClip> change_reframe(const TimelineClip& clip, const Json& patch)
 }
 
 bool keyframes_on(const TimelineClip& clip) {
-    return clip.keyframes && clip.keyframes->value("enabled", false) == true &&
+    return clip.keyframes && clip.keyframes->value("enabled", false) &&
            clip.keyframes->value("items", Json::array()).is_array() && !clip.keyframes->at("items").empty();
 }
 
@@ -408,7 +414,7 @@ Result<TimelineClip> confirm_crop(const TimelineClip& clip, const CropWindow& cr
             Json j = to_json(out);
             Json list = j["reframe"].value("keyframes", Json::array());
             const double t = js_fixed(snap_to_frame(std::clamp(src_t, out.in_point, out.out_point), fps), 6);
-            const auto hit = std::find_if(list.begin(), list.end(), [&](const Json& k) {
+            const auto hit = std::ranges::find_if(list, [&](const Json& k) {
                 return std::abs(js_number(k.value("t", Json(0))) - t) < frame_duration(fps) / 2;
             });
             if (hit != list.end()) {
@@ -419,6 +425,7 @@ Result<TimelineClip> confirm_crop(const TimelineClip& clip, const CropWindow& cr
                 list.push_back({{"id", make_uid(ids, "k")}, {"t", t}, {"cx", cx}, {"cy", cy},
                                 {"zoom", j["reframe"].value("zoom", Json(1))}, {"pan_mode", "smooth"}});
             }
+            // NOLINTNEXTLINE(modernize-use-ranges): el iterador de Json no es de acceso aleatorio en C++20
             std::stable_sort(list.begin(), list.end(), [](const Json& a, const Json& b) {
                 return js_number(a.value("t", Json(0))) < js_number(b.value("t", Json(0)));
             });

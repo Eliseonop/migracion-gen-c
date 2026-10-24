@@ -18,7 +18,7 @@ namespace gc::core {
 [[nodiscard]] std::vector<Json> upsert_sfx_category(const Json& categories, const Json& cat);
 // matchSfxCategory: {categoryId, newCategory}; la existente con esa etiqueta o id (sin
 // distinguir mayúsculas) o una nueva con ese texto.
-[[nodiscard]] Json match_sfx_category(const Json& text, const Json& categories);
+[[nodiscard]] Json match_sfx_category(const Json& value, const Json& categories);
 // sfxDraftFromSaved: la fila de un SFX ya guardado.
 [[nodiscard]] Json sfx_draft_from_saved(const Json& sfx);
 // sfxSavePayload: {name, categoryId, newCategory, uso} de una fila.

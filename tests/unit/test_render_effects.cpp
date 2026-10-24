@@ -145,7 +145,7 @@ TEST_CASE("efectos: el grano cambia con la semilla, no toca el alfa y casi no mu
         sum += d;
         sum2 += d * d;
     }
-    const double n = static_cast<double>(a.pixels.size() / 4);
+    const double n = static_cast<double>(a.pixels.size()) / 4;
     CHECK(std::abs(sum / n) < 1.0);
     // Desviación 12/√3 ≈ 6,9, algo menos al truncar a enteros.
     const double sd = std::sqrt(sum2 / n);

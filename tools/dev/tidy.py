@@ -10,6 +10,11 @@ escaneo de módulos de C++20, cuyas opciones de GCC clang no entiende). Ese clan
 trae las cabeceras internas de clang: las de GCC sirven (-idirafter), salvo las de
 intrínsecos x86, que usan builtins de GCC; windows.h las incluye y se sustituyen por las
 vacías de tools/dev/tidy_shim (nuestro código no usa intrínsecos).
+
+Lo que MinGW no compila (gc_media, gc_render, gc_export y sus tests, que necesitan FFmpeg y
+Skia de vcpkg) se analiza con la base de compilación de la build de MSVC (build/msvc-vcpkg-debug,
+la de tools/dev/verificar_msvc.bat) y el entorno de vcvars64.bat (VCVARS), cuyo INCLUDE da las
+cabeceras de MSVC. Si esa build no existe, se avisa y esos archivos no se analizan.
 """
 from __future__ import annotations
 
@@ -31,6 +36,8 @@ ENV = dict(os.environ)
 ENV["PATH"] = os.pathsep.join([str(MINGW / "bin"), str(CLION / "bin" / "ninja" / "win" / "x64"),
                                str(CLION / "bin" / "cmake" / "win" / "x64" / "bin"), ENV["PATH"]])
 BUILD = REPO / "build" / "tidy"
+MSVC_BUILD = REPO / "build" / "msvc-vcpkg-debug"
+VCVARS = Path(os.environ.get("VCVARS", r"D:\visual\VC\Auxiliary\Build\vcvars64.bat"))
 DIAG = re.compile(r"^(?P<file>.*?):(?P<line>\d+):(?P<col>\d+): (?:warning|error): (?P<msg>.*) \[(?P<check>[\w\-.,]+)\]$",
                   re.M)
 
@@ -53,25 +60,37 @@ def configure() -> None:
         sys.exit(f"Falla la configuración de {BUILD}:\n{r.stdout[-2000:]}{r.stderr[-2000:]}")
 
 
-def sources() -> list[Path]:
-    db = json.loads((BUILD / "compile_commands.json").read_text(encoding="utf-8"))
+def sources(build: Path) -> set[Path]:
+    """Los archivos nuestros (src, apps y tests) de la base de compilación de `build`."""
+    db = json.loads((build / "compile_commands.json").read_text(encoding="utf-8"))
     out = set()
     for entry in db:
-        f = Path(entry["file"]).resolve()
+        f = Path(entry["directory"], entry["file"]).resolve()
         rel = f.relative_to(REPO) if f.is_relative_to(REPO) else None
         if rel is not None and rel.parts[0] in ("src", "apps", "tests"):
             out.add(f)
-    return sorted(out)
+    return out
 
 
-def run(f: Path, fix: bool) -> tuple[Path, subprocess.CompletedProcess]:
-    cmd = [str(CLANG_TIDY), "-p", str(BUILD), "--quiet",
-           "--extra-arg=--target=x86_64-w64-mingw32",
-           "--extra-arg=-isystem", f"--extra-arg={REPO / 'tools' / 'dev' / 'tidy_shim'}",
-           "--extra-arg=-idirafter", f"--extra-arg={gcc_include()}"]
+def msvc_env() -> dict[str, str] | None:
+    """El entorno de vcvars64.bat (INCLUDE, LIB, PATH…), o nada si no está."""
+    if not VCVARS.exists():
+        return None
+    r = subprocess.run(f'"{VCVARS}" >nul 2>&1 && set', shell=True, capture_output=True, text=True,
+                       encoding="utf-8", errors="replace")
+    env: dict[str, str] = {}
+    for line in r.stdout.splitlines():
+        key, sep, value = line.partition("=")
+        if sep and key:
+            env[key] = value
+    return env if "INCLUDE" in env else None
+
+
+def run(f: Path, fix: bool, build: Path, env: dict[str, str], extra: list[str]) -> tuple[Path, subprocess.CompletedProcess]:
+    cmd = [str(CLANG_TIDY), "-p", str(build), "--quiet", *extra]
     if fix:
         cmd.append("--fix")
-    r = subprocess.run([*cmd, str(f)], cwd=REPO, env=ENV, capture_output=True, text=True, encoding="utf-8",
+    r = subprocess.run([*cmd, str(f)], cwd=REPO, env=env, capture_output=True, text=True, encoding="utf-8",
                        errors="replace")
     return f, r
 
@@ -83,16 +102,31 @@ def main() -> int:
         print(f"No encuentro clang-tidy en {CLANG_TIDY} (CLION_HOME)")
         return 2
     configure()
-    files = [f for f in sources() if not args or args[0] in str(f)]
+    mingw_files = sources(BUILD)
+    mingw_extra = ["--extra-arg=--target=x86_64-w64-mingw32",
+                   "--extra-arg=-isystem", f"--extra-arg={REPO / 'tools' / 'dev' / 'tidy_shim'}",
+                   "--extra-arg=-idirafter", f"--extra-arg={gcc_include()}"]
+    jobs = [(f, BUILD, ENV, mingw_extra) for f in sorted(mingw_files)]
+    # Lo que solo compila MSVC (con FFmpeg y Skia), con su base de compilación y su entorno.
+    notes = []
+    if (MSVC_BUILD / "compile_commands.json").exists():
+        env = msvc_env()
+        if env is None:
+            notes.append(f"Sin {VCVARS} (VCVARS): gc_media, gc_render y gc_export no se analizan")
+        else:
+            jobs += [(f, MSVC_BUILD, env, []) for f in sorted(sources(MSVC_BUILD) - mingw_files)]
+    else:
+        notes.append(f"Sin {MSVC_BUILD} (tools/dev/verificar_msvc.bat): gc_media, gc_render y gc_export no se analizan")
+    jobs = [j for j in jobs if not args or args[0] in str(j[0])]
     found: dict[tuple, str] = {}
     failed: list[str] = []
     # Con --fix, de uno en uno: dos clang-tidy podrían arreglar la misma cabecera a la vez.
     with concurrent.futures.ThreadPoolExecutor(1 if fix else os.cpu_count() or 4) as pool:
-        for f, r in pool.map(lambda f: run(f, fix), files):
+        for f, r in pool.map(lambda j: run(j[0], fix, j[1], j[2], j[3]), jobs):
             ours = 0
             for m in DIAG.finditer(r.stdout):
                 path = Path(m["file"]).resolve()
-                if not path.is_relative_to(REPO) or "_deps" in path.parts:
+                if not path.is_relative_to(REPO) or "_deps" in path.parts or "vcpkg_installed" in path.parts:
                     continue  # avisos de cabeceras de terceros o del sistema
                 key = (str(path.relative_to(REPO)), int(m["line"]), int(m["col"]), m["check"])
                 found[key] = m["msg"]
@@ -109,7 +143,11 @@ def main() -> int:
         print(f"{n:5d}  {check}")
     for line in failed:
         print(f"SIN ANALIZAR {line}")
-    print(f"{len(found)} avisos en {len(files)} archivos" + (f", {len(failed)} sin analizar" if failed else ""))
+    for note in notes:
+        print(f"AVISO: {note}")
+    msvc_jobs = sum(1 for j in jobs if j[1] == MSVC_BUILD)
+    print(f"{len(found)} avisos en {len(jobs)} archivos ({msvc_jobs} con la build de MSVC)"
+          + (f", {len(failed)} sin analizar" if failed else ""))
     return 1 if found or failed else 0
 
 

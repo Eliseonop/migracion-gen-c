@@ -241,6 +241,7 @@ std::vector<AlignClip> snap_targets(const std::vector<Json>& markers, const Clip
     }
     std::ranges::stable_sort(marks);
     std::vector<AlignClip> out;
+    out.reserve(marks.size() + clips.size());
     for (const double t : marks) {
         out.push_back({"mk", "__markers__", t, t});
     }

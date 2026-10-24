@@ -66,6 +66,7 @@ TEST_CASE("ClipFrames da los mismos fotogramas que export_frame_at", "[media][de
     };
     // Ticks crecientes (con repeticiones) y un salto hacia atrás al final.
     std::vector<std::int64_t> ticks;
+    ticks.reserve(56);
     for (std::int64_t k = 0; k < 50; ++k) {
         ticks.push_back(k);
     }
@@ -116,6 +117,7 @@ TEST_CASE("ClipFrames::open_bake_input da los mismos fotogramas que bake_input_f
         // Crecientes (con una repetición), uno pasado el final y un salto hacia atrás.
         const auto n = static_cast<std::int64_t>(std::llround((c.out_point - c.in_point) / c.speed * fps));
         std::vector<std::int64_t> seq;
+        seq.reserve(static_cast<std::size_t>(n) + 4);
         for (std::int64_t m = 0; m < n; ++m) {
             seq.push_back(m);
         }

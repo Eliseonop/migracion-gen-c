@@ -1,6 +1,7 @@
 #include "gc/core/text_style.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <numbers>
@@ -172,12 +173,8 @@ bool box_drawn(const Json& style) {
     if (py_truthy(field(style, "_bg_draw")) || is_text(field(style, "bg_style"), "block")) {
         return true;
     }
-    for (const char* key : {"bg_radius", "bg_pad_x", "bg_pad_y", "bg_dx", "bg_dy"}) {
-        if (py_num(field(style, key), 0.0) != 0) {
-            return true;
-        }
-    }
-    return false;
+    static constexpr std::array<const char*, 5> kShapeKeys{"bg_radius", "bg_pad_x", "bg_pad_y", "bg_dx", "bg_dy"};
+    return std::ranges::any_of(kShapeKeys, [&](const char* key) { return py_num(field(style, key), 0.0) != 0; });
 }
 
 std::int64_t active_word_index(std::int64_t word_count, double local_t, double duration) {
@@ -550,6 +547,7 @@ std::vector<std::pair<double, double>> word_windows(const TimelineClip& clip) {
     const double dur = text_clip_duration(clip);
     if (clip.words.size() == n) {
         std::vector<double> rels;
+        rels.reserve(clip.words.size());
         for (const Word& w : clip.words) {
             rels.push_back(py_min(py_max(0.0, w.start), dur));
         }

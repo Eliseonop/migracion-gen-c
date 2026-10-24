@@ -145,7 +145,7 @@ TEST_CASE("paridad del render: el texto frente al de libass en el export", "[par
     gc::media::silence_ffmpeg_log();
     const gc::render::TextFonts fonts(
         FontDirs{default_system_font_dir(), path_from_utf8(GC_RESOURCES_DIR) / "fonts"});
-    const char* dump = std::getenv("GC_TEXT_DUMP"); // carpeta donde dejar los PNG del C++ (para mirarlos)
+    const char* dump = std::getenv("GC_TEXT_DUMP"); // NOLINT(concurrency-mt-unsafe): carpeta donde dejar los PNG del C++
     std::size_t cases = 0;
     std::size_t pending = 0;
     for (const Json& c : *file) {

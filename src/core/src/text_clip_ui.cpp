@@ -14,7 +14,6 @@
 #include "gc/core/timeline_view.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/timeline_ui.hpp"
-#include "gc/core/timeline_view.hpp"
 
 namespace gc::core {
 
@@ -455,7 +454,7 @@ std::string name_text_style_favorite(const Json& style, const Json& existing) {
     const Json& theme = truthy(field(style, "theme")) ? field(style, "theme") : field(style, "preset");
     const Json& size = field(style, "size");
     const double px = js_round_half_up((size.is_null() ? 0.05 : js_number(size)) * 1280);
-    const std::string base = (truthy(theme) ? js_string(theme) : "Estilo") + " · " + js_string(Json(px)) + "px";
+    std::string base = (truthy(theme) ? js_string(theme) : "Estilo") + " · " + js_string(Json(px)) + "px";
     std::vector<std::string> names;
     for (const Json& f : existing.is_array() ? existing : Json::array()) {
         names.push_back(js_string(field(f, "name")));
@@ -503,8 +502,8 @@ std::vector<Json> split_clip_by_max_words(const TimelineClip& clip, const Json& 
         Json words = Json::array();
         if (has_words) {
             const std::size_t last = std::min(to, clip.words.size());
-            const double w0 = from < last ? clip.words[from].start : dur * (static_cast<double>(from) / total);
-            const double wn = from < last ? clip.words[last - 1].end : dur * (static_cast<double>(to) / total);
+            const double w0 = from < last ? clip.words[from].start : dur * (static_cast<double>(from) / static_cast<double>(total));
+            const double wn = from < last ? clip.words[last - 1].end : dur * (static_cast<double>(to) / static_cast<double>(total));
             start = base + w0;
             d = std::max(0.05, wn - w0);
             for (std::size_t k = from; k < last; ++k) {
@@ -518,8 +517,8 @@ std::vector<Json> split_clip_by_max_words(const TimelineClip& clip, const Json& 
                 words.push_back(std::move(word));
             }
         } else {
-            start = base + dur * (static_cast<double>(from) / total);
-            const double end = i == chunks.size() - 1 ? base + dur : base + dur * (static_cast<double>(to) / total);
+            start = base + dur * (static_cast<double>(from) / static_cast<double>(total));
+            const double end = i == chunks.size() - 1 ? base + dur : base + dur * (static_cast<double>(to) / static_cast<double>(total));
             d = std::max(0.05, end - start);
         }
         Json frag = source;

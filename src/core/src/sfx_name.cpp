@@ -101,7 +101,7 @@ Json match_sfx_category(const Json& value, const Json& categories) {
 }
 
 Json sfx_draft_from_saved(const Json& sfx) {
-    const auto or_else = [&](const char* key, Json fallback) {
+    const auto or_else = [&](const char* key, const Json& fallback) {
         const Json& v = field(sfx, key);
         return truthy(v) ? v : fallback;
     };

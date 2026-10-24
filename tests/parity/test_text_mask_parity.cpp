@@ -113,7 +113,7 @@ TEST_CASE("paridad de la máscara de texto: el alfa frente al de Pillow", "[pari
         REQUIRE(png->has_value());
         REQUIRE((*png)->width == w);
         REQUIRE((*png)->height == h);
-        if (const char* dump = std::getenv("GC_MASK_DUMP")) { // carpeta donde dejar el alfa del C++
+        if (const char* dump = std::getenv("GC_MASK_DUMP")) { // NOLINT(concurrency-mt-unsafe): dónde dejar el alfa del C++
             gc::render::Image img{w, h, std::vector<std::uint8_t>(alpha->alpha.size() * 4, 255)};
             for (std::size_t i = 0; i < alpha->alpha.size(); ++i) {
                 img.pixels[4 * i] = img.pixels[4 * i + 1] = img.pixels[4 * i + 2] = alpha->alpha[i];

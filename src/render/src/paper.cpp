@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <bit>
 #include <cmath>
 #include <cstdint>
 #include <format>
@@ -104,7 +105,7 @@ std::uint32_t to_int32(double x) {
     return static_cast<std::uint32_t>(static_cast<std::int64_t>(m < 0 ? m + 4294967296.0 : m));
 }
 
-std::uint32_t rotl(std::uint32_t x, int r) { return (x << r) | (x >> (32 - r)); }
+std::uint32_t rotl(std::uint32_t x, int r) { return std::rotl(x, r); } // también con r = 0
 
 struct Jitter {
     double rotation = 0.0;

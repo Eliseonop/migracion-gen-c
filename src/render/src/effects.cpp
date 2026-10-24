@@ -257,7 +257,7 @@ std::vector<std::int8_t> noise_table(int strength, std::size_t comp) {
             w = (x1 * x1) + (x2 * x2);
         } while (w >= 1.0 || w == 0.0);
         w = std::sqrt((-2.0 * std::log(w)) / w);
-        const double y1 = std::clamp(x1 * w * strength / std::sqrt(3.0), -128.0, 127.0);
+        const double y1 = std::clamp(x1 * w * strength / std::numbers::sqrt3, -128.0, 127.0);
         v = static_cast<std::int8_t>(static_cast<int>(y1));
     }
     return table;

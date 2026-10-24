@@ -64,7 +64,7 @@ double differing(const gc::render::Image& a, const gc::render::Image& b) {
             }
         }
     }
-    return static_cast<double>(n) / static_cast<double>(a.pixels.size() / 4);
+    return static_cast<double>(n) / (static_cast<double>(a.pixels.size()) / 4);
 }
 
 // Efectos que ELIGEN una muestra con un umbral duro (pixel_drift: la más brillante de 24 por
@@ -103,7 +103,7 @@ TEST_CASE("paridad de los efectos de vídeo con el runtime de video-yt en Chromi
     const auto fixture = read_json_file(kFixtures / "render" / "vfx.json");
     REQUIRE(fixture); // faltan: export_fixtures.py --solo vfx
     gc::render::set_vfx_assets_dir(path_from_utf8(GC_RESOURCES_DIR) / "fx");
-    const auto dump = std::getenv("GC_VFX_DUMP"); // carpeta para dejar los fotogramas de C++
+    const char* const dump = std::getenv("GC_VFX_DUMP"); // NOLINT(concurrency-mt-unsafe): carpeta para dejar los fotogramas de C++
     double worst = 99.0;
     std::size_t papers = 0;
     for (const Json& c : *fixture) {

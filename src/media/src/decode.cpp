@@ -177,7 +177,7 @@ private:
                 return fail(ErrorCode::Unsupported, "este FFmpeg no tiene el decodificador " + opts_.decoder);
             }
         }
-        AVStream* st = fmt_->streams[stream_];
+        const AVStream* st = fmt_->streams[stream_];
         // El CLI desplaza las marcas de tiempo de cada paquete con `ts_offset = −start_time` del
         // contenedor (sin -copyts), así que el `trim` de la cadena cuenta desde el principio del
         // archivo aunque el contenedor no empiece en 0.

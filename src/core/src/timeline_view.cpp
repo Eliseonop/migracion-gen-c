@@ -26,8 +26,12 @@ std::string pad2(long n) {
 
 int normalize_fps(double fps) {
     constexpr std::array<int, 5> kChoices{24, 25, 30, 50, 60};
-    const auto it = std::ranges::find_if(kChoices, [&](int c) { return c == fps; });
-    return it == kChoices.end() ? 30 : *it;
+    for (const int c : kChoices) { // un bucle: en MSVC el iterador de std::array no es un puntero
+        if (c == fps) {
+            return c;
+        }
+    }
+    return 30;
 }
 
 double frame_duration(double fps) {
@@ -121,11 +125,15 @@ std::vector<Tick> build_ticks(double max_t, double pps, double fps, double scrol
         }
         ticks.push_back({n, major, step});
     };
+    // Los bucles con un double copian el acumulado de rulerTicks (timelineView.js): con un contador
+    // entero, las marcas no saldrían iguales.
+    // NOLINTNEXTLINE(bugprone-float-loop-counter,clang-analyzer-security.FloatLoopCounter)
     for (double t = std::floor(a / step) * step; t <= b + step * 0.01; t += step) {
         push(t, true);
     }
     const double minor = step >= 1 ? step / 5 : (step > frame * 1.5 ? frame : 0);
     if (minor > 1e-9 && ticks.size() < 250) {
+        // NOLINTNEXTLINE(bugprone-float-loop-counter,clang-analyzer-security.FloatLoopCounter)
         for (double t = std::floor(a / minor) * minor; t <= b + minor * 0.01; t += minor) {
             push(t, false);
         }

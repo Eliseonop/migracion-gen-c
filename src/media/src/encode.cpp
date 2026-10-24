@@ -137,7 +137,7 @@ bool encoder_works(std::string_view name) {
     if (!ctx) {
         return false;
     }
-    std::unique_ptr<AVFrame, FrameFree> frame(av_frame_alloc());
+    const std::unique_ptr<AVFrame, FrameFree> frame(av_frame_alloc());
     frame->format = (*ctx)->pix_fmt;
     frame->width = 64;
     frame->height = 64;
@@ -151,7 +151,7 @@ bool encoder_works(std::string_view name) {
     if (avcodec_send_frame(ctx->get(), frame.get()) < 0 || avcodec_send_frame(ctx->get(), nullptr) < 0) {
         return false;
     }
-    std::unique_ptr<AVPacket, PacketFree> pkt(av_packet_alloc());
+    const std::unique_ptr<AVPacket, PacketFree> pkt(av_packet_alloc());
     bool got = false;
     while (avcodec_receive_packet(ctx->get(), pkt.get()) == 0) {
         got = got || pkt->size > 0;
@@ -259,7 +259,7 @@ struct Mp4Writer::Impl {
         }
     }
 
-    Result<void> drain(AVCodecContext* ctx, AVStream* st) {
+    Result<void> drain(AVCodecContext* ctx, AVStream* st) const {
         while (true) {
             const int r = avcodec_receive_packet(ctx, pkt.get());
             if (r == AVERROR(EAGAIN) || r == AVERROR_EOF) {
@@ -436,7 +436,7 @@ Result<void> Mp4Writer::audio(std::span<const float> interleaved) {
         left[i] = interleaved[2 * i];
         right[i] = interleaved[(2 * i) + 1];
     }
-    void* planes[] = {left.data(), right.data()};
+    void* const planes[] = {left.data(), right.data()};
     if (av_audio_fifo_write(s.fifo.get(), planes, static_cast<int>(n)) < static_cast<int>(n)) {
         return fail(ErrorCode::Internal, "sin memoria para la cola de audio");
     }

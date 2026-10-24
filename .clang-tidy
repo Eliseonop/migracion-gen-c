@@ -18,6 +18,13 @@
 #   - use-string-view: cambia tipos de vuelta (std::string → string_view) y puede dejar
 #     vistas colgando si la función devuelve un parámetro.
 #   - simplify-boolean-expr con De Morgan: las condiciones copian las de Python.
+#   - signed-bitwise: avisa hasta de `std::ios::binary | std::ios::trunc` y de
+#     `std::size_t{1} << 16`. En C++20 los desplazamientos con signo están definidos (el de
+#     la derecha, aritmético: el PIXEL de 26.6 de FreeType y Pillow lo necesita), los
+#     píxeles y el UTF-8 se operan con la promoción a int, y las banderas de FFmpeg son int.
+#   - redundant-member-init: los `= {}` de las estructuras que se crean con inicializadores
+#     designados (`Drop{.slot = …, .start = …}`) evitan el -Wmissing-field-initializers de GCC.
+# Y en unused-return-value vale descartar con `(void)` (lo explícito, en vez de un NOLINT).
 Checks: >
   -*,
   bugprone-*,
@@ -45,6 +52,7 @@ Checks: >
   readability-use-anyofallof,
   -bugprone-easily-swappable-parameters,
   -bugprone-return-const-ref-from-parameter,
+  -bugprone-signed-bitwise,
   -bugprone-throwing-static-initialization,
   -bugprone-unchecked-optional-access,
   -clang-analyzer-optin.performance.Padding,
@@ -60,8 +68,10 @@ Checks: >
   -modernize-use-trailing-return-type,
   -performance-enum-size,
   -portability-avoid-pragma-once,
+  -readability-redundant-member-init,
   -readability-redundant-parentheses
 CheckOptions:
   readability-simplify-boolean-expr.SimplifyDeMorgan: false
+  bugprone-unused-return-value.AllowCastToVoid: true
 HeaderFilterRegex: '.*[/\\](src|apps|tests)[/\\].*'
 ExcludeHeaderFilterRegex: '.*[/\\](_deps|build)[/\\].*'

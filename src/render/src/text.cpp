@@ -81,7 +81,7 @@ int be16(const char* p) {
     return (static_cast<unsigned char>(p[0]) << 8) | static_cast<unsigned char>(p[1]);
 }
 
-std::shared_ptr<FontFace> load_face(SkFontMgr& mgr, const std::filesystem::path& path) {
+std::shared_ptr<FontFace> load_face(const SkFontMgr& mgr, const std::filesystem::path& path) {
     std::ifstream in(path, std::ios::binary);
     if (!in) {
         return nullptr;
@@ -237,7 +237,7 @@ bool bold_of(const Json& st) {
 
 // "&HAABBGGRR&" de ass_bgr → color de Skia (sin alfa). nullopt si no son cifras hexadecimales.
 std::optional<SkColor> ass_color(const std::string& ass) {
-    if (ass.size() != 11 || ass.compare(0, 2, "&H") != 0) { // &H + AA + BBGGRR + &
+    if (ass.size() != 11 || !ass.starts_with("&H")) { // &H + AA + BBGGRR + &
         return std::nullopt;
     }
     unsigned v[3] = {};
@@ -300,7 +300,7 @@ struct TextFonts::Impl {
     std::map<std::filesystem::path, std::shared_ptr<FontFace>> faces;
     detail::PillowFonts pillow; // las mismas fuentes, abiertas como Pillow (para medir)
 
-    std::filesystem::path path(std::string_view name, bool bold) const {
+    [[nodiscard]] std::filesystem::path path(std::string_view name, bool bold) const {
         return core::resolve_font_path(name.empty() ? "Arial" : name, bold, dirs);
     }
 
@@ -468,7 +468,7 @@ bool paint_text_mask(SkCanvas& canvas, const SkPaint& paint, const Json& m, doub
     if (std::abs(rotation) > 0.01) {
         canvas.rotate(static_cast<SkScalar>(rotation), static_cast<SkScalar>(cx + 0.5), static_cast<SkScalar>(cy + 0.5));
     }
-    SkFont sk_font(ff->typeface, static_cast<SkScalar>(size));
+    const SkFont sk_font(ff->typeface, static_cast<SkScalar>(size));
     for (std::size_t i = 0; i < lines.size(); ++i) {
         const auto lay = pillow_layout(fonts, font, bold, size, lines[i]);
         if (!lay) {
@@ -591,6 +591,7 @@ Mask blurred(const Mask& m, double n) {
 
 // ass_fix_outline de libass: donde hay relleno, el contorno se aclara (o > g ? o − g/2 : 0) para
 // que no se vea a través de un relleno semitransparente.
+// NOLINTNEXTLINE(misc-const-correctness): escribe en los píxeles de `o` (getAddr8 de un SkBitmap const)
 void fix_outline(const Mask& g, Mask& o) {
     const int l = std::max(g.left, o.left);
     const int t = std::max(g.top, o.top);

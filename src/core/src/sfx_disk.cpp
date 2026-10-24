@@ -22,7 +22,6 @@ using detail::py_iter;
 using detail::py_lower;
 using detail::py_path_name;
 using detail::py_path_stem;
-using detail::py_path_str;
 using detail::py_path_suffix;
 using detail::py_quote;
 using detail::py_round;
@@ -346,7 +345,7 @@ std::string unique_filename(const fs::path& folder, const std::string& filename)
     std::string candidate = filename;
     std::error_code ec;
     for (int n = 2; fs::exists(folder / path_from_utf8(candidate), ec); ++n) {
-        candidate = stem + "_" + std::to_string(n) + ext;
+        candidate = std::format("{}_{}{}", stem, n, ext);
     }
     return candidate;
 }
@@ -408,7 +407,7 @@ Result<void> write_library(const fs::path& base, Json& lib) {
 
 Result<std::string> safe_folder_id(std::string_view raw) {
     const std::string text = py_strip(raw);
-    const std::string folder = py_path_name(text);
+    std::string folder = py_path_name(text);
     if (folder.empty() || folder == "." || folder == ".." || folder != text) {
         return invalid("Categoría no válida.");
     }
@@ -635,7 +634,7 @@ Result<Json> sfx_update_sound(const std::optional<fs::path>& base, SettingsFile&
         }
         const std::string folder = replace_backslashes(text_of(get_or(s, "carpeta", kNull)));
         const std::string file = text_of(get_or(s, "archivo", kNull));
-        if ((folder.empty() ? file : folder + "/" + file) == rel) {
+        if ((folder.empty() ? file : std::format("{}/{}", folder, file)) == rel) {
             idx = i;
         }
     }

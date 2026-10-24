@@ -14,7 +14,6 @@
 namespace gc::core {
 
 using detail::py_float;
-using detail::py_num;
 using detail::py_truthy;
 
 namespace {
@@ -345,7 +344,7 @@ DashRuns dash_runs(const Polyline& pts, std::pair<double, double> pattern) {
     const double total = cum.back();
     const auto point_at = [&](double s) {
         // bisect.bisect_left(cum, s), acotado a [1, n − 1]
-        const auto lb = static_cast<std::size_t>(std::lower_bound(cum.begin(), cum.end(), s) - cum.begin());
+        const auto lb = static_cast<std::size_t>(std::ranges::lower_bound(cum, s) - cum.begin());
         const std::size_t i = std::max<std::size_t>(1, std::min(pts.size() - 1, lb));
         const Point a = pts[i - 1];
         const Point b = pts[i];

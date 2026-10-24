@@ -25,6 +25,7 @@
 #include <limits>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "gc/core/io.hpp"
@@ -76,7 +77,7 @@ std::vector<float> audio_pcm(const std::filesystem::path& mp4, double total) {
 
 // Nivel (dBFS) de cada bloque de 100 ms: la media de los cuadrados de los dos canales.
 std::vector<double> block_db(const std::vector<float>& pcm) {
-    constexpr std::size_t kBlock = 4800 * 2;
+    constexpr std::size_t kBlock = std::size_t{4800} * 2;
     std::vector<double> out;
     for (std::size_t i = 0; i + kBlock <= pcm.size(); i += kBlock) {
         double sum = 0.0;
@@ -154,7 +155,7 @@ TEST_CASE("paridad del export: el MP4 entero frente al de compose.render", "[par
         const auto a = video_frames(ref);
         const auto b = video_frames(out);
         REQUIRE(a.size() == b.size());
-        REQUIRE(static_cast<std::int64_t>(b.size()) == stats->frames);
+        REQUIRE(std::cmp_equal(b.size(), stats->frames));
         const auto skipped = end_ticks(lp.timeline, stats->fps);
         double worst = std::numeric_limits<double>::infinity();
         for (std::size_t k = 0; k < a.size(); ++k) {
@@ -198,5 +199,5 @@ TEST_CASE("export: una timeline vacía es un error, como en compose.py", "[expor
     const auto lp = fixture_project(empty, std::filesystem::temp_directory_path() / "gc_test_export");
     auto stats = gc::exporter::render_project(lp, std::filesystem::temp_directory_path() / "gc_test_export_vacio.mp4");
     REQUIRE_FALSE(stats);
-    CHECK(stats.error().message.find("vacía") != std::string::npos);
+    CHECK(stats.error().message.contains("vacía"));
 }

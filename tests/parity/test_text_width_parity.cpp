@@ -316,6 +316,7 @@ TEST_CASE("la medida del texto da lo mismo desde varios hilos", "[render][text]"
     }
     std::array<bool, 4> ok{};
     std::vector<std::thread> threads;
+    threads.reserve(ok.size());
     for (std::size_t t = 0; t < ok.size(); ++t) {
         threads.emplace_back([&, t] {
             bool all = true;

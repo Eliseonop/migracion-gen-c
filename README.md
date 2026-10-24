@@ -40,6 +40,8 @@ Debug y Release, y falla si hay algún warning.
 
 Análisis estático: `python tools/dev/tidy.py [--fix] [filtro]` pasa el clang-tidy de CLion con el
 `.clang-tidy` del repo por `src`, `apps` y `tests`, y falla si hay algún aviso (tiene que quedar en 0).
+Lo que solo compila MSVC (`gc_media`, `gc_render`, `gc_export`) lo analiza con la build de
+`tools/dev/verificar_msvc.bat` y el entorno de `vcvars64.bat` (variable `VCVARS`).
 
 | Preset | Para qué |
 |---|---|
