@@ -8,9 +8,9 @@
 //                                           PNG del alfa) y TEXT_MASK_METRICS (getmetrics,
 //                                           getlength y la caja con cada ancla).
 //
-// Las métricas y el ancla vertical son exactas; el ancho, con los avances redondeados de HarfBuzz
-// en vez de los del hinting de FreeType (±1 px). Las letras no son las mismas: Pillow rasteriza el
-// contorno con hinting y Skia sin él, así que el alfa se compara por PSNR.
+// Las métricas, el ancho y las anclas son exactos (la maquetación básica de Pillow con la misma
+// FreeType). Las letras no son las mismas: Pillow rasteriza el contorno con hinting y Skia sin él,
+// así que el alfa se compara por PSNR.
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -70,7 +70,7 @@ TEST_CASE("paridad de la máscara de texto: las medidas de Pillow", "[parity][re
         REQUIRE(ls);
         CHECK(ls->ascent == c.at("metrics")[0].get<int>());
         CHECK(ls->descent == c.at("metrics")[1].get<int>());
-        CHECK(std::abs(ls->length - c.at("length").get<double>()) <= 1.0);
+        CHECK(ls->length == c.at("length").get<double>());
         if (text.empty()) {
             continue; // sin texto, Pillow da la caja (0, 0, 0, 0) con cualquier ancla
         }
@@ -82,7 +82,7 @@ TEST_CASE("paridad de la máscara de texto: las medidas de Pillow", "[parity][re
             const double want_x = box.at(anchor)[0].get<double>() - box.at("ls")[0].get<double>();
             const double want_y = box.at(anchor)[1].get<double>() - box.at("ls")[1].get<double>();
             CHECK(p->origin_y == want_y);
-            CHECK(std::abs(p->origin_x - want_x) <= 1.0);
+            CHECK(p->origin_x == want_x);
         }
         ++checked;
     }

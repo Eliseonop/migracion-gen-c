@@ -38,9 +38,11 @@ public:
 
     [[nodiscard]] const core::FontDirs& dirs() const noexcept;
 
-    // Ancho de un texto como font_metrics.text_width de video-yt (Pillow): la fuente a `em` px
-    // redondeado a 1/4 de px, con kerning, más `letter_spacing` por carácter. Sin la fuente, la
-    // estimación de 0,55 em por carácter.
+    // Ancho de un texto como font_metrics.text_width de video-yt: el getlength() de Pillow (su
+    // maquetación básica, con el hinting y el kerning de FreeType) a `em` px redondeado a 1/4 de
+    // px, más `letter_spacing` por carácter; exacto, con la misma FreeType que ese Pillow. Si Pillow
+    // no puede medir (sin la fuente, o un tamaño o un glifo que FreeType rechaza), la estimación de
+    // 0,55 em por carácter, como text_width. Se puede llamar desde varios hilos.
     [[nodiscard]] double text_width(std::string_view font, bool bold, double em, std::string_view text,
                                     double letter_spacing) const;
 
@@ -54,12 +56,14 @@ private:
     std::shared_ptr<Impl> impl_;
 };
 
+// La versión de FreeType con la que mide TextFonts («2.14.3», la del Pillow de video-yt).
+[[nodiscard]] std::string freetype_version();
+
 // Lo que mide Pillow de `text` en `font` a `size` px (ImageFont.truetype con su maquetación básica
 // de FreeType, la de video-yt; la usa la máscara de tipo texto): getmetrics(), getlength() y dónde
 // queda el origen de la línea (izquierda de la línea base) respecto al ancla de ImageDraw.text
-// («ls», «mm», «lm» o «rm»). Las métricas y las anclas verticales, exactas (la aritmética de 26.6
-// de FreeType); el ancho, con los avances redondeados de HarfBuzz en vez de los del hinting, que
-// pueden diferir en 1 px. Nada si la fuente no se puede leer.
+// («ls», «mm», «lm» o «rm»). Todo exacto (la misma FreeType con las mismas llamadas). Nada si
+// Pillow no puede medir: la fuente no se abre, o FreeType rechaza el tamaño o un glifo.
 struct PillowText {
     int ascent = 0;
     int descent = 0;

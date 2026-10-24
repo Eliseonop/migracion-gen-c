@@ -37,6 +37,7 @@ Salida (al repo):
   tests/fixtures/beats/synthetic.json      beats automáticos (beats.py) sobre las señales de beats_cases.py
   tests/fixtures/keywords/synthetic.json   palabras clave locales de Explorar (explore_keywords.py)
   tests/fixtures/audio/mono.json           audio mono de beats.py y sample_rms_envelope: media_cases.MONO_* (--solo mono)
+  tests/fixtures/text/widths.json          ancho del texto (font_metrics.text_width, Pillow): text_cases.WIDTH_* (--solo anchos)
   tests/fixtures/collections/synthetic.json  colecciones de material: pasos de collections_cases.py
   tests/fixtures/stick/synthetic.json      personajes stick: pasos de stick_cases.py
   tests/fixtures/projects/synthetic.json   almacén de proyectos: pasos de projects_cases.py
@@ -3330,6 +3331,172 @@ def real_text_fixtures(ctx: Ctx, data: dict) -> dict:
                   "fonts": fonts})
 
 
+def _width_case(fm, font, bold, em, ti, text, ls) -> list:
+    """[em, índice del texto, espaciado, text_width REAL] o, si Python lanza, {"error": tipo} en vez
+    del ancho (el round() de un em no finito está fuera del try de text_width)."""
+    try:
+        return [em, ti, ls, fm.text_width(font, bold, em, text, ls)]
+    except Exception as e:  # noqa: BLE001 — basta con saber que Python falla
+        return [em, ti, ls, {"error": type(e).__name__}]
+
+
+def synthetic_text_width_fixtures() -> dict:
+    """font_metrics.text_width REAL (Pillow con la maquetación básica de su FreeType) para
+    text_cases.WIDTH_*: cada archivo de fuente de FONTS, FONTS_BOLD y BUNDLED_FONTS con la rejilla
+    de tamaños, textos y espaciados; los nombres de FONT_NAMES (alias, desconocidos, vacío) con unos
+    pocos; tamaños y espaciados raros con Arial; más de MAX_STRING_LENGTH caracteres; y carpetas de
+    fuentes de mentira (sin fuentes, o con archivos vacíos, rotos o cortados: lo que Pillow no abre
+    lo busca por su nombre en WINDIR\\fonts y, si tampoco, text_width estima). Cada archivo de
+    fuente del sistema o de la app va con su tamaño y su CRC-32 (y lo que encuentra esa búsqueda,
+    en "fallback"): si en otro equipo no es lo mismo, el test lo dice."""
+    import tempfile
+    import zlib
+    import text_cases as tc
+    from PIL import Image, features
+    from app import font_metrics as fm
+
+    anton = (REPO / "resources" / "fonts" / "Anton-Regular.ttf").read_bytes()
+    assert anton == (fm.BUNDLED_FONT_DIR / "Anton-Regular.ttf").read_bytes(), "Anton de resources/fonts ≠ video-yt"
+    long_text = tc.WIDTH_LONG["repeat"] * tc.WIDTH_LONG["times"]
+    plain = list(dict.fromkeys([*tc.WIDTH_TEXTS, *tc.WIDTH_ODD_TEXTS, *tc.WIDTH_DIR_TEXTS]))
+    texts = [*plain, tc.WIDTH_LONG]
+    index = {t: i for i, t in enumerate(plain)}
+    files: dict[str, dict] = {}
+
+    def rel(p: Path) -> str:
+        """La ruta de resolve_font_path relativa a su carpeta: system/… o bundled/…."""
+        for prefix, base in (("bundled", fm.BUNDLED_FONT_DIR), ("system", fm.FONT_DIR)):
+            if p.parent == base:
+                if p.exists() and f"{prefix}/{p.name}" not in files:
+                    data = p.read_bytes()
+                    files[f"{prefix}/{p.name}"] = {"size": len(data), "crc32": zlib.crc32(data)}
+                return f"{prefix}/{p.name}"
+        raise AssertionError(f"fuente fuera de las carpetas: {p}")
+
+    def group(name, bold, widths) -> dict:
+        return {"font": name, "bold": bold, "file": rel(fm.resolve_font_path(name or "Arial", bold)), "widths": widths}
+
+    fm._pil_font.cache_clear()
+    out_files, aliases, odd = [], [], []
+    seen: set[Path] = set()
+    for name in sorted({*fm.FONTS, *fm.FONTS_BOLD, *fm.BUNDLED_FONTS}):
+        for bold in (False, True):
+            p = fm.resolve_font_path(name, bold)
+            if p in seen:
+                continue
+            seen.add(p)
+            widths = [_width_case(fm, name, bold, em, index[t], t, 0.0) for em in tc.WIDTH_EMS for t in tc.WIDTH_GRID_TEXTS]
+            widths += [_width_case(fm, name, bold, em, index[t], t, ls) for em in tc.WIDTH_SPOT_EMS
+                       for t in tc.WIDTH_TEXTS for ls in tc.WIDTH_SPACINGS
+                       if not (ls == 0.0 and t in tc.WIDTH_GRID_TEXTS)]
+            out_files.append(group(name, bold, widths))
+    for name in tc.FONT_NAMES:
+        for bold in (False, True):
+            aliases.append(group(name, bold, [_width_case(fm, name, bold, 46.375, index[t], t, 0.0)
+                                              for t in ("Hola mundo", "AVAVAVAV WAWAWA")]))
+    for bold in (False, True):
+        widths = [_width_case(fm, "Arial", bold, em, index[t], t, 0.0) for em in tc.WIDTH_ODD_EMS for t in tc.WIDTH_ODD_TEXTS]
+        widths += [_width_case(fm, "Arial", bold, 46.0, index[t], t, ls) for ls in tc.WIDTH_ODD_SPACINGS
+                   for t in tc.WIDTH_ODD_TEXTS]
+        widths += [_width_case(fm, "Arial", bold, 46.0, len(texts) - 1, long_text, ls) for ls in (0.0, 1.5)]
+        odd.append(group("Arial", bold, widths))
+
+    # Carpetas de mentira: los archivos de cada una, con FONT_DIR y BUNDLED_FONT_DIR cambiadas.
+    ttf = dict(tc.FONT_FILES)
+    dirs = []
+    saved = fm.FONT_DIR, fm.BUNDLED_FONT_DIR
+    with tempfile.TemporaryDirectory() as tmp:
+        try:
+            for i, d in enumerate(tc.WIDTH_DIRS):
+                root = Path(tmp) / f"d{i}"
+                spec = {}
+                for sub in ("system", "bundled"):
+                    (root / sub).mkdir(parents=True)
+                    spec[sub] = {}
+                    for fname, recipe in d[sub].items():
+                        if "anton" in recipe:
+                            data = anton if recipe["anton"] is None else anton[:recipe["anton"]]
+                            spec[sub][fname] = {"anton": recipe["anton"]}
+                        else:
+                            data = ttf[recipe["ttf"]] if "ttf" in recipe else bytes.fromhex(recipe["hex"])
+                            spec[sub][fname] = {"hex": data.hex()}
+                        (root / sub / fname).write_bytes(data)
+                fm.FONT_DIR, fm.BUNDLED_FONT_DIR = root / "system", root / "bundled"
+                fm._pil_font.cache_clear()
+                cases = []
+                for name, bold in tc.WIDTH_DIR_FONTS:
+                    p = fm.resolve_font_path(name, bold)
+                    widths = [_width_case(fm, name, bold, em, index[t], t, 0.0) for em in tc.WIDTH_DIR_EMS
+                              for t in tc.WIDTH_DIR_TEXTS]
+                    cases.append({"font": name, "bold": bold, "file": f"{p.parent.name}/{p.name}", "widths": widths})
+                dirs.append({"name": d["name"], **spec, "cases": cases})
+        finally:
+            fm.FONT_DIR, fm.BUNDLED_FONT_DIR = saved
+            fm._pil_font.cache_clear()
+    # Lo que no abre, ImageFont.truetype lo busca por su nombre en WINDIR\fonts (con os.walk) y mide
+    # con eso: lo que encuentra aquí para los archivos de las carpetas de mentira.
+    import os
+    windir = os.environ.get("WINDIR")
+    fallback = {}
+    for d in dirs:
+        for c in d["cases"]:
+            name = c["file"].split("/", 1)[1]
+            if name in fallback:
+                continue
+            fallback[name] = None
+            for walkroot, _walkdirs, walkfiles in (os.walk(os.path.join(windir, "fonts")) if windir else ()):
+                if name in walkfiles:
+                    data = (Path(walkroot) / name).read_bytes()
+                    rel_dir = os.path.relpath(walkroot, os.path.join(windir, "fonts"))
+                    fallback[name] = {"path": Path(rel_dir, name).as_posix(), "size": len(data), "crc32": zlib.crc32(data)}
+                    break
+    return _nan_safe({
+        "pillow": Image.__version__, "freetype": features.version("freetype2"), "raqm": features.check("raqm"),
+        "system_dir": fm.FONT_DIR.as_posix(), "files": files, "texts": texts,
+        "fonts": out_files, "aliases": aliases, "odd": odd, "dirs": dirs, "fallback": fallback,
+    })
+
+
+def real_text_width_fixtures(ctx: Ctx, data: dict) -> dict:
+    """Tus textos con la medida REAL de Pillow: el reparto en líneas (_rows) y las cajas de Fondo
+    (box_rects, con el ass_size_factor real) de cada clip de texto con su estilo efectivo y su
+    texto en May./min., en el cuadro de su timeline, con cada text_width que hacen. Sin repetidos."""
+    from app import font_metrics as fm
+    from app import text_ass as ta
+    calls: list = []
+
+    def recording(font, bold, em, text, ls=0.0):
+        out = fm.text_width(font, bold, em, text, ls)
+        calls.append([font, bold, em, text, ls, out])
+        return out
+
+    saved = ta.text_width
+    ta.text_width = recording
+    seen, cases = set(), []
+    try:
+        for p in data.get("projects", []):
+            tl = p.get("timeline") or {}
+            w, h = int(tl.get("width") or 1080), int(tl.get("height") or 1920)
+            track_style = {t.get("id"): t.get("style") for t in tl.get("tracks", [])}
+            for c in tl.get("clips", []):
+                if c.get("kind") != "text":
+                    continue
+                st = ta.effective_text_style(track_style.get(c.get("track_id")), c.get("style"))
+                text = ta.apply_text_case(c.get("text") or "", st.get("text_case"))
+                key = json.dumps([st, w, h, text], sort_keys=True)
+                if key in seen:
+                    continue
+                seen.add(key)
+                calls.clear()
+                rows = ta._rows(st, w, h, text)
+                boxes = [list(r) for r in ta.box_rects(st, w, h, rows)]
+                cases.append({"style": st, "w": w, "h": h, "text": text, "rows": rows, "box_rects": boxes,
+                              "calls": list(calls)})
+    finally:
+        ta.text_width = saved
+    return _pure(_nan_safe({"system_dir": fm.FONT_DIR.as_posix(), "cases": cases}))
+
+
 # --- Salida -----------------------------------------------------------------------------------
 
 def write(path: Path, payload, count: int, errors: int) -> None:
@@ -3344,7 +3511,8 @@ def main() -> None:
     ap.add_argument("--video-yt", type=Path, default=DEFAULT_VIDEO_YT, help="raíz del repo video-yt")
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
-                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake"],
+                                       "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake",
+                                       "anchos"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3476,6 +3644,21 @@ def main() -> None:
         fx_bake_group()
         return
 
+    def widths_group() -> None:
+        wid = synthetic_text_width_fixtures()
+        groups = wid["fonts"] + wid["aliases"] + wid["odd"] + [c for d in wid["dirs"] for c in d["cases"]]
+        write(REPO / "tests" / "fixtures" / "text" / "widths.json", wid, sum(len(g["widths"]) for g in groups),
+              sum(isinstance(w[3], dict) for g in groups for w in g["widths"]))
+        if args.real:
+            data = json.loads((args.video_yt / "backend" / "data" / "projects.json").read_text(encoding="utf-8"))
+            wid_real = real_text_width_fixtures(ctx, data)
+            write(REPO / "tests" / "fixtures" / "local" / "text" / "widths.json", wid_real,
+                  sum(len(c["calls"]) for c in wid_real["cases"]), 0)
+
+    if args.solo == "anchos":
+        widths_group()
+        return
+
     def shapes_group() -> None:
         shp = synthetic_shape_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "shapes" / "geometry.json", shp,
@@ -3548,6 +3731,7 @@ def main() -> None:
           len(txt["styles"]) + len(txt["clips"]) + len(txt["effective"]) + len(txt["alpha"]) + len(txt["case"]) + len(txt["active_word"])
           + len(txt["font_files"]) + sum(len(lay["fonts"]) for lay in txt["font_layouts"]), 0)
     warp_group()
+    widths_group()
     render_group()
     ren_txt = synthetic_text_render_fixtures(ctx)
     write(RENDER_DIR / "text.json", ren_txt, len(ren_txt), 0)

@@ -295,3 +295,62 @@ FONT_LAYOUTS: list[dict] = [
 FONT_NAMES = ["Arial", "Arial Black", "Impact", "Georgia", "Verdana", "Times New Roman", "Courier New",
               "Comic Sans MS", "Trebuchet MS", "Segoe UI", "Segoe UI Black", "Calibri", "Bahnschrift",
               "Tahoma", "Consolas", "Anton", "anton", "Desconocida", "", "arial"]
+
+
+# --- Ancho del texto (font_metrics.text_width, Pillow) ----------------------------------------
+
+# Tamaños de letra (em, en px): los de los estilos (0,048 de 360, 640, 960 y 1920 de alto), enteros
+# y con fracción, los del redondeo a 1/4 de px con empate (round de Python, al par: 46,125 → 46 y
+# 46,375 → 46,5), menores de 1 px (Pillow mide a 1 px) y alguno grande.
+WIDTH_EMS = [0.3, 1, 5, 7.5, 9.9, 11, 12.4, 12.5, 12.6, 13.3, 17.28, 21.6, 24, 30.72, 37, 46, 46.08, 46.125,
+             46.375, 51.84, 72, 92.16, 141, 333]
+# Textos: vacío, espacios, kerning (AV, WA, Te, Yo…), ligaduras (la maquetación básica no las hace),
+# tildes y eñes, compuestos (e + tilde combinada), controles (tabulador, salto de línea, NUL, DEL),
+# invisibles (blando, ZWSP, ZWJ, NBSP), CJK, emoji (fuera del BMP), árabe y hebreo (sin formas),
+# cirílico, griego, uso privado y el último carácter de Unicode.
+WIDTH_TEXTS = [
+    "", " ", "   ", "a", "Hola mundo", "AVAVAVAV WAWAWA", "Te Vo Ty Wa Yo P. L' f, r. «T»", "fi fl ffi ff",
+    "Añoró Ñandú pingüino ¿qué? ¡sí!", "ÀÉÎÕÜ çß øå ŁŒ", "0123456789 1/2 3,14 100%", "—–-… “” \"'() []{}",
+    "a\tb", "a\nb", "\x00\x7f", "é ä", "soft­hy zw​sp zw‍j a b",
+    "中文字 日本語", "😀👍🏽 ❤", "مرحبا بالعالم", "שלום", "Привет мир", "Γειά σου", "\U0010ffff",
+    "MAYÚSCULAS GRANDES QUE NO CABEN EN UNA LÍNEA", "lllliiiijjjj WWWWMMMM",
+]
+# Los que se miden en todas las fuentes y tamaños; los demás, en tres tamaños.
+WIDTH_GRID_TEXTS = ["", " ", "Hola mundo", "AVAVAVAV WAWAWA", "Te Vo Ty Wa Yo P. L' f, r. «T»",
+                    "Añoró Ñandú pingüino ¿qué? ¡sí!", "0123456789 1/2 3,14 100%",
+                    "MAYÚSCULAS GRANDES QUE NO CABEN EN UNA LÍNEA"]
+WIDTH_SPOT_EMS = [9.9, 46.375, 92.16]
+# Espaciado entre letras (px): los raros solo con un tamaño.
+WIDTH_SPACINGS = [0.0, 1.5, -2.25]
+WIDTH_ODD_SPACINGS = [1e-300, -0.0, 1e300, float("inf"), float("-inf"), float("nan")]
+# Tamaños raros con Arial (normal y negrita): ceros y negativos (a 1 px), subnormales, el borde del
+# ppem de 16 bits de FreeType (65535,5 px ya es 65536), lo que no cabe en el FT_Long de 32 bits de
+# Pillow (2^31/64 px: Pillow lanza y text_width estima), lo que no cabe en un float de C, y lo que
+# hace fallar el round() de Python, fuera del try (no finito, o em · 4 = inf).
+WIDTH_ODD_EMS = [0, -0.0, -5, 5e-324, 1e-300, 0.124, 0.125, 0.375, 0.5, 0.625, 1.125, 1.375, 2.875, 1000,
+                 5000.125, 65535.25, 65535.5, 65536, 65537, 131072.75, 1e6, 33554431.75, 33554432, 4e7,
+                 1e15, 3.4028234663852886e38, 3.5e38, 1e300, 4.4e307, 4.5e307, 1e308,
+                 float("inf"), float("-inf"), float("nan")]
+WIDTH_ODD_TEXTS = ["", "Hola mundo", "AV"]
+# Más de MAX_STRING_LENGTH caracteres (1 000 000): getlength lanza ValueError y text_width estima.
+WIDTH_LONG = {"repeat": "ab", "times": 500_001}
+
+# Carpetas de fuentes de mentira: qué hay en cada una (el C++ la rehace). "anton" es una copia de
+# resources/fonts/Anton-Regular.ttf (con un número, solo sus primeros bytes); "hex", esos bytes; y
+# "ttf", uno de FONT_FILES. Lo que Pillow no abre (o no puede medir a ese tamaño) lo busca por su
+# nombre en WINDIR\fonts: sin arial.ttf que valga, mide con la Arial de Windows; sin Anton, estima.
+WIDTH_DIRS = [
+    {"name": "sin fuentes", "system": {}, "bundled": {}},
+    {"name": "arial vacío", "system": {"arial.ttf": {"hex": ""}}, "bundled": {}},
+    {"name": "arial que no es una fuente", "system": {"arial.ttf": {"hex": "00010000000500000000"}}, "bundled": {}},
+    {"name": "arial mínimo (sin glyf ni cmap)", "system": {"arial.ttf": {"ttf": "os2"}}, "bundled": {}},
+    {"name": "Anton como arial", "system": {"arial.ttf": {"anton": None}}, "bundled": {}},
+    {"name": "Anton cortada", "system": {"arial.ttf": {"anton": 40000}}, "bundled": {}},
+    {"name": "Anton cortada en el directorio", "system": {"arial.ttf": {"anton": 200}}, "bundled": {}},
+    {"name": "Anton de la app y nada del sistema", "system": {}, "bundled": {"Anton-Regular.ttf": {"anton": None}}},
+    {"name": "Anton cortada en la app", "system": {"arial.ttf": {"anton": None}},
+     "bundled": {"Anton-Regular.ttf": {"anton": 1000}}},
+]
+WIDTH_DIR_FONTS = [("Arial", False), ("Arial", True), ("Anton", True), ("Impact", False)]
+WIDTH_DIR_EMS = [12.5, 46.375]
+WIDTH_DIR_TEXTS = ["", "Hola mundo", "AVAV"]

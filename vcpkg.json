@@ -34,8 +34,9 @@
       ]
     },
     "render": {
-      "description": "gc_render: Skia por CPU (con las features por defecto: harfbuzz, icu, jpeg, png, webp, gl) y HarfBuzz para dar forma al texto",
+      "description": "gc_render: Skia por CPU (con las features por defecto: harfbuzz, icu, jpeg, png, webp, gl), HarfBuzz para dar forma al texto y FreeType para medirlo como Pillow",
       "dependencies": [
+        "freetype",
         "harfbuzz",
         "skia"
       ]

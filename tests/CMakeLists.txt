@@ -66,7 +66,7 @@ endif()
 # Con Skia (vcpkg), los de gc_render.
 if(TARGET gc_render)
     target_sources(gc_tests PRIVATE unit/test_render_canvas.cpp unit/test_render_compose.cpp
-                   unit/test_render_effects.cpp)
+                   unit/test_render_effects.cpp parity/test_text_width_parity.cpp)
     target_link_libraries(gc_tests PRIVATE gc::render)
     # La paridad del render lee el material y los fotogramas del export con gc_media.
     if(TARGET gc_media)

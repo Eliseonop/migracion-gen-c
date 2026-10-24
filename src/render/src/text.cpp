@@ -46,6 +46,7 @@
 #endif
 
 #include "canvas_impl.hpp"
+#include "pillow_font.hpp"
 #include "text_mask.hpp"
 #include "py.hpp"
 
@@ -65,10 +66,6 @@ struct FontFace {
     double upem = 1000;
     double asc = 0;  // unidades de la fuente
     double desc = 0; // unidades de la fuente, positivo hacia abajo
-    // Los de FreeType (face->ascender y face->descender, los que mide Pillow): los de hhea; si los
-    // dos son 0, los tipográficos de la OS/2 y, si no, los de Windows. El descendente, negativo.
-    std::int64_t ft_asc = 0;
-    std::int64_t ft_desc = 0;
 
     FontFace() = default;
     FontFace(const FontFace&) = delete;
@@ -109,8 +106,6 @@ std::shared_ptr<FontFace> load_face(SkFontMgr& mgr, const std::filesystem::path&
     const int win_asc = len >= 78 ? static_cast<std::int16_t>(be16(d + 74)) : 0;
     const int win_desc = len >= 78 ? static_cast<std::int16_t>(be16(d + 76)) : 0;
     const bool has_os2 = len >= 78;
-    const int typo_asc = len >= 72 ? static_cast<std::int16_t>(be16(d + 68)) : 0;
-    const int typo_desc = len >= 72 ? static_cast<std::int16_t>(be16(d + 70)) : 0;
     hb_blob_destroy(os2);
     int hhea_asc = 0;
     int hhea_desc = 0;
@@ -127,16 +122,6 @@ std::shared_ptr<FontFace> load_face(SkFontMgr& mgr, const std::filesystem::path&
     } else {
         ff->asc = hhea_asc;
         ff->desc = -hhea_desc;
-    }
-    if (hhea_asc != 0 || hhea_desc != 0) {
-        ff->ft_asc = hhea_asc;
-        ff->ft_desc = hhea_desc;
-    } else if (typo_asc != 0 || typo_desc != 0) {
-        ff->ft_asc = typo_asc;
-        ff->ft_desc = typo_desc;
-    } else {
-        ff->ft_asc = win_asc;
-        ff->ft_desc = -win_desc;
     }
     if (ff->upem <= 0 || ff->asc + ff->desc <= 0) {
         return nullptr;
@@ -313,34 +298,37 @@ struct TextFonts::Impl {
     sk_sp<SkFontMgr> mgr;
     std::mutex mutex;
     std::map<std::filesystem::path, std::shared_ptr<FontFace>> faces;
+    detail::PillowFonts pillow; // las mismas fuentes, abiertas como Pillow (para medir)
+
+    std::filesystem::path path(std::string_view name, bool bold) const {
+        return core::resolve_font_path(name.empty() ? "Arial" : name, bold, dirs);
+    }
 
     std::shared_ptr<FontFace> face(std::string_view name, bool bold) {
-        const auto path = core::resolve_font_path(name.empty() ? "Arial" : name, bold, dirs);
+        const auto file = path(name, bold);
         const std::scoped_lock lock(mutex);
-        if (const auto it = faces.find(path); it != faces.end()) {
+        if (const auto it = faces.find(file); it != faces.end()) {
             return it->second;
         }
-        auto ff = mgr ? load_face(*mgr, path) : nullptr;
-        faces.emplace(path, ff);
+        auto ff = mgr ? load_face(*mgr, file) : nullptr;
+        faces.emplace(file, ff);
         return ff;
     }
 
+    // font_metrics.text_width: el getlength() de Pillow a max(1, round(em · 4) / 4) px (el round de
+    // Python, al par) más el espaciado por carácter. Si Pillow lanza (la fuente no se abre, o
+    // FreeType rechaza el tamaño o un glifo), la estimación de 0,55 em por carácter, como el
+    // `except` de text_width. Con un em no finito (o tan grande que em · 4 no lo es), Python lanza
+    // en el round(), fuera del try; aquí, también la estimación.
     double width(std::string_view font, bool bold, double em, std::string_view text, double ls) {
         const double n = char_count(text);
-        const auto ff = face(font, bold);
-        if (!ff) {
-            return n * em * 0.55 + ls * n;
+        if (std::isfinite(em * 4)) {
+            const double size = std::max(1.0, std::nearbyint(em * 4) / 4);
+            if (const auto length = pillow.length(path(font, bold), size, text)) {
+                return static_cast<double>(*length) / 64 + ls * n;
+            }
         }
-        // Pillow (layout básico de FreeType con hinting) suma avances enteros, los del hinting; con
-        // la 'kern' de estas fuentes apenas mueve 1/64 de px. Aquí: cada avance redondeado y sin
-        // kerning («AVAVAVAV WAWAWA» en Arial a 46 px: 483 frente a los 482,5 de Pillow).
-        const double size = std::max(1.0, std::nearbyint(em * 4) / 4); // round(em · 4) / 4 de Python
-        const Shaped sh = shape(*ff, text, size, 0.0, false);
-        double width = 0;
-        for (const double a : sh.advances) {
-            width += std::round(a);
-        }
-        return width + ls * n;
+        return n * em * 0.55 + ls * n;
     }
 };
 
@@ -373,44 +361,55 @@ core::TextWidthFn TextFonts::width_fn() const {
     };
 }
 
+std::string freetype_version() {
+    return detail::PillowFonts::freetype_version();
+}
+
 // --- Medidas de Pillow y máscara de tipo texto -----------------------------------------------
 
 namespace {
 
-// FT_DivFix y FT_MulFix de FreeType (16.16, redondeando), en enteros de 64 bits.
-std::int64_t ft_divfix(std::int64_t a, std::int64_t b) {
-    const bool neg = (a < 0) != (b < 0);
-    const std::int64_t q = ((std::abs(a) << 16) + (std::abs(b) >> 1)) / std::abs(b);
-    return neg ? -q : q;
+// La maquetación de `text` en ImageFont.truetype(resolve_font_path(font, bold), size).
+std::optional<detail::PillowLayout> pillow_layout(const TextFonts& fonts, std::string_view font, bool bold, int size,
+                                                  std::string_view text) {
+    auto& impl = TextFontsAccess::impl(fonts);
+    return impl.pillow.layout(impl.path(font, bold), size, text);
 }
 
-std::int64_t ft_mulfix(std::int64_t a, std::int64_t b) {
-    const bool neg = (a < 0) != (b < 0);
-    const std::int64_t p = ((std::abs(a) * std::abs(b)) + 0x8000) >> 16;
-    return neg ? -p : p;
+// getmetrics(), getlength() y el origen de la línea con el ancla de bounding_box_and_anchors de
+// _imagingft.c (con la división entera de C; sin glifos, las anclas son 0).
+PillowText anchored(const detail::PillowLayout& lay, std::string_view anchor) {
+    PillowText out;
+    out.ascent = static_cast<int>(detail::ft_pixel(lay.ascender));
+    out.descent = static_cast<int>(-detail::ft_pixel(lay.descender));
+    out.length = static_cast<double>(lay.length) / 64;
+    if (!lay.glyphs.empty()) {
+        const char h = anchor[0];
+        const char v = anchor[1];
+        const std::int64_t x_anchor =
+            h == 'm' ? detail::ft_pixel(lay.length / 2) : (h == 'r' ? detail::ft_pixel(lay.length) : 0);
+        const std::int64_t y_anchor = v == 'm' ? detail::ft_pixel((lay.ascender + lay.descender) / 2) : 0;
+        out.origin_x = -static_cast<double>(x_anchor);
+        out.origin_y = static_cast<double>(y_anchor);
+    }
+    return out;
 }
 
-// PIXEL de _imagingft.c: de 26.6 a px enteros, con las mitades hacia arriba.
-std::int64_t ft_pixel(std::int64_t v) { return (v + 32) >> 6; }
-
-// Una línea como la maquetación básica de Pillow: los glifos de HarfBuzz sin kerning y cada avance
-// redondeado al px (los del hinting), con el origen de cada glifo.
+// Los glifos de una línea y el origen de cada uno, como los pone font_render de Pillow: en el px
+// (PIXEL) de la suma de los avances anteriores, que lleva el kerning en 1/64 de px.
 struct PillowLine {
     std::vector<SkGlyphID> ids;
     std::vector<double> x;
-    std::int64_t width = 0; // px
 };
 
-PillowLine pillow_line(const FontFace& ff, std::string_view text, int size) {
-    const Shaped sh = shape(ff, text, size, 0.0, false);
+PillowLine pillow_line(const detail::PillowLayout& lay) {
     PillowLine out;
-    double pen = 0;
-    for (std::size_t i = 0; i < sh.ids.size(); ++i) {
-        out.ids.push_back(sh.ids[i]);
-        out.x.push_back(pen);
-        pen += std::round(sh.advances[i]);
+    std::uint32_t pen = 0; // el `int` de Pillow
+    for (std::size_t i = 0; i < lay.glyphs.size(); ++i) {
+        out.ids.push_back(static_cast<SkGlyphID>(lay.glyphs[i]));
+        out.x.push_back(static_cast<double>(detail::ft_pixel(static_cast<std::int32_t>(pen))));
+        pen += static_cast<std::uint32_t>(lay.advances[i]);
     }
-    out.width = static_cast<std::int64_t>(pen);
     return out;
 }
 
@@ -418,28 +417,14 @@ PillowLine pillow_line(const FontFace& ff, std::string_view text, int size) {
 
 std::optional<PillowText> pillow_text(const TextFonts& fonts, std::string_view font, bool bold, int size,
                                       std::string_view text, std::string_view anchor) {
-    const auto ff = TextFontsAccess::impl(fonts).face(font, bold);
-    if (!ff || size <= 0 || anchor.size() != 2) {
+    if (size <= 0 || anchor.size() != 2) {
         return std::nullopt;
     }
-    // tt_size_reset de FreeType: ascendente al techo y descendente al suelo del px, en 26.6.
-    const std::int64_t y_scale = ft_divfix(static_cast<std::int64_t>(size) * 64, static_cast<std::int64_t>(ff->upem));
-    const std::int64_t asc = (ft_mulfix(ff->ft_asc, y_scale) + 63) & -64;
-    const std::int64_t desc = ft_mulfix(ff->ft_desc, y_scale) & -64;
-    const PillowLine line = pillow_line(*ff, text, size);
-    const std::int64_t width = line.width * 64;
-    PillowText out;
-    out.ascent = static_cast<int>(asc / 64);
-    out.descent = static_cast<int>(-desc / 64);
-    out.length = static_cast<double>(line.width);
-    // bounding_box_and_anchors de _imagingft.c (con la división entera de C).
-    const char h = anchor[0];
-    const char v = anchor[1];
-    const std::int64_t x_anchor = h == 'm' ? ft_pixel(width / 2) : (h == 'r' ? ft_pixel(width) : 0);
-    const std::int64_t y_anchor = v == 'm' ? ft_pixel((asc + desc) / 2) : 0;
-    out.origin_x = -static_cast<double>(x_anchor);
-    out.origin_y = static_cast<double>(y_anchor);
-    return out;
+    const auto lay = pillow_layout(fonts, font, bold, size, text);
+    if (!lay) {
+        return std::nullopt;
+    }
+    return anchored(*lay, anchor);
 }
 
 bool paint_text_mask(SkCanvas& canvas, const SkPaint& paint, const Json& m, double cx, double cy, double hw,
@@ -485,13 +470,14 @@ bool paint_text_mask(SkCanvas& canvas, const SkPaint& paint, const Json& m, doub
     }
     SkFont sk_font(ff->typeface, static_cast<SkScalar>(size));
     for (std::size_t i = 0; i < lines.size(); ++i) {
-        const auto p = pillow_text(fonts, font, bold, size, lines[i], anchor);
-        if (!p) {
+        const auto lay = pillow_layout(fonts, font, bold, size, lines[i]);
+        if (!lay) {
             continue;
         }
-        const double ox = ax + p->origin_x;
-        const double oy = y0 + (static_cast<double>(i) * lh) + p->origin_y;
-        const PillowLine line = pillow_line(*ff, lines[i], size);
+        const PillowText p = anchored(*lay, anchor);
+        const double ox = ax + p.origin_x;
+        const double oy = y0 + (static_cast<double>(i) * lh) + p.origin_y;
+        const PillowLine line = pillow_line(*lay);
         for (std::size_t g = 0; g < line.ids.size(); ++g) {
             if (auto path = sk_font.getPath(line.ids[g])) {
                 canvas.drawPath(path->makeOffset(static_cast<SkScalar>(ox + line.x[g]), static_cast<SkScalar>(oy)),
