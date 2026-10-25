@@ -77,29 +77,44 @@ std::vector<float> gaussian_kernel(int n, double sigma) {
 
 // GaussianBlur(src, (0, 0), sigma) de una imagen float32: el tamaño del núcleo de
 // createGaussianKernels para profundidades que no son de 8 bits (cvRound(σ·4·2 + 1) | 1), filas y
-// después columnas.
+// después columnas. Cada píxel suma sus coeficientes en orden (0…n−1), como coeficiente a
+// coeficiente: aquí, por cada coeficiente, toda la fila (con el borde reflejado ya puesto en una
+// fila acolchada), que el compilador puede vectorizar sin cambiar ni un bit.
 Plane gaussian_blur(const Plane& src, double sigma) {
     const int n = static_cast<int>(std::lrint((sigma * 8.0) + 1.0)) | 1; // cvRound: al par
     const auto k = gaussian_kernel(n, sigma);
     const int r = n / 2;
+    const auto w = static_cast<std::size_t>(src.w);
+    const auto un = static_cast<std::size_t>(n);
     Plane rows = make_plane(src.w, src.h);
+    std::vector<std::size_t> xi(w + un - 1);
+    for (std::size_t j = 0; j < xi.size(); ++j) {
+        xi[j] = static_cast<std::size_t>(reflect101(static_cast<int>(j) - r, src.w));
+    }
+    std::vector<float> pad(xi.size());
     for (int y = 0; y < src.h; ++y) {
-        for (int x = 0; x < src.w; ++x) {
-            float acc = 0.0F;
-            for (int i = 0; i < n; ++i) {
-                acc += k[static_cast<std::size_t>(i)] * src.at(reflect101(x + i - r, src.w), y);
+        const float* in = &src.v[static_cast<std::size_t>(y) * w];
+        for (std::size_t j = 0; j < pad.size(); ++j) {
+            pad[j] = in[xi[j]];
+        }
+        float* out = &rows.v[static_cast<std::size_t>(y) * w];
+        for (std::size_t i = 0; i < un; ++i) {
+            const float ki = k[i];
+            const float* p = pad.data() + i;
+            for (std::size_t x = 0; x < w; ++x) {
+                out[x] += ki * p[x];
             }
-            rows.at(x, y) = acc;
         }
     }
     Plane out = make_plane(src.w, src.h);
     for (int y = 0; y < src.h; ++y) {
-        for (int x = 0; x < src.w; ++x) {
-            float acc = 0.0F;
-            for (int i = 0; i < n; ++i) {
-                acc += k[static_cast<std::size_t>(i)] * rows.at(x, reflect101(y + i - r, src.h));
+        float* o = &out.v[static_cast<std::size_t>(y) * w];
+        for (int i = 0; i < n; ++i) {
+            const float ki = k[static_cast<std::size_t>(i)];
+            const float* p = &rows.v[static_cast<std::size_t>(reflect101(y + i - r, src.h)) * w];
+            for (std::size_t x = 0; x < w; ++x) {
+                o[x] += ki * p[x];
             }
-            out.at(x, y) = acc;
         }
     }
     return out;

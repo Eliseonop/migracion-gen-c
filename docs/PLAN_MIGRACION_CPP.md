@@ -1537,3 +1537,8 @@ Decisión de Edu (§6):
 - **Un punto del pincel enorme** (|x·ancho| ≥ 2³¹) ya no es comportamiento indefinido: se acota (Python falla al pasarlo a int32).
 - **Docs:** el comentario de `derive_matte` decía que el pincel solo «se parecía» al de cv2; la nota del TODO decía que un matte que no es solo LUT salía con un aviso; la casilla del contorno y el croma seguía abierta con sus tres partes hechas.
 - **Pendiente (siguiente tanda):** probar `derive_matte` con los mattes reales de la caché de video-yt (todas las fixtures son discos y franjas) y medir el desenfoque, que es O(n·w·h) sin SIMD: con un matte de 1080 de alto y pluma media puede pesar en el export.
+
+**`derive_matte` con tus mattes reales y más rápido**
+
+- **Paridad con la caché real** (`export_fixtures.py --solo matte --real`, `tests/fixtures/local/bg/`, sin subir: el JSON y los fotogramas en gris sin cabecera): el fotograma del medio de un conjunto por cada proveedor y tamaño de tu `data/bgcache/matte` (12: RVM mobilenet y resnet 1280×720, SAM 2.1 base+ y large 910×512, U²-Net y U²-Netp de 288×512 a 910×512) con 7 ajustes (pluma 0,02/0,08/0,15, expansión, contracción con opacidad, umbral y suavidad con pluma, y pincel con pluma): los 84, como mucho 1 nivel en casi ningún píxel, con el `derive_matte` real.
+- **El desenfoque, ~8 veces más rápido y con los mismos bits:** cada píxel suma sus coeficientes en el mismo orden, pero por cada coeficiente se recorre la fila entera (acolchada una vez con el borde reflejado), que el compilador vectoriza; la huella de los 110 derivados (sintéticos y reales) es la misma. En un RVM de 1280×720, de 260 a 33 ms por fotograma en el peor caso (contracción y opacidad); mediana, 7 ms.

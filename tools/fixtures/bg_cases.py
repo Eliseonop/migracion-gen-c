@@ -193,6 +193,19 @@ DERIVE_CASES = [
       "edits": [_stroke("keep", [(0.6, 0.3), (0.9, 0.7)], 0.07)]}),
 ]
 
+# derive_matte sobre los mattes REALES de la caché de video-yt (--solo matte --real): los ajustes que se
+# prueban con un fotograma de cada proveedor y tamaño.
+DERIVE_REAL_AUTOS = [
+    ("pluma 0,02", {"feather": 0.02}),
+    ("pluma 0,08", {"feather": 0.08}),
+    ("pluma 0,15", {"feather": 0.15}),
+    ("expansión 0,3", {"expansion": 0.3}),
+    ("contracción 0,3 y opacidad 0,5", {"expansion": -0.3, "opacity": 0.5}),
+    ("umbral, suavidad y pluma", {"threshold": 0.35, "softness": 0.5, "feather": 0.04}),
+    ("pincel y pluma", {"feather": 0.03, "edits": [_stroke("keep", [(0.2, 0.3), (0.45, 0.7)], 0.05),
+                                                   _stroke("erase", [(0.6, 0.2), (0.8, 0.5), (0.7, 0.9)], 0.08)]}),
+]
+
 # La caché de las escenas de render (tests/fixtures/render/files/bgcache): el material es de 320×180.
 RENDER_MATTES = {
     "escena_imagen": {"size": (320, 180), "frames": 1},

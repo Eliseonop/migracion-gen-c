@@ -12,10 +12,12 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
+#include <iterator>
 #include <limits>
 #include <optional>
 #include <string>
@@ -196,3 +198,49 @@ TEST_CASE("paridad del matte de eliminar fondo: pluma, expansión, opacidad y pi
     }
     CHECK(cases >= 20);
 }
+
+// derive_matte sobre tus mattes reales de la caché de video-yt (export_fixtures.py --solo matte
+// --real): un fotograma de cada proveedor y tamaño (RVM 1280×720, SAM 910×512, U²-Net…) con pluma,
+// expansión, opacidad y pincel. Mismo criterio que los sintéticos, y el tiempo de cada derivado.
+TEST_CASE("paridad del matte de eliminar fondo: derive_matte con tus mattes", "[parity][bg][real]") {
+    const fs::path dir = kFixtures / "local" / "bg";
+    if (!fs::exists(dir / "derive.json")) {
+        SKIP("sin tests/fixtures/local/bg/derive.json (export_fixtures.py --solo matte --real)");
+    }
+    auto fx = read_json_file(dir / "derive.json");
+    REQUIRE(fx);
+    const auto read_gray = [&](const std::string& name) {
+        std::ifstream in(dir / "derive" / path_from_utf8(name), std::ios::binary);
+        return std::vector<std::uint8_t>(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+    };
+    std::size_t cases = 0;
+    for (const Json& c : fx->at("cases")) {
+        const auto name = c.at("name").get<std::string>();
+        INFO(name);
+        const int w = c.at("width").get<int>();
+        const int h = c.at("height").get<int>();
+        const auto raw = read_gray(c.at("raw").get<std::string>());
+        const auto want = read_gray(c.at("derived").get<std::string>());
+        REQUIRE(raw.size() == static_cast<std::size_t>(w) * static_cast<std::size_t>(h));
+        REQUIRE(want.size() == raw.size());
+        const Json bg = normalize_bg(Json{{"auto", c.at("auto")}});
+        const auto t0 = std::chrono::steady_clock::now();
+        const auto got = derive_matte(raw, w, h, bg.at("auto"));
+        const auto ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count();
+        REQUIRE(got.size() == want.size());
+        int worst = 0;
+        std::size_t off = 0;
+        for (std::size_t i = 0; i < got.size(); ++i) {
+            const int d = std::abs(int{got[i]} - int{want[i]});
+            worst = std::max(worst, d);
+            off += d > 0 ? 1 : 0;
+        }
+        UNSCOPED_INFO(name << ": " << off << " de " << got.size() << " píxeles distintos, como mucho " << worst
+                           << "; " << ms << " ms");
+        CHECK(worst <= 1);
+        CHECK(static_cast<double>(off) <= 0.01 * static_cast<double>(got.size()));
+        ++cases;
+    }
+    CHECK(cases >= 20);
+}
+

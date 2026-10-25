@@ -3593,6 +3593,42 @@ def synthetic_bg_matte_fixtures(ctx: Ctx) -> dict:
     return _pure(_nan_safe({"mattes": mattes, "clips": clips, "lut": luts, "derive": derive}))
 
 
+def real_bg_derive_fixtures(matte_root: Path) -> dict:
+    """derive_matte REAL (clip_bg.py) sobre tus mattes de la caché de video-yt (solo se leen): el
+    fotograma del medio de un conjunto por cada proveedor y tamaño, con los ajustes de
+    bg_cases.DERIVE_REAL_AUTOS. El crudo y cada derivado van en gris de 8 bits, sin cabecera, a
+    tests/fixtures/local/bg/derive/ (no se suben)."""
+    import cv2
+    import bg_cases as bc
+    from app import clip_bg
+    out_dir = REPO / "tests" / "fixtures" / "local" / "bg" / "derive"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    picked: dict[tuple, Path] = {}
+    for folder in sorted(p for p in matte_root.iterdir() if p.is_dir()):
+        meta = folder / "meta.json"
+        frames = sorted(folder.glob("*.png"))
+        if not meta.exists() or not frames:
+            continue
+        m = json.loads(meta.read_text(encoding="utf-8"))
+        key = (m.get("provider"), m.get("width"), m.get("height"))
+        picked.setdefault(key, frames[len(frames) // 2])
+    cases = []
+    for (provider, _w, _h), frame in sorted(picked.items(), key=lambda kv: str(kv[0])):
+        raw = cv2.imread(str(frame), cv2.IMREAD_GRAYSCALE)
+        h, w = raw.shape
+        stem = f"{frame.parent.name[:10]}_{frame.stem}"
+        (out_dir / f"{stem}.gray").write_bytes(raw.tobytes())
+        for name, extra in bc.DERIVE_REAL_AUTOS:
+            auto = clip_bg.normalize_auto({"enabled": True, "base_key": "k", "status": "ready", "provider": provider,
+                                           **extra})
+            der = clip_bg.derive_matte(raw, auto)
+            dname = f"{stem}_{len(cases)}.gray"
+            (out_dir / dname).write_bytes(der.tobytes())
+            cases.append({"name": f"{provider} {w}×{h}: {name}", "width": w, "height": h, "auto": auto,
+                          "raw": f"{stem}.gray", "derived": dname})
+    return _pure(_nan_safe({"cases": cases}))
+
+
 # --- Salida -----------------------------------------------------------------------------------
 
 def write(path: Path, payload, count: int, errors: int) -> None:
@@ -3759,6 +3795,9 @@ def main() -> None:
         mat = synthetic_bg_matte_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "media" / "bg_matte.json", mat, len(mat["clips"]) + len(mat["lut"]),
               sum("error" in c for c in mat["clips"]))
+        if args.real:
+            real = real_bg_derive_fixtures(args.video_yt / "backend" / "data" / "bgcache" / "matte")
+            write(REPO / "tests" / "fixtures" / "local" / "bg" / "derive.json", real, len(real["cases"]), 0)
 
     if args.solo == "matte":
         matte_group()
