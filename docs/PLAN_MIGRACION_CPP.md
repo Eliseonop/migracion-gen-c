@@ -1514,5 +1514,10 @@ Decisión de Edu (§6):
 - **Mutaciones a mano con MSVC (6/6 detectadas):** sin matte (30 fallos), sin la LUT, sin dar la vuelta en el GIF, el croma sin multiplicar por el matte, el `start_number` desplazado y el matte escalado con el vecino más cercano en vez de bicúbico. Para que las dos últimas se notaran: suelo propio de 48 dB en estas escenas (medido 50,96–51,10; con el de 35 pasaban), el matte pequeño es ahora un disco de 80×45 (×4: con franjas suaves ×2 el escalado no se notaba) y la escena de croma y matte lleva el matte invertido sobre un degradado (antes el sujeto del croma era de la misma textura que el fondo y el matte no cambiaba nada).
 - **Trampa de las mutaciones:** el script deshace el cambio en el código, pero el `gc_tests.exe` que queda es el de la última mutación. Una pasada «sin mutar» con ese binario dio 47,7 dB y pareció una divergencia del escalado; con la build limpia, el alfa de `export_frame_at` es idéntico (byte a byte) al que saca el comando real del export tras su `alphamerge`. Después de mutar, recompilar.
 - **Falta:** el resto de `derive_matte` (pluma, expansión, opacidad y el pincel); hoy un matte así sale con solo la LUT y un aviso (`exporter::clip_matte`). Ninguno de tus clips lo usa.
+
+**Revisión: los hallazgos del revisor** (`revisor-migracion` sobre `a77f17b..b357f4b`: aprobada; repitió MinGW 150/150 y MSVC 194/194)
+
+- **El contorno con matte usa el alto de `detect.dims`:** Python le pasa `detect.dims(path)[1]` (0 si OpenCV no abre el material: sin contorno), aunque el matte se haya subido al tamaño del meta.json. `matte_source_chain` recibía ese alto del meta; ahora recibe aparte el alto sondeado.
+- **La nota «en marcha» del TODO** daba como pendientes pasos ya hechos; queda solo lo que sigue vigente (huecos que image2 puede saltarse, crudos que no son gris, sin fixture del texto de la cadena ni escenas con contorno o efectos de vídeo con matte, sin test de matte con salto previo).
 - `heatmap.analyze` y la descarga del vídeo completo, con yt-dlp como sidecar (F7).
 - El «Detectar beats» del menú del clip y el Clip Editor, en el studio (con Qt, en Linux).

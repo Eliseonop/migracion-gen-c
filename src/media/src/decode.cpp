@@ -564,13 +564,14 @@ Result<ClipChain> clip_chain(const core::TimelineClip& clip, const std::filesyst
                 iw = (*first)->width;
                 ih = (*first)->height;
             }
+            const std::int64_t probed_h = iw > 0 && ih > 0 ? ih : 0; // el contorno usa detect.dims(path)[1]
             if (iw <= 0 || ih <= 0) {
                 iw = matte->width;
                 ih = matte->height;
             }
             if (iw > 0 && ih > 0) {
                 c.spec.matte = *matte;
-                c.spec.chain += core::matte_source_chain(bg, iw, ih, fps);
+                c.spec.chain += core::matte_source_chain(bg, iw, ih, probed_h, fps);
             }
         } else if (core::bg_chroma_active(bg)) {
             // El desenfoque del borde y el grosor del contorno van en px del alto del material

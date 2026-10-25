@@ -55,8 +55,10 @@ struct MatteSpec {
 // `scale=iw:ih,format=gbrap,fps=F` y `alphamerge` con el matte, subido al tamaño del material con
 // bicúbico; con croma, su alfa (con el difuminado o la expansión del borde) se multiplica por el
 // del matte (`blend=all_mode=multiply`) y entra una sola vez. Después, el contorno, si lo hay
-// (outline_ffmpeg_steps, con el alto del material). Empieza por «,» para ir detrás de la cadena.
-[[nodiscard]] std::string matte_source_chain(const Json& normalized_bg, std::int64_t iw, std::int64_t ih, int fps);
+// (outline_ffmpeg_steps, con `outline_height`: el alto de detect.dims, 0 si no se supo, aunque iw×ih
+// salga del meta.json). Empieza por «,» para ir detrás de la cadena.
+[[nodiscard]] std::string matte_source_chain(const Json& normalized_bg, std::int64_t iw, std::int64_t ih,
+                                             std::int64_t outline_height, int fps);
 
 // matte_lut de clip_bg.py sobre un `auto` normalizado (normalize_bg(...)["auto"]): la rampa de
 // umbral y suavidad, invertida si toca, con la aritmética de doble del JS.

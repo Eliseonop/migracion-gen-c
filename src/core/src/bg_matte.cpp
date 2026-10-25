@@ -106,7 +106,8 @@ std::string matte_frame_name(std::int64_t index) {
     return std::format("{:06d}.png", index + 1);
 }
 
-std::string matte_source_chain(const Json& normalized_bg, std::int64_t iw, std::int64_t ih, int fps) {
+std::string matte_source_chain(const Json& normalized_bg, std::int64_t iw, std::int64_t ih, std::int64_t outline_height,
+                               int fps) {
     const std::string matte =
         std::format("[matte]format=gray,scale={}:{}:flags=bicubic,fps={},setpts=PTS-STARTPTS[bgm]", iw, ih, fps);
     // `fit`: el material al tamaño sondeado (alphamerge y blend exigen el mismo tamaño).
@@ -125,7 +126,7 @@ std::string matte_source_chain(const Json& normalized_bg, std::int64_t iw, std::
     } else {
         out = std::format(",scale={}:{},format=gbrap,fps={}[bgs];{};[bgs][bgm]alphamerge", iw, ih, fps, matte);
     }
-    if (const std::string outline = outline_source_chain(field(normalized_bg, "outline"), ih); !outline.empty()) {
+    if (const std::string outline = outline_source_chain(field(normalized_bg, "outline"), outline_height); !outline.empty()) {
         out += "," + outline;
     }
     return out;
