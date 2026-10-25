@@ -151,7 +151,7 @@ LUT_CASES = [{"threshold": t, "softness": s, "invert": inv}
 # La caché de las escenas de render (tests/fixtures/render/files/bgcache): el material es de 320×180.
 RENDER_MATTES = {
     "escena_imagen": {"size": (320, 180), "frames": 1},
-    "escena_pequeno": {"size": (160, 90), "frames": 1, "shape": "bars"},
+    "escena_pequeno": {"size": (80, 45), "frames": 1},            # ×4: el bicúbico se nota en el borde
     "escena_video": {"size": (320, 180), "frames": 31},           # 2 s a 15 fps
     "escena_corto": {"size": (320, 180), "frames": 8},            # solo 0..7: el resto repite el 7
     "escena_gif": {"size": (320, 180), "frames": 31, "source_duration": 2.0},

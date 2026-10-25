@@ -8,6 +8,7 @@
 #include <optional>
 #include <string>
 
+#include "gc/core/bg_matte.hpp"
 #include "gc/core/clip_media.hpp"
 #include "gc/core/error.hpp"
 #include "gc/core/json.hpp"
@@ -32,5 +33,13 @@ struct LoadedProject {
 // _clip_path de compose.py: el material de un clip de vídeo, imagen, audio o SFX (nada para las
 // figuras, los motion graphics ni los textos).
 [[nodiscard]] std::optional<std::filesystem::path> clip_path(const LoadedProject& p, const gc::core::TimelineClip& clip);
+
+// «Eliminar fondo»: el matte de la caché de un clip (build_clip_bg_mask, con la caché en
+// DATA_DIR/bgcache). Nada si no lo tiene o si no está; si no se puede preparar, nada y el motivo en
+// `warning`, como build_timeline_bg_masks, que lo registra y sigue sin el matte. Un matte con pluma,
+// expansión, opacidad o pincel sale con solo la LUT, y con un aviso.
+[[nodiscard]] std::optional<gc::core::MatteSpec> clip_matte(const LoadedProject& p,
+                                                            const gc::core::TimelineClip& clip,
+                                                            std::string& warning);
 
 } // namespace gc::exporter

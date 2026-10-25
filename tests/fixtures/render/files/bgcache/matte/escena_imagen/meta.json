@@ -1,0 +1,17 @@
+{
+ "base_key": "escena_imagen",
+ "provider": "u2net",
+ "model_version": "u2net-1",
+ "mask_fps": 15,
+ "mask_height": 180,
+ "width": 320,
+ "height": 180,
+ "source_duration": -1.0,
+ "source_id": "escena_imagen.png:1:1:0",
+ "range": [
+  0,
+  0
+ ],
+ "device": "cpu",
+ "updated_at": 1789539484
+}

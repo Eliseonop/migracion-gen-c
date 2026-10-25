@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <format>
+#include <utility>
 
 #include "gc/core/collections.hpp"
 #include "gc/core/io.hpp"
@@ -45,6 +46,20 @@ std::optional<fs::path> clip_path(const LoadedProject& p, const TimelineClip& cl
         return sfx_resolve(p.sfx_base, clip.filename);
     }
     return clip_media_path(p.project, clip, p.dirs);
+}
+
+std::optional<MatteSpec> clip_matte(const LoadedProject& p, const TimelineClip& clip, std::string& warning) {
+    auto spec = clip_matte_spec(clip, p.dirs.data_dir / "bgcache");
+    if (!spec) {
+        warning = std::format("Eliminar fondo: no se pudo preparar el matte de {} ({})", clip.id, spec.error().message);
+        return std::nullopt;
+    }
+    if (*spec && !(*spec)->lut_only) {
+        warning = std::format("Eliminar fondo: el render aún no aplica la pluma, la expansión, la opacidad ni el "
+                              "pincel del matte de {}: sale con solo el umbral y la suavidad",
+                              clip.id);
+    }
+    return std::move(*spec);
 }
 
 } // namespace gc::exporter

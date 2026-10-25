@@ -156,8 +156,16 @@ int cmd_frame(std::span<const std::string> args) {
         // Un clip horneado: el fotograma m de su tramo original, con sus efectos (vfx.hpp).
         const auto bake = vfx->find(id);
         const std::int64_t m = bake != vfx->end() ? gc::render::vfx_baked_index(bake->second, tick, fps) : tick;
-        auto got = bake != vfx->end() ? gc::media::bake_input_frame_at(bake->second.source, p->second, fps, m)
-                                      : gc::media::export_frame_at(clip, p->second, fps, m);
+        // «Eliminar fondo» con el matte de la caché (del original, si se hornea).
+        const TimelineClip& read = bake != vfx->end() ? bake->second.source : clip;
+        std::string warning;
+        const auto matte = gc::exporter::clip_matte(lp, read, warning);
+        if (!warning.empty()) {
+            std::cerr << "aviso: " << warning << "\n";
+        }
+        const gc::core::MatteSpec* ms = matte ? &*matte : nullptr;
+        auto got = bake != vfx->end() ? gc::media::bake_input_frame_at(read, p->second, fps, m, ms)
+                                      : gc::media::export_frame_at(read, p->second, fps, m, ms);
         if (!got || !got->has_value()) {
             media_error = got ? gc::Error{gc::ErrorCode::Io, std::format("el clip {} no da fotograma en {}", id, t)}
                               : got.error();

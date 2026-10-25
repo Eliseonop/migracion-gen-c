@@ -8,10 +8,14 @@
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
+#include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "gc/core/bg_matte.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/json.hpp"
 #include "gc/core/model.hpp"
 #include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
@@ -86,6 +90,68 @@ TEST_CASE("ClipFrames da los mismos fotogramas que export_frame_at", "[media][de
     }
 }
 
+// «Eliminar fondo» con el matte de la caché (la segunda entrada del grafo): en orden, los mismos
+// fotogramas que export_frame_at (comparado con el export en la paridad del render), y con alfa.
+TEST_CASE("ClipFrames con el matte de la caché da los mismos fotogramas que export_frame_at", "[media][decode][bg]") {
+    gc::media::silence_ffmpeg_log();
+    const auto cache = kFiles / "bgcache";
+    const auto with_bg = [](TimelineClip c, const std::string& key) {
+        c.bg_removal = gc::Json{{"enabled", true},
+                                {"mode", "auto"},
+                                {"auto",
+                                 {{"enabled", true},
+                                  {"provider", "u2net"},
+                                  {"base_key", key},
+                                  {"status", "ready"},
+                                  {"mask_fps", 15},
+                                  {"mask_height", 180}}}};
+        return c;
+    };
+    const std::vector<std::pair<std::string, TimelineClip>> cases{
+        {"vídeo con in_point", with_bg(clip("moving30.mp4", 0.0, 0.4, 1.8), "escena_video")},
+        {"vídeo más largo que la caché", with_bg(clip("moving30.mp4", 0.1, 0.0, 2.0), "escena_corto")},
+        {"velocidad 1,5", with_bg(clip("moving30.mp4", 0.0, 0.2, 1.7, 1.5), "escena_video")},
+        {"GIF que da la vuelta", with_bg(clip("anim10.gif", 0.0, 0.0, 3.5, 1.0, true), "escena_gif")},
+        {"imagen", with_bg(clip("waves.png", 0.2, 0.0, 1.0, 1.0, true), "escena_imagen")},
+    };
+    for (const auto& [name, c] : cases) {
+        INFO(name);
+        auto spec = gc::core::clip_matte_spec(c, cache);
+        REQUIRE(spec);
+        REQUIRE(spec->has_value());
+        const gc::core::MatteSpec* m = &**spec;
+        auto frames = gc::media::ClipFrames::open(c, kFiles / c.filename, 30, m);
+        REQUIRE(frames);
+        bool transparent = false;
+        for (std::int64_t k = 0; k < 110; k += 3) {
+            INFO("tick " << k);
+            auto got = frames->at(k);
+            REQUIRE(got);
+            auto want = gc::media::export_frame_at(c, kFiles / c.filename, 30, k, m);
+            REQUIRE(want);
+            CHECK(md5_of(*got) == md5_of(*want ? &**want : nullptr));
+            if (*got != nullptr) {
+                for (std::size_t i = 3; i < (*got)->pixels.size(); i += 4) {
+                    transparent = transparent || (*got)->pixels[i] < 128;
+                }
+            }
+        }
+        CHECK(transparent); // el matte recorta: sin él, el material es opaco
+    }
+    // Sin ningún fotograma del matte al principio de su tramo, image2 no abre la secuencia (el
+    // export falla); sin matte (nullptr), el clip sale opaco, como el export sin la caché.
+    gc::core::MatteSpec empty;
+    empty.folder = cache / "matte" / "no_existe";
+    empty.frames = 3;
+    empty.sources = {std::nullopt, std::nullopt, std::nullopt};
+    const TimelineClip v = with_bg(clip("moving30.mp4", 0.0, 0.0, 1.0), "no_existe");
+    CHECK_FALSE(gc::media::export_frame_at(v, kFiles / v.filename, 30, 0, &empty));
+    auto plain = gc::media::export_frame_at(v, kFiles / v.filename, 30, 0);
+    REQUIRE(plain);
+    REQUIRE(plain->has_value());
+    CHECK((*plain)->pixels[3] == 255);
+}
+
 // La ruta de `genclip render` con efectos de vídeo: el tramo que hornea fx_bake.prepare_input,
 // fotograma a fotograma, tiene que ser el de bake_input_frame_at (el que compara con el export la
 // paridad del render), también con velocidad, al revés y saltando a un fotograma clave.
@@ -132,3 +198,4 @@ TEST_CASE("ClipFrames::open_bake_input da los mismos fotogramas que bake_input_f
         }
     }
 }
+

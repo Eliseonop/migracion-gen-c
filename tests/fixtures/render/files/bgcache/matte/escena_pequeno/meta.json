@@ -1,0 +1,17 @@
+{
+ "base_key": "escena_pequeno",
+ "provider": "u2net",
+ "model_version": "u2net-1",
+ "mask_fps": 15,
+ "mask_height": 45,
+ "width": 80,
+ "height": 45,
+ "source_duration": -1.0,
+ "source_id": "escena_pequeno.png:1:1:0",
+ "range": [
+  0,
+  0
+ ],
+ "device": "cpu",
+ "updated_at": 1789539484
+}

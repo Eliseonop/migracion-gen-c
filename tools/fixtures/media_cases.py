@@ -945,11 +945,14 @@ RENDER_SCENES = [
       ("anim10.gif", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 3.5, "transform": _CENTER,
                             "bg_removal": _bg_auto("escena_gif")})],
      [0.5, 2.4, 3.1]),
-    # Croma y matte a la vez: los dos alfas se multiplican (alphaextract y blend=multiply).
+    # Croma y matte a la vez: los dos alfas se multiplican (alphaextract y blend=multiply). El matte,
+    # invertido, abre un agujero en el sujeto del croma: sin él o sin el croma, la escena cambia. El
+    # fondo no es waves.png, que es la textura del sujeto de keyed.png (no se notaría el agujero).
     ("eliminar fondo: croma y matte", 30, ["V1", "V2"],
-     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
       ("keyed.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
-                           "bg_removal": {**_bg_auto("escena_imagen"), "chroma": {"enabled": True}}})],
+                           "bg_removal": {**_bg_auto("escena_imagen", invert=True),
+                                          "chroma": {"enabled": True}}})],
      [0.5]),
     # Sin nada en la caché, el export sigue sin el matte.
     ("eliminar fondo: sin el matte en la caché", 30, ["V1", "V2"],

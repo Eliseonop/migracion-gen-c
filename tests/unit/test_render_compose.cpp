@@ -63,7 +63,7 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
                                                          gc::core::path_from_utf8(GC_RESOURCES_DIR) / "fonts"});
     CHECK_FALSE(unsupported_reason(masked, &fonts));
 
-    // Eliminar fondo: el croma y su contorno ya los hace el decode.
+    // Eliminar fondo: el croma, el matte de la caché y el contorno ya los hace el decode.
     TimelineClip chroma = video();
     chroma.bg_removal = Json{{"enabled", true}, {"mode", "chroma"}, {"chroma", {{"enabled", true}}}};
     CHECK_FALSE(unsupported_reason(layer(chroma)));
@@ -71,12 +71,11 @@ TEST_CASE("unsupported_reason: lo que el render aún no dibuja", "[render]") {
                              {"chroma", {{"enabled", true}}},
                              {"outline", {{"enabled", true}, {"width", 0.3}, {"opacity", 1}}}};
     CHECK_FALSE(unsupported_reason(layer(chroma)));
-    // El automático solo cuenta con el matte listo.
     TimelineClip matte = video();
     matte.bg_removal = Json{{"enabled", true}, {"auto", {{"enabled", true}, {"base_key", ""}, {"status", "idle"}}}};
     CHECK_FALSE(unsupported_reason(layer(matte)));
     matte.bg_removal = Json{{"enabled", true}, {"auto", {{"enabled", true}, {"base_key", "k"}, {"status", "ready"}}}};
-    CHECK(unsupported_reason(layer(matte)));
+    CHECK_FALSE(unsupported_reason(layer(matte)));
 
     // Los filtros de color y los efectos de clip ya se dibujan (también en una figura); los efectos
     // de vídeo, aún no.

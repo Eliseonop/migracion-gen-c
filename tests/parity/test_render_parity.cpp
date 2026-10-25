@@ -22,6 +22,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
+#include <deque>
 #include <filesystem>
 #include <format>
 #include <functional>
@@ -31,6 +32,7 @@
 #include <string>
 #include <vector>
 
+#include "gc/core/bg_matte.hpp"
 #include "gc/core/font_metrics.hpp"
 #include "gc/core/frame.hpp"
 #include "gc/core/fx_bake.hpp"
@@ -303,6 +305,17 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         const auto media_path = [](const TimelineClip& clip) {
             return kFixtures / "render" / "files" / path_from_utf8(clip.filename);
         };
+        // «Eliminar fondo»: el matte de la caché de las escenas (render/files/bgcache), como
+        // build_timeline_bg_masks (un error, sin matte).
+        std::deque<MatteSpec> mattes; // los punteros siguen valiendo al añadir
+        const auto matte_of = [&](const TimelineClip& clip) -> const MatteSpec* {
+            auto spec = clip_matte_spec(clip, kFixtures / "render" / "files" / "bgcache");
+            if (!spec || !*spec) {
+                return nullptr;
+            }
+            mattes.push_back(std::move(**spec));
+            return &mattes.back();
+        };
         // Dimensiones del material: su primer fotograma.
         const auto source_of = [&](const TimelineClip& clip) -> const gc::render::Image& {
             auto [it, fresh] = sources.try_emplace(clip.filename);
@@ -357,7 +370,8 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
                     // El fotograma m del tramo del clip original, con sus efectos.
                     const auto& plan = bake->second;
                     const std::int64_t m = gc::render::vfx_baked_index(plan, tick, fps);
-                    auto got = gc::media::bake_input_frame_at(plan.source, media_path(plan.source), fps, m);
+                    auto got = gc::media::bake_input_frame_at(plan.source, media_path(plan.source), fps, m,
+                                                              matte_of(plan.source));
                     if (!got) {
                         return std::unexpected(got.error());
                     }
@@ -370,7 +384,8 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
                     frames.push_back(std::move(*baked));
                     return &frames.back();
                 }
-                auto got = gc::media::export_frame_at(*layer.clip, media_path(*layer.clip), fps, tick);
+                auto got = gc::media::export_frame_at(*layer.clip, media_path(*layer.clip), fps, tick,
+                                                      matte_of(*layer.clip));
                 if (!got) {
                     return std::unexpected(got.error());
                 }
@@ -435,6 +450,11 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         if (name.starts_with("croma con") && name.contains("contorno")) {
             // El contorno del sujeto es fino: sin él, alguna escena aún pasaría de 35 dB (miden ~50,5).
             CHECK(psnr >= 45.0);
+        }
+        if (name.starts_with("eliminar fondo: ")) {
+            // Medido: 50,96–51,10 dB. Con 35, pasaban el matte escalado con el vecino más cercano y
+            // el croma sin el matte multiplicado.
+            CHECK(psnr >= 48.0);
         }
         if (name.starts_with("efecto: ")) {
             const auto floor = kEffectFloors.find(name);

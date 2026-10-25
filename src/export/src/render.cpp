@@ -174,6 +174,20 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
         return std::unexpected(vfx.error());
     }
     const VfxPlans& vfx_plans = *vfx;
+    // «Eliminar fondo» con el matte de la caché (build_timeline_bg_masks): de cada clip, o del
+    // original si se hornea (el horneado ya no lleva bg_removal).
+    std::map<std::string, std::optional<MatteSpec>> mattes;
+    for (const auto& c : timeline.clips) {
+        const auto bake = vfx_plans.find(c->id);
+        std::string warning;
+        auto spec = clip_matte(project, bake != vfx_plans.end() ? bake->second.source : *c, warning);
+        if (!warning.empty()) {
+            warn(warning);
+        }
+        if (spec) {
+            mattes.emplace(c->id, std::move(spec));
+        }
+    }
 
     const auto [crf, preset] = encoder_quality(project.settings);
     media::EncodeSettings settings;
@@ -400,8 +414,10 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             const std::int64_t at = bake != vfx_plans.end() ? render::vfx_baked_index(bake->second, tick, fps) : tick;
             auto r = readers.find(id);
             if (r == readers.end()) {
-                auto opened = bake != vfx_plans.end() ? media::ClipFrames::open_bake_input(read, p->second, fps)
-                                                      : media::ClipFrames::open(read, p->second, fps);
+                const auto matte = mattes.find(id);
+                const MatteSpec* m = matte != mattes.end() && matte->second ? &*matte->second : nullptr;
+                auto opened = bake != vfx_plans.end() ? media::ClipFrames::open_bake_input(read, p->second, fps, m)
+                                                      : media::ClipFrames::open(read, p->second, fps, m);
                 if (!opened) {
                     media_error = opened.error();
                     return nullptr;

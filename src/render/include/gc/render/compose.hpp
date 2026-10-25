@@ -5,8 +5,8 @@
 //
 // Por ahora las capas con material (vídeo, imagen y motion: las que traen blits), las figuras
 // (shape.hpp) y las capas de ajuste (su matriz sobre lo de debajo), con los 12 modos de fusión,
-// con máscaras (también la de texto; mask.hpp), con el croma y su contorno (los hace el decode)
-// pero sin el matte automático, con los filtros de color (`filters` y `look`) y los efectos de clip
+// con máscaras (también la de texto; mask.hpp), con «Eliminar fondo» (el croma, el matte de la
+// caché y el contorno: los hace el decode, en el espacio del material), con los filtros de color (`filters` y `look`) y los efectos de clip
 // (`effects`, effects.hpp: sobre el clip escalado a su destino, antes de girarlo) y sin los
 // efectos de vídeo (`vfx`). Lo demás es un error Unsupported hasta que llegue, para no dar un
 // fotograma incompleto o mal dibujado como bueno (unsupported_reason).

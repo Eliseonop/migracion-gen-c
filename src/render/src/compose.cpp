@@ -10,7 +10,6 @@
 #include <string_view>
 #include <utility>
 
-#include "gc/core/bg.hpp"
 #include "gc/core/clip_adjust.hpp"
 #include "gc/core/clip_effects.hpp"
 #include "gc/core/clip_filters.hpp"
@@ -29,19 +28,6 @@ bool is_media(const core::TimelineClip& clip) {
 bool is_adjustment(const core::TimelineClip& clip) { return clip.kind == "adjustment"; }
 
 bool is_shape(const core::TimelineClip& clip) { return clip.kind == "shape"; }
-
-// Lo de «Eliminar fondo» que el render aún no hace: el matte automático listo (auto_active). El
-// croma y su contorno ya los hace el decode (export_frame_at).
-std::optional<std::string> bg_unsupported(const core::TimelineClip& clip) {
-    if (!clip.bg_removal || !core::bg_capable(clip)) {
-        return std::nullopt;
-    }
-    const Json bg = core::normalize_bg(*clip.bg_removal);
-    if (core::bg_auto_active(bg)) {
-        return std::string("el render aún no aplica el matte automático de «Eliminar fondo»");
-    }
-    return std::nullopt;
-}
 
 // El grano de un fotograma: cambia con el instante del clip y no con la pasada (la base y el
 // fantasma de la máscara de ajuste llevan el mismo, como las dos cadenas del export, que
@@ -127,9 +113,6 @@ std::optional<std::string> unsupported_reason(const core::FrameLayer& layer, con
         return std::format("el render aún no dibuja capas de tipo «{}»", clip.kind);
     }
     if (auto reason = core::maskable(clip) ? mask_unsupported(layer.masks, fonts) : std::string(); !reason.empty()) {
-        return reason;
-    }
-    if (auto reason = bg_unsupported(clip)) {
         return reason;
     }
     if (clip.vfx && clip.vfx->is_array() && !clip.vfx->empty()) {
