@@ -8,8 +8,8 @@
 //
 // Las dos salidas pasan por codificadores con pérdidas distintos (x264 o el de la GPU en el
 // export; OpenH264 o la GPU aquí), así que no se comparan bytes: el mismo número de fotogramas,
-// la luma de cada uno por PSNR (≥ 35 dB, el umbral del plan) y el audio de los dos AAC, con la
-// misma sonoridad en cada bloque de 100 ms (±0,5 dB, el ±0,5 LU del plan). Las escenas usan
+// la luma de cada uno por PSNR y SSIM (≥ 35 dB y ≥ 0,98, los umbrales del plan) y el audio de los
+// dos AAC, con la misma sonoridad en cada bloque de 100 ms (±0,5 dB, el ±0,5 LU del plan). Las escenas usan
 // geometría entera y par, así que la divergencia del redondeo a pares del export no entra.
 // Sí entra la del borde (notas de F3, decisión de Edu): el export enciende cada clip con
 // `between(t, start, end)`, cerrado, y con `eof_action=repeat` lo deja ver en t = fin; el C++ usa
@@ -35,6 +35,7 @@
 #include "gc/media/audio.hpp"
 #include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
+#include "ssim.hpp"
 
 using gc::Json;
 using namespace gc::core;
@@ -158,6 +159,7 @@ TEST_CASE("paridad del export: el MP4 entero frente al de compose.render", "[par
         REQUIRE(std::cmp_equal(b.size(), stats->frames));
         const auto skipped = end_ticks(lp.timeline, stats->fps);
         double worst = std::numeric_limits<double>::infinity();
+        double worst_ssim = 1.0;
         for (std::size_t k = 0; k < a.size(); ++k) {
             INFO("fotograma " << k);
             REQUIRE(a[k].width == b[k].width);
@@ -168,9 +170,13 @@ TEST_CASE("paridad del export: el MP4 entero frente al de compose.render", "[par
             const double p = psnr_luma(a[k], b[k]);
             worst = std::min(worst, p);
             CHECK(p >= 35.0);
+            const double ss = gc::test::ssim_luma(a[k].width, a[k].height, a[k].pixels, b[k].pixels);
+            worst_ssim = std::min(worst_ssim, ss);
+            CHECK(ss >= 0.98);
         }
         CHECK(skipped.size() < a.size() / 10); // casi todos se comparan
-        UNSCOPED_INFO(name << ": peor fotograma " << worst << " dB (" << skipped.size() << " en el fin de un clip)");
+        UNSCOPED_INFO(name << ": peor fotograma " << worst << " dB y SSIM " << worst_ssim << " (" << skipped.size()
+                           << " en el fin de un clip)");
 
         // El audio: la misma sonoridad en cada bloque de 100 ms con sonido.
         if (pr.has_audio) {

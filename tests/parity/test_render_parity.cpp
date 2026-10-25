@@ -14,6 +14,9 @@
 // geometría como el export (notas de F3), el PSNR excluye una banda de kEdge px alrededor del
 // borde de lo que cubren los clips: ahí el export cae hasta un píxel más allá y, contra el
 // fondo negro, eso solo ya baja el fotograma entero a ~31 dB (dentro de la banda, ~11 dB).
+// Además, el SSIM de la luma (ssim_luma, sin las ventanas que tocan la banda) ≥ 0,98, como pide el
+// plan; los efectos de vídeo, horneados por el export en un VP9 intermedio, ≥ 0,97, y las escenas
+// con grano (aleatorio, distinto del de FFmpeg) no lo miden.
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -45,6 +48,7 @@
 #include "gc/render/png.hpp"
 #include "gc/render/text.hpp"
 #include "gc/render/vfx.hpp"
+#include "ssim.hpp"
 
 using gc::Json;
 using namespace gc::core;
@@ -92,6 +96,11 @@ std::vector<bool> edge_band(const gc::render::Image& coverage) {
         }
     }
     return band;
+}
+
+// SSIM de la luma, sin las ventanas que tocan `skip` (ssim.hpp).
+double ssim_luma(const gc::render::Image& a, const gc::render::Image& b, const std::vector<bool>& skip) {
+    return gc::test::ssim_luma(a.width, a.height, a.pixels, b.pixels, &skip);
 }
 
 // PSNR de la luma BT.709 (R, G y B a pantalla completa, 0–255) entre dos imágenes RGBA opacas,
@@ -429,6 +438,8 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
             // el C++ no lo copia). Se comparan las medias de 8×8 sin ese sesgo, que tiene que estar en
             // lo medido (0–6 niveles más oscuro), y píxel a píxel se pide un suelo menor.
             const BakedStats st = baked_stats(*frame, expected, band, *coverage);
+            const double ssim = ssim_luma(*frame, expected, band);
+            UNSCOPED_INFO(name << " en " << at << ": SSIM " << ssim);
             const double px = psnr_luma(*frame, expected, &band);
             UNSCOPED_INFO(name << " en " << at << ": medias de 8×8 sin el sesgo " << st.psnr << " dB (sesgo "
                                << st.bias << "); píxel a píxel " << px << " dB");
@@ -438,15 +449,19 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
             CHECK(st.bias >= 0.0);
             CHECK(st.bias <= 6.0);
             CHECK(px >= 30.0);
+            // El horneado también pierde detalle fino (el glitch RGB, el temblor): 0,976–0,988.
+            CHECK(ssim >= 0.97);
             ++cases;
             continue;
         }
         const double whole = psnr_luma(*frame, expected);
         const double psnr = psnr_luma(*frame, expected, &band);
         const double chroma = psnr_chroma(*frame, expected, band);
-        UNSCOPED_INFO(name << " en " << at << ": PSNR de luma " << psnr << " dB sin la banda del borde (" << whole
+        const double ssim = ssim_luma(*frame, expected, band);
+        UNSCOPED_INFO(name << " en " << at << ": SSIM " << ssim << "; PSNR de luma " << psnr << " dB sin la banda del borde (" << whole
                            << " dB con ella); de crominancia " << chroma << " dB");
         CHECK(psnr >= 35.0);
+        CHECK(ssim >= 0.98); // el plan: PSNR ≥ 35 dB y SSIM ≥ 0,98 (medido: 0,990–0,99999)
         if (name.starts_with("croma con") && name.contains("contorno")) {
             // El contorno del sujeto es fino: sin él, alguna escena aún pasaría de 35 dB (miden ~50,5).
             CHECK(psnr >= 45.0);
