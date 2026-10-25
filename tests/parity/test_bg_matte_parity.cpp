@@ -243,4 +243,3 @@ TEST_CASE("paridad del matte de eliminar fondo: derive_matte con tus mattes", "[
     }
     CHECK(cases >= 20);
 }
-
