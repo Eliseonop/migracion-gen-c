@@ -64,9 +64,9 @@ struct MatteSpec {
 
 // derive_matte de clip_bg.py: un fotograma crudo del matte (gris de 8 bits, width × height, sin
 // relleno) → el derivado, con la LUT, la expansión, la pluma, el pincel y la opacidad del `auto`
-// normalizado, en float32 como numpy y OpenCV. Sin nada de eso, es la LUT (exacto); con pluma o
-// expansión, el GaussianBlur y los resize de OpenCV (casi exactos); los trazos del pincel se
-// parecen a los de cv2.polylines, pero no son iguales.
+// normalizado, en float32 como numpy y OpenCV: el GaussianBlur y los resize de OpenCV y su
+// rasterizador para el pincel (cv_draw.hpp). Bit a bit, salvo a veces 1 nivel en unos pocos píxeles:
+// el GaussianBlur de cv2 suma en otro orden y en una meseta no da exactamente 1,0.
 [[nodiscard]] std::vector<std::uint8_t> derive_matte(std::span<const std::uint8_t> raw, int width, int height,
                                                      const Json& normalized_auto);
 

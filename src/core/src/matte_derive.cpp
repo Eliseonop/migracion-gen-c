@@ -240,14 +240,18 @@ std::optional<Plane> edits_alpha(const Json& edits, int w, int h, std::string_vi
         }
         const double size = py_float(e.contains("size") ? e.at("size") : Json()).value_or(0.08);
         const auto thick = static_cast<int>(std::max(1.0, py_round(size * ch, 0)));
+        // int(round(·)) a un Point de int32 de cv2; fuera de ese rango Python falla y aquí se acota.
+        const auto pixel = [](double v) {
+            return static_cast<std::int64_t>(std::clamp(py_round(v, 0), -2147483648.0, 2147483647.0));
+        };
         // Un punto con «m» empieza otro trazo.
         std::vector<std::vector<detail::CvPoint>> strokes(1);
         for (const Json& p : pts) {
             if (p.contains("m") && py_truthy(p.at("m")) && !strokes.back().empty()) {
                 strokes.emplace_back();
             }
-            strokes.back().push_back({static_cast<std::int64_t>(py_round(py_float(p.at("x")).value_or(0.0) * cw, 0)),
-                                      static_cast<std::int64_t>(py_round(py_float(p.at("y")).value_or(0.0) * ch, 0))});
+            strokes.back().push_back({pixel(py_float(p.at("x")).value_or(0.0) * cw),
+                                      pixel(py_float(p.at("y")).value_or(0.0) * ch)});
         }
         const int cap = std::max(1, thick / 2);
         for (const auto& s : strokes) {
