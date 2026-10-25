@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "gc/core/bg_matte.hpp"
 #include "gc/core/error.hpp"
 #include "gc/core/model.hpp"
 
@@ -35,6 +36,9 @@ struct DecodeSpec {
     // mismos. Si el salto cae después del instante (un contenedor sin índice), se decodifica desde
     // el principio.
     std::optional<std::int64_t> preroll_us;
+    // «Eliminar fondo» con el matte de la caché: la secuencia PNG del derivado como segunda entrada
+    // del grafo (la `[k:v]` de _bg_input_args), con la etiqueta `[matte]` en la cadena.
+    std::optional<core::MatteSpec> matte;
 };
 
 // `ASSUME_BT709_FILTER` de compose.py: un vídeo sin etiqueta de color se lee como BT.709.
@@ -70,9 +74,14 @@ inline constexpr const char* kAssumeBt709Filter =
 // `setpts=PTS-STARTPTS+{max(0, start):.3f}/TB`, con el truncado a ticks enteros de las setpts;
 // el overlay toma el primer fotograma con pts = k o, si no hay, el último anterior, y pasado el
 // final el último (`eof_action=repeat`). Nada (nullopt) si la cadena no da ningún fotograma.
+//
+// `matte`: lo que da core::clip_matte_spec del clip (build_clip_bg_mask). Con él, el alfa del
+// matte automático (y el del croma multiplicado, si lo hay) entra antes del encuadre, como la rama
+// del matte de _bg_source_chain; sin él, como el export sin matte en la caché: solo el croma.
 [[nodiscard]] Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip,
                                                                const std::filesystem::path& path, int fps,
-                                                               std::int64_t tick);
+                                                               std::int64_t tick,
+                                                               const core::MatteSpec* matte = nullptr);
 
 // Los fotogramas de un clip que compone el export, en orden de ticks: los mismos que
 // export_frame_at, pero sin volver a decodificar desde el principio en cada fotograma (el
@@ -82,13 +91,15 @@ inline constexpr const char* kAssumeBt709Filter =
 // 1 s antes del tramo. Cada uno decodifica por adelantado en su propio hilo (unos pocos fotogramas).
 class ClipFrames {
 public:
+    // `matte`, como en export_frame_at.
     [[nodiscard]] static Result<ClipFrames> open(const core::TimelineClip& clip, const std::filesystem::path& path,
-                                                 int fps);
+                                                 int fps, const core::MatteSpec* matte = nullptr);
     // El tramo que hornea fx_bake.prepare_input para los efectos de vídeo: la cadena del clip (trim,
     // croma) y después la velocidad (`reverse`, `setpts=PTS/sp`) y `fps=F`. at(n) da su fotograma n
     // (pasado el final, el último), sin el desplazamiento del inicio del clip.
     [[nodiscard]] static Result<ClipFrames> open_bake_input(const core::TimelineClip& clip,
-                                                            const std::filesystem::path& path, int fps);
+                                                            const std::filesystem::path& path, int fps,
+                                                            const core::MatteSpec* matte = nullptr);
 
     ClipFrames(ClipFrames&&) noexcept;
     ClipFrames& operator=(ClipFrames&&) noexcept;
@@ -109,7 +120,8 @@ private:
 // desde el principio: la referencia de los tests y de `genclip frame`.
 [[nodiscard]] Result<std::optional<RgbaFrame>> bake_input_frame_at(const core::TimelineClip& clip,
                                                                    const std::filesystem::path& path, int fps,
-                                                                   std::int64_t n);
+                                                                   std::int64_t n,
+                                                                   const core::MatteSpec* matte = nullptr);
 
 // MD5 en hexadecimal (av_md5): para comparar fotogramas con las fixtures.
 [[nodiscard]] std::string md5_hex(std::span<const std::uint8_t> data);

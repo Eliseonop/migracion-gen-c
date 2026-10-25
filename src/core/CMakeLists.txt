@@ -13,6 +13,7 @@ add_library(gc_core
     # Motor de edición: reglas, comandos, sin solapes, historial; evaluación por instante
     src/audio_export.cpp
     src/bg.cpp
+    src/bg_matte.cpp
     src/captions.cpp
     src/clip_adjust.cpp
     src/clip_attrs.cpp

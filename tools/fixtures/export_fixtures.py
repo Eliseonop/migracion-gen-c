@@ -38,6 +38,7 @@ Salida (al repo):
   tests/fixtures/keywords/synthetic.json   palabras clave locales de Explorar (explore_keywords.py)
   tests/fixtures/audio/mono.json           audio mono de beats.py y sample_rms_envelope: media_cases.MONO_* (--solo mono)
   tests/fixtures/text/widths.json          ancho del texto (font_metrics.text_width, Pillow): text_cases.WIDTH_* (--solo anchos)
+  tests/fixtures/media/bg_matte.json       el matte de «Eliminar fondo» en la caché (bg/service.py): bg_cases.py (--solo matte)
   tests/fixtures/collections/synthetic.json  colecciones de material: pasos de collections_cases.py
   tests/fixtures/stick/synthetic.json      personajes stick: pasos de stick_cases.py
   tests/fixtures/projects/synthetic.json   almacén de proyectos: pasos de projects_cases.py
@@ -1948,6 +1949,14 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
     from app import fx_bake
     real_cache = fx_bake.CACHE_DIR
     fx_bake.CACHE_DIR = Path(tempfile.mkdtemp(prefix="gc_fxcache_"))
+    # «Eliminar fondo»: el nivel 1 de las escenas, en render/files/bgcache (al repo; el C++ lo lee de
+    # ahí); el nivel 2 que deriva ensure_derived, a una carpeta temporal nueva para cada fotograma.
+    import bg_cases as bc
+    from app.bg import service as bg_service
+    bc.make_matte_cache(files / "bgcache", bc.RENDER_MATTES)
+    real_bg = bg_service.MATTE_ROOT, bg_service.MASK_ROOT
+    mask_tmp = Path(tempfile.mkdtemp(prefix="gc_bgmask_"))
+    bg_service.MATTE_ROOT, bg_service.MASK_ROOT = files / "bgcache" / "matte", mask_tmp
     # El material de las fixtures; las figuras, su PNG rasterizado (shape_files), como el real.
     compose._clip_path = lambda project, clip, shape_files=None: (
         (shape_files or {}).get(clip.id) if clip.kind == "shape" else files / clip.filename)
@@ -1977,6 +1986,7 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
             timeline = ctx.schemas.Timeline.model_validate(ctx.migrations.migrate_timeline(raw))
             for t in times:
                 png = f"s{i:02d}_{int(round(t * 1000)):05d}.png"
+                bg_service.MASK_ROOT = mask_tmp / Path(png).stem
                 compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
                 case = {"name": name, "t": t, "frame": png, "timeline": _pure(timeline.model_dump())}
                 if name in mc.RENDER_NOISY:
@@ -1987,6 +1997,8 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
         compose._clip_path = real_clip_path
         shutil.rmtree(fx_bake.CACHE_DIR, ignore_errors=True)
         fx_bake.CACHE_DIR = real_cache
+        shutil.rmtree(mask_tmp, ignore_errors=True)
+        bg_service.MATTE_ROOT, bg_service.MASK_ROOT = real_bg
 
 
 def synthetic_text_mask_fixtures() -> dict:
@@ -3497,6 +3509,79 @@ def real_text_width_fixtures(ctx: Ctx, data: dict) -> dict:
     return _pure(_nan_safe({"system_dir": fm.FONT_DIR.as_posix(), "cases": cases}))
 
 
+def synthetic_bg_matte_fixtures(ctx: Ctx) -> dict:
+    """«Eliminar fondo» con el matte de la caché: build_clip_bg_mask y ensure_derived REALES
+    (bg/service.py) sobre las cachés sintéticas de bg_cases.MATTES, en una carpeta temporal. Para
+    cada clip de SPEC_CLIPS, lo que da (o None, o el error) y, de cada fotograma derivado del tramo,
+    de qué fotograma crudo sale (None si falta: la secuencia PNG del export se corta ahí), con el
+    nivel 2 vacío. Y la LUT de clip_bg.matte_lut para LUT_CASES. El C++ rehace la caché con los
+    nombres de archivo y el meta."""
+    import cv2
+    import numpy as np
+    import bg_cases as bc
+    from app import clip_bg
+    from app.bg import service as bg_service
+    saved = bg_service.MATTE_ROOT, bg_service.MASK_ROOT
+    clips, mattes = [], {}
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        bc.make_matte_cache(root, bc.MATTES)
+        for key in bc.MATTES:
+            folder = root / "matte" / key
+            meta = folder / "meta.json"
+            mattes[key] = {"files": sorted(int(f.stem) - 1 for f in folder.glob("*.png")),
+                           "meta": meta.read_text(encoding="utf-8") if meta.exists() else None}
+        bg_service.MATTE_ROOT = root / "matte"
+        try:
+            for i, (name, raw) in enumerate(bc.SPEC_CLIPS):
+                # Cada clip con su nivel 2 vacío: ensure_derived reutiliza lo que ya hubiera en
+                # mask/<derive_key>, y así cada caso es lo que pasa la primera vez (lo que hace el C++).
+                bg_service.MASK_ROOT = root / f"mask{i}"
+                clip = ctx.schemas.TimelineClip.model_validate(raw)
+                case = {"name": name, "clip": _pure(clip.model_dump())}
+                try:
+                    spec = bg_service.build_clip_bg_mask(clip, 30)
+                except Exception as e:  # noqa: BLE001 — basta con saber que Python falla
+                    clips.append({**case, "error": type(e).__name__})
+                    continue
+                if spec is None:
+                    clips.append({**case, "spec": None})
+                    continue
+                bg = clip_bg.clip_bg(clip)
+                auto = bg["auto"]
+                # El atajo de derive_matte: sin pluma, expansión, opacidad ni pincel, el derivado es la LUT.
+                lut_only = (float(auto["feather"]) <= 0.0 and abs(float(auto.get("expansion", 0.0))) < 1e-4
+                            and float(auto.get("opacity", 1.0)) >= 1.0
+                            and (clip_bg.is_interactive_provider(auto.get("provider")) or not auto["edits"]))
+                case["spec"] = {k: v for k, v in spec.items() if k != "path"}
+                case["lut_only"] = lut_only
+                if not lut_only:
+                    clips.append(case)
+                    continue
+                lut = clip_bg.matte_lut(auto)
+                raws = {int(f.stem) - 1: cv2.LUT(cv2.imread(str(f), cv2.IMREAD_GRAYSCALE), lut)
+                        for f in (root / "matte" / auto["base_key"]).glob("*.png")}
+                folder = Path(spec["path"]).parent
+                sources = []
+                for idx in range(spec["start_number"] - 1, spec["start_number"] - 1 + spec["frames"]):
+                    f = folder / f"{idx + 1:06d}.png"
+                    if not f.exists():
+                        sources.append(None)
+                        continue
+                    d = cv2.imread(str(f), cv2.IMREAD_GRAYSCALE)
+                    hits = [j for j, r in raws.items() if r.shape == d.shape and np.array_equal(r, d)]
+                    assert len(hits) == 1, (name, idx, hits)
+                    sources.append(hits[0])
+                clips.append({**case, "sources": sources})
+        finally:
+            bg_service.MATTE_ROOT, bg_service.MASK_ROOT = saved
+    luts = []
+    for raw in bc.LUT_CASES:
+        auto = clip_bg.normalize_auto(raw)
+        luts.append({"auto": raw, "lut": [int(v) for v in clip_bg.matte_lut(auto)]})
+    return _pure(_nan_safe({"mattes": mattes, "clips": clips, "lut": luts}))
+
+
 # --- Salida -----------------------------------------------------------------------------------
 
 def write(path: Path, payload, count: int, errors: int) -> None:
@@ -3512,7 +3597,7 @@ def main() -> None:
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
                                        "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake",
-                                       "anchos"],
+                                       "anchos", "matte"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3659,6 +3744,15 @@ def main() -> None:
         widths_group()
         return
 
+    def matte_group() -> None:
+        mat = synthetic_bg_matte_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "media" / "bg_matte.json", mat, len(mat["clips"]) + len(mat["lut"]),
+              sum("error" in c for c in mat["clips"]))
+
+    if args.solo == "matte":
+        matte_group()
+        return
+
     def shapes_group() -> None:
         shp = synthetic_shape_fixtures(ctx)
         write(REPO / "tests" / "fixtures" / "shapes" / "geometry.json", shp,
@@ -3726,6 +3820,7 @@ def main() -> None:
     chroma = synthetic_chroma_fixtures()
     write(REPO / "tests" / "fixtures" / "media" / "chroma.json", chroma, len(chroma), 0)
     outline_group()
+    matte_group()
     txt = synthetic_text_fixtures(ctx)
     write(REPO / "tests" / "fixtures" / "text" / "synthetic.json", txt,
           len(txt["styles"]) + len(txt["clips"]) + len(txt["effective"]) + len(txt["alpha"]) + len(txt["case"]) + len(txt["active_word"])

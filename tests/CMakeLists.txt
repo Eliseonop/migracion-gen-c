@@ -18,6 +18,7 @@ add_executable(gc_tests
     parity/bench_edit.cpp
     parity/test_audio_parity.cpp
     parity/test_beats_parity.cpp
+    parity/test_bg_matte_parity.cpp
     parity/test_chroma_parity.cpp
     parity/test_collections_parity.cpp
     parity/test_edit_parity.cpp

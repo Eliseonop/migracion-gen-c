@@ -23,6 +23,7 @@
 #include "gc/core/timeline_rules.hpp"
 #include "gc/media/probe.hpp"
 #include "input_args.hpp"
+#include "matte_input.hpp"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -80,6 +81,13 @@ public:
             return std::unexpected(opts.error());
         }
         opts_ = std::move(*opts);
+        if (spec_.matte) {
+            auto feed = detail::MatteFeed::open(*spec_.matte);
+            if (!feed) {
+                return std::unexpected(feed.error());
+            }
+            matte_.emplace(std::move(*feed));
+        }
         pkt_.reset(av_packet_alloc());
         frame_.reset(av_frame_alloc());
         out_.reset(av_frame_alloc());
@@ -102,6 +110,15 @@ public:
                 }
                 if (r != AVERROR(EAGAIN)) {
                     return fail(ErrorCode::Internal, "error en el grafo de filtros: " + av_err(r));
+                }
+                // La segunda entrada (el matte), cuando el grafo la pide o cuando ya no queda nada
+                // más que mandarle, como el CLI, que lee de la entrada que el grafo espera.
+                if (matte_src_ != nullptr && !matte_eof_ &&
+                    (av_buffersrc_get_nb_failed_requests(matte_src_) > 0 || eof_sent_)) {
+                    if (auto m = feed_matte(); !m) {
+                        return std::unexpected(m.error());
+                    }
+                    continue;
                 }
             }
             if (input_done_) {
@@ -243,6 +260,28 @@ private:
         if (avfilter_init_str(sink_, nullptr) < 0) {
             return fail(ErrorCode::Internal, "no se pudo preparar la salida del grafo");
         }
+        if (matte_) {
+            // Los parámetros de la entrada image2: los del primer PNG, en 1/mask_fps (-framerate).
+            const AVFrame& m = matte_->first();
+            matte_src_ = avfilter_graph_alloc_filter(graph_.get(), avfilter_get_by_name("buffer"), "matte");
+            AVBufferSrcParameters* mp = av_buffersrc_parameters_alloc();
+            if (matte_src_ == nullptr || mp == nullptr) {
+                av_free(mp);
+                return fail(ErrorCode::Internal, "sin memoria para la entrada del matte");
+            }
+            mp->format = m.format;
+            mp->width = m.width;
+            mp->height = m.height;
+            mp->time_base = AVRational{1, static_cast<int>(matte_->fps())};
+            mp->sample_aspect_ratio = m.sample_aspect_ratio;
+            mp->color_space = m.colorspace;
+            mp->color_range = m.color_range;
+            const int mr = av_buffersrc_parameters_set(matte_src_, mp);
+            av_free(mp);
+            if (mr < 0 || avfilter_init_str(matte_src_, nullptr) < 0) {
+                return fail(ErrorCode::Internal, "no se pudo preparar la entrada del matte");
+            }
+        }
         // Lo que el CLI pone delante (seek exacto y -t), la cadena del export y el formato de salida.
         std::string desc = (opts_.seek_us ? std::string("trim=starti=0,") : std::string()) +
                            (opts_.duration_us ? duration_trim(*opts_.duration_us) : std::string()) + spec_.chain;
@@ -254,6 +293,15 @@ private:
         std::unique_ptr<AVFilterInOut, InOutFree> inputs(avfilter_inout_alloc());
         outputs->name = av_strdup("in");
         outputs->filter_ctx = src_;
+        if (matte_src_ != nullptr) { // `[matte]` en la cadena
+            AVFilterInOut* m = avfilter_inout_alloc();
+            if (m == nullptr) {
+                return fail(ErrorCode::Internal, "sin memoria para la entrada del matte");
+            }
+            m->name = av_strdup("matte");
+            m->filter_ctx = matte_src_;
+            outputs->next = m;
+        }
         inputs->name = av_strdup("out");
         inputs->filter_ctx = sink_;
         AVFilterInOut* in_raw = inputs.release();
@@ -311,12 +359,39 @@ private:
         }
     }
 
+    // Un fotograma más del matte al grafo o, al final de la secuencia, su fin.
+    Result<void> feed_matte() {
+        auto next = matte_->next();
+        if (!next) {
+            return std::unexpected(next.error());
+        }
+        const std::unique_ptr<AVFrame, FrameFree> f(*next);
+        if (!f) {
+            matte_eof_ = true;
+            static_cast<void>(av_buffersrc_add_frame_flags(matte_src_, nullptr, 0));
+            return {};
+        }
+        if (const int a = av_buffersrc_add_frame_flags(matte_src_, f.get(), 0); a < 0 && a != AVERROR_EOF) {
+            return fail(ErrorCode::Internal, "error en el grafo de filtros (matte): " + av_err(a));
+        }
+        return {};
+    }
+
     Result<void> reopen_without_preroll() {
         overshoot_ = false;
         preroll_failed_ = true;
         graph_.reset();
         src_ = nullptr;
         sink_ = nullptr;
+        matte_src_ = nullptr;
+        matte_eof_ = false;
+        if (spec_.matte) { // la secuencia del matte, también desde el principio
+            auto feed = detail::MatteFeed::open(*spec_.matte);
+            if (!feed) {
+                return std::unexpected(feed.error());
+            }
+            matte_.emplace(std::move(*feed));
+        }
         dec_.reset();
         fmt_.reset();
         decode_errors_ = 0;
@@ -349,6 +424,9 @@ private:
     std::unique_ptr<AVFrame, FrameFree> out_;
     AVFilterContext* src_ = nullptr;
     AVFilterContext* sink_ = nullptr;
+    std::optional<detail::MatteFeed> matte_; // la secuencia PNG del matte (DecodeSpec::matte)
+    AVFilterContext* matte_src_ = nullptr;
+    bool matte_eof_ = false;
     int stream_ = -1;
     std::int64_t ts_offset_ = 0; // en la base de tiempos del stream
     std::size_t decode_errors_ = 0;
@@ -447,7 +525,7 @@ struct ClipChain {
 
 // `preroll`: con el salto previo (ClipFrames); export_frame_at, la referencia, decodifica desde 0.
 Result<ClipChain> clip_chain(const core::TimelineClip& clip, const std::filesystem::path& path, int fps,
-                             bool preroll) {
+                             bool preroll, const core::MatteSpec* matte) {
     // compose.py, la cadena de cada clip:
     //   [k:v]{color_pre}{trim},setpts=PTS-STARTPTS,{cropscale},fps=F{spd},…,setpts=PTS-STARTPTS+{start:.3f}/TB
     // con spd = video_speed_filters (vacío en un still): «reverse» y `setpts=PTS/{sp:.6f}`. Las
@@ -473,14 +551,28 @@ Result<ClipChain> clip_chain(const core::TimelineClip& clip, const std::filesyst
             c.spec.preroll_us = static_cast<std::int64_t>(std::llround(at * 1e6));
         }
     }
-    // «Eliminar fondo» por croma: en el espacio del material, antes del encuadre
-    // (_bg_source_chain). El matte automático aún no.
+    // «Eliminar fondo»: en el espacio del material, antes del encuadre (_bg_source_chain).
     if (clip.bg_removal && core::bg_capable(clip)) {
         const Json bg = core::normalize_bg(*clip.bg_removal);
-        if (core::bg_auto_active(bg)) {
-            return fail(ErrorCode::Unsupported, std::format("el matte automático del clip {} aún no se aplica", clip.id));
-        }
-        if (core::bg_chroma_active(bg)) {
+        if (matte != nullptr && core::bg_auto_active(bg)) {
+            // El matte de la caché, subido al tamaño del material: el de detect.dims (aquí, el del
+            // primer fotograma) o, si no se sabe, el del meta.json. Sin ninguno de los dos, el
+            // export no aplica nada (ni el croma).
+            std::int64_t iw = 0;
+            std::int64_t ih = 0;
+            if (auto first = frame_at(path, 0.0); first && first->has_value()) {
+                iw = (*first)->width;
+                ih = (*first)->height;
+            }
+            if (iw <= 0 || ih <= 0) {
+                iw = matte->width;
+                ih = matte->height;
+            }
+            if (iw > 0 && ih > 0) {
+                c.spec.matte = *matte;
+                c.spec.chain += core::matte_source_chain(bg, iw, ih, fps);
+            }
+        } else if (core::bg_chroma_active(bg)) {
             // El desenfoque del borde y el grosor del contorno van en px del alto del material
             // (detect.dims). Sin saberlo, el croma toma 512 y el contorno 0 (no se dibuja).
             std::optional<std::int64_t> height;
@@ -506,10 +598,10 @@ Result<ClipChain> clip_chain(const core::TimelineClip& clip, const std::filesyst
 // del overlay, `{spd},fps=F` (la velocidad ANTES del fps: el fotograma n es el instante local n/F).
 // Sale un fotograma por tick desde 0, así que el n-ésimo tiene pts n.
 Result<ClipChain> bake_input_chain(const core::TimelineClip& clip, const std::filesystem::path& path, int fps,
-                                   bool preroll) {
+                                   bool preroll, const core::MatteSpec* matte) {
     core::TimelineClip at_zero = clip;
     at_zero.start = 0.0;
-    auto chain = clip_chain(at_zero, path, fps, preroll);
+    auto chain = clip_chain(at_zero, path, fps, preroll, matte);
     if (!chain) {
         return chain;
     }
@@ -534,8 +626,8 @@ Result<ClipChain> bake_input_chain(const core::TimelineClip& clip, const std::fi
 } // namespace
 
 Result<std::optional<RgbaFrame>> bake_input_frame_at(const core::TimelineClip& clip, const std::filesystem::path& path,
-                                                     int fps, std::int64_t n) {
-    auto chain = bake_input_chain(clip, path, fps, false);
+                                                     int fps, std::int64_t n, const core::MatteSpec* matte) {
+    auto chain = bake_input_chain(clip, path, fps, false, matte);
     if (!chain) {
         return std::unexpected(chain.error());
     }
@@ -552,8 +644,8 @@ Result<std::optional<RgbaFrame>> bake_input_frame_at(const core::TimelineClip& c
 }
 
 Result<std::optional<RgbaFrame>> export_frame_at(const core::TimelineClip& clip, const std::filesystem::path& path,
-                                                 int fps, std::int64_t tick) {
-    auto chain = clip_chain(clip, path, fps, false);
+                                                 int fps, std::int64_t tick, const core::MatteSpec* matte) {
+    auto chain = clip_chain(clip, path, fps, false, matte);
     if (!chain) {
         return std::unexpected(chain.error());
     }
@@ -711,6 +803,7 @@ struct ClipFrames::Impl {
     core::TimelineClip clip;
     std::filesystem::path path;
     int fps = 30;
+    std::optional<core::MatteSpec> matte;
     ClipChain chain;
     std::unique_ptr<Prefetch> decoder;
     std::int64_t m = 0;                 // fotogramas sacados de la cadena
@@ -752,8 +845,9 @@ ClipFrames::ClipFrames(ClipFrames&&) noexcept = default;
 ClipFrames& ClipFrames::operator=(ClipFrames&&) noexcept = default;
 ClipFrames::~ClipFrames() = default;
 
-Result<ClipFrames> ClipFrames::open(const core::TimelineClip& clip, const std::filesystem::path& path, int fps) {
-    auto chain = clip_chain(clip, path, fps, true);
+Result<ClipFrames> ClipFrames::open(const core::TimelineClip& clip, const std::filesystem::path& path, int fps,
+                                    const core::MatteSpec* matte) {
+    auto chain = clip_chain(clip, path, fps, true, matte);
     if (!chain) {
         return std::unexpected(chain.error());
     }
@@ -761,6 +855,9 @@ Result<ClipFrames> ClipFrames::open(const core::TimelineClip& clip, const std::f
     impl->clip = clip;
     impl->path = path;
     impl->fps = fps;
+    if (matte != nullptr) {
+        impl->matte = *matte;
+    }
     impl->chain = std::move(*chain);
     if (!impl->chain.reverse) {
         if (auto r = impl->restart(); !r) {
@@ -771,8 +868,8 @@ Result<ClipFrames> ClipFrames::open(const core::TimelineClip& clip, const std::f
 }
 
 Result<ClipFrames> ClipFrames::open_bake_input(const core::TimelineClip& clip, const std::filesystem::path& path,
-                                               int fps) {
-    auto chain = bake_input_chain(clip, path, fps, true);
+                                               int fps, const core::MatteSpec* matte) {
+    auto chain = bake_input_chain(clip, path, fps, true, matte);
     if (!chain) {
         return std::unexpected(chain.error());
     }
@@ -780,6 +877,9 @@ Result<ClipFrames> ClipFrames::open_bake_input(const core::TimelineClip& clip, c
     impl->clip = clip;
     impl->path = path;
     impl->fps = fps;
+    if (matte != nullptr) {
+        impl->matte = *matte;
+    }
     impl->chain = std::move(*chain);
     if (auto r = impl->restart(); !r) {
         return std::unexpected(r.error());
@@ -791,7 +891,7 @@ Result<const RgbaFrame*> ClipFrames::at(std::int64_t tick) {
     Impl& s = *impl_;
     if (s.chain.reverse) {
         // Al revés hace falta el final del tramo: de momento, como export_frame_at.
-        auto f = export_frame_at(s.clip, s.path, s.fps, tick);
+        auto f = export_frame_at(s.clip, s.path, s.fps, tick, s.matte ? &*s.matte : nullptr);
         if (!f) {
             return std::unexpected(f.error());
         }

@@ -563,6 +563,13 @@ _MASK_SCENES = [
      {"keyframes": {"enabled": True, "items": [{"t": 0, "props": {"mx": 0.3}}, {"t": 2, "props": {"mx": 0.7}}]}},
      [0.0, 1.0]),
 ]
+def _bg_auto(key: str, **kw) -> dict:
+    """«Eliminar fondo» automático listo con el matte `key` de render/files/bgcache."""
+    return {"enabled": True, "mode": "auto",
+            "auto": {"enabled": True, "provider": "u2net", "model_version": "u2net-1", "base_key": key,
+                     "status": "ready", "mask_fps": 15, "mask_height": 180, **kw}}
+
+
 RENDER_SCENES = [
     ("vídeo centrado", 30, ["V1"],
      [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER})],
@@ -893,6 +900,64 @@ RENDER_SCENES = [
      [("moving30.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 1.6, "transform": _CENTER,
                               "vfx": [{"effect": "crt"}]})],
      [0.6, 1.2]),
+    # «Eliminar fondo» con el matte de IA de la caché (bg/service.py): el derivado de solo LUT del
+    # matte crudo de render/files/bgcache (bg_cases.RENDER_MATTES), en el espacio del material y antes
+    # del encuadre (_bg_source_chain), sobre un fondo.
+    ("eliminar fondo: imagen con su matte", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "bg_removal": _bg_auto("escena_imagen")})],
+     [0.5]),
+    ("eliminar fondo: umbral, suavidad e invertir", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "bg_removal": _bg_auto("escena_imagen", threshold=0.35, softness=0.6, invert=True)})],
+     [0.5]),
+    ("eliminar fondo: matte más pequeño que el material", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "bg_removal": _bg_auto("escena_pequeno", threshold=0.6, softness=0.1)})],
+     [0.5]),
+    ("eliminar fondo: vídeo con el matte a 15 fps", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("moving30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.4, "out_point": 1.8,
+                              "transform": {"x": 0.5, "y": 0.5, "scale": 0.8},
+                              "bg_removal": _bg_auto("escena_video")})],
+     [0.1, 0.5, 1.2]),
+    ("eliminar fondo: vídeo más largo que la caché", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("moving30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                              "bg_removal": _bg_auto("escena_corto")})],
+     [0.2, 1.5]),
+    ("eliminar fondo: vídeo a velocidad 1,5 y al revés", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("moving30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.2, "out_point": 1.7, "speed": 1.5, "reverse": True,
+                              "transform": _CENTER, "bg_removal": _bg_auto("escena_video")})],
+     [0.3, 0.8]),
+    ("eliminar fondo: vídeo en una timeline de 25 fps", 25, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("moving30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.1, "out_point": 1.5, "transform": _CENTER,
+                              "bg_removal": _bg_auto("escena_video")})],
+     [0.6, 1.2]),
+    # Un GIF de 2 s que dura 3,5: el GIF y la secuencia del matte dan la vuelta (-stream_loop -1).
+    ("eliminar fondo: GIF que da la vuelta", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 3.5, "transform": _CENTER}),
+      ("anim10.gif", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 3.5, "transform": _CENTER,
+                            "bg_removal": _bg_auto("escena_gif")})],
+     [0.5, 2.4, 3.1]),
+    # Croma y matte a la vez: los dos alfas se multiplican (alphaextract y blend=multiply).
+    ("eliminar fondo: croma y matte", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyed.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "bg_removal": {**_bg_auto("escena_imagen"), "chroma": {"enabled": True}}})],
+     [0.5]),
+    # Sin nada en la caché, el export sigue sin el matte.
+    ("eliminar fondo: sin el matte en la caché", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0,
+                           "transform": {"x": 0.5, "y": 0.5, "scale": 0.6},
+                           "bg_removal": _bg_auto("no_existe")})],
+     [0.5]),
 ]
 
 # Texto (el .ass global de text_ass.py, dibujado por libass): escenas de 540×960 a 30 fps.
