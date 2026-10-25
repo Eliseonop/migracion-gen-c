@@ -25,6 +25,7 @@ add_library(gc_core
     src/clip_media.cpp
     src/clip_pose_edit.cpp
     src/collections.cpp
+    src/cv_draw.cpp
     src/disk_scan.cpp
     src/edit_commands.cpp
     src/edit_ops.cpp
@@ -47,6 +48,7 @@ add_library(gc_core
     src/material_drop.cpp
     src/library.cpp
     src/masks.cpp
+    src/matte_derive.cpp
     src/no_overlap.cpp
     src/pose.cpp
     src/projects_store.cpp

@@ -1,12 +1,13 @@
 #include "matte_input.hpp"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
+#include <cstddef>
 #include <cstring>
 #include <filesystem>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "gc/core/io.hpp"
 #include "input_args.hpp"
@@ -37,8 +38,9 @@ using FramePtr = std::unique_ptr<AVFrame, FrameFree>;
 
 constexpr std::size_t kStartRange = 5; // start_number_range del demuxer image2
 
-// Un PNG crudo del matte, decodificado como lo decodifica FFmpeg y pasado por la LUT.
-Result<FramePtr> load(const std::filesystem::path& path, const std::array<std::uint8_t, 256>& lut) {
+// Un PNG crudo del matte, decodificado como lo decodifica FFmpeg y derivado: la LUT o, si el clip
+// lleva pluma, expansión, opacidad o pincel, derive_matte entero.
+Result<FramePtr> load(const std::filesystem::path& path, const core::MatteSpec& spec) {
     const std::string utf8 = core::path_to_utf8(path);
     AVFormatContext* raw = nullptr;
     if (const int r = avformat_open_input(&raw, utf8.c_str(), nullptr, nullptr); r < 0) {
@@ -84,11 +86,24 @@ Result<FramePtr> load(const std::filesystem::path& path, const std::array<std::u
     if (av_frame_make_writable(frame.get()) < 0) {
         return fail(ErrorCode::Internal, "sin memoria para el matte");
     }
-    for (int y = 0; y < frame->height; ++y) {
-        std::uint8_t* row = frame->data[0] + (static_cast<std::ptrdiff_t>(y) * frame->linesize[0]);
-        for (int x = 0; x < frame->width; ++x) {
-            row[x] = lut[row[x]];
+    const auto row = [&](int y) { return frame->data[0] + (static_cast<std::ptrdiff_t>(y) * frame->linesize[0]); };
+    if (spec.lut_only) {
+        for (int y = 0; y < frame->height; ++y) {
+            std::uint8_t* r = row(y);
+            for (int x = 0; x < frame->width; ++x) {
+                r[x] = spec.lut[r[x]];
+            }
         }
+        return frame;
+    }
+    const auto w = static_cast<std::size_t>(frame->width);
+    std::vector<std::uint8_t> crude(w * static_cast<std::size_t>(frame->height));
+    for (int y = 0; y < frame->height; ++y) {
+        std::memcpy(crude.data() + (w * static_cast<std::size_t>(y)), row(y), w);
+    }
+    const auto derived = core::derive_matte(crude, frame->width, frame->height, spec.settings);
+    for (int y = 0; y < frame->height; ++y) {
+        std::memcpy(row(y), derived.data() + (w * static_cast<std::size_t>(y)), w);
     }
     return frame;
 }
@@ -96,9 +111,8 @@ Result<FramePtr> load(const std::filesystem::path& path, const std::array<std::u
 } // namespace
 
 struct MatteFeed::Impl {
-    std::filesystem::path folder;
+    core::MatteSpec spec;
     std::vector<std::int64_t> raw; // el fotograma crudo de cada uno de la secuencia
-    std::array<std::uint8_t, 256> lut{};
     std::int64_t fps = 15;
     bool loop = false;
     std::int64_t last_pts = 0; // con -stream_loop, el último que se da
@@ -114,8 +128,7 @@ MatteFeed::~MatteFeed() = default;
 
 Result<MatteFeed> MatteFeed::open(const core::MatteSpec& spec) {
     auto impl = std::make_unique<Impl>();
-    impl->folder = spec.folder;
-    impl->lut = spec.lut;
+    impl->spec = spec;
     impl->fps = spec.mask_fps;
     impl->loop = spec.loop;
     // En el export, el `-t` de la salida corta la entrada en bucle; aquí, sin él, no acabaría. Lo
@@ -136,7 +149,7 @@ Result<MatteFeed> MatteFeed::open(const core::MatteSpec& spec) {
     for (std::size_t k = start; k < s.size() && s[k]; ++k) {
         impl->raw.push_back(*s[k]);
     }
-    auto first = load(impl->folder / core::matte_frame_name(impl->raw.front()), impl->lut);
+    auto first = load(spec.folder / core::matte_frame_name(impl->raw.front()), impl->spec);
     if (!first) {
         return std::unexpected(first.error());
     }
@@ -170,7 +183,7 @@ Result<AVFrame*> MatteFeed::next() {
             return fail(ErrorCode::Internal, "sin memoria para el matte");
         }
     } else {
-        auto loaded = load(s.folder / core::matte_frame_name(s.raw[s.pos]), s.lut);
+        auto loaded = load(s.spec.folder / core::matte_frame_name(s.raw[s.pos]), s.spec);
         if (!loaded) {
             return std::unexpected(loaded.error());
         }

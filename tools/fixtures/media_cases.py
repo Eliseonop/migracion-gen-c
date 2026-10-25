@@ -954,6 +954,20 @@ RENDER_SCENES = [
                            "bg_removal": {**_bg_auto("escena_imagen", invert=True),
                                           "chroma": {"enabled": True}}})],
      [0.5]),
+    # El derivado que no es solo la LUT (derive_matte): pluma, expansión, opacidad y el pincel.
+    ("eliminar fondo: pluma, expansión y opacidad", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("waves.png", "V2", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                           "bg_removal": _bg_auto("escena_imagen", feather=0.06, expansion=0.3, opacity=0.8)})],
+     [0.5]),
+    ("eliminar fondo: pincel para conservar y borrar", 30, ["V1", "V2"],
+     [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("moving30.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                              "bg_removal": _bg_auto("escena_video", edits=[
+                                  {"op": "keep", "size": 0.06, "points": [{"x": 0.7, "y": 0.2}, {"x": 0.9, "y": 0.8}]},
+                                  {"op": "erase", "size": 0.1, "points": [{"x": 0.2, "y": 0.4}, {"x": 0.5, "y": 0.5},
+                                                                          {"x": 0.3, "y": 0.9, "m": 1}]}])})],
+     [0.4, 1.3]),
     # Sin nada en la caché, el export sigue sin el matte.
     ("eliminar fondo: sin el matte en la caché", 30, ["V1", "V2"],
      [("grad.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),

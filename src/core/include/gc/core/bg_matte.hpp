@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -35,6 +36,7 @@ struct MatteSpec {
     std::int64_t height = 0;
     bool lut_only = true;          // el derivado es solo la LUT (sin pluma, expansión, opacidad ni pincel)
     std::array<std::uint8_t, 256> lut{}; // matte_lut
+    Json settings;                 // el `auto` normalizado, para derive_matte cuando no es solo la LUT
     // De qué fotograma crudo (índice desde 0) sale cada fotograma del tramo: fuera del rango que
     // hay, el del extremo. Nada si ese derivado no existe (su crudo falta): la secuencia PNG del
     // export se corta ahí.
@@ -59,6 +61,14 @@ struct MatteSpec {
 // salga del meta.json). Empieza por «,» para ir detrás de la cadena.
 [[nodiscard]] std::string matte_source_chain(const Json& normalized_bg, std::int64_t iw, std::int64_t ih,
                                              std::int64_t outline_height, int fps);
+
+// derive_matte de clip_bg.py: un fotograma crudo del matte (gris de 8 bits, width × height, sin
+// relleno) → el derivado, con la LUT, la expansión, la pluma, el pincel y la opacidad del `auto`
+// normalizado, en float32 como numpy y OpenCV. Sin nada de eso, es la LUT (exacto); con pluma o
+// expansión, el GaussianBlur y los resize de OpenCV (casi exactos); los trazos del pincel se
+// parecen a los de cv2.polylines, pero no son iguales.
+[[nodiscard]] std::vector<std::uint8_t> derive_matte(std::span<const std::uint8_t> raw, int width, int height,
+                                                     const Json& normalized_auto);
 
 // matte_lut de clip_bg.py sobre un `auto` normalizado (normalize_bg(...)["auto"]): la rampa de
 // umbral y suavidad, invertida si toca, con la aritmética de doble del JS.

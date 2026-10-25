@@ -148,6 +148,51 @@ LUT_CASES = [{"threshold": t, "softness": s, "invert": inv}
     {"threshold": "0.4", "softness": None, "invert": 1}, {"threshold": float("nan"), "softness": 0.2, "invert": 0},
     {"threshold": 2, "softness": -1, "invert": "x"}, {}]
 
+# derive_matte (clip_bg.py) más allá de la LUT: pluma, expansión, opacidad y el pincel. Cada caso:
+# (nombre, tamaño del crudo, forma, `auto` sin normalizar). El crudo es matte_frame(w, h, 3, 8, forma).
+def _stroke(op, pts, size=0.08, **kw):
+    return {"op": op, "size": size, "points": [dict(zip(("x", "y"), p)) | ({"m": 1} if len(p) > 2 else {})
+                                               for p in pts], **kw}
+
+
+DERIVE_CASES = [
+    ("solo la LUT", (96, 54), "disc", {}),
+    ("pluma pequeña (σ ≤ 0,3: nada)", (96, 54), "disc", {"feather": 0.005}),
+    ("pluma", (96, 54), "disc", {"feather": 0.05}),
+    ("pluma máxima", (96, 54), "disc", {"feather": 0.15}),
+    ("pluma con reducción (σ ≥ 32)", (360, 240), "disc", {"feather": 0.15}),
+    ("pluma con reducción ×3", (480, 360), "disc", {"feather": 0.14}),
+    # Con un factor no entero y franjas (no un disco suave), INTER_AREA no es INTER_LINEAR.
+    ("pluma con reducción no entera ×2, franjas", (351, 231), "bars", {"feather": 0.15}),
+    ("pluma con reducción no entera ×3, franjas", (481, 361), "bars", {"feather": 0.14}),
+    # Un trazo grueso: extremos de radio ≥ 15 px (EllipseEx con 5° por lado).
+    ("pincel grueso", (160, 90), "disc", {"edits": [_stroke("keep", [(0.3, 0.5), (0.6, 0.4)], 0.4),
+                                                    _stroke("erase", [(0.85, 0.2)], 0.45)]}),
+    ("expansión", (96, 54), "disc", {"expansion": 0.4}),
+    ("contracción", (96, 54), "disc", {"expansion": -0.6}),
+    ("expansión mínima (|e| < 1e-4: nada)", (96, 54), "disc", {"expansion": 0.00005}),
+    ("expansión pequeña (σ ≤ 0,3)", (96, 54), "disc", {"expansion": 0.05}),
+    ("expansión y pluma", (160, 90), "bars", {"expansion": 0.3, "feather": 0.03}),
+    ("opacidad", (96, 54), "disc", {"opacity": 0.4}),
+    ("opacidad 0", (96, 54), "disc", {"opacity": 0.0}),
+    ("umbral, invertir y pluma", (96, 54), "disc", {"threshold": 0.3, "softness": 0.6, "invert": True, "feather": 0.04}),
+    ("pincel: conservar", (96, 54), "disc", {"edits": [_stroke("keep", [(0.1, 0.2), (0.4, 0.8)])]}),
+    ("pincel: borrar", (96, 54), "disc", {"edits": [_stroke("erase", [(0.5, 0.1), (0.6, 0.9), (0.9, 0.5)], 0.12)]}),
+    ("pincel: un punto", (96, 54), "disc", {"edits": [_stroke("keep", [(0.8, 0.3)], 0.2)]}),
+    ("pincel: dos trazos con «m»", (96, 54), "disc",
+     {"edits": [_stroke("erase", [(0.2, 0.2), (0.3, 0.3), (0.7, 0.2, 1), (0.8, 0.8)])]}),
+    ("pincel: conservar y borrar, con pluma", (160, 90), "disc",
+     {"feather": 0.02, "edits": [_stroke("keep", [(0.05, 0.5), (0.3, 0.5)], 0.1),
+                                 _stroke("erase", [(0.4, 0.4), (0.5, 0.6)], 0.05)]}),
+    ("pincel muy fino (grosor 1)", (96, 54), "disc", {"edits": [_stroke("erase", [(0.1, 0.5), (0.9, 0.5)], 0.002)]}),
+    ("pincel fuera del lienzo", (96, 54), "disc", {"edits": [_stroke("keep", [(-0.2, 0.5), (1.3, 0.6)], 0.1)]}),
+    ("SAM: los trazos no se pintan", (96, 54), "disc",
+     {"provider": "sam21_tiny", "edits": [_stroke("keep", [(0.1, 0.2), (0.4, 0.8)], tool="smart")]}),
+    ("todo a la vez", (160, 90), "disc",
+     {"threshold": 0.45, "softness": 0.3, "feather": 0.06, "expansion": -0.2, "opacity": 0.7,
+      "edits": [_stroke("keep", [(0.6, 0.3), (0.9, 0.7)], 0.07)]}),
+]
+
 # La caché de las escenas de render (tests/fixtures/render/files/bgcache): el material es de 320×180.
 RENDER_MATTES = {
     "escena_imagen": {"size": (320, 180), "frames": 1},

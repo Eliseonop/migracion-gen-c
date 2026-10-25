@@ -3579,7 +3579,18 @@ def synthetic_bg_matte_fixtures(ctx: Ctx) -> dict:
     for raw in bc.LUT_CASES:
         auto = clip_bg.normalize_auto(raw)
         luts.append({"auto": raw, "lut": [int(v) for v in clip_bg.matte_lut(auto)]})
-    return _pure(_nan_safe({"mattes": mattes, "clips": clips, "lut": luts}))
+    # derive_matte REAL más allá de la LUT: el crudo y el derivado, en gris de 8 bits (base64).
+    import base64
+    derive = []
+    for name, (w, h), shape, raw in bc.DERIVE_CASES:
+        auto = clip_bg.normalize_auto({"enabled": True, "base_key": "k", "status": "ready", **raw})
+        src = bc.matte_frame(w, h, 3, 8, shape)
+        out = clip_bg.derive_matte(src, auto)
+        assert out.dtype == np.uint8 and out.shape == src.shape, name
+        derive.append({"name": name, "auto": raw, "width": w, "height": h,
+                       "raw": base64.b64encode(src.tobytes()).decode("ascii"),
+                       "derived": base64.b64encode(out.tobytes()).decode("ascii")})
+    return _pure(_nan_safe({"mattes": mattes, "clips": clips, "lut": luts, "derive": derive}))
 
 
 # --- Salida -----------------------------------------------------------------------------------

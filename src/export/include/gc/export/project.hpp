@@ -36,8 +36,7 @@ struct LoadedProject {
 
 // «Eliminar fondo»: el matte de la caché de un clip (build_clip_bg_mask, con la caché en
 // DATA_DIR/bgcache). Nada si no lo tiene o si no está; si no se puede preparar, nada y el motivo en
-// `warning`, como build_timeline_bg_masks, que lo registra y sigue sin el matte. Un matte con pluma,
-// expansión, opacidad o pincel sale con solo la LUT, y con un aviso.
+// `warning`, como build_timeline_bg_masks, que lo registra y sigue sin el matte.
 [[nodiscard]] std::optional<gc::core::MatteSpec> clip_matte(const LoadedProject& p,
                                                             const gc::core::TimelineClip& clip,
                                                             std::string& warning);

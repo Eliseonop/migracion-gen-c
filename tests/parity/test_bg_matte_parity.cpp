@@ -11,12 +11,16 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <limits>
 #include <optional>
 #include <string>
+#include <string_view>
+#include <vector>
 
 #include "gc/core/bg.hpp"
 #include "gc/core/bg_matte.hpp"
@@ -30,6 +34,37 @@ namespace fs = std::filesystem;
 namespace {
 
 const fs::path kFixtures = path_from_utf8(GC_FIXTURES_DIR);
+
+// Base64 estándar (la fixture guarda los fotogramas en gris así).
+std::vector<std::uint8_t> from_base64(std::string_view text) {
+    std::vector<std::uint8_t> out;
+    std::uint32_t acc = 0;
+    int bits = 0;
+    for (const char c : text) {
+        int v = -1;
+        if (c >= 'A' && c <= 'Z') {
+            v = c - 'A';
+        } else if (c >= 'a' && c <= 'z') {
+            v = c - 'a' + 26;
+        } else if (c >= '0' && c <= '9') {
+            v = c - '0' + 52;
+        } else if (c == '+') {
+            v = 62;
+        } else if (c == '/') {
+            v = 63;
+        }
+        if (v < 0) {
+            continue; // el relleno «=»
+        }
+        acc = (acc << 6U) | static_cast<std::uint32_t>(v);
+        bits += 6;
+        if (bits >= 8) {
+            bits -= 8;
+            out.push_back(static_cast<std::uint8_t>((acc >> static_cast<unsigned>(bits)) & 0xFFU));
+        }
+    }
+    return out;
+}
 
 Json load_fixture() {
     auto fx = read_json_file(kFixtures / "media" / "bg_matte.json");
@@ -118,4 +153,46 @@ TEST_CASE("matte_frame_index redondea como el filtro fps y nunca da negativo", "
     CHECK(matte_frame_index(1.0, -4) == 1);  // max(MASK_FPS_MIN, …)
     CHECK(matte_frame_name(0) == "000001.png");
     CHECK(matte_frame_name(68) == "000069.png");
+}
+
+// derive_matte más allá de la LUT, frente al de clip_bg.py (cv2 y numpy en float32): el GaussianBlur,
+// los resize y el pincel (cv2.polylines y cv2.circle con LINE_AA, cv_draw.cpp) son los de OpenCV.
+// Bit a bit salvo, a veces, 1 nivel en pocos píxeles (la suma en float32 en otro orden: la
+// contracción, 44 de 5184).
+TEST_CASE("paridad del matte de eliminar fondo: pluma, expansión, opacidad y pincel", "[parity][bg]") {
+    const Json fx = load_fixture();
+    std::size_t cases = 0;
+    for (const Json& c : fx.at("derive")) {
+        const auto name = c.at("name").get<std::string>();
+        INFO(name);
+        const int w = c.at("width").get<int>();
+        const int h = c.at("height").get<int>();
+        const auto raw = from_base64(c.at("raw").get<std::string>());
+        const auto want = from_base64(c.at("derived").get<std::string>());
+        REQUIRE(raw.size() == static_cast<std::size_t>(w) * static_cast<std::size_t>(h));
+        REQUIRE(want.size() == raw.size());
+        Json a = c.at("auto");
+        a["enabled"] = true;
+        a["base_key"] = "k";
+        a["status"] = "ready";
+        const Json bg = normalize_bg(Json{{"auto", a}});
+        const auto got = derive_matte(raw, w, h, bg.at("auto"));
+        REQUIRE(got.size() == want.size());
+        int worst = 0;
+        std::size_t off = 0;
+        double se = 0.0;
+        for (std::size_t i = 0; i < got.size(); ++i) {
+            const int d = std::abs(int{got[i]} - int{want[i]});
+            worst = std::max(worst, d);
+            off += d > 0 ? 1 : 0;
+            se += static_cast<double>(d) * d;
+        }
+        const double psnr = se == 0.0 ? 99.0 : 10.0 * std::log10(255.0 * 255.0 * static_cast<double>(got.size()) / se);
+        UNSCOPED_INFO(name << ": " << off << " de " << got.size() << " píxeles distintos, como mucho " << worst
+                           << "; " << psnr << " dB");
+        CHECK(worst <= 1);
+        CHECK(static_cast<double>(off) <= 0.01 * static_cast<double>(got.size()));
+        ++cases;
+    }
+    CHECK(cases >= 20);
 }

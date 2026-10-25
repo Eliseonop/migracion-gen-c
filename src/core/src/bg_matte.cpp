@@ -253,6 +253,7 @@ Result<std::optional<MatteSpec>> clip_matte_spec(const TimelineClip& clip, const
     spec.lut_only = feather <= 0.0 && std::abs(expansion) < 1e-4 && opacity >= 1.0 &&
                     (interactive || a.at("edits").empty());
     spec.lut = matte_lut(a);
+    spec.settings = a;
     return std::optional<MatteSpec>(std::move(spec));
 }
 
