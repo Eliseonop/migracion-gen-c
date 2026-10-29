@@ -12,8 +12,8 @@
 // de los ajustes del export:
 // `-cq` en NVENC, `-global_quality` en QSV, `-qp_*` en AMF y qmin = qmax en OpenH264, que no tiene
 // CRF (de ahí que el tamaño del archivo no coincida con el de x264). OpenH264 solo usa varios hilos
-// con un número de hilos y de *slices* explícito: 4 de cada en 720×1280, más en salidas mayores (12
-// en 2160×3840), sin pasar de los núcleos.
+// con un número de hilos y de *slices* explícito: hasta 4 hilos (su máximo) y 4 slices en 720×1280,
+// más slices en salidas mayores (12 en 2160×3840).
 
 #include <cstdint>
 #include <filesystem>

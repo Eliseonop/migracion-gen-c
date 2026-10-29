@@ -52,6 +52,9 @@ struct Case {
     double alpha = 1.0;
     bool layer = false;
     std::optional<core::AffineColorMatrix> color;
+    // Tras el dibujo, la capa de ajuste (apply_color_matrix, que hace una instantánea del lienzo) y
+    // otra vez el mismo dibujo: el segundo escribe en un lienzo con una instantánea por medio.
+    std::optional<core::AffineColorMatrix> adjust;
 };
 
 // Dibuja el caso sobre un fondo con dibujo y devuelve el lienzo (sin premultiplicar).
@@ -65,6 +68,10 @@ render::Image draw(const render::Image& img, const Case& c, bool fast) {
         canvas->begin_layer("multiply");
     }
     REQUIRE(canvas->draw_image(img, c.src, c.m, c.alpha, std::nullopt, c.color));
+    if (c.adjust) {
+        canvas->apply_color_matrix(*c.adjust);
+        REQUIRE(canvas->draw_image(img, c.src, c.m, c.alpha, std::nullopt, c.color));
+    }
     if (c.layer) {
         canvas->end_layer();
     }
@@ -80,6 +87,7 @@ TEST_CASE("draw_image: el bicúbico separable da lo mismo que el de Skia", "[ren
     const std::vector<Case> cases = {
         {"identidad", full, {1, 0, 0, 1, 3, 2}},
         {"traslación con fracción", full, {1, 0, 0, 1, 3.3, 2.71}},
+        {"bordes justo en ,5 (floor(v + 0,5), no al par)", full, {1, 0, 0, 1, 2.5, 4.5}},
         {"escala ×1,915", full, {1.915, 0, 0, 1.915, -4.2, -3.7}},
         {"escala ×2 entera", full, {2, 0, 0, 2, 0, 0}},
         {"escala ×4,12 (como el tráiler)", full, {4.1244, 0, 0, 4.1244, -30.5, -20.25}},
@@ -108,6 +116,8 @@ TEST_CASE("draw_image: el bicúbico separable da lo mismo que el de Skia", "[ren
         {"filtro cálido en una capa", {7.4, 3.6, 21.3, 17.9}, {2.25, 0, 0, 2.25, -12.3, -4.1}, 0.9, true, core::filter_matrix("warm")},
         {"matriz que se sale de 0–1", full, {1.2, 0, 0, 1.2, 0.3, 0.3}, 1.0, false,
          core::AffineColorMatrix{{{1.8, -0.4, 0.1, 0.2}, {0.3, 1.5, -0.6, -0.3}, {-0.2, 0.2, 2.0, 0.05}}}},
+        {"otra vez tras la capa de ajuste", full, {1.915, 0, 0, 1.915, -4.2, -3.7}, 0.7, false, std::nullopt,
+         core::filter_matrix("noir")},
     };
     std::size_t total_off = 0;
     std::size_t total = 0;
@@ -128,7 +138,9 @@ TEST_CASE("draw_image: el bicúbico separable da lo mismo que el de Skia", "[ren
         total_off += off;
         total += got.pixels.size();
     }
-    CHECK(static_cast<double>(total_off) <= 0.002 * static_cast<double>(total));
+    // Medido: 5 canales de ~860 000. Un fallo que mueva ±1 en unos cientos de canales no pasa.
+    CHECK(total_off <= 30);
+    CHECK(total > 0);
 }
 
 TEST_CASE("draw_image: el bicúbico separable no se usa con giro, sesgo ni una escala rara", "[render][resample]") {

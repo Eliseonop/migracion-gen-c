@@ -51,19 +51,22 @@ using CodecPtr = std::unique_ptr<AVCodecContext, CodecFree>;
 
 constexpr std::array<std::string_view, 3> kHwPreference{"h264_nvenc", "h264_qsv", "h264_amf"};
 
-// Hilos (y slices) de OpenH264: con `threads=0` no reparte el trabajo (iMultipleThreadIdc = 0 y
-// una sola slice); con N de cada, sí. En 720×1280, más de 4 apenas acelera; en 2160×3840 sí (un
-// export entero de 48 s: 93 s con 4, 91 con 8 y 85 con 12). Crecen con la raíz del área: 4 en
-// 720×1280, 6 en 1080×1920 y 12 en 2160×3840, sin pasar de los núcleos ni de 16.
-int openh264_threads(int width, int height) {
+// Hilos y slices de OpenH264: con `threads=0` no reparte el trabajo (iMultipleThreadIdc = 0 y una
+// sola slice); con N hilos y N slices, sí. OpenH264 no usa más de 4 hilos (MAX_THREADS_NUM, en
+// encoder_ext.cpp acota iMultipleThreadIdc), así que en salidas grandes solo crecen las slices:
+// en 2160×3840, un export entero de 48 s tardó 93 s con 4, 91 con 8 y 85 con 12 (con el PC al
+// 20–35 %, así que parte puede ser ruido; el MP4, un 1 % mayor). Crecen con la raíz del área: 4 en
+// 720×1280, 6 en 1080×1920 y 12 en 2160×3840, sin pasar de 16.
+int openh264_threads() { return std::clamp(av_cpu_count(), 1, 4); }
+
+int openh264_slices(int width, int height) {
     const double scale = std::sqrt(static_cast<double>(width) * height / (720.0 * 1280.0));
-    const int wanted = std::clamp(static_cast<int>(std::lround(4.0 * scale)), 4, 16);
-    return std::clamp(av_cpu_count(), 1, wanted);
+    return std::clamp(static_cast<int>(std::lround(4.0 * scale)), 4, 16);
 }
 
-// _encoder_args_for de gpu.py: la calidad del CRF en las opciones de cada codificador. `threads`,
-// los de OpenH264 (openh264_threads).
-AVDictionary* encoder_options(std::string_view name, int crf, const std::string& preset, int threads) {
+// _encoder_args_for de gpu.py: la calidad del CRF en las opciones de cada codificador. `slices`,
+// las de OpenH264 (openh264_slices).
+AVDictionary* encoder_options(std::string_view name, int crf, const std::string& preset, int slices) {
     AVDictionary* d = nullptr;
     const std::string q = std::to_string(crf);
     if (name.ends_with("nvenc")) {
@@ -81,7 +84,7 @@ AVDictionary* encoder_options(std::string_view name, int crf, const std::string&
         // Sin CRF: el cuantificador fijo en el del CRF.
         av_dict_set(&d, "qmin", q.c_str(), 0);
         av_dict_set(&d, "qmax", q.c_str(), 0);
-        av_dict_set(&d, "slices", std::to_string(threads).c_str(), 0);
+        av_dict_set(&d, "slices", std::to_string(slices).c_str(), 0);
     } else {
         av_dict_set(&d, "crf", q.c_str(), 0); // libx264, si algún día se compila con él
         av_dict_set(&d, "preset", preset.c_str(), 0);
@@ -126,12 +129,11 @@ Result<CodecPtr> open_video(std::string_view name, int width, int height, int fp
     ctx->color_trc = AVCOL_TRC_BT709;
     ctx->color_range = AVCOL_RANGE_MPEG;
     // `-threads auto`, como el CLI; OpenH264, con un número explícito (openh264_threads).
-    const int threads = openh264_threads(width, height);
-    ctx->thread_count = name == "libopenh264" ? threads : 0;
+    ctx->thread_count = name == "libopenh264" ? openh264_threads() : 0;
     if (global_header) {
         ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
-    std::unique_ptr<AVDictionary, DictFree> opts(encoder_options(name, crf, preset, threads));
+    std::unique_ptr<AVDictionary, DictFree> opts(encoder_options(name, crf, preset, openh264_slices(width, height)));
     AVDictionary* raw = opts.release();
     const int r = avcodec_open2(ctx.get(), codec, &raw);
     av_dict_free(&raw);
