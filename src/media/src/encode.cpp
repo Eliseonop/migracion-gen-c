@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <format>
 #include <optional>
 #include <string_view>
@@ -17,6 +18,7 @@ extern "C" {
 #include <libavutil/channel_layout.h>
 #include <libavutil/cpu.h>
 #include <libavutil/opt.h>
+#include <libavutil/pixdesc.h>
 #include <libswscale/swscale.h>
 }
 
@@ -50,11 +52,18 @@ using CodecPtr = std::unique_ptr<AVCodecContext, CodecFree>;
 constexpr std::array<std::string_view, 3> kHwPreference{"h264_nvenc", "h264_qsv", "h264_amf"};
 
 // Hilos (y slices) de OpenH264: con `threads=0` no reparte el trabajo (iMultipleThreadIdc = 0 y
-// una sola slice); con N de cada, sí. Más de 4 apenas acelera (medido en 720×1280).
-int openh264_threads() { return std::clamp(av_cpu_count(), 1, 4); }
+// una sola slice); con N de cada, sí. En 720×1280, más de 4 apenas acelera; en 2160×3840 sí (un
+// export entero de 48 s: 93 s con 4, 91 con 8 y 85 con 12). Crecen con la raíz del área: 4 en
+// 720×1280, 6 en 1080×1920 y 12 en 2160×3840, sin pasar de los núcleos ni de 16.
+int openh264_threads(int width, int height) {
+    const double scale = std::sqrt(static_cast<double>(width) * height / (720.0 * 1280.0));
+    const int wanted = std::clamp(static_cast<int>(std::lround(4.0 * scale)), 4, 16);
+    return std::clamp(av_cpu_count(), 1, wanted);
+}
 
-// _encoder_args_for de gpu.py: la calidad del CRF en las opciones de cada codificador.
-AVDictionary* encoder_options(std::string_view name, int crf, const std::string& preset) {
+// _encoder_args_for de gpu.py: la calidad del CRF en las opciones de cada codificador. `threads`,
+// los de OpenH264 (openh264_threads).
+AVDictionary* encoder_options(std::string_view name, int crf, const std::string& preset, int threads) {
     AVDictionary* d = nullptr;
     const std::string q = std::to_string(crf);
     if (name.ends_with("nvenc")) {
@@ -72,7 +81,7 @@ AVDictionary* encoder_options(std::string_view name, int crf, const std::string&
         // Sin CRF: el cuantificador fijo en el del CRF.
         av_dict_set(&d, "qmin", q.c_str(), 0);
         av_dict_set(&d, "qmax", q.c_str(), 0);
-        av_dict_set(&d, "slices", std::to_string(openh264_threads()).c_str(), 0);
+        av_dict_set(&d, "slices", std::to_string(threads).c_str(), 0);
     } else {
         av_dict_set(&d, "crf", q.c_str(), 0); // libx264, si algún día se compila con él
         av_dict_set(&d, "preset", preset.c_str(), 0);
@@ -117,11 +126,12 @@ Result<CodecPtr> open_video(std::string_view name, int width, int height, int fp
     ctx->color_trc = AVCOL_TRC_BT709;
     ctx->color_range = AVCOL_RANGE_MPEG;
     // `-threads auto`, como el CLI; OpenH264, con un número explícito (openh264_threads).
-    ctx->thread_count = name == "libopenh264" ? openh264_threads() : 0;
+    const int threads = openh264_threads(width, height);
+    ctx->thread_count = name == "libopenh264" ? threads : 0;
     if (global_header) {
         ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
-    std::unique_ptr<AVDictionary, DictFree> opts(encoder_options(name, crf, preset));
+    std::unique_ptr<AVDictionary, DictFree> opts(encoder_options(name, crf, preset, threads));
     AVDictionary* raw = opts.release();
     const int r = avcodec_open2(ctx.get(), codec, &raw);
     av_dict_free(&raw);
@@ -131,21 +141,31 @@ Result<CodecPtr> open_video(std::string_view name, int width, int height, int fp
     return ctx;
 }
 
-// _encoder_works de gpu.py: codificar un fotograma de 64×64 y que salga algo.
+// _encoder_works de gpu.py: codificar un fotograma y que salga algo. gpu.py prueba con 64×64, que
+// está por debajo del mínimo de NVENC en H.264 (145×49 en una RTX 4060: «Frame Dimension less
+// than the minimum supported value»), así que allí NVENC nunca pasa la sonda aunque funcione. Aquí,
+// con 256×256, que pasa en todos.
+constexpr int kProbeSize = 256;
+
 bool encoder_works(std::string_view name) {
-    auto ctx = open_video(name, 64, 64, 5, 23, "fast", false);
+    auto ctx = open_video(name, kProbeSize, kProbeSize, 5, 23, "fast", false);
     if (!ctx) {
         return false;
     }
     const std::unique_ptr<AVFrame, FrameFree> frame(av_frame_alloc());
     frame->format = (*ctx)->pix_fmt;
-    frame->width = 64;
-    frame->height = 64;
+    frame->width = kProbeSize;
+    frame->height = kProbeSize;
     if (av_frame_get_buffer(frame.get(), 0) < 0 || av_frame_make_writable(frame.get()) < 0) {
         return false;
     }
+    // Gris en todos los planos, cada uno con su alto (el de croma, menor en 4:2:0 o NV12).
+    const AVPixFmtDescriptor* desc = av_pix_fmt_desc_get(static_cast<AVPixelFormat>(frame->format));
     for (int p = 0; p < 4 && frame->data[p] != nullptr; ++p) {
-        std::fill_n(frame->data[p], static_cast<std::size_t>(frame->linesize[p]) * 64, std::uint8_t{128});
+        const int rows =
+            (p == 1 || p == 2) && desc != nullptr ? AV_CEIL_RSHIFT(kProbeSize, desc->log2_chroma_h) : kProbeSize;
+        std::fill_n(frame->data[p], static_cast<std::size_t>(frame->linesize[p]) * static_cast<std::size_t>(rows),
+                    std::uint8_t{128});
     }
     frame->pts = 0;
     if (avcodec_send_frame(ctx->get(), frame.get()) < 0 || avcodec_send_frame(ctx->get(), nullptr) < 0) {
@@ -308,14 +328,28 @@ Result<Mp4Writer> Mp4Writer::open(const std::filesystem::path& path, const Encod
     }
     auto impl = std::make_unique<Impl>();
     impl->settings = settings;
-    impl->encoder = settings.video_encoder.empty() ? pick_h264_encoder() : settings.video_encoder;
     const std::string utf8 = core::path_to_utf8(path);
     if (const int r = avformat_alloc_output_context2(&impl->fmt, nullptr, "mp4", utf8.c_str()); r < 0) {
         return fail(ErrorCode::Internal, "no se pudo preparar el MP4: " + av_err(r));
     }
     const bool global = (impl->fmt->oformat->flags & AVFMT_GLOBALHEADER) != 0;
-    auto vctx = open_video(impl->encoder, settings.width, settings.height, settings.fps, settings.crf, settings.preset,
-                           global);
+    // Sin codificador pedido, los que pasan la sonda en orden y al final OpenH264: uno por hardware
+    // puede no abrir con este tamaño (NVENC no baja de 145×49) o sin sesiones libres.
+    std::vector<std::string> candidates;
+    if (settings.video_encoder.empty()) {
+        candidates = working_hw_encoders();
+        candidates.emplace_back("libopenh264");
+    } else {
+        candidates.push_back(settings.video_encoder);
+    }
+    Result<CodecPtr> vctx = fail(ErrorCode::Internal, "sin codificador de vídeo");
+    for (const std::string& name : candidates) {
+        vctx = open_video(name, settings.width, settings.height, settings.fps, settings.crf, settings.preset, global);
+        if (vctx) {
+            impl->encoder = name;
+            break;
+        }
+    }
     if (!vctx) {
         return std::unexpected(vctx.error());
     }

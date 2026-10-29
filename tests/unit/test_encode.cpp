@@ -4,6 +4,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
@@ -96,4 +97,37 @@ TEST_CASE("Mp4Writer: vídeo y audio que se vuelven a leer", "[media][encode]") 
     gc::media::EncodeSettings odd;
     odd.width = 161;
     CHECK_FALSE(gc::media::Mp4Writer::open(out, odd));
+}
+
+// NVENC no baja de 145×49: con una salida más pequeña, el export sigue con el siguiente codificador
+// (al final OpenH264) en vez de fallar; si se pide NVENC a mano, sí falla.
+TEST_CASE("Mp4Writer: un codificador por hardware que no abre con ese tamaño deja paso al siguiente",
+          "[media][encode]") {
+    gc::media::silence_ffmpeg_log();
+    const auto& hw = gc::media::working_hw_encoders();
+    const bool nvenc = std::ranges::find(hw, "h264_nvenc") != hw.end();
+    INFO("codificadores por hardware que pasan la sonda: " << hw.size() << (nvenc ? " (con NVENC)" : ""));
+    const auto out = std::filesystem::temp_directory_path() / "gc_test_encode_small.mp4";
+    gc::media::EncodeSettings s;
+    s.width = 64;
+    s.height = 64;
+    s.audio = false;
+    {
+        auto w = gc::media::Mp4Writer::open(out, s);
+        INFO((w ? std::string() : w.error().message));
+        REQUIRE(w);
+        CHECK(w->video_encoder() != "h264_nvenc");
+        std::vector<std::uint8_t> gray(std::size_t{64} * 64 * 4, 128);
+        for (int k = 0; k < 5; ++k) {
+            REQUIRE(w->video(gray));
+        }
+        REQUIRE(w->finish());
+    }
+    CHECK(gc::media::probe_media(out).duration > 0.0);
+    std::filesystem::remove(out);
+    if (nvenc) {
+        s.video_encoder = "h264_nvenc";
+        CHECK_FALSE(gc::media::Mp4Writer::open(out, s));
+        std::filesystem::remove(out);
+    }
 }

@@ -6,10 +6,14 @@
 //
 // El codificador de vídeo se elige como gpu.py: el primero de NVENC, QSV y AMF que el FFmpeg trae Y
 // que pasa una sonda real (codificar un fotograma); si ninguno, OpenH264 por software (el export usa
-// libx264, que pasaría todo a GPL; plan §10). La calidad es la del CRF de los ajustes del export:
+// libx264, que pasaría todo a GPL; plan §10). La sonda codifica 256×256 y no 64×64 como gpu.py, que
+// queda por debajo del mínimo de NVENC (145×49) y lo descarta aunque funcione. Si el elegido no abre
+// con el tamaño de la salida, se prueba el siguiente y al final OpenH264. La calidad es la del CRF
+// de los ajustes del export:
 // `-cq` en NVENC, `-global_quality` en QSV, `-qp_*` en AMF y qmin = qmax en OpenH264, que no tiene
 // CRF (de ahí que el tamaño del archivo no coincida con el de x264). OpenH264 solo usa varios hilos
-// con un número de hilos y de *slices* explícito: hasta 4 de cada.
+// con un número de hilos y de *slices* explícito: 4 de cada en 720×1280, más en salidas mayores (12
+// en 2160×3840), sin pasar de los núcleos.
 
 #include <cstdint>
 #include <filesystem>
@@ -36,7 +40,7 @@ struct EncodeSettings {
 // Los codificadores H.264 por hardware que trae este FFmpeg y pasan la sonda real, en el orden de
 // gpu.py (h264_nvenc, h264_qsv, h264_amf). Se calcula una vez.
 [[nodiscard]] const std::vector<std::string>& working_hw_encoders();
-// El que usará el export: el primero de los de arriba o «libopenh264».
+// El que intentará primero el export: el primero de los de arriba o «libopenh264».
 [[nodiscard]] std::string pick_h264_encoder();
 
 // Un fotograma de vídeo ya en el formato del codificador (lo que da FrameConverter): Mp4Writer lo
