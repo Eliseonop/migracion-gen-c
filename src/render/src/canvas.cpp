@@ -22,6 +22,7 @@
 #include "include/core/SkSurface.h"
 
 #include "canvas_impl.hpp"
+#include "resample.hpp"
 
 namespace gc::render {
 
@@ -97,6 +98,29 @@ Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src,
                     std::format("recorte ({}, {}, {}, {}) fuera de una imagen de {}x{}", src.sx, src.sy, src.sw, src.sh,
                                 image.width, image.height));
     }
+    // Un alfa que no es un número no cambia nada, como `globalAlpha = NaN` en el contexto 2D.
+    const auto paint_alpha = static_cast<float>(std::isnan(alpha) ? 1.0 : std::clamp(alpha, 0.0, 1.0));
+    SkCanvas* canvas = impl_->surface->getCanvas();
+    // Escala y traslación sin cortinilla: el bicúbico separable (resample.hpp), directo sobre los
+    // píxeles de la capa de arriba, que da lo mismo que Skia mucho más deprisa.
+    if (!clip && detail::fast_scaled_draw() && canvas->getTotalMatrix().isIdentity() && canvas->isClipRect()) {
+        // Antes de escribir en los píxeles: si hay una instantánea del lienzo, Skia la separa.
+        impl_->surface->notifyContentWillChange(SkSurface::kRetain_ContentChangeMode);
+        SkImageInfo info;
+        std::size_t row_bytes = 0;
+        SkIPoint origin{};
+        void* top = canvas->accessTopLayerPixels(&info, &row_bytes, &origin);
+        if (top != nullptr && origin.isZero() && info.colorType() == kRGBA_8888_SkColorType &&
+            info.alphaType() == kPremul_SkAlphaType) {
+            const SkIRect bounds = canvas->getDeviceClipBounds();
+            const detail::PremulPixels pixels{static_cast<std::uint8_t*>(top), row_bytes, info.width(), info.height()};
+            if (detail::draw_scaled_bicubic(image, src, m, paint_alpha, color, pixels,
+                                            {bounds.fLeft, bounds.fTop, bounds.fRight, bounds.fBottom})) {
+                return {};
+            }
+        }
+    }
+
     const SkPixmap pixmap(SkImageInfo::Make(image.width, image.height, kRGBA_8888_SkColorType, kUnpremul_SkAlphaType),
                           image.pixels.data(), row);
     // Sin copiar los píxeles: el lienzo raster dibuja al momento y la imagen no sale de aquí.
@@ -105,7 +129,6 @@ Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src,
         return fail(ErrorCode::Internal, "Skia no pudo leer la imagen");
     }
 
-    SkCanvas* canvas = impl_->surface->getCanvas();
     canvas->save();
     if (clip) {
         SkPathBuilder path;
@@ -121,8 +144,7 @@ Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src,
                                      static_cast<float>(m.b), static_cast<float>(m.d), static_cast<float>(m.f), 0.0F,
                                      0.0F, 1.0F));
     SkPaint paint;
-    // Un alfa que no es un número no cambia nada, como `globalAlpha = NaN` en el contexto 2D.
-    paint.setAlphaf(static_cast<float>(std::isnan(alpha) ? 1.0 : std::clamp(alpha, 0.0, 1.0)));
+    paint.setAlphaf(paint_alpha);
     if (color) {
         paint.setColorFilter(color_filter(*color));
     }

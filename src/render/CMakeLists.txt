@@ -7,7 +7,7 @@ find_package(harfbuzz CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
 
 add_library(gc_render src/canvas.cpp src/compose.cpp src/effects.cpp src/mask.cpp src/png.cpp src/pillow_font.cpp
-            src/shape.cpp src/text.cpp src/vfx.cpp src/paper.cpp)
+            src/resample.cpp src/shape.cpp src/text.cpp src/vfx.cpp src/paper.cpp)
 add_library(gc::render ALIAS gc_render)
 
 target_include_directories(gc_render PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
