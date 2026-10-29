@@ -88,6 +88,8 @@ int cmd_render(std::span<const std::string> args) {
         std::cout << std::format("tiempos: audio {:.2f} s · decode {:.2f} s · evaluate {:.2f} s · compose {:.2f} s · "
                                  "texto {:.2f} s · encode {:.2f} s\n",
                                  t.audio, t.decode, t.evaluate, t.compose, t.text, t.encode);
+        std::cout << std::format("capas quietas sin redibujar en {} de {} fotogramas\n", stats->layer_cache_hits,
+                                 stats->frames);
     }
     return 0;
 }

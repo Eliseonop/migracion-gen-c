@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <functional>
+#include <span>
 #include <string>
 
 #include "gc/core/error.hpp"
@@ -21,10 +22,18 @@ struct RenderOptions {
     bool omit_unsupported = false;
     std::string video_encoder; // "" = elegirlo como gpu.py (Mp4Writer)
     int threads = 0;           // hilos que componen; 0 = según los núcleos (de 1 a 8)
+    // Las capas quietas de abajo no se redibujan (render::LayerCache). Da el mismo vídeo; false,
+    // para comprobarlo.
+    bool layer_cache = true;
     // Tras cada fotograma: cuántos van y cuántos hay.
     std::function<void(std::int64_t done, std::int64_t total)> on_progress;
     // Cada aviso distinto, una vez (material que falta, capas que se omiten).
     std::function<void(const std::string& message)> on_warning;
+    // Cada fotograma ya compuesto, con los textos (RGBA premultiplicado y opaco, width · height · 4),
+    // antes de pasarlo a YUV. Se llama desde los hilos que componen, en cualquier orden; los
+    // píxeles valen solo durante la llamada. Para los tests: el codificador por software no da
+    // siempre los mismos bytes (OpenH264 con varios hilos), y esto sí.
+    std::function<void(std::int64_t tick, std::span<const std::uint8_t> rgba)> on_composed;
 };
 
 // Segundos por fase, sumados entre hilos (componer va en varios a la vez, así que la suma puede
@@ -47,6 +56,7 @@ struct RenderStats {
     std::int64_t frames = 0;
     std::string video_encoder;
     int threads = 0;    // hilos que compusieron
+    std::int64_t layer_cache_hits = 0; // fotogramas cuyas capas quietas de abajo no se redibujaron
     double seconds = 0; // lo que tardó, en total
     RenderTimes times;
 };

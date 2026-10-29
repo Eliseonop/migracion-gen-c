@@ -288,7 +288,8 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             // Las capas, con los textos de las pistas con vídeo encima en su sitio, y el resto encima.
             std::vector<std::string> warnings;
             if (auto ok = render::compose_with_buried_texts(*canvas, timeline, job.layers, job.tick, source, fonts,
-                                                            skip, &warnings, &layer_cache);
+                                                            skip, &warnings,
+                                                            options.layer_cache ? &layer_cache : nullptr);
                 !ok) {
                 fail_all(ok.error());
                 break;
@@ -300,6 +301,9 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             }
             for (const auto& message : warnings) {
                 warn_locked(message + ": se omite");
+            }
+            if (options.on_composed) {
+                options.on_composed(job.tick, canvas->opaque_pixels());
             }
             // El fotograma es opaco: los píxeles del lienzo tal cual, a YUV.
             lap.emplace(mine.encode);
@@ -316,6 +320,7 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
         const std::scoped_lock lock(mutex);
         worker_times.compose += mine.compose;
         worker_times.text += mine.text;
+        stats.layer_cache_hits += static_cast<std::int64_t>(layer_cache.hits());
         worker_times.encode += mine.encode;
     };
 

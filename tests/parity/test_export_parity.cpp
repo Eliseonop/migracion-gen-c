@@ -23,7 +23,10 @@
 #include <cstdint>
 #include <filesystem>
 #include <limits>
+#include <map>
+#include <mutex>
 #include <set>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
@@ -206,4 +209,65 @@ TEST_CASE("export: una timeline vacía es un error, como en compose.py", "[expor
     auto stats = gc::exporter::render_project(lp, std::filesystem::temp_directory_path() / "gc_test_export_vacio.mp4");
     REQUIRE_FALSE(stats);
     CHECK(stats.error().message.contains("vacía"));
+}
+
+// La caché de las capas quietas (render::LayerCache) en el export entero: un fondo fijo con filtro
+// de color y un vídeo encima, con y sin caché, da los mismos fotogramas compuestos byte a byte.
+TEST_CASE("export: la caché de las capas quietas da el mismo vídeo", "[export]") {
+    gc::media::silence_ffmpeg_log();
+    // La timeline de la primera escena sintética (normalizada por Python) con dos de sus clips
+    // cambiados: la imagen de fondo a pantalla completa durante todo el vídeo y el vídeo encima.
+    auto file = read_json_file(kFixtures / "export" / "synthetic.json");
+    REQUIRE(file);
+    Json timeline = file->at(0).at("timeline");
+    Json bg;
+    Json top;
+    for (const Json& c : timeline.at("clips")) {
+        if (c.at("kind") == "image") {
+            bg = c;
+        } else if (c.at("kind") == "video" && !c.at("filename").get<std::string>().ends_with("va8.mp4")) {
+            top = c;
+        }
+    }
+    REQUIRE(bg.is_object());
+    REQUIRE(top.is_object());
+    bg["id"] = "fondo";
+    bg["track_id"] = "V1";
+    bg["start"] = 0.0;
+    bg["out_point"] = 2.0;
+    bg["appear"] = "none";
+    bg["look"] = "vintage";
+    bg["transform"] = {{"x", 0.5}, {"y", 0.5}, {"scale", 1.0}};
+    top["id"] = "encima";
+    top["track_id"] = "V2";
+    top["start"] = 0.3;
+    top["out_point"] = 1.0;
+    top["transform"] = {{"x", 0.5}, {"y", 0.4}, {"scale", 0.5}};
+    timeline["clips"] = Json::array({bg, top});
+    const auto lp = fixture_project(timeline, std::filesystem::temp_directory_path() / "gc_test_export");
+    // Se comparan los fotogramas compuestos (antes del codificador, que con OpenH264 y varios hilos
+    // no da siempre los mismos bytes): el MD5 de cada uno, con y sin caché.
+    const auto composed = [&](bool cache) {
+        std::mutex mutex;
+        std::map<std::int64_t, std::string> md5;
+        gc::exporter::RenderOptions options;
+        options.layer_cache = cache;
+        options.on_composed = [&](std::int64_t tick, std::span<const std::uint8_t> rgba) {
+            std::string sum = gc::media::md5_hex(rgba);
+            const std::scoped_lock lock(mutex);
+            md5[tick] = std::move(sum);
+        };
+        const auto out = std::filesystem::temp_directory_path() /
+                         (cache ? "gc_test_export_cache_si.mp4" : "gc_test_export_cache_no.mp4");
+        auto stats = gc::exporter::render_project(lp, out, options);
+        INFO((stats ? std::string() : stats.error().to_string()));
+        REQUIRE(stats);
+        std::filesystem::remove(out);
+        CHECK((stats->layer_cache_hits > 0) == cache); // con caché, el fondo no se redibuja casi nunca
+        return md5;
+    };
+    const auto with = composed(true);
+    const auto without = composed(false);
+    CHECK(with.size() == 60);
+    CHECK(with == without);
 }
