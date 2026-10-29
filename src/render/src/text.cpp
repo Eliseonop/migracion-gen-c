@@ -1577,6 +1577,9 @@ std::vector<ChainText> chain_texts(const core::Timeline& timeline, double fps) {
                     first = &*cow;
                 }
             }
+            if (first == nullptr) { // no pasa: el propio texto está en la pista
+                first = e.clip;
+            }
             tracks.push_back({keys.of(*first), e.track, nullptr, {}});
             it = std::prev(tracks.end());
         }
@@ -1625,7 +1628,7 @@ Result<void> draw_timeline_texts(Canvas& canvas, const core::Timeline& timeline,
 Result<void> compose_with_buried_texts(Canvas& canvas, const core::Timeline& timeline,
                                        const std::vector<core::FrameLayer>& layers, std::int64_t k,
                                        const SourceFn& source, const TextFonts& fonts, bool omit,
-                                       std::vector<std::string>* warnings) {
+                                       std::vector<std::string>* warnings, LayerCache* cache) {
     const TextFrame fr = make_frame(timeline, k, fonts, omit, warnings);
     const std::vector<ChainText> chain = chain_texts(timeline, fr.fps);
     const ChainKeys keys(timeline);
@@ -1651,7 +1654,12 @@ Result<void> compose_with_buried_texts(Canvas& canvas, const core::Timeline& tim
         }
         return {};
     };
-    return compose_into(canvas, layers, source, &fonts, between);
+    // Sin textos en la cadena no hay nada que poner entre capas (y así compose_into puede usar la
+    // caché de las capas quietas).
+    if (chain.empty()) {
+        return compose_into(canvas, layers, source, &fonts, {}, cache);
+    }
+    return compose_into(canvas, layers, source, &fonts, between, cache);
 }
 
 } // namespace gc::render

@@ -1573,3 +1573,12 @@ Decisión de Edu (§6):
 - **Cifras:** 199 tests con MSVC y fecha del TODO al día.
 - **MSVC:** 199/199, 0 warnings; MinGW 152/152.
 
+**Las capas quietas, sin redibujar (y el benchmark cerrado)**
+
+- `render::LayerCache` (`compose_into`; uno por hilo que compone en `genclip render`): las primeras capas que son imágenes fijas dibujadas igual (mismos píxeles, comparados con `memcmp`, y mismo recorte, matriz, opacidad, cortinilla y filtros de color; sin máscaras, fusión ni efectos) no se redibujan: se restaura el lienzo guardado tras ellas. Si solo siguen igual las de más abajo (una imagen que se mueve sobre un fondo quieto), se guardan esas; tras 3 guardados seguidos que no sirvieron (un GIF) descansa 16 fotogramas. Solo sin textos en la cadena de vídeo: `compose_with_buried_texts` ya no pasa `between` cuando no los hay. El guardado y la restauración, en `CanvasAccess` (sin capas abiertas; `notifyContentWillChange(kDiscard)` antes de sobrescribir).
+- **Test** (`test_render_compose.cpp`): 12 fotogramas con y sin caché, iguales byte a byte, con un fondo quieto y una imagen que se mueve encima, cambios de opacidad, de píxeles y de filtro, y un fondo que cambia en cada fotograma (nunca acierta).
+- **Con tus proyectos:** passagers, el MP4 entero idéntico al de sin caché (PSNR infinito en los 1242 fotogramas), y de 74,4 a 25,8 s (componer: de 490 a 92 s entre 8 hilos); filo, de 47,8 a 26,5 s.
+- **Benchmark de F3, cerrado** (una tras otra, con el PC al ~20 % de carga): filo, C++ con NVENC 26,5 s y con OpenH264 85,7, frente a 83,2 del export de hoy (x264) y 56,3 de Python con NVENC forzado; passagers, 25,8 y 66,9 frente a 97,6 y 77,4. Por software, lo que limita al C++ es OpenH264 (~17 fotogramas por segundo en 4K, un hilo). Queda repetirlo con el PC tranquilo (`tools\devenchmark.ps1`) para confirmar las cifras.
+- clang-tidy: un aviso del analizador en `chain_texts` (`*first` podía ser nulo para él; no pasa, el propio texto está en la pista) se resuelve con una vuelta explícita al clip del texto.
+- **MSVC:** 200/200, 0 warnings.
+

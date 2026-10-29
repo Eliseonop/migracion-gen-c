@@ -88,10 +88,12 @@ struct PillowText {
 // textos de las pistas de texto que tienen vídeo encima (buried_text_track_ids) metidos en la
 // cadena de vídeo, por (capa de la pila, inicio, índice en la lista), como build_command: cada
 // texto de capa propia en su sitio y los demás de la pista en una capa, en el sitio del clip más
-// temprano de la pista. Después, draw_timeline_texts pone encima el resto.
+// temprano de la pista. Después, draw_timeline_texts pone encima el resto. `cache`, la de
+// compose_into (solo se usa si no hay textos en la cadena).
 [[nodiscard]] Result<void> compose_with_buried_texts(Canvas& canvas, const core::Timeline& timeline,
                                                      const std::vector<core::FrameLayer>& layers, std::int64_t k,
                                                      const SourceFn& source, const TextFonts& fonts,
-                                                     bool omit = false, std::vector<std::string>* warnings = nullptr);
+                                                     bool omit = false, std::vector<std::string>* warnings = nullptr,
+                                                     LayerCache* cache = nullptr);
 
 } // namespace gc::render

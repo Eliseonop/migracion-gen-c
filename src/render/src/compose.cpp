@@ -1,21 +1,28 @@
 #include "gc/render/compose.hpp"
 
 #include <algorithm>
+#include <array>
 #include <bit>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <format>
+#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
+#include <vector>
 
 #include "gc/core/clip_adjust.hpp"
 #include "gc/core/clip_effects.hpp"
 #include "gc/core/clip_filters.hpp"
+#include "gc/core/export_input.hpp"
 #include "gc/core/masks.hpp"
 #include "gc/render/effects.hpp"
 #include "gc/render/shape.hpp"
+
+#include "canvas_impl.hpp"
 
 namespace gc::render {
 
@@ -133,12 +140,187 @@ Result<Image> compose_frame(const std::vector<core::FrameLayer>& layers, int wid
     return canvas->snapshot();
 }
 
+// --- LayerCache --------------------------------------------------------------------------------
+
+struct LayerCache::Impl {
+    // Una capa guardada: todo lo que decide cómo se dibuja (Canvas::draw_image por cada blit).
+    struct Entry {
+        std::string id;
+        int width = 0;
+        int height = 0;
+        std::vector<std::uint8_t> pixels; // copia del material
+        std::vector<core::Blit> blits;
+        double alpha = 1.0;
+        std::optional<std::array<core::Point, 4>> wipe;
+        std::optional<core::AffineColorMatrix> color;
+    };
+    std::vector<Entry> entries;       // las capas de abajo que hay en `pixels`
+    std::vector<std::uint8_t> pixels; // el lienzo (premultiplicado) tras dibujarlas
+    int width = 0;
+    int height = 0;
+    std::size_t hits = 0;
+    // Para no guardar en cada fotograma lo que cambia (un GIF): tras 3 guardados seguidos que el
+    // fotograma siguiente no aprovechó, se descansa (restore_prefix).
+    std::vector<std::string> run_ids;
+    int failed = 0;
+    int skipped = 0;
+    bool built_last = false;
+};
+
+LayerCache::LayerCache() : impl_(std::make_unique<Impl>()) {}
+LayerCache::LayerCache(LayerCache&&) noexcept = default;
+LayerCache& LayerCache::operator=(LayerCache&&) noexcept = default;
+LayerCache::~LayerCache() = default;
+std::size_t LayerCache::hits() const noexcept { return impl_->hits; }
+
+namespace {
+
+std::optional<core::AffineColorMatrix> color_of(const core::FrameLayer& layer) {
+    return core::stack_matrix(core::clip_filters(*layer.clip));
+}
+
+// Una capa que se puede guardar: una imagen fija que se dibuja con draw_image tal cual (sin
+// máscaras, fusión, efectos de clip ni de vídeo).
+bool cacheable(const core::FrameLayer& layer) {
+    const core::TimelineClip& clip = *layer.clip;
+    return is_media(clip) && core::is_still_clip(clip) && !layer.blits.empty() && layer.blend == "normal" &&
+           layer.masks.empty() && !core::clip_effects(clip).any() && !(clip.vfx && clip.vfx->is_array() && !clip.vfx->empty());
+}
+
+bool same_wipe(const std::optional<std::array<core::Point, 4>>& a, const std::optional<std::array<core::Point, 4>>& b) {
+    if (a.has_value() != b.has_value()) {
+        return false;
+    }
+    if (!a) {
+        return true;
+    }
+    for (std::size_t i = 0; i < 4; ++i) {
+        if ((*a)[i].x != (*b)[i].x || (*a)[i].y != (*b)[i].y) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool same_blit(const core::Blit& a, const core::Blit& b) {
+    return a.src.sx == b.src.sx && a.src.sy == b.src.sy && a.src.sw == b.src.sw && a.src.sh == b.src.sh &&
+           a.m.a == b.m.a && a.m.b == b.m.b && a.m.c == b.m.c && a.m.d == b.m.d && a.m.e == b.m.e && a.m.f == b.m.f;
+}
+
+bool matches(const LayerCache::Impl::Entry& e, const core::FrameLayer& layer, const Image& image) {
+    if (e.id != layer.clip->id || e.alpha != layer.alpha || e.width != image.width || e.height != image.height ||
+        e.blits.size() != layer.blits.size() || !same_wipe(e.wipe, layer.wipe) || e.color != color_of(layer)) {
+        return false;
+    }
+    for (std::size_t i = 0; i < e.blits.size(); ++i) {
+        if (!same_blit(e.blits[i], layer.blits[i])) {
+            return false;
+        }
+    }
+    return e.pixels == image.pixels;
+}
+
+// Las `count` primeras capas (ya dibujadas en `canvas`) y el lienzo, en la caché.
+void save_prefix(LayerCache::Impl& lc, Canvas& canvas, const std::vector<core::FrameLayer>& layers, std::size_t count,
+                 const SourceFn& source) {
+    lc.entries.clear();
+    for (std::size_t i = 0; i < count; ++i) {
+        const core::FrameLayer& layer = layers[i];
+        auto got = source(layer);
+        if (!got || *got == nullptr) {
+            lc.entries.clear();
+            return;
+        }
+        const Image& image = **got;
+        lc.entries.push_back({layer.clip->id, image.width, image.height, image.pixels, layer.blits, layer.alpha,
+                              layer.wipe, color_of(layer)});
+    }
+    if (!CanvasAccess::save_pixels(canvas, lc.pixels)) {
+        lc.entries.clear();
+        return;
+    }
+    lc.width = canvas.width();
+    lc.height = canvas.height();
+    lc.built_last = true;
+}
+
+// Si las capas de abajo son las guardadas, restaura el lienzo y devuelve cuántas son (0: no).
+// `build`: tras cuántas capas guardar el lienzo en este fotograma (0: no se guarda).
+std::size_t restore_prefix(LayerCache::Impl& lc, Canvas& canvas, const std::vector<core::FrameLayer>& layers,
+                           const SourceFn& source, std::size_t& build) {
+    build = 0;
+    std::size_t run = 0;
+    while (run < layers.size() && cacheable(layers[run])) {
+        ++run;
+    }
+    std::vector<std::string> ids;
+    ids.reserve(run);
+    for (std::size_t i = 0; i < run; ++i) {
+        ids.push_back(layers[i].clip->id);
+    }
+    if (ids != lc.run_ids) { // otras capas abajo: se vuelve a probar desde cero
+        lc.run_ids = std::move(ids);
+        lc.failed = 0;
+        lc.skipped = 0;
+    }
+    // Cuántas de las guardadas siguen igual, desde abajo.
+    std::size_t match = 0;
+    if (lc.width == canvas.width() && lc.height == canvas.height()) {
+        while (match < lc.entries.size() && match < run) {
+            auto got = source(layers[match]);
+            if (!got || *got == nullptr || !matches(lc.entries[match], layers[match], **got)) {
+                break;
+            }
+            ++match;
+        }
+    }
+    if (match > 0 && match == lc.entries.size() && CanvasAccess::restore_pixels(canvas, lc.pixels)) {
+        ++lc.hits;
+        lc.failed = 0;
+        lc.built_last = false;
+        return match;
+    }
+    if (match > 0) {
+        lc.failed = 0;
+    } else if (lc.built_last) {
+        ++lc.failed; // nada de lo guardado la última vez sirvió
+    }
+    lc.built_last = false;
+    // Si solo siguen igual las de más abajo (una imagen que se mueve encima de un fondo quieto),
+    // se guardan esas; si ninguna, todas las que se pueden. Tras 3 guardados seguidos que no
+    // sirvieron (un GIF), se descansa 16 fotogramas antes de volver a probar.
+    if (match > 0) {
+        build = match;
+    } else if (run > 0) {
+        if (lc.failed < 3) {
+            build = run;
+        } else if (++lc.skipped >= 16) {
+            lc.failed = 0;
+            lc.skipped = 0;
+            build = run;
+        }
+    }
+    return 0;
+}
+
+} // namespace
+
 Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers, const SourceFn& source,
-                          const TextFonts* fonts, const BetweenFn& between) {
+                          const TextFonts* fonts, const BetweenFn& between, LayerCache* cache) {
     const int width = canvas.width();
     const int height = canvas.height();
-    canvas.clear({0, 0, 0, 255});
-    for (const core::FrameLayer& layer : layers) {
+    // Con la caché (y sin textos entre capas), las capas quietas de abajo salen de lo guardado.
+    LayerCache::Impl* lc = cache != nullptr && !between ? &cache->impl() : nullptr;
+    std::size_t build = 0;
+    const std::size_t first = lc != nullptr ? restore_prefix(*lc, canvas, layers, source, build) : 0;
+    if (first == 0) {
+        canvas.clear({0, 0, 0, 255});
+    }
+    for (std::size_t li = first; li < layers.size(); ++li) {
+        const core::FrameLayer& layer = layers[li];
+        if (li > 0 && li == build) {
+            save_prefix(*lc, canvas, layers, build, source);
+        }
         const std::string& id = layer.clip->id;
         if (auto reason = unsupported_reason(layer, fonts)) {
             return fail(ErrorCode::Unsupported, std::format("{} (clip {})", *reason, id));
@@ -228,6 +410,9 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
         } else if (blended) {
             canvas.end_layer();
         }
+    }
+    if (build > 0 && build == layers.size()) { // todas las capas eran de las que se guardan
+        save_prefix(*lc, canvas, layers, build, source);
     }
     if (between) {
         return between(canvas, nullptr);

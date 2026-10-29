@@ -254,6 +254,7 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             return;
         }
         RenderTimes mine;
+        render::LayerCache layer_cache; // las capas quietas de abajo, de un fotograma al siguiente
         while (true) {
             Job job;
             {
@@ -287,7 +288,7 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             // Las capas, con los textos de las pistas con vídeo encima en su sitio, y el resto encima.
             std::vector<std::string> warnings;
             if (auto ok = render::compose_with_buried_texts(*canvas, timeline, job.layers, job.tick, source, fonts,
-                                                            skip, &warnings);
+                                                            skip, &warnings, &layer_cache);
                 !ok) {
                 fail_all(ok.error());
                 break;

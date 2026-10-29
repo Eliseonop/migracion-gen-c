@@ -11,7 +11,9 @@
 // efectos de vídeo (`vfx`). Lo demás es un error Unsupported hasta que llegue, para no dar un
 // fotograma incompleto o mal dibujado como bueno (unsupported_reason).
 
+#include <cstddef>
 #include <functional>
+#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
@@ -40,10 +42,36 @@ using SourceFn = std::function<Result<const Image*>(const core::FrameLayer&)>;
 // nullptr). Así van en su sitio de la pila los textos que el export mete en la cadena de vídeo.
 using BetweenFn = std::function<Result<void>(Canvas&, const core::FrameLayer* next)>;
 
+// Las capas quietas de abajo de un fotograma para el siguiente, en el mismo lienzo: si las
+// primeras capas son imágenes fijas que se dibujan igual (mismos píxeles, recorte, matriz,
+// opacidad, cortinilla y filtros de color; sin máscaras, fusión ni efectos), compose_into
+// restaura el lienzo tal como quedó tras ellas en vez de redibujarlas. El resultado es el mismo,
+// byte a byte. Una por lienzo (no se comparte entre hilos). Solo sin `between`: un texto entre
+// medias cambiaría lo guardado.
+class LayerCache {
+public:
+    LayerCache();
+    LayerCache(LayerCache&&) noexcept;
+    LayerCache& operator=(LayerCache&&) noexcept;
+    LayerCache(const LayerCache&) = delete;
+    LayerCache& operator=(const LayerCache&) = delete;
+    ~LayerCache();
+
+    // Fotogramas que se sirvieron de lo guardado (para medir).
+    [[nodiscard]] std::size_t hits() const noexcept;
+
+    struct Impl; // interno (compose.cpp)
+    [[nodiscard]] Impl& impl() noexcept { return *impl_; }
+
+private:
+    std::unique_ptr<Impl> impl_;
+};
+
 // Lo mismo, pero sobre un lienzo que ya existe (se borra a negro opaco): para poner encima los
-// textos y reutilizar el lienzo de un fotograma al siguiente. El resultado es opaco.
+// textos y reutilizar el lienzo de un fotograma al siguiente. El resultado es opaco. Con
+// `cache`, las capas quietas de abajo no se redibujan (LayerCache).
 [[nodiscard]] Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers,
                                         const SourceFn& source, const TextFonts* fonts = nullptr,
-                                        const BetweenFn& between = {});
+                                        const BetweenFn& between = {}, LayerCache* cache = nullptr);
 
 } // namespace gc::render
