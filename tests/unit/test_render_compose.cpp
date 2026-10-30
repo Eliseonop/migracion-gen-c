@@ -165,9 +165,11 @@ std::size_t run_frames(int n, const std::function<Frame(int)>& frame, const gc::
     return cache.hits();
 }
 
+// El fondo recortado con margen en los cuatro lados, para poder mover cada borde por separado.
 FrameLayer bg_layer(const TimelineClip& clip, gc::core::Affine m = {1.2, 0, 0, 1.2, 1.5, 0.5}) {
     FrameLayer a = layer(clip);
     a.blits = {blit(64, 48, m)};
+    a.blits[0].src = {2, 2, 56, 40};
     return a;
 }
 
@@ -211,6 +213,18 @@ TEST_CASE("compose_into: con LayerCache, las capas quietas no se redibujan y el 
     }
     SECTION("zoom") {
         CHECK(run_frames(7, changed([](FrameLayer& a) { a.blits[0].m.a = 1.5; }), source) >= 3);
+    }
+    SECTION("escala vertical") {
+        CHECK(run_frames(7, changed([](FrameLayer& a) { a.blits[0].m.d = 0.9; }), source) >= 3);
+    }
+    SECTION("giro (b y c de la matriz)") {
+        CHECK(run_frames(7, changed([](FrameLayer& a) { a.blits[0].m.b = 0.2; }), source) >= 3);
+        CHECK(run_frames(7, changed([](FrameLayer& a) { a.blits[0].m.c = -0.15; }), source) >= 3);
+    }
+    SECTION("recorte: cada borde por separado") {
+        CHECK(run_frames(7, changed([](FrameLayer& a) { a.blits[0].src.sy = 3.5; }), source) >= 3);
+        CHECK(run_frames(7, changed([](FrameLayer& a) { a.blits[0].src.sw = 50; }), source) >= 3);
+        CHECK(run_frames(7, changed([](FrameLayer& a) { a.blits[0].src.sh = 44; }), source) >= 3);
     }
     SECTION("desplazamiento vertical") {
         CHECK(run_frames(7, changed([](FrameLayer& a) { a.blits[0].m.f = 6.25; }), source) >= 3);

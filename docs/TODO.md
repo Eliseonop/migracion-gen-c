@@ -15,7 +15,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · *(parcial)* empezado pero no cerrado.
 | **F2** Lógica de edición | ops, sin solapes, keyframes, undo | ✅ hecha: las 42 ops, el historial en disco, el autoguardado y la envolvente de un sonido (`clip_motion`) | |
 | **F3** Media + export | gc_media, gc_render v1, `genclip render` | 🟡 evaluación hecha (por clip, capas y fotograma), cabeceras de imagen, sondas, decode y seek de `gc_media` · MSVC, vcpkg, FFmpeg y Skia (con clang-cl) listos; `gc_render` compone imágenes en overlay (paridad con el export por PSNR); `genclip render` exporta de punta a punta en tubería (`gc_export`), más rápido que el export (Snowpiercer: 34 s frente a 100; tus 4K: 26 s frente a 83–98) | **M1** |
 | **F4** Render completo | texto, fx, transiciones, chroma | 🟡 los 42 efectos de vídeo (también en el compuesto, con velocidad y al revés, y `paper_cutout`), el croma con el contorno, el matte de «Eliminar fondo» desde la caché y la medida del texto exacta como Pillow | |
-| **F5** Editor de escritorio | app Qt Quick | ⬜ | **M2** |
+| **F5** Editor de escritorio | app Qt Quick | 🟡 empezada (2026-10-19): `genclip-studio` con inicio, timeline, material, inspector y ajustes sobre `gc_core`; falta el preview (unir Qt con `gc_render`/`gc_export`) | **M2** |
 | **F6** IA local | fondo, SAM, Whisper, TTS, tracking | ⬜ | |
 | **F7** Nube, agente, MCP | providers, chat, MCP :8000, YouTube | ⬜ | |
 | ~~**F8** Motion, Stick, Paper~~ | fuera de alcance por ahora (plan §6): Paper ya es el efecto `paper_cutout` (F4) | — | |

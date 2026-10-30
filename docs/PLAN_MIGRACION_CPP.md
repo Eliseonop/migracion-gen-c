@@ -1590,3 +1590,11 @@ Decisión de Edu (§6):
 - **Docs:** un `\b` de Python se había comido la barra de `tools\dev\benchmark.ps1`; el README decía «por software, igual o más rápido» (filo va un 3 % por detrás) y las cifras finales se midieron a mano (con ~20 % de carga, `benchmark.ps1` se niega).
 - **Casillas de F3:** «Opacidad, modos de fusión, filtros y ajustes de color», cerrada (los efectos de vídeo ya están en F4); «gc_render v1», partida en overlay (hecho) y relleno con doble encuadre (sin escenas de render: espera la decisión de Edu sobre su semántica).
 - **MSVC:** 201/201, 0 warnings; MinGW 152/152; clang-tidy, 0 avisos.
+
+**Revisión: los hallazgos del revisor** (`revisor-migracion` sobre `339730a..2000819`: aprobada, sin bloqueantes)
+
+- **La clave aún tenía huecos sin probar:** un mutante que solo compara `src.sx` del recorte y `a`, `e` y `f` de la matriz pasaba. Escenarios nuevos: escala vertical, giro (`b` y `c`) y cada borde del recorte por separado (el fondo ahora va recortado con margen para poder mover cada borde sin salirse de la imagen; un primer intento movía `sy` fuera y el test fallaba por eso, no por la caché). 11/11 mutaciones de la clave detectadas.
+- **`on_composed`** ya no cuenta en el tiempo de «texto» de `--tiempos`, y el test del export comprueba el tamaño del fotograma (un lienzo vacío daría el mismo MD5 con y sin caché).
+- **Docs:** F5 en la tabla del TODO, 🟡 (estaba en ⬜ con decenas de partes hechas), y el README ya no dice que el preview espera a `gc_render`, sino que falta unir Qt con el render.
+- **MSVC:** 201/201 (el test de la caché, también en Debug), 0 warnings; MinGW 152/152; clang-tidy, 0 avisos.
+

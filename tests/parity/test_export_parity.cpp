@@ -253,7 +253,8 @@ TEST_CASE("export: la caché de las capas quietas da el mismo vídeo", "[export]
         gc::exporter::RenderOptions options;
         options.layer_cache = cache;
         options.on_composed = [&](std::int64_t tick, std::span<const std::uint8_t> rgba) {
-            std::string sum = gc::media::md5_hex(rgba);
+            // Un lienzo vacío daría el mismo MD5 con y sin caché: el tamaño se comprueba.
+            std::string sum = rgba.size() == std::size_t{360} * 640 * 4 ? gc::media::md5_hex(rgba) : "mal tamaño";
             const std::scoped_lock lock(mutex);
             md5[tick] = std::move(sum);
         };
@@ -270,4 +271,5 @@ TEST_CASE("export: la caché de las capas quietas da el mismo vídeo", "[export]
     const auto without = composed(false);
     CHECK(with.size() == 60);
     CHECK(with == without);
+    CHECK(std::ranges::none_of(with, [](const auto& kv) { return kv.second == "mal tamaño"; }));
 }

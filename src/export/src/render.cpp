@@ -302,7 +302,8 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             for (const auto& message : warnings) {
                 warn_locked(message + ": se omite");
             }
-            if (options.on_composed) {
+            lap.reset();
+            if (options.on_composed) { // fuera de los tiempos de --tiempos
                 options.on_composed(job.tick, canvas->opaque_pixels());
             }
             // El fotograma es opaco: los píxeles del lienzo tal cual, a YUV.
