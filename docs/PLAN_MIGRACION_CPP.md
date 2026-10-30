@@ -1598,3 +1598,10 @@ Decisión de Edu (§6):
 - **Docs:** F5 en la tabla del TODO, 🟡 (estaba en ⬜ con decenas de partes hechas), y el README ya no dice que el preview espera a `gc_render`, sino que falta unir Qt con el render.
 - **MSVC:** 201/201 (el test de la caché, también en Debug), 0 warnings; MinGW 152/152; clang-tidy, 0 avisos.
 
+### 2026-10-29 — F5: las barras de los clips de audio en la timeline (pseudoWaveform)
+
+- `gc_core/timeline_view.hpp`: `pseudo_waveform(semilla, barras)`, el `pseudoWaveform` de `lib/panning.js` que dibuja la timeline del editor en cada clip de audio. No sale del audio: barras pseudoaleatorias con la semilla del `asset_id` (si es falsy en JS, «a»; `String()` de JS para números, con el `Number::toString` de ECMAScript), el hash en uint32 sobre las unidades UTF-16 (`charCodeAt`) y un generador lineal en dobles como JS: el producto pasa de 2⁵³ y se redondea antes del `& 0x7fffffff`, así que se emula en doble, no en enteros. Envolvente que imita la voz y acotado a 0,12–1.
+- **Paridad** frente al JS real (`editor_ui_js.mjs`, caso «forma de onda» de `timeline_ui.json`: 89 llamadas con semillas falsy, números, Unicode y emoji, y de 0 a 400 barras). Hasta 1 ulp por `Math.sin`: se compara con la tolerancia de 1e-12 de `near`, que ahora también recorre listas. Al regenerar la fixture, 6 valores de `zoomByDrag` cambiaron 1 ulp (el `Math.pow` del Node instalado); el test ya los compara con 1e-15 relativo.
+- Falta dibujarlas en la timeline de QML (F5).
+- **MSVC:** 201/201, 0 warnings; MinGW 152/152; clang-tidy, 0 avisos.
+

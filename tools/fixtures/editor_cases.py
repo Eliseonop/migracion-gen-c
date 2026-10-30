@@ -593,6 +593,23 @@ def _sfx_name_case() -> dict:
     return {"name": "sfx", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
 
 
+def _waveform_case(rng: random.Random) -> dict:
+    """Las barras del clip de audio en la timeline (pseudoWaveform de lib/panning.js): no es el audio,
+    sino barras pseudoaleatorias con la semilla del asset_id."""
+    seeds = ["a", "", None, 0, 7, 123456789, "sfx_0001", "clip-3f9c", "voz.mp3", "ñandú", "日本語", "🎵 emoji",
+             "a" * 300, " ", "0", -5, 1.5, 2 ** 40, "x\ny"]
+    calls: list = []
+    for s in seeds:
+        calls.append(["pseudoWaveform", s, None])
+    for s in seeds[:6]:
+        for bars in (0, 1, 16, 47, 200):
+            calls.append(["pseudoWaveform", s, bars])
+    for _ in range(40):
+        calls.append(["pseudoWaveform", "".join(rng.choice("abcdefghijklmnopqrstuvwxyz0123456789_-") for _ in range(12)),
+                      rng.randint(16, 400)])
+    return {"name": "forma de onda", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
+
+
 def _crop_case(rng: random.Random) -> dict:
     """Confirmar el modal Recortar (confirmCrop)."""
     clips = [clip("st", "V1", start=0, inp=1, out=6, layout="overlay"),
@@ -641,4 +658,5 @@ def cases() -> list[dict]:
     out.append(_crop_case(rng))
     out.append(_sfx_name_case())
     out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
+    out.append(_waveform_case(rng))
     return out

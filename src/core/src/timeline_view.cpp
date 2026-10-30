@@ -2,10 +2,15 @@
 
 #include <algorithm>
 #include <array>
+#include <charconv>
 #include <cmath>
+#include <cstdint>
 #include <format>
+#include <numbers>
 #include <ranges>
+#include <string>
 #include <unordered_set>
+#include <vector>
 
 #include "gc/core/timeline_rules.hpp"
 #include "gc/core/timeline_ui.hpp"
@@ -172,6 +177,147 @@ std::vector<const TimelineTrack*> display_tracks(const std::vector<TimelineTrack
         if (!is_stack_track(t)) {
             out.push_back(&t);
         }
+    }
+    return out;
+}
+
+namespace {
+
+// Number::toString de ECMAScript: los dígitos más cortos que vuelven al mismo doble y la notación
+// según el exponente (fija entre 1e-6 y 1e21; si no, «d.ddde±n»).
+std::string js_number_string(double v) {
+    if (std::isnan(v)) {
+        return "NaN";
+    }
+    if (v == 0) {
+        return "0";
+    }
+    if (std::isinf(v)) {
+        return v < 0 ? "-Infinity" : "Infinity";
+    }
+    std::array<char, 64> buf{};
+    const auto r = std::to_chars(buf.data(), buf.data() + buf.size(), std::abs(v), std::chars_format::scientific);
+    const std::string s(buf.data(), r.ptr);
+    const auto e = s.find('e');
+    std::string digits;
+    for (const char c : s.substr(0, e)) {
+        if (c != '.') {
+            digits += c;
+        }
+    }
+    const auto k = static_cast<int>(digits.size());
+    const int n = std::stoi(s.substr(e + 1)) + 1; // v = 0.dígitos × 10^n
+    std::string out;
+    if (k <= n && n <= 21) {
+        out = digits + std::string(static_cast<std::size_t>(n - k), '0');
+    } else if (0 < n && n <= 21) {
+        out = digits.substr(0, static_cast<std::size_t>(n)) + "." + digits.substr(static_cast<std::size_t>(n));
+    } else if (-6 < n && n <= 0) {
+        out = "0." + std::string(static_cast<std::size_t>(-n), '0') + digits;
+    } else {
+        const int e1 = n - 1;
+        out = digits.substr(0, 1) + (k > 1 ? "." + digits.substr(1) : "") + "e" + (e1 >= 0 ? "+" : "-") +
+              std::to_string(std::abs(e1));
+    }
+    return v < 0 ? "-" + out : out;
+}
+
+// String(v) de JS para lo que puede llegar como semilla.
+std::string js_string(const Json& v) {
+    if (v.is_string()) {
+        return v.get<std::string>();
+    }
+    if (v.is_boolean()) {
+        return v.get<bool>() ? "true" : "false";
+    }
+    if (v.is_number()) {
+        return js_number_string(v.get<double>());
+    }
+    if (v.is_null()) {
+        return "null";
+    }
+    if (v.is_array()) { // Array.prototype.join(",")
+        std::string out;
+        for (std::size_t i = 0; i < v.size(); ++i) {
+            out += (i > 0 ? "," : "") + (v[i].is_null() ? std::string() : js_string(v[i]));
+        }
+        return out;
+    }
+    return "[object Object]";
+}
+
+bool js_truthy(const Json& v) {
+    if (v.is_null()) {
+        return false;
+    }
+    if (v.is_boolean()) {
+        return v.get<bool>();
+    }
+    if (v.is_number()) {
+        const double d = v.get<double>();
+        return d != 0 && !std::isnan(d);
+    }
+    if (v.is_string()) {
+        return !v.get<std::string>().empty();
+    }
+    return true;
+}
+
+// Las unidades UTF-16 de un texto UTF-8 (charCodeAt).
+std::vector<std::uint32_t> utf16_units(const std::string& s) {
+    std::vector<std::uint32_t> out;
+    std::size_t i = 0;
+    while (i < s.size()) {
+        const auto lead = static_cast<unsigned char>(s[i]);
+        std::uint32_t cp = lead;
+        std::size_t len = 1;
+        if (lead >= 0xF0) {
+            cp = lead & 0x07U;
+            len = 4;
+        } else if (lead >= 0xE0) {
+            cp = lead & 0x0FU;
+            len = 3;
+        } else if (lead >= 0xC0) {
+            cp = lead & 0x1FU;
+            len = 2;
+        }
+        for (std::size_t j = 1; j < len && i + j < s.size(); ++j) {
+            cp = (cp << 6U) | (static_cast<unsigned char>(s[i + j]) & 0x3FU);
+        }
+        if (cp >= 0x10000) {
+            cp -= 0x10000;
+            out.push_back(0xD800U + (cp >> 10U));
+            out.push_back(0xDC00U + (cp & 0x3FFU));
+        } else {
+            out.push_back(cp);
+        }
+        i += len;
+    }
+    return out;
+}
+
+} // namespace
+
+std::vector<double> pseudo_waveform(const Json& seed, const Json& bars) {
+    const double n = bars.is_null() ? 48.0 : js_number(bars);
+    std::uint32_t h = 0;
+    for (const std::uint32_t c : utf16_units(js_truthy(seed) ? js_string(seed) : std::string("a"))) {
+        h = (h * 31U) + c; // (h * 31 + c) >>> 0: exacto en doble y después módulo 2³²
+    }
+    std::vector<double> out;
+    double hd = h;
+    // Las vueltas de `for (i = 0; i < bars; i++)`: ⌈bars⌉ si es positivo (acotado: con Infinity, JS
+    // no acaba nunca); con 0, negativo o NaN, ninguna.
+    const auto count = n > 0 ? static_cast<std::int64_t>(std::ceil(std::min(n, 1e6))) : std::int64_t{0};
+    for (std::int64_t k = 0; k < count; ++k) {
+        const auto i = static_cast<double>(k);
+        // (h * 1103515245 + 12345) & 0x7fffffff: el producto en doble (se redondea), ToInt32.
+        const double p = (hd * 1103515245.0) + 12345.0;
+        const auto wrapped = static_cast<std::uint64_t>(std::fmod(p, 4294967296.0));
+        hd = static_cast<double>(wrapped & 0x7fffffffULL);
+        const double base = 0.25 + ((std::fmod(hd, 1000.0) / 1000) * 0.75);
+        const double env = 0.6 + (0.4 * std::sin((i / n) * std::numbers::pi * 3));
+        out.push_back(std::max(0.12, std::min(1.0, base * env)));
     }
     return out;
 }

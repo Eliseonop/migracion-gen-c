@@ -1,8 +1,8 @@
 #pragma once
 
 // Cómo se ve la timeline del editor (espejo de timelineScale.js, trackRows.js y displayTracks de
-// trackStack.js de video-yt): zoom en píxeles por segundo, marcas de la regla, alto de las filas
-// y orden de las pistas en pantalla.
+// trackStack.js de video-yt): zoom en píxeles por segundo, marcas de la regla, alto de las filas,
+// orden de las pistas en pantalla y las barras de los clips de audio (pseudoWaveform de panning.js).
 
 #include <optional>
 #include <string>
@@ -55,5 +55,12 @@ inline constexpr int kRowHeightDefault = 52;
 
 // Orden en pantalla: la pila de vídeo y texto al revés (lo de delante arriba) y luego el audio.
 [[nodiscard]] std::vector<const TimelineTrack*> display_tracks(const std::vector<TimelineTrack>& tracks);
+
+// Las barras de un clip de audio en la timeline (pseudoWaveform de lib/panning.js): no salen del
+// audio, son pseudoaleatorias con la semilla `seed` (el asset_id; si es falsy en JS, «a») y una
+// envolvente que imita la voz, entre 0,12 y 1. `bars`: cuántas (null = 48; no entero, como el
+// `for (i < bars)` de JS). La suma del hash va en uint32 sobre las unidades UTF-16 y el
+// generador, en dobles como JS (el producto pasa de 2⁵³ y se redondea antes del `& 0x7fffffff`).
+[[nodiscard]] std::vector<double> pseudo_waveform(const Json& seed, const Json& bars = Json());
 
 } // namespace gc::core

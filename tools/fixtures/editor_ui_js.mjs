@@ -30,6 +30,7 @@ const maskLib = await load('lib/clipMask.js')
 const favorites = await load('lib/favorites.js')
 const sfxName = await load('lib/sfxName.js')
 const projectFps = await load('lib/projectFps.js')
+const panning = await load('lib/panning.js')
 // confirmCrop de VideoEditor.jsx (con changeReframe, upsertKeyframe, changeTransform y srcTOf) sobre un clip.
 const confirmCrop = (clip, crop, rotation, t, fps) => {
   let made = clip
@@ -314,6 +315,7 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     },
     styleKfState: (id, t, keys, fps) => kf.styleKfState(byId(id), t, keys, fps),
     toggleStyleKf: (id, trackStyle, keys, t, fps) => noIds(toggleStyleKf(byId(id), trackStyle, keys, t, fps)).keyframes ?? null,
+    pseudoWaveform: (seed, bars) => panning.pseudoWaveform(seed, bars ?? undefined),
     normalizeFavorites: (raw) => favorites.normalizeFavorites(raw),
     sfxNameFromFile: (name) => sfxName.sfxNameFromFile(name),
     realSfxCategories: (cats) => sfxName.realSfxCategories(cats),

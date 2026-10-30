@@ -142,6 +142,17 @@ bool near(const Json& a, const Json& b) {
                    return b.contains(kv.key()) && near(kv.value(), b.at(kv.key()));
                });
     }
+    if (a.is_array() && b.is_array()) {
+        if (a.size() != b.size()) {
+            return false;
+        }
+        for (std::size_t i = 0; i < a.size(); ++i) {
+            if (!near(a[i], b[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
     return a == b;
 }
 
@@ -661,6 +672,9 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         toggle_style_kf(c, call.at(2), num(4), strings(call.at(3)), num(5), ids);
         return c.keyframes ? without_ids(*c.keyframes) : Json();
     }
+    if (fn == "pseudoWaveform") {
+        return pseudo_waveform(call.at(1), call.at(2));
+    }
     if (fn == "sfxNameFromFile") {
         return sfx_name_from_file(call.at(1));
     }
@@ -888,7 +902,7 @@ TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]
                 CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(expected.dump()));
             } else if (calls[i].at(0) == "zoomByDrag") { // Math.pow de V8 y el pow de la libc: hasta 1 ulp
                 CHECK(std::abs(got.get<double>() / results[i].get<double>() - 1) < 1e-15);
-            } else if (c.at("name") == "encuadre") {
+            } else if (c.at("name") == "encuadre" || c.at("name") == "forma de onda") { // sin: 1 ulp
                 CHECK(near(nlohmann::json::parse(got.dump()), nlohmann::json::parse(results[i].dump())));
             } else {
                 CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(results[i].dump()));
