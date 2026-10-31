@@ -813,7 +813,65 @@ struct ClipFrames::Impl {
     std::optional<RgbaFrame> lookahead; // el siguiente
     std::int64_t lookahead_pts = 0;
     bool ended = false;
-    std::optional<RgbaFrame> reversed; // al revés: el del último tick (export_frame_at)
+    // Al revés: cuántos fotogramas da el tramo (se cuenta una vez) y una ventana de fotogramas
+    // seguidos del tramo, en su orden, desde el índice `window_from`.
+    std::optional<std::int64_t> reverse_total;
+    std::size_t reverse_frame_bytes = 0;
+    std::int64_t window_from = 0;
+    std::vector<RgbaFrame> window;
+    static constexpr std::size_t kReverseWindowBytes = std::size_t{256} * 1024 * 1024;
+
+    // El fotograma del tick al revés: el m-ésimo que suelta el filtro reverse es el (N−1−m)-ésimo
+    // del tramo, como en export_frame_at. Al reproducir, los índices del tramo bajan: cada vez se
+    // decodifica un bloque que TERMINA en el pedido (tantos como quepan en kReverseWindowBytes), así
+    // que los siguientes ticks salen de él sin decodificar.
+    Result<const RgbaFrame*> reverse_at(std::int64_t tick) {
+        if (!reverse_total) {
+            std::size_t bytes = 0;
+            auto total = decode_frames(chain.spec, [&](const RgbaFrame& f) {
+                bytes = std::max(bytes, f.pixels.size());
+                return true;
+            });
+            if (!total) {
+                return std::unexpected(total.error());
+            }
+            reverse_total = static_cast<std::int64_t>(*total);
+            reverse_frame_bytes = std::max<std::size_t>(bytes, 1);
+        }
+        const std::int64_t n = *reverse_total;
+        if (n == 0) {
+            return nullptr;
+        }
+        std::int64_t chosen = n - 1;
+        for (std::int64_t k = 0; k < n; ++k) {
+            const std::int64_t p = chain.pts_of(k);
+            if (p >= tick) {
+                chosen = p == tick || k == 0 ? k : k - 1;
+                break;
+            }
+        }
+        const std::int64_t wanted = n - 1 - chosen;
+        if (wanted < window_from || wanted >= window_from + static_cast<std::int64_t>(window.size())) {
+            const auto fit = static_cast<std::int64_t>(std::max<std::size_t>(1, kReverseWindowBytes / reverse_frame_bytes));
+            window.clear();
+            window_from = std::max<std::int64_t>(0, wanted - fit + 1);
+            std::int64_t i = 0;
+            auto got = decode_frames(chain.spec, [&](const RgbaFrame& f) {
+                if (i >= window_from) {
+                    window.push_back(f);
+                }
+                return i++ < wanted;
+            });
+            if (!got) {
+                return std::unexpected(got.error());
+            }
+            if (wanted >= window_from + static_cast<std::int64_t>(window.size())) {
+                // El tramo dio menos fotogramas que al contarlos: no debería pasar.
+                return fail(ErrorCode::Io, std::format("el clip {} no da el fotograma {} al revés", clip.id, wanted));
+            }
+        }
+        return &window[static_cast<std::size_t>(wanted - window_from)];
+    }
 
     Result<void> restart() {
         decoder.reset(); // el anterior termina su hilo antes de abrir otro
@@ -891,13 +949,7 @@ Result<ClipFrames> ClipFrames::open_bake_input(const core::TimelineClip& clip, c
 Result<const RgbaFrame*> ClipFrames::at(std::int64_t tick) {
     Impl& s = *impl_;
     if (s.chain.reverse) {
-        // Al revés hace falta el final del tramo: de momento, como export_frame_at.
-        auto f = export_frame_at(s.clip, s.path, s.fps, tick, s.matte ? &*s.matte : nullptr);
-        if (!f) {
-            return std::unexpected(f.error());
-        }
-        s.reversed = std::move(*f);
-        return s.reversed ? &*s.reversed : nullptr;
+        return s.reverse_at(tick);
     }
     if (tick < s.last) { // hacia atrás: se empieza de nuevo
         if (auto r = s.restart(); !r) {

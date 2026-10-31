@@ -1633,3 +1633,10 @@ Decisión de Edu (§6):
 - `LruBytes::drop` sigue tomando el iterador por valor (clang-tidy pedía referencia, pero en `set` viene del índice que `drop` borra antes de usarlo).
 - **MSVC:** 204/204, 0 warnings; MinGW 154/154; clang-tidy, 0 avisos.
 
+### 2026-10-31 — F3: el revés en ClipFrames, por bloques
+
+- `ClipFrames::at` con `reverse` ya no llama a `export_frame_at` en cada tick (dos decodes enteros del tramo por fotograma: contar y tomar uno). Ahora cuenta el tramo una vez y decodifica un bloque de fotogramas seguidos que TERMINA en el pedido (el m-ésimo que suelta el filtro reverse es el (N−1−m)-ésimo del tramo, como en `export_frame_at`), tantos como quepan en 256 MB (en 1080p, 32; en 4K, 7). Al reproducir, el índice del tramo baja, así que los siguientes ticks salen del bloque: N fotogramas al revés cuestan ~N²/(2·bloque) decodificados en vez de 2·N². Usa el salto previo (preroll) del lector.
+- **Test:** 5 casos al revés en «ClipFrames da los mismos fotogramas que export_frame_at» (30 en 30, 25 en 30 empezando en 0,29, velocidades 1,5 y 0,75, y con salto previo), con ticks crecientes, repetidos y saltos atrás. Un mutante (índice del tramo desplazado uno) falla.
+- Ninguno de tus clips va al revés: sin medida real.
+- **MSVC:** 204/204 (Debug y Release), 0 warnings; MinGW 154/154; clang-tidy, 0 avisos.
+

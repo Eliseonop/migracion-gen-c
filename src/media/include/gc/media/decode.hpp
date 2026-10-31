@@ -86,7 +86,8 @@ inline constexpr const char* kAssumeBt709Filter =
 // Los fotogramas de un clip que compone el export, en orden de ticks: los mismos que
 // export_frame_at, pero sin volver a decodificar desde el principio en cada fotograma (el
 // decodificador avanza con los ticks). Pedir un tick anterior al último empieza de nuevo. Al revés
-// (`reverse`), de momento, cada tick es un export_frame_at. Un vídeo que no empieza cerca del
+// (`reverse`), el tramo se cuenta una vez y se decodifica por bloques que terminan en el fotograma
+// pedido (hasta 256 MB): al reproducir, los siguientes ticks salen del bloque. Un vídeo que no empieza cerca del
 // principio del archivo no se decodifica desde 0: salta antes a un fotograma clave (preroll_us),
 // 1 s antes del tramo. Cada uno decodifica por adelantado en su propio hilo (unos pocos fotogramas).
 class ClipFrames {

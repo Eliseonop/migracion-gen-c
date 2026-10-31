@@ -67,6 +67,12 @@ TEST_CASE("ClipFrames da los mismos fotogramas que export_frame_at", "[media][de
         {"salto previo: MKV que empieza en 1,5 s", clip("keys30_offset.mkv", 0.0, 3.0, 4.2)},
         {"salto previo a velocidad 1,5", clip("keys30.mp4", 0.2, 2.2, 4.0, 1.5)},
         {"salto previo hasta el final del archivo", clip("keys30.mp4", 0.0, 4.5, 6.0)},
+        // Al revés (el tramo por bloques, no un export_frame_at por tick).
+        {"al revés", clip("moving30.mp4", 0.0, 0.0, 1.2, 1.0, false, true)},
+        {"al revés, de 25 en 30 y empieza en 0,29", clip("moving25.mp4", 0.29, 0.1, 1.4, 1.0, false, true)},
+        {"al revés a velocidad 1,5", clip("moving30.mp4", 0.0, 0.0, 1.8, 1.5, false, true)},
+        {"al revés a velocidad 0,75", clip("moving30.mp4", 0.1, 0.0, 1.0, 0.75, false, true)},
+        {"al revés con salto previo", clip("keys30.mp4", 0.2, 3.3, 4.6, 1.0, false, true)},
     };
     // Ticks crecientes (con repeticiones) y un salto hacia atrás al final.
     std::vector<std::int64_t> ticks;
