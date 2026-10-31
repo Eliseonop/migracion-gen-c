@@ -1640,3 +1640,11 @@ Decisión de Edu (§6):
 - Ninguno de tus clips va al revés: sin medida real.
 - **MSVC:** 204/204 (Debug y Release), 0 warnings; MinGW 154/154; clang-tidy, 0 avisos.
 
+### 2026-10-31 — F4: el marco de TikTok/Shorts del preview (platformChrome.js)
+
+- `gc/render/platform.hpp` y `src/render/src/platform.cpp`: `kPlatformOverlays` (PLATFORM_OVERLAYS), `overlay_label` y `draw_platform_chrome(lienzo, x, y, w, h, marco)`, línea a línea con `features/editor/render/platformChrome.js` sobre una capa mínima del contexto 2D en Skia: el estado de save/restore (relleno o degradado, trazo, grosor, puntas y uniones redondas, sombra, modo de fusión, fuente, alineación y línea de base), el trazado actual (que no es parte del estado), `arc` como el navegador (línea desde el punto actual, barrido módulo 2π y la vuelta entera en dos medias vueltas), `roundRect`, el recorte al recuadro, la sombra de CADA dibujo (DropShadow sin desplazamiento con sigma = shadowBlur / 2) y el `destination-out` del agujero del disco.
+- **Texto:** `system-ui` es Segoe UI en Windows (la de Chromium), con el peso por la regla de CSS (`matchStyle` de DirectWrite = `matchStyleCSS3`: 500 → 400, 800 → 900); la forma, con HarfBuzz sobre los bytes de la fuente (interletraje; posiciones a 1/65536 px), y las líneas de base «top» y «middle» por la caja del em de Chromium (`NormalizedTypoAscentAndDescent`: sTypoAscender y sTypoDescender de OS/2 llevados a que sumen el tamaño, a 1/64 px). Con el ascenso de la fuente, los textos «top» bajaban ~5 px (25–27 dB); sin HarfBuzz, las líneas largas derivaban (34–38 dB).
+- **Paridad** frente al JS REAL en el Canvas 2D de Chromium por software (`export_fixtures.py --solo plataforma`, `render/platform.json` y `render/platform/*.png`): 12 escenas (TikTok y Shorts a 180×320, 360×640 y 720×1280, dentro de un recuadro de un lienzo mayor, sin fondo, y «none», un marco desconocido y un ancho 0, que no dibujan nada y se comparan exactos) y las etiquetas del selector. Luma de los colores premultiplicados de 35,2 a 40,5 dB y alfa ≥ 40,3 dB (lo que queda es el antialias de glifos y sombras). Sin la sombra fallan 7 de 9.
+- Falta mostrarlo en el preview del studio (F5), con el selector del visor (EdViewerTools).
+- **MSVC:** 205/205 (Debug y Release), 0 warnings; MinGW 154/154; clang-tidy, 0 avisos.
+

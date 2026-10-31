@@ -29,6 +29,7 @@ Salida (al repo):
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
   tests/fixtures/editor/timeline_ui.json   timeline del editor: editor_cases.py (editorModel.js con Node)
   tests/fixtures/editor/lru_bytes.json     caché LRU con tope en bytes: lru_cases.py (lib/lruBytes.js con Node; --solo lru)
+  tests/fixtures/render/platform.json      marco de TikTok/Shorts del preview (platformChrome.js en Chromium; --solo plataforma)
   tests/fixtures/frame/synthetic.json      fotograma: frame_cases.py (drawComposite con Node)
   tests/fixtures/history/synthetic.json    historial: pasos de history_cases.py
   tests/fixtures/settings/synthetic.json   ajustes: pasos de settings_cases.py
@@ -2126,6 +2127,59 @@ def synthetic_vfx_fixtures() -> list[dict]:
     return cases
 
 
+# Escenas del marco de plataforma: (nombre, ancho, alto, recuadro [x, y, w, h], marco, fondo o None).
+PLATFORM_CASES = [
+    ("tiktok 360x640", 360, 640, [0, 0, 360, 640], "tiktok", "#3c6e91"),
+    ("shorts 360x640", 360, 640, [0, 0, 360, 640], "shorts", "#3c6e91"),
+    ("tiktok 720x1280", 720, 1280, [0, 0, 720, 1280], "tiktok", "#7a4b2a"),
+    ("shorts 720x1280", 720, 1280, [0, 0, 720, 1280], "shorts", "#7a4b2a"),
+    ("tiktok en un recuadro dentro del lienzo", 520, 720, [80, 40, 360, 640], "tiktok", "#204030"),
+    ("shorts en un recuadro dentro del lienzo", 520, 720, [80, 40, 360, 640], "shorts", "#204030"),
+    ("tiktok sin fondo (el disco recorta)", 360, 640, [0, 0, 360, 640], "tiktok", None),
+    ("shorts sin fondo", 360, 640, [0, 0, 360, 640], "shorts", None),
+    ("tiktok pequeño", 180, 320, [0, 0, 180, 320], "tiktok", "#3c6e91"),
+    ("sin marco", 180, 320, [0, 0, 180, 320], "none", "#3c6e91"),
+    ("marco desconocido", 180, 320, [0, 0, 180, 320], "instagram", "#3c6e91"),
+    ("recuadro sin ancho", 180, 320, [0, 0, 0, 320], "tiktok", "#3c6e91"),
+]
+
+
+def synthetic_platform_chrome_fixtures(ctx: Ctx) -> list[dict]:
+    """El marco de TikTok/Shorts del preview (features/editor/render/platformChrome.js) dibujado por
+    el JS REAL en el Canvas 2D de Chromium (por software: sin GPU, para que sea estable). Los PNG
+    van a tests/fixtures/render/platform/."""
+    import base64
+    from playwright.sync_api import sync_playwright
+    src = (ctx.root / "frontend" / "src" / "features" / "editor" / "render" / "platformChrome.js").read_text(
+        encoding="utf-8")
+    body = src.replace("export const ", "const ").replace("export function ", "function ")
+    js = "\n".join([
+        "([W, H, frame, kind, bg]) => {",
+        body,
+        "const c = document.createElement('canvas'); c.width = W; c.height = H",
+        "const g = c.getContext('2d')",
+        "if (bg) { g.fillStyle = bg; g.fillRect(0, 0, W, H) }",
+        "drawPlatformChrome(g, { x: frame[0], y: frame[1], w: frame[2], h: frame[3] }, kind)",
+        "return { url: c.toDataURL('image/png'), overlays: PLATFORM_OVERLAYS,"
+        " labels: ['none', 'tiktok', 'shorts', 'x', ''].map((id) => [id, overlayLabel(id)]) }",
+        "}",
+    ])
+    out_dir = RENDER_DIR / "platform"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    cases = []
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch(headless=True, args=["--disable-gpu"])
+        page = browser.new_page()
+        for n, (name, w, h, frame, kind, bg) in enumerate(PLATFORM_CASES):
+            r = page.evaluate(js, [w, h, frame, kind, bg])
+            file = f"platform_{n}.png"
+            (out_dir / file).write_bytes(base64.b64decode(r["url"].split(",", 1)[1]))
+            cases.append({"name": name, "width": w, "height": h, "frame": frame, "kind": kind, "background": bg,
+                          "png": f"platform/{file}", "overlays": r["overlays"], "labels": r["labels"]})
+        browser.close()
+    return cases
+
+
 def synthetic_effect_chains() -> list[dict]:
     """La cadena de FFmpeg de effects_ffmpeg (clip_fx.py) para media_cases.EFFECT_CHAINS, en un
     cuadro de 360×640: el C++ comprueba que lee de cada `effects` lo mismo que FFmpeg."""
@@ -3645,7 +3699,7 @@ def main() -> None:
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
                                        "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake",
-                                       "anchos", "matte", "lru"],
+                                       "anchos", "matte", "lru", "plataforma"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3679,6 +3733,14 @@ def main() -> None:
 
     if args.solo == "lru":
         lru_group()
+        return
+
+    def platform_group() -> None:
+        plat = synthetic_platform_chrome_fixtures(ctx)
+        write(RENDER_DIR / "platform.json", plat, len(plat), 0)
+
+    if args.solo == "plataforma":
+        platform_group()
         return
 
     def sfx_write_group() -> None:
@@ -3896,6 +3958,7 @@ def main() -> None:
     shapes_group()
     editor_group()
     lru_group()
+    platform_group()
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)

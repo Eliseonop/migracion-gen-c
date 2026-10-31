@@ -1,0 +1,602 @@
+[
+ {
+  "name": "tiktok 360x640",
+  "width": 360,
+  "height": 640,
+  "frame": [
+   0,
+   0,
+   360,
+   640
+  ],
+  "kind": "tiktok",
+  "background": "#3c6e91",
+  "png": "platform/platform_0.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "shorts 360x640",
+  "width": 360,
+  "height": 640,
+  "frame": [
+   0,
+   0,
+   360,
+   640
+  ],
+  "kind": "shorts",
+  "background": "#3c6e91",
+  "png": "platform/platform_1.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "tiktok 720x1280",
+  "width": 720,
+  "height": 1280,
+  "frame": [
+   0,
+   0,
+   720,
+   1280
+  ],
+  "kind": "tiktok",
+  "background": "#7a4b2a",
+  "png": "platform/platform_2.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "shorts 720x1280",
+  "width": 720,
+  "height": 1280,
+  "frame": [
+   0,
+   0,
+   720,
+   1280
+  ],
+  "kind": "shorts",
+  "background": "#7a4b2a",
+  "png": "platform/platform_3.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "tiktok en un recuadro dentro del lienzo",
+  "width": 520,
+  "height": 720,
+  "frame": [
+   80,
+   40,
+   360,
+   640
+  ],
+  "kind": "tiktok",
+  "background": "#204030",
+  "png": "platform/platform_4.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "shorts en un recuadro dentro del lienzo",
+  "width": 520,
+  "height": 720,
+  "frame": [
+   80,
+   40,
+   360,
+   640
+  ],
+  "kind": "shorts",
+  "background": "#204030",
+  "png": "platform/platform_5.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "tiktok sin fondo (el disco recorta)",
+  "width": 360,
+  "height": 640,
+  "frame": [
+   0,
+   0,
+   360,
+   640
+  ],
+  "kind": "tiktok",
+  "background": null,
+  "png": "platform/platform_6.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "shorts sin fondo",
+  "width": 360,
+  "height": 640,
+  "frame": [
+   0,
+   0,
+   360,
+   640
+  ],
+  "kind": "shorts",
+  "background": null,
+  "png": "platform/platform_7.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "tiktok pequeño",
+  "width": 180,
+  "height": 320,
+  "frame": [
+   0,
+   0,
+   180,
+   320
+  ],
+  "kind": "tiktok",
+  "background": "#3c6e91",
+  "png": "platform/platform_8.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "sin marco",
+  "width": 180,
+  "height": 320,
+  "frame": [
+   0,
+   0,
+   180,
+   320
+  ],
+  "kind": "none",
+  "background": "#3c6e91",
+  "png": "platform/platform_9.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "marco desconocido",
+  "width": 180,
+  "height": 320,
+  "frame": [
+   0,
+   0,
+   180,
+   320
+  ],
+  "kind": "instagram",
+  "background": "#3c6e91",
+  "png": "platform/platform_10.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "name": "recuadro sin ancho",
+  "width": 180,
+  "height": 320,
+  "frame": [
+   0,
+   0,
+   0,
+   320
+  ],
+  "kind": "tiktok",
+  "background": "#3c6e91",
+  "png": "platform/platform_11.png",
+  "overlays": [
+   {
+    "id": "none",
+    "label": "Sin marco"
+   },
+   {
+    "id": "tiktok",
+    "label": "TikTok"
+   },
+   {
+    "id": "shorts",
+    "label": "YouTube Shorts"
+   }
+  ],
+  "labels": [
+   [
+    "none",
+    "Sin marco"
+   ],
+   [
+    "tiktok",
+    "TikTok"
+   ],
+   [
+    "shorts",
+    "YouTube Shorts"
+   ],
+   [
+    "x",
+    ""
+   ],
+   [
+    "",
+    ""
+   ]
+  ]
+ }
+]
