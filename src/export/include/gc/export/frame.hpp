@@ -33,8 +33,8 @@ struct Frame {
 
 class FrameRenderer {
 public:
-    // Prepara la timeline de `project`, que tiene que vivir mientras se use el FrameRenderer.
-    // Error si la timeline está vacía (como compose.py) o si falla la preparación.
+    // Prepara la timeline de `project` (se copia lo que hace falta: el proyecto no tiene que seguir
+    // vivo). Error si la timeline está vacía (como compose.py) o si falla la preparación.
     [[nodiscard]] static Result<FrameRenderer> open(const LoadedProject& project, const FrameOptions& options = {});
 
     FrameRenderer(FrameRenderer&&) noexcept;

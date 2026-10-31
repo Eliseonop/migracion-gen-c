@@ -29,12 +29,14 @@
 #include "gc/core/frame.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/export/frame.hpp"
 #include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
 #include "gc/render/canvas.hpp"
 #include "gc/render/compose.hpp"
 #include "gc/render/png.hpp"
 #include "gc/render/text.hpp"
+#include "render_project.hpp"
 
 using gc::Json;
 using namespace gc::core;
@@ -196,6 +198,22 @@ TEST_CASE("paridad del render: el texto frente al de libass en el export", "[par
         }
         REQUIRE(drawn);
         const auto frame = canvas->snapshot();
+        // El mismo fotograma por FrameRenderer (el camino de `genclip frame` y del preview): byte a
+        // byte el que acaba de dibujar el test.
+        {
+            const auto lp = gc::test::render_fixture_project(c.at("timeline"));
+            auto renderer = gc::exporter::FrameRenderer::open(lp);
+            INFO((renderer ? std::string() : renderer.error().to_string()));
+            REQUIRE(renderer);
+            auto got = renderer->at(at);
+            INFO((got ? std::string() : got.error().to_string()));
+            REQUIRE(got);
+            CHECK(got->tick == tick);
+            REQUIRE(got->image.width == frame.width);
+            REQUIRE(got->image.height == frame.height);
+            const bool same = got->image.pixels == frame.pixels; // sin imprimir los píxeles si fallan
+            CHECK(same);
+        }
         const auto expected = load(kFixtures / "render" / path_from_utf8(c.at("frame").get<std::string>()));
         REQUIRE(frame.width == expected.width);
         REQUIRE(frame.height == expected.height);

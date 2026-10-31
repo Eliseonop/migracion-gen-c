@@ -2,6 +2,7 @@
 
 #include <charconv>
 #include <cmath>
+#include <cstdint>
 #include <format>
 #include <iostream>
 #include <optional>
@@ -9,9 +10,11 @@
 #include <string_view>
 #include <vector>
 
+#include "gc/core/export_input.hpp"
 #include "gc/core/io.hpp"
 #include "gc/export/frame.hpp"
 #include "gc/export/project.hpp"
+#include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
 #include "gc/render/png.hpp"
 
@@ -59,6 +62,17 @@ int cmd_frame(std::span<const std::string> args) {
     auto loaded = gc::exporter::load_project(gc::core::path_from_utf8(pos[0]), pos[1]);
     if (!loaded) {
         return fail_with(loaded.error().to_string());
+    }
+    // Como compose.py, antes de preparar nada: sin clips, «La timeline está vacía», y el fondo dura
+    // `total`, así que un fotograma en round(total·F) o después no existe. (FrameRenderer lo
+    // comprueba igual; aquí solo se adelanta.)
+    const gc::core::Timeline& timeline = loaded->timeline;
+    const int fps = timeline.fps > 0 ? static_cast<int>(timeline.fps) : 30;
+    const double total = gc::core::export_total_duration(timeline);
+    const std::int64_t tick = gc::media::export_frame_tick(*at, fps);
+    if (total > 0 && static_cast<double>(tick) >= std::round(total * fps)) {
+        return fail_with(std::format("el instante {:.3f} s queda fuera de la timeline ({:.3f} s)",
+                                     static_cast<double>(tick) / fps, total));
     }
     gc::media::silence_ffmpeg_log();
     // Lo mismo que el export en ese fotograma (gc_export): el material que falta y lo que se omite,

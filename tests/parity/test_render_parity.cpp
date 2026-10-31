@@ -42,12 +42,14 @@
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/export/frame.hpp"
 #include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
 #include "gc/render/compose.hpp"
 #include "gc/render/png.hpp"
 #include "gc/render/text.hpp"
 #include "gc/render/vfx.hpp"
+#include "render_project.hpp"
 #include "ssim.hpp"
 
 using gc::Json;
@@ -305,6 +307,7 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
     const gc::render::TextFonts fonts(
         FontDirs{default_system_font_dir(), path_from_utf8(GC_RESOURCES_DIR) / "fonts"});
     std::size_t cases = 0;
+    std::size_t frame_renderer_cases = 0;
     for (const Json& c : *file) {
         const auto name = c.at("name").get<std::string>();
         const double at = c.at("t").get<double>(); // el `at` que recibió compose.render_frame
@@ -404,6 +407,23 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
             },
             &fonts);
         REQUIRE(frame);
+        // El mismo fotograma por FrameRenderer (el camino de `genclip frame` y del preview, con su
+        // preparación y sus lectores): byte a byte el que acaba de componer el test.
+        {
+            const auto lp = gc::test::render_fixture_project(c.at("timeline"));
+            auto renderer = gc::exporter::FrameRenderer::open(lp);
+            INFO((renderer ? std::string() : renderer.error().to_string()));
+            REQUIRE(renderer);
+            auto got = renderer->at(at);
+            INFO((got ? std::string() : got.error().to_string()));
+            REQUIRE(got);
+            CHECK(got->tick == tick);
+            REQUIRE(got->image.width == frame->width);
+            REQUIRE(got->image.height == frame->height);
+            const bool same = got->image.pixels == frame->pixels; // sin imprimir los píxeles si fallan
+            CHECK(same);
+            ++frame_renderer_cases;
+        }
         auto coverage = gc::render::compose_frame(
             *layers, w, h, [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
                 const auto [mw, mh] = material_size(*layer.clip); // mismas dimensiones
@@ -480,4 +500,5 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
         ++cases;
     }
     CHECK(cases >= 5);
+    CHECK(frame_renderer_cases == file->size());
 }
