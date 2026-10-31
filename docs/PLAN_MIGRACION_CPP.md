@@ -1614,3 +1614,10 @@ Decisión de Edu (§6):
 - **Benchmark de 4K (repetido con el PC sin juegos):** `38b3e5bd` entero en la segunda pasada: C++ 26,0 s con NVENC y 64,2 s con OpenH264; Python 56,2 s con NVENC forzado y 89,7 s con x264 (el de hoy). Con el mismo codificador, el C++ tarda menos de la mitad (NVENC) o un 28 % menos (por software, OpenH264 frente a x264). `c1dcc884` no llegó a medirse: la carga de fondo (iCUE, NZXT CAM, el navegador) pasó del umbral del 15 % del script.
 - **MSVC:** 202/202 (Debug y Release), 0 warnings; MinGW 152/152; clang-tidy, 0 avisos en `src/export`, `apps/cli` y el test.
 
+### 2026-10-31 — F3: la caché LRU con tope en bytes (lruBytes.js)
+
+- `gc/core/lru_bytes.hpp`: `LruBytes<K, V>`, espejo de `lib/lruBytes.js` (la caché de canvas, fotogramas y pósters del editor de video-yt): cada entrada declara su peso; al pasar el tope se descartan las usadas hace más tiempo, salvo la que se acaba de guardar o redimensionar (una entrada sola mayor que el tope se conserva); `get` la pasa a reciente y `peek` no; `resize` recorta sin reordenar; `purge(keep)` y `clear` avisan (`onEvict`) en orden de antigüedad; `set` sobre una clave avisa del valor anterior salvo que sea igual (el `===` de JS); un `onEvict` que lanza no rompe la caché. `pixel_bytes(ancho, alto)`.
+- **Paridad** frente al JS real (`tools/fixtures/lru_js.mjs`, `lru_cases.py`, `export_fixtures.py --solo lru`): 1052 pasos en 14 casos (los de `lruBytes.test.mjs`, bordes con tope 0 y el de por defecto, y 4 secuencias al azar) comparando, tras cada paso, lo devuelto, las claves en orden, los bytes, el tamaño y lo descartado.
+- **Divergencias:** bytes en `size_t` (JS acepta cualquier cosa y la pasa a `max(0, Number(b) || 0)`), `pixelBytes` solo con dimensiones y sin el registro `cacheStats`.
+- **MSVC:** 204/204, 0 warnings; MinGW 154/154; clang-tidy, 0 avisos.
+

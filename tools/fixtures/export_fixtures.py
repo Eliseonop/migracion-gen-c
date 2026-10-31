@@ -28,6 +28,7 @@ Salida (al repo):
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
   tests/fixtures/editor/timeline_ui.json   timeline del editor: editor_cases.py (editorModel.js con Node)
+  tests/fixtures/editor/lru_bytes.json     caché LRU con tope en bytes: lru_cases.py (lib/lruBytes.js con Node; --solo lru)
   tests/fixtures/frame/synthetic.json      fotograma: frame_cases.py (drawComposite con Node)
   tests/fixtures/history/synthetic.json    historial: pasos de history_cases.py
   tests/fixtures/settings/synthetic.json   ajustes: pasos de settings_cases.py
@@ -3644,7 +3645,7 @@ def main() -> None:
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
                                        "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake",
-                                       "anchos", "matte"],
+                                       "anchos", "matte", "lru"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
     args = ap.parse_args()
 
@@ -3667,6 +3668,17 @@ def main() -> None:
 
     if args.solo == "editor":
         editor_group()
+        return
+
+    def lru_group() -> None:
+        import lru_cases
+        cases = lru_cases.cases()
+        results = _node(ctx, "lru_js.mjs", cases)
+        out = [{**c, "results": r} for c, r in zip(cases, results)]
+        write(REPO / "tests" / "fixtures" / "editor" / "lru_bytes.json", out, sum(len(c["ops"]) for c in cases), 0)
+
+    if args.solo == "lru":
+        lru_group()
         return
 
     def sfx_write_group() -> None:
@@ -3883,6 +3895,7 @@ def main() -> None:
     export_group()
     shapes_group()
     editor_group()
+    lru_group()
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)
