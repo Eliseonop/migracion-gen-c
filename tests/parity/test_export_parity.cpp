@@ -34,6 +34,7 @@
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/timeline_rules.hpp"
+#include "gc/export/frame.hpp"
 #include "gc/export/render.hpp"
 #include "gc/media/audio.hpp"
 #include "gc/media/decode.hpp"
@@ -272,4 +273,62 @@ TEST_CASE("export: la caché de las capas quietas da el mismo vídeo", "[export]
     CHECK(with.size() == 60);
     CHECK(with == without);
     CHECK(std::ranges::none_of(with, [](const auto& kv) { return kv.second == "mal tamaño"; }));
+}
+
+// El fotograma suelto (FrameRenderer, el de `genclip frame` y el preview) dibuja lo mismo que el
+// export entero en cada fotograma, byte a byte: pedidos en orden, como al reproducir, y hacia
+// atrás y a saltos, como al mover el cabezal (los lectores vuelven a empezar).
+TEST_CASE("export: el fotograma suelto es el mismo que compone el export", "[export]") {
+    gc::media::silence_ffmpeg_log();
+    auto file = read_json_file(kFixtures / "export" / "synthetic.json");
+    REQUIRE(file);
+    const auto root = std::filesystem::temp_directory_path() / "gc_test_export";
+    for (const Json& c : *file) {
+        const auto name = c.at("name").get<std::string>();
+        INFO(name);
+        const auto lp = fixture_project(c.at("timeline"), root);
+        std::mutex mutex;
+        std::map<std::int64_t, std::string> composed;
+        gc::exporter::RenderOptions options;
+        options.on_composed = [&](std::int64_t tick, std::span<const std::uint8_t> rgba) {
+            std::string sum = gc::media::md5_hex(rgba);
+            const std::scoped_lock lock(mutex);
+            composed[tick] = std::move(sum);
+        };
+        const auto out = std::filesystem::temp_directory_path() / "gc_test_export_suelto.mp4";
+        auto stats = gc::exporter::render_project(lp, out, options);
+        INFO((stats ? std::string() : stats.error().to_string()));
+        REQUIRE(stats);
+        std::filesystem::remove(out);
+
+        auto renderer = gc::exporter::FrameRenderer::open(lp);
+        INFO((renderer ? std::string() : renderer.error().to_string()));
+        REQUIRE(renderer);
+        CHECK(renderer->width() == stats->width);
+        CHECK(renderer->height() == stats->height);
+        CHECK(renderer->fps() == stats->fps);
+        // El export saca ⌈total·fps⌉ fotogramas y render_frame solo los de antes de round(total·fps).
+        REQUIRE(renderer->frames() <= stats->frames);
+        REQUIRE(renderer->frames() >= stats->frames - 1);
+        std::vector<std::int64_t> order;
+        order.reserve(static_cast<std::size_t>(renderer->frames() * 2));
+        for (std::int64_t k = 0; k < renderer->frames(); ++k) {
+            order.push_back(k);
+        }
+        for (std::int64_t k = renderer->frames() - 1; k >= 0; k -= 7) {
+            order.push_back(k);
+        }
+        for (const std::int64_t k : order) {
+            INFO("fotograma " << k);
+            auto frame = renderer->tick(k);
+            INFO((frame ? std::string() : frame.error().to_string()));
+            REQUIRE(frame);
+            CHECK(frame->tick == k);
+            REQUIRE(frame->image.width == stats->width);
+            REQUIRE(frame->image.height == stats->height);
+            CHECK(gc::media::md5_hex(frame->image.pixels) == composed.at(k));
+        }
+        CHECK_FALSE(renderer->tick(renderer->frames()));
+        CHECK_FALSE(renderer->tick(-1));
+    }
 }

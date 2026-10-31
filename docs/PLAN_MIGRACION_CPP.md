@@ -1605,3 +1605,12 @@ Decisión de Edu (§6):
 - Falta dibujarlas en la timeline de QML (F5).
 - **MSVC:** 201/201, 0 warnings; MinGW 152/152; clang-tidy, 0 avisos.
 
+### 2026-10-31 — F3/F5: el fotograma suelto en gc_export (FrameRenderer), base del preview
+
+- **Estado comprobado al empezar:** MinGW 152/152 (Debug y Release), MSVC 201/201 (Debug y Release), 0 warnings. Se quitó el worktree `claude/blissful-ellis-fcde91`, ya entero en `main` y limpio.
+- `src/export/src/prepare.hpp/.cpp` (interno de `gc_export`): lo que preparan el export y el fotograma suelto antes de dibujar, antes duplicado en `render.cpp` y `apps/cli/frame_cmd.cpp`: el material de cada clip (`_clip_path` + `media_exists`), la timeline sin los clips sin material ni los motion graphics (que se guardan aparte), los efectos de vídeo (`plan_timeline_vfx`) y el matte de «Eliminar fondo» de cada clip; y cómo se abre el lector de un clip (`open_reader`, el tramo original si se hornea) y sale su fotograma (`read_image`, con el horneado).
+- `gc/export/frame.hpp`: `FrameRenderer::open(proyecto, opciones)` y `tick(k)`/`at(s)`, el fotograma de `compose.render_frame`. Los lectores (`ClipFrames`, que da los mismos fotogramas que `export_frame_at`) se quedan abiertos de un fotograma al siguiente y se cierran los de los clips que no salen; el lienzo y las fuentes, una vez. `genclip frame` lo usa (antes decodificaba cada clip desde el principio con `export_frame_at`). Cambia el orden de algunos avisos: los del matte salen de todos los clips, no solo de los que se ven en ese instante.
+- **Test:** «el fotograma suelto es el mismo que compone el export»: en cada escena de `export/synthetic.json`, cada fotograma de `FrameRenderer` (en orden y luego hacia atrás de 7 en 7) tiene el mismo MD5 que el que compone `render_project` (`on_composed`). Y `genclip frame` con tus dos proyectos de 4K en 0, 7,3, 21,05 y 40 s (1,5–8 s por fotograma en Release, con el decode incluido).
+- **Benchmark de 4K (repetido con el PC sin juegos):** C++ con NVENC 26,6 s y con OpenH264 65,3 s en `38b3e5bd`, como el 2026-10-29; Python no llegó a medirse porque la carga de fondo (iCUE, NZXT CAM, el navegador) rozó el umbral del 15 % del script.
+- **MSVC:** 202/202 (Debug y Release), 0 warnings; MinGW 152/152; clang-tidy, 0 avisos en `src/export`, `apps/cli` y el test.
+

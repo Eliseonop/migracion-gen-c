@@ -1,50 +1,28 @@
 #include "frame_cmd.hpp"
 
 #include <charconv>
-#include <cstdint>
 #include <cmath>
-#include <filesystem>
 #include <format>
 #include <iostream>
-#include <map>
 #include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
 
-#include "gc/core/clip_adjust.hpp"
-#include "gc/core/export_input.hpp"
-#include "gc/core/frame.hpp"
 #include "gc/core/io.hpp"
-#include "gc/core/timeline_rules.hpp"
-#include "gc/media/decode.hpp"
-#include "gc/media/probe.hpp"
-#include "gc/core/font_metrics.hpp"
-#include "gc/render/canvas.hpp"
-#include "gc/render/compose.hpp"
-#include "gc/render/png.hpp"
-#include "gc/render/text.hpp"
+#include "gc/export/frame.hpp"
 #include "gc/export/project.hpp"
-#include "gc/export/vfx_bake.hpp"
+#include "gc/media/probe.hpp"
+#include "gc/render/png.hpp"
 
 namespace genclip {
 
 namespace {
 
-namespace fs = std::filesystem;
-using namespace gc::core;
-using gc::exporter::clip_path;
-using gc::exporter::load_project;
-using gc::exporter::LoadedProject;
-
 int fail_with(std::string_view message) {
     std::cerr << "error: " << message << '\n';
     return 1;
 }
-
-// Los clips cuyo material se busca en el disco. Las figuras pasan tal cual (unsupported_reason
-// las rechaza) y los motion graphics, sin clip_media_path aún, van aparte.
-bool has_media(const TimelineClip& clip) { return clip.kind == "video" || clip.kind == "image"; }
 
 } // namespace
 
@@ -78,170 +56,29 @@ int cmd_frame(std::span<const std::string> args) {
         std::cerr << "uso: genclip frame <raíz de video-yt> <proyecto> --at <s> -o <salida.png> [--omitir]\n";
         return 2;
     }
-    auto loaded = load_project(path_from_utf8(pos[0]), pos[1]);
+    auto loaded = gc::exporter::load_project(gc::core::path_from_utf8(pos[0]), pos[1]);
     if (!loaded) {
         return fail_with(loaded.error().to_string());
     }
-    const LoadedProject& lp = *loaded;
-    Timeline timeline = lp.timeline;
-
-    // compose.py: W y H pares; `-ss T` a la salida da el fotograma compuesto más cercano a T.
-    const int w = static_cast<int>(timeline.width - timeline.width % 2);
-    const int h = static_cast<int>(timeline.height - timeline.height % 2);
-    const int fps = timeline.fps > 0 ? static_cast<int>(timeline.fps) : 30;
-    const std::int64_t tick = gc::media::export_frame_tick(*at, fps);
-    const double t = static_cast<double>(tick) / fps;
-    // Como compose.py: sin clips, «La timeline está vacía»; y el fondo dura `total`, así que un
-    // fotograma en round(total·F) o después no existe (render_frame falla).
-    const double total = export_total_duration(timeline);
-    if (total <= 0) {
-        return fail_with("la timeline está vacía: añade al menos un clip");
-    }
-    if (static_cast<double>(tick) >= std::round(total * fps)) {
-        return fail_with(std::format("el instante {:.3f} s queda fuera de la timeline ({:.3f} s)", t, total));
-    }
-
-    // Como el export: solo los clips con material que existe (media_exists de compose.py). Los
-    // motion graphics aún no: si alguno se ve en t, error (o, con --omitir, aviso).
-    std::map<std::string, fs::path> paths;
-    std::optional<std::string> motion;
-    std::erase_if(timeline.clips, [&](const gc::Cow<TimelineClip>& c) {
-        const TimelineClip& clip = *c;
-        if (clip.kind == "motion") {
-            const double start = std::max(0.0, clip.start);
-            if (!clip.disabled && t >= start && t < start + clip_timeline_duration(clip)) {
-                motion = clip.id;
-            }
-            return true;
-        }
-        if (!has_media(clip)) {
-            return false;
-        }
-        const auto path = clip_path(lp, clip);
-        if (!path || !fs::is_regular_file(*path)) {
-            std::cerr << std::format("aviso: sin material para el clip {} ({}): no se dibuja\n", clip.id, clip.filename);
-            return true;
-        }
-        paths[clip.id] = *path;
-        return false;
-    });
-    if (motion && !skip) {
-        return fail_with(std::format("el render aún no dibuja motion graphics (clip {})", *motion));
-    }
-    if (motion) {
-        std::cerr << std::format("aviso: el render aún no dibuja motion graphics (clip {}): se omite\n", *motion);
-    }
-    // Los efectos de vídeo: como bake_timeline, el clip horneado en la timeline.
-    gc::exporter::ensure_fx_catalog(lp);
-    auto vfx = gc::exporter::plan_timeline_vfx(timeline, paths, w, h, fps, skip,
-                                               [](const std::string& m) { std::cerr << "aviso: " << m << "\n"; });
-    if (!vfx) {
-        return fail_with(vfx.error().to_string());
-    }
-
-    // El fotograma de cada clip en t, decodificado una vez (también da sus dimensiones). Las
-    // pasadas fantasma (kGhostSuffix) usan el material de su clip.
-    std::map<std::string, gc::render::Image> frames;
-    std::optional<gc::Error> media_error;
-    const auto frame_of = [&](const TimelineClip& clip) -> const gc::render::Image* {
-        const std::string id =
-            clip.id.ends_with(kGhostSuffix) ? clip.id.substr(0, clip.id.size() - kGhostSuffix.size()) : clip.id;
-        if (auto it = frames.find(id); it != frames.end()) {
-            return &it->second;
-        }
-        const auto p = paths.find(id);
-        if (p == paths.end()) {
-            return nullptr;
-        }
-        // Un clip horneado: el fotograma m de su tramo original, con sus efectos (vfx.hpp).
-        const auto bake = vfx->find(id);
-        const std::int64_t m = bake != vfx->end() ? gc::render::vfx_baked_index(bake->second, tick, fps) : tick;
-        // «Eliminar fondo» con el matte de la caché (del original, si se hornea).
-        const TimelineClip& read = bake != vfx->end() ? bake->second.source : clip;
-        std::string warning;
-        const auto matte = gc::exporter::clip_matte(lp, read, warning);
-        if (!warning.empty()) {
-            std::cerr << "aviso: " << warning << "\n";
-        }
-        const gc::core::MatteSpec* ms = matte ? &*matte : nullptr;
-        auto got = bake != vfx->end() ? gc::media::bake_input_frame_at(read, p->second, fps, m, ms)
-                                      : gc::media::export_frame_at(read, p->second, fps, m, ms);
-        if (!got || !got->has_value()) {
-            media_error = got ? gc::Error{gc::ErrorCode::Io, std::format("el clip {} no da fotograma en {}", id, t)}
-                              : got.error();
-            return nullptr;
-        }
-        auto& f = **got;
-        gc::render::Image img{f.width, f.height, std::move(f.pixels)};
-        if (bake != vfx->end()) {
-            auto baked = gc::render::vfx_baked_frame(bake->second, img, m, fps);
-            if (!baked) {
-                media_error = baked.error();
-                return nullptr;
-            }
-            img = std::move(*baked);
-        }
-        return &frames.emplace(id, std::move(img)).first->second;
-    };
-
     gc::media::silence_ffmpeg_log();
-    auto layers = evaluate(timeline, t, FrameSpec{static_cast<double>(w), static_cast<double>(h), kRenderLayers},
-                           [&](const TimelineClip& clip) -> std::optional<MediaSize> {
-                               const auto* img = frame_of(clip);
-                               if (img == nullptr) {
-                                   return std::nullopt;
-                               }
-                               return MediaSize{static_cast<double>(img->width), static_cast<double>(img->height)};
-                           });
-    if (media_error) {
-        return fail_with(media_error->to_string());
+    // Lo mismo que el export en ese fotograma (gc_export): el material que falta y lo que se omite,
+    // como avisos por stderr.
+    gc::exporter::FrameOptions options;
+    options.omit_unsupported = skip;
+    options.on_warning = [](const std::string& message) { std::cerr << "aviso: " << message << '\n'; };
+    auto renderer = gc::exporter::FrameRenderer::open(*loaded, options);
+    if (!renderer) {
+        return fail_with(renderer.error().to_string());
     }
-    if (!layers) {
-        return fail_with(layers.error().to_string());
+    auto frame = renderer->at(*at);
+    if (!frame) {
+        return fail_with(frame.error().to_string());
     }
-    // Los textos no son capas del compuesto: van encima, como el .ass global del export.
-    std::erase_if(*layers, [](const FrameLayer& layer) { return layer.clip->kind == "text"; });
-    // Las fuentes del sistema y las de video-yt (backend/app/fonts: Anton), para las máscaras de
-    // texto y los textos.
-    const gc::render::TextFonts fonts(FontDirs{default_system_font_dir(), lp.root / "app" / "fonts"});
-    if (skip) {
-        std::erase_if(*layers, [&fonts](const FrameLayer& layer) {
-            const auto reason = gc::render::unsupported_reason(layer, &fonts);
-            if (reason) {
-                std::cerr << std::format("aviso: {} (clip {}): se omite\n", *reason, layer.clip->id);
-            }
-            return reason.has_value();
-        });
-    }
-    auto canvas = gc::render::Canvas::make(w, h);
-    if (!canvas) {
-        return fail_with(canvas.error().to_string());
-    }
-    // Las capas, con los textos de las pistas con vídeo encima en su sitio, y el resto de textos encima.
-    std::vector<std::string> warnings;
-    if (auto ok = gc::render::compose_with_buried_texts(
-            *canvas, timeline, *layers, tick,
-            [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {
-                const auto* img = frame_of(*layer.clip);
-                if (img == nullptr) {
-                    return gc::fail(gc::ErrorCode::NotFound, std::format("sin material para el clip {}", layer.clip->id));
-                }
-                return img;
-            },
-            fonts, skip, &warnings);
-        !ok) {
+    if (auto ok = gc::render::write_png(frame->image, gc::core::path_from_utf8(*out)); !ok) {
         return fail_with(ok.error().to_string());
     }
-    if (auto ok = gc::render::draw_timeline_texts(*canvas, timeline, tick, fonts, skip, &warnings); !ok) {
-        return fail_with(ok.error().to_string());
-    }
-    for (const auto& wmsg : warnings) {
-        std::cerr << "aviso: " << wmsg << ": se omite\n";
-    }
-    if (auto ok = gc::render::write_png(canvas->snapshot(), path_from_utf8(*out)); !ok) {
-        return fail_with(ok.error().to_string());
-    }
-    std::cout << std::format("{} ({}x{}, t = {:.3f} s, {} capas)\n", *out, w, h, t, layers->size());
+    std::cout << std::format("{} ({}x{}, t = {:.3f} s, {} capas)\n", *out, renderer->width(), renderer->height(),
+                             frame->t, frame->layers);
     return 0;
 }
 

@@ -33,7 +33,7 @@
 #include "gc/render/canvas.hpp"
 #include "gc/render/compose.hpp"
 #include "gc/render/text.hpp"
-#include "gc/export/vfx_bake.hpp"
+#include "prepare.hpp"
 
 namespace gc::exporter {
 
@@ -41,8 +41,6 @@ namespace {
 
 namespace fs = std::filesystem;
 using namespace gc::core;
-
-bool has_media(const TimelineClip& clip) { return clip.kind == "video" || clip.kind == "image"; }
 
 // La calidad de los ajustes del export (export_settings.encoder_quality).
 std::pair<int, std::string> encoder_quality(const Json& settings) {
@@ -102,15 +100,24 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
     stats.frames = ((total_us * fps) + 999'999) / 1'000'000;
     const std::int64_t frames = stats.frames;
 
-    // El material de cada clip (como _clip_path + media_exists) y si tiene audio (_has_audio).
-    std::map<std::string, fs::path> paths;
-    std::map<std::string, bool> audio_of;
-    for (const auto& c : full.clips) {
-        const auto p = clip_path(project, *c);
-        if (p && fs::is_regular_file(*p)) {
-            paths[c->id] = *p;
-        }
+    // El material de cada clip, la timeline que se dibuja, los efectos de vídeo y los mattes.
+    auto prepared = detail::prepare(project, full, w, h, fps, skip, warn);
+    if (!prepared) {
+        return std::unexpected(prepared.error());
     }
+    const detail::Prepared& prep = *prepared;
+    const auto& paths = prep.paths;
+    const Timeline& timeline = prep.timeline;
+    if (!prep.motion.empty()) {
+        const std::string msg = std::format("el render aún no dibuja motion graphics (clip {})", prep.motion.front().id);
+        if (!skip) {
+            return fail(ErrorCode::Unsupported, msg);
+        }
+        warn(msg + ": se omite");
+    }
+
+    // Si el material de cada clip tiene audio (_has_audio).
+    std::map<std::string, bool> audio_of;
     const auto exists = [&](const TimelineClip& c) { return paths.contains(c.id); };
     const auto has_audio = [&](const TimelineClip& c) {
         auto [it, fresh] = audio_of.try_emplace(c.id, false);
@@ -140,52 +147,6 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
                 return std::unexpected(mixed.error());
             }
             pcm = std::move(*mixed);
-        }
-    }
-
-    // Lo que se dibuja: sin los clips cuyo material no existe (como el export) ni los motion
-    // graphics, que el render aún no sabe dibujar.
-    Timeline timeline = full;
-    std::optional<std::string> motion;
-    std::erase_if(timeline.clips, [&](const Cow<TimelineClip>& c) {
-        if (c->kind == "motion") {
-            if (!c->disabled && !motion) {
-                motion = c->id;
-            }
-            return true;
-        }
-        if (has_media(*c) && !paths.contains(c->id)) {
-            warn(std::format("sin material para el clip {} ({}): no se dibuja", c->id, c->filename));
-            return true;
-        }
-        return false;
-    });
-    if (motion) {
-        const std::string msg = std::format("el render aún no dibuja motion graphics (clip {})", *motion);
-        if (!skip) {
-            return fail(ErrorCode::Unsupported, msg);
-        }
-        warn(msg + ": se omite");
-    }
-    // Los efectos de vídeo: como bake_timeline, el clip horneado en la timeline (vfx_bake.hpp).
-    ensure_fx_catalog(project);
-    auto vfx = plan_timeline_vfx(timeline, paths, w, h, fps, skip, warn);
-    if (!vfx) {
-        return std::unexpected(vfx.error());
-    }
-    const VfxPlans& vfx_plans = *vfx;
-    // «Eliminar fondo» con el matte de la caché (build_timeline_bg_masks): de cada clip, o del
-    // original si se hornea (el horneado ya no lleva bg_removal).
-    std::map<std::string, std::optional<MatteSpec>> mattes;
-    for (const auto& c : timeline.clips) {
-        const auto bake = vfx_plans.find(c->id);
-        std::string warning;
-        auto spec = clip_matte(project, bake != vfx_plans.end() ? bake->second.source : *c, warning);
-        if (!warning.empty()) {
-            warn(warning);
-        }
-        if (spec) {
-            mattes.emplace(c->id, std::move(spec));
         }
     }
 
@@ -277,11 +238,9 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
                 });
             }
             const auto source = [&](const FrameLayer& layer) -> Result<const render::Image*> {
-                const std::string& id = layer.clip->id;
-                const auto it =
-                    job.images.find(id.ends_with(kGhostSuffix) ? id.substr(0, id.size() - kGhostSuffix.size()) : id);
+                const auto it = job.images.find(detail::material_id(layer.clip->id));
                 if (it == job.images.end()) {
-                    return fail(ErrorCode::NotFound, std::format("sin material para el clip {}", id));
+                    return fail(ErrorCode::NotFound, std::format("sin material para el clip {}", layer.clip->id));
                 }
                 return &it->second;
             };
@@ -406,47 +365,28 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
         std::optional<Error> media_error;
         const auto frame_of = [&](const TimelineClip& clip) -> const render::Image* {
             const Lap lap(ph.decode);
-            const std::string id =
-                clip.id.ends_with(kGhostSuffix) ? clip.id.substr(0, clip.id.size() - kGhostSuffix.size()) : clip.id;
+            const std::string id = detail::material_id(clip.id);
             if (auto it = job.images.find(id); it != job.images.end()) {
                 return &it->second;
             }
-            const auto p = paths.find(id);
-            if (p == paths.end()) {
+            if (!paths.contains(id)) {
                 return nullptr;
             }
-            // Un clip horneado lee su tramo original (desde 0) y pide su fotograma m (vfx.hpp).
-            const auto bake = vfx_plans.find(id);
-            const TimelineClip& read = bake != vfx_plans.end() ? bake->second.source : clip;
-            const std::int64_t at = bake != vfx_plans.end() ? render::vfx_baked_index(bake->second, tick, fps) : tick;
             auto r = readers.find(id);
             if (r == readers.end()) {
-                const auto matte = mattes.find(id);
-                const MatteSpec* m = matte != mattes.end() && matte->second ? &*matte->second : nullptr;
-                auto opened = bake != vfx_plans.end() ? media::ClipFrames::open_bake_input(read, p->second, fps, m)
-                                                      : media::ClipFrames::open(read, p->second, fps, m);
+                auto opened = detail::open_reader(prep, id, fps);
                 if (!opened) {
                     media_error = opened.error();
                     return nullptr;
                 }
                 r = readers.emplace(id, std::move(*opened)).first;
             }
-            auto got = r->second.at(at);
-            if (!got || *got == nullptr) {
-                media_error =
-                    got ? Error{ErrorCode::Io, std::format("el clip {} no da fotograma en el {}", id, tick)} : got.error();
+            auto img = detail::read_image(prep, id, r->second, tick, fps);
+            if (!img) {
+                media_error = img.error();
                 return nullptr;
             }
-            const auto& f = **got;
-            if (bake != vfx_plans.end()) {
-                auto baked = render::vfx_baked_frame(bake->second, render::Image{f.width, f.height, f.pixels}, at, fps);
-                if (!baked) {
-                    media_error = baked.error();
-                    return nullptr;
-                }
-                return &job.images.emplace(id, std::move(*baked)).first->second;
-            }
-            return &job.images.emplace(id, render::Image{f.width, f.height, f.pixels}).first->second;
+            return &job.images.emplace(id, std::move(*img)).first->second;
         };
         const double t = static_cast<double>(tick) / fps;
         std::optional<Lap> lap(std::in_place, ph.evaluate);
