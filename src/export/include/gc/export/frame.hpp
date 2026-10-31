@@ -6,6 +6,7 @@
 // lectores de cada clip se quedan abiertos de un fotograma al siguiente, así que pedirlos en orden
 // no vuelve a decodificar desde el principio.
 
+#include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -22,6 +23,9 @@ struct FrameOptions {
     bool omit_unsupported = false;
     // Cada aviso distinto, una vez (material que falta, capas que se omiten).
     std::function<void(const std::string& message)> on_warning;
+    // Tope de la caché de fotogramas ya compuestos (core::LruBytes, como el lruBytes del editor):
+    // volver a pedir uno no lo vuelve a componer. 0, sin caché.
+    std::size_t cache_bytes = 0;
 };
 
 struct Frame {
@@ -55,6 +59,10 @@ public:
     [[nodiscard]] Result<Frame> tick(std::int64_t k);
     // El que da compose.render_frame(…, at): el más cercano de la rejilla de 1/fps.
     [[nodiscard]] Result<Frame> at(double seconds);
+
+    // Fotogramas servidos desde la caché (cache_bytes) y lo que ocupa ahora.
+    [[nodiscard]] std::int64_t cache_hits() const noexcept;
+    [[nodiscard]] std::size_t cache_bytes() const noexcept;
 
 private:
     struct Impl;

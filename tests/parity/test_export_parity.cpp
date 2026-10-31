@@ -330,5 +330,35 @@ TEST_CASE("export: el fotograma suelto es el mismo que compone el export", "[exp
         }
         CHECK_FALSE(renderer->tick(renderer->frames()));
         CHECK_FALSE(renderer->tick(-1));
+        CHECK(renderer->cache_hits() == 0); // sin cache_bytes, sin caché
+        CHECK(renderer->cache_bytes() == 0);
+
+        // Con caché para 10 fotogramas: los 10 últimos que se compusieron salen de ella, con los
+        // mismos bytes, y los de antes se descartaron (el tope en bytes se respeta).
+        const std::size_t one = std::size_t{4} * static_cast<std::size_t>(stats->width) * static_cast<std::size_t>(stats->height);
+        gc::exporter::FrameOptions cached_options;
+        cached_options.cache_bytes = 10 * one;
+        auto cached = gc::exporter::FrameRenderer::open(lp, cached_options);
+        REQUIRE(cached);
+        const std::int64_t n = cached->frames();
+        REQUIRE(n > 12);
+        for (std::int64_t k = 0; k < n; ++k) {
+            REQUIRE(cached->tick(k));
+        }
+        CHECK(cached->cache_hits() == 0);
+        CHECK(cached->cache_bytes() == 10 * one);
+        for (std::int64_t k = n - 1; k >= n - 10; --k) {
+            INFO("de la caché, fotograma " << k);
+            auto frame = cached->tick(k);
+            REQUIRE(frame);
+            CHECK(frame->tick == k);
+            CHECK(gc::media::md5_hex(frame->image.pixels) == composed.at(k));
+        }
+        CHECK(cached->cache_hits() == 10);
+        auto again = cached->tick(0); // ya descartado: se vuelve a componer, igual
+        REQUIRE(again);
+        CHECK(gc::media::md5_hex(again->image.pixels) == composed.at(0));
+        CHECK(cached->cache_hits() == 10);
+        CHECK(cached->cache_bytes() == 10 * one);
     }
 }

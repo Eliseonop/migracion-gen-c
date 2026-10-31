@@ -55,10 +55,13 @@ public:
     // se avisa de su descarte salvo que sea igual (en JS, el mismo objeto: ===).
     V& set(const K& key, V value, std::size_t bytes) {
         if (const auto it = index_.find(key); it != index_.end()) {
-            bool evicted = true;
-            if constexpr (std::equality_comparable<V>) {
-                evicted = !(it->second->value == value);
-            }
+            const bool evicted = [&] {
+                if constexpr (std::equality_comparable<V>) {
+                    return !(it->second->value == value);
+                } else {
+                    return true;
+                }
+            }();
             drop(it->second, evicted);
         }
         order_.push_back(Entry{key, std::move(value), bytes});
@@ -125,7 +128,8 @@ private:
     };
     using Iter = std::list<Entry>::iterator;
 
-    void drop(Iter it, bool evicted) {
+    // `it` por valor: en set() viene del índice, que drop() borra antes de usarlo.
+    void drop(Iter it, bool evicted) { // NOLINT(performance-unnecessary-value-param)
         const Entry entry = std::move(*it);
         index_.erase(entry.key);
         order_.erase(it);

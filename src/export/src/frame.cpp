@@ -13,6 +13,7 @@
 #include "gc/core/export_input.hpp"
 #include "gc/core/font_metrics.hpp"
 #include "gc/core/frame.hpp"
+#include "gc/core/lru_bytes.hpp"
 #include "gc/core/timeline_rules.hpp"
 #include "gc/media/decode.hpp"
 #include "gc/render/compose.hpp"
@@ -24,12 +25,14 @@ namespace gc::exporter {
 using namespace gc::core;
 
 struct FrameRenderer::Impl {
-    Impl(detail::Prepared p, render::Canvas c, render::TextFonts f) :
-        prepared(std::move(p)), canvas(std::move(c)), fonts(std::move(f)) {}
+    Impl(detail::Prepared p, render::Canvas c, render::TextFonts f, std::size_t cache_bytes) :
+        prepared(std::move(p)), canvas(std::move(c)), fonts(std::move(f)), cache(cache_bytes) {}
 
     detail::Prepared prepared;
     render::Canvas canvas;
     render::TextFonts fonts;
+    core::LruBytes<std::int64_t, Frame> cache; // los fotogramas ya compuestos, por tick
+    std::int64_t cache_hits = 0;
     std::map<std::string, media::ClipFrames> readers; // los del fotograma anterior
     std::set<std::string> warned;
     std::function<void(const std::string&)> on_warning;
@@ -57,6 +60,8 @@ int FrameRenderer::height() const noexcept { return impl_->height; }
 int FrameRenderer::fps() const noexcept { return impl_->fps; }
 double FrameRenderer::duration() const noexcept { return impl_->duration; }
 std::int64_t FrameRenderer::frames() const noexcept { return impl_->frames; }
+std::int64_t FrameRenderer::cache_hits() const noexcept { return impl_->cache_hits; }
+std::size_t FrameRenderer::cache_bytes() const noexcept { return impl_->cache.bytes(); }
 
 Result<FrameRenderer> FrameRenderer::open(const LoadedProject& project, const FrameOptions& options) {
     const Timeline& full = project.timeline;
@@ -85,7 +90,8 @@ Result<FrameRenderer> FrameRenderer::open(const LoadedProject& project, const Fr
     // Las fuentes del sistema y las de video-yt (backend/app/fonts: Anton), para las máscaras de
     // texto y los textos.
     auto impl = std::make_unique<Impl>(std::move(*prepared), std::move(*canvas),
-                                       render::TextFonts(FontDirs{default_system_font_dir(), project.root / "app" / "fonts"}));
+                                       render::TextFonts(FontDirs{default_system_font_dir(), project.root / "app" / "fonts"}),
+                                       options.cache_bytes);
     impl->warned = std::move(warned);
     impl->on_warning = options.on_warning;
     impl->skip = options.omit_unsupported;
@@ -107,6 +113,10 @@ Result<Frame> FrameRenderer::tick(std::int64_t k) {
     if (k < 0 || k >= m.frames) {
         return fail(ErrorCode::InvalidArgument,
                     std::format("el instante {:.3f} s queda fuera de la timeline ({:.3f} s)", t, m.duration));
+    }
+    if (const Frame* cached = m.cache.get(k); cached != nullptr) {
+        ++m.cache_hits;
+        return *cached; // sus avisos ya salieron la primera vez
     }
     // Los motion graphics que se ven en t: un error (o, con omit_unsupported, un aviso).
     for (const TimelineClip& clip : m.prepared.motion) {
@@ -200,7 +210,11 @@ Result<Frame> FrameRenderer::tick(std::int64_t k) {
     // Fuera los lectores de los clips que no salen en este fotograma (cada uno guarda un
     // decodificador). Si vuelve a verse, su lector se abre de nuevo.
     std::erase_if(m.readers, [&](const auto& reader) { return !images.contains(reader.first); });
-    return Frame{m.canvas.snapshot(), k, t, layers->size()};
+    Frame frame{m.canvas.snapshot(), k, t, layers->size()};
+    if (m.cache.max_bytes() > 0) {
+        m.cache.set(k, frame, frame.image.pixels.size());
+    }
+    return frame;
 }
 
 } // namespace gc::exporter
