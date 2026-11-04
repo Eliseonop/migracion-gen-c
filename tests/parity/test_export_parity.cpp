@@ -360,5 +360,30 @@ TEST_CASE("export: el fotograma suelto es el mismo que compone el export", "[exp
         CHECK(gc::media::md5_hex(again->image.pixels) == composed.at(0));
         CHECK(cached->cache_hits() == 10);
         CHECK(cached->cache_bytes() == 10 * one);
+
+        // Con el decode por hardware (si hay GPU): los mismos fotogramas compuestos, en el export y
+        // en el fotograma suelto (también hacia atrás).
+        std::map<std::int64_t, std::string> composed_hw;
+        gc::exporter::RenderOptions hw_options;
+        hw_options.hwaccel = true;
+        hw_options.on_composed = [&](std::int64_t tick, std::span<const std::uint8_t> rgba) {
+            std::string sum = gc::media::md5_hex(rgba);
+            const std::scoped_lock lock(mutex);
+            composed_hw[tick] = std::move(sum);
+        };
+        auto hw_stats = gc::exporter::render_project(lp, out, hw_options);
+        REQUIRE(hw_stats);
+        std::filesystem::remove(out);
+        CHECK(composed_hw == composed);
+        gc::exporter::FrameOptions hw_frame_options;
+        hw_frame_options.hwaccel = true;
+        auto hw_renderer = gc::exporter::FrameRenderer::open(lp, hw_frame_options);
+        REQUIRE(hw_renderer);
+        for (const std::int64_t k : order) {
+            INFO("por hardware, fotograma " << k);
+            auto frame = hw_renderer->tick(k);
+            REQUIRE(frame);
+            CHECK(gc::media::md5_hex(frame->image.pixels) == composed.at(k));
+        }
     }
 }

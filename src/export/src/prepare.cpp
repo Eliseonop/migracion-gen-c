@@ -70,7 +70,7 @@ std::string material_id(const std::string& clip_id) {
     return clip_id.ends_with(kGhostSuffix) ? clip_id.substr(0, clip_id.size() - kGhostSuffix.size()) : clip_id;
 }
 
-Result<media::ClipFrames> open_reader(const Prepared& p, const std::string& id, int fps) {
+Result<media::ClipFrames> open_reader(const Prepared& p, const std::string& id, int fps, bool hwaccel) {
     const auto path = p.paths.find(id);
     const auto clip = std::ranges::find_if(p.timeline.clips, [&](const auto& c) { return c->id == id; });
     if (path == p.paths.end() || clip == p.timeline.clips.end()) {
@@ -80,9 +80,9 @@ Result<media::ClipFrames> open_reader(const Prepared& p, const std::string& id, 
     const MatteSpec* m = matte != p.mattes.end() && matte->second ? &*matte->second : nullptr;
     // Un clip horneado lee su tramo original (desde 0).
     if (const auto bake = p.vfx.find(id); bake != p.vfx.end()) {
-        return media::ClipFrames::open_bake_input(bake->second.source, path->second, fps, m);
+        return media::ClipFrames::open_bake_input(bake->second.source, path->second, fps, m, hwaccel);
     }
-    return media::ClipFrames::open(**clip, path->second, fps, m);
+    return media::ClipFrames::open(**clip, path->second, fps, m, hwaccel);
 }
 
 Result<render::Image> read_image(const Prepared& p, const std::string& id, media::ClipFrames& reader,

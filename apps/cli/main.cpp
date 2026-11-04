@@ -3,9 +3,9 @@
 //   genclip version
 //   genclip projects <projects.json>                     valida todos los proyectos
 //   genclip normalize <projects.json> <salida> [--preserve]
-//   genclip frame <raíz de video-yt> <proyecto> --at <s> -o <salida.png> [--omitir]
+//   genclip frame <raíz de video-yt> <proyecto> --at <s> -o <salida.png> [--omitir] [--hwaccel]
 //   genclip render <raíz de video-yt> <proyecto> -o <salida.mp4> [--progress] [--omitir]
-//                  [--codificador <nombre>] [--hilos <n>] [--tiempos]
+//                  [--codificador <nombre>] [--hilos <n>] [--tiempos] [--hwaccel]
 //                                                        (frame y render, solo con FFmpeg y Skia)
 //
 // Los argumentos y la salida van en UTF-8 en todos los SO (rutas con tildes). Los errores van

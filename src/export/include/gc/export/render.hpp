@@ -25,6 +25,9 @@ struct RenderOptions {
     // Las capas quietas de abajo no se redibujan (render::LayerCache). Da el mismo vídeo; false,
     // para comprobarlo.
     bool layer_cache = true;
+    // Decode por hardware (media::DecodeSpec::hwaccel): los mismos fotogramas que por software, con
+    // menos CPU en los códecs que la GPU decodifica (H.264, HEVC, VP9, AV1). Video-yt no lo usa.
+    bool hwaccel = false;
     // Tras cada fotograma: cuántos van y cuántos hay.
     std::function<void(std::int64_t done, std::int64_t total)> on_progress;
     // Cada aviso distinto, una vez (material que falta, capas que se omiten).

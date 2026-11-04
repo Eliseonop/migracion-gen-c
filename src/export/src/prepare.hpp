@@ -43,7 +43,8 @@ struct Prepared {
 [[nodiscard]] std::string material_id(const std::string& clip_id);
 
 // El lector del clip `id` (el tramo original si se hornea), con su matte.
-[[nodiscard]] Result<media::ClipFrames> open_reader(const Prepared& p, const std::string& id, int fps);
+[[nodiscard]] Result<media::ClipFrames> open_reader(const Prepared& p, const std::string& id, int fps,
+                                                  bool hwaccel = false);
 
 // El fotograma del clip `id` en el tick de la timeline, del lector `reader`: con el horneado de
 // sus efectos de vídeo si los tiene.

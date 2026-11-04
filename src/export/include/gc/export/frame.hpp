@@ -26,6 +26,8 @@ struct FrameOptions {
     // Tope de la caché de fotogramas ya compuestos (core::LruBytes, como el lruBytes del editor):
     // volver a pedir uno no lo vuelve a componer. 0, sin caché.
     std::size_t cache_bytes = 0;
+    // Decode por hardware, como RenderOptions::hwaccel (los mismos fotogramas).
+    bool hwaccel = false;
 };
 
 struct Frame {

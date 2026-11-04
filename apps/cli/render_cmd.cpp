@@ -47,6 +47,8 @@ int cmd_render(std::span<const std::string> args) {
             options.threads = n;
         } else if (a == "--omitir") {
             options.omit_unsupported = true;
+        } else if (a == "--hwaccel") {
+            options.hwaccel = true;
         } else if (a == "--progress") {
             progress = true;
         } else if (a == "--tiempos") {
@@ -57,7 +59,7 @@ int cmd_render(std::span<const std::string> args) {
     }
     if (pos.size() != 2 || !out) {
         std::cerr << "uso: genclip render <raíz de video-yt> <proyecto> -o <salida.mp4> [--progress] [--omitir] "
-                     "[--codificador <nombre>] [--hilos <n>] [--tiempos]\n";
+                     "[--codificador <nombre>] [--hilos <n>] [--tiempos] [--hwaccel]\n";
         return 2;
     }
     gc::media::silence_ffmpeg_log();

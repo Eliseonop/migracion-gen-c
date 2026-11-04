@@ -37,6 +37,7 @@ struct FrameRenderer::Impl {
     std::set<std::string> warned;
     std::function<void(const std::string&)> on_warning;
     bool skip = false;
+    bool hwaccel = false;
     int width = 0;
     int height = 0;
     int fps = 0;
@@ -95,6 +96,7 @@ Result<FrameRenderer> FrameRenderer::open(const LoadedProject& project, const Fr
     impl->warned = std::move(warned);
     impl->on_warning = options.on_warning;
     impl->skip = options.omit_unsupported;
+    impl->hwaccel = options.hwaccel;
     impl->width = w;
     impl->height = h;
     impl->fps = fps;
@@ -144,7 +146,7 @@ Result<Frame> FrameRenderer::tick(std::int64_t k) {
         }
         auto r = m.readers.find(id);
         if (r == m.readers.end()) {
-            auto opened = detail::open_reader(m.prepared, id, fps);
+            auto opened = detail::open_reader(m.prepared, id, fps, m.hwaccel);
             if (!opened) {
                 media_error = opened.error();
                 return nullptr;

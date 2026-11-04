@@ -1676,3 +1676,10 @@ Decisión de Edu (§6):
 - **Fixture nueva:** un HEVC de 10 bits (`v_hevc10.mp4`, 320×180). Al pasar 10 bits a RGBA, el CLI de Gyan usa MMX en ensamblador en línea que la build de MSVC no tiene y redondea distinto (hasta 7 niveles, 50,9 dB): su referencia lleva `-cpuflags` sin MMX (`DECODE_CPUFLAGS`), con lo que coincide exacto. Divergencia de build, en las notas de F3.
 - Falta pedirlo desde `gc_export` (`genclip render`, `genclip frame` y `FrameRenderer` del preview).
 - **MSVC:** 206/206 (Debug y Release), 0 warnings; clang-tidy, 0 avisos en `decode.cpp` y su test.
+
+### 2026-11-04 — F3: el decode por hardware en gc_export y genclip (`--hwaccel`), medido
+
+- `RenderOptions::hwaccel` y `FrameOptions::hwaccel` llegan a `open_reader` (`ClipFrames::open` y `open_bake_input`); `genclip render` y `genclip frame` aceptan `--hwaccel`.
+- **Test** (en «el fotograma suelto es el mismo que compone el export»): con `hwaccel`, `render_project` compone los mismos fotogramas (MD5 de cada uno) que por software, y `FrameRenderer` también, en orden y a saltos hacia atrás. Con tus proyectos: `genclip frame` con y sin `--hwaccel` da el mismo PNG en Snowpiercer, TAREA2, IRON MAN y los dos de 4K.
+- **Medido** con el PC al 10–12 % (Release, NVENC): tus proyectos de 4K tardan más con `--hwaccel` (38b3e5bd, 25,4 → 29,9 s; c1dcc884, 23,9 → 26,7 s). Con un dispositivo por decodificador da lo mismo (30,8 s): lo que cuesta es bajar cada fotograma de la GPU, que comparte con NVENC, cuando el decode por software en varios hilos ya va sobrado. Va apagado por defecto. En el preview solo compensará sin bajar el fotograma (la textura de la GPU directa a Skia).
+- **MSVC:** 206/206 (Debug y Release), 0 warnings.

@@ -34,6 +34,7 @@ int cmd_frame(std::span<const std::string> args) {
     std::optional<double> at;
     std::optional<std::string> out;
     bool skip = false;
+    bool hwaccel = false;
     for (std::size_t i = 0; i < args.size(); ++i) {
         const std::string& a = args[i];
         if (a == "--at" && i + 1 < args.size()) {
@@ -51,12 +52,14 @@ int cmd_frame(std::span<const std::string> args) {
             out = args[++i];
         } else if (a == "--omitir") {
             skip = true;
+        } else if (a == "--hwaccel") {
+            hwaccel = true;
         } else {
             pos.push_back(a);
         }
     }
     if (pos.size() != 2 || !at || !out) {
-        std::cerr << "uso: genclip frame <raíz de video-yt> <proyecto> --at <s> -o <salida.png> [--omitir]\n";
+        std::cerr << "uso: genclip frame <raíz de video-yt> <proyecto> --at <s> -o <salida.png> [--omitir] [--hwaccel]\n";
         return 2;
     }
     auto loaded = gc::exporter::load_project(gc::core::path_from_utf8(pos[0]), pos[1]);
@@ -79,6 +82,7 @@ int cmd_frame(std::span<const std::string> args) {
     // como avisos por stderr.
     gc::exporter::FrameOptions options;
     options.omit_unsupported = skip;
+    options.hwaccel = hwaccel;
     options.on_warning = [](const std::string& message) { std::cerr << "aviso: " << message << '\n'; };
     auto renderer = gc::exporter::FrameRenderer::open(*loaded, options);
     if (!renderer) {

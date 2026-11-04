@@ -374,7 +374,7 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             }
             auto r = readers.find(id);
             if (r == readers.end()) {
-                auto opened = detail::open_reader(prep, id, fps);
+                auto opened = detail::open_reader(prep, id, fps, options.hwaccel);
                 if (!opened) {
                     media_error = opened.error();
                     return nullptr;
