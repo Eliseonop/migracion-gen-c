@@ -141,6 +141,19 @@ PROBE_MEDIA_VFR = [
 PROBE_DERIVED = [
     ("v_offset.mkv", "v_untagged.mp4", ["-itsoffset", "0.5"], ["-c", "copy"]),
     ("va_offset.mp4", "va_bt709.mp4", ["-itsoffset", "0.3"], ["-c", "copy"]),
+    # Autogiro (vídeos de móvil): la misma imagen con la matriz de visualización del contenedor
+    # (-display_rotation va en grados antihorarios). El CLI la deshace con transpose, hflip, vflip o
+    # rotate según el ángulo y el signo de la matriz (configure_input_video_filter): una rama por caso.
+    ("v_rot90.mp4", "v_untagged.mp4", ["-display_rotation", "90"], ["-c", "copy"]),        # cclock
+    ("v_rot270.mov", "v_smpte170m.mov", ["-display_rotation", "270"], ["-c", "copy"]),     # clock
+    ("v_rot180.mp4", "v_untagged.mp4", ["-display_rotation", "180"], ["-c", "copy"]),      # hflip,vflip
+    ("v_hflip.mp4", "v_untagged.mp4", ["-display_hflip"], ["-c", "copy"]),                 # hflip
+    ("v_vflip.mp4", "v_untagged.mp4", ["-display_vflip"], ["-c", "copy"]),                 # vflip
+    ("v_rot90_hflip.mp4", "v_untagged.mp4", ["-display_rotation", "90", "-display_hflip"], ["-c", "copy"]),    # clock_flip
+    ("v_rot270_hflip.mp4", "v_untagged.mp4", ["-display_rotation", "270", "-display_hflip"], ["-c", "copy"]),  # cclock_flip
+    ("v_rot45.mp4", "v_untagged.mp4", ["-display_rotation", "45"], ["-c", "copy"]),        # rotate
+    ("va_rot90.mkv", "va_untagged.mkv", ["-display_rotation", "90"], ["-c", "copy"]),      # Matroska
+    ("motion_rot90.webm", "motion_alpha.webm", ["-display_rotation", "90"], ["-c", "copy"]),  # libvpx-vp9
 ]
 # VP9 con alfa (motion graphics): ffmpeg_input_args fuerza `-c:v libvpx-vp9` en todo .webm,
 # porque el VP9 nativo no expone el plano alfa. Un círculo semitransparente que se mueve.
@@ -186,7 +199,24 @@ DECODE = [
                                                   "out_point": 0.5}, 25),
     ("mp4 av1", "v_av1.mp4", {"kind": "video", "in_point": 0.1, "out_point": 0.6}, 30),
     ("mp4 hevc", "v_hevc.mp4", {"kind": "video", "in_point": 0.0, "out_point": 0.5}, 24),
+    # Autogiro: el ancho y el alto del fixture son los de lo que sale del CLI (ya girado).
+    ("mp4 girado 90° (de móvil)", "v_rot90.mp4", {"kind": "video", "in_point": 0.1, "out_point": 0.8}, 30),
+    ("mov girado 270°", "v_rot270.mov", {"kind": "video", "in_point": 0.0, "out_point": 0.52}, 25),
+    ("mp4 girado 180°", "v_rot180.mp4", {"kind": "video", "in_point": 0.2, "out_point": 0.6}, 30),
+    ("mp4 volteado en horizontal", "v_hflip.mp4", {"kind": "video", "in_point": 0.0, "out_point": 0.4}, 30),
+    ("mp4 volteado en vertical", "v_vflip.mp4", {"kind": "video", "in_point": 0.0, "out_point": 0.4}, 24),
+    ("mp4 girado 90° y volteado", "v_rot90_hflip.mp4", {"kind": "video", "in_point": 0.3, "out_point": 0.7}, 30),
+    ("mp4 girado 270° y volteado", "v_rot270_hflip.mp4", {"kind": "video", "in_point": 0.3, "out_point": 0.7}, 30),
+    ("mp4 girado 45°", "v_rot45.mp4", {"kind": "video", "in_point": 0.0, "out_point": 0.3}, 30),
+    ("mkv vp8 girado 90°", "va_rot90.mkv", {"kind": "video", "in_point": 0.2, "out_point": 0.5}, 30),
+    ("motion vp9 con alfa girado 90°", "motion_rot90.webm", {"kind": "motion", "asset_kind": "motion",
+                                                             "in_point": 0.1, "out_point": 0.5}, 25),
 ]
+# Casos cuya referencia lleva `,scale=iw:ih` antes del `format=rgba`, como el `{cropscale}` que el export
+# pone detrás de la cadena. El CLI negocia el formato de cada filtro en el orden en que los crea (primero
+# los de -vf, luego el autogiro): con `format=rgba` justo detrás, el `rotate` (que interpola) iría en RGBA;
+# con el `scale` del export, en YUV, como el C++. A los transpose y volteos no les cambia nada.
+DECODE_SCALE_AFTER = {"mp4 girado 45°"}
 
 # Audio del export ejecutado (gc_media/audio.hpp): material con sonido que cambia de nivel, para que
 # el volumen, los fundidos, la mezcla y loudnorm se noten. Se generan UNA vez (git-lfs).
@@ -289,6 +319,17 @@ SEEK = [
     ("motion_alpha.webm", [0.0, 0.3, 0.56, 0.6]),
     ("v_av1.mp4", [0.0, 0.25, 0.58]),
     ("v_hevc.mp4", [0.0, 0.3, 0.56]),
+    # Autogiro (también con -ss): una vez por rama, el final y pasado el final.
+    ("v_rot90.mp4", [0.0, 0.5, 0.96, 5.0]),
+    ("v_rot270.mov", [0.0, 0.26]),
+    ("v_rot180.mp4", [0.3]),
+    ("v_hflip.mp4", [0.3]),
+    ("v_vflip.mp4", [0.3]),
+    ("v_rot90_hflip.mp4", [0.3]),
+    ("v_rot270_hflip.mp4", [0.3]),
+    ("v_rot45.mp4", [0.3]),
+    ("va_rot90.mkv", [0.25]),
+    ("motion_rot90.webm", [0.3]),
 ]
 
 # Archivos que no son medios (se escriben tal cual) y rutas que no existen.
@@ -975,6 +1016,41 @@ RENDER_SCENES = [
                            "transform": {"x": 0.5, "y": 0.5, "scale": 0.6},
                            "bg_removal": _bg_auto("no_existe")})],
      [0.5]),
+    # Autogiro (RENDER_DERIVED): un vídeo de móvil con el giro en el contenedor. El export lo gira
+    # (el CLI) y lo encaja con las dimensiones de detect.dims (OpenCV, ya giradas): 180×320.
+    ("vídeo de móvil girado 90°", 30, ["V1"],
+     [("moving30_rot90.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER})],
+     [0.0, 0.5, 1.0]),
+    # El keyframe, dentro del tramo: el export (_shifted_keyframes) tira los de antes de in_point − 0,05
+    # y el preview no (divergencia de las notas de F3, ninguno de tus clips la tiene). cx 0,4 da un
+    # recorte en x = 18,000000000000007 px: el int() del export y la coma flotante del C++ caen en el
+    # mismo píxel (con 0,35 sale 8,999…: el export recorta en 8 y el C++ en 9, el redondeo pendiente).
+    ("vídeo girado 90° con recorte parcial", 30, ["V1"],
+     [("moving30_rot90.mp4", "V1",
+       {**_V, "start": 0.0, "in_point": 0.2, "out_point": 1.8, "transform": _CENTER,
+        "reframe": {"crop_w": 0.6, "crop_h": 0.8, "zoom": 1.0,
+                    "keyframes": [{"t": 0.2, "cx": 0.4, "cy": 0.55, "zoom": 1.0}]}})],
+     [0.5]),
+    ("vídeo volteado en el contenedor", 30, ["V1"],
+     [("moving30_hflip.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER})],
+     [0.5]),
+    # Un ángulo que no es de 90°: `rotate`, del mismo tamaño y con las esquinas en negro.
+    ("vídeo girado 45° en el contenedor", 30, ["V1"],
+     [("moving30_rot45.mp4", "V1", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER})],
+     [0.5]),
+    # El croma desenfoca el borde en px del alto del material: el de después de girar.
+    ("croma en un vídeo girado 90°", 30, ["V1", "V2"],
+     [("waves.png", "V1", {**_I, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER}),
+      ("keyed30_rot90.mp4", "V2", {**_V, "start": 0.0, "in_point": 0.0, "out_point": 2.0, "transform": _CENTER,
+                                   "bg_removal": {"enabled": True, "mode": "chroma", "chroma": {"enabled": True}}})],
+     [0.5]),
+]
+# Material derivado de RENDER_VIDEO_MEDIA (como PROBE_DERIVED): (archivo, origen, antes de -i, después).
+RENDER_DERIVED = [
+    ("moving30_rot90.mp4", "moving30.mp4", ["-display_rotation", "90"], ["-c", "copy"]),
+    ("moving30_hflip.mp4", "moving30.mp4", ["-display_hflip"], ["-c", "copy"]),
+    ("moving30_rot45.mp4", "moving30.mp4", ["-display_rotation", "45"], ["-c", "copy"]),
+    ("keyed30_rot90.mp4", "keyed30.mp4", ["-display_rotation", "90"], ["-c", "copy"]),
 ]
 
 # Texto (el .ass global de text_ass.py, dibujado por libass): escenas de 540×960 a 30 fps.

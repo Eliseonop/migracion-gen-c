@@ -4475,6 +4475,12 @@
    "has_audio": true
   },
   {
+   "file": "drums120.m4a",
+   "duration": 12.0,
+   "color_untagged": true,
+   "has_audio": true
+  },
+  {
    "file": "empty.mp4",
    "duration": 0.0,
    "color_untagged": true,
@@ -4499,6 +4505,12 @@
    "has_audio": false
   },
   {
+   "file": "motion_rot90.webm",
+   "duration": 0.6,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
    "file": "still.png",
    "duration": 0.0,
    "color_untagged": false,
@@ -4509,6 +4521,12 @@
    "duration": 0.0,
    "color_untagged": true,
    "has_audio": false
+  },
+  {
+   "file": "tones44.wav",
+   "duration": 8.0,
+   "color_untagged": true,
+   "has_audio": true
   },
   {
    "file": "v_2s.mp4",
@@ -4541,9 +4559,51 @@
    "has_audio": false
   },
   {
+   "file": "v_hflip.mp4",
+   "duration": 1.0,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
    "file": "v_offset.mkv",
    "duration": 1.5,
    "color_untagged": true,
+   "has_audio": false
+  },
+  {
+   "file": "v_rot180.mp4",
+   "duration": 1.0,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
+   "file": "v_rot270.mov",
+   "duration": 0.52,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
+   "file": "v_rot270_hflip.mp4",
+   "duration": 1.0,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
+   "file": "v_rot45.mp4",
+   "duration": 1.0,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
+   "file": "v_rot90.mp4",
+   "duration": 1.0,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
+   "file": "v_rot90_hflip.mp4",
+   "duration": 1.0,
+   "color_untagged": false,
    "has_audio": false
   },
   {
@@ -4559,10 +4619,22 @@
    "has_audio": false
   },
   {
+   "file": "v_vflip.mp4",
+   "duration": 1.0,
+   "color_untagged": false,
+   "has_audio": false
+  },
+  {
    "file": "v_vfr_gap.mp4",
    "duration": 1.8,
    "color_untagged": true,
    "has_audio": false
+  },
+  {
+   "file": "va8.mp4",
+   "duration": 8.0,
+   "color_untagged": true,
+   "has_audio": true
   },
   {
    "file": "va_bt709.mp4",
@@ -4577,6 +4649,12 @@
    "has_audio": true
   },
   {
+   "file": "va_rot90.mkv",
+   "duration": 0.72,
+   "color_untagged": false,
+   "has_audio": true
+  },
+  {
    "file": "va_trunc.mp4",
    "duration": 0.0,
    "color_untagged": true,
@@ -4585,6 +4663,12 @@
   {
    "file": "va_untagged.mkv",
    "duration": 0.72,
+   "color_untagged": true,
+   "has_audio": true
+  },
+  {
+   "file": "voice22.mp3",
+   "duration": 8.0,
    "color_untagged": true,
    "has_audio": true
   },

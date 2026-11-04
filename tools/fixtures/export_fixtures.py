@@ -17,8 +17,9 @@ Salida (al repo):
   tests/fixtures/motion/synthetic.json     envolvente de un sonido (clip_motion): motion_cases.py
   tests/fixtures/media/synthetic.json      cabeceras de imagen (images.probe_gif) y sondas de medios: media_cases.py
   tests/fixtures/export_input/synthetic.json  cómo lee el export el material (clip_kind.py): export_input_cases.py
-  tests/fixtures/media/decode.json         decode como el export: media_cases.DECODE (MD5 por fotograma del ffmpeg del PATH)
-  tests/fixtures/media/seek.json           seek exacto de frame_grab.extract_frame: media_cases.SEEK
+  tests/fixtures/media/decode.json         decode como el export: media_cases.DECODE (MD5 por fotograma del ffmpeg del PATH;
+                                           con el autogiro de los vídeos con giro en el contenedor; --solo decode)
+  tests/fixtures/media/seek.json           seek exacto de frame_grab.extract_frame: media_cases.SEEK (--solo decode)
   tests/fixtures/media/chroma.json         cadenas de FFmpeg del croma (clip_bg.py): media_cases.CHROMA
   tests/fixtures/media/outline.json        contorno del sujeto (clip_bg.outline_ffmpeg_steps): media_cases.OUTLINE
   tests/fixtures/render/synthetic.json     fotogramas del compuesto real (compose.render_frame): media_cases.RENDER
@@ -1851,6 +1852,22 @@ def _decode_chain(c, path: Path, fps: int) -> str:
     return color_pre + clip_kind.ffmpeg_trim_filter(c, fps) + ",setpts=PTS-STARTPTS"
 
 
+def _cli_dims(ffmpeg: str, ffprobe: str, path: Path, args: list[str]) -> tuple[int, int]:
+    """Ancho y alto de lo que SALE del CLI con `args` (entrada y filtros): los de la cabecera del
+    primer fotograma en PNG. No los de ffprobe, que son los codificados: un vídeo con giro en el
+    contenedor sale girado (autogiro). Si no sale nada, los de ffprobe."""
+    import struct
+    png = subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", *args, "-frames:v", "1",
+                          "-c:v", "png", "-f", "image2pipe", "-"], capture_output=True).stdout
+    if len(png) >= 24 and png[12:16] == b"IHDR":
+        w, h = struct.unpack(">II", png[16:24])
+        return w, h
+    dims = subprocess.run([ffprobe, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+                           "-of", "csv=p=0", str(path)], capture_output=True, text=True, check=True).stdout
+    w, h = (int(x) for x in dims.strip().split(",")[:2])
+    return w, h
+
+
 def synthetic_decode_fixtures(ctx: Ctx) -> list[dict]:
     """Fotogramas que da el ffmpeg del PATH con la entrada y la cadena del export de cada caso de
     media_cases.DECODE, en RGBA: dimensiones y un MD5 por fotograma."""
@@ -1867,10 +1884,9 @@ def synthetic_decode_fixtures(ctx: Ctx) -> list[dict]:
         c = ctx.schemas.TimelineClip.model_validate(clip)
         args = clip_kind.ffmpeg_input_args(c, path, fps)
         chain = _decode_chain(c, path, fps)
-        dims = subprocess.run([ffprobe, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
-                               "-of", "csv=p=0", str(path)], capture_output=True, text=True, check=True).stdout
-        w, h = (int(x) for x in dims.strip().split(",")[:2])
-        out = subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", *args, "-vf", chain + ",format=rgba",
+        vf = chain + (",scale=iw:ih" if name in mc.DECODE_SCALE_AFTER else "") + ",format=rgba"
+        w, h = _cli_dims(ffmpeg, ffprobe, path, [*args, "-vf", vf])
+        out = subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", *args, "-vf", vf,
                               "-fps_mode", "passthrough", "-f", "rawvideo", "-pix_fmt", "rgba", "-"],
                              capture_output=True, check=True).stdout
         size = w * h * 4
@@ -1915,9 +1931,7 @@ def synthetic_seek_fixtures() -> list[dict]:
     cases = []
     for file, times in mc.SEEK:
         path = PROBE_DIR / file
-        dims = subprocess.run([ffprobe, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
-                               "-of", "csv=p=0", str(path)], capture_output=True, text=True, check=True).stdout
-        w, h = (int(x) for x in dims.strip().split(",")[:2])
+        w, h = _cli_dims(ffmpeg, ffprobe, path, ["-i", str(path)])
         for t in times:
             ss = _extract_frame_ss(path, t)
             out = subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", "-ss", ss, "-i", str(path),
@@ -1932,10 +1946,11 @@ def synthetic_seek_fixtures() -> list[dict]:
 RENDER_DIR = REPO / "tests" / "fixtures" / "render"
 
 
-def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
+def synthetic_render_fixtures(ctx: Ctx, keep: bool = False) -> list[dict]:
     """Fotogramas del COMPUESTO real del export (compose.render_frame: la misma tubería que el
     export, pero con un solo PNG) para media_cases.RENDER. Solo se sustituye dónde está el
-    material (_clip_path). Los PNG van a tests/fixtures/render (git-lfs)."""
+    material (_clip_path). Los PNG van a tests/fixtures/render (git-lfs). Con `keep` (--conservar),
+    los PNG que ya existen no se vuelven a componer: solo los de las escenas nuevas."""
     import media_cases as mc
     from types import SimpleNamespace
     from app import compose
@@ -1946,6 +1961,14 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
         if not (files / name).exists():
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *args, "-map_metadata", "-1",
                             "-fflags", "+bitexact", str(files / name)], check=True)
+    for name, src, pre, post in mc.RENDER_DERIVED:
+        if not (files / name).exists():
+            subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *pre, "-i", str(files / src), *post,
+                            str(files / name)], check=True)
+
+    def render_frame(timeline, png: str, t: float) -> None:
+        if not (keep and (RENDER_DIR / png).exists()):
+            compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
     real_clip_path = compose._clip_path
     # Los horneados de los efectos de vídeo (fx_bake), a una carpeta temporal: no en data/ de video-yt.
     from app import fx_bake
@@ -1973,7 +1996,7 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
             timeline = ctx.schemas.Timeline.model_validate(ctx.migrations.migrate_timeline(raw))
             for t in times:
                 png = f"r{i:02d}_{int(round(t * 1000)):05d}.png"
-                compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
+                render_frame(timeline, png, t)
                 cases.append({"name": name, "t": t, "file": file, "frame": png,
                               "timeline": _pure(timeline.model_dump())})
         for i, (name, fps, tracks, clips, times) in enumerate(mc.RENDER_SCENES):
@@ -1989,7 +2012,7 @@ def synthetic_render_fixtures(ctx: Ctx) -> list[dict]:
             for t in times:
                 png = f"s{i:02d}_{int(round(t * 1000)):05d}.png"
                 bg_service.MASK_ROOT = mask_tmp / Path(png).stem
-                compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
+                render_frame(timeline, png, t)
                 case = {"name": name, "t": t, "frame": png, "timeline": _pure(timeline.model_dump())}
                 if name in mc.RENDER_NOISY:
                     case["noise"] = True
@@ -3699,8 +3722,11 @@ def main() -> None:
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
                                        "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake",
-                                       "anchos", "matte", "lru", "plataforma"],
-                    help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json)")
+                                       "anchos", "matte", "lru", "plataforma", "decode"],
+                    help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json; "
+                         "decode: media/decode.json y media/seek.json)")
+    ap.add_argument("--conservar", action="store_true",
+                    help="render: no volver a componer los PNG que ya existen (solo los de escenas nuevas)")
     args = ap.parse_args()
 
     ctx = Ctx(args.video_yt)
@@ -3713,6 +3739,20 @@ def main() -> None:
 
     if args.solo == "export":
         export_group()
+        return
+
+    def decode_group() -> None:
+        # Las sondas recorren todo tests/fixtures/media/files: con medios nuevos, también cambian.
+        med = synthetic_media_fixtures()
+        write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
+              len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)
+        dec = synthetic_decode_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
+        seek = synthetic_seek_fixtures()
+        write(REPO / "tests" / "fixtures" / "media" / "seek.json", seek, len(seek), 0)
+
+    if args.solo == "decode":
+        decode_group()
         return
 
     def editor_group() -> None:
@@ -3905,7 +3945,7 @@ def main() -> None:
         shapes_group()
         return
     def render_group() -> None:
-        ren = synthetic_render_fixtures(ctx)
+        ren = synthetic_render_fixtures(ctx, keep=args.conservar)
         write(RENDER_DIR / "synthetic.json", ren, len(ren), 0)
         chains = synthetic_effect_chains()
         write(RENDER_DIR / "effects.json", chains, len(chains), 0)

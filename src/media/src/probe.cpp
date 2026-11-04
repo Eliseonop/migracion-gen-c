@@ -77,10 +77,14 @@ MediaProbe probe_media(const std::filesystem::path& path) {
         } else if (par->codec_type == AVMEDIA_TYPE_VIDEO && first_video) {
             // `-select_streams v:0`: el primer stream de vídeo (también una carátula). ffprobe
             // imprime el nombre de la matriz o «unknown»; Python da por sin etiqueta "" y «unknown».
+            // Si el stream lleva datos laterales (la matriz de giro de un vídeo de móvil, p. ej.),
+            // ffprobe abre una sección por cada uno aunque no se pida ningún campo, y el CSV sale
+            // «unknown,»: para Python ya no es «sin etiqueta» (no se le supone BT.709). Se copia.
             first_video = false;
             const char* name = av_color_space_name(par->color_space);
-            out.color_untagged = par->color_space == AVCOL_SPC_UNSPECIFIED || name == nullptr ||
+            const bool unknown = par->color_space == AVCOL_SPC_UNSPECIFIED || name == nullptr ||
                                  std::string_view(name) == "unknown";
+            out.color_untagged = unknown && par->nb_coded_side_data == 0;
         }
     }
     return out;

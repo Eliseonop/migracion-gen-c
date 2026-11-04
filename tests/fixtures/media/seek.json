@@ -638,5 +638,117 @@
   "width": 64,
   "height": 48,
   "frame": "08017f39e3100ea9ace073f578168888"
+ },
+ {
+  "file": "v_rot90.mp4",
+  "t": 0.0,
+  "ss": "0.000",
+  "width": 48,
+  "height": 64,
+  "frame": "44fe81492b06ed4908410830580e80b9"
+ },
+ {
+  "file": "v_rot90.mp4",
+  "t": 0.5,
+  "ss": "0.500",
+  "width": 48,
+  "height": 64,
+  "frame": "ba96fcd45c825fc5202bcb484419f49a"
+ },
+ {
+  "file": "v_rot90.mp4",
+  "t": 0.96,
+  "ss": "0.960",
+  "width": 48,
+  "height": 64,
+  "frame": "bd00a5f00a4a770e662fda587e986bf6"
+ },
+ {
+  "file": "v_rot90.mp4",
+  "t": 5.0,
+  "ss": "5.000",
+  "width": 48,
+  "height": 64,
+  "frame": null
+ },
+ {
+  "file": "v_rot270.mov",
+  "t": 0.0,
+  "ss": "0.000",
+  "width": 48,
+  "height": 64,
+  "frame": "34d71fb0e1b94febc7194505811d2187"
+ },
+ {
+  "file": "v_rot270.mov",
+  "t": 0.26,
+  "ss": "0.260",
+  "width": 48,
+  "height": 64,
+  "frame": "435a734d3981f30944c1944c9ed8a920"
+ },
+ {
+  "file": "v_rot180.mp4",
+  "t": 0.3,
+  "ss": "0.300",
+  "width": 64,
+  "height": 48,
+  "frame": "2bdbebea81e7a60e49d05fbff142cac4"
+ },
+ {
+  "file": "v_hflip.mp4",
+  "t": 0.3,
+  "ss": "0.300",
+  "width": 64,
+  "height": 48,
+  "frame": "aafbebd9606e2f91933376278940c214"
+ },
+ {
+  "file": "v_vflip.mp4",
+  "t": 0.3,
+  "ss": "0.300",
+  "width": 64,
+  "height": 48,
+  "frame": "391166d1e1f73531392053e84f3c1e1b"
+ },
+ {
+  "file": "v_rot90_hflip.mp4",
+  "t": 0.3,
+  "ss": "0.300",
+  "width": 48,
+  "height": 64,
+  "frame": "c0a67c5a5641fc98952dc085763b6beb"
+ },
+ {
+  "file": "v_rot270_hflip.mp4",
+  "t": 0.3,
+  "ss": "0.300",
+  "width": 48,
+  "height": 64,
+  "frame": "e9407d217c790148bb5bfd003ad49282"
+ },
+ {
+  "file": "v_rot45.mp4",
+  "t": 0.3,
+  "ss": "0.300",
+  "width": 64,
+  "height": 48,
+  "frame": "c6e3f5250e77623d03108f1a7f12c5f8"
+ },
+ {
+  "file": "va_rot90.mkv",
+  "t": 0.25,
+  "ss": "0.250",
+  "width": 48,
+  "height": 64,
+  "frame": "fdb1e4f43bbbf8648ec4ae7372d21001"
+ },
+ {
+  "file": "motion_rot90.webm",
+  "t": 0.3,
+  "ss": "0.300",
+  "width": 48,
+  "height": 64,
+  "frame": "6590e26b92459422df9a6d3a7417d7ea"
  }
 ]

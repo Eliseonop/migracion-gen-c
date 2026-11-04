@@ -7,6 +7,8 @@
 //                                      entrada y la cadena que arman las funciones REALES de
 //                                      video-yt y un MD5 por fotograma de lo que da el ffmpeg
 //                                      del PATH con `-vf "<cadena>,format=rgba" -f rawvideo`.
+//                                      Con vídeos girados en el contenedor (autogiro del CLI),
+//                                      y el ancho y alto de lo que sale del CLI, ya girado.
 //
 // Exacta: la misma entrada, la misma cadena y los mismos píxeles (MD5) fotograma a fotograma.
 

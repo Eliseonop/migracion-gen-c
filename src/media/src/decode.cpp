@@ -31,6 +31,7 @@ extern "C" {
 #include <libavfilter/buffersink.h>
 #include <libavfilter/buffersrc.h>
 #include <libavformat/avformat.h>
+#include <libavutil/display.h>
 #include <libavutil/error.h>
 #include <libavutil/md5.h>
 #include <libavutil/opt.h>
@@ -70,6 +71,37 @@ using detail::parse_input_args;
 // `-t` de una entrada: el CLI le pone a su salida un `trim` con la duración en µs.
 // En texto, una duración sin unidad son segundos: el valor va con «us».
 std::string duration_trim(std::int64_t us) { return std::format("trim=duration={}us,", us); }
+
+// El autogiro del CLI (configure_input_video_filter de fftools/ffmpeg_filter.c, con get_rotation de
+// cmdutils.c): los vídeos de móvil guardan el giro en la matriz de visualización del contenedor, que
+// libavcodec pega a cada fotograma, y el CLI lo deshace con filtros delante de todo lo demás (también
+// del trim de -ss y -t). Lo decide la matriz del PRIMER fotograma, la que configura el grafo.
+std::string autorotate_filters(const AVFrame& first) {
+    const AVFrameSideData* sd = av_frame_get_side_data(&first, AV_FRAME_DATA_DISPLAYMATRIX);
+    if (sd == nullptr || sd->size < sizeof(std::int32_t) * 9) {
+        return {}; // sin matriz, el CLI la deja a ceros: el ángulo es NaN y no inserta nada
+    }
+    std::array<std::int32_t, 9> m{};
+    std::memcpy(m.data(), sd->data, sizeof(std::int32_t) * 9);
+    double theta = -std::round(av_display_rotation_get(m.data()));
+    theta -= 360 * std::floor((theta / 360) + (0.9 / 360));
+    if (std::abs(theta - 90) < 1.0) {
+        return m[3] > 0 ? "transpose=cclock_flip," : "transpose=clock,";
+    }
+    if (std::abs(theta - 180) < 1.0) {
+        return std::string(m[0] < 0 ? "hflip," : "") + (m[4] < 0 ? "vflip," : "");
+    }
+    if (std::abs(theta - 270) < 1.0) {
+        return m[3] < 0 ? "transpose=clock_flip," : "transpose=cclock,";
+    }
+    if (std::abs(theta) > 1.0) {
+        return std::format("rotate={:f}*PI/180,", theta); // "%f*PI/180"
+    }
+    if (std::abs(theta) < 1.0 && m[4] < 0) {
+        return "vflip,";
+    }
+    return {};
+}
 
 class Decoder {
 public:
@@ -282,8 +314,10 @@ private:
                 return fail(ErrorCode::Internal, "no se pudo preparar la entrada del matte");
             }
         }
-        // Lo que el CLI pone delante (seek exacto y -t), la cadena del export y el formato de salida.
-        std::string desc = (opts_.seek_us ? std::string("trim=starti=0,") : std::string()) +
+        // Lo que el CLI pone delante (autogiro, seek exacto y -t), la cadena del export y el formato
+        // de salida.
+        std::string desc = autorotate_filters(first) +
+                           (opts_.seek_us ? std::string("trim=starti=0,") : std::string()) +
                            (opts_.duration_us ? duration_trim(*opts_.duration_us) : std::string()) + spec_.chain;
         if (!desc.empty() && desc.back() != ',') {
             desc += ',';

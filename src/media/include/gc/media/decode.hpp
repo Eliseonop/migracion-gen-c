@@ -4,7 +4,8 @@
 // argumentos de ffmpeg (core::ffmpeg_input_args) y la cadena de filtros que el export le
 // aplica antes del encuadre (`[k:v]{color_pre}{trim},setpts=PTS-STARTPTS`, compose.py), a
 // fotogramas RGBA. El grafo de filtros es el de libavfilter, así que los fotogramas son los
-// mismos que da `ffmpeg <args> -vf "<cadena>,format=rgba" -f rawvideo`.
+// mismos que da `ffmpeg <args> -vf "<cadena>,format=rgba" -f rawvideo`, también el autogiro del
+// CLI: un vídeo con el giro en el contenedor (de móvil) sale girado, con sus dimensiones giradas.
 
 #include <cstdint>
 #include <filesystem>
