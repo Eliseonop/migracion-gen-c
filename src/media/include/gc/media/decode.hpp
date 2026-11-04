@@ -26,6 +26,7 @@ struct RgbaFrame {
     int width = 0;
     int height = 0;
     std::vector<std::uint8_t> pixels; // width · height · 4, sin relleno entre filas
+    bool hardware = false;            // lo decodificó la GPU (DecodeSpec::hwaccel)
 };
 
 struct DecodeSpec {
@@ -40,6 +41,12 @@ struct DecodeSpec {
     // «Eliminar fondo» con el matte de la caché: la secuencia PNG del derivado como segunda entrada
     // del grafo (la `[k:v]` de _bg_input_args), con la etiqueta `[matte]` en la cadena.
     std::optional<core::MatteSpec> matte;
+    // Decode por hardware (D3D11VA, CUDA, VAAPI o VideoToolbox, el primero que abra): la GPU da los
+    // mismos YUV que el decodificador por software, y el fotograma se pasa a su formato (NV12 →
+    // YUV420P, P010 → YUV420P10, sin pérdidas) antes del grafo, así que salen los mismos píxeles. Si
+    // el códec o el tamaño no se pueden decodificar así, o falla antes del primer fotograma, sigue
+    // por software. Video-yt no lo usa: el export lo deja apagado.
+    bool hwaccel = false;
 };
 
 // `ASSUME_BT709_FILTER` de compose.py: un vídeo sin etiqueta de color se lee como BT.709.
@@ -93,15 +100,17 @@ inline constexpr const char* kAssumeBt709Filter =
 // 1 s antes del tramo. Cada uno decodifica por adelantado en su propio hilo (unos pocos fotogramas).
 class ClipFrames {
 public:
-    // `matte`, como en export_frame_at.
+    // `matte`, como en export_frame_at; `hwaccel`, como en DecodeSpec (los mismos fotogramas).
     [[nodiscard]] static Result<ClipFrames> open(const core::TimelineClip& clip, const std::filesystem::path& path,
-                                                 int fps, const core::MatteSpec* matte = nullptr);
+                                                 int fps, const core::MatteSpec* matte = nullptr,
+                                                 bool hwaccel = false);
     // El tramo que hornea fx_bake.prepare_input para los efectos de vídeo: la cadena del clip (trim,
     // croma) y después la velocidad (`reverse`, `setpts=PTS/sp`) y `fps=F`. at(n) da su fotograma n
     // (pasado el final, el último), sin el desplazamiento del inicio del clip.
     [[nodiscard]] static Result<ClipFrames> open_bake_input(const core::TimelineClip& clip,
                                                             const std::filesystem::path& path, int fps,
-                                                            const core::MatteSpec* matte = nullptr);
+                                                            const core::MatteSpec* matte = nullptr,
+                                                            bool hwaccel = false);
 
     ClipFrames(ClipFrames&&) noexcept;
     ClipFrames& operator=(ClipFrames&&) noexcept;

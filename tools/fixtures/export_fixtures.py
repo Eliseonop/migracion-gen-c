@@ -1885,8 +1885,9 @@ def synthetic_decode_fixtures(ctx: Ctx) -> list[dict]:
         args = clip_kind.ffmpeg_input_args(c, path, fps)
         chain = _decode_chain(c, path, fps)
         vf = chain + (",scale=iw:ih" if name in mc.DECODE_SCALE_AFTER else "") + ",format=rgba"
-        w, h = _cli_dims(ffmpeg, ffprobe, path, [*args, "-vf", vf])
-        out = subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", *args, "-vf", vf,
+        cpu = ["-cpuflags", mc.DECODE_CPUFLAGS[name]] if name in mc.DECODE_CPUFLAGS else []
+        w, h = _cli_dims(ffmpeg, ffprobe, path, [*cpu, *args, "-vf", vf])
+        out = subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-nostdin", *cpu, *args, "-vf", vf,
                               "-fps_mode", "passthrough", "-f", "rawvideo", "-pix_fmt", "rgba", "-"],
                              capture_output=True, check=True).stdout
         size = w * h * 4

@@ -14,8 +14,10 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <cstdlib>
 #include <filesystem>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "gc/core/io.hpp"
@@ -75,4 +77,42 @@ TEST_CASE("paridad del decode: la entrada y la cadena del export", "[parity][dec
         frames += got.size();
     }
     CHECK(frames > 150);
+}
+
+TEST_CASE("decode por hardware: los mismos fotogramas que por software", "[parity][decode][hwaccel]") {
+    // Cada caso de decode.json con DecodeSpec::hwaccel: la GPU da los mismos YUV y el fotograma pasa al
+    // formato del software antes del grafo, así que el MD5 es el del CLI por software. Sin GPU (o con un
+    // códec que no va por hardware) sigue por software y da lo mismo; con GC_REQUIRE_HWACCEL=1 se exige
+    // que la GPU haya decodificado algún caso.
+    const auto path = kFixtures / "media" / "decode.json";
+    REQUIRE(std::filesystem::exists(path));
+    auto file = read_json_file(path);
+    REQUIRE(file);
+    gc::media::silence_ffmpeg_log();
+    std::size_t hw_cases = 0;
+    for (const Json& c : *file) {
+        INFO(c.at("name").get<std::string>());
+        auto clip = clip_from_json(c.at("clip"));
+        REQUIRE(clip);
+        const auto media = kFixtures / "media" / "files" / path_from_utf8(c.at("file").get<std::string>());
+        auto spec = gc::media::export_decode_spec(*clip, media, c.at("fps").get<int>());
+        spec.hwaccel = true;
+        std::vector<std::string> got;
+        bool hardware = false;
+        const auto n = gc::media::decode_frames(spec, [&](const gc::media::RgbaFrame& f) {
+            CHECK(f.width == c.at("width").get<int>());
+            CHECK(f.height == c.at("height").get<int>());
+            got.push_back(gc::media::md5_hex(f.pixels));
+            hardware = hardware || f.hardware;
+            return true;
+        });
+        REQUIRE(n);
+        CHECK(Json(got) == c.at("frames"));
+        hw_cases += hardware ? 1 : 0;
+    }
+    const char* required = std::getenv("GC_REQUIRE_HWACCEL"); // NOLINT(concurrency-mt-unsafe)
+    if (required != nullptr && std::string_view(required) == "1") {
+        CHECK(hw_cases > 0);
+    }
+    WARN("casos decodificados por la GPU: " << hw_cases);
 }

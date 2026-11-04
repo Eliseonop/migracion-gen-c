@@ -34,6 +34,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libavutil/display.h>
 #include <libavutil/error.h>
+#include <libavutil/hwcontext.h>
 #include <libavutil/md5.h>
 #include <libavutil/opt.h>
 #include <libavutil/pixdesc.h>
@@ -104,9 +105,100 @@ std::string autorotate_filters(const AVFrame& first) {
     return {};
 }
 
+// Decode por hardware (DecodeSpec::hwaccel): los tipos de dispositivo que se prueban, en orden.
+constexpr std::array kHwDevices = {AV_HWDEVICE_TYPE_D3D11VA, AV_HWDEVICE_TYPE_CUDA, AV_HWDEVICE_TYPE_VAAPI,
+                                   AV_HWDEVICE_TYPE_VIDEOTOOLBOX};
+
+// Un dispositivo por tipo para todo el proceso (crear uno de D3D11 o CUDA cuesta, y cada clip, cada
+// salto atrás y cada reapertura abren otro decodificador): se crea la primera vez y no se libera. Los
+// de FFmpeg se pueden usar desde varios hilos (D3D11VA lleva su cerrojo). Nada si no se puede crear.
+AVBufferRef* shared_hw_device(AVHWDeviceType type) {
+    static std::mutex mutex;
+    static std::array<AVBufferRef*, kHwDevices.size()> devices{};
+    static std::array<bool, kHwDevices.size()> tried{};
+    std::size_t i = 0; // (con MSVC, el iterador de std::array no es un puntero: un bucle)
+    while (i + 1 < kHwDevices.size() && kHwDevices.at(i) != type) {
+        ++i;
+    }
+    const std::scoped_lock lock(mutex);
+    if (!tried.at(i)) {
+        tried.at(i) = true;
+        if (av_hwdevice_ctx_create(&devices.at(i), type, nullptr, nullptr, 0) < 0) {
+            devices.at(i) = nullptr;
+        }
+    }
+    return devices.at(i) != nullptr ? av_buffer_ref(devices.at(i)) : nullptr;
+}
+
+// El fotograma bajado de la GPU (NV12 o P010) al formato del decodificador por software (YUV420P o
+// YUV420P10), sin pérdidas: la GPU da los mismos YUV que el software, pero swscale convierte NV12 a
+// RGBA por otro camino que YUV420P y no salen los mismos píxeles. Copia también las propiedades.
+// Falso si no es uno de esos dos pares.
+bool to_software_format(const AVFrame& src, AVPixelFormat want, AVFrame& dst) {
+    const auto from = static_cast<AVPixelFormat>(src.format);
+    const bool nv12 = from == AV_PIX_FMT_NV12 && want == AV_PIX_FMT_YUV420P;
+    const bool p010 = from == AV_PIX_FMT_P010LE && want == AV_PIX_FMT_YUV420P10LE;
+    if (!nv12 && !p010) {
+        return false;
+    }
+    dst.format = want;
+    dst.width = src.width;
+    dst.height = src.height;
+    if (av_frame_get_buffer(&dst, 0) < 0 || av_frame_copy_props(&dst, &src) < 0) {
+        return false;
+    }
+    const std::ptrdiff_t cw = (src.width + 1) / 2;
+    const int ch = (src.height + 1) / 2;
+    if (nv12) {
+        for (int y = 0; y < src.height; ++y) {
+            std::memcpy(dst.data[0] + static_cast<std::ptrdiff_t>(y) * dst.linesize[0],
+                        src.data[0] + static_cast<std::ptrdiff_t>(y) * src.linesize[0], static_cast<std::size_t>(src.width));
+        }
+        for (int y = 0; y < ch; ++y) {
+            const std::uint8_t* uv = src.data[1] + static_cast<std::ptrdiff_t>(y) * src.linesize[1];
+            std::uint8_t* u = dst.data[1] + static_cast<std::ptrdiff_t>(y) * dst.linesize[1];
+            std::uint8_t* v = dst.data[2] + static_cast<std::ptrdiff_t>(y) * dst.linesize[2];
+            for (std::ptrdiff_t x = 0; x < cw; ++x) {
+                u[x] = uv[2 * x];
+                v[x] = uv[(2 * x) + 1];
+            }
+        }
+        return true;
+    }
+    // P010: 10 bits en los bits altos de cada muestra de 16; YUV420P10: en los bajos.
+    const auto row16 = [](const AVFrame& f, int plane, int y) {
+        return reinterpret_cast<const std::uint16_t*>(f.data[plane] + static_cast<std::ptrdiff_t>(y) * f.linesize[plane]);
+    };
+    const auto out16 = [](AVFrame& f, int plane, int y) {
+        return reinterpret_cast<std::uint16_t*>(f.data[plane] + static_cast<std::ptrdiff_t>(y) * f.linesize[plane]);
+    };
+    for (int y = 0; y < src.height; ++y) {
+        const std::uint16_t* s = row16(src, 0, y);
+        std::uint16_t* d = out16(dst, 0, y);
+        for (int x = 0; x < src.width; ++x) {
+            d[x] = static_cast<std::uint16_t>(s[x] >> 6U);
+        }
+    }
+    for (int y = 0; y < ch; ++y) {
+        const std::uint16_t* uv = row16(src, 1, y);
+        std::uint16_t* u = out16(dst, 1, y);
+        std::uint16_t* v = out16(dst, 2, y);
+        for (std::ptrdiff_t x = 0; x < cw; ++x) {
+            u[x] = static_cast<std::uint16_t>(uv[2 * x] >> 6U);
+            v[x] = static_cast<std::uint16_t>(uv[(2 * x) + 1] >> 6U);
+        }
+    }
+    return true;
+}
+
 class Decoder {
 public:
     explicit Decoder(DecodeSpec spec) : spec_(std::move(spec)) {}
+    Decoder(const Decoder&) = delete;
+    Decoder& operator=(const Decoder&) = delete;
+    Decoder(Decoder&&) = delete; // el decodificador guarda `this` (get_format)
+    Decoder& operator=(Decoder&&) = delete;
+    ~Decoder() = default;
 
     Result<void> start() {
         auto opts = parse_input_args(spec_.input_args);
@@ -134,6 +226,11 @@ public:
             if (graph_) {
                 const int r = av_buffersink_get_frame(sink_, out_.get());
                 if (r == 0) {
+                    if (skip_ > 0) { // tras pasar a software: los que ya salieron de la GPU
+                        --skip_;
+                        av_frame_unref(out_.get());
+                        continue;
+                    }
                     ++count_;
                     return take();
                 }
@@ -171,7 +268,15 @@ public:
             }
             if (overshoot_) {
                 // El salto previo cayó después de su instante: desde el principio, sin saltar.
-                if (auto r = reopen_without_preroll(); !r) {
+                preroll_failed_ = true;
+                if (auto r = reopen(); !r) {
+                    return std::unexpected(r.error());
+                }
+            } else if (hw_reopen_) {
+                // La GPU falló (hw_to_software): otra vez desde el principio, por software, saltando
+                // lo que ya salió.
+                skip_ = count_;
+                if (auto r = reopen(); !r) {
                     return std::unexpected(r.error());
                 }
             }
@@ -256,10 +361,98 @@ private:
         }
         dec_->pkt_timebase = st->time_base;
         dec_->thread_count = 0; // automático, como el CLI
+        hw_fmt_ = AV_PIX_FMT_NONE;
+        if (spec_.hwaccel && !hw_failed_) {
+            setup_hw(*codec);
+        }
         if (const int r = avcodec_open2(dec_.get(), codec, nullptr); r < 0) {
             return fail(ErrorCode::Io, "no se pudo abrir el decodificador: " + av_err(r), opts_.path);
         }
         return {};
+    }
+
+    // El primer dispositivo de kHwDevices que el códec admita y que se pueda crear. Si ninguno, nada:
+    // por software. Solo códecs cuyo decode es exacto por la norma (transformadas enteras): en MPEG-4
+    // Part 2, MPEG-2, VC-1 o MJPEG la IDCT de la GPU no es la de FFmpeg y los fotogramas cambian.
+    void setup_hw(const AVCodec& codec) {
+        constexpr std::array kExact = {AV_CODEC_ID_H264, AV_CODEC_ID_HEVC, AV_CODEC_ID_VP8, AV_CODEC_ID_VP9,
+                                       AV_CODEC_ID_AV1};
+        if (std::ranges::find(kExact, codec.id) == kExact.end()) {
+            return;
+        }
+        for (const AVHWDeviceType type : kHwDevices) {
+            for (int i = 0;; ++i) {
+                const AVCodecHWConfig* cfg = avcodec_get_hw_config(&codec, i);
+                if (cfg == nullptr) {
+                    break;
+                }
+                if ((cfg->methods & AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX) == 0 || cfg->device_type != type) {
+                    continue;
+                }
+                AVBufferRef* device = shared_hw_device(type);
+                if (device == nullptr) {
+                    break; // no hay ese dispositivo: el siguiente tipo
+                }
+                dec_->hw_device_ctx = device;
+                dec_->opaque = this;
+                dec_->get_format = pick_format;
+                hw_fmt_ = cfg->pix_fmt;
+                return;
+            }
+        }
+    }
+
+    // get_format: el formato de la GPU si el decodificador lo ofrece; si no (o si ya falló al
+    // iniciarse, que libavcodec lo quita de la lista y vuelve a preguntar), el primero de software.
+    static AVPixelFormat pick_format(AVCodecContext* ctx, const AVPixelFormat* fmts) {
+        const auto* self = static_cast<const Decoder*>(ctx->opaque);
+        for (const AVPixelFormat* p = fmts; *p != AV_PIX_FMT_NONE; ++p) {
+            if (*p == self->hw_fmt_) {
+                return *p;
+            }
+        }
+        for (const AVPixelFormat* p = fmts; *p != AV_PIX_FMT_NONE; ++p) {
+            if ((av_pix_fmt_desc_get(*p)->flags & AV_PIX_FMT_FLAG_HWACCEL) == 0) {
+                return *p;
+            }
+        }
+        return AV_PIX_FMT_NONE;
+    }
+
+    // Un error de decode (o un fotograma dañado o que no se puede bajar) por hardware: con datos rotos,
+    // la GPU no da lo mismo que el software. Se vuelve a empezar por software (next()) y se saltan los
+    // fotogramas que ya salieron, que hasta aquí eran iguales: la secuencia es la del software.
+    void hw_to_software() {
+        if (hw_fmt_ != AV_PIX_FMT_NONE && !hw_failed_) {
+            hw_failed_ = true;
+            hw_reopen_ = true;
+        }
+    }
+
+    // frame_ en la GPU → en memoria y en el formato del software (to_software_format). Falso si no se
+    // puede.
+    bool download() {
+        if (!hw_tmp_) {
+            hw_tmp_.reset(av_frame_alloc());
+            hw_sw_.reset(av_frame_alloc());
+        }
+        av_frame_unref(hw_tmp_.get());
+        av_frame_unref(hw_sw_.get());
+        if (!hw_tmp_ || !hw_sw_ || av_hwframe_transfer_data(hw_tmp_.get(), frame_.get(), 0) < 0 ||
+            av_frame_copy_props(hw_tmp_.get(), frame_.get()) < 0) {
+            return false;
+        }
+        AVFrame* result = hw_tmp_.get();
+        if (hw_tmp_->format != dec_->sw_pix_fmt) {
+            if (!to_software_format(*hw_tmp_, dec_->sw_pix_fmt, *hw_sw_)) {
+                return false;
+            }
+            result = hw_sw_.get();
+        }
+        av_frame_unref(frame_.get());
+        av_frame_move_ref(frame_.get(), result);
+        hw_used_ = true;
+        return true;
     }
 
     // El CLI arma el grafo con los parámetros del primer fotograma decodificado.
@@ -357,6 +550,7 @@ private:
         // Como el CLI, un paquete que no se puede decodificar se salta y se sigue con el resto.
         if (const int r = avcodec_send_packet(dec_.get(), pkt); r < 0 && r != AVERROR_EOF) {
             ++decode_errors_;
+            hw_to_software();
             return {};
         }
         while (true) {
@@ -366,7 +560,17 @@ private:
             }
             if (r < 0) {
                 ++decode_errors_;
+                hw_to_software();
                 return {};
+            }
+            if (hw_fmt_ != AV_PIX_FMT_NONE && frame_->format == hw_fmt_) {
+                // Un fotograma dañado: la GPU lo oculta a su manera, distinta del software.
+                const bool damaged = frame_->decode_error_flags != 0 || (frame_->flags & AV_FRAME_FLAG_CORRUPT) != 0;
+                if (damaged || !download()) {
+                    av_frame_unref(frame_.get());
+                    hw_to_software();
+                    return {};
+                }
             }
             // Lo que hace el CLI: la marca «mejor estimada», ya desplazada con ts_offset.
             frame_->pts = frame_->best_effort_timestamp == AV_NOPTS_VALUE
@@ -412,9 +616,11 @@ private:
         return {};
     }
 
-    Result<void> reopen_without_preroll() {
+    // Desde el principio (tras el salto previo pasado o una GPU que falló), con lo que quede activo.
+    Result<void> reopen() {
         overshoot_ = false;
-        preroll_failed_ = true;
+        hw_reopen_ = false;
+        hw_used_ = hw_used_ && !hw_failed_;
         graph_.reset();
         src_ = nullptr;
         sink_ = nullptr;
@@ -439,6 +645,7 @@ private:
         RgbaFrame f;
         f.width = out_->width;
         f.height = out_->height;
+        f.hardware = hw_used_;
         const auto row = static_cast<std::size_t>(out_->width) * 4;
         f.pixels.resize(row * static_cast<std::size_t>(out_->height));
         for (int y = 0; y < out_->height; ++y) {
@@ -469,6 +676,13 @@ private:
     std::optional<std::int64_t> preroll_pts_; // el instante del salto previo, en la base del stream
     bool overshoot_ = false;                  // el salto previo se pasó: hay que reabrir sin él
     bool preroll_failed_ = false;
+    AVPixelFormat hw_fmt_ = AV_PIX_FMT_NONE; // el de la GPU, si se decodifica por hardware
+    std::unique_ptr<AVFrame, FrameFree> hw_tmp_; // el fotograma bajado de la GPU
+    std::unique_ptr<AVFrame, FrameFree> hw_sw_;  // y en el formato del software
+    bool hw_used_ = false;   // algún fotograma vino de la GPU
+    bool hw_failed_ = false; // la GPU falló: por software desde ahí
+    bool hw_reopen_ = false; // y hay que volver a empezar
+    std::size_t skip_ = 0;   // fotogramas de la cadena que no se devuelven (ya salieron de la GPU)
     bool input_done_ = false;
     bool eof_sent_ = false;
     bool finished_ = false;
@@ -938,11 +1152,12 @@ ClipFrames& ClipFrames::operator=(ClipFrames&&) noexcept = default;
 ClipFrames::~ClipFrames() = default;
 
 Result<ClipFrames> ClipFrames::open(const core::TimelineClip& clip, const std::filesystem::path& path, int fps,
-                                    const core::MatteSpec* matte) {
+                                    const core::MatteSpec* matte, bool hwaccel) {
     auto chain = clip_chain(clip, path, fps, true, matte);
     if (!chain) {
         return std::unexpected(chain.error());
     }
+    chain->spec.hwaccel = hwaccel;
     auto impl = std::make_unique<Impl>();
     impl->clip = clip;
     impl->path = path;
@@ -960,11 +1175,12 @@ Result<ClipFrames> ClipFrames::open(const core::TimelineClip& clip, const std::f
 }
 
 Result<ClipFrames> ClipFrames::open_bake_input(const core::TimelineClip& clip, const std::filesystem::path& path,
-                                               int fps, const core::MatteSpec* matte) {
+                                               int fps, const core::MatteSpec* matte, bool hwaccel) {
     auto chain = bake_input_chain(clip, path, fps, true, matte);
     if (!chain) {
         return std::unexpected(chain.error());
     }
+    chain->spec.hwaccel = hwaccel;
     auto impl = std::make_unique<Impl>();
     impl->clip = clip;
     impl->path = path;

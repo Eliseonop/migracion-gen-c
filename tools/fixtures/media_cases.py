@@ -170,6 +170,9 @@ PROBE_MEDIA_CODECS = [
     ("v_av1.mp4", _V + ["-t", "0.6", "-c:v", "libaom-av1", "-cpu-used", "8", "-crf", "30", "-pix_fmt", "yuv420p"]),
     ("v_hevc.mp4", _V + ["-t", "0.6", "-c:v", "libx265", "-x265-params", "log-level=error", "-pix_fmt", "yuv420p",
                          "-tag:v", "hvc1"]),
+    # HEVC de 10 bits (móviles con HDR o «alta eficiencia»): por la GPU llega en P010.
+    ("v_hevc10.mp4", ["-f", "lavfi", "-i", "testsrc2=size=320x180:rate=25", "-t", "0.6", "-c:v", "libx265",
+                      "-x265-params", "log-level=error", "-pix_fmt", "yuv420p10le", "-tag:v", "hvc1"]),
 ]
 CORRUPT = ("v_corrupt.mp4", "v_2s.mp4", 300)  # (archivo, origen, bytes invertidos a mitad)
 
@@ -211,12 +214,18 @@ DECODE = [
     ("mkv vp8 girado 90°", "va_rot90.mkv", {"kind": "video", "in_point": 0.2, "out_point": 0.5}, 30),
     ("motion vp9 con alfa girado 90°", "motion_rot90.webm", {"kind": "motion", "asset_kind": "motion",
                                                              "in_point": 0.1, "out_point": 0.5}, 25),
+    ("mp4 hevc de 10 bits", "v_hevc10.mp4", {"kind": "video", "in_point": 0.0, "out_point": 0.6}, 30),
 ]
 # Casos cuya referencia lleva `,scale=iw:ih` antes del `format=rgba`, como el `{cropscale}` que el export
 # pone detrás de la cadena. El CLI negocia el formato de cada filtro en el orden en que los crea (primero
 # los de -vf, luego el autogiro): con `format=rgba` justo detrás, el `rotate` (que interpola) iría en RGBA;
 # con el `scale` del export, en YUV, como el C++. A los transpose y volteos no les cambia nada.
 DECODE_SCALE_AFTER = {"mp4 girado 45°"}
+# Casos cuya referencia lleva `-cpuflags` sin MMX ni MMXEXT. Al pasar 10 bits a RGBA de 8, el swscale del
+# ffmpeg del PATH (Gyan, GCC) usa código MMX en ensamblador en línea que la build de MSVC de vcpkg no
+# puede compilar (HAVE_INLINE_ASM 0), y redondea distinto: hasta 7 niveles en el 21 % de las muestras,
+# 50,9 dB. Sin MMX, el CLI da justo lo que el C++. Con 8 bits no pasa (comprobado: los mismos MD5).
+DECODE_CPUFLAGS = {"mp4 hevc de 10 bits": "sse2+sse3+ssse3+sse4.1+sse4.2+avx+avx2"}
 
 # Audio del export ejecutado (gc_media/audio.hpp): material con sonido que cambia de nivel, para que
 # el volumen, los fundidos, la mezcla y loudnorm se noten. Se generan UNA vez (git-lfs).
