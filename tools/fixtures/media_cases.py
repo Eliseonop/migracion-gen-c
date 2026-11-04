@@ -173,6 +173,9 @@ PROBE_MEDIA_CODECS = [
     # HEVC de 10 bits (móviles con HDR o «alta eficiencia»): por la GPU llega en P010.
     ("v_hevc10.mp4", ["-f", "lavfi", "-i", "testsrc2=size=320x180:rate=25", "-t", "0.6", "-c:v", "libx265",
                       "-x265-params", "log-level=error", "-pix_fmt", "yuv420p10le", "-tag:v", "hvc1"]),
+    # H.264 de rango completo (algunas cámaras y capturas): el decodificador por software da YUVJ420P.
+    ("v_fullrange.mp4", ["-f", "lavfi", "-i", "testsrc2=size=320x180:rate=25", "-t", "0.6", "-c:v", "libx264",
+                         "-pix_fmt", "yuvj420p", "-color_range", "pc"]),
 ]
 CORRUPT = ("v_corrupt.mp4", "v_2s.mp4", 300)  # (archivo, origen, bytes invertidos a mitad)
 
@@ -215,6 +218,7 @@ DECODE = [
     ("motion vp9 con alfa girado 90°", "motion_rot90.webm", {"kind": "motion", "asset_kind": "motion",
                                                              "in_point": 0.1, "out_point": 0.5}, 25),
     ("mp4 hevc de 10 bits", "v_hevc10.mp4", {"kind": "video", "in_point": 0.0, "out_point": 0.6}, 30),
+    ("mp4 h264 de rango completo", "v_fullrange.mp4", {"kind": "video", "in_point": 0.0, "out_point": 0.6}, 30),
 ]
 # Casos cuya referencia lleva `,scale=iw:ih` antes del `format=rgba`, como el `{cropscale}` que el export
 # pone detrás de la cadena. El CLI negocia el formato de cada filtro en el orden en que los crea (primero
@@ -225,6 +229,8 @@ DECODE_SCALE_AFTER = {"mp4 girado 45°"}
 # ffmpeg del PATH (Gyan, GCC) usa código MMX en ensamblador en línea que la build de MSVC de vcpkg no
 # puede compilar (HAVE_INLINE_ASM 0), y redondea distinto: hasta 7 niveles en el 21 % de las muestras,
 # 50,9 dB. Sin MMX, el CLI da justo lo que el C++. Con 8 bits no pasa (comprobado: los mismos MD5).
+# Queda atado a los caminos SIMD de swscale de esta CPU y esta build: en otra (ARM, sin AVX2, un
+# FFmpeg de Linux con MMX) este es el caso que puede fallar.
 DECODE_CPUFLAGS = {"mp4 hevc de 10 bits": "sse2+sse3+ssse3+sse4.1+sse4.2+avx+avx2"}
 
 # Audio del export ejecutado (gc_media/audio.hpp): material con sonido que cambia de nivel, para que

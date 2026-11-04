@@ -130,13 +130,14 @@ AVBufferRef* shared_hw_device(AVHWDeviceType type) {
     return devices.at(i) != nullptr ? av_buffer_ref(devices.at(i)) : nullptr;
 }
 
-// El fotograma bajado de la GPU (NV12 o P010) al formato del decodificador por software (YUV420P o
-// YUV420P10), sin pérdidas: la GPU da los mismos YUV que el software, pero swscale convierte NV12 a
+// El fotograma bajado de la GPU (NV12 o P010) al formato del decodificador por software (YUV420P,
+// YUVJ420P o YUV420P10), sin pérdidas: la GPU da los mismos YUV que el software, pero swscale convierte NV12 a
 // RGBA por otro camino que YUV420P y no salen los mismos píxeles. Copia también las propiedades.
 // Falso si no es uno de esos dos pares.
 bool to_software_format(const AVFrame& src, AVPixelFormat want, AVFrame& dst) {
     const auto from = static_cast<AVPixelFormat>(src.format);
-    const bool nv12 = from == AV_PIX_FMT_NV12 && want == AV_PIX_FMT_YUV420P;
+    // YUVJ420P (H.264 de rango completo) tiene los mismos planos que YUV420P.
+    const bool nv12 = from == AV_PIX_FMT_NV12 && (want == AV_PIX_FMT_YUV420P || want == AV_PIX_FMT_YUVJ420P);
     const bool p010 = from == AV_PIX_FMT_P010LE && want == AV_PIX_FMT_YUV420P10LE;
     if (!nv12 && !p010) {
         return false;
@@ -432,13 +433,16 @@ private:
     // frame_ en la GPU → en memoria y en el formato del software (to_software_format). Falso si no se
     // puede.
     bool download() {
-        if (!hw_tmp_) {
+        if (!hw_tmp_ || !hw_sw_) {
             hw_tmp_.reset(av_frame_alloc());
             hw_sw_.reset(av_frame_alloc());
+            if (!hw_tmp_ || !hw_sw_) {
+                return false;
+            }
         }
         av_frame_unref(hw_tmp_.get());
         av_frame_unref(hw_sw_.get());
-        if (!hw_tmp_ || !hw_sw_ || av_hwframe_transfer_data(hw_tmp_.get(), frame_.get(), 0) < 0 ||
+        if (av_hwframe_transfer_data(hw_tmp_.get(), frame_.get(), 0) < 0 ||
             av_frame_copy_props(hw_tmp_.get(), frame_.get()) < 0) {
             return false;
         }

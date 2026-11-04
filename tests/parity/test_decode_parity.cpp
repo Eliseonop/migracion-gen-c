@@ -14,6 +14,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <algorithm>
 #include <cstdlib>
 #include <filesystem>
 #include <string>
@@ -89,6 +90,10 @@ TEST_CASE("decode por hardware: los mismos fotogramas que por software", "[parit
     auto file = read_json_file(path);
     REQUIRE(file);
     gc::media::silence_ffmpeg_log();
+    const char* required_env = std::getenv("GC_REQUIRE_HWACCEL"); // NOLINT(concurrency-mt-unsafe)
+    const bool required = required_env != nullptr && std::string_view(required_env) == "1";
+    // Con GPU, estos tienen que salir de ella: P010 (10 bits) y NV12 → YUVJ420P (rango completo).
+    const std::vector<std::string> must_use_gpu = {"mp4 hevc de 10 bits", "mp4 h264 de rango completo"};
     std::size_t hw_cases = 0;
     for (const Json& c : *file) {
         INFO(c.at("name").get<std::string>());
@@ -109,9 +114,11 @@ TEST_CASE("decode por hardware: los mismos fotogramas que por software", "[parit
         REQUIRE(n);
         CHECK(Json(got) == c.at("frames"));
         hw_cases += hardware ? 1 : 0;
+        if (required && std::ranges::contains(must_use_gpu, c.at("name").get<std::string>())) {
+            CHECK(hardware);
+        }
     }
-    const char* required = std::getenv("GC_REQUIRE_HWACCEL"); // NOLINT(concurrency-mt-unsafe)
-    if (required != nullptr && std::string_view(required) == "1") {
+    if (required) {
         CHECK(hw_cases > 0);
     }
     WARN("casos decodificados por la GPU: " << hw_cases);

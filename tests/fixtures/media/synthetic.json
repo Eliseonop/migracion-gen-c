@@ -4553,6 +4553,12 @@
    "has_audio": false
   },
   {
+   "file": "v_fullrange.mp4",
+   "duration": 0.6,
+   "color_untagged": true,
+   "has_audio": false
+  },
+  {
    "file": "v_hevc.mp4",
    "duration": 0.6,
    "color_untagged": true,

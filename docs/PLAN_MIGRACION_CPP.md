@@ -1674,7 +1674,7 @@ Decisión de Edu (§6):
 - **Datos rotos:** con un error de decode o un fotograma marcado como dañado, la GPU oculta el daño a su manera (en el H.264 con paquetes rotos cambia el fotograma dañado), así que se vuelve a empezar por software y se saltan los fotogramas que ya salieron, que hasta ahí eran iguales.
 - **Test** «decode por hardware: los mismos fotogramas que por software»: los 31 casos de `decode.json` con `hwaccel`, contra el MD5 del CLI por software; 20 salen de la GPU de este PC (RTX 4060 por D3D11VA). `GC_REQUIRE_HWACCEL=1` exige que la GPU decodifique alguno; sin GPU, el test pasa por software. 6/6 mutaciones a mano (sin la conversión, P010 desplazado de más, U y V cambiados, sin volver a software, sin saltar lo ya salido y todos los códecs por la GPU).
 - **Fixture nueva:** un HEVC de 10 bits (`v_hevc10.mp4`, 320×180). Al pasar 10 bits a RGBA, el CLI de Gyan usa MMX en ensamblador en línea que la build de MSVC no tiene y redondea distinto (hasta 7 niveles, 50,9 dB): su referencia lleva `-cpuflags` sin MMX (`DECODE_CPUFLAGS`), con lo que coincide exacto. Divergencia de build, en las notas de F3.
-- Falta pedirlo desde `gc_export` (`genclip render`, `genclip frame` y `FrameRenderer` del preview).
+- Pedirlo desde `gc_export` (`genclip render`, `genclip frame` y `FrameRenderer` del preview): hecho en la entrada siguiente.
 - **MSVC:** 206/206 (Debug y Release), 0 warnings; clang-tidy, 0 avisos en `decode.cpp` y su test.
 
 ### 2026-11-04 — F3: el decode por hardware en gc_export y genclip (`--hwaccel`), medido
