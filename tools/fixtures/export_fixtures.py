@@ -1966,8 +1966,16 @@ def synthetic_render_fixtures(ctx: Ctx, keep: bool = False) -> list[dict]:
             subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", *pre, "-i", str(files / src), *post,
                             str(files / name)], check=True)
 
+    # Con `keep`, un PNG se conserva solo si su caso (instante y timeline) es el mismo que el del
+    # synthetic.json que ya hay: una escena cambiada o un índice movido se vuelven a componer.
+    old: dict[str, str] = {}
+    if keep and (RENDER_DIR / "synthetic.json").exists():
+        for c in json.loads((RENDER_DIR / "synthetic.json").read_text(encoding="utf-8")):
+            old[c["frame"]] = json.dumps([c["t"], c["timeline"]], sort_keys=True)
+
     def render_frame(timeline, png: str, t: float) -> None:
-        if not (keep and (RENDER_DIR / png).exists()):
+        same = old.get(png) == json.dumps([t, _pure(timeline.model_dump())], sort_keys=True)
+        if not (keep and same and (RENDER_DIR / png).exists()):
             compose.render_frame(SimpleNamespace(id="render-fixture"), timeline, RENDER_DIR / png, t)
     real_clip_path = compose._clip_path
     # Los horneados de los efectos de vídeo (fx_bake), a una carpeta temporal: no en data/ de video-yt.

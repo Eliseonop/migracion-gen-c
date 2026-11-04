@@ -13,6 +13,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <ranges>
 #include <string_view>
 #include <thread>
 #include <vector>
@@ -876,14 +877,12 @@ struct ClipFrames::Impl {
         if (n == 0) {
             return nullptr;
         }
-        std::int64_t chosen = n - 1;
-        for (std::int64_t k = 0; k < n; ++k) {
-            const std::int64_t p = chain.pts_of(k);
-            if (p >= tick) {
-                chosen = p == tick || k == 0 ? k : k - 1;
-                break;
-            }
-        }
+        // El primero con pts ≥ tick, como el bucle de export_frame_at, pero por bisección: pts_of no
+        // decrece, y así reproducir un clip largo al revés no recorre el tramo en cada tick.
+        const auto ks = std::views::iota(std::int64_t{0}, n);
+        const auto it = std::ranges::partition_point(ks, [&](std::int64_t i) { return chain.pts_of(i) < tick; });
+        const std::int64_t k = it == ks.end() ? n : *it;
+        const std::int64_t chosen = k == n ? n - 1 : chain.pts_of(k) == tick || k == 0 ? k : k - 1;
         const std::int64_t wanted = n - 1 - chosen;
         if (wanted < window_from || wanted >= window_from + static_cast<std::int64_t>(window.size())) {
             const auto fit = static_cast<std::int64_t>(std::max<std::size_t>(1, kReverseWindowBytes / reverse_frame_bytes));

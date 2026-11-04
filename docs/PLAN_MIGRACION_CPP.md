@@ -1658,3 +1658,11 @@ Decisión de Edu (§6):
 - **Encontrado de paso** (notas de F3): `_shifted_keyframes` tira los keyframes del encuadre fuera del tramo (decisión nueva para Edu; ninguno de sus clips) y el `int()` del recorte del export cae un píxel antes con `0,35·180` (el redondeo pendiente).
 - **Mutaciones a mano:** 8/8 detectadas (cada rama, el signo de `get_rotation`, el ángulo de `rotate` y la regla de las sondas); poner el giro detrás de los trim es equivalente.
 - **MSVC:** 205/205 (Debug y Release), 0 warnings; MinGW 154/154 (Debug y Release); clang-tidy, 0 avisos en `decode.cpp` y `probe.cpp`.
+
+### 2026-11-04 — F3, revisión de `7202cf4..HEAD` (revisor-migracion: aprobado, sin bloqueantes)
+
+- **Autogiro y sondas:** el revisor comprobó las ramas, los signos, el NaN sin matriz y el orden frente a `ffmpeg_filter.c` y `cmdutils.c`, y la regla de las sondas frente a `print_stream` de `ffprobe.c` y el ffprobe del PATH. Todo cuadra. La divergencia teórica que queda (el CLI reconfigura el grafo si la matriz cambia a mitad del stream) no aparece en vídeos de móvil.
+- **`--conservar`** solo saltaba un PNG por su nombre: con una escena cambiada o un índice movido se quedaba el viejo. Ahora lo vuelve a componer si su caso (instante y timeline) no es el del `synthetic.json` que ya hay (con todo igual, 2,5 s y ningún PNG tocado).
+- **`ClipFrames` al revés:** el fotograma del tick se busca por bisección (`pts_of` no decrece) en vez de recorrer el tramo en cada tick (O(n²) al reproducir un clip largo al revés). Dos mutaciones a mano detectadas por «ClipFrames da los mismos fotogramas que export_frame_at».
+- **TODO:** quitadas dos frases viejas (el autogiro «sin portar» y la caché de fotogramas como pendiente). Las miniaturas, los proxies y las formas de onda no tienen módulo de Python que portar: en video-yt las miniaturas las saca el navegador y las barras del audio son `pseudoWaveform`, ya portado. Llegan con el preview de F5.
+- **MSVC:** 205/205 (Debug y Release), 0 warnings; clang-tidy, 0 avisos en `decode.cpp`. MinGW no compila nada de lo cambiado (154/154 en la tanda anterior).
