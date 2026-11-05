@@ -18,7 +18,12 @@ struct Fixture {
     core::SettingsFile file{dir / "settings.json"};
 
     Fixture() { std::filesystem::remove_all(dir); }
-    ~Fixture() { std::filesystem::remove_all(dir); }
+    ~Fixture() {
+        try { // el remove_all de MSVC puede lanzar bad_alloc al copiar rutas
+            std::filesystem::remove_all(dir);
+        } catch (...) { // NOLINT(bugprone-empty-catch): la carpeta temporal se queda, el destructor no lanza
+        }
+    }
 };
 
 QVariantMap provider(const studio::SettingsModel& m, const QString& id) {
@@ -34,7 +39,7 @@ QVariantMap provider(const studio::SettingsModel& m, const QString& id) {
 
 TEST_CASE("ajustes: valores de fábrica y los 19 proveedores de la lista", "[studio]") {
     Fixture f;
-    studio::SettingsModel m(f.file);
+    const studio::SettingsModel m(f.file);
     CHECK(m.fps() == 30);
     CHECK(m.quality() == "standard");
     CHECK(m.transcribeModel() == "base");
@@ -51,7 +56,7 @@ TEST_CASE("ajustes: exportación y transcripción se guardan y se releen", "[stu
         m.setTranscribeModel("small");
         CHECK(m.error().isEmpty());
     }
-    studio::SettingsModel again(f.file);
+    const studio::SettingsModel again(f.file);
     CHECK(again.fps() == 60);
     CHECK(again.quality() == "high");
     CHECK(again.transcribeModel() == "small");

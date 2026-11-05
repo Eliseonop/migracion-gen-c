@@ -40,6 +40,23 @@
         "harfbuzz",
         "skia"
       ]
+    },
+    "studio": {
+      "description": "genclip-studio: Qt 6 con Quick, Controls y Dialogs (qtdeclarative) y QtTest, sin lo que no usa (OpenSSL, ICU, SQL, D-Bus ni Widgets)",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [
+            "gui", "network", "testlib", "concurrent", "thread", "png", "jpeg", "freetype", "harfbuzz",
+            "doubleconversion", "pcre2"
+          ]
+        },
+        {
+          "name": "qtdeclarative",
+          "default-features": false
+        }
+      ]
     }
   }
 }

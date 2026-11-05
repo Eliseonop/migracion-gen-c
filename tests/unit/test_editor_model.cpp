@@ -54,9 +54,14 @@ struct Fixture {
                           {{"id", "p2"}, {"name", "Vacío"}, {"created_at", "2026-10-19T10:00:00+00:00"}}})}};
         REQUIRE(core::write_json_file(dir / "data" / "projects.json", data));
     }
-    ~Fixture() { std::filesystem::remove_all(dir); }
+    ~Fixture() {
+        try { // el remove_all de MSVC puede lanzar bad_alloc al copiar rutas
+            std::filesystem::remove_all(dir);
+        } catch (...) { // NOLINT(bugprone-empty-catch): la carpeta temporal se queda, el destructor no lanza
+        }
+    }
 
-    [[nodiscard]] core::Timeline saved() {
+    [[nodiscard]] core::Timeline saved() const {
         auto p = store.get_project("p1");
         REQUIRE(p);
         REQUIRE(*p);

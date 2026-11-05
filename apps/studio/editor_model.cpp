@@ -310,9 +310,7 @@ std::optional<std::filesystem::path> EditorModel::sfx_dir() const {
 
 void EditorModel::load_sfx(const std::string& q, const std::string& category) {
     sfx_query_ = {q, category};
-    materials_.erase(std::remove_if(materials_.begin(), materials_.end(),
-                                    [](const QVariant& m) { return m.toMap()["source"] == "sfx"; }),
-                     materials_.end());
+    materials_.removeIf([](const QVariant& m) { return m.toMap()["source"] == "sfx"; });
     const Json settings = settings_ ? settings_->load() : Json::object();
     const Json sfx = core::sfx_search(sfx_dir(), settings, q, category);
     sfx_items_.clear();
@@ -342,9 +340,7 @@ std::optional<std::filesystem::path> EditorModel::collections_base() const {
 
 void EditorModel::load_collections(const std::string& q, const std::string& collection) {
     collections_query_ = {q, collection};
-    materials_.erase(std::remove_if(materials_.begin(), materials_.end(),
-                                    [](const QVariant& m) { return m.toMap()["source"] == "collection"; }),
-                     materials_.end());
+    materials_.removeIf([](const QVariant& m) { return m.toMap()["source"] == "collection"; });
     const Json settings = settings_ ? settings_->load() : Json::object();
     const auto root = collections_base();
     collections_root_ = root ? QString::fromStdString(core::path_to_utf8(*root)) : QString();
@@ -650,7 +646,8 @@ QVariantMap EditorModel::selectedClip() const {
     const double local = playhead_ - c->start;
     const core::Pose pose = core::clip_pose(*c, std::max(0.0, local));
     const auto& tl = *session_->timeline();
-    const core::TransformView tv = core::transform_view(*c, local, tl.width, tl.height);
+    const core::TransformView tv =
+        core::transform_view(*c, local, static_cast<double>(tl.width), static_cast<double>(tl.height));
     return {
         {"transform", QVariantMap{{"show", tv.show},
                                   {"xy", tv.xy},
@@ -1476,7 +1473,7 @@ void EditorModel::pose_each(const char* cause, Patch patch) {
 void EditorModel::setPosition(double x, double y) {
     const auto& tl = *session_->timeline();
     pose_each("transform", [&](const core::TimelineClip& c) {
-        return core::transform_pos_patch(c, x, y, tl.width, tl.height);
+        return core::transform_pos_patch(c, x, y, static_cast<double>(tl.width), static_cast<double>(tl.height));
     });
 }
 
@@ -1751,7 +1748,7 @@ void EditorModel::addText(const QString& themeId) {
                   "add-text");
 }
 
-void EditorModel::add_generated(core::Timeline next, Json clip, const char* cause) {
+void EditorModel::add_generated(core::Timeline next, const Json& clip, const char* cause) {
     auto made = core::clip_from_json(clip);
     if (!ok(made)) {
         return;

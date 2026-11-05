@@ -46,7 +46,7 @@ public:
     Q_INVOKABLE void drag(double nx, double ny);
     Q_INVOKABLE void release() { grab_.reset(); }
     // Qt::CursorShape para el puntero sin pulsar.
-    Q_INVOKABLE int cursorAt(double nx, double ny, double w, double h) const;
+    Q_INVOKABLE [[nodiscard]] int cursorAt(double nx, double ny, double w, double h) const;
     Q_INVOKABLE void pickRatio(const QString& id);
     Q_INVOKABLE void reset();
 

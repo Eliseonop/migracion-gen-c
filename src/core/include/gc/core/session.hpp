@@ -34,6 +34,9 @@ namespace gc::core {
 using TimelineSnapshot = std::shared_ptr<const Timeline>;
 
 // Pilas de deshacer/rehacer y checkpoints con nombre (timeline_history.py).
+// El movimiento implícito puede lanzar con la STL de MSVC en Debug (mover un std::deque reserva su
+// proxy de iteradores); con libstdc++, no.
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class History {
 public:
     static constexpr std::size_t kDefaultLimit = 50;

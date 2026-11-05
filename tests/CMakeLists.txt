@@ -1,5 +1,6 @@
 add_executable(gc_tests
     support/json_diff.cpp
+    support/no_crash_dialogs.cpp
     unit/test_clip_layout_ui.cpp
     unit/test_clip_media.cpp
     unit/test_coercion.cpp
@@ -95,6 +96,7 @@ if(TARGET gc_studio)
         target_sources(gc_tests PRIVATE unit/test_studio_ui.cpp)
         target_link_libraries(gc_tests PRIVATE gc_studio_qml Qt6::Test)
     endif()
+    gc_qt_runtime(gc_tests) # el qt.conf y las DLL de Qt de vcpkg (cmake/GcQtRuntime.cmake)
 endif()
 # MSVC sabe que FAIL() lanza y da por inalcanzable el `return`/`throw` que GCC necesita detrás.
 # El manifiesto pone argv en UTF-8: si no, con una página de códigos ANSI que no lo sea (la del

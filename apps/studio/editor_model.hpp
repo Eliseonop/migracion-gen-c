@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QUrl> // moc pide el tipo completo de QList<QUrl> (Qt 6.11; la 6.4 lo dejaba pasar)
 #include <QVariantList>
 #include <QVariantMap>
 #include <map>
@@ -301,7 +302,7 @@ private:
     template <class Edit>
     void mask_edit(const char* cause, Edit edit);
     void set_filters(const std::vector<core::ClipFilter>& stack);
-    void add_generated(core::Timeline next, Json clip, const char* cause);
+    void add_generated(core::Timeline next, const Json& clip, const char* cause);
     template <class Patch>
     void pose_each(const char* cause, Patch patch);
     template <class Edit>

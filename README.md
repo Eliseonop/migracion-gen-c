@@ -40,14 +40,14 @@ Debug y Release, y falla si hay algún warning.
 
 Análisis estático: `python tools/dev/tidy.py [--fix] [filtro]` pasa el clang-tidy de CLion con el
 `.clang-tidy` del repo por `src`, `apps` y `tests`, y falla si hay algún aviso (tiene que quedar en 0).
-Lo que solo compila MSVC (`gc_media`, `gc_render`, `gc_export`) lo analiza con la build de
+Lo que solo compila MSVC (`gc_media`, `gc_render`, `gc_export` y, en Windows, el studio) lo analiza con la build de
 `tools/dev/verificar_msvc.bat` y el entorno de `vcvars64.bat` (variable `VCVARS`).
 
 | Preset | Para qué |
 |---|---|
 | `mingw-debug` / `mingw-release` | MinGW de CLion. Provisional, solo para el núcleo (F0–F2). |
 | `msvc-debug` / `msvc-release` | MSVC desde un *Developer Prompt* o desde CLion con el toolchain «Visual Studio». |
-| `msvc-vcpkg-*` | MSVC + dependencias de vcpkg (necesita `VCPKG_ROOT`). Obligatorio desde F3 (FFmpeg, Skia, ORT). |
+| `msvc-vcpkg-*` | MSVC + dependencias de vcpkg (necesita `VCPKG_ROOT`). Obligatorio desde F3 (FFmpeg, Skia, ORT). Trae también Qt 6.11 para `genclip-studio`, que arranca desde `build/` (su `qt.conf` apunta al Qt de vcpkg). |
 | `linux-debug`, `macos-debug` | Otras plataformas. |
 | `ci` | Release con warnings como errores (GitHub Actions). |
 

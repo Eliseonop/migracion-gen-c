@@ -31,6 +31,13 @@ QGuiApplication& app() {
     static char name[] = "gc_tests";
     static char* argv[] = {name, nullptr};
     qputenv("QT_QPA_PLATFORM", "offscreen");
+#ifdef _WIN32
+    // En Windows, offscreen no mira las fuentes del sistema sino <prefijo de Qt>/lib/fonts, que el Qt
+    // de vcpkg no trae: sin fuentes, los textos no miden lo que deben y la maqueta se descoloca.
+    if (qEnvironmentVariableIsEmpty("QT_QPA_FONTDIR")) {
+        qputenv("QT_QPA_FONTDIR", qgetenv("WINDIR") + "/Fonts");
+    }
+#endif
     static auto* instance = new QGuiApplication(argc, argv);
     return *instance;
 }
@@ -102,7 +109,10 @@ struct Studio {
     }
     ~Studio() {
         engine.reset();
-        std::filesystem::remove_all(dir);
+        try { // aun con error_code, el remove_all de MSVC puede lanzar bad_alloc al copiar rutas
+            std::filesystem::remove_all(dir);
+        } catch (...) { // NOLINT(bugprone-empty-catch): la carpeta temporal se queda, el destructor no lanza
+        }
     }
 
     // Busca en el árbol visual: los delegados de un Repeater cuelgan de su padre visual.
@@ -123,13 +133,13 @@ struct Studio {
         REQUIRE(c);
         return c->mapToScene(QPointF(c->width() * fx, c->height() / 2)).toPoint();
     }
-    void click(const QString& name) {
+    void click(const QString& name) const {
         QQuickItem* i = item(name);
         REQUIRE(i);
         QTest::mouseClick(window, Qt::LeftButton, {}, i->mapToScene(QPointF(i->width() / 2, i->height() / 2)).toPoint());
         QCoreApplication::processEvents();
     }
-    void drag(QPoint from, QPoint to, Qt::KeyboardModifiers mods = {}) {
+    void drag(QPoint from, QPoint to, Qt::KeyboardModifiers mods = {}) const {
         QTest::mousePress(window, Qt::LeftButton, mods, from);
         for (int i = 1; i <= 8; ++i) {
             QTest::mouseMove(window, from + (to - from) * i / 8);
@@ -152,7 +162,7 @@ struct Studio {
 TEST_CASE(
     "studio sin pantalla: arrastrar un clip con el ratón lo mueve, se pega al vecino y se deshace con Ctrl+Z",
     "[studio][ui]") {
-    Studio s;
+    const Studio s;
     const double pps = s.editor->pps();
     const QPoint from = s.at("b", 0.5);
     s.drag(from, from - QPoint(static_cast<int>(1.5 * pps), 0)); // b: 6 → 4,5
@@ -168,7 +178,7 @@ TEST_CASE(
 }
 
 TEST_CASE("studio sin pantalla: arrastrar el borde derecho recorta y no invade al vecino", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     const double pps = s.editor->pps();
     const QPoint edge = s.at("a", 1.0) - QPoint(2, 0);
     s.drag(edge, edge + QPoint(static_cast<int>(5 * pps), 0)); // a: 4 s → hasta «b» (en 6)
@@ -177,7 +187,7 @@ TEST_CASE("studio sin pantalla: arrastrar el borde derecho recorta y no invade a
 
 TEST_CASE("studio sin pantalla: arrastrar a la fila de encima cambia de pista; S corta y Supr borra",
           "[studio][ui]") {
-    Studio s;
+    const Studio s;
     QQuickItem* a = s.item("clip:a");
     REQUIRE(a);
     const QPoint from = s.at("b", 0.5);
@@ -194,7 +204,7 @@ TEST_CASE("studio sin pantalla: arrastrar a la fila de encima cambia de pista; S
 }
 
 TEST_CASE("studio sin pantalla: atajos del editor (M, «,» y «.», flechas, V)", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     s.editor->setPlayhead(1);
     QTest::keyClick(s.window, Qt::Key_M);
     s.editor->setPlayhead(3);
@@ -220,7 +230,7 @@ TEST_CASE("studio sin pantalla: atajos del editor (M, «,» y «.», flechas, V)
 }
 
 TEST_CASE("studio sin pantalla: con la pista bloqueada sus clips no se arrastran", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     QQuickItem* lock = s.item("track:V1:locked");
     REQUIRE(lock);
     QTest::mouseClick(s.window, Qt::LeftButton, {},
@@ -233,7 +243,7 @@ TEST_CASE("studio sin pantalla: con la pista bloqueada sus clips no se arrastran
 }
 
 TEST_CASE("studio sin pantalla: arrastrar material del panel a la timeline crea el clip", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     QQuickItem* card = s.item("material:audios:a1");
     REQUIRE(card);
     QQuickItem* a = s.item("clip:a");
@@ -251,7 +261,7 @@ TEST_CASE("studio sin pantalla: arrastrar material del panel a la timeline crea 
 }
 
 TEST_CASE("studio sin pantalla: con Alt el material soltado encima de un clip lo reemplaza", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     QQuickItem* card = s.item("material:images:i1");
     REQUIRE(card);
     const QPoint to = s.at("b", 0.5);
@@ -266,7 +276,7 @@ TEST_CASE("studio sin pantalla: con Alt el material soltado encima de un clip lo
 }
 
 TEST_CASE("studio sin pantalla: el rectángulo de selección elige los clips que corta", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     const QPoint a = s.at("a", 0.5);
     const QPoint b = s.at("b", 0.5);
     // Desde un hueco de V1 entre «a» y «b», arriba, hasta el centro de «b»: corta solo «b».
@@ -280,7 +290,7 @@ TEST_CASE("studio sin pantalla: el rectángulo de selección elige los clips que
 }
 
 TEST_CASE("studio sin pantalla: Ctrl+, abre los ajustes, cambia los fps y guarda una clave", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     CHECK_FALSE(s.item("set:fps:60"));
     QTest::keyClick(s.window, Qt::Key_Comma, Qt::ControlModifier);
     s.click("set:fps:60");
@@ -304,7 +314,7 @@ TEST_CASE("studio sin pantalla: Ctrl+, abre los ajustes, cambia los fps y guarda
 }
 
 TEST_CASE("studio sin pantalla: arrastrar hasta el borde desplaza la vista y el clip la sigue", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     QQuickItem* lane = s.item("clip:b")->parentItem();
     const QPoint from = s.at("b", 0.5);
     const double grab = from.x() - s.at("b", 0.0).x();
@@ -314,8 +324,9 @@ TEST_CASE("studio sin pantalla: arrastrar hasta el borde desplaza la vista y el 
         QTest::mouseMove(s.window, from + (edge - from) * i / 8);
     }
     const double before = lane->mapFromScene(QPointF(edge)).x();
-    QTest::qWait(300);
-    CHECK(lane->mapFromScene(QPointF(edge)).x() > before + 100); // la vista ha corrido bajo el puntero
+    // La vista corre a golpes de un Timer de 16 ms y cada golpe rehace la vista previa del gesto: en
+    // Debug (MSVC sin optimizar, ~50 ms el golpe) y con el PC ocupado, tarda más que en 300 ms fijos.
+    CHECK(QTest::qWaitFor([&] { return lane->mapFromScene(QPointF(edge)).x() > before + 100; }, 5000)); // ha corrido bajo el puntero
     QTest::mouseRelease(s.window, Qt::LeftButton, {}, edge);
     QCoreApplication::processEvents();
     const double reached = (before - grab) / s.editor->pps(); // donde caería sin desplazar
@@ -323,7 +334,7 @@ TEST_CASE("studio sin pantalla: arrastrar hasta el borde desplaza la vista y el 
 }
 
 TEST_CASE("studio sin pantalla: el botón T añade un texto y el inspector lo cambia", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     s.click("editor:addText");
     REQUIRE(s.editor->selectedClip()["kind"] == "text");
     s.click("insp:bold");
@@ -339,7 +350,7 @@ TEST_CASE("studio sin pantalla: el botón T añade un texto y el inspector lo ca
 }
 
 TEST_CASE("studio sin pantalla: los marcadores se arrastran y se quitan con el botón derecho", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     s.editor->setPlayhead(2);
     QTest::keyClick(s.window, Qt::Key_M);
     REQUIRE(s.editor->markers().size() == 1);
@@ -351,14 +362,14 @@ TEST_CASE("studio sin pantalla: los marcadores se arrastran y se quitan con el b
     CHECK(std::abs(s.editor->markers().front().toMap()["t"].toDouble() - 5) < 0.1);
     s.editor->renameMarker(id, "  gancho ");
     CHECK(s.editor->markers().front().toMap()["label"] == "gancho");
-    QQuickItem* moved = s.item("marker:" + id);
+    const QQuickItem* moved = s.item("marker:" + id);
     QTest::mouseClick(s.window, Qt::RightButton, {}, moved->mapToScene(QPointF(moved->width() / 2, 5)).toPoint());
     QCoreApplication::processEvents();
     CHECK(s.editor->markers().isEmpty());
 }
 
 TEST_CASE("studio sin pantalla: Ctrl+Alt+C y Ctrl+Alt+V pegan los atributos elegidos", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     s.editor->select("a");
     s.editor->setBlend("multiply");
     QTest::keyClick(s.window, Qt::Key_C, Qt::ControlModifier | Qt::AltModifier);
@@ -370,7 +381,7 @@ TEST_CASE("studio sin pantalla: Ctrl+Alt+C y Ctrl+Alt+V pegan los atributos eleg
 }
 
 TEST_CASE("studio sin pantalla: un rombo de keyframe se arrastra y un clic lleva el cabezal a él", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     s.editor->select("a");
     s.editor->setPlayhead(1);
     s.editor->toggleKeyframe();
@@ -383,7 +394,7 @@ TEST_CASE("studio sin pantalla: un rombo de keyframe se arrastra y un clic lleva
     CHECK(s.editor->selectedClip()["kf"] == "on");
     s.editor->setPlayhead(0);
     const bool undo = s.editor->canUndo();
-    QQuickItem* moved = s.item("kf:a:0");
+    const QQuickItem* moved = s.item("kf:a:0");
     QTest::mouseClick(s.window, Qt::LeftButton, {}, moved->mapToScene(QPointF(moved->width() / 2, moved->height() / 2)).toPoint());
     QCoreApplication::processEvents();
     CHECK(std::abs(s.editor->playhead() - 3) < 0.1);
@@ -391,7 +402,7 @@ TEST_CASE("studio sin pantalla: un rombo de keyframe se arrastra y un clic lleva
 }
 
 TEST_CASE("studio sin pantalla: las pestañas del inspector según el clip", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     s.editor->select("a");
     QCoreApplication::processEvents();
     CHECK(s.item("insp:x"));
@@ -407,7 +418,7 @@ TEST_CASE("studio sin pantalla: las pestañas del inspector según el clip", "[s
 }
 
 TEST_CASE("studio sin pantalla: el modal Recortar se abre desde la barra y confirma", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     s.editor->select("a");
     s.click("cropButton");
     QTest::qWait(50);
@@ -423,7 +434,7 @@ TEST_CASE("studio sin pantalla: el modal Recortar se abre desde la barra y confi
 }
 
 TEST_CASE("studio sin pantalla: el tirador de la curva del keyframe la vuelve personalizada", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     s.editor->select("a");
     s.editor->setPlayhead(1);
     s.editor->toggleKeyframe();
@@ -444,7 +455,7 @@ TEST_CASE("studio sin pantalla: un efecto de la biblioteca va a la pestaña Efec
     auto catalog = core::FxCatalog::load(core::path_from_utf8(GC_RESOURCES_DIR) / "fx" / "catalog.json");
     REQUIRE(catalog);
     core::set_fx_catalog(std::make_shared<const core::FxCatalog>(std::move(*catalog)));
-    Studio s;
+    const Studio s;
     s.editor->select("a");
     s.click("material:source:fx");
     s.click("fx:glitch_rgb");
@@ -454,7 +465,7 @@ TEST_CASE("studio sin pantalla: un efecto de la biblioteca va a la pestaña Efec
 }
 
 TEST_CASE("studio sin pantalla: una figura del material se añade con un clic o arrastrándola", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     s.click("material:source:shapes");
     s.click("material:shape:star");
     CHECK(s.editor->selectedClip()["kind"] == "shape");
@@ -470,7 +481,7 @@ TEST_CASE("studio sin pantalla: una figura del material se añade con un clic o 
 }
 
 TEST_CASE("studio sin pantalla: los textos del material se añaden, cambian de tema y se arrastran", "[studio][ui]") {
-    Studio s;
+    const Studio s;
     s.click("material:source:text");
     s.click("material:text:neon");
     QVariantMap made = s.editor->selectedClip();

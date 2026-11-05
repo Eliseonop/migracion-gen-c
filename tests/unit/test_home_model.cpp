@@ -23,7 +23,12 @@ struct Fixture {
                               [] { return std::string("2026-10-19T10:00:00+00:00"); }};
 
     Fixture() { std::filesystem::remove_all(dir); }
-    ~Fixture() { std::filesystem::remove_all(dir); }
+    ~Fixture() {
+        try { // el remove_all de MSVC puede lanzar bad_alloc al copiar rutas
+            std::filesystem::remove_all(dir);
+        } catch (...) { // NOLINT(bugprone-empty-catch): la carpeta temporal se queda, el destructor no lanza
+        }
+    }
 };
 
 QStringList names(const QVariantList& list) {

@@ -28,3 +28,5 @@ target_link_libraries(gc_studio_qml PUBLIC Qt6::Quick Qt6::QuickControls2)
 qt_add_executable(genclip-studio main.cpp)
 target_link_libraries(genclip-studio PRIVATE gc_studio gc_studio_qml)
 set_target_properties(genclip-studio PROPERTIES WIN32_EXECUTABLE ON MACOSX_BUNDLE ON)
+include(GcQtRuntime)
+gc_qt_runtime(genclip-studio) # con el Qt de vcpkg, que arranque desde build/
