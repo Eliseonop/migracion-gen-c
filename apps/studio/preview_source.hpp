@@ -13,12 +13,22 @@
 #include <QString>
 #include <QStringList>
 #include <filesystem>
+#include <map>
 #include <memory>
 #include <string>
 
 #include "gc/core/session.hpp"
 
 namespace gc::studio {
+
+// Un proxy de la vista previa (gc/export/proxy.hpp, sin que esta cabecera dependa de gc_export): el
+// .mp4 y el tamaño del original. Por la ruta del material original.
+struct PreviewProxy {
+    std::filesystem::path file;
+    int source_width = 0;
+    int source_height = 0;
+};
+using PreviewProxies = std::map<std::filesystem::path, PreviewProxy>;
 
 class PreviewSource : public QObject {
     Q_OBJECT
@@ -54,6 +64,8 @@ public:
 
     // El recuadro donde se ve, en píxeles de la pantalla: decide la escala. Sin él (0), 1.
     void setDisplaySize(int width, int height);
+    // Los proxies que hay (ProxyMaker): los vídeos que estén aquí se leen de su proxy.
+    void setProxies(PreviewProxies proxies);
     // La escala para un cuadro de frame_w × frame_h visto en display_w × display_h: la más pequeña
     // de 1, ½ y ¼ que no se queda corta.
     [[nodiscard]] static double scale_for(double frame_w, double frame_h, int display_w, int display_h);

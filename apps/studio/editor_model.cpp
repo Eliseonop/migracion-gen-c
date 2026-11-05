@@ -196,6 +196,8 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
             emit selectionChanged();
         }
     });
+    // Cada proxy que acaba, a la vista previa.
+    connect(&proxy_maker_, &ProxyMaker::proxiesChanged, this, [this] { preview_.setProxies(proxy_maker_.proxies()); });
 }
 
 EditorModel::~EditorModel() = default;
@@ -304,9 +306,11 @@ bool EditorModel::openProject(const QString& pid) {
     selection_ = {};
     playhead_ = 0;
     // La raíz del proyecto, como la de video-yt: <raíz>/data/projects.json y <raíz>/clips.
+    const auto root = store_.file().parent_path().parent_path();
     player_.close();
-    player_.open(store_.file().parent_path().parent_path(), project_id_);
-    preview_.open(store_.file().parent_path().parent_path(), project_id_);
+    player_.open(root, project_id_);
+    preview_.open(root, project_id_);
+    proxy_maker_.open(root, project_id_);
     rebuild();
     emit projectChanged();
     emit selectionChanged();
@@ -553,6 +557,7 @@ void EditorModel::searchSfx(const QString& q, const QString& category) {
 void EditorModel::closeProject() {
     player_.close();
     preview_.close();
+    proxy_maker_.close();
     autosave_.reset();
     session_.reset();
     project_id_.clear();
@@ -611,6 +616,7 @@ void EditorModel::rebuild() {
         preview_.setTimeline(session_->timeline()); // si es otra, el render se vuelve a preparar
         preview_.request(playhead_);
         player_.setTimeline(session_->timeline()); // sonando, se vuelve a mezclar
+        proxy_maker_.setTimeline(session_->timeline()); // un vídeo nuevo, su proxy
     }
     clip_model_.sync(std::move(rows));
     emit timelineChanged();

@@ -27,6 +27,7 @@
 #include "crop_editor.hpp"
 #include "player.hpp"
 #include "preview_source.hpp"
+#include "proxy_maker.hpp"
 
 namespace gc::studio {
 
@@ -41,6 +42,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(QObject* preview READ preview CONSTANT)
     // Reproducir y parar, con el reloj del audio (player.hpp).
     Q_PROPERTY(QObject* player READ player CONSTANT)
+    // Los proxies de la vista previa (proxy_maker.hpp): su progreso.
+    Q_PROPERTY(QObject* proxies READ proxies CONSTANT)
     Q_PROPERTY(double duration READ duration NOTIFY timelineChanged)
     Q_PROPERTY(int fps READ fps NOTIFY timelineChanged)
     Q_PROPERTY(double aspect READ aspect NOTIFY timelineChanged)
@@ -82,6 +85,10 @@ public:
     [[nodiscard]] PreviewSource& previewSource() { return preview_; }
     [[nodiscard]] QObject* player() { return &player_; }
     [[nodiscard]] Player& playback() { return player_; }
+    [[nodiscard]] QObject* proxies() { return &proxy_maker_; }
+    [[nodiscard]] ProxyMaker& proxyMaker() { return proxy_maker_; }
+    // La caché de los proxies (la de la app); sin ella, la vista previa lee siempre los originales.
+    void setProxyDir(std::filesystem::path dir) { proxy_maker_.setCacheDir(std::move(dir)); }
     // Las filas de clipModel (para los tests).
     [[nodiscard]] QVariantList clips() const;
     [[nodiscard]] double duration() const;
@@ -376,7 +383,8 @@ private:
     double pps_ = 40;
     int row_height_ = 52;
     QString error_;
-    Player player_;         // con su hilo de la mezcla
+    ProxyMaker proxy_maker_; // con su hilo
+    Player player_;          // con su hilo de la mezcla
     PreviewSource preview_; // el último: su hilo se para antes de soltar la sesión
 };
 

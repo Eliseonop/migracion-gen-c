@@ -34,6 +34,8 @@ struct FrameRenderer::Impl {
     core::LruBytes<std::int64_t, Frame> cache; // los fotogramas ya compuestos, por tick
     std::int64_t cache_hits = 0;
     std::map<std::string, media::ClipFrames> readers; // los del fotograma anterior
+    ProxyMap proxies;                                  // los de FrameOptions
+    std::map<std::string, const ProxyFile*> proxied;   // clip → el proxy del que se lee (en `proxies`)
     std::set<std::string> warned;
     std::function<void(const std::string&)> on_warning;
     bool skip = false;
@@ -63,6 +65,7 @@ double FrameRenderer::duration() const noexcept { return impl_->duration; }
 std::int64_t FrameRenderer::frames() const noexcept { return impl_->frames; }
 std::int64_t FrameRenderer::cache_hits() const noexcept { return impl_->cache_hits; }
 std::size_t FrameRenderer::cache_bytes() const noexcept { return impl_->cache.bytes(); }
+std::size_t FrameRenderer::proxied() const noexcept { return impl_->proxied.size(); }
 
 Result<FrameRenderer> FrameRenderer::open(const LoadedProject& project, const FrameOptions& options) {
     const Timeline& full = project.timeline;
@@ -95,6 +98,18 @@ Result<FrameRenderer> FrameRenderer::open(const LoadedProject& project, const Fr
                                        options.cache_bytes);
     impl->warned = std::move(warned);
     impl->on_warning = options.on_warning;
+    // Los clips que se leen de un proxy: los de vídeo con el suyo, sin horneado ni matte.
+    impl->proxies = options.proxies;
+    for (const auto& [id, path] : impl->prepared.paths) {
+        const auto proxy = impl->proxies.find(path);
+        const auto matte = impl->prepared.mattes.find(id);
+        if (proxy == impl->proxies.end() || impl->prepared.vfx.contains(id) ||
+            (matte != impl->prepared.mattes.end() && matte->second) || proxy->second.source_width <= 0 ||
+            proxy->second.source_height <= 0) {
+            continue;
+        }
+        impl->proxied.emplace(id, &proxy->second);
+    }
     impl->skip = options.omit_unsupported;
     impl->hwaccel = options.hwaccel;
     impl->width = w;
@@ -146,7 +161,9 @@ Result<Frame> FrameRenderer::tick(std::int64_t k) {
         }
         auto r = m.readers.find(id);
         if (r == m.readers.end()) {
-            auto opened = detail::open_reader(m.prepared, id, fps, m.hwaccel);
+            const auto proxy = m.proxied.find(id);
+            auto opened = detail::open_reader(m.prepared, id, fps, m.hwaccel,
+                                              proxy != m.proxied.end() ? &proxy->second->path : nullptr);
             if (!opened) {
                 media_error = opened.error();
                 return nullptr;
@@ -168,6 +185,11 @@ Result<Frame> FrameRenderer::tick(std::int64_t k) {
                                if (img == nullptr) {
                                    return std::nullopt;
                                }
+                               // Con proxy, el tamaño del original: el clip se coloca igual.
+                               if (const auto px = m.proxied.find(detail::material_id(clip.id)); px != m.proxied.end()) {
+                                   return MediaSize{static_cast<double>(px->second->source_width),
+                                                    static_cast<double>(px->second->source_height)};
+                               }
                                return MediaSize{static_cast<double>(img->width), static_cast<double>(img->height)};
                            });
     if (media_error) {
@@ -175,6 +197,26 @@ Result<Frame> FrameRenderer::tick(std::int64_t k) {
     }
     if (!layers) {
         return std::unexpected(layers.error());
+    }
+    // Los blits de un clip con proxy están en píxeles del original: el recorte pasa a los del proxy
+    // y la transformación, a la inversa, así que llega al mismo sitio del cuadro.
+    for (FrameLayer& layer : *layers) {
+        const std::string id = detail::material_id(layer.clip->id);
+        const auto px = m.proxied.find(id);
+        const auto img = images.find(id);
+        if (px == m.proxied.end() || img == images.end()) {
+            continue;
+        }
+        const double kx = static_cast<double>(img->second.width) / px->second->source_width;
+        const double ky = static_cast<double>(img->second.height) / px->second->source_height;
+        for (Blit& b : layer.blits) {
+            const double pw = img->second.width;
+            const double ph = img->second.height;
+            const double sx = std::clamp(b.src.sx * kx, 0.0, pw);
+            const double sy = std::clamp(b.src.sy * ky, 0.0, ph);
+            b.src = {sx, sy, std::clamp(b.src.sw * kx, 0.0, pw - sx), std::clamp(b.src.sh * ky, 0.0, ph - sy)};
+            b.m = {b.m.a / kx, b.m.b / kx, b.m.c / ky, b.m.d / ky, b.m.e, b.m.f};
+        }
     }
     // Los textos no son capas del compuesto: van encima, como el .ass global del export.
     std::erase_if(*layers, [](const FrameLayer& layer) { return layer.clip->kind == "text"; });

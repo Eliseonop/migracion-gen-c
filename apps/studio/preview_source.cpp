@@ -67,10 +67,12 @@ struct PreviewSource::Worker {
     core::TimelineSnapshot timeline;
     std::optional<double> at;
     std::optional<double> scale;
+    std::optional<PreviewProxies> proxies;
     std::thread thread; // el último: arranca con todo lo demás ya hecho
 
     [[nodiscard]] bool pending() const {
-        return stop || closing || reload || timeline_dirty || at.has_value() || scale.has_value();
+        return stop || closing || reload || timeline_dirty || at.has_value() || scale.has_value() ||
+               proxies.has_value();
     }
 
     // En el hilo de la interfaz, cuando llegue (si el PreviewSource sigue vivo).
@@ -94,6 +96,7 @@ struct PreviewSource::Worker {
         std::optional<double> want; // el último instante pedido
         std::int64_t shown = -1;    // el tick publicado con este `renderer`
         double current_scale = 1.0;
+        exporter::ProxyMap current_proxies;
         for (;;) {
             bool close_now = false;
             bool reload_now = false;
@@ -103,6 +106,7 @@ struct PreviewSource::Worker {
             core::TimelineSnapshot new_timeline;
             std::optional<double> new_at;
             std::optional<double> new_scale;
+            std::optional<PreviewProxies> new_proxies;
             {
                 std::unique_lock lock(mutex);
                 wake.wait(lock, [&] { return pending(); });
@@ -117,12 +121,19 @@ struct PreviewSource::Worker {
                 new_timeline = std::move(timeline);
                 new_at = std::exchange(at, std::nullopt);
                 new_scale = std::exchange(scale, std::nullopt);
+                new_proxies = std::exchange(proxies, std::nullopt);
             }
             const bool rescaled = new_scale && *new_scale != current_scale;
             if (rescaled) {
                 current_scale = *new_scale;
             }
-            const bool changed = close_now || reload_now || timeline_now || rescaled;
+            if (new_proxies) {
+                current_proxies.clear();
+                for (const auto& [source, proxy] : *new_proxies) {
+                    current_proxies.emplace(source, exporter::ProxyFile{proxy.file, proxy.source_width, proxy.source_height});
+                }
+            }
+            const bool changed = close_now || reload_now || timeline_now || rescaled || new_proxies.has_value();
             if (changed) {
                 renderer.reset();
                 warnings.clear();
@@ -162,6 +173,7 @@ struct PreviewSource::Worker {
                 options.omit_unsupported = true; // el editor enseña lo que sabe dibujar
                 options.cache_bytes = kCacheBytes;
                 options.scale = current_scale;
+                options.proxies = current_proxies;
                 options.on_warning = [&warnings](const std::string& message) {
                     warnings << QString::fromStdString(message);
                 };
@@ -240,6 +252,14 @@ void PreviewSource::setDisplaySize(int width, int height) {
     update_scale();
 }
 
+void PreviewSource::setProxies(PreviewProxies proxies) {
+    {
+        const std::scoped_lock lock(worker_->mutex);
+        worker_->proxies = std::move(proxies);
+    }
+    worker_->wake.notify_one();
+}
+
 void PreviewSource::update_scale() {
     if (!sent_) {
         return;
@@ -284,6 +304,7 @@ void PreviewSource::setDisplaySize(int width, int height) {
     display_h_ = height;
 }
 void PreviewSource::update_scale() {}
+void PreviewSource::setProxies(PreviewProxies /*proxies*/) {}
 
 #endif
 

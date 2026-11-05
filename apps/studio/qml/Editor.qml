@@ -139,7 +139,7 @@ Item {
 
                 Rectangle {
                     id: frame
-                    readonly property real fit: Math.min(parent.width - 40, (parent.height - 56) * editor.model.aspect)
+                    readonly property real fit: Math.min(parent.width - 40, (parent.height - 72) * editor.model.aspect)
                     anchors.horizontalCenter: parent.horizontalCenter
                     y: 16
                     width: fit
@@ -167,12 +167,24 @@ Item {
                     }
                 }
                 Label {
+                    id: timeLabel
                     anchors.top: frame.bottom
                     anchors.topMargin: 8
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: editor.model.formatTime(editor.model.playhead) + " / " + editor.model.formatTime(editor.model.duration)
                     color: Theme.textSecondary
                     font.family: "monospace"
+                }
+                // Los proxies que se están haciendo (proxy_maker.hpp); vacío si no hay ninguno.
+                Label {
+                    objectName: "preview:proxies"
+                    anchors.top: timeLabel.bottom
+                    anchors.topMargin: 2
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    visible: text !== ""
+                    text: editor.model.proxies.status
+                    color: Theme.muted
+                    font.pixelSize: 11
                 }
             }
 

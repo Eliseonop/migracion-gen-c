@@ -83,7 +83,7 @@ if(TARGET gc_render)
 endif()
 # Con los dos, el export entero (gc_export) frente al MP4 de compose.render.
 if(TARGET gc_export)
-    target_sources(gc_tests PRIVATE parity/test_export_parity.cpp)
+    target_sources(gc_tests PRIVATE parity/test_export_parity.cpp parity/test_proxy.cpp)
     target_link_libraries(gc_tests PRIVATE gc::export)
 endif()
 # Con Qt, los ViewModels del editor.

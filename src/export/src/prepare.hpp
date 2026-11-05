@@ -52,9 +52,10 @@ struct Prepared {
 // El id del clip cuyo material usa una capa (las pasadas fantasma, kGhostSuffix, usan el de su clip).
 [[nodiscard]] std::string material_id(const std::string& clip_id);
 
-// El lector del clip `id` (el tramo original si se hornea), con su matte.
+// El lector del clip `id` (el tramo original si se hornea), con su matte. Con `proxy` (la vista
+// previa, proxy.hpp), del proxy en vez del original: solo para un clip sin horneado ni matte.
 [[nodiscard]] Result<media::ClipFrames> open_reader(const Prepared& p, const std::string& id, int fps,
-                                                  bool hwaccel = false);
+                                                  bool hwaccel = false, const std::filesystem::path* proxy = nullptr);
 
 // El fotograma del clip `id` en el tick de la timeline, del lector `reader`: con el horneado de
 // sus efectos de vídeo si los tiene.

@@ -28,6 +28,7 @@
 
 #include "gc/export/frame.hpp"
 #include "gc/export/project.hpp"
+#include "gc/media/encode.hpp"
 #endif
 
 using namespace gc;
@@ -113,6 +114,7 @@ struct Studio {
         REQUIRE(solid.save(QString::fromStdString(image.string())));
         home = std::make_unique<studio::HomeModel>(*store, ids);
         editor = std::make_unique<studio::EditorModel>(*store);
+        editor->setProxyDir(dir / "proxies");
         REQUIRE(editor->openProject("p1"));
         settings_file = std::make_unique<core::SettingsFile>(dir / "data" / "settings.json");
         settings = std::make_unique<studio::SettingsModel>(*settings_file);
@@ -566,12 +568,13 @@ bool wait_tick(const studio::PreviewSource& p, qint64 tick, int since = -1) {
 }
 
 // Lo que da el export en `t` con lo que hay en projects.json (el editor lo guarda en cada cambio).
-render::Image exported(const std::filesystem::path& root, double t, double scale) {
+render::Image exported(const std::filesystem::path& root, double t, double scale, const exporter::ProxyMap& proxies = {}) {
     auto project = exporter::load_project(root, "p1");
     REQUIRE(project);
     exporter::FrameOptions options;
     options.omit_unsupported = true;
     options.scale = scale;
+    options.proxies = proxies;
     auto renderer = exporter::FrameRenderer::open(*project, options);
     REQUIRE(renderer);
     auto frame = renderer->at(t);
@@ -767,5 +770,59 @@ TEST_CASE("studio sin pantalla: la mezcla del export suena en el reproductor y s
     CHECK(player.audible());
     CHECK(player.playing());
     player.pause();
+}
+#endif
+
+#ifdef GC_STUDIO_PREVIEW
+TEST_CASE("studio sin pantalla: un vídeo grande se hace proxy y la vista previa lo lee de él", "[studio][ui][proxy]") {
+    const Studio s;
+    // «a» pasa a ser un vídeo de 2560 × 1440 (1 s), y se vuelve a abrir el proyecto.
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    const auto video = core::project_base(s.store->clips_dir(), **project) / "video" / "a.mp4";
+    std::filesystem::create_directories(video.parent_path());
+    {
+        media::EncodeSettings settings;
+        settings.width = 2560;
+        settings.height = 1440;
+        settings.fps = 30;
+        settings.audio = false;
+        auto writer = media::Mp4Writer::open(video, settings);
+        REQUIRE(writer);
+        std::vector<std::uint8_t> rgba(static_cast<std::size_t>(2560) * 1440 * 4, 255);
+        for (int k = 0; k < 30; ++k) {
+            for (std::size_t i = 0; i < rgba.size(); i += 4) {
+                rgba[i] = static_cast<std::uint8_t>(40 + (5 * k)); // el rojo cambia con el fotograma
+                rgba[i + 1] = 90;
+                rgba[i + 2] = 160;
+            }
+            REQUIRE(writer->video(rgba));
+        }
+        REQUIRE(writer->finish());
+    }
+    REQUIRE(s.editor->openProject("p1"));
+    studio::ProxyMaker& maker = s.editor->proxyMaker();
+    REQUIRE(QTest::qWaitFor([&] { return maker.ready() == 1 || maker.status().startsWith("No se pudo"); }, 180000));
+    INFO(maker.status().toStdString());
+    REQUIRE(maker.ready() == 1);
+    CHECK(maker.status().isEmpty());
+    const studio::PreviewProxy& proxy = maker.proxies().begin()->second;
+    CHECK(std::filesystem::is_regular_file(proxy.file));
+    CHECK(proxy.file.parent_path() == s.dir / "proxies"); // en la caché, no en la carpeta del proyecto
+    CHECK(proxy.source_width == 2560);
+    CHECK(proxy.source_height == 1440);
+
+    // La vista previa vuelve a componer con el proxy: lo mismo que FrameRenderer con él.
+    studio::PreviewSource& p = s.editor->previewSource();
+    exporter::ProxyMap proxies;
+    for (const auto& [source, px] : maker.proxies()) {
+        proxies[source] = {px.file, px.source_width, px.source_height};
+    }
+    REQUIRE(QTest::qWaitFor([&] { return p.tick() == 0 && p.scale() < 1.0; }, 60000));
+    const render::Image expected = exported(s.dir, 0.0, p.scale(), proxies);
+    CHECK(QTest::qWaitFor([&] { return same_pixels(p.image(), expected); }, 60000));
+    // Y el proxy se ve: el clip «a» deja de ser el negro de «sin material».
+    CHECK(has_color(expected, QColor(40, 90, 160)));
 }
 #endif

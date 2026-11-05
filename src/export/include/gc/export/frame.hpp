@@ -14,6 +14,7 @@
 
 #include "gc/core/error.hpp"
 #include "gc/export/project.hpp"
+#include "gc/export/proxy.hpp"
 #include "gc/render/canvas.hpp"
 
 namespace gc::exporter {
@@ -32,6 +33,10 @@ struct FrameOptions {
     // píxeles a esa escala (Canvas::make(w, h, scale)), así que cuesta menos componer y pintar. Con 1,
     // el fotograma del export.
     double scale = 1.0;
+    // Los proxies de la vista previa (proxy.hpp): un clip de vídeo cuyo material esté aquí se lee del
+    // proxy, sin horneado de efectos ni matte (esos van con el original). La geometría es la del
+    // original: el clip se coloca igual y solo cambia de cuántos píxeles sale.
+    ProxyMap proxies;
 };
 
 struct Frame {
@@ -69,6 +74,8 @@ public:
     // Fotogramas servidos desde la caché (cache_bytes) y lo que ocupa ahora.
     [[nodiscard]] std::int64_t cache_hits() const noexcept;
     [[nodiscard]] std::size_t cache_bytes() const noexcept;
+    // Cuántos clips se leen de un proxy (FrameOptions::proxies).
+    [[nodiscard]] std::size_t proxied() const noexcept;
 
 private:
     struct Impl;

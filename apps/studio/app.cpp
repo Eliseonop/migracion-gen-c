@@ -56,6 +56,10 @@ int gc::studio::run(int argc, char* argv[]) {
     gc::studio::HomeModel home(store, ids);
     gc::core::SettingsFile settings_file(base / "data" / "settings.json");
     gc::studio::EditorModel editor(store, &settings_file);
+    // Los proxies de la vista previa, en la caché de la app (no en la carpeta del proyecto).
+    editor.setProxyDir(gc::core::path_from_utf8(
+                           QStandardPaths::writableLocation(QStandardPaths::CacheLocation).toStdString()) /
+                       "proxies");
     gc::studio::SettingsModel settings(settings_file);
 
     gc::studio::register_qml_types();
