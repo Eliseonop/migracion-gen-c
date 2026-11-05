@@ -16,7 +16,9 @@ namespace fs = std::filesystem;
 using namespace gc::core;
 
 gc::Result<LoadedProject> load_project(const fs::path& root, const std::string& id) {
-    const char* assets_env = std::getenv("VIDEO_YT_ASSETS"); // NOLINT(concurrency-mt-unsafe): al arrancar
+    // Solo se lee (también desde el hilo de la vista previa del editor); nadie la cambia con la app en marcha.
+    // NOLINTNEXTLINE(concurrency-mt-unsafe)
+    const char* assets_env = std::getenv("VIDEO_YT_ASSETS");
     const fs::path assets =
         assets_env != nullptr && *assets_env != '\0' ? path_from_utf8(assets_env) : root.parent_path() / "assets";
     const SettingsFile settings_file(root / "data" / "settings.json");

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
+import GenClip.Preview
 
 // El editor (VideoEditor.jsx): barra de herramientas, vista previa, inspector y timeline.
 Item {
@@ -157,12 +158,23 @@ Item {
                     height: fit / editor.model.aspect
                     color: "black"
                     border.color: Theme.lineBright
+                    // El fotograma del cabezal, el mismo que saca el export (gc::exporter::FrameRenderer).
+                    FramePreview {
+                        id: preview
+                        objectName: "preview"
+                        anchors.fill: parent
+                        anchors.margins: 1 // dentro del borde
+                        source: editor.model.preview
+                    }
                     Label {
+                        objectName: "preview:message"
                         anchors.centerIn: parent
                         width: parent.width - 20
+                        visible: !editor.model.preview.hasFrame && text !== ""
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.Wrap
-                        text: "Vista previa\n(llega con gc_render)"
+                        text: !editor.model.preview.available ? "Vista previa\n(sin gc_export: compila con MSVC + vcpkg)"
+                                                              : editor.model.preview.error
                         color: Theme.muted
                     }
                 }

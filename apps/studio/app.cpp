@@ -1,10 +1,11 @@
 // genclip-studio: el editor de escritorio (F5).
 //
-//   genclip-studio [--root <carpeta>] [--open <proyecto> [--select <clip>]] [--grab <png>]
+//   genclip-studio [--root <carpeta>] [--open <proyecto> [--select <clip>] [--at <s>]] [--grab <png>]
 //
 // <carpeta> tiene data/projects.json y clips/, como backend/ de video-yt (así se abren tus
-// proyectos de siempre). Sin --root, la carpeta de datos de la app. --grab guarda una captura de
-// la ventana al arrancar y sale (revisión visual sin pantalla: QT_QPA_PLATFORM=offscreen).
+// proyectos de siempre). Sin --root, la carpeta de datos de la app. --at pone el cabezal. --grab
+// guarda una captura de la ventana al arrancar (con un proyecto abierto, cuando la vista previa ya
+// tiene su fotograma) y sale: revisión visual sin pantalla con QT_QPA_PLATFORM=offscreen.
 
 #include "app.hpp"
 
@@ -22,6 +23,7 @@
 #include "gc/core/io.hpp"
 
 #include "editor_model.hpp"
+#include "frame_preview.hpp"
 #include "home_model.hpp"
 #include "settings_model.hpp"
 
@@ -41,6 +43,7 @@ int gc::studio::run(int argc, char* argv[]) {
     args.addOption({"grab", "Guarda una captura de la ventana y sale.", "png"});
     args.addOption({"open", "Abre ese proyecto en el editor.", "id"});
     args.addOption({"select", "Con --open, selecciona ese clip.", "clip"});
+    args.addOption({"at", "Con --open, pone el cabezal en ese instante.", "segundos"});
     args.process(app);
     const QString root = args.isSet("root")
                              ? args.value("root")
@@ -55,6 +58,7 @@ int gc::studio::run(int argc, char* argv[]) {
     gc::studio::EditorModel editor(store, &settings_file);
     gc::studio::SettingsModel settings(settings_file);
 
+    gc::studio::register_qml_types();
     QQmlApplicationEngine engine;
     engine.setInitialProperties(
         {{"home", QVariant::fromValue(&home)}, {"editor", QVariant::fromValue(&editor)},
@@ -67,13 +71,25 @@ int gc::studio::run(int argc, char* argv[]) {
         if (args.isSet("select")) {
             editor.select(args.value("select"));
         }
+        if (args.isSet("at")) {
+            editor.setPlayhead(args.value("at").toDouble());
+        }
     }
     engine.load(QUrl("qrc:/qt/qml/GenClip/Studio/Main.qml"));
+    QTimer poll;
     if (args.isSet("grab") && !engine.rootObjects().isEmpty()) {
         auto* window = qobject_cast<QQuickWindow*>(engine.rootObjects().front());
-        QTimer::singleShot(500, &app, [window, file = args.value("grab")] {
-            QCoreApplication::exit(window && window->grabWindow().save(file) ? 0 : 1);
+        // Medio segundo para que se pinte y, con un proyecto abierto, hasta que la vista previa tenga
+        // su fotograma (o diga por qué no), con un tope.
+        QObject::connect(&poll, &QTimer::timeout, &app, [&editor, window, file = args.value("grab"), waited = 0] mutable {
+            waited += 100;
+            const PreviewSource& preview = editor.previewSource();
+            const bool ready = !editor.isOpen() || !preview.available() || preview.hasFrame() || !preview.error().isEmpty();
+            if (waited >= 500 && (ready || waited >= 60000)) {
+                QCoreApplication::exit(window && window->grabWindow().save(file) ? 0 : 1);
+            }
         });
+        poll.start(100);
     }
     return QGuiApplication::exec();
 }

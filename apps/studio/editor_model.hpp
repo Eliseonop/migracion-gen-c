@@ -25,6 +25,7 @@
 
 #include "clip_list_model.hpp"
 #include "crop_editor.hpp"
+#include "preview_source.hpp"
 
 namespace gc::studio {
 
@@ -35,6 +36,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList tracks READ tracks NOTIFY timelineChanged)
     Q_PROPERTY(QObject* clipModel READ clipModel CONSTANT)
     Q_PROPERTY(QObject* cropEditor READ cropEditor CONSTANT)
+    // El fotograma de la timeline en el cabezal (preview_source.hpp), para FramePreview.
+    Q_PROPERTY(QObject* preview READ preview CONSTANT)
     Q_PROPERTY(double duration READ duration NOTIFY timelineChanged)
     Q_PROPERTY(int fps READ fps NOTIFY timelineChanged)
     Q_PROPERTY(double aspect READ aspect NOTIFY timelineChanged)
@@ -72,6 +75,8 @@ public:
     [[nodiscard]] QVariantList tracks() const { return tracks_; }
     [[nodiscard]] QObject* clipModel() { return &clip_model_; }
     [[nodiscard]] QObject* cropEditor() { return &crop_editor_; }
+    [[nodiscard]] QObject* preview() { return &preview_; }
+    [[nodiscard]] PreviewSource& previewSource() { return preview_; }
     // Las filas de clipModel (para los tests).
     [[nodiscard]] QVariantList clips() const;
     [[nodiscard]] double duration() const;
@@ -366,6 +371,7 @@ private:
     double pps_ = 40;
     int row_height_ = 52;
     QString error_;
+    PreviewSource preview_; // el último: su hilo se para antes de soltar la sesión
 };
 
 } // namespace gc::studio

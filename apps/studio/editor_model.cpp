@@ -296,6 +296,8 @@ bool EditorModel::openProject(const QString& pid) {
     });
     selection_ = {};
     playhead_ = 0;
+    // La raíz del proyecto, como la de video-yt: <raíz>/data/projects.json y <raíz>/clips.
+    preview_.open(store_.file().parent_path().parent_path(), project_id_);
     rebuild();
     emit projectChanged();
     emit selectionChanged();
@@ -540,6 +542,7 @@ void EditorModel::searchSfx(const QString& q, const QString& category) {
 }
 
 void EditorModel::closeProject() {
+    preview_.close();
     autosave_.reset();
     session_.reset();
     project_id_.clear();
@@ -595,6 +598,8 @@ void EditorModel::rebuild() {
                             {"kfs", keyframe_marks(*c)},
                             {"beats", beat_marks(*c)}});
         }
+        preview_.setTimeline(session_->timeline()); // si es otra, el render se vuelve a preparar
+        preview_.request(playhead_);
     }
     clip_model_.sync(std::move(rows));
     emit timelineChanged();
@@ -781,6 +786,7 @@ void EditorModel::setPlayhead(double t) {
     const double clamped = std::max(0.0, t);
     if (clamped != playhead_) {
         playhead_ = clamped;
+        preview_.request(playhead_);
         emit playheadChanged();
         if (!selection_.ids.empty()) {
             emit selectionChanged(); // la pose del inspector es la del cabezal

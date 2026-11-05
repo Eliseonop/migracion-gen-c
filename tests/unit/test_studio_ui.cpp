@@ -17,8 +17,18 @@
 #include "gc/core/io.hpp"
 
 #include "editor_model.hpp"
+#include "frame_preview.hpp"
 #include "home_model.hpp"
 #include "settings_model.hpp"
+
+#ifdef GC_STUDIO_PREVIEW
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
+
+#include "gc/export/frame.hpp"
+#include "gc/export/project.hpp"
+#endif
 
 using namespace gc;
 
@@ -30,17 +40,24 @@ QGuiApplication& app() {
     static int argc = 1;
     static char name[] = "gc_tests";
     static char* argv[] = {name, nullptr};
-    qputenv("QT_QPA_PLATFORM", "offscreen");
+    // Una vez y antes de que haya hilos (el de la vista previa lee el entorno).
+    static auto* instance = [] {
+        qputenv("QT_QPA_PLATFORM", "offscreen");
 #ifdef _WIN32
-    // En Windows, offscreen no mira las fuentes del sistema sino <prefijo de Qt>/lib/fonts, que el Qt
-    // de vcpkg no trae: sin fuentes, los textos no miden lo que deben y la maqueta se descoloca.
-    if (qEnvironmentVariableIsEmpty("QT_QPA_FONTDIR")) {
-        qputenv("QT_QPA_FONTDIR", qgetenv("WINDIR") + "/Fonts");
-    }
+        // En Windows, offscreen no mira las fuentes del sistema sino <prefijo de Qt>/lib/fonts, que el
+        // Qt de vcpkg no trae: sin fuentes, los textos no miden lo que deben y la maqueta se descoloca.
+        if (qEnvironmentVariableIsEmpty("QT_QPA_FONTDIR")) {
+            qputenv("QT_QPA_FONTDIR", qgetenv("WINDIR") + "/Fonts");
+        }
 #endif
-    static auto* instance = new QGuiApplication(argc, argv);
+        studio::register_qml_types();
+        return new QGuiApplication(argc, argv);
+    }();
     return *instance;
 }
+
+// El color de la imagen «b» de la fixture.
+const QColor kImageColor(200, 30, 40);
 
 Json clip(const char* id, const char* track, double start, double out) {
     return {{"id", id},         {"track_id", track},       {"kind", "video"}, {"asset_kind", "clips"},
@@ -90,7 +107,9 @@ struct Studio {
         store = std::make_unique<core::ProjectsStore>(dir / "data" / "projects.json", dir / "clips");
         const auto image = core::project_base(store->clips_dir(), **store->get_project("p1")) / "image" / "b.png";
         std::filesystem::create_directories(image.parent_path());
-        REQUIRE(QImage(160, 90, QImage::Format_RGB32).save(QString::fromStdString(image.string())));
+        QImage solid(160, 90, QImage::Format_RGB32);
+        solid.fill(kImageColor);
+        REQUIRE(solid.save(QString::fromStdString(image.string())));
         home = std::make_unique<studio::HomeModel>(*store, ids);
         editor = std::make_unique<studio::EditorModel>(*store);
         REQUIRE(editor->openProject("p1"));
@@ -109,6 +128,7 @@ struct Studio {
     }
     ~Studio() {
         engine.reset();
+        editor.reset(); // para el hilo de la vista previa, que puede estar leyendo la carpeta
         try { // aun con error_code, el remove_all de MSVC puede lanzar bad_alloc al copiar rutas
             std::filesystem::remove_all(dir);
         } catch (...) { // NOLINT(bugprone-empty-catch): la carpeta temporal se queda, el destructor no lanza
@@ -533,3 +553,129 @@ TEST_CASE("studio sin pantalla: el menú del clic derecho ordena capas y elimina
     CHECK(s.view("b").isEmpty());
     CHECK(!copy.isEmpty());
 }
+
+#ifdef GC_STUDIO_PREVIEW
+
+namespace {
+
+// Hasta que la vista previa publique el fotograma `tick` (o un error), con un tope: en Debug, componer
+// un 1080 × 1920 tarda.
+bool wait_tick(const studio::PreviewSource& p, qint64 tick, int since = -1) {
+    return QTest::qWaitFor([&] { return p.revision() > since && (p.tick() == tick || !p.error().isEmpty()); }, 60000);
+}
+
+// Lo que da el export en `t` con lo que hay en projects.json (el editor lo guarda en cada cambio).
+render::Image exported(const std::filesystem::path& root, double t) {
+    auto project = exporter::load_project(root, "p1");
+    REQUIRE(project);
+    exporter::FrameOptions options;
+    options.omit_unsupported = true;
+    auto renderer = exporter::FrameRenderer::open(*project, options);
+    REQUIRE(renderer);
+    auto frame = renderer->at(t);
+    REQUIRE(frame);
+    return std::move(frame->image);
+}
+
+bool same_pixels(const QImage& image, const render::Image& ref) {
+    return image.width() == ref.width && image.height() == ref.height &&
+           static_cast<std::size_t>(image.sizeInBytes()) == ref.pixels.size() &&
+           std::memcmp(image.constBits(), ref.pixels.data(), ref.pixels.size()) == 0;
+}
+
+// ¿Algún píxel de `rect` casi del color `c`?
+bool has_color(const QImage& image, const QRect& rect, const QColor& c) {
+    const QRect r = rect.intersected(image.rect());
+    for (int y = r.top(); y <= r.bottom(); ++y) {
+        for (int x = r.left(); x <= r.right(); ++x) {
+            const QColor p = image.pixelColor(x, y);
+            if (std::abs(p.red() - c.red()) <= 24 && std::abs(p.green() - c.green()) <= 24 &&
+                std::abs(p.blue() - c.blue()) <= 24) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool has_color(const render::Image& image, const QColor& c) {
+    return has_color(QImage(image.pixels.data(), image.width, image.height, static_cast<qsizetype>(image.width) * 4,
+                            QImage::Format_RGBA8888),
+                     QRect(0, 0, image.width, image.height), c);
+}
+
+} // namespace
+
+TEST_CASE("studio sin pantalla: la vista previa pinta el fotograma del export en el cabezal", "[studio][ui][preview]") {
+    const Studio s;
+    studio::PreviewSource& p = s.editor->previewSource();
+    REQUIRE(p.available());
+    REQUIRE(wait_tick(p, 0));
+    REQUIRE(p.error().isEmpty());
+    // En 0 s solo está «a», cuyo a.mp4 no existe: negro, con su aviso, como el export.
+    CHECK(same_pixels(p.image(), exported(s.dir, 0.0)));
+    CHECK(p.warnings().join('\n').contains("a.mp4"));
+    QQuickItem* item = s.item("preview");
+    REQUIRE(item);
+    const auto on_screen = [&] { return item->mapRectToScene(item->property("frameRect").toRectF()).toAlignedRect(); };
+    REQUIRE(!on_screen().isEmpty());
+    CHECK_FALSE(has_color(s.window->grabWindow(), on_screen(), kImageColor));
+
+    // De 6 a 9 s se ve «b», la imagen roja: el fotograma sigue al cabezal y llega a la pantalla.
+    int since = p.revision();
+    s.editor->setPlayhead(7.0);
+    REQUIRE(wait_tick(p, 210, since)); // 7 s · 30 fps
+    REQUIRE(p.error().isEmpty());
+    const render::Image at7 = exported(s.dir, 7.0);
+    REQUIRE(has_color(at7, kImageColor));
+    CHECK(same_pixels(p.image(), at7));
+    CHECK(has_color(s.window->grabWindow(), on_screen(), kImageColor));
+    // El fotograma encaja en el recuadro negro sin deformarse.
+    const QRectF fit = item->property("frameRect").toRectF();
+    CHECK(std::abs(fit.width() / fit.height() - static_cast<double>(at7.width) / at7.height) < 0.01);
+
+    // Cambia la timeline (multiplicar sobre negro: «b» deja de verse): se vuelve a componer en el
+    // mismo instante, con la timeline de la sesión.
+    since = p.revision();
+    s.editor->select("b");
+    s.editor->setBlend("multiply");
+    REQUIRE(wait_tick(p, 210, since));
+    REQUIRE(p.error().isEmpty());
+    const render::Image multiplied = exported(s.dir, 7.0);
+    CHECK_FALSE(has_color(multiplied, kImageColor));
+    CHECK(same_pixels(p.image(), multiplied));
+    CHECK_FALSE(has_color(s.window->grabWindow(), on_screen(), kImageColor));
+
+    // Pasado el final, el último fotograma (como el cabezal en la duración).
+    since = p.revision();
+    s.editor->setPlayhead(1000.0);
+    REQUIRE(wait_tick(p, 269, since)); // 9 s · 30 − 1
+    CHECK(p.error().isEmpty());
+
+    // Al cerrar el proyecto, sin fotograma.
+    since = p.revision();
+    s.editor->closeProject();
+    REQUIRE(QTest::qWaitFor([&] { return p.revision() > since; }, 60000));
+    CHECK_FALSE(p.hasFrame());
+}
+
+TEST_CASE("studio sin pantalla: la vista previa de una timeline vacía lo dice", "[studio][ui][preview]") {
+    const Studio s;
+    studio::PreviewSource& p = s.editor->previewSource();
+    REQUIRE(wait_tick(p, 0));
+    const int since = p.revision();
+    for (const char* id : {"a", "b"}) {
+        s.editor->select(id);
+        s.editor->deleteSelection();
+    }
+    REQUIRE(s.editor->clips().isEmpty());
+    REQUIRE(QTest::qWaitFor([&] { return p.revision() > since; }, 60000));
+    INFO("error «" << p.error().toStdString() << "», fotograma " << p.hasFrame() << ", tick " << p.tick());
+    CHECK_FALSE(p.hasFrame());
+    CHECK(p.error().contains("vacía"));
+    QQuickItem* message = s.item("preview:message");
+    REQUIRE(message);
+    CHECK(message->property("text").toString() == p.error());
+}
+
+#endif
