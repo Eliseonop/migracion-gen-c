@@ -50,6 +50,7 @@ QGuiApplication& app() {
             qputenv("QT_QPA_FONTDIR", qgetenv("WINDIR") + "/Fonts");
         }
 #endif
+        qputenv("GC_AUDIO_DEVICE", "null"); // el reproductor, sin sonar por los altavoces
         studio::register_qml_types();
         return new QGuiApplication(argc, argv);
     }();
@@ -678,4 +679,77 @@ TEST_CASE("studio sin pantalla: la vista previa de una timeline vacía lo dice",
     CHECK(message->property("text").toString() == p.error());
 }
 
+#endif
+
+TEST_CASE("studio sin pantalla: reproducir lleva el cabezal con el reloj, se para y salta", "[studio][ui][player]") {
+    const Studio s;
+    studio::Player& player = s.editor->playback();
+    s.editor->setPlayhead(1.0);
+    QTest::keyClick(s.window, Qt::Key_Space); // reproduce
+    REQUIRE(player.playing());
+    QTest::qWait(400);
+    const double ran = s.editor->playhead();
+    CHECK(ran > 1.1); // en tiempo real, con margen para un PC cargado
+    CHECK(ran < 3.0);
+
+    s.click("editor:play"); // para
+    CHECK_FALSE(player.playing());
+    const double stopped = s.editor->playhead();
+    QTest::qWait(150);
+    CHECK(s.editor->playhead() == stopped);
+    // Con el foco en el botón, Espacio cambia una vez (no el botón y el atajo a la vez).
+    QTest::keyClick(s.window, Qt::Key_Space);
+    CHECK(player.playing());
+    QTest::keyClick(s.window, Qt::Key_Space);
+    CHECK_FALSE(player.playing());
+
+    // Mover el cabezal sonando: el reloj salta ahí y sigue.
+    player.play();
+    s.editor->setPlayhead(5.0);
+    QTest::qWait(200);
+    CHECK(s.editor->playhead() >= 5.0);
+    CHECK(s.editor->playhead() < 6.5);
+
+    // Al final se para en la duración, y otra vez desde el principio.
+    s.editor->setPlayhead(s.editor->duration() - 0.2);
+    REQUIRE(QTest::qWaitFor([&] { return !player.playing(); }, 10000));
+    CHECK(s.editor->playhead() == s.editor->duration());
+    player.play();
+    CHECK(s.editor->playhead() < 0.5);
+    player.pause();
+}
+
+TEST_CASE("studio sin pantalla: sonando, el inspector no se recalcula a cada fotograma", "[studio][ui][player]") {
+    const Studio s;
+    s.editor->select("b");
+    int changes = 0;
+    QObject::connect(s.editor.get(), &studio::EditorModel::selectionChanged, [&] { ++changes; });
+    s.editor->playback().play();
+    QTest::qWait(300);
+    CHECK(changes == 0);
+    s.editor->playback().pause();
+    CHECK(changes == 1); // al parar, con la pose del cabezal
+    s.editor->setPlayhead(1.0);
+    CHECK(changes == 2); // parado, como siempre
+}
+
+#ifdef GC_STUDIO_PREVIEW
+TEST_CASE("studio sin pantalla: la mezcla del export suena en el reproductor y se rehace al cambiar", "[studio][ui][player]") {
+    const Studio s;
+    studio::Player& player = s.editor->playback();
+    CHECK_FALSE(player.audible());
+    player.play();
+    // La fixture no tiene audio con material: la mezcla es silencio, pero llega y suena.
+    REQUIRE(QTest::qWaitFor([&] { return player.audible() || !player.audioError().isEmpty(); }, 60000));
+    CHECK(player.audioError().isEmpty());
+    CHECK(player.audible());
+    // Un cambio de la timeline sonando: hasta la mezcla nueva no, y luego sí, sin parar.
+    s.editor->select("b");
+    s.editor->setBlend("multiply");
+    CHECK_FALSE(player.audible());
+    REQUIRE(QTest::qWaitFor([&] { return player.audible() || !player.audioError().isEmpty(); }, 60000));
+    CHECK(player.audible());
+    CHECK(player.playing());
+    player.pause();
+}
 #endif

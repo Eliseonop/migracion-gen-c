@@ -189,7 +189,14 @@ QString speed_badge(const core::TimelineClip& c) {
 } // namespace
 
 EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* settings, QObject* parent)
-    : QObject(parent), store_(store), settings_(settings) {}
+    : QObject(parent), store_(store), settings_(settings), player_(*this) {
+    // Sonando, el inspector no se recalcula a cada fotograma (setPlayhead): al parar, una vez.
+    connect(&player_, &Player::playingChanged, this, [this] {
+        if (!player_.playing() && !selection_.ids.empty()) {
+            emit selectionChanged();
+        }
+    });
+}
 
 EditorModel::~EditorModel() = default;
 
@@ -297,6 +304,8 @@ bool EditorModel::openProject(const QString& pid) {
     selection_ = {};
     playhead_ = 0;
     // La raíz del proyecto, como la de video-yt: <raíz>/data/projects.json y <raíz>/clips.
+    player_.close();
+    player_.open(store_.file().parent_path().parent_path(), project_id_);
     preview_.open(store_.file().parent_path().parent_path(), project_id_);
     rebuild();
     emit projectChanged();
@@ -542,6 +551,7 @@ void EditorModel::searchSfx(const QString& q, const QString& category) {
 }
 
 void EditorModel::closeProject() {
+    player_.close();
     preview_.close();
     autosave_.reset();
     session_.reset();
@@ -600,6 +610,7 @@ void EditorModel::rebuild() {
         }
         preview_.setTimeline(session_->timeline()); // si es otra, el render se vuelve a preparar
         preview_.request(playhead_);
+        player_.setTimeline(session_->timeline()); // sonando, se vuelve a mezclar
     }
     clip_model_.sync(std::move(rows));
     emit timelineChanged();
@@ -787,8 +798,9 @@ void EditorModel::setPlayhead(double t) {
     if (clamped != playhead_) {
         playhead_ = clamped;
         preview_.request(playhead_);
+        player_.seeked(playhead_); // si no lo mueve el reproductor, su reloj salta ahí
         emit playheadChanged();
-        if (!selection_.ids.empty()) {
+        if (!selection_.ids.empty() && !player_.playing()) {
             emit selectionChanged(); // la pose del inspector es la del cabezal
         }
     }

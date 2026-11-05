@@ -34,6 +34,16 @@ struct Prepared {
     std::map<std::string, std::optional<core::MatteSpec>> mattes;
 };
 
+// El material de cada clip de `full` que lo tiene en el disco (_clip_path + media_exists).
+[[nodiscard]] std::map<std::string, std::filesystem::path> material_paths(const LoadedProject& project,
+                                                                          const core::Timeline& full);
+
+// El audio entero de `full`, como el export (audio.cpp): el mismo PCM que el CLI con el grafo de
+// build_command, de `total` s. Vacío si no suena nada.
+[[nodiscard]] Result<std::vector<float>> mix_audio(const core::Timeline& full,
+                                                   const std::map<std::string, std::filesystem::path>& paths, int fps,
+                                                   double total);
+
 // `full`: la timeline del proyecto entera. Avisa (`warn`) del material que falta; con `skip`, los
 // efectos de vídeo que no se saben hacer se saltan con un aviso en vez de ser un error.
 [[nodiscard]] Result<Prepared> prepare(const LoadedProject& project, const core::Timeline& full, int width, int height,

@@ -29,6 +29,8 @@ FetchContent_MakeAvailable(spdlog)
 find_package(FFMPEG QUIET)
 if(FFMPEG_FOUND)
     message(STATUS "FFmpeg encontrado: se compila gc_media")
+    # miniaudio (la reproducción de audio de gc_media): una sola cabecera, de la misma feature.
+    find_path(MINIAUDIO_INCLUDE_DIR miniaudio.h REQUIRED)
 endif()
 
 # Skia (gc_render): igual, solo con vcpkg (feature `render`). El paquete de vcpkg da el objetivo

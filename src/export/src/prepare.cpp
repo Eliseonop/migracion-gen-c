@@ -18,15 +18,21 @@ bool has_media(const TimelineClip& clip) { return clip.kind == "video" || clip.k
 
 } // namespace
 
-Result<Prepared> prepare(const LoadedProject& project, const Timeline& full, int width, int height, int fps, bool skip,
-                         const std::function<void(const std::string&)>& warn) {
-    Prepared p;
+std::map<std::string, fs::path> material_paths(const LoadedProject& project, const Timeline& full) {
+    std::map<std::string, fs::path> paths;
     for (const auto& c : full.clips) {
         const auto path = clip_path(project, *c);
         if (path && fs::is_regular_file(*path)) {
-            p.paths[c->id] = *path;
+            paths[c->id] = *path;
         }
     }
+    return paths;
+}
+
+Result<Prepared> prepare(const LoadedProject& project, const Timeline& full, int width, int height, int fps, bool skip,
+                         const std::function<void(const std::string&)>& warn) {
+    Prepared p;
+    p.paths = material_paths(project, full);
     // Lo que se dibuja: sin los clips cuyo material no existe (como el export) ni los motion
     // graphics, que el render aún no sabe dibujar.
     p.timeline = full;

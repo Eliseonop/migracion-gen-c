@@ -24,7 +24,7 @@ Item {
     Shortcut { sequence: "Ctrl+Alt+C"; enabled: editor.visible; onActivated: editor.model.copyAttributes() }
     Shortcut { sequence: "Ctrl+Alt+V"; enabled: editor.visible; onActivated: pasteAttrs.openFor(editor.model.pasteableGroups()) }
     Shortcut { sequence: "Escape"; enabled: editor.visible; onActivated: editor.model.clearSelection() }
-    Shortcut { sequence: "Space"; enabled: editor.visible; onActivated: editor.playing = !editor.playing }
+    Shortcut { sequence: "Space"; enabled: editor.visible; onActivated: editor.model.player.toggle() }
     Shortcut { sequence: "Left"; enabled: editor.visible; onActivated: editor.model.nudgePlayhead(-0.1) }
     Shortcut { sequence: "Right"; enabled: editor.visible; onActivated: editor.model.nudgePlayhead(0.1) }
     Shortcut { sequence: "Shift+Left"; enabled: editor.visible; onActivated: editor.model.nudgePlayhead(-1) }
@@ -34,26 +34,8 @@ Item {
     Shortcut { sequence: ","; enabled: editor.visible; onActivated: editor.model.jumpSnap(-1) }
     Shortcut { sequence: "."; enabled: editor.visible; onActivated: editor.model.jumpSnap(1) }
 
-    // Reproducir sin vídeo todavía: el cabezal avanza en tiempo real hasta el final.
-    property bool playing: false
-    Timer {
-        interval: 16
-        repeat: true
-        running: editor.playing && editor.visible
-        property double last: 0
-        onRunningChanged: last = Date.now()
-        onTriggered: {
-            const now = Date.now()
-            const next = editor.model.playhead + (now - last) / 1000
-            last = now
-            if (next >= editor.model.duration) {
-                editor.model.playhead = editor.model.duration
-                editor.playing = false
-            } else {
-                editor.model.playhead = next
-            }
-        }
-    }
+    // Reproducir: el cabezal sigue al reloj del audio (player.hpp). Fuera del editor, parado.
+    onVisibleChanged: if (!visible) editor.model.player.pause()
 
     ColumnLayout {
         anchors.fill: parent
@@ -104,7 +86,13 @@ Item {
             IconButton { text: "⚙"; tip: "Ajustes (Ctrl+,)"; onClicked: editor.openSettings() }
             IconButton { text: "↶"; tip: "Deshacer (Ctrl+Z)"; enabled: editor.model.canUndo; onClicked: editor.model.undo() }
             IconButton { text: "↷"; tip: "Rehacer (Ctrl+Y)"; enabled: editor.model.canRedo; onClicked: editor.model.redo() }
-            IconButton { text: editor.playing ? "⏸" : "▶"; tip: "Reproducir (Espacio)"; onClicked: editor.playing = !editor.playing }
+            IconButton {
+                objectName: "editor:play"
+                text: editor.model.player.playing ? "⏸" : "▶"
+                tip: editor.model.player.audioError !== "" ? "Reproducir (Espacio) · " + editor.model.player.audioError
+                                                            : "Reproducir (Espacio)"
+                onClicked: editor.model.player.toggle()
+            }
             IconButton { text: "⚑"; tip: "Marcador en el cabezal (M)"; onClicked: editor.model.toggleMarker() }
             IconButton { text: "✂"; tip: "Cortar en el cabezal (S)"; onClicked: editor.model.splitAtPlayhead() }
             IconButton {
@@ -112,7 +100,7 @@ Item {
                 text: "⛶"; tip: "Recortar el clip seleccionado"
                 enabled: editor.model.selection.length > 0
                 onClicked: {
-                    editor.playing = false
+                    editor.model.player.pause()
                     cropModal.openFor(editor.model.openCrop())
                 }
             }

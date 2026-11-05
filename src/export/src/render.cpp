@@ -116,38 +116,16 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
         warn(msg + ": se omite");
     }
 
-    // Si el material de cada clip tiene audio (_has_audio).
-    std::map<std::string, bool> audio_of;
-    const auto exists = [&](const TimelineClip& c) { return paths.contains(c.id); };
-    const auto has_audio = [&](const TimelineClip& c) {
-        auto [it, fresh] = audio_of.try_emplace(c.id, false);
-        if (fresh && paths.contains(c.id)) {
-            it->second = media::probe_media(paths.at(c.id)).has_audio;
-        }
-        return it->second;
-    };
-
     RenderTimes& ph = stats.times;
     // El audio entero, como el export (el mismo PCM que el CLI con el grafo de build_command).
     std::vector<float> pcm;
     {
         const Lap lap(ph.audio);
-        auto plan = export_inputs(full, exists, has_audio);
-        auto graph = export_audio_graph(full, exists, has_audio);
-        if (!plan || !graph) {
-            return std::unexpected(plan ? graph.error() : plan.error());
+        auto mixed = detail::mix_audio(full, paths, fps, stats.duration);
+        if (!mixed) {
+            return std::unexpected(mixed.error());
         }
-        if (!graph->empty()) {
-            std::vector<std::vector<std::string>> inputs;
-            for (const TimelineClip* c : plan->files) {
-                inputs.push_back(ffmpeg_input_args(*c, path_to_utf8(paths.at(c->id)), fps));
-            }
-            auto mixed = media::mix_audio(inputs, *graph, stats.duration);
-            if (!mixed) {
-                return std::unexpected(mixed.error());
-            }
-            pcm = std::move(*mixed);
-        }
+        pcm = std::move(*mixed);
     }
 
     const auto [crf, preset] = encoder_quality(project.settings);

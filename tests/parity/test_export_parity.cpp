@@ -34,6 +34,7 @@
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/timeline_rules.hpp"
+#include "gc/export/audio.hpp"
 #include "gc/export/frame.hpp"
 #include "gc/export/render.hpp"
 #include "gc/media/audio.hpp"
@@ -197,6 +198,18 @@ TEST_CASE("paridad del export: el MP4 entero frente al de compose.render", "[par
                 ++loud;
             }
             CHECK(loud > 0);
+            // La mezcla que suena en el reproductor del editor: la del export, antes del AAC.
+            auto mixed = gc::exporter::mix_timeline_audio(lp);
+            REQUIRE(mixed);
+            const auto dm = block_db(*mixed);
+            REQUIRE(dm.size() + 1 >= da.size());
+            for (std::size_t k = 0; k < std::min(da.size(), dm.size()); ++k) {
+                if (da[k] < -50.0 && dm[k] < -50.0) {
+                    continue;
+                }
+                INFO("bloque de la mezcla " << k << ": " << da[k] << " frente a " << dm[k] << " dBFS");
+                CHECK(std::abs(da[k] - dm[k]) <= 0.5);
+            }
         }
         std::filesystem::remove(out);
         ++cases;
