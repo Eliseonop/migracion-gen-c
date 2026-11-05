@@ -36,6 +36,7 @@ add_executable(gc_tests
     parity/test_keyframes_parity.cpp
     parity/test_layers_parity.cpp
     parity/test_lru_bytes_parity.cpp
+    parity/test_model_manager_parity.cpp
     parity/test_layout_parity.cpp
     parity/test_library_parity.cpp
     parity/test_model_parity.cpp

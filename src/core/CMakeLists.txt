@@ -61,6 +61,7 @@ add_library(gc_core
     src/py.cpp
     src/session.cpp
     src/segments.cpp
+    src/model_manager.cpp
     src/settings.cpp
     src/sfx_disk.cpp
     src/sfx_name.cpp

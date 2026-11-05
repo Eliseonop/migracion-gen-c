@@ -29,6 +29,7 @@ Salida (al repo):
   tests/fixtures/eval/synthetic.json       evaluación por clip: casos de eval_cases.py
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
   tests/fixtures/editor/timeline_ui.json   timeline del editor: editor_cases.py (editorModel.js con Node)
+  tests/fixtures/ai/model_manager.json     modelos de IA en RAM (model_manager.py): model_manager_cases.py (--solo modelos)
   tests/fixtures/editor/lru_bytes.json     caché LRU con tope en bytes: lru_cases.py (lib/lruBytes.js con Node; --solo lru)
   tests/fixtures/render/platform.json      marco de TikTok/Shorts del preview (platformChrome.js en Chromium; --solo plataforma)
   tests/fixtures/frame/synthetic.json      fotograma: frame_cases.py (drawComposite con Node)
@@ -2877,6 +2878,89 @@ def real_audio_mix_fixtures(ctx: Ctx, data: dict) -> list[dict]:
 
 # --- Evaluación por clip (fx_anims, clip_fx, clip_blend, clip_adjust) ------------------------
 
+def synthetic_model_manager_fixtures() -> dict:
+    """model_manager.py REAL (modelos de IA en RAM): cada caso de model_manager_cases.CASES paso a
+    paso, con su reloj falso (`_set_clock`), sin el hilo que descarga y con `settings.load`
+    sustituido; tras cada paso, lo que devuelve y las descargas que hubo. Y idle_minutes() con cada
+    uno de model_manager_cases.SETTINGS."""
+    import logging
+    sys.path.insert(0, str(HERE))
+    import model_manager_cases as mc
+    from app import model_manager as mm
+    from app import settings as st
+    real_load, real_reaper, real_now = st.load, mm._ensure_reaper, mm._now
+    logger = logging.getLogger(mm.__name__)
+    real_level = logger.level
+    logger.setLevel(logging.CRITICAL)  # el log.exception de la descarga que falla, fuera
+    mm._ensure_reaper = lambda: None
+    cases, settings_out = [], []
+    try:
+        for name, ops in mc.CASES:
+            mm._models.clear()
+            clock = [0.0]
+            mm._set_clock(lambda: clock[0])
+            current: list = [{}]
+            st.load = lambda: current[0]
+            events: list[str] = []
+            stack = []
+
+            def unloader(n: str, boom: bool):
+                def f():
+                    events.append(n)
+                    if boom:
+                        raise RuntimeError("la descarga falla")
+                return f
+
+            results = []
+            for op in ops:
+                events.clear()
+                kind, ret = op[0], None
+                if kind == "clock":
+                    clock[0] = float(op[1])
+                elif kind == "settings":
+                    current[0] = op[1]
+                elif kind in ("register", "register_boom"):
+                    mm.register(op[1], unloader(op[1], kind == "register_boom"), heavy=op[2])
+                elif kind == "touch":
+                    mm.touch(op[1])
+                elif kind == "forget":
+                    mm.forget(op[1])
+                elif kind == "unload":
+                    ret = mm.unload(op[1])
+                elif kind == "unload_all":
+                    ret = mm.unload_all()
+                elif kind == "unload_idle":
+                    ret = mm.unload_idle(None if op[1] is None else float(op[1]))
+                elif kind == "enter":
+                    cm = mm.in_use(op[1])
+                    cm.__enter__()
+                    stack.append(cm)
+                elif kind == "exit":
+                    stack.pop().__exit__(None, None, None)
+                elif kind == "loaded":
+                    ret = mm.loaded()
+                elif kind == "idle_minutes":
+                    ret = mm.idle_minutes()
+                elif kind == "report":
+                    r = mm.memory_report()
+                    ret = {"idle_minutes": r["idle_minutes"], "models": r["models"]}
+                else:
+                    raise ValueError(f"paso desconocido: {op}")
+                results.append({"ret": ret, "events": list(events)})
+            while stack:
+                stack.pop().__exit__(None, None, None)
+            cases.append({"name": name, "ops": ops, "results": results})
+        for name, s in mc.SETTINGS:
+            st.load = lambda s=s: s
+            settings_out.append({"name": name, "settings": s, "idle_minutes": mm.idle_minutes()})
+    finally:
+        st.load, mm._ensure_reaper = real_load, real_reaper
+        mm._set_clock(real_now)
+        mm._models.clear()
+        logger.setLevel(real_level)
+    return _nan_safe({"cases": cases, "settings": settings_out})
+
+
 def _nan_safe(value):
     """NaN e infinito como texto ("nan", "inf", "-inf"): JSON no los admite."""
     if isinstance(value, float) and value - value != 0:
@@ -3731,7 +3815,7 @@ def main() -> None:
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
                                        "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake",
-                                       "anchos", "matte", "lru", "plataforma", "decode"],
+                                       "anchos", "matte", "lru", "plataforma", "decode", "modelos"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json; "
                          "decode: media/decode.json y media/seek.json)")
     ap.add_argument("--conservar", action="store_true",
@@ -3782,6 +3866,15 @@ def main() -> None:
 
     if args.solo == "lru":
         lru_group()
+        return
+
+    def models_group() -> None:
+        mmf = synthetic_model_manager_fixtures()
+        write(REPO / "tests" / "fixtures" / "ai" / "model_manager.json", mmf,
+              sum(len(c["ops"]) for c in mmf["cases"]) + len(mmf["settings"]), 0)
+
+    if args.solo == "modelos":
+        models_group()
         return
 
     def platform_group() -> None:
@@ -4008,6 +4101,7 @@ def main() -> None:
     editor_group()
     lru_group()
     platform_group()
+    models_group()
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)

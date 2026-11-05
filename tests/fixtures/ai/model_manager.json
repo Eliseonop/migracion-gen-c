@@ -1,0 +1,1732 @@
+{
+ "cases": [
+  {
+   "name": "descarga por inactividad con los ajustes",
+   "ops": [
+    [
+     "settings",
+     {
+      "models": {
+       "idle_minutes": 1
+      }
+     }
+    ],
+    [
+     "clock",
+     0.0
+    ],
+    [
+     "register",
+     "rvm",
+     false
+    ],
+    [
+     "clock",
+     10.0
+    ],
+    [
+     "touch",
+     "rvm"
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "clock",
+     69.9
+    ],
+    [
+     "unload_idle",
+     null
+    ],
+    [
+     "clock",
+     70.0
+    ],
+    [
+     "unload_idle",
+     null
+    ],
+    [
+     "loaded"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "rvm",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 10.0
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      "rvm"
+     ],
+     "events": [
+      "rvm"
+     ]
+    },
+    {
+     "ret": [],
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "uno pesado a la vez",
+   "ops": [
+    [
+     "clock",
+     1.0
+    ],
+    [
+     "register",
+     "sam",
+     true
+    ],
+    [
+     "register",
+     "whisper",
+     false
+    ],
+    [
+     "clock",
+     2.0
+    ],
+    [
+     "register",
+     "birefnet",
+     true
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "register",
+     "kokoro",
+     true
+    ],
+    [
+     "loaded"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": [
+      "sam"
+     ]
+    },
+    {
+     "ret": [
+      {
+       "name": "birefnet",
+       "heavy": true,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      },
+      {
+       "name": "whisper",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 1.0,
+       "loaded_s": 1.0
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": [
+      "birefnet"
+     ]
+    },
+    {
+     "ret": [
+      {
+       "name": "kokoro",
+       "heavy": true,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      },
+      {
+       "name": "whisper",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 1.0,
+       "loaded_s": 1.0
+      }
+     ],
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "un pesado en uso no se descarga",
+   "ops": [
+    [
+     "register",
+     "sam",
+     true
+    ],
+    [
+     "enter",
+     "sam"
+    ],
+    [
+     "register",
+     "birefnet",
+     true
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "exit"
+    ],
+    [
+     "register",
+     "rvm",
+     true
+    ],
+    [
+     "loaded"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "birefnet",
+       "heavy": true,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      },
+      {
+       "name": "sam",
+       "heavy": true,
+       "busy": true,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": [
+      "sam",
+      "birefnet"
+     ]
+    },
+    {
+     "ret": [
+      {
+       "name": "rvm",
+       "heavy": true,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      }
+     ],
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "volver a registrar no cambia el orden",
+   "ops": [
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "register",
+     "b",
+     false
+    ],
+    [
+     "clock",
+     5.0
+    ],
+    [
+     "register",
+     "a",
+     true
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "unload_all"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": true,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 5.0
+      },
+      {
+       "name": "b",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 5.0,
+       "loaded_s": 5.0
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": [
+      "a",
+      "b"
+     ],
+     "events": [
+      "a",
+      "b"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "volver a registrar uno en uso lo deja en uso",
+   "ops": [
+    [
+     "clock",
+     1.0
+    ],
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "enter",
+     "a"
+    ],
+    [
+     "clock",
+     4.0
+    ],
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "unload_all"
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "exit"
+    ],
+    [
+     "unload_all"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": false,
+       "busy": true,
+       "idle_s": 0.0,
+       "loaded_s": 3.0
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      "a"
+     ],
+     "events": [
+      "a"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "volver a registrar uno pesado no se descarga a sí mismo",
+   "ops": [
+    [
+     "register",
+     "sam",
+     true
+    ],
+    [
+     "clock",
+     3.0
+    ],
+    [
+     "register",
+     "sam",
+     true
+    ],
+    [
+     "loaded"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "sam",
+       "heavy": true,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 3.0
+      }
+     ],
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "olvidar y volver a registrar va al final",
+   "ops": [
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "register",
+     "b",
+     false
+    ],
+    [
+     "forget",
+     "a"
+    ],
+    [
+     "forget",
+     "nadie"
+    ],
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "unload_all"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      "b",
+      "a"
+     ],
+     "events": [
+      "b",
+      "a"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "in_use de uno que no estaba al entrar",
+   "ops": [
+    [
+     "clock",
+     1.0
+    ],
+    [
+     "enter",
+     "x"
+    ],
+    [
+     "register",
+     "x",
+     false
+    ],
+    [
+     "clock",
+     9.0
+    ],
+    [
+     "exit"
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "clock",
+     20.0
+    ],
+    [
+     "unload_idle",
+     11.0
+    ],
+    [
+     "unload_idle",
+     10.0
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "x",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 8.0
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      "x"
+     ],
+     "events": [
+      "x"
+     ]
+    },
+    {
+     "ret": [],
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "in_use anidado",
+   "ops": [
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "enter",
+     "a"
+    ],
+    [
+     "enter",
+     "a"
+    ],
+    [
+     "clock",
+     100.0
+    ],
+    [
+     "exit"
+    ],
+    [
+     "unload_idle",
+     1.0
+    ],
+    [
+     "unload_all"
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "exit"
+    ],
+    [
+     "clock",
+     200.0
+    ],
+    [
+     "unload_idle",
+     1.0
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": false,
+       "busy": true,
+       "idle_s": 0.0,
+       "loaded_s": 100.0
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      "a"
+     ],
+     "events": [
+      "a"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "in_use de otro registro con el mismo nombre",
+   "ops": [
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "enter",
+     "a"
+    ],
+    [
+     "unload",
+     "a"
+    ],
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "exit"
+    ],
+    [
+     "loaded"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": true,
+     "events": [
+      "a"
+     ]
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      }
+     ],
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "una descarga que falla",
+   "ops": [
+    [
+     "register_boom",
+     "boom",
+     false
+    ],
+    [
+     "register",
+     "ok",
+     false
+    ],
+    [
+     "unload",
+     "boom"
+    ],
+    [
+     "unload",
+     "boom"
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "register_boom",
+     "boom2",
+     true
+    ],
+    [
+     "register",
+     "big",
+     true
+    ],
+    [
+     "loaded"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": true,
+     "events": [
+      "boom"
+     ]
+    },
+    {
+     "ret": false,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "ok",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": [
+      "boom2"
+     ]
+    },
+    {
+     "ret": [
+      {
+       "name": "big",
+       "heavy": true,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      },
+      {
+       "name": "ok",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      }
+     ],
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "unload_idle con topes raros",
+   "ops": [
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "clock",
+     50.0
+    ],
+    [
+     "unload_idle",
+     0.0
+    ],
+    [
+     "unload_idle",
+     -5.0
+    ],
+    [
+     "unload_idle",
+     "nan"
+    ],
+    [
+     "unload_idle",
+     "inf"
+    ],
+    [
+     "unload_idle",
+     50.0
+    ],
+    [
+     "loaded"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": [
+      "a"
+     ],
+     "events": [
+      "a"
+     ]
+    },
+    {
+     "ret": [],
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "descargar uno que no está",
+   "ops": [
+    [
+     "unload",
+     "nadie"
+    ],
+    [
+     "unload_all"
+    ],
+    [
+     "unload_idle",
+     1.0
+    ],
+    [
+     "loaded"
+    ]
+   ],
+   "results": [
+    {
+     "ret": false,
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "segundos redondeados como round(…, 1)",
+   "ops": [
+    [
+     "clock",
+     0.0
+    ],
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "clock",
+     0.25
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "clock",
+     0.35
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "clock",
+     1.25
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "clock",
+     2.675
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "clock",
+     10.05
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "touch",
+     "a"
+    ],
+    [
+     "clock",
+     10.15
+    ],
+    [
+     "loaded"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.2,
+       "loaded_s": 0.2
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.3,
+       "loaded_s": 0.3
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 1.2,
+       "loaded_s": 1.2
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 2.7,
+       "loaded_s": 2.7
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 10.1,
+       "loaded_s": 10.1
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.1,
+       "loaded_s": 10.2
+      }
+     ],
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "loaded por nombre",
+   "ops": [
+    [
+     "register",
+     "b",
+     false
+    ],
+    [
+     "register",
+     "A",
+     false
+    ],
+    [
+     "register",
+     "á",
+     false
+    ],
+    [
+     "register",
+     "a",
+     true
+    ],
+    [
+     "register",
+     "a b",
+     false
+    ],
+    [
+     "register",
+     "Z",
+     false
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "report"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "A",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      },
+      {
+       "name": "Z",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      },
+      {
+       "name": "a",
+       "heavy": true,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      },
+      {
+       "name": "a b",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      },
+      {
+       "name": "b",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      },
+      {
+       "name": "á",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": {
+      "idle_minutes": 5.0,
+      "models": [
+       {
+        "name": "A",
+        "heavy": false,
+        "busy": false,
+        "idle_s": 0.0,
+        "loaded_s": 0.0
+       },
+       {
+        "name": "Z",
+        "heavy": false,
+        "busy": false,
+        "idle_s": 0.0,
+        "loaded_s": 0.0
+       },
+       {
+        "name": "a",
+        "heavy": true,
+        "busy": false,
+        "idle_s": 0.0,
+        "loaded_s": 0.0
+       },
+       {
+        "name": "a b",
+        "heavy": false,
+        "busy": false,
+        "idle_s": 0.0,
+        "loaded_s": 0.0
+       },
+       {
+        "name": "b",
+        "heavy": false,
+        "busy": false,
+        "idle_s": 0.0,
+        "loaded_s": 0.0
+       },
+       {
+        "name": "á",
+        "heavy": false,
+        "busy": false,
+        "idle_s": 0.0,
+        "loaded_s": 0.0
+       }
+      ]
+     },
+     "events": []
+    }
+   ]
+  },
+  {
+   "name": "unload_all salta los que están en uso",
+   "ops": [
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "register",
+     "b",
+     true
+    ],
+    [
+     "enter",
+     "b"
+    ],
+    [
+     "unload_all"
+    ],
+    [
+     "loaded"
+    ],
+    [
+     "exit"
+    ],
+    [
+     "unload_all"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      "a"
+     ],
+     "events": [
+      "a"
+     ]
+    },
+    {
+     "ret": [
+      {
+       "name": "b",
+       "heavy": true,
+       "busy": true,
+       "idle_s": 0.0,
+       "loaded_s": 0.0
+      }
+     ],
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [
+      "b"
+     ],
+     "events": [
+      "b"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "unload_idle sin ajustes de descarga (0 = nunca)",
+   "ops": [
+    [
+     "settings",
+     {
+      "models": {
+       "idle_minutes": 0
+      }
+     }
+    ],
+    [
+     "register",
+     "a",
+     false
+    ],
+    [
+     "clock",
+     1000000000.0
+    ],
+    [
+     "unload_idle",
+     null
+    ],
+    [
+     "loaded"
+    ]
+   ],
+   "results": [
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": null,
+     "events": []
+    },
+    {
+     "ret": [],
+     "events": []
+    },
+    {
+     "ret": [
+      {
+       "name": "a",
+       "heavy": false,
+       "busy": false,
+       "idle_s": 1000000000.0,
+       "loaded_s": 1000000000.0
+      }
+     ],
+     "events": []
+    }
+   ]
+  }
+ ],
+ "settings": [
+  {
+   "name": "2 minutos",
+   "settings": {
+    "models": {
+     "idle_minutes": 2
+    }
+   },
+   "idle_minutes": 2.0
+  },
+  {
+   "name": "con decimales",
+   "settings": {
+    "models": {
+     "idle_minutes": 0.5
+    }
+   },
+   "idle_minutes": 0.5
+  },
+  {
+   "name": "texto numérico",
+   "settings": {
+    "models": {
+     "idle_minutes": "3.5"
+    }
+   },
+   "idle_minutes": 3.5
+  },
+  {
+   "name": "texto con espacios",
+   "settings": {
+    "models": {
+     "idle_minutes": " 7 "
+    }
+   },
+   "idle_minutes": 7.0
+  },
+  {
+   "name": "texto con guion bajo",
+   "settings": {
+    "models": {
+     "idle_minutes": "1_0"
+    }
+   },
+   "idle_minutes": 10.0
+  },
+  {
+   "name": "negativo",
+   "settings": {
+    "models": {
+     "idle_minutes": -1
+    }
+   },
+   "idle_minutes": 0.0
+  },
+  {
+   "name": "cero",
+   "settings": {
+    "models": {
+     "idle_minutes": 0
+    }
+   },
+   "idle_minutes": 0.0
+  },
+  {
+   "name": "None",
+   "settings": {
+    "models": {
+     "idle_minutes": null
+    }
+   },
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "texto que no es un número",
+   "settings": {
+    "models": {
+     "idle_minutes": "abc"
+    }
+   },
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "True",
+   "settings": {
+    "models": {
+     "idle_minutes": true
+    }
+   },
+   "idle_minutes": 1.0
+  },
+  {
+   "name": "False",
+   "settings": {
+    "models": {
+     "idle_minutes": false
+    }
+   },
+   "idle_minutes": 0.0
+  },
+  {
+   "name": "nan",
+   "settings": {
+    "models": {
+     "idle_minutes": "nan"
+    }
+   },
+   "idle_minutes": 0.0
+  },
+  {
+   "name": "inf",
+   "settings": {
+    "models": {
+     "idle_minutes": "inf"
+    }
+   },
+   "idle_minutes": "inf"
+  },
+  {
+   "name": "-inf",
+   "settings": {
+    "models": {
+     "idle_minutes": "-inf"
+    }
+   },
+   "idle_minutes": 0.0
+  },
+  {
+   "name": "lista",
+   "settings": {
+    "models": {
+     "idle_minutes": [
+      1
+     ]
+    }
+   },
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "sin la clave",
+   "settings": {
+    "models": {}
+   },
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "models None",
+   "settings": {
+    "models": null
+   },
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "models lista vacía",
+   "settings": {
+    "models": []
+   },
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "models lista",
+   "settings": {
+    "models": [
+     1
+    ]
+   },
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "models texto",
+   "settings": {
+    "models": "x"
+   },
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "models 0",
+   "settings": {
+    "models": 0
+   },
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "models 1",
+   "settings": {
+    "models": 1
+   },
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "sin models",
+   "settings": {},
+   "idle_minutes": 5.0
+  },
+  {
+   "name": "otra clave",
+   "settings": {
+    "models": {
+     "idle": 9
+    }
+   },
+   "idle_minutes": 5.0
+  }
+ ]
+}
