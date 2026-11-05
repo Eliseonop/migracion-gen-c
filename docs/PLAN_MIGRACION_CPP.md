@@ -1739,3 +1739,11 @@ Decisión de Edu (§6):
 - **En el studio** (`ProxyMaker`): al abrir el proyecto y con cada vídeo nuevo de la timeline, un hilo de baja prioridad coge los que ya hay y hace, uno a uno, los que faltan; la vista previa vuelve a preparar el render con cada uno. Progreso bajo la vista previa. La caché, la de la app (`QStandardPaths::CacheLocation`/proxies).
 - **Tests:** tamaños; hacerlo, reconocerlo, otro fps, el que no hace falta, pararlo y caducar con el archivo; el fotograma k del proxy y del original (el gris de cada fotograma dice cuál es) en un clip que empieza dentro del vídeo; `FrameRenderer` con y sin proxy a ½ (un relleno con recorte y un superpuesto) a 30 dB o más; y en el studio, un vídeo de 2560 × 1440 que se hace proxy en la caché y la vista previa que lo usa (byte a byte lo de `FrameRenderer` con él).
 - **Falta:** limpiar la caché (hoy solo crece) y hacerlos al importar, cuando el studio importe material.
+- **Verificado:** MSVC Debug y Release 287/287, MinGW Debug y Release 157/157, 0 warnings, 0 avisos de clang-tidy.
+
+### 2026-11-05 — F5: exportar desde el editor
+
+- **Como `jobs._run_export`:** el botón ⤓ exporta la timeline de la sesión (que el editor ya guarda en cada cambio, el «persistir la timeline usada» del job) con `render_project` a `<carpeta del proyecto>/exports/final_<AAAAMMDD-HHMMSS en UTC>.mp4`, con los mensajes del job («Vídeo final exportado.», «Error exportando el vídeo final.», «No hay nada en la timeline para exportar.»). `ExportJob` (`apps/studio/export_job.hpp`) lo hace en un hilo y publica el progreso unas 5 veces por segundo.
+- **Divergencia:** video-yt renderiza antes los motion graphics de la timeline (su motion service); el render C++ aún no, así que el export los omite con un aviso (`omit_unsupported`) y la tarjeta los enseña al acabar, en vez de fallar.
+- **Cancelar:** `RenderOptions::cancelled` se mira antes de evaluar cada fotograma; si dice que sí, `render_project` para los hilos y devuelve las estadísticas con `cancelled` (no un error) y el editor borra el MP4 a medias. Cerrar la app con un export en marcha lo cancela.
+- **Tests** sin pantalla: el botón, la tarjeta con su progreso, el MP4 en exports con la duración de la timeline (9 s) y el aviso de «a.mp4», cerrar la tarjeta; cancelar sin dejar nada; y una timeline vacía que no empieza.

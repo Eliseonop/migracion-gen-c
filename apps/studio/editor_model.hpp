@@ -25,6 +25,7 @@
 
 #include "clip_list_model.hpp"
 #include "crop_editor.hpp"
+#include "export_job.hpp"
 #include "player.hpp"
 #include "preview_source.hpp"
 #include "proxy_maker.hpp"
@@ -44,6 +45,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(QObject* player READ player CONSTANT)
     // Los proxies de la vista previa (proxy_maker.hpp): su progreso.
     Q_PROPERTY(QObject* proxies READ proxies CONSTANT)
+    // El export (export_job.hpp): su progreso y su resultado.
+    Q_PROPERTY(QObject* exporter READ exporter CONSTANT)
     Q_PROPERTY(double duration READ duration NOTIFY timelineChanged)
     Q_PROPERTY(int fps READ fps NOTIFY timelineChanged)
     Q_PROPERTY(double aspect READ aspect NOTIFY timelineChanged)
@@ -89,6 +92,10 @@ public:
     [[nodiscard]] ProxyMaker& proxyMaker() { return proxy_maker_; }
     // La caché de los proxies (la de la app); sin ella, la vista previa lee siempre los originales.
     void setProxyDir(std::filesystem::path dir) { proxy_maker_.setCacheDir(std::move(dir)); }
+    [[nodiscard]] QObject* exporter() { return &export_job_; }
+    [[nodiscard]] ExportJob& exportJob() { return export_job_; }
+    // Exporta la timeline a la carpeta exports del proyecto (ExportJob). false si no se puede empezar.
+    Q_INVOKABLE bool exportVideo();
     // Las filas de clipModel (para los tests).
     [[nodiscard]] QVariantList clips() const;
     [[nodiscard]] double duration() const;
@@ -384,6 +391,7 @@ private:
     int row_height_ = 52;
     QString error_;
     ProxyMaker proxy_maker_; // con su hilo
+    ExportJob export_job_;   // con su hilo, mientras exporta
     Player player_;          // con su hilo de la mezcla
     PreviewSource preview_; // el último: su hilo se para antes de soltar la sesión
 };

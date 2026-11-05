@@ -30,6 +30,9 @@ struct RenderOptions {
     bool hwaccel = false;
     // Tras cada fotograma: cuántos van y cuántos hay.
     std::function<void(std::int64_t done, std::int64_t total)> on_progress;
+    // Si devuelve true (se mira antes de evaluar cada fotograma), el render para y devuelve las
+    // estadísticas con `cancelled`: el MP4 queda a medias y lo borra quien lo pidió (el editor).
+    std::function<bool()> cancelled;
     // Cada aviso distinto, una vez (material que falta, capas que se omiten).
     std::function<void(const std::string& message)> on_warning;
     // Cada fotograma ya compuesto, con los textos (RGBA premultiplicado y opaco, width · height · 4),
@@ -62,6 +65,7 @@ struct RenderStats {
     std::int64_t layer_cache_hits = 0; // fotogramas cuyas capas quietas de abajo no se redibujaron
     double seconds = 0; // lo que tardó, en total
     RenderTimes times;
+    bool cancelled = false; // paró a petición (RenderOptions::cancelled): el MP4 está a medias
 };
 
 // Renderiza la timeline del proyecto a `out`. Error si la timeline está vacía, si falta algo que

@@ -29,6 +29,7 @@
 #include "gc/export/frame.hpp"
 #include "gc/export/project.hpp"
 #include "gc/media/encode.hpp"
+#include "gc/media/probe.hpp"
 #endif
 
 using namespace gc;
@@ -824,5 +825,60 @@ TEST_CASE("studio sin pantalla: un vídeo grande se hace proxy y la vista previa
     CHECK(QTest::qWaitFor([&] { return same_pixels(p.image(), expected); }, 60000));
     // Y el proxy se ve: el clip «a» deja de ser el negro de «sin material».
     CHECK(has_color(expected, QColor(40, 90, 160)));
+}
+#endif
+
+#ifdef GC_STUDIO_PREVIEW
+TEST_CASE("studio sin pantalla: exportar deja el MP4 en exports, con su progreso y sus avisos", "[studio][ui][export]") {
+    const Studio s;
+    studio::ExportJob& job = s.editor->exportJob();
+    REQUIRE(job.available());
+    s.click("editor:export");
+    REQUIRE(job.running());
+    CHECK(s.item("export:card"));
+    CHECK(s.item("export:cancel"));
+    REQUIRE(QTest::qWaitFor([&] { return !job.running(); }, 300000));
+    INFO(job.message().toStdString());
+    REQUIRE(job.error().isEmpty());
+    CHECK(job.message() == "Vídeo final exportado.");
+    CHECK(job.progress() == 1.0);
+    // Como jobs._run_export: <carpeta del proyecto>/exports/final_<UTC>.mp4.
+    const auto file = core::path_from_utf8(job.file().toStdString());
+    REQUIRE(std::filesystem::is_regular_file(file));
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    CHECK(file.parent_path() == core::project_base(s.store->clips_dir(), **project) / "exports");
+    CHECK(core::path_to_utf8(file.filename()).starts_with("final_"));
+    CHECK(std::abs(media::probe_duration(file) - 9.0) < 0.1); // «b» acaba a los 9 s
+    CHECK(job.warnings().join('\n').contains("a.mp4"));       // «a» no tiene material: se omite
+    CHECK(s.item("export:open"));
+    CHECK(s.item("export:warnings"));
+    s.click("export:close");
+    CHECK(job.message().isEmpty());
+    CHECK_FALSE(s.item("export:card"));
+}
+
+TEST_CASE("studio sin pantalla: un export cancelado no deja nada y una timeline vacía no se exporta", "[studio][ui][export]") {
+    const Studio s;
+    studio::ExportJob& job = s.editor->exportJob();
+    REQUIRE(s.editor->exportVideo());
+    job.cancel();
+    REQUIRE(QTest::qWaitFor([&] { return !job.running(); }, 300000));
+    CHECK(job.message() == "Export cancelado.");
+    CHECK(job.file().isEmpty());
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    const auto folder = core::project_base(s.store->clips_dir(), **project) / "exports";
+    CHECK((!std::filesystem::exists(folder) || std::filesystem::is_empty(folder))); // sin el MP4 a medias
+
+    for (const char* id : {"a", "b"}) {
+        s.editor->select(id);
+        s.editor->deleteSelection();
+    }
+    CHECK_FALSE(s.editor->exportVideo());
+    CHECK_FALSE(job.running());
+    CHECK(job.error() == "No hay nada en la timeline para exportar.");
 }
 #endif

@@ -554,6 +554,15 @@ void EditorModel::searchSfx(const QString& q, const QString& category) {
     }
 }
 
+bool EditorModel::exportVideo() {
+    if (!session_) {
+        return false;
+    }
+    player_.pause();
+    // Lo que se exporta es la timeline de la sesión, ya guardada (cada cambio va a projects.json).
+    return export_job_.start(store_.file().parent_path().parent_path(), project_id_, session_->timeline());
+}
+
 void EditorModel::closeProject() {
     player_.close();
     preview_.close();

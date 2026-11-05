@@ -114,6 +114,12 @@ Item {
                 enabled: editor.model.selection.length > 0
                 onClicked: editor.model.deleteSelection()
             }
+            IconButton {
+                objectName: "editor:export"
+                text: "⤓"; tip: "Exportar el vídeo final"
+                enabled: !editor.model.exporter.running
+                onClicked: editor.model.exportVideo()
+            }
         }
 
         RowLayout {
@@ -201,6 +207,75 @@ Item {
             Layout.preferredHeight: 2
             model: editor.model
             onContextClip: (id) => clipMenu.openFor(id)
+        }
+    }
+
+    // El export (export_job.hpp): su progreso y, al acabar, el archivo, la cancelación o el error.
+    Rectangle {
+        id: exportCard
+        objectName: "export:card"
+        readonly property var job: editor.model.exporter
+        visible: job.running || job.message !== ""
+        z: 90
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: 24
+        width: 340
+        height: exportColumn.implicitHeight + 24
+        radius: Theme.radiusLg
+        color: Theme.card
+        border.color: Theme.lineBright
+        ColumnLayout {
+            id: exportColumn
+            anchors.fill: parent
+            anchors.margins: 12
+            spacing: 8
+            Label {
+                objectName: "export:message"
+                Layout.fillWidth: true
+                text: exportCard.job.message
+                color: exportCard.job.error !== "" ? Theme.danger : Theme.text
+                wrapMode: Text.Wrap
+            }
+            ProgressBar {
+                objectName: "export:progress"
+                Layout.fillWidth: true
+                visible: exportCard.job.running
+                from: 0
+                to: 1
+                value: exportCard.job.progress
+            }
+            Label {
+                objectName: "export:warnings"
+                Layout.fillWidth: true
+                visible: !exportCard.job.running && exportCard.job.warnings.length > 0
+                text: "Se omitió: " + exportCard.job.warnings.join(" · ")
+                color: Theme.muted
+                font.pixelSize: 11
+                wrapMode: Text.Wrap
+            }
+            RowLayout {
+                Layout.alignment: Qt.AlignRight
+                spacing: 6
+                SmallButton {
+                    objectName: "export:cancel"
+                    visible: exportCard.job.running
+                    text: "Cancelar"
+                    onClicked: exportCard.job.cancel()
+                }
+                SmallButton {
+                    objectName: "export:open"
+                    visible: !exportCard.job.running && exportCard.job.file !== ""
+                    text: "Abrir carpeta"
+                    onClicked: Qt.openUrlExternally(exportCard.job.folderUrl)
+                }
+                SmallButton {
+                    objectName: "export:close"
+                    visible: !exportCard.job.running
+                    text: "Cerrar"
+                    onClicked: exportCard.job.dismiss()
+                }
+            }
         }
     }
 

@@ -329,7 +329,13 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
             it->second = std::max(it->second, end);
         }
     }
+    bool stopped = false; // lo pidió options.cancelled
     for (std::int64_t tick = 0; tick < frames; ++tick) {
+        if (options.cancelled && options.cancelled()) {
+            stopped = true;
+            fail_all(Error{ErrorCode::Internal, "render cancelado", {}}); // para los otros hilos
+            break;
+        }
         {
             std::unique_lock lock(mutex);
             wake.wait(lock, [&] { return failure || queued < in_flight; });
@@ -418,6 +424,11 @@ Result<RenderStats> render_project(const LoadedProject& project, const fs::path&
     ph.compose = worker_times.compose;
     ph.text = worker_times.text;
     ph.encode += worker_times.encode; // la conversión a YUV, en los hilos que componen
+    if (stopped) {
+        stats.cancelled = true;
+        stats.threads = workers;
+        return stats;
+    }
     if (failure) {
         return std::unexpected(*failure);
     }
