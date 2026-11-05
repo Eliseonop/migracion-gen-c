@@ -1,7 +1,8 @@
 #pragma once
 
 // FramePreview (QML, GenClip.Preview): pinta el último fotograma de un PreviewSource, encajado en
-// su rectángulo sin deformarlo y centrado. Sube el fotograma a una textura solo cuando cambia.
+// su rectángulo sin deformarlo y centrado. Sube el fotograma a una textura solo cuando cambia, y le
+// dice al PreviewSource cuánto se ve (de ahí sale la escala a la que compone: 1, ½ o ¼).
 
 #include <QImage>
 #include <QPointer>
@@ -34,6 +35,7 @@ protected:
 
 private:
     void take_frame();
+    void report_size(); // el tamaño en píxeles de la pantalla, a su PreviewSource
 
     QPointer<PreviewSource> source_;
     QImage image_;       // el que se pinta

@@ -44,21 +44,36 @@ sk_sp<SkColorFilter> color_filter(const core::AffineColorMatrix& m) {
     return SkColorFilters::Matrix(row_major.data());
 }
 
-Result<Canvas> Canvas::make(int width, int height) {
+Result<Canvas> Canvas::make(int width, int height) { return make(width, height, 1.0); }
+
+Result<Canvas> Canvas::make(int width, int height, double scale) {
     if (width <= 0 || height <= 0) {
         return fail(ErrorCode::InvalidArgument, std::format("lienzo de {}x{}: las dimensiones deben ser mayores que 0",
                                                             width, height));
     }
+    if (!(scale > 0.0 && scale <= 1.0)) {
+        return fail(ErrorCode::InvalidArgument, std::format("lienzo a escala {}: tiene que ser mayor que 0 y como mucho 1",
+                                                            scale));
+    }
+    const int pw = scale == 1.0 ? width : std::max(1, static_cast<int>(std::lround(width * scale)));
+    const int ph = scale == 1.0 ? height : std::max(1, static_cast<int>(std::lround(height * scale)));
     // Premultiplicado por dentro (lo que Skia dibuja más rápido); snapshot() lo devuelve sin
     // premultiplicar.
-    auto surface = SkSurfaces::Raster(SkImageInfo::Make(width, height, kRGBA_8888_SkColorType, kPremul_SkAlphaType));
+    auto surface = SkSurfaces::Raster(SkImageInfo::Make(pw, ph, kRGBA_8888_SkColorType, kPremul_SkAlphaType));
     if (!surface) {
-        return fail(ErrorCode::Internal, std::format("Skia no pudo crear un lienzo de {}x{}", width, height));
+        return fail(ErrorCode::Internal, std::format("Skia no pudo crear un lienzo de {}x{}", pw, ph));
     }
     auto impl = std::make_unique<Impl>();
     impl->surface = std::move(surface);
     impl->width = width;
     impl->height = height;
+    impl->pixel_width = pw;
+    impl->pixel_height = ph;
+    impl->sx = static_cast<float>(pw) / static_cast<float>(width);
+    impl->sy = static_cast<float>(ph) / static_cast<float>(height);
+    if (impl->scaled()) {
+        impl->surface->getCanvas()->scale(impl->sx, impl->sy); // la de base: del cuadro a los píxeles
+    }
     return Canvas(std::move(impl));
 }
 
@@ -69,6 +84,8 @@ Canvas::~Canvas() = default;
 
 int Canvas::width() const noexcept { return impl_->width; }
 int Canvas::height() const noexcept { return impl_->height; }
+int Canvas::pixel_width() const noexcept { return impl_->pixel_width; }
+int Canvas::pixel_height() const noexcept { return impl_->pixel_height; }
 
 void Canvas::clear(Rgba8 color) { impl_->surface->getCanvas()->clear(to_sk(color)); }
 
@@ -102,8 +119,10 @@ Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src,
     const auto paint_alpha = static_cast<float>(std::isnan(alpha) ? 1.0 : std::clamp(alpha, 0.0, 1.0));
     SkCanvas* canvas = impl_->surface->getCanvas();
     // Escala y traslación sin cortinilla: el bicúbico separable (resample.hpp), directo sobre los
-    // píxeles de la capa de arriba, que da lo mismo que Skia mucho más deprisa.
-    if (!clip && detail::fast_scaled_draw() && canvas->getTotalMatrix().isIdentity() && canvas->isClipRect()) {
+    // píxeles de la capa de arriba, que da lo mismo que Skia mucho más deprisa. En un lienzo
+    // reducido, con la escala de base dentro de la matriz (de la fuente a los píxeles).
+    const SkMatrix base = SkMatrix::Scale(impl_->sx, impl_->sy);
+    if (!clip && detail::fast_scaled_draw() && canvas->getTotalMatrix() == base && canvas->isClipRect()) {
         // Antes de escribir en los píxeles: si hay una instantánea del lienzo, Skia la separa.
         impl_->surface->notifyContentWillChange(SkSurface::kRetain_ContentChangeMode);
         SkImageInfo info;
@@ -114,7 +133,12 @@ Result<void> Canvas::draw_image(const Image& image, const core::SourceCrop& src,
             info.alphaType() == kPremul_SkAlphaType) {
             const SkIRect bounds = canvas->getDeviceClipBounds();
             const detail::PremulPixels pixels{static_cast<std::uint8_t*>(top), row_bytes, info.width(), info.height()};
-            if (detail::draw_scaled_bicubic(image, src, m, paint_alpha, color, pixels,
+            const double sx = impl_->sx;
+            const double sy = impl_->sy;
+            const core::Affine to_pixels = impl_->scaled()
+                                               ? core::Affine{m.a * sx, m.b * sy, m.c * sx, m.d * sy, m.e * sx, m.f * sy}
+                                               : m;
+            if (detail::draw_scaled_bicubic(image, src, to_pixels, paint_alpha, color, pixels,
                                             {bounds.fLeft, bounds.fTop, bounds.fRight, bounds.fBottom})) {
                 return {};
             }
@@ -212,7 +236,8 @@ Result<void> Canvas::end_layer(const MaskAlpha& mask) {
     const SkPixmap pixmap(SkImageInfo::MakeA8(mask.width, mask.height), mask.alpha.data(), row);
     SkPaint paint;
     paint.setBlendMode(SkBlendMode::kDstIn);
-    canvas->drawImage(SkImages::RasterFromPixmapCopy(pixmap), 0, 0, SkSamplingOptions(), &paint);
+    // La máscara es del cuadro: en un lienzo reducido, la escala de base la reduce (bilineal).
+    canvas->drawImage(SkImages::RasterFromPixmapCopy(pixmap), 0, 0, device_sampling(canvas), &paint);
     canvas->restore();
     return {};
 }
@@ -223,14 +248,21 @@ void Canvas::apply_color_matrix(const core::AffineColorMatrix& m) {
     SkPaint paint;
     paint.setBlendMode(SkBlendMode::kSrc);
     paint.setColorFilter(color_filter(m));
-    surface->getCanvas()->drawImage(below, 0, 0, SkSamplingOptions(), &paint);
+    // Píxel a píxel: la instantánea ya está en píxeles, sin la escala de base.
+    SkCanvas* canvas = surface->getCanvas();
+    canvas->save();
+    canvas->resetMatrix();
+    canvas->drawImage(below, 0, 0, SkSamplingOptions(), &paint);
+    canvas->restore();
 }
 
 Image Canvas::snapshot() const {
-    Image img{impl_->width, impl_->height, {}};
-    const auto row = static_cast<std::size_t>(impl_->width) * 4;
-    img.pixels.resize(row * static_cast<std::size_t>(impl_->height));
-    const auto info = SkImageInfo::Make(impl_->width, impl_->height, kRGBA_8888_SkColorType, kUnpremul_SkAlphaType);
+    const int w = impl_->pixel_width;
+    const int h = impl_->pixel_height;
+    Image img{w, h, {}};
+    const auto row = static_cast<std::size_t>(w) * 4;
+    img.pixels.resize(row * static_cast<std::size_t>(h));
+    const auto info = SkImageInfo::Make(w, h, kRGBA_8888_SkColorType, kUnpremul_SkAlphaType);
     // Mismas dimensiones que el lienzo y formato soportado: no puede fallar.
     [[maybe_unused]] const bool ok = impl_->surface->readPixels(info, img.pixels.data(), row, 0, 0);
     return img;
@@ -238,8 +270,8 @@ Image Canvas::snapshot() const {
 
 std::span<const std::uint8_t> Canvas::opaque_pixels() const {
     SkPixmap pm;
-    // Un lienzo raster de make() siempre se deja ver, con filas de width · 4 bytes.
-    if (!impl_->surface->peekPixels(&pm) || pm.rowBytes() != static_cast<std::size_t>(impl_->width) * 4) {
+    // Un lienzo raster de make() siempre se deja ver, con filas de pixel_width · 4 bytes.
+    if (!impl_->surface->peekPixels(&pm) || pm.rowBytes() != static_cast<std::size_t>(impl_->pixel_width) * 4) {
         return {};
     }
     return {static_cast<const std::uint8_t*>(pm.addr()), pm.computeByteSize()};

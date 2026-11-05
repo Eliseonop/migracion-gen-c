@@ -9,6 +9,7 @@
 #include <limits>
 #include <numbers>
 #include <optional>
+#include <vector>
 
 #include "gc/render/canvas.hpp"
 
@@ -247,4 +248,87 @@ TEST_CASE("lienzo: un alfa NaN dibuja opaco, como globalAlpha = NaN del contexto
     canvas->clear({0, 0, 0, 255});
     REQUIRE(canvas->draw_image(src, {0, 0, 1, 1}, gc::core::Affine{}, std::numeric_limits<double>::quiet_NaN()));
     CHECK(same(pixel(canvas->snapshot(), 0, 0), {200, 100, 50, 255}));
+}
+
+TEST_CASE("lienzo a escala: los píxeles reducidos, las coordenadas del cuadro", "[render][scale]") {
+    CHECK_FALSE(Canvas::make(8, 8, 0.0));
+    CHECK_FALSE(Canvas::make(8, 8, 1.5));
+    CHECK_FALSE(Canvas::make(8, 8, std::numeric_limits<double>::quiet_NaN()));
+    auto tiny = Canvas::make(3, 3, 0.25); // al menos 1 × 1
+    REQUIRE(tiny);
+    CHECK(tiny->pixel_width() == 1);
+    CHECK(tiny->pixel_height() == 1);
+
+    auto canvas = Canvas::make(8, 6, 0.5);
+    REQUIRE(canvas);
+    CHECK(canvas->width() == 8); // el cuadro
+    CHECK(canvas->height() == 6);
+    CHECK(canvas->pixel_width() == 4);
+    CHECK(canvas->pixel_height() == 3);
+    canvas->clear({0, 0, 0, 255});
+    canvas->fill_rect(4, 2, 4, 4, {255, 0, 0, 255}); // la mitad de abajo a la derecha del cuadro
+    const Image img = canvas->snapshot();
+    REQUIRE(img.width == 4);
+    REQUIRE(img.height == 3);
+    CHECK(same(pixel(img, 0, 0), {0, 0, 0, 255}));
+    CHECK(same(pixel(img, 1, 1), {0, 0, 0, 255}));
+    CHECK(same(pixel(img, 2, 1), {255, 0, 0, 255}));
+    CHECK(same(pixel(img, 3, 2), {255, 0, 0, 255}));
+    CHECK(canvas->opaque_pixels().size() == img.pixels.size());
+}
+
+TEST_CASE("lienzo a escala: la capa de ajuste pasa por todos los píxeles", "[render][scale]") {
+    auto canvas = Canvas::make(8, 8, 0.5);
+    REQUIRE(canvas);
+    canvas->clear({200, 100, 50, 255});
+    // Solo el rojo a 0: si la instantánea se volviera a dibujar con la escala de base, solo
+    // cambiaría la cuarta parte de arriba a la izquierda.
+    canvas->apply_color_matrix({{{0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}}});
+    const Image img = canvas->snapshot();
+    for (int y = 0; y < img.height; ++y) {
+        for (int x = 0; x < img.width; ++x) {
+            INFO(x << ", " << y);
+            CHECK(same(pixel(img, x, y), {0, 100, 50, 255}));
+        }
+    }
+}
+
+TEST_CASE("lienzo a escala: una máscara del cuadro recorta en su sitio", "[render][scale]") {
+    auto canvas = Canvas::make(8, 4, 0.5);
+    REQUIRE(canvas);
+    canvas->clear({0, 0, 0, 255});
+    canvas->begin_layer();
+    canvas->fill_rect(0, 0, 8, 4, {255, 255, 255, 255});
+    gc::render::MaskAlpha mask{8, 4, std::vector<std::uint8_t>(32, 0)};
+    for (int y = 0; y < 4; ++y) {
+        for (int x = 0; x < 4; ++x) {
+            mask.alpha[(static_cast<std::size_t>(y) * 8) + static_cast<std::size_t>(x)] = 255; // la mitad izquierda
+        }
+    }
+    REQUIRE(canvas->end_layer(mask));
+    const Image img = canvas->snapshot();
+    REQUIRE(img.width == 4);
+    CHECK(same(pixel(img, 0, 0), {255, 255, 255, 255}));
+    CHECK(same(pixel(img, 1, 1), {255, 255, 255, 255}));
+    CHECK(same(pixel(img, 2, 0), {0, 0, 0, 255}));
+    CHECK(same(pixel(img, 3, 1), {0, 0, 0, 255}));
+}
+
+TEST_CASE("lienzo a escala: un blit va al sitio del cuadro reducido", "[render][scale]") {
+    // 4 × 4 en verde, al cuadro de 16 × 16 en (8, 8) con escala 2: a ½, los píxeles (4–7, 4–7).
+    const Image green{4, 4, std::vector<std::uint8_t>(64, 0)};
+    Image src = green;
+    for (std::size_t i = 0; i < 16; ++i) {
+        src.pixels[(i * 4) + 1] = 255;
+        src.pixels[(i * 4) + 3] = 255;
+    }
+    auto canvas = Canvas::make(16, 16, 0.5);
+    REQUIRE(canvas);
+    canvas->clear({0, 0, 0, 255});
+    REQUIRE(canvas->draw_image(src, {0, 0, 4, 4}, {2, 0, 0, 2, 8, 8}));
+    const Image img = canvas->snapshot();
+    CHECK(same(pixel(img, 5, 5), {0, 255, 0, 255}));
+    CHECK(same(pixel(img, 6, 6), {0, 255, 0, 255}));
+    CHECK(same(pixel(img, 2, 2), {0, 0, 0, 255}));
+    CHECK(same(pixel(img, 5, 2), {0, 0, 0, 255}));
 }

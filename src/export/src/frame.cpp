@@ -84,7 +84,7 @@ Result<FrameRenderer> FrameRenderer::open(const LoadedProject& project, const Fr
     if (!prepared) {
         return std::unexpected(prepared.error());
     }
-    auto canvas = render::Canvas::make(w, h);
+    auto canvas = render::Canvas::make(w, h, options.scale);
     if (!canvas) {
         return std::unexpected(canvas.error());
     }

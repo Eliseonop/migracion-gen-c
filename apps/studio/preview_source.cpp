@@ -1,9 +1,10 @@
 #include "preview_source.hpp"
 
+#include <algorithm>
+#include <initializer_list>
 #include <utility>
 
 #ifdef GC_STUDIO_PREVIEW
-#include <algorithm>
 #include <condition_variable>
 #include <cstdint>
 #include <cstring>
@@ -65,17 +66,20 @@ struct PreviewSource::Worker {
     bool timeline_dirty = false;
     core::TimelineSnapshot timeline;
     std::optional<double> at;
+    std::optional<double> scale;
     std::thread thread; // el último: arranca con todo lo demás ya hecho
 
-    [[nodiscard]] bool pending() const { return stop || closing || reload || timeline_dirty || at.has_value(); }
+    [[nodiscard]] bool pending() const {
+        return stop || closing || reload || timeline_dirty || at.has_value() || scale.has_value();
+    }
 
     // En el hilo de la interfaz, cuando llegue (si el PreviewSource sigue vivo).
-    void post(QImage image, qint64 tick, QString error, QStringList warnings) const {
+    void post(QImage image, qint64 tick, double s, QString error, QStringList warnings) const {
         PreviewSource* o = owner;
         QMetaObject::invokeMethod(
             o,
-            [o, image = std::move(image), tick, error = std::move(error), warnings = std::move(warnings)] {
-                o->publish(image, tick, error, warnings);
+            [o, image = std::move(image), tick, s, error = std::move(error), warnings = std::move(warnings)] {
+                o->publish(image, tick, s, error, warnings);
             },
             Qt::QueuedConnection);
     }
@@ -89,6 +93,7 @@ struct PreviewSource::Worker {
         bool open_failed = false; // no reintentar hasta que cambie algo
         std::optional<double> want; // el último instante pedido
         std::int64_t shown = -1;    // el tick publicado con este `renderer`
+        double current_scale = 1.0;
         for (;;) {
             bool close_now = false;
             bool reload_now = false;
@@ -97,6 +102,7 @@ struct PreviewSource::Worker {
             std::string new_id;
             core::TimelineSnapshot new_timeline;
             std::optional<double> new_at;
+            std::optional<double> new_scale;
             {
                 std::unique_lock lock(mutex);
                 wake.wait(lock, [&] { return pending(); });
@@ -110,8 +116,13 @@ struct PreviewSource::Worker {
                 new_id = std::move(project_id);
                 new_timeline = std::move(timeline);
                 new_at = std::exchange(at, std::nullopt);
+                new_scale = std::exchange(scale, std::nullopt);
             }
-            const bool changed = close_now || reload_now || timeline_now;
+            const bool rescaled = new_scale && *new_scale != current_scale;
+            if (rescaled) {
+                current_scale = *new_scale;
+            }
+            const bool changed = close_now || reload_now || timeline_now || rescaled;
             if (changed) {
                 renderer.reset();
                 warnings.clear();
@@ -122,7 +133,7 @@ struct PreviewSource::Worker {
                 project.reset();
                 current.reset();
                 want.reset();
-                post({}, -1, {}, {});
+                post({}, -1, current_scale, {}, {});
             }
             if (reload_now) {
                 auto loaded = exporter::load_project(new_root, new_id);
@@ -140,7 +151,7 @@ struct PreviewSource::Worker {
             }
             if (!project) {
                 if (changed) {
-                    post({}, -1, project_error, {});
+                    post({}, -1, current_scale, project_error, {});
                 }
                 continue;
             }
@@ -150,14 +161,15 @@ struct PreviewSource::Worker {
                 exporter::FrameOptions options;
                 options.omit_unsupported = true; // el editor enseña lo que sabe dibujar
                 options.cache_bytes = kCacheBytes;
+                options.scale = current_scale;
                 options.on_warning = [&warnings](const std::string& message) {
                     warnings << QString::fromStdString(message);
                 };
                 auto opened = exporter::FrameRenderer::open(p, options);
                 if (!opened || opened->frames() <= 0) {
                     open_failed = true;
-                    post({}, -1, opened ? QString("La timeline no tiene fotogramas.")
-                                        : QString::fromStdString(opened.error().message),
+                    post({}, -1, current_scale,
+                         opened ? QString("La timeline no tiene fotogramas.") : QString::fromStdString(opened.error().message),
                          warnings);
                     continue;
                 }
@@ -171,11 +183,11 @@ struct PreviewSource::Worker {
             auto frame = renderer->tick(k);
             if (!frame) {
                 shown = -1;
-                post({}, -1, QString::fromStdString(frame.error().message), warnings);
+                post({}, -1, current_scale, QString::fromStdString(frame.error().message), warnings);
                 continue;
             }
             shown = k;
-            post(to_qimage(frame->image), k, {}, warnings);
+            post(to_qimage(frame->image), k, current_scale, {}, warnings);
         }
     }
 };
@@ -219,6 +231,32 @@ void PreviewSource::setTimeline(core::TimelineSnapshot timeline) {
         worker_->timeline = std::move(timeline);
     }
     worker_->wake.notify_one();
+    update_scale(); // otro tamaño del cuadro, quizá otra escala
+}
+
+void PreviewSource::setDisplaySize(int width, int height) {
+    display_w_ = width;
+    display_h_ = height;
+    update_scale();
+}
+
+void PreviewSource::update_scale() {
+    if (!sent_) {
+        return;
+    }
+    // Las dimensiones de la salida, pares como el export.
+    const auto w = static_cast<double>(sent_->width - sent_->width % 2);
+    const auto h = static_cast<double>(sent_->height - sent_->height % 2);
+    const double s = scale_for(w, h, display_w_, display_h_);
+    if (s == sent_scale_) {
+        return;
+    }
+    sent_scale_ = s;
+    {
+        const std::scoped_lock lock(worker_->mutex);
+        worker_->scale = s;
+    }
+    worker_->wake.notify_one();
 }
 
 void PreviewSource::request(double seconds) {
@@ -241,14 +279,35 @@ void PreviewSource::open(std::filesystem::path /*root*/, std::string /*project_i
 void PreviewSource::close() {}
 void PreviewSource::setTimeline(core::TimelineSnapshot /*timeline*/) {}
 void PreviewSource::request(double /*seconds*/) {}
+void PreviewSource::setDisplaySize(int width, int height) {
+    display_w_ = width;
+    display_h_ = height;
+}
+void PreviewSource::update_scale() {}
 
 #endif
 
 PreviewSource::~PreviewSource() = default;
 
-void PreviewSource::publish(const QImage& image, qint64 tick, const QString& error, const QStringList& warnings) {
+double PreviewSource::scale_for(double frame_w, double frame_h, int display_w, int display_h) {
+    if (!(frame_w > 0 && frame_h > 0) || display_w <= 0 || display_h <= 0) {
+        return 1.0;
+    }
+    // Lo que hace falta para llenar el recuadro (con un pelo de holgura por el redondeo).
+    const double need = std::max(display_w / frame_w, display_h / frame_h) * 0.999;
+    for (const double s : {0.25, 0.5}) {
+        if (s >= need) {
+            return s;
+        }
+    }
+    return 1.0;
+}
+
+void PreviewSource::publish(const QImage& image, qint64 tick, double scale, const QString& error,
+                            const QStringList& warnings) {
     image_ = image;
     tick_ = image.isNull() ? -1 : tick;
+    scale_ = scale;
     error_ = error;
     warnings_ = warnings;
     ++revision_;

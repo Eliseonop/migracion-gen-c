@@ -4,7 +4,9 @@
 // export en ese fotograma (gc::exporter::FrameRenderer), hecho en un hilo aparte para no frenar la
 // interfaz. Se queda con la última petición: si llegan varias mientras compone (el cabezal
 // corriendo), salta a la más nueva. Cuando cambia la timeline vuelve a preparar el render y repite
-// el último instante pedido. Sin gc_export (Linux sin vcpkg), `available` es false y no hace nada.
+// el último instante pedido. Compone a 1, ½ o ¼ (FrameOptions::scale): la más pequeña que aún llena
+// el recuadro en pantalla (setDisplaySize). Sin gc_export (Linux sin vcpkg), `available` es false y
+// no hace nada.
 
 #include <QImage>
 #include <QObject>
@@ -47,6 +49,14 @@ public:
     [[nodiscard]] QImage image() const { return image_; }
     // Su tick (fotograma k de la timeline, en k/fps s); -1 sin fotograma.
     [[nodiscard]] qint64 tick() const { return tick_; }
+    // La escala a la que se compuso (1, 0,5 o 0,25).
+    [[nodiscard]] double scale() const { return scale_; }
+
+    // El recuadro donde se ve, en píxeles de la pantalla: decide la escala. Sin él (0), 1.
+    void setDisplaySize(int width, int height);
+    // La escala para un cuadro de frame_w × frame_h visto en display_w × display_h: la más pequeña
+    // de 1, ½ y ¼ que no se queda corta.
+    [[nodiscard]] static double scale_for(double frame_w, double frame_h, int display_w, int display_h);
 
     // El proyecto `project_id` de la carpeta `root` (la de data/projects.json y clips/, como la
     // raíz de video-yt): de ahí salen el material y los ajustes.
@@ -62,11 +72,16 @@ signals:
 
 private:
     struct Worker;
-    void publish(const QImage& image, qint64 tick, const QString& error, const QStringList& warnings);
+    void publish(const QImage& image, qint64 tick, double scale, const QString& error, const QStringList& warnings);
+    void update_scale();
 
     core::TimelineSnapshot sent_; // la última timeline que se mandó al hilo
+    int display_w_ = 0;
+    int display_h_ = 0;
+    double sent_scale_ = 1.0; // la última escala que se mandó al hilo
     QImage image_;
     qint64 tick_ = -1;
+    double scale_ = 1.0;
     QString error_;
     QStringList warnings_;
     int revision_ = 0;

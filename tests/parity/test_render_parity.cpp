@@ -122,6 +122,39 @@ double psnr_luma(const gc::render::Image& a, const gc::render::Image& b, const s
     return mse == 0.0 ? std::numeric_limits<double>::infinity() : 10.0 * std::log10(255.0 * 255.0 / mse);
 }
 
+// Los suelos de la vista previa a ½ y ¼ frente al 1:1 reducido (PSNR de luma, dB). Medido el
+// 2026-11-05 en las 191 escenas: a ½, la peor 33,9 dB («desplazado a escala 0,8») y la mediana
+// 55,7; a ¼, la peor 25,9 («contraste 10», que agranda cualquier diferencia) y la mediana 33,3. Es
+// lo que separa el bicúbico sobre menos píxeles de promediar los del 1:1; una capa en otro sitio
+// bajaría a 10–15 dB.
+constexpr double kHalfFloor = 32.0;
+constexpr double kQuarterFloor = 24.0;
+
+// `img` reducida a w × h promediando cada bloque (el área de cada píxel de destino): con ½ o ¼ de
+// un tamaño par, bloques de 2×2 o 4×4 enteros. Para comparar la vista previa reducida con el 1:1.
+gc::render::Image box_reduce(const gc::render::Image& img, int w, int h) {
+    gc::render::Image out{w, h, std::vector<std::uint8_t>(static_cast<std::size_t>(w) * h * 4)};
+    for (int y = 0; y < h; ++y) {
+        const int y0 = y * img.height / h;
+        const int y1 = std::max(y0 + 1, (y + 1) * img.height / h);
+        for (int x = 0; x < w; ++x) {
+            const int x0 = x * img.width / w;
+            const int x1 = std::max(x0 + 1, (x + 1) * img.width / w);
+            for (int ch = 0; ch < 4; ++ch) {
+                double sum = 0.0;
+                for (int sy = y0; sy < y1; ++sy) {
+                    for (int sx = x0; sx < x1; ++sx) {
+                        sum += img.pixels[((static_cast<std::size_t>(sy) * img.width + sx) * 4) + ch];
+                    }
+                }
+                out.pixels[((static_cast<std::size_t>(y) * w + x) * 4) + ch] =
+                    static_cast<std::uint8_t>(std::lround(sum / ((y1 - y0) * (x1 - x0))));
+            }
+        }
+    }
+    return out;
+}
+
 // PSNR de la crominancia (Cb y Cr BT.709) por bloques de 2×2 enteros fuera de `skip`: la media
 // de cada bloque, para que el 4:2:0 del export no cuente. Ve lo que la luma no ve (la sepia, la
 // saturación de un eq o el tono).
@@ -423,6 +456,24 @@ TEST_CASE("paridad del render: el fotograma compuesto frente al del export", "[p
             const bool same = got->image.pixels == frame->pixels; // sin imprimir los píxeles si fallan
             CHECK(same);
             ++frame_renderer_cases;
+            // A ½ y ¼ (la vista previa del editor): lo mismo compuesto en un lienzo de menos píxeles,
+            // frente al de 1:1 promediado por bloques. Lo que se dibujara en píxeles del cuadro sin
+            // pasar por la escala (una máscara, un texto, la caché) saldría movido y aquí se vería.
+            for (const double scale : {0.5, 0.25}) {
+                INFO("a escala " << scale);
+                gc::exporter::FrameOptions small_options;
+                small_options.scale = scale;
+                auto small_renderer = gc::exporter::FrameRenderer::open(lp, small_options);
+                REQUIRE(small_renderer);
+                auto small = small_renderer->at(at);
+                INFO((small ? std::string() : small.error().to_string()));
+                REQUIRE(small);
+                REQUIRE(small->image.width == static_cast<int>(std::lround(w * scale)));
+                REQUIRE(small->image.height == static_cast<int>(std::lround(h * scale)));
+                const double p = psnr_luma(small->image, box_reduce(got->image, small->image.width, small->image.height));
+                UNSCOPED_INFO(name << " a " << scale << ": PSNR de luma frente al 1:1 reducido " << p << " dB");
+                CHECK(p >= (scale == 0.5 ? kHalfFloor : kQuarterFloor));
+            }
         }
         auto coverage = gc::render::compose_frame(
             *layers, w, h, [&](const FrameLayer& layer) -> gc::Result<const gc::render::Image*> {

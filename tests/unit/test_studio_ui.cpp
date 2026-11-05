@@ -566,11 +566,12 @@ bool wait_tick(const studio::PreviewSource& p, qint64 tick, int since = -1) {
 }
 
 // Lo que da el export en `t` con lo que hay en projects.json (el editor lo guarda en cada cambio).
-render::Image exported(const std::filesystem::path& root, double t) {
+render::Image exported(const std::filesystem::path& root, double t, double scale) {
     auto project = exporter::load_project(root, "p1");
     REQUIRE(project);
     exporter::FrameOptions options;
     options.omit_unsupported = true;
+    options.scale = scale;
     auto renderer = exporter::FrameRenderer::open(*project, options);
     REQUIRE(renderer);
     auto frame = renderer->at(t);
@@ -613,8 +614,12 @@ TEST_CASE("studio sin pantalla: la vista previa pinta el fotograma del export en
     REQUIRE(p.available());
     REQUIRE(wait_tick(p, 0));
     REQUIRE(p.error().isEmpty());
+    // El recuadro de la ventana del test es pequeño: compone reducido (½ o ¼), lo justo para llenarlo.
+    // El primer fotograma puede llegar a 1:1, antes de que el QML diga cuánto se ve.
+    REQUIRE(QTest::qWaitFor([&] { return p.tick() == 0 && p.scale() < 1.0; }, 60000));
+    CHECK(p.image().height() == static_cast<int>(std::lround(1280 * p.scale())));
     // En 0 s solo está «a», cuyo a.mp4 no existe: negro, con su aviso, como el export.
-    CHECK(same_pixels(p.image(), exported(s.dir, 0.0)));
+    CHECK(same_pixels(p.image(), exported(s.dir, 0.0, p.scale())));
     CHECK(p.warnings().join('\n').contains("a.mp4"));
     QQuickItem* item = s.item("preview");
     REQUIRE(item);
@@ -627,7 +632,7 @@ TEST_CASE("studio sin pantalla: la vista previa pinta el fotograma del export en
     s.editor->setPlayhead(7.0);
     REQUIRE(wait_tick(p, 210, since)); // 7 s · 30 fps
     REQUIRE(p.error().isEmpty());
-    const render::Image at7 = exported(s.dir, 7.0);
+    const render::Image at7 = exported(s.dir, 7.0, p.scale());
     REQUIRE(has_color(at7, kImageColor));
     CHECK(same_pixels(p.image(), at7));
     CHECK(has_color(s.window->grabWindow(), on_screen(), kImageColor));
@@ -642,7 +647,7 @@ TEST_CASE("studio sin pantalla: la vista previa pinta el fotograma del export en
     s.editor->setBlend("multiply");
     REQUIRE(wait_tick(p, 210, since));
     REQUIRE(p.error().isEmpty());
-    const render::Image multiplied = exported(s.dir, 7.0);
+    const render::Image multiplied = exported(s.dir, 7.0, p.scale());
     CHECK_FALSE(has_color(multiplied, kImageColor));
     CHECK(same_pixels(p.image(), multiplied));
     CHECK_FALSE(has_color(s.window->grabWindow(), on_screen(), kImageColor));
@@ -680,6 +685,17 @@ TEST_CASE("studio sin pantalla: la vista previa de una timeline vacía lo dice",
 }
 
 #endif
+
+TEST_CASE("vista previa: la escala más pequeña que llena el recuadro", "[studio][preview]") {
+    using studio::PreviewSource;
+    CHECK(PreviewSource::scale_for(1080, 1920, 0, 0) == 1.0); // sin recuadro todavía
+    CHECK(PreviewSource::scale_for(1080, 1920, 270, 480) == 0.25);
+    CHECK(PreviewSource::scale_for(1080, 1920, 250, 481) == 0.5); // un píxel más alto que ¼
+    CHECK(PreviewSource::scale_for(1080, 1920, 540, 960) == 0.5);
+    CHECK(PreviewSource::scale_for(1080, 1920, 541, 300) == 1.0); // más ancho que ½
+    CHECK(PreviewSource::scale_for(2160, 3840, 405, 720) == 0.25); // un 4K vertical en un portátil
+    CHECK(PreviewSource::scale_for(0, 1920, 270, 480) == 1.0);
+}
 
 TEST_CASE("studio sin pantalla: reproducir lleva el cabezal con el reloj, se para y salta", "[studio][ui][player]") {
     const Studio s;

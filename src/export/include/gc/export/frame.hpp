@@ -28,10 +28,14 @@ struct FrameOptions {
     std::size_t cache_bytes = 0;
     // Decode por hardware, como RenderOptions::hwaccel (los mismos fotogramas).
     bool hwaccel = false;
+    // La vista previa a ½ o ¼ (0 < scale ≤ 1): se compone igual, sobre un lienzo de la salida con sus
+    // píxeles a esa escala (Canvas::make(w, h, scale)), así que cuesta menos componer y pintar. Con 1,
+    // el fotograma del export.
+    double scale = 1.0;
 };
 
 struct Frame {
-    render::Image image; // RGBA, opaco, del tamaño de la salida
+    render::Image image; // RGBA, opaco, del tamaño de la salida (a `scale`: round(w · scale) × round(h · scale))
     std::int64_t tick = 0;
     double t = 0;           // tick / fps
     std::size_t layers = 0; // capas compuestas (sin los textos, que van encima)

@@ -614,7 +614,7 @@ void paint_mask(SkCanvas* canvas, const Mask& m, SkColor rgb, int ass_alpha) {
     SkPaint p;
     p.setColor(with_alpha(rgb, ass_alpha));
     canvas->drawImage(SkImages::RasterFromBitmap(m.bitmap), static_cast<float>(m.left), static_cast<float>(m.top),
-                      SkSamplingOptions(), &p);
+                      device_sampling(canvas), &p);
 }
 
 // Caja de BorderStyle 4 (Fondo por línea): detrás del contorno y del relleno.
@@ -1462,7 +1462,7 @@ Result<void> draw_own_layer(Canvas& canvas, const core::TimelineClip& c, const c
         sk->drawImage(image, 0, 0, SkSamplingOptions(SkFilterMode::kLinear), nullptr);
         sk->restore();
     } else {
-        sk->drawImage(image, 0, 0);
+        sk->drawImage(image, 0, 0, device_sampling(sk), nullptr); // la capa es del cuadro
     }
     if (mask) {
         return canvas.end_layer(*mask);

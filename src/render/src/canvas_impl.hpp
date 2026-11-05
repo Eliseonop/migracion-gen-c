@@ -12,6 +12,7 @@
 #include "gc/render/canvas.hpp"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPixmap.h"
+#include "include/core/SkSamplingOptions.h"
 #include "include/core/SkColorFilter.h"
 #include "include/core/SkImage.h"
 #include "include/core/SkSurface.h"
@@ -20,9 +21,21 @@ namespace gc::render {
 
 struct Canvas::Impl {
     sk_sp<SkSurface> surface;
-    int width = 0;
+    int width = 0;  // el cuadro (lo lógico)
     int height = 0;
+    int pixel_width = 0; // la superficie
+    int pixel_height = 0;
+    // La escala de base del SkCanvas (pixel_width / width, pixel_height / height): 1 sin escalar.
+    float sx = 1.0F;
+    float sy = 1.0F;
+    [[nodiscard]] bool scaled() const noexcept { return sx != 1.0F || sy != 1.0F; }
 };
+
+// El muestreo de una imagen que va al lienzo píxel a píxel en el cuadro (máscaras de glifos, capas
+// de texto): sin escala, el más cercano (copia tal cual); en un lienzo reducido, bilineal.
+[[nodiscard]] inline SkSamplingOptions device_sampling(const SkCanvas* canvas) {
+    return canvas->getTotalMatrix().isIdentity() ? SkSamplingOptions() : SkSamplingOptions(SkFilterMode::kLinear);
+}
 
 // La matriz afín 3×4 de los filtros como la 4×5 de Skia (filas R, G, B y A; el desplazamiento,
 // en 0–1). Skia la aplica sin premultiplicar y acota el resultado a 0–1. El alfa no cambia.
@@ -38,7 +51,7 @@ struct CanvasAccess {
     [[nodiscard]] static bool save_pixels(Canvas& canvas, std::vector<std::uint8_t>& out) {
         SkPixmap pm;
         if (canvas.impl_->surface->getCanvas()->getSaveCount() != 1 || !canvas.impl_->surface->peekPixels(&pm) ||
-            pm.rowBytes() != static_cast<std::size_t>(canvas.impl_->width) * 4) {
+            pm.rowBytes() != static_cast<std::size_t>(canvas.impl_->pixel_width) * 4) {
             return false;
         }
         const auto* p = static_cast<const std::uint8_t*>(pm.addr());

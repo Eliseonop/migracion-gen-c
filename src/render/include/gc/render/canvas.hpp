@@ -42,6 +42,12 @@ class Canvas {
 public:
     // Error si las dimensiones no son mayores que 0 o Skia no puede reservar el lienzo.
     [[nodiscard]] static Result<Canvas> make(int width, int height);
+    // Un lienzo del cuadro de width × height con sus píxeles a `scale` (la vista previa a ½ o ¼):
+    // round(width · scale) × round(height · scale), al menos 1 × 1. width() y height() siguen
+    // siendo las del cuadro, en las que se da todo lo que se dibuja, y una escala de base lo lleva a
+    // los píxeles; snapshot() y opaque_pixels() dan los píxeles. Con scale = 1, como make(w, h).
+    // Error también si `scale` no es un número mayor que 0 y como mucho 1.
+    [[nodiscard]] static Result<Canvas> make(int width, int height, double scale);
 
     Canvas(Canvas&&) noexcept;
     Canvas& operator=(Canvas&&) noexcept;
@@ -51,6 +57,9 @@ public:
 
     [[nodiscard]] int width() const noexcept;
     [[nodiscard]] int height() const noexcept;
+    // Los píxeles de verdad (con make(w, h, scale), el cuadro a esa escala).
+    [[nodiscard]] int pixel_width() const noexcept;
+    [[nodiscard]] int pixel_height() const noexcept;
 
     // Sustituye todo el lienzo por `color` (también el alfa: transparente si a = 0).
     void clear(Rgba8 color);
@@ -90,9 +99,10 @@ public:
     // a lo compuesto debajo.
     void apply_color_matrix(const core::AffineColorMatrix& m);
 
+    // Los píxeles (pixel_width × pixel_height).
     [[nodiscard]] Image snapshot() const;
 
-    // Los píxeles del lienzo sin copiarlos: RGBA premultiplicado, width · height · 4, sin
+    // Los píxeles del lienzo sin copiarlos: RGBA premultiplicado, pixel_width · pixel_height · 4, sin
     // relleno entre filas. En un lienzo opaco (el que deja compose_into, con los textos encima)
     // son los mismos bytes que snapshot(), sin su conversión. Valen hasta el siguiente dibujo.
     [[nodiscard]] std::span<const std::uint8_t> opaque_pixels() const;

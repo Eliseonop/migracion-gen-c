@@ -8,7 +8,17 @@
 
 namespace gc::studio {
 
-FramePreview::FramePreview(QQuickItem* parent) : QQuickItem(parent) { setFlag(ItemHasContents, true); }
+FramePreview::FramePreview(QQuickItem* parent) : QQuickItem(parent) {
+    setFlag(ItemHasContents, true);
+    connect(this, &QQuickItem::windowChanged, this, [this] { report_size(); }); // su densidad de píxeles
+}
+
+void FramePreview::report_size() {
+    if (source_) {
+        const double dpr = window() != nullptr ? window()->effectiveDevicePixelRatio() : 1.0;
+        source_->setDisplaySize(qRound(width() * dpr), qRound(height() * dpr));
+    }
+}
 
 void FramePreview::setSource(QObject* source) {
     auto* next = qobject_cast<PreviewSource*>(source);
@@ -22,6 +32,7 @@ void FramePreview::setSource(QObject* source) {
     if (source_) {
         connect(source_, &PreviewSource::frameChanged, this, &FramePreview::take_frame);
     }
+    report_size();
     take_frame();
     emit sourceChanged();
 }
@@ -50,6 +61,7 @@ QRectF FramePreview::frameRect() const {
 void FramePreview::geometryChange(const QRectF& next, const QRectF& previous) {
     QQuickItem::geometryChange(next, previous);
     if (next.size() != previous.size()) {
+        report_size(); // la escala de la vista previa depende de cuánto se ve
         emit frameRectChanged();
         update();
     }
