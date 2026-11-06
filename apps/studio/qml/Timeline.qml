@@ -360,6 +360,7 @@ Rectangle {
                     required property bool locked
                     required property var kfs
                     required property var beats
+                    required property string assetId
                     objectName: "clip:" + clipId
                     readonly property var palette3: timeline.colorsOf(kind)
                     readonly property var dp: timeline.drag
@@ -386,6 +387,36 @@ Rectangle {
                         GradientStop { position: 1; color: block.palette3[1] }
                     }
 
+                    Canvas { // las barras de un audio, como .ed-clip-wave de editor.css: max(16, ancho/5)
+                        id: wave
+                        objectName: "wave:" + block.clipId
+                        visible: block.kind === "audio"
+                        anchors.fill: parent
+                        anchors.topMargin: 4
+                        anchors.bottomMargin: 4
+                        anchors.leftMargin: 8
+                        anchors.rightMargin: 8
+                        opacity: block.muted ? 0.28 : 1
+                        readonly property var heights: visible
+                            ? timeline.model.waveform(block.assetId, Math.max(16, Math.round(block.width / 5))) : []
+                        onHeightsChanged: requestPaint()
+                        onWidthChanged: requestPaint()
+                        onHeightChanged: requestPaint()
+                        onPaint: {
+                            const ctx = getContext("2d")
+                            ctx.reset()
+                            const n = heights.length
+                            if (!n)
+                                return
+                            // flex: 1 con 1 px entre barras y como poco 1 px de ancho
+                            const w = Math.max(1, (width - (n - 1)) / n)
+                            ctx.fillStyle = Qt.rgba(120 / 255, 160 / 255, 1, 0.55)
+                            for (let i = 0; i < n; ++i) {
+                                const h = Math.round(heights[i] * 100) / 100 * height
+                                ctx.fillRect(i * (w + 1), (height - h) / 2, w, h)
+                            }
+                        }
+                    }
                     Repeater { // beats del clip (uno de cada `every`)
                         model: block.beats
                         Rectangle {

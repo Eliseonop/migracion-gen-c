@@ -308,6 +308,9 @@ public:
     // Marcas de la regla visibles: [{t, x, major, label}].
     Q_INVOKABLE QVariantList ticks(double scrollX, double viewWidth) const;
     Q_INVOKABLE QString formatTime(double t) const;
+    // Las barras de un clip de audio (pseudoWaveform de EdTimeline: no salen del audio, sino del
+    // asset_id): alturas de 0,12 a 1, `bars` de ellas.
+    Q_INVOKABLE static QVariantList waveform(const QString& seed, int bars);
     // Alt pulsado (soltar material encima de un clip lo reemplaza).
     Q_INVOKABLE static bool altHeld();
 

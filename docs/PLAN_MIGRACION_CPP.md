@@ -1768,3 +1768,9 @@ Decisión de Edu (§6):
 - **Paridad** (`export_fixtures.py --solo mcp`, `mcp_cases.py`, `test_mcp_parity.cpp`): 389 casos contra los módulos REALES con la máquina, el reloj, los uuid y los jobs sustituidos: 12 proyectos (con valores raros: velocidades 0, negativas, NaN e infinitas, ids y pistas repetidos, beats que no son listas), 27 proporciones, 9 jobs, 3 análisis, 3 entornos × 25 dominios, 126 lecturas de resources (el texto exacto de `json.dumps`) y 96 pasos de auditoría con el archivo tras cada uno; más `match_resource`, el error de UTF-8 y `splitlines()` con tests propios.
 - **Mutaciones:** 30/30 (`tools/dev/mutantes.py mcp`). La primera pasada dejó dos: una equivalente (con velocidad 0, dividir entre 1 o no dividir da lo mismo; se cambió por la de dividir con velocidad negativa) y un hueco de verdad, el tope de 200 de `read_recent` (ningún paso tenía más de 200 entradas: ahora hay uno con 250).
 - **Verificado:** MSVC Debug y Release 298/298, MinGW Debug y Release 164/164 (GCC 15.2: un `istreambuf_iterator` daba un falso positivo de `-Wnull-dereference`; se lee con el tamaño conocido, como `io.cpp`), 0 warnings, 0 avisos de clang-tidy.
+
+### 2026-11-05 — F5: las barras de los clips de audio en la timeline
+
+- **Como EdTimeline.jsx:** `pseudoWaveform(asset_id, max(16, round(ancho/5)))` (ya portada con paridad, `pseudo_waveform`) pintada en un `Canvas` por clip de audio con lo de `.ed-clip-wave` de editor.css: margen de 4 × 8 px, 1 px entre barras, el color rgba(120, 160, 255, 0,55), la altura redondeada al 1 % y al 28 % de opacidad si el clip está silenciado. Las barras no salen del audio: son decorativas, como en video-yt. Se rehacen al cambiar el ancho (zoom).
+- **Test** sin pantalla: `EditorModel::waveform` da las barras de `pseudo_waveform`, y un audio soltado en A1 enseña su lienzo con las que tocan por su ancho; un vídeo, ninguno.
+- **Verificado:** MSVC Debug y Release 299/299, MinGW 164/164 (sin el studio), 0 warnings.

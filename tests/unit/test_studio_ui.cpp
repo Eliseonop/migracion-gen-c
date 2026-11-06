@@ -8,6 +8,8 @@
 #include <QQuickItem>
 #include <QQuickWindow>
 #include <QTest>
+#include <algorithm>
+#include <cmath>
 #include <filesystem>
 #include <string>
 
@@ -15,6 +17,7 @@
 
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/timeline_view.hpp"
 
 #include "editor_model.hpp"
 #include "frame_preview.hpp"
@@ -273,6 +276,41 @@ TEST_CASE("studio sin pantalla: con la pista bloqueada sus clips no se arrastran
     s.drag(from, from - QPoint(60, 0));
     CHECK(s.view("b")["start"].toDouble() == 6.0);
     CHECK(s.view("b")["locked"] == true);
+}
+
+TEST_CASE("studio sin pantalla: los clips de audio pintan sus barras (pseudoWaveform)", "[studio][ui]") {
+    const Studio s;
+    // Las barras salen del asset_id (no del audio), como en EdTimeline.jsx.
+    const QVariantList bars = studio::EditorModel::waveform("a1", 20);
+    const auto expected = core::pseudo_waveform(Json("a1"), Json(20));
+    REQUIRE(bars.size() == 20);
+    for (qsizetype i = 0; i < bars.size(); ++i) {
+        CHECK(bars[i].toDouble() == expected[static_cast<std::size_t>(i)]);
+    }
+    // Un audio soltado en A1 enseña su lienzo con max(16, ancho/5) barras; un vídeo, no.
+    double y = -1;
+    for (const QVariant& t : s.editor->tracks()) {
+        if (t.toMap()["id"] == "A1") {
+            y = t.toMap()["y"].toDouble() + (t.toMap()["height"].toDouble() / 2);
+        }
+    }
+    REQUIRE(y >= 0);
+    s.editor->dropMaterial("audios:a1", s.editor->pps(), y, false);
+    QCoreApplication::processEvents();
+    QString audio;
+    for (const QVariant& v : s.editor->clips()) {
+        if (v.toMap()["kind"] == "audio") {
+            audio = v.toMap()["clipId"].toString();
+        }
+    }
+    REQUIRE_FALSE(audio.isEmpty());
+    QQuickItem* wave = s.item("wave:" + audio);
+    REQUIRE(wave);
+    QQuickItem* block = s.item("clip:" + audio);
+    REQUIRE(block);
+    const auto count = std::max<qsizetype>(16, std::lround(block->width() / 5));
+    CHECK(wave->property("heights").toList().size() == count);
+    CHECK_FALSE(s.item("wave:a")); // «a» es un vídeo: sin barras
 }
 
 TEST_CASE("studio sin pantalla: arrastrar material del panel a la timeline crea el clip", "[studio][ui]") {

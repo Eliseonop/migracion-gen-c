@@ -610,6 +610,7 @@ void EditorModel::rebuild() {
             rows.push_back({{"clipId", qstr(c->id)},
                             {"trackId", qstr(c->track_id)},
                             {"kind", qstr(c->kind)},
+                            {"assetId", qstr(c->asset_id)},
                             {"label", clip_label(*c)},
                             {"speed", speed_badge(*c)},
                             {"start", c->start},
@@ -2820,6 +2821,14 @@ void EditorModel::zoomToFit(double viewWidth) {
     const double span = std::max(duration(), 1.0);
     pps_ = core::clamp_pps(viewWidth * 0.95 / span, duration(), viewWidth, fps());
     emit zoomChanged();
+}
+
+QVariantList EditorModel::waveform(const QString& seed, int bars) {
+    QVariantList out;
+    for (const double h : core::pseudo_waveform(Json(seed.toStdString()), Json(bars))) {
+        out.push_back(h);
+    }
+    return out;
 }
 
 QVariantList EditorModel::ticks(double scrollX, double viewWidth) const {
