@@ -34,6 +34,8 @@ Salida (al repo):
                                            registry, resources y audit): mcp_cases.py (--solo mcp)
   tests/fixtures/editor/lru_bytes.json     caché LRU con tope en bytes: lru_cases.py (lib/lruBytes.js con Node; --solo lru)
   tests/fixtures/render/platform.json      marco de TikTok/Shorts del preview (platformChrome.js en Chromium; --solo plataforma)
+  tests/fixtures/media/image_import.json   el PNG de trabajo de «Importar imagen» (images.to_working_png con OpenCV;
+                                           originales y PNG en media/import/; --solo imagenes)
   tests/fixtures/frame/synthetic.json      fotograma: frame_cases.py (drawComposite con Node)
   tests/fixtures/history/synthetic.json    historial: pasos de history_cases.py
   tests/fixtures/settings/synthetic.json   ajustes: pasos de settings_cases.py
@@ -1174,12 +1176,16 @@ _PROJECTS_MESSAGES = {"El nombre no puede estar vacío.", "La carpeta no existe.
                       # videos.py
                       "Formato de vídeo no válido. Usa MP4, MOV, MKV, WEBM…",
                       "Formato de audio no válido. Usa MP3, WAV, M4A…", "Archivo vacío.",
-                      "No se pudo guardar el vídeo.", "No se pudo guardar el audio."}
+                      "No se pudo guardar el vídeo.", "No se pudo guardar el audio.",
+                      # images.py
+                      "Formato no válido. Usa PNG, JPG, WebP o GIF.",
+                      "No se pudo leer la imagen. Usa PNG, JPG, WebP o GIF.", "No se pudo guardar la imagen."}
 # Los pasos que pueden escribir projects.json: tras ellos se guarda su texto.
 _PROJECTS_WRITES = {"create", "create_group", "rename_group", "delete_group", "move", "rename", "duplicate",
                     "set_folder", "delete", "add_clips", "add_transcript", "add_audio", "add_image", "update",
                     "remove_material", "manifest", "timeline", "motion", "delete_motion", "scenes", "blueprint",
-                    "retarget", "segments", "face_track", "upgrade", "import_video", "import_audio"}
+                    "retarget", "segments", "face_track", "upgrade", "import_video", "import_audio",
+                    "import_image"}
 
 
 class _FixedNow:
@@ -1197,13 +1203,13 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
     """Ejecuta los pasos con el projects.py REAL sobre un projects.json temporal (y los clips por
     defecto en {TMP}/clips), con uuid4 y _now fijados. «{TMP}» es la carpeta temporal (con «/»)
     en los argumentos, y vuelve a serlo en los resultados y en el texto de projects.json."""
-    from app import config, detect, media_upgrade, segments, timeline_store, videos, youtube_audio
+    from app import config, detect, images, media_upgrade, segments, timeline_store, videos, youtube_audio
     projects, schemas = ctx.projects, ctx.schemas
     tmp = Path(tempfile.mkdtemp(prefix="gc_prj_"))
     posix = tmp.as_posix()
     saved = (projects._FILE, config.OUTPUT_DIR, uuid.uuid4, projects._now)
     saved_seg = (segments._now, detect.face_track, youtube_audio.probe_duration, detect.dims,
-                 timeline_store.HISTORY_DIR, videos.probe_duration)
+                 timeline_store.HISTORY_DIR, videos.probe_duration, images.to_working_png, images.probe_size)
     timeline_store.HISTORY_DIR = tmp / "data" / "history"
     projects._FILE = tmp / "data" / "projects.json"
     config.OUTPUT_DIR = tmp / "clips"
@@ -1274,6 +1280,22 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
         with_probe(dur)
         return videos.import_audio(projects.get_project(pid), filename, data.encode("utf-8"))
 
+    # images.import_image con OpenCV sustituido (cv2 no se puede fijar con datos de mentira): un PNG
+    # pasa tal cual (lo del to_working_png real); lo demás «se lee» si lleva «OK» (y da la firma de
+    # PNG + «conv:» + los datos) y si no, el error de to_working_png. probe_size da `size` (None:
+    # falla). Los datos van en hexadecimal.
+    def import_image(pid, filename, data_hex, size, meta, keep_gif):
+        def to_png(_name, data):
+            if data.startswith(images.PNG_MAGIC):
+                return data
+            if b"OK" in data:
+                return images.PNG_MAGIC + b"conv:" + data
+            raise ValueError("No se pudo leer la imagen. Usa PNG, JPG, WebP o GIF.")
+        images.to_working_png = to_png
+        images.probe_size = lambda _path: tuple(size) if size is not None else (None, None)
+        return images.import_image(projects.get_project(pid), filename, bytes.fromhex(data_hex), keep_gif=keep_gif,
+                                   **meta)
+
     def tmp_of(value):
         return json.loads(json.dumps(value, ensure_ascii=False).replace(posix, "{TMP}"))
 
@@ -1296,7 +1318,7 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
         "add_image": lambda pid, i: projects.add_image(pid, schemas.ImageInfo(**i)),
         "segments": create_segments, "face_track": face_track, "versions": versions, "upgrade": upgrade,
         "yt_sources": media_upgrade.youtube_sources, "best_full": best_full,
-        "import_video": import_video, "import_audio": import_audio,
+        "import_video": import_video, "import_audio": import_audio, "import_image": import_image,
     }
     out = []
     try:
@@ -1323,7 +1345,13 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
                     result = projects._FILE.read_bytes().decode("utf-8") if projects._FILE.exists() else None
                 elif kind == "tree":
                     top = tmp / "clips"
-                    result = [[p.relative_to(top).as_posix(), p.read_text(encoding="utf-8") if p.is_file() else None]
+                    # El texto de cada archivo; el que no es UTF-8 (un PNG), «hex:» y sus bytes.
+                    def content(f):
+                        try:
+                            return f.read_text(encoding="utf-8")
+                        except UnicodeDecodeError:
+                            return "hex:" + f.read_bytes().hex()
+                    result = [[p.relative_to(top).as_posix(), content(p) if p.is_file() else None]
                               for p in sorted(top.rglob("*"), key=lambda p: p.relative_to(top).as_posix())]
                 elif kind in calls:
                     result = dump(calls[kind](*args))
@@ -1342,7 +1370,7 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
     finally:
         projects._FILE, config.OUTPUT_DIR, uuid.uuid4, projects._now = saved
         (segments._now, detect.face_track, youtube_audio.probe_duration, detect.dims,
-         timeline_store.HISTORY_DIR, videos.probe_duration) = saved_seg
+         timeline_store.HISTORY_DIR, videos.probe_duration, images.to_working_png, images.probe_size) = saved_seg
         shutil.rmtree(tmp, ignore_errors=True)
     return _pure(out)
 
@@ -4157,6 +4185,97 @@ def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
 
 # --- Salida -----------------------------------------------------------------------------------
 
+# --- «Importar imagen»: to_working_png con OpenCV (images.py) ------------------------------------
+
+IMAGE_IMPORT_DIR = REPO / "tests" / "fixtures" / "media" / "import"
+
+
+def synthetic_image_import_fixtures(ctx: Ctx) -> list[dict]:
+    """Imágenes de prueba en cada formato (con Pillow y OpenCV) y lo que hace con ellas el
+    to_working_png REAL de images.py (cv2.imdecode + imencode): el PNG de trabajo o el error. Los
+    originales y los PNG van a tests/fixtures/media/import/. `lossless`: los píxeles deben salir
+    exactos."""
+    import io
+
+    import cv2
+    import numpy as np
+    from PIL import Image as PilImage
+    from app import images
+
+    rng = np.random.default_rng(7)
+
+    def pattern(w, h, alpha=False):
+        y, x = np.mgrid[0:h, 0:w]
+        r = (x * 255 // max(1, w - 1)).astype(np.uint8)
+        g = (y * 255 // max(1, h - 1)).astype(np.uint8)
+        b = ((x + y) * 3 % 256).astype(np.uint8)
+        img = np.dstack([r, g, b])
+        img[h // 4:h // 2, w // 4:w // 2] = (250, 30, 60)          # un bloque de color puro (bordes de croma)
+        img = np.clip(img.astype(np.int16) + rng.integers(-12, 13, img.shape), 0, 255).astype(np.uint8)
+        if alpha:
+            a = (x * 255 // max(1, w - 1)).astype(np.uint8)
+            a[: h // 3] = 255
+            a[-h // 5:] = 0
+            img = np.dstack([img, a])
+        return img                                                    # RGB(A)
+
+    def pil(img):
+        return PilImage.fromarray(img, "RGBA" if img.shape[2] == 4 else "RGB")
+
+    def pil_bytes(img, fmt, **kw):
+        buf = io.BytesIO()
+        img.save(buf, fmt, **kw)
+        return buf.getvalue()
+
+    def cv_bytes(img, ext, params=()):
+        bgr = cv2.cvtColor(img, cv2.COLOR_RGBA2BGRA if img.shape[2] == 4 else cv2.COLOR_RGB2BGR)
+        ok, buf = cv2.imencode(ext, bgr, list(params))
+        assert ok, ext
+        return bytes(buf)
+
+    photo = pattern(160, 96)
+    exif = PilImage.Exif()
+    exif[0x0112] = 6                                                  # Orientation: girar 90°
+    gray = pil(photo).convert("L")
+    cases = [
+        ("jpeg_420", ".jpg", cv_bytes(photo, ".jpg", (cv2.IMWRITE_JPEG_QUALITY, 90)), False),
+        ("jpeg_444", ".jpg", pil_bytes(pil(photo), "JPEG", quality=92, subsampling=0), False),
+        ("jpeg_impar", ".jpg", pil_bytes(pil(pattern(33, 17)), "JPEG", quality=90), False),
+        ("jpeg_34x18", ".jpg", pil_bytes(pil(pattern(34, 18)), "JPEG", quality=90), False),
+        ("jpeg_33x16", ".jpg", pil_bytes(pil(pattern(33, 16)), "JPEG", quality=90), False),
+        ("jpeg_32x17", ".jpg", pil_bytes(pil(pattern(32, 17)), "JPEG", quality=90), False),
+        ("jpeg_161x97", ".jpg", pil_bytes(pil(pattern(161, 97)), "JPEG", quality=90), False),
+        ("jpeg_gris", ".jpg", pil_bytes(gray, "JPEG", quality=90), False),
+        ("jpeg_progresivo", ".jpg", pil_bytes(pil(photo), "JPEG", quality=85, progressive=True), False),
+        ("jpeg_exif_girado", ".jpg", pil_bytes(pil(photo), "JPEG", quality=90, exif=exif), False),
+        ("webp_con_perdida", ".webp", cv_bytes(photo, ".webp", (cv2.IMWRITE_WEBP_QUALITY, 80)), False),
+        ("webp_impar", ".webp", pil_bytes(pil(pattern(33, 17)), "WEBP", quality=80), False),
+        ("webp_sin_perdida_alfa", ".webp", pil_bytes(pil(pattern(64, 40, True)), "WEBP", lossless=True), True),
+        ("webp_alfa_con_perdida", ".webp", pil_bytes(pil(pattern(64, 40, True)), "WEBP", quality=80), False),
+        ("bmp", ".bmp", cv_bytes(photo, ".bmp"), True),
+        ("tiff", ".tiff", cv_bytes(photo, ".tiff"), True),
+        ("tiff_alfa", ".tiff", pil_bytes(pil(pattern(48, 30, True)), "TIFF", compression="tiff_lzw"), True),
+        ("avif", ".avif", pil_bytes(pil(photo), "AVIF", quality=80), False),
+        ("jpeg_cortado", ".jpg", cv_bytes(photo, ".jpg")[:400], False),
+        ("no_es_imagen", ".jpg", b"esto no es una imagen", False),
+        ("video_con_nombre_de_imagen", ".png", (PROBE_DIR / "v_2s.mp4").read_bytes(), False),
+    ]
+    IMAGE_IMPORT_DIR.mkdir(parents=True, exist_ok=True)
+    out = []
+    for name, ext, data, lossless in cases:
+        (IMAGE_IMPORT_DIR / f"{name}{ext}").write_bytes(data)
+        entry = {"name": name, "src": f"media/import/{name}{ext}", "lossless": lossless}
+        try:
+            png = images.to_working_png(f"{name}{ext}", data)
+            (IMAGE_IMPORT_DIR / f"{name}.png").write_bytes(png)
+            entry["want"] = f"media/import/{name}.png"
+            entry["size"] = list(images.probe_size(IMAGE_IMPORT_DIR / f"{name}.png"))
+        except ValueError as e:
+            entry["error"] = str(e)
+        out.append(entry)
+    return out
+
+
 def write(path: Path, payload, count: int, errors: int) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
@@ -4170,7 +4289,7 @@ def main() -> None:
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
                                        "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake",
-                                       "anchos", "matte", "lru", "plataforma", "decode", "modelos", "mcp"],
+                                       "anchos", "matte", "lru", "plataforma", "imagenes", "decode", "modelos", "mcp"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json; "
                          "decode: media/decode.json y media/seek.json)")
     ap.add_argument("--conservar", action="store_true",
@@ -4264,6 +4383,15 @@ def main() -> None:
 
     if args.solo == "plataforma":
         platform_group()
+        return
+
+    def image_import_group() -> None:
+        imp = synthetic_image_import_fixtures(ctx)
+        write(REPO / "tests" / "fixtures" / "media" / "image_import.json", imp, len(imp),
+              sum("error" in c for c in imp))
+
+    if args.solo == "imagenes":
+        image_import_group()
         return
 
     def sfx_write_group() -> None:

@@ -9,7 +9,7 @@ if(UNIX AND NOT APPLE)
     target_link_libraries(gc_miniaudio PUBLIC ${CMAKE_DL_LIBS} pthread m)
 endif()
 
-add_library(gc_media src/audio.cpp src/audio_out.cpp src/decode.cpp src/encode.cpp src/matte_input.cpp src/probe.cpp)
+add_library(gc_media src/audio.cpp src/audio_out.cpp src/decode.cpp src/encode.cpp src/image.cpp src/matte_input.cpp src/probe.cpp)
 add_library(gc::media ALIAS gc_media)
 target_link_libraries(gc_media PRIVATE gc_miniaudio)
 

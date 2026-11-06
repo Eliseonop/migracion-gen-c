@@ -823,6 +823,17 @@ IMPORT = [
     ("origen por defecto upload", MI, 'or_text(meta.origin, "import")', 'or_text(meta.origin, "upload")'),
     ("audio con extensiones de vídeo", MI, "if (!has(kImportAudioExts, lower_suffix(filename))) {",
      "if (!has(kImportVideoExts, lower_suffix(filename))) {"),
+    # images.import_image
+    ("imagen: nombre sin unquote", MI, "detail::py_path_name(detail::py_unquote(filename))", "detail::py_path_name(filename)"),
+    ("imagen: sin quitar la consulta", MI, "    name = name.substr(0, name.find('?'));\n", ""),
+    ("imagen: extensión rara sin error", MI, "if (!ext.empty() && guessed.empty()) {", "if (false) {"),
+    ("imagen: el GIF se aplana", MI, "if (keep_gif && is_gif) {", "if (false) {"),
+    ("imagen: el PNG se reconvierte", MI, "data.starts_with(kPngMagic) ? std::optional(std::string(data))",
+     "false ? std::optional(std::string(data))"),
+    ("imagen: un 0 de probe_size cuenta", MI, "if (!w || *w == 0) {", "if (!w) {"),
+    ("imagen: origen import", MI, 'or_text(meta.origin, "upload")', 'or_text(meta.origin, "import")'),
+    ("imagen: descripción vacía cuenta", MI, "meta.description && !meta.description->empty() ? meta.description",
+     "meta.description ? meta.description"),
 ]
 
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),

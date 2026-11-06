@@ -1,0 +1,196 @@
+[
+ {
+  "name": "jpeg_420",
+  "src": "media/import/jpeg_420.jpg",
+  "lossless": false,
+  "want": "media/import/jpeg_420.png",
+  "size": [
+   160,
+   96
+  ]
+ },
+ {
+  "name": "jpeg_444",
+  "src": "media/import/jpeg_444.jpg",
+  "lossless": false,
+  "want": "media/import/jpeg_444.png",
+  "size": [
+   160,
+   96
+  ]
+ },
+ {
+  "name": "jpeg_impar",
+  "src": "media/import/jpeg_impar.jpg",
+  "lossless": false,
+  "want": "media/import/jpeg_impar.png",
+  "size": [
+   33,
+   17
+  ]
+ },
+ {
+  "name": "jpeg_34x18",
+  "src": "media/import/jpeg_34x18.jpg",
+  "lossless": false,
+  "want": "media/import/jpeg_34x18.png",
+  "size": [
+   34,
+   18
+  ]
+ },
+ {
+  "name": "jpeg_33x16",
+  "src": "media/import/jpeg_33x16.jpg",
+  "lossless": false,
+  "want": "media/import/jpeg_33x16.png",
+  "size": [
+   33,
+   16
+  ]
+ },
+ {
+  "name": "jpeg_32x17",
+  "src": "media/import/jpeg_32x17.jpg",
+  "lossless": false,
+  "want": "media/import/jpeg_32x17.png",
+  "size": [
+   32,
+   17
+  ]
+ },
+ {
+  "name": "jpeg_161x97",
+  "src": "media/import/jpeg_161x97.jpg",
+  "lossless": false,
+  "want": "media/import/jpeg_161x97.png",
+  "size": [
+   161,
+   97
+  ]
+ },
+ {
+  "name": "jpeg_gris",
+  "src": "media/import/jpeg_gris.jpg",
+  "lossless": false,
+  "want": "media/import/jpeg_gris.png",
+  "size": [
+   160,
+   96
+  ]
+ },
+ {
+  "name": "jpeg_progresivo",
+  "src": "media/import/jpeg_progresivo.jpg",
+  "lossless": false,
+  "want": "media/import/jpeg_progresivo.png",
+  "size": [
+   160,
+   96
+  ]
+ },
+ {
+  "name": "jpeg_exif_girado",
+  "src": "media/import/jpeg_exif_girado.jpg",
+  "lossless": false,
+  "want": "media/import/jpeg_exif_girado.png",
+  "size": [
+   160,
+   96
+  ]
+ },
+ {
+  "name": "webp_con_perdida",
+  "src": "media/import/webp_con_perdida.webp",
+  "lossless": false,
+  "want": "media/import/webp_con_perdida.png",
+  "size": [
+   160,
+   96
+  ]
+ },
+ {
+  "name": "webp_impar",
+  "src": "media/import/webp_impar.webp",
+  "lossless": false,
+  "want": "media/import/webp_impar.png",
+  "size": [
+   33,
+   17
+  ]
+ },
+ {
+  "name": "webp_sin_perdida_alfa",
+  "src": "media/import/webp_sin_perdida_alfa.webp",
+  "lossless": true,
+  "want": "media/import/webp_sin_perdida_alfa.png",
+  "size": [
+   64,
+   40
+  ]
+ },
+ {
+  "name": "webp_alfa_con_perdida",
+  "src": "media/import/webp_alfa_con_perdida.webp",
+  "lossless": false,
+  "want": "media/import/webp_alfa_con_perdida.png",
+  "size": [
+   64,
+   40
+  ]
+ },
+ {
+  "name": "bmp",
+  "src": "media/import/bmp.bmp",
+  "lossless": true,
+  "want": "media/import/bmp.png",
+  "size": [
+   160,
+   96
+  ]
+ },
+ {
+  "name": "tiff",
+  "src": "media/import/tiff.tiff",
+  "lossless": true,
+  "want": "media/import/tiff.png",
+  "size": [
+   160,
+   96
+  ]
+ },
+ {
+  "name": "tiff_alfa",
+  "src": "media/import/tiff_alfa.tiff",
+  "lossless": true,
+  "want": "media/import/tiff_alfa.png",
+  "size": [
+   48,
+   30
+  ]
+ },
+ {
+  "name": "avif",
+  "src": "media/import/avif.avif",
+  "lossless": false,
+  "error": "No se pudo leer la imagen. Usa PNG, JPG, WebP o GIF."
+ },
+ {
+  "name": "jpeg_cortado",
+  "src": "media/import/jpeg_cortado.jpg",
+  "lossless": false,
+  "error": "No se pudo leer la imagen. Usa PNG, JPG, WebP o GIF."
+ },
+ {
+  "name": "no_es_imagen",
+  "src": "media/import/no_es_imagen.jpg",
+  "lossless": false,
+  "error": "No se pudo leer la imagen. Usa PNG, JPG, WebP o GIF."
+ },
+ {
+  "name": "video_con_nombre_de_imagen",
+  "src": "media/import/video_con_nombre_de_imagen.png",
+  "lossless": false,
+  "error": "No se pudo leer la imagen. Usa PNG, JPG, WebP o GIF."
+ }
+]

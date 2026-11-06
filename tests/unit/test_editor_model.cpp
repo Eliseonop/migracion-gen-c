@@ -759,15 +759,17 @@ TEST_CASE("editor: material de la biblioteca y de la carpeta de SFX", "[studio]"
     CHECK(std::ranges::any_of(m.materials(), [](const QVariant& v) { return v.toMap()["source"] == "sfx"; }));
 }
 
-TEST_CASE("editor: importar vídeos y audios del disco al material del proyecto", "[studio]") {
+TEST_CASE("editor: importar vídeos, imágenes y audios del disco al material del proyecto", "[studio]") {
     Fixture f;
     const auto media_dir = core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files";
     const auto in = f.dir / "fuera";
     std::filesystem::create_directories(in);
     std::filesystem::copy_file(media_dir / "v_2s.mp4", in / "Mi clip.mp4");
     std::filesystem::copy_file(media_dir / "a.wav", in / "voz.WAV");
-    std::filesystem::copy_file(media_dir / "still.png", in / "foto.png");
+    std::filesystem::copy_file(core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "import" / "jpeg_420.jpg", in / "foto.jpg");
+    std::filesystem::copy_file(media_dir / "anim.gif", in / "baile.gif");
     { std::ofstream(in / "nota.txt") << "x"; }
+    { std::ofstream(in / "rota.png") << "no es una imagen"; }
     { std::ofstream(in / "vacío.mp4"); }
     const auto url = [&](const char* name) {
         return QUrl::fromLocalFile(QString::fromStdString(core::path_to_utf8(in / core::path_from_utf8(name))));
@@ -785,15 +787,17 @@ TEST_CASE("editor: importar vídeos y audios del disco al material del proyecto"
         return out;
     };
     REQUIRE(project_names().isEmpty());
-    CHECK(m.importFiles({url("Mi clip.mp4"), url("foto.png"), url("voz.WAV"), url("nota.txt"), url("vacío.mp4")}) == 2);
-    CHECK(project_names() == QStringList{"video:Mi clip", "audio:voz"});
+    CHECK(m.importFiles({url("Mi clip.mp4"), url("foto.jpg"), url("voz.WAV"), url("nota.txt"), url("vacío.mp4"),
+                         url("baile.gif"), url("rota.png")}) == 4);
+    CHECK(project_names() == QStringList{"video:Mi clip", "image:foto", "image:baile", "audio:voz"});
     CHECK(m.materials().front().toMap()["source"] == "project"); // delante, como al abrir el proyecto
     CHECK(m.notice()["type"] == "error");
     const QString msg = m.notice()["message"].toString();
-    CHECK(msg.contains("foto.png: las imágenes aún no se importan desde aquí."));
     CHECK(msg.contains("nota.txt: formato no válido."));
     CHECK(msg.contains("vacío.mp4: Archivo vacío."));
+    CHECK(msg.contains("rota.png: No se pudo leer la imagen. Usa PNG, JPG, WebP o GIF."));
     CHECK_FALSE(msg.contains("Mi clip"));
+    CHECK_FALSE(msg.contains("foto"));
 
     // En projects.json, con el archivo copiado (el original sigue donde estaba).
     auto p = f.store.get_project("p1");
@@ -801,6 +805,25 @@ TEST_CASE("editor: importar vídeos y audios del disco al material del proyecto"
     REQUIRE(*p);
     REQUIRE((*p)->clips.size() == 1);
     REQUIRE((*p)->audios.size() == 1);
+    REQUIRE((*p)->images.size() == 2);
+    // La imagen, como PNG de trabajo; el GIF animado, tal cual y con sus metadatos (upload_images).
+    const core::ImageInfo& photo = (*p)->images[0];
+    const core::ImageInfo& gif = (*p)->images[1];
+    CHECK(photo.label == "foto");
+    CHECK(photo.origin == "upload");
+    CHECK(photo.filename.ends_with(".png"));
+    CHECK(gif.filename.ends_with(".gif"));
+    CHECK(gif.animated == true);
+    CHECK(gif.frames == 10);
+    CHECK(gif.width == 64);
+    const auto photo_file = core::resolve_project_media(f.store.clips_dir(), **p, "image", photo.filename);
+    REQUIRE(photo_file);
+    {
+        std::ifstream png(*photo_file, std::ios::binary);
+        std::string magic(8, '\0');
+        png.read(magic.data(), 8);
+        CHECK(magic == std::string("\x89PNG\r\n\x1a\n"));
+    }
     const core::ClipInfo& clip = (*p)->clips.front();
     CHECK(clip.label == "Mi clip");
     CHECK(clip.index == 100000);
@@ -814,13 +837,15 @@ TEST_CASE("editor: importar vídeos y audios del disco al material del proyecto"
     CHECK(clip.end == media::probe_duration(in / "Mi clip.mp4"));
     CHECK((*p)->audios.front().duration == media::probe_duration(in / "voz.WAV"));
     CHECK(clip.end > 1.5);
+    CHECK(photo.width == 160); // probe_size del PNG convertido
+    CHECK(photo.height == 96);
 #endif
 
     // Uno solo: el aviso de React con su nombre; el material se rehace sin duplicar.
     CHECK(m.importFiles({url("voz.WAV")}) == 1);
     CHECK(m.notice()["type"] == "success");
     CHECK(m.notice()["message"] == "«voz.WAV» está en el material.");
-    CHECK(project_names() == QStringList{"video:Mi clip", "audio:voz", "audio:voz"});
+    CHECK(project_names() == QStringList{"video:Mi clip", "image:foto", "image:baile", "audio:voz", "audio:voz"});
     CHECK(m.importFiles({url("Mi clip.mp4"), url("voz.WAV")}) == 2);
     CHECK(m.notice()["message"] == "2 archivos añadidos al material.");
 }

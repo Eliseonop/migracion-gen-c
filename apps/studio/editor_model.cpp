@@ -47,6 +47,7 @@
 #include "gc/core/vfx_stack.hpp"
 
 #ifdef GC_STUDIO_PREVIEW
+#include "gc/export/image_import.hpp"
 #include "gc/media/probe.hpp"
 #endif
 
@@ -359,6 +360,11 @@ int EditorModel::importFiles(const QList<QUrl>& files) {
         return std::nullopt;
 #endif
     };
+#ifdef GC_STUDIO_PREVIEW
+    const core::ImageCodec codec = exporter::image_codec();
+#else
+    const core::ImageCodec codec; // sin gc_media: solo los PNG, y sin su tamaño
+#endif
     int imported = 0;
     QString last;
     QStringList problems;
@@ -375,10 +381,14 @@ int EditorModel::importFiles(const QList<QUrl>& files) {
             if (auto r = core::import_audio_file(store_, project_id_, path, name, probe, ids_); !r) {
                 failed = r.error();
             }
+        } else if (kind == "image") { // upload_images: los GIF animados se quedan como GIF
+            if (auto r = core::import_image_file(store_, project_id_, path, name, codec, ids_, {}, true); !r) {
+                failed = r.error();
+            }
         } else {
             problems << qstr(name) + ": " +
-                            (kind == "image" ? QString("las imágenes aún no se importan desde aquí.")
-                                             : QString("formato no válido. Usa vídeo (MP4, MOV, MKV, WEBM…) o audio (MP3, WAV, M4A…)."));
+                            QString("formato no válido. Usa vídeo (MP4, MOV, MKV, WEBM…), imagen (PNG, JPG, WebP, "
+                                    "GIF…) o audio (MP3, WAV, M4A…).");
             continue;
         }
         if (failed) {

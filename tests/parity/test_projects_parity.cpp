@@ -63,6 +63,48 @@ Json dump(const Project& v) { return to_json(v); }
 Json dump(const ProjectGroup& v) { return to_json(v); }
 Json dump(const ClipInfo& v) { return to_json(v); }
 Json dump(const AudioInfo& v) { return to_json(v); }
+Json dump(const ImageInfo& v) { return to_json(v); }
+
+std::string from_hex(std::string_view hex) {
+    std::string out;
+    for (std::size_t i = 0; i + 1 < hex.size(); i += 2) {
+        out.push_back(static_cast<char>(std::stoi(std::string(hex.substr(i, 2)), nullptr, 16)));
+    }
+    return out;
+}
+
+// El paso «tree»: el texto del archivo o, si no es UTF-8 (un PNG), «hex:» y sus bytes.
+std::string tree_content(const std::string& bytes) {
+    try {
+        (void)Json(bytes).dump(); // lanza si no es UTF-8 válido
+        return bytes;
+    } catch (const Json::exception&) {
+        std::string out = "hex:";
+        for (const char c : bytes) {
+            out += std::format("{:02x}", static_cast<unsigned char>(c));
+        }
+        return out;
+    }
+}
+
+// Los argumentos con nombre de import_video e import_image (los textos; lo demás no cuenta).
+ImportMeta import_meta(const Json& m) {
+    const auto field = [&](const char* key) -> std::optional<std::string> {
+        return m.contains(key) && m[key].is_string() ? std::optional(m[key].get<std::string>()) : std::nullopt;
+    };
+    ImportMeta meta;
+    meta.label = field("label");
+    meta.description = field("description");
+    meta.origin = field("origin");
+    meta.source = field("source");
+    meta.provider = field("provider");
+    meta.external_id = field("external_id");
+    meta.source_url = field("source_url");
+    meta.author = field("author");
+    meta.license_info = field("license_info");
+    return meta;
+}
+
 template <class T>
 Json dump(const std::optional<T>& v) {
     return v ? dump(*v) : Json();
@@ -121,7 +163,7 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
             std::vector<std::pair<std::string, Json>> entries;
             for (const auto& e : fs::recursive_directory_iterator(tmp / "clips")) {
                 entries.emplace_back(replace_all(path_to_utf8(fs::relative(e.path(), tmp / "clips")), "\\", "/"),
-                                     e.is_regular_file() ? Json(gc::test::read_file(e.path())) : Json());
+                                     e.is_regular_file() ? Json(tree_content(gc::test::read_file(e.path()))) : Json());
             }
             std::ranges::sort(entries, {}, &std::pair<std::string, Json>::first);
             result = Json::array();
@@ -286,24 +328,27 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
             };
             const std::string data = text(3);
             if (kind == "import_video") {
-                ImportMeta meta;
-                const auto field = [&](const char* key) -> std::optional<std::string> {
-                    return a[5].contains(key) && a[5][key].is_string() ? std::optional(a[5][key].get<std::string>())
-                                                                        : std::nullopt;
-                };
-                meta.label = field("label");
-                meta.description = field("description");
-                meta.origin = field("origin");
-                meta.source = field("source");
-                meta.provider = field("provider");
-                meta.external_id = field("external_id");
-                meta.source_url = field("source_url");
-                meta.author = field("author");
-                meta.license_info = field("license_info");
-                take(import_video(store, text(1), text(2), data, probe, ids, meta));
+                take(import_video(store, text(1), text(2), data, probe, ids, import_meta(a[5])));
             } else {
                 take(import_audio(store, text(1), text(2), data, probe, ids));
             }
+        } else if (kind == "import_image") { // OpenCV sustituido como en export_fixtures.py
+            const Json& size = a[4];
+            ImageCodec codec;
+            codec.to_png = [](std::string_view d) -> std::optional<std::string> {
+                if (!d.contains("OK")) {
+                    return std::nullopt;
+                }
+                return std::string("\x89PNG\r\n\x1a\n") + "conv:" + std::string(d);
+            };
+            codec.size = [&size](const fs::path&) -> std::optional<std::pair<std::int64_t, std::int64_t>> {
+                if (size.is_null()) {
+                    return std::nullopt;
+                }
+                return std::pair{size[0].get<std::int64_t>(), size[1].get<std::int64_t>()};
+            };
+            take(import_image(store, text(1), text(2), from_hex(text(3)), codec, ids, import_meta(a[5]),
+                              a[6].get<bool>()));
         } else if (kind == "retarget") {
             ok = store.retarget_timeline_asset(text(1), text(2), a[3], a[4], a[5], a[6], a[7].get<bool>());
         } else {

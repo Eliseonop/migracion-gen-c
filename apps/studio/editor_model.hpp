@@ -101,9 +101,10 @@ public:
     [[nodiscard]] ExportJob& exportJob() { return export_job_; }
     // Exporta la timeline a la carpeta exports del proyecto (ExportJob). false si no se puede empezar.
     Q_INVOKABLE bool exportVideo();
-    // Importar material del disco (el botón de la pestaña Proyecto; upload_video y upload_audio de
-    // main.py, media_import.hpp): copia cada vídeo o audio a la carpeta del proyecto y lo da de
-    // alta; el aviso dice cuántos entraron o qué falló. Las imágenes, todavía no. Da cuántos entraron.
+    // Importar material del disco (el botón de la pestaña Proyecto; upload_video, upload_audio y
+    // upload_images de main.py, media_import.hpp): copia cada vídeo o audio a la carpeta del
+    // proyecto, y cada imagen como PNG de trabajo (un GIF, tal cual), y lo da de alta; el aviso dice
+    // cuántos entraron o qué falló. Da cuántos entraron.
     Q_INVOKABLE int importFiles(const QList<QUrl>& files);
     // Las filas de clipModel (para los tests).
     [[nodiscard]] QVariantList clips() const;

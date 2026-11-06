@@ -523,3 +523,49 @@ STEPS_IMPORT = [
     ("tree",), ("get", "aaaa0001"), ("get", "bbbb0002"), ("get", "cccc0003"),
 ]
 STEPS += [("remove",), *STEPS_IMPORT]
+
+# Importar una imagen (images.import_image, con OpenCV sustituido; ver import_image en
+# export_fixtures.py):
+#   import_image pid nombre datos_hex size meta keep_gif   `size` lo que da probe_size (None: falla)
+from pathlib import Path as _Path  # noqa: E402
+
+_PNG = b"\x89PNG\r\n\x1a\n"
+_ANIM_GIF = (_Path(__file__).resolve().parents[2] / "tests" / "fixtures" / "media" / "files" / "anim.gif").read_bytes()
+
+
+def _img(pid, name, data: bytes, size=None, meta=None, keep_gif=True):
+    return ("import_image", pid, name, data.hex(), size, meta or {}, keep_gif)
+
+
+STEPS_IMAGE = [
+    ("file", START),
+    _img("aaaa0001", "Foto.PNG", _PNG + b"resto del png", [640, 360]),
+    _img("aaaa0001", "foto.jpg", b"\xff\xd8\xffOK jpeg", [4, 3]),
+    _img("aaaa0001", "rota.jpg", b"\xff\xd8\xff roto", [4, 3]),
+    _img("aaaa0001", "vacía.png", b"", [1, 1]),
+    _img("aaaa0001", "nota.txt", b"hola", [1, 1]),
+    _img("aaaa0001", "nota.txt", _PNG + b"es un png", None),
+    _img("aaaa0001", "sin_ext", b"OK sin firma", [2, 2]),
+    _img("aaaa0001", "sin_ext2", b"sin firma", [2, 2]),
+    _img("aaaa0001", "x.dat", b"RIFF\x00\x00\x00\x00WEBPOK", [8, 8]),
+    _img("aaaa0001", "carpeta%2Fmi%20foto.png?x=1#frag", _PNG + b"q", [3, 3]),
+    _img("aaaa0001", r"C:\fotos\de viaje.jpg", b"OK", [5, 5]),
+    _img("aaaa0001", "   ", _PNG, [1, 2]),
+    _img("aaaa0001", ".png", _PNG, [1, 2]),
+    _img("aaaa0001", "%3F", _PNG, None),
+    _img("aaaa0001", "anim.gif", _ANIM_GIF, None),
+    _img("aaaa0001", "anim2.gif", _ANIM_GIF, [7, 8]),
+    _img("aaaa0001", "anim3.gif", _ANIM_GIF, [0, 0]),
+    _img("aaaa0001", "aplanado.gif", b"GIF89a OK", [9, 9], keep_gif=False),
+    _img("aaaa0001", "corto.gif", b"GIF89a", None),
+    _img("aaaa0001", "gif.png", b"GIF87a" + b"\x00" * 20, None),
+    _img("aaaa0001", "stock.webp", b"OK", [100, 50],
+         {"label": "Etiqueta", "description": "Una descripción", "origin": "pexels", "source": "stock",
+          "provider": "pexels", "external_id": "9", "source_url": "https://www.pexels.com/photo/9/",
+          "author": "Ana", "license_info": "Pexels License"}),
+    _img("aaaa0001", "vacíos.png", _PNG, [1, 1], {"label": "", "description": "", "origin": "", "source": ""}),
+    _img("bbbb0002", "en su carpeta.png", _PNG, [2, 2]),
+    _img("cccc0003", "ñandú.JPEG", b"OK", [3, 3]),
+    ("tree",), ("get", "aaaa0001"), ("get", "bbbb0002"), ("get", "cccc0003"),
+]
+STEPS += [("remove",), *STEPS_IMAGE]
