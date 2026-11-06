@@ -24,6 +24,11 @@ namespace gc::core {
 [[nodiscard]] Result<Json> normalize_export_settings(const Json& raw);
 // {model}: tiny/base/small/medium/large-v3 (si no, base).
 [[nodiscard]] Json normalize_transcribe_settings(const Json& raw);
+// transcribe_settings.MODEL_INFO: [{id, label, hint}] de los cinco modelos, de más rápido a más preciso.
+[[nodiscard]] Json transcribe_model_info();
+// transcribe_settings.resolve: el modelo pedido si es uno de los cinco (texto exacto); si no,
+// el de los ajustes (`saved`, el de normalize_transcribe_settings).
+[[nodiscard]] std::string resolve_transcribe_model(const Json& requested, std::string_view saved);
 
 class SettingsFile {
 public:

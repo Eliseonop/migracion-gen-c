@@ -3897,6 +3897,7 @@ def _mcp_dto_fixtures(ctx: Ctx, mc) -> dict:
                      "expected": _pure(dto.job_dto(job))})
     return {"capabilities": dto.capabilities(),
             "aspect_ratio": [[w, h, dto.aspect_ratio(w, h)] for w, h in mc.ASPECTS],
+            "context_histories": mc.CONTEXT_HISTORIES,
             "projects": projects, "analyze": analyze, "jobs": jobs}
 
 
@@ -4004,8 +4005,8 @@ def _mcp_resources_fixtures(ctx: Ctx, mc) -> dict:
         p.set(projects_mod, "get_project", lambda pid: ctx.projects._project_from_dict(
             copy.deepcopy(raw_by_id[pid][0])) if pid in raw_by_id else None)
         p.set(timeline_store, "_load_history", lambda pid: copy.deepcopy(raw_by_id[pid][1]))
-        for pid, (raw, _hist) in raw_by_id.items():
-            histories.append({"pid": pid, "summary": resources._history(pid)})
+        for pid, (raw, hist) in raw_by_id.items():
+            histories.append({"pid": pid, "raw": hist, "summary": resources._history(pid)})
             calls.append(call("project://{pid}", pid=pid))
             calls.append(call("project://{pid}/timeline", pid=pid))
             calls.append(call("project://{pid}/media", pid=pid))
@@ -4015,7 +4016,9 @@ def _mcp_resources_fixtures(ctx: Ctx, mc) -> dict:
         for uri in ("project://{pid}", "project://{pid}/timeline", "project://{pid}/media"):
             calls.append(call(uri, pid="no-existe"))
         calls.append(call("project://{pid}/clip/{cid}", pid="no-existe", cid="v1"))
-    return {"catalog": catalog, "histories": histories, "calls": calls}
+    return {"catalog": catalog, "environments": mc.ENVIRONMENTS,
+            "projects": [{"pid": pid, "input": raw} for pid, (raw, _h) in raw_by_id.items()],
+            "histories": histories, "calls": calls}
 
 
 class _FakeAuditClock:

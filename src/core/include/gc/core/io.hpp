@@ -27,7 +27,8 @@ namespace gc::core {
 // valor por defecto.
 [[nodiscard]] Result<Json> read_json_file_py(const std::filesystem::path& path);
 
-// json.loads(text) de Python, como los lectores de archivo (sin el BOM). Divergencias: un
+// json.loads(text) de Python, como los lectores de archivo; un BOM al principio es un error,
+// como en Python («Unexpected UTF-8 BOM»). Divergencias: un
 // entero de más de 64 bits pasa a real (y uno de más de 308 cifras, a infinito), y un sustituto
 // suelto de UTF-16 (\ud800) pasa a U+FFFD (Python lo lee, aunque no podría volver a escribirlo).
 [[nodiscard]] Result<Json> py_json_loads(std::string_view text);

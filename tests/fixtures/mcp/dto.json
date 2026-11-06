@@ -175,6 +175,22 @@
    "3:1099511627776"
   ]
  ],
+ "context_histories": [
+  null,
+  {
+   "can_undo": true,
+   "can_redo": false,
+   "checkpoints": [
+    "inicio",
+    "v2"
+   ]
+  },
+  {
+   "can_undo": false,
+   "can_redo": true,
+   "checkpoints": []
+  }
+ ],
  "projects": [
   {
    "name": "sin timeline",

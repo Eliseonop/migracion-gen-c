@@ -321,7 +321,13 @@ Result<Json> read_json_file_py(const std::filesystem::path& path) {
     return parse_text(*text, path_to_utf8(path));
 }
 
-Result<Json> py_json_loads(std::string_view text) { return parse_text(text, ""); }
+Result<Json> py_json_loads(std::string_view text) {
+    // nlohmann se salta el BOM del principio; json.loads de Python no lo acepta.
+    if (text.starts_with(kUtf8Bom)) {
+        return fail(ErrorCode::Parse, "Unexpected UTF-8 BOM (decode using utf-8-sig)");
+    }
+    return parse_text(text, "");
+}
 
 namespace {
 

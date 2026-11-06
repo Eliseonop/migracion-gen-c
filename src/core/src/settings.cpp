@@ -206,6 +206,13 @@ Result<void> set_keys_list(Json& d, const std::string& provider, const std::vect
 
 Json transcribe_public(const Json& cfg_raw) {
     Json cfg = normalize_transcribe_settings(cfg_raw);
+    cfg["models"] = transcribe_model_info();
+    return cfg;
+}
+
+} // namespace
+
+Json transcribe_model_info() {
     static const std::array<std::array<std::string_view, 3>, 5> kInfo{{
         {"tiny", "Tiny", "Más rápido, menos preciso (~75 MB)"},
         {"base", "Base", "Equilibrio velocidad / calidad (~140 MB)"},
@@ -217,11 +224,15 @@ Json transcribe_public(const Json& cfg_raw) {
     for (const auto& [id, label, hint] : kInfo) {
         models.push_back(Json{{"id", id}, {"label", label}, {"hint", hint}});
     }
-    cfg["models"] = std::move(models);
-    return cfg;
+    return models;
 }
 
-} // namespace
+std::string resolve_transcribe_model(const Json& requested, std::string_view saved) {
+    if (requested.is_string() && std::ranges::find(kModels, requested.get_ref<const std::string&>()) != kModels.end()) {
+        return requested.get<std::string>();
+    }
+    return std::string(saved);
+}
 
 Result<Json> normalize_export_settings(const Json& raw) {
     static const Json kEmpty = Json::object();

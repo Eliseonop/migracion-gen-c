@@ -85,6 +85,13 @@ add_library(gc_core
     src/asset_import.cpp
     src/youtube_video.cpp
     src/fx_bake.cpp
+    # Núcleo sin red del servidor MCP (mcp_server de video-yt)
+    src/mcp_audit.cpp
+    src/mcp_capabilities.cpp
+    src/mcp_dto.cpp
+    src/mcp_help.cpp
+    src/mcp_registry.cpp
+    src/mcp_resources.cpp
 )
 add_library(gc::core ALIAS gc_core)
 

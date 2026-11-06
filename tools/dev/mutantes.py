@@ -764,11 +764,55 @@ FX_BAKE = [
     ("horneado con su velocidad", FB, "    c.speed = 1.0;\n", ""),
 ]
 
+MD = "src/core/src/mcp_dto.cpp"
+MC = "src/core/src/mcp_capabilities.cpp"
+MR = "src/core/src/mcp_registry.cpp"
+MA = "src/core/src/mcp_audit.cpp"
+MS = "src/core/src/mcp_resources.cpp"
+MH = "src/core/src/mcp_help.cpp"
+MCP = [
+    ("dto: -0,0 no pasa a 0,0", MD, "return x == 0.0 ? 0.0 : x;", "return x;"),
+    ("dto: max que se queda el NaN", MD, "return b > a ? b : a;", "return a > b ? a : b;"),
+    ("dto: velocidad negativa divide", MD, "return speed > 0 ? span / speed : span;", "return span / speed;"),
+    ("dto: imagen con velocidad", MD, 'if (clip.kind == "text" || clip.kind == "image") {', 'if (clip.kind == "text") {'),
+    ("dto: dup_of vacío es linaje", MD, "c.dup_of && !c.dup_of->empty() ? *c.dup_of : c.id", "c.dup_of ? *c.dup_of : c.id"),
+    ("dto: pista sin tipo gana", MD, "track_kind != nullptr && !track_kind->empty() ? *track_kind : c.kind",
+     "track_kind != nullptr ? *track_kind : c.kind"),
+    ("dto: every por defecto 0", MD, "every != beats.end() ? *every : Json(1)", "every != beats.end() ? *every : Json(0)"),
+    ("dto: aspecto al 0,05 %", MD, "constexpr double kRatioTol = 0.01;", "constexpr double kRatioTol = 0.0005;"),
+    ("dto: etiqueta vacía no cae al archivo", MD, "c.label && !c.label->empty() ? *c.label : c.filename",
+     "c.label ? *c.label : c.filename"),
+    ("dto: done también cancelado", MD, 'py_truthy(get(job, "cancel_requested")) && status != "done"',
+     'py_truthy(get(job, "cancel_requested"))'),
+    ("dto: result.update mueve las claves", MD, "result[key] = value; // dict.update",
+     "result.erase(key); result[key] = value; // dict.update"),
+    ("dto: magnética siempre", MD, "if (t.magnetic) {", "if (true) {"),
+    ("capacidades: describe sin strip", MC, "detail::py_lower(detail::py_strip(domain))", "detail::py_lower(std::string(domain))"),
+    ("capacidades: describe sin lower", MC, "detail::py_lower(detail::py_strip(domain))", "detail::py_strip(domain)"),
+    ("capacidades: verbos sin ordenar", MC, "        std::ranges::sort(sorted);\n", ""),
+    ("capacidades: available sin la verdad de Python", MC, 'detail::py_truthy(e["available"])', 'e["available"] == true'),
+    ("registro: hint vacío sale", MR, "if (hint && !hint->empty()) {", "if (hint) {"),
+    ("registro: clasificar sin minúsculas", MR, "const std::string m = detail::py_lower(message);", "const std::string m(message);"),
+    ("registro: id de job que no es texto", MR, "id->is_string() && ", ""),
+    ("auditoría: ms sin redondear", MA, 'entry["ms"] = detail::py_round(*args.ms, 1);', 'entry["ms"] = *args.ms;'),
+    ("auditoría: error sin cortar", MA, "detail::py_slice(*args.error, kErrorMax)", "*args.error"),
+    ("auditoría: progreso 0 real", MA, "job->progress == 0.0 ? Json(0) : Json(job->progress)", "Json(job->progress)"),
+    ("auditoría: splitlines sin U+2028", MA, "(static_cast<unsigned char>(s[i + 2]) == 0xA8 || ", "("),
+    ("auditoría: hora redondeada", MA, "floor<milliseconds>(t - day)", "round<milliseconds>(t - day)"),
+    ("auditoría: read_recent hasta 2000", MA, ", 1, 200);", ", 1, 2000);"),
+    ("auditoría: param_keys sin ordenar", MA, "    std::ranges::sort(out); // por bytes", "    // por bytes"),
+    ("auditoría: fin de datos como continuación", MA, 'return {0, s.size() - i, "unexpected end of data"};',
+     'return {0, 1, "invalid continuation byte"};'),
+    ("resources: clip con otro texto", MS, '"Clip no encontrado en la timeline: "', '"Clip no encontrado: "'),
+    ("resources: sin historial", MS, "ctx.history ? ctx.history(pid) : History()", "History()"),
+    ("ayuda: dominios repetidos", MH, "    out.erase(first, last);\n", ""),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

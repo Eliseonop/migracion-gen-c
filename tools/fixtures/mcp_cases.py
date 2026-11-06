@@ -433,6 +433,10 @@ AUDIT_STEPS = [
     ["read_all"],
     ["write_raw", "{\"a\": 1} {\"b\": 2}\n"],
     ["read_all"],
+    # Más de 200 entradas: read_recent no da más de 200 (las últimas).
+    ["write_raw", "".join(f'{{"tool": "t{i}", "project_id": "p{i % 3}"}}\n' for i in range(250))],
+    ["read_recent", 500, None],
+    ["read_recent", 1000, "p1"],
     ["write_raw", ""],
     ["read_all"],
     ["remove_file"],
