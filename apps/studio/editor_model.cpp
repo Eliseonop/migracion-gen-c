@@ -45,6 +45,10 @@
 #include "gc/core/timeline_view.hpp"
 #include "gc/core/vfx_stack.hpp"
 
+#ifdef GC_STUDIO_PREVIEW
+#include "gc/media/probe.hpp"
+#endif
+
 namespace gc::studio {
 
 namespace {
@@ -1186,8 +1190,38 @@ void EditorModel::dropDrag(const QString& id, double delta, double centerY) {
 
 // materialTarget de EdTimeline.jsx: el material empieza en el puntero, con el imán, y cae donde
 // diga dropTarget.
+void EditorModel::probe_material(const QString& key) const {
+    const auto it = payloads_.find(key);
+    if (it == payloads_.end()) {
+        return;
+    }
+    Json& payload = it->second;
+    const double d = core::js_number(payload.value("duration", Json(0)));
+    const std::string kind = payload.value("asset_kind", std::string());
+    if (!(std::isnan(d) || d == 0) || (kind != "sfx" && kind != "audios" && kind != "clips")) {
+        return;
+    }
+    auto [known, fresh] = probed_.try_emplace(key, 0.0);
+    if (fresh) {
+        const std::string file = payload.value("filename", std::string());
+        // El SFX por su ruta en la carpeta de SFX; el de una colección, por «<colección>/<ruta>».
+        const auto path = key.startsWith("sfx:")   ? core::sfx_resolve(sfx_dir(), file)
+                          : key.startsWith("col:") ? core::collection_resolve(collections_base(), file)
+                                                   : std::nullopt;
+#ifdef GC_STUDIO_PREVIEW
+        known->second = path ? media::probe_duration(*path) : 0.0;
+#else
+        (void)path;
+#endif
+    }
+    if (known->second > 0) {
+        payload["duration"] = known->second;
+    }
+}
+
 std::optional<std::pair<Json, core::Drop>> EditorModel::planMaterialDrop(const QString& key, double x,
                                                                          double y, bool alt) const {
+    probe_material(key);
     const auto it = payloads_.find(key);
     if (!session_ || it == payloads_.end()) {
         return std::nullopt;

@@ -18,6 +18,12 @@
 
 #include "editor_model.hpp"
 
+#ifdef GC_STUDIO_PREVIEW
+#include <utility>
+
+#include "gc/media/probe.hpp"
+#endif
+
 using namespace gc;
 
 namespace {
@@ -751,6 +757,64 @@ TEST_CASE("editor: material de la biblioteca y de la carpeta de SFX", "[studio]"
     m.searchSfx("pum", "");
     CHECK(std::ranges::any_of(m.materials(), [](const QVariant& v) { return v.toMap()["source"] == "sfx"; }));
 }
+
+#ifdef GC_STUDIO_PREVIEW
+TEST_CASE("editor: un SFX o un audio de colección soltado dura lo que su archivo", "[studio]") {
+    Fixture f;
+    const auto media_dir = core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files";
+    const auto sfx_file = f.dir / "sfx" / "Ritmos" / "bateria.m4a";
+    const auto col_file = f.dir / "material" / "Viajes" / "ola.wav";
+    std::filesystem::create_directories(sfx_file.parent_path());
+    std::filesystem::create_directories(col_file.parent_path());
+    std::filesystem::copy_file(media_dir / "drums120.m4a", sfx_file);
+    std::filesystem::copy_file(media_dir / "a.wav", col_file);
+    core::SettingsFile settings(f.dir / "data" / "settings.json");
+    REQUIRE(settings.save({{"sfx_folder", core::path_to_utf8(f.dir / "sfx")},
+                           {"material_root", core::path_to_utf8(f.dir / "material")}}));
+    studio::EditorModel m(f.store, &settings);
+    REQUIRE(m.openProject("p1"));
+    QString sfx;
+    QString col;
+    for (const QVariant& v : m.materials()) {
+        const QVariantMap item = v.toMap();
+        if (item["source"] == "sfx") {
+            sfx = item["key"].toString();
+        } else if (item["source"] == "collection") {
+            col = item["key"].toString();
+        }
+    }
+    REQUIRE_FALSE(sfx.isEmpty());
+    REQUIRE_FALSE(col.isEmpty());
+    double y = -1;
+    for (const QVariant& t : m.tracks()) {
+        if (t.toMap()["id"] == "A1") {
+            y = t.toMap()["y"].toDouble() + (t.toMap()["height"].toDouble() / 2);
+        }
+    }
+    REQUIRE(y >= 0);
+    // Como el <audio preload="metadata"> de EdLibrary: la duración del archivo, no 1 s.
+    double x = 30 * m.pps();
+    for (const auto& [key, file] : {std::pair{sfx, sfx_file}, std::pair{col, col_file}}) {
+        const double expected = media::probe_duration(file);
+        INFO(key.toStdString());
+        REQUIRE(expected > 0.1);
+        REQUIRE(expected != 1.0); // la de por defecto
+        CHECK(m.previewMaterialDrop(key, x, y, false)["duration"].toDouble() == expected);
+        m.dropMaterial(key, x, y, false);
+        REQUIRE(m.selection().size() == 1);
+        const QString id = m.selection().front();
+        for (const QVariant& v : m.clips()) {
+            if (v.toMap()["clipId"] == id) {
+                CHECK(v.toMap()["duration"].toDouble() == expected);
+            }
+        }
+        x += 40 * m.pps();
+    }
+    // Una búsqueda nueva rehace el material: la duración ya sondeada se conserva.
+    m.searchSfx("bateria", "");
+    CHECK(m.previewMaterialDrop(sfx, x, y, false)["duration"].toDouble() == media::probe_duration(sfx_file));
+}
+#endif
 
 TEST_CASE("editor: deshacer sobrevive a cerrar y abrir el proyecto", "[studio]") {
     Fixture f;

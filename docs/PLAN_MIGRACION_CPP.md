@@ -1783,3 +1783,10 @@ Decisión de Edu (§6):
 - **De paso:** `hasBeats` del menú pasa a ser el `clipBeats` de JS (unos beats que caen todos fuera del tramo también cuentan), y la casilla de beats de F6 queda cerrada.
 - **Test** sin pantalla con la batería a 120 BPM de los medios de prueba: los tiempos y el BPM de `detect_beats` guardados en projects.json, el aviso en pantalla y su cierre, la densidad en el inspector, deshacer dos veces y el error de un vídeo sin archivo.
 - **Verificado:** MSVC Debug y Release 300/300, MinGW 164/164 (sin el studio), 0 warnings, 0 avisos de clang-tidy en el studio.
+
+### 2026-11-05 — F5: la duración de los SFX y del audio de colecciones al soltarlos
+
+- **El hueco:** la búsqueda de SFX y la de colecciones no traen duración (en video-yt la pone el `<audio preload="metadata">` de cada tarjeta de EdLibrary), así que en el studio un sonido soltado en la timeline duraba el 1 s por defecto.
+- **Ahora:** al arrastrarlo (la vista previa del arrastre y el soltar pasan por `planMaterialDrop`), `probe_material` sondea su archivo una vez (`media::probe_duration`; el SFX por su ruta en la carpeta de SFX y el de una colección por «<colección>/<ruta>») y la duración queda en su material; si se rehace la búsqueda, se recupera de lo ya sondeado. Sin gc_export, como antes.
+- **Test:** un SFX y un audio de colección reales: la vista previa del arrastre y el clip soltado duran lo que su archivo, también tras una búsqueda nueva.
+- **Verificado:** MSVC Debug y Release 301/301, 0 warnings, 0 avisos de clang-tidy.

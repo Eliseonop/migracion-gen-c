@@ -365,6 +365,9 @@ private:
     [[nodiscard]] std::optional<DragPlan> planDrag(const QString& id, double delta, double centerY) const;
     [[nodiscard]] std::optional<core::ClipPatch> planTrim(const QString& id, bool left, double delta,
                                                           std::vector<double>* times = nullptr) const;
+    // Un SFX o un audio o vídeo de colección sin duración: la de su archivo (la del <audio
+    // preload="metadata"> de EdLibrary), una vez. Sin gc_export, se queda sin ella (y cuenta 1 s).
+    void probe_material(const QString& key) const;
     [[nodiscard]] std::optional<std::pair<Json, core::Drop>> planMaterialDrop(const QString& key, double x,
                                                                               double y, bool alt) const;
     [[nodiscard]] std::vector<core::AlignClip> snapOthers(std::span<const std::string> moving,
@@ -402,7 +405,10 @@ private:
     // changeTrackStyle / applyTrackPreset: el estilo de la pista y el de todos sus textos.
     template <class Restyle>
     bool restyle_track(Restyle restyle, bool theme = false);
-    std::map<QString, Json> payloads_; // material → dragPayload
+    // material → dragPayload. Mutable: la duración de un SFX o de un audio o vídeo de colección se
+    // sondea al arrastrarlo (probe_material), desde los métodos const del arrastre.
+    mutable std::map<QString, Json> payloads_;
+    mutable std::map<QString, double> probed_; // lo que dio la sonda de cada uno (0: nada)
     ClipListModel clip_model_;
     CropEditor crop_editor_;
     std::string crop_clip_;
