@@ -104,8 +104,13 @@ public:
     // Importar material del disco (el botón de la pestaña Proyecto; upload_video, upload_audio y
     // upload_images de main.py, media_import.hpp): copia cada vídeo o audio a la carpeta del
     // proyecto, y cada imagen como PNG de trabajo (un GIF, tal cual), y lo da de alta; el aviso dice
-    // cuántos entraron o qué falló. Da cuántos entraron.
-    Q_INVOKABLE int importFiles(const QList<QUrl>& files);
+    // cuántos entraron o qué falló. Como importMedia de EdMaterial.jsx, lo que no es vídeo, imagen
+    // ni audio (por su tipo MIME o su extensión) no cuenta; si no queda nada, el aviso de error
+    // (`dropped`: el de soltar archivos en el panel). Da cuántos entraron.
+    Q_INVOKABLE int importFiles(const QList<QUrl>& files, bool dropped = false);
+    // dragMediaKind de EdMaterial: lo que se arrastra desde el sistema («video», «image» o «audio»,
+    // por ese orden; «other» si no hay nada de eso; «file» sin archivos), para el aviso del panel.
+    [[nodiscard]] Q_INVOKABLE QString dropFileKind(const QList<QUrl>& files) const;
     // Las filas de clipModel (para los tests).
     [[nodiscard]] QVariantList clips() const;
     [[nodiscard]] double duration() const;

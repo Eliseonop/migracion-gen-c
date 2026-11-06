@@ -126,6 +126,29 @@ bool opencv_reads(AVCodecID id) {
     }
 }
 
+// yuvj* → yuv* (con `full` a true): los mismos planos.
+AVPixelFormat without_j(AVPixelFormat f, bool& full) {
+    switch (f) {
+    case AV_PIX_FMT_YUVJ420P:
+        full = true;
+        return AV_PIX_FMT_YUV420P;
+    case AV_PIX_FMT_YUVJ422P:
+        full = true;
+        return AV_PIX_FMT_YUV422P;
+    case AV_PIX_FMT_YUVJ444P:
+        full = true;
+        return AV_PIX_FMT_YUV444P;
+    case AV_PIX_FMT_YUVJ440P:
+        full = true;
+        return AV_PIX_FMT_YUV440P;
+    case AV_PIX_FMT_YUVJ411P:
+        full = true;
+        return AV_PIX_FMT_YUV411P;
+    default:
+        return f;
+    }
+}
+
 // La copia de un fotograma YUV planar de 8 bits con submuestreo y algún lado impar, a lo par: los
 // planos de luma y alfa repiten su última columna y fila; los de croma ya miden ceil(n/2), que es
 // la mitad de lo par. Nada si no hace falta (o el formato no es ese).
@@ -215,7 +238,10 @@ std::optional<RgbaFrame> decode_image(std::span<const std::uint8_t> data) {
         frame->height <= 0) {
         return std::nullopt;
     }
-    const auto src_format = static_cast<AVPixelFormat>(frame->format);
+    // Los formatos «J» (el rango completo del JPEG) como su YUV con el rango dicho aparte: swscale
+    // los da por obsoletos.
+    bool full_range = frame->color_range == AVCOL_RANGE_JPEG;
+    const auto src_format = without_j(static_cast<AVPixelFormat>(frame->format), full_range);
     const AVPixFmtDescriptor* src_desc = av_pix_fmt_desc_get(src_format);
     if (src_desc == nullptr) {
         return std::nullopt;
@@ -247,8 +273,7 @@ std::optional<RgbaFrame> decode_image(std::span<const std::uint8_t> data) {
     if (sws_init_context(sws.get(), nullptr, nullptr) < 0) {
         return std::nullopt;
     }
-    // El rango completo si el fotograma lo dice aunque el formato no sea uno «J» (hoy el MJPEG de
-    // FFmpeg da yuvj*, que swscale ya trata así: es por si deja de hacerlo).
+    // El rango completo del JPEG (y de lo que lo diga).
     int* inv = nullptr;
     int src_range = 0;
     int* table = nullptr;
@@ -258,7 +283,7 @@ std::optional<RgbaFrame> decode_image(std::span<const std::uint8_t> data) {
     int saturation = 0;
     if (sws_getColorspaceDetails(sws.get(), &inv, &src_range, &table, &dst_range, &brightness, &contrast,
                                  &saturation) >= 0 &&
-        frame->color_range == AVCOL_RANGE_JPEG) {
+        full_range) {
         sws_setColorspaceDetails(sws.get(), inv, 1, table, dst_range, brightness, contrast, saturation);
     }
     std::vector<std::uint8_t> rgba(static_cast<std::size_t>(src->width) * static_cast<std::size_t>(src->height) * 4);

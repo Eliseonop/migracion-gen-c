@@ -3,7 +3,9 @@
 
 #include <QCoreApplication>
 #include <QGuiApplication>
+#include <QDropEvent>
 #include <QImage>
+#include <QMimeData>
 #include <QQmlApplicationEngine>
 #include <QQuickItem>
 #include <QQuickWindow>
@@ -11,6 +13,7 @@
 #include <algorithm>
 #include <cmath>
 #include <filesystem>
+#include <fstream>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
@@ -29,7 +32,6 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
-#include <fstream>
 #include <vector>
 
 #include "gc/export/frame.hpp"
@@ -329,6 +331,71 @@ TEST_CASE("studio sin pantalla: arrastrar material del panel a la timeline crea 
     const QVariantMap made = s.editor->selectedClip();
     CHECK(made["kind"] == "audio");
     CHECK(std::abs(made["start"].toDouble() - (to.x() - lane.x()) / pps) < 0.1);
+}
+
+TEST_CASE("studio sin pantalla: soltar archivos del sistema en el material los importa", "[studio][ui]") {
+    const Studio s;
+    const auto in = s.dir / "fuera";
+    std::filesystem::create_directories(in);
+    std::filesystem::copy_file(core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "import" / "jpeg_420.jpg",
+                               in / "foto.jpg");
+    { std::ofstream(in / "nota.txt") << "x"; }
+    const auto url = [&](const char* name) {
+        return QUrl::fromLocalFile(QString::fromStdString(core::path_to_utf8(in / name)));
+    };
+    QQuickItem* area = s.item("material:fileDrop");
+    REQUIRE(area);
+    QQuickItem* panel = area->parentItem();
+    const QPoint at = area->mapToScene(QPointF(area->width() / 2, area->height() / 2)).toPoint();
+    const auto hint = [&] { // el texto del aviso, o "" si no se ve
+        const QQuickItem* h = s.item("material:dropHint");
+        if (h == nullptr) {
+            return QString();
+        }
+        for (const QQuickItem* c : h->childItems()) {
+            if (c->property("text").isValid()) {
+                return c->property("text").toString();
+            }
+        }
+        return QString();
+    };
+    const auto images = [&] { return (*s.store->get_project("p1"))->images.size(); };
+    const std::size_t before = images();
+
+    // Algo que no es material: el aviso lo dice y no deja soltar.
+    QMimeData bad;
+    bad.setUrls({url("nota.txt")});
+    QDragEnterEvent enter_bad(at, Qt::CopyAction, &bad, Qt::LeftButton, {});
+    QCoreApplication::sendEvent(s.window, &enter_bad);
+    CHECK(hint() == "Formato no compatible");
+    QDropEvent drop_bad(at, Qt::CopyAction, &bad, Qt::LeftButton, {});
+    QCoreApplication::sendEvent(s.window, &drop_bad);
+    CHECK(images() == before);
+    CHECK(s.editor->notice().isEmpty()); // ni se importa ni avisa (React ni siquiera lo deja soltar)
+    QDragEnterEvent again(at, Qt::CopyAction, &bad, Qt::LeftButton, {});
+    QCoreApplication::sendEvent(s.window, &again);
+    QDragLeaveEvent leave;
+    QCoreApplication::sendEvent(s.window, &leave);
+    CHECK(hint().isEmpty());
+
+    // Una imagen (y la nota, que no cuenta): se importa y el panel la enseña en Proyecto › Imágenes.
+    panel->setProperty("source", "library");
+    QMimeData good;
+    good.setUrls({url("nota.txt"), url("foto.jpg")});
+    QDragEnterEvent enter(at, Qt::CopyAction, &good, Qt::LeftButton, {});
+    QCoreApplication::sendEvent(s.window, &enter);
+    CHECK(hint() == "Suelta la imagen aquí");
+    QDragMoveEvent move(at, Qt::CopyAction, &good, Qt::LeftButton, {});
+    QCoreApplication::sendEvent(s.window, &move);
+    QDropEvent drop(at, Qt::CopyAction, &good, Qt::LeftButton, {});
+    QCoreApplication::sendEvent(s.window, &drop);
+    QCoreApplication::processEvents();
+    CHECK(hint().isEmpty());
+    CHECK(images() == before + 1);
+    CHECK(panel->property("source").toString() == "project");
+    CHECK(panel->property("filter").toString() == "image");
+    CHECK(s.editor->notice()["type"] == "success");
+    CHECK(s.editor->notice()["message"] == "«foto.jpg» está en el material.");
 }
 
 TEST_CASE("studio sin pantalla: con Alt el material soltado encima de un clip lo reemplaza", "[studio][ui]") {

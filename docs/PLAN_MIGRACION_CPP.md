@@ -1819,3 +1819,11 @@ Decisión de Edu (§6):
 - **El studio:** el botón pasa a «Importar vídeo, imagen o audio…» y las imágenes entran como en `upload_images` (los GIF, como GIF). Test: un JPEG convertido a PNG con su tamaño, un GIF animado con sus 10 fotogramas y una imagen rota con su error.
 - **Sin probar:** un TIFF con el alfa ya asociado (libtiff lo deja; si FFmpeg no lo deshace, aquí se premultiplicaría dos veces).
 - **Verificado:** MSVC Debug y Release 304/304, 0 warnings; MinGW 164/164; clang-tidy, 0 avisos.
+
+### 2026-11-06 — F5: soltar archivos en el material
+
+- **Como `onFileDrop` de EdMaterial:** todo el panel acepta archivos del sistema (las tarjetas de material, con su clave, no entran). Mientras se arrastra, el aviso de React según `dropFileKind` (el `dragMediaKind` de JS: vídeo, imagen o audio por ese orden; «other» → «Formato no compatible», que se acepta con la acción «ignorar», como el dropEffect «none», y no se importa). Al soltar, `importFiles(urls, true)` y el panel pasa a Proyecto con el filtro del tipo (el `onDone` de React).
+- **`importFiles` como `importMedia`:** clasifica por el tipo MIME del sistema (QMimeDatabase por la extensión, el `file.type` del navegador) o por las extensiones de isVideoFile, isImageFile e isAudioFile; lo que no es material se ignora (antes daba un error por archivo); vídeos, luego imágenes, luego audios; y si no queda nada, «Suelta un vídeo, una imagen o un audio.» o, al soltar, «Formato no compatible. Suelta un vídeo, una imagen o un audio.».
+- **De paso, `decode_image`:** los yuvj* de JPEG pasan a su YUV con el rango completo aparte (swscale avisaba de formato obsoleto); el ajuste de rango ya se usa y su mutación se detecta (7/7).
+- **Tests:** el del modelo (los dos avisos de nada que importar y `dropFileKind`, con .MPEG y un .ogv por su MIME) y uno sin pantalla con eventos de arrastre reales sobre la ventana: un .txt da «Formato no compatible», no se importa y el aviso se quita al salir; una imagen con una nota se importa, sale «Suelta la imagen aquí» y el panel acaba en Proyecto › Imágenes. 4/4 mutaciones del studio. El cursor de «no se puede» no se comprueba (el evento del test no lo refleja).
+- **Verificado:** MSVC Debug y Release 305/305, 0 warnings; clang-tidy, 0 avisos.

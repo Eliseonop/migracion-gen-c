@@ -4,7 +4,8 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 // Material (EdMaterial.jsx): el del proyecto, la biblioteca global y los SFX, con vídeos, imágenes y
-// audios. Cada tarjeta se arrastra a la timeline (DropArea con la clave «material»).
+// audios. Cada tarjeta se arrastra a la timeline (DropArea con la clave «material»); los archivos del
+// sistema se sueltan en el panel para importarlos.
 Rectangle {
     id: panel
     required property var model
@@ -17,6 +18,7 @@ Rectangle {
     property string collection: ""
     property bool manage: false
     property string fxCategory: ""
+    property string fileDrag: "" // lo que se arrastra desde el sistema (dropFileKind), o ""
     function words(text) { return text.toLowerCase().split(/\s+/).filter((w) => w) }
 
     radius: Theme.radiusLg
@@ -452,6 +454,54 @@ Rectangle {
                     }
                 }
             }
+        }
+    }
+
+    // Soltar archivos del sistema en el panel (onFileDrop de EdMaterial): el aviso dice qué se suelta
+    // y, si no es vídeo, imagen ni audio, no deja soltarlo. Lo importado se ve en Proyecto, con el
+    // filtro del tipo. Las tarjetas de material (clave «material») no entran aquí.
+    DropArea {
+        id: fileDrop
+        objectName: "material:fileDrop"
+        anchors.fill: parent
+        keys: ["text/uri-list"]
+        // Lo que no es material se acepta con la acción «ignorar» (el cursor de no se puede, el
+        // dropEffect «none» de React) y no rechazado: así sigue llegando la salida y el aviso se quita.
+        onEntered: (drag) => {
+            panel.fileDrag = panel.model.dropFileKind(drag.urls)
+            if (panel.fileDrag === "other")
+                drag.accept(Qt.IgnoreAction)
+            else
+                drag.accept(Qt.CopyAction)
+        }
+        onExited: panel.fileDrag = ""
+        onDropped: (drop) => {
+            const kind = panel.model.dropFileKind(drop.urls)
+            panel.fileDrag = ""
+            if (kind === "other")
+                return
+            drop.accept(Qt.CopyAction)
+            if (panel.model.importFiles(drop.urls, true) > 0) {
+                panel.source = "project"
+                panel.filter = kind
+            }
+        }
+    }
+    Rectangle {
+        objectName: "material:dropHint"
+        visible: panel.fileDrag !== ""
+        anchors.fill: parent
+        radius: panel.radius
+        color: Qt.rgba(0, 0, 0, 0.55)
+        border.width: 2
+        border.color: panel.fileDrag === "other" ? "#f87171" : Theme.accent
+        Label {
+            anchors.centerIn: parent
+            text: ({ video: "Suelta el vídeo aquí", image: "Suelta la imagen aquí", audio: "Suelta el audio aquí",
+                     other: "Formato no compatible" })[panel.fileDrag] || "Suelta el archivo aquí"
+            color: panel.fileDrag === "other" ? "#f87171" : Theme.text
+            font.pixelSize: 14
+            font.bold: true
         }
     }
 }

@@ -11,6 +11,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMimeDatabase>
 #include <algorithm>
 #include <cmath>
 #include <map>
@@ -348,7 +349,53 @@ void EditorModel::project_materials(const core::Project& project, QVariantList& 
     }
 }
 
-int EditorModel::importFiles(const QList<QUrl>& files) {
+namespace {
+
+// isVideoFile, isImageFile (imagePaste.js) e isAudioFile de EdMaterial.jsx: el tipo MIME que da el
+// sistema por la extensión (el `file.type` del navegador) o la extensión. "" si no es ninguno.
+QString media_file_kind(const QString& name) {
+    static const QRegularExpression video(R"(\.(mp4|mov|mkv|webm|avi|m4v|mpe?g|wmv|flv)$)",
+                                          QRegularExpression::CaseInsensitiveOption);
+    static const QRegularExpression image(R"(\.(png|jpe?g|webp|gif|bmp|tiff?|avif|heic|heif)$)",
+                                          QRegularExpression::CaseInsensitiveOption);
+    static const QRegularExpression audio(R"(\.(mp3|wav|m4a|aac|ogg|flac|wma)$)",
+                                          QRegularExpression::CaseInsensitiveOption);
+    const QString mime = QMimeDatabase().mimeTypeForFile(name, QMimeDatabase::MatchExtension).name();
+    if (mime.startsWith("video/") || video.match(name).hasMatch()) {
+        return "video";
+    }
+    if (mime.startsWith("image/") || image.match(name).hasMatch()) {
+        return "image";
+    }
+    if (mime.startsWith("audio/") || audio.match(name).hasMatch()) {
+        return "audio";
+    }
+    return {};
+}
+
+std::filesystem::path local_path(const QUrl& url) {
+    return core::path_from_utf8((url.isLocalFile() ? url.toLocalFile() : url.toString()).toStdString());
+}
+
+} // namespace
+
+QString EditorModel::dropFileKind(const QList<QUrl>& files) const {
+    if (files.isEmpty()) {
+        return "file";
+    }
+    QStringList kinds;
+    for (const QUrl& url : files) {
+        kinds << media_file_kind(qstr(core::path_to_utf8(local_path(url).filename())));
+    }
+    for (const char* kind : {"video", "image", "audio"}) {
+        if (kinds.contains(kind)) {
+            return kind;
+        }
+    }
+    return "other";
+}
+
+int EditorModel::importFiles(const QList<QUrl>& files, bool dropped) {
     if (!session_) {
         return 0;
     }
@@ -365,31 +412,37 @@ int EditorModel::importFiles(const QList<QUrl>& files) {
 #else
     const core::ImageCodec codec; // sin gc_media: solo los PNG, y sin su tamaño
 #endif
+    // importMedia: los vídeos, luego las imágenes y luego los audios; lo que no es ninguno, fuera.
+    std::vector<std::pair<std::filesystem::path, QString>> todo;
+    for (const char* wanted : {"video", "image", "audio"}) {
+        for (const QUrl& url : files) {
+            const auto path = local_path(url);
+            if (media_file_kind(qstr(core::path_to_utf8(path.filename()))) == wanted) {
+                todo.emplace_back(path, wanted);
+            }
+        }
+    }
+    if (todo.empty()) {
+        set_notice("error", dropped ? QString("Formato no compatible. Suelta un vídeo, una imagen o un audio.")
+                                    : QString("Suelta un vídeo, una imagen o un audio."));
+        return 0;
+    }
     int imported = 0;
     QString last;
     QStringList problems;
-    for (const QUrl& url : files) {
-        const auto path = core::path_from_utf8((url.isLocalFile() ? url.toLocalFile() : url.toString()).toStdString());
+    for (const auto& [path, kind] : todo) {
         const std::string name = core::path_to_utf8(path.filename());
-        const auto kind = core::import_kind(name);
         std::optional<Error> failed;
-        if (kind == "video") {
+        if (kind == "video") { // upload_video: videos.import_video valida la extensión
             if (auto r = core::import_video_file(store_, project_id_, path, name, probe, ids_); !r) {
-                failed = r.error();
-            }
-        } else if (kind == "audio") {
-            if (auto r = core::import_audio_file(store_, project_id_, path, name, probe, ids_); !r) {
                 failed = r.error();
             }
         } else if (kind == "image") { // upload_images: los GIF animados se quedan como GIF
             if (auto r = core::import_image_file(store_, project_id_, path, name, codec, ids_, {}, true); !r) {
                 failed = r.error();
             }
-        } else {
-            problems << qstr(name) + ": " +
-                            QString("formato no válido. Usa vídeo (MP4, MOV, MKV, WEBM…), imagen (PNG, JPG, WebP, "
-                                    "GIF…) o audio (MP3, WAV, M4A…).");
-            continue;
+        } else if (auto r = core::import_audio_file(store_, project_id_, path, name, probe, ids_); !r) {
+            failed = r.error();
         }
         if (failed) {
             problems << qstr(name) + ": " + qstr(failed->message);

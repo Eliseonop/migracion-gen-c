@@ -793,7 +793,7 @@ TEST_CASE("editor: importar vídeos, imágenes y audios del disco al material de
     CHECK(m.materials().front().toMap()["source"] == "project"); // delante, como al abrir el proyecto
     CHECK(m.notice()["type"] == "error");
     const QString msg = m.notice()["message"].toString();
-    CHECK(msg.contains("nota.txt: formato no válido."));
+    CHECK_FALSE(msg.contains("nota.txt")); // importMedia: lo que no es vídeo, imagen ni audio no cuenta
     CHECK(msg.contains("vacío.mp4: Archivo vacío."));
     CHECK(msg.contains("rota.png: No se pudo leer la imagen. Usa PNG, JPG, WebP o GIF."));
     CHECK_FALSE(msg.contains("Mi clip"));
@@ -848,6 +848,22 @@ TEST_CASE("editor: importar vídeos, imágenes y audios del disco al material de
     CHECK(project_names() == QStringList{"video:Mi clip", "image:foto", "image:baile", "audio:voz", "audio:voz"});
     CHECK(m.importFiles({url("Mi clip.mp4"), url("voz.WAV")}) == 2);
     CHECK(m.notice()["message"] == "2 archivos añadidos al material.");
+
+    // Nada que importar: el aviso del botón o el de soltar en el panel.
+    CHECK(m.importFiles({url("nota.txt")}) == 0);
+    CHECK(m.notice()["type"] == "error");
+    CHECK(m.notice()["message"] == "Suelta un vídeo, una imagen o un audio.");
+    CHECK(m.importFiles({url("nota.txt")}, true) == 0);
+    CHECK(m.notice()["message"] == "Formato no compatible. Suelta un vídeo, una imagen o un audio.");
+
+    // dragMediaKind: vídeo antes que imagen y que audio; «other» si no hay nada de eso.
+    CHECK(m.dropFileKind({}) == "file");
+    CHECK(m.dropFileKind({url("nota.txt")}) == "other");
+    CHECK(m.dropFileKind({url("nota.txt"), url("voz.WAV")}) == "audio");
+    CHECK(m.dropFileKind({url("voz.WAV"), url("foto.jpg")}) == "image");
+    CHECK(m.dropFileKind({url("foto.jpg"), url("Mi clip.mp4")}) == "video");
+    CHECK(m.dropFileKind({url("clip.MPEG")}) == "video"); // mpe?g, sin distinguir mayúsculas
+    CHECK(m.dropFileKind({url("x.ogv")}) == "video");     // por su tipo MIME (video/ogg), como el navegador
 }
 
 #ifdef GC_STUDIO_PREVIEW
