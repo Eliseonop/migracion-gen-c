@@ -26,6 +26,7 @@
 #include "frame_preview.hpp"
 #include "home_model.hpp"
 #include "settings_model.hpp"
+#include "thumbnails.hpp"
 
 int gc::studio::run(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
@@ -51,15 +52,18 @@ int gc::studio::run(int argc, char* argv[]) {
     QDir().mkpath(root);
 
     const auto base = gc::core::path_from_utf8(QDir(root).absolutePath().toStdString());
+    // Las miniaturas del inicio y los proxies de la vista previa, en la caché de la app (no en la
+    // carpeta del proyecto).
+    const auto cache =
+        gc::core::path_from_utf8(QStandardPaths::writableLocation(QStandardPaths::CacheLocation).toStdString());
     gc::core::ProjectsStore store(base / "data" / "projects.json", base / "clips");
     gc::core::RandomIdSource ids;
-    gc::studio::HomeModel home(store, ids);
+    gc::studio::Thumbnails thumbnails;
+    thumbnails.setCacheDir(cache / "thumbnails");
+    gc::studio::HomeModel home(store, ids, &thumbnails);
     gc::core::SettingsFile settings_file(base / "data" / "settings.json");
     gc::studio::EditorModel editor(store, &settings_file);
-    // Los proxies de la vista previa, en la caché de la app (no en la carpeta del proyecto).
-    editor.setProxyDir(gc::core::path_from_utf8(
-                           QStandardPaths::writableLocation(QStandardPaths::CacheLocation).toStdString()) /
-                       "proxies");
+    editor.setProxyDir(cache / "proxies");
     gc::studio::SettingsModel settings(settings_file);
 
     gc::studio::register_qml_types();

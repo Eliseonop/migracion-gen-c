@@ -1,12 +1,15 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
+import GenClip.Preview
 
 // Tarjeta de proyecto: se arrastra a una carpeta (DropArea con la clave «project»).
 Item {
     id: slot
     required property var project
     required property Item dragLayer
+    // La miniatura del primer clip (HomeModel.thumbs); vacía, el icono.
+    property string thumb
     property bool editing
     signal open
     signal renamed(string name)
@@ -60,7 +63,15 @@ Item {
                 radius: Theme.radiusLg
                 color: Theme.card2
                 Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: Theme.radiusLg; color: Theme.card2 }
-                Label { anchors.centerIn: parent; text: "🎬"; font.pixelSize: 34; color: Theme.muted }
+                RoundedImage {
+                    id: thumbImage
+                    objectName: "project:thumb:" + slot.project.id
+                    anchors.fill: parent
+                    visible: loaded
+                    source: slot.thumb
+                    radius: Theme.radiusLg
+                }
+                Label { anchors.centerIn: parent; visible: !thumbImage.loaded; text: "🎬"; font.pixelSize: 34; color: Theme.muted }
             }
             ColumnLayout {
                 Layout.fillWidth: true

@@ -20,11 +20,15 @@
 #include "frame_preview.hpp"
 #include "home_model.hpp"
 #include "settings_model.hpp"
+#include "thumbnails.hpp"
 
 #ifdef GC_STUDIO_PREVIEW
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
+#include <vector>
 
 #include "gc/export/frame.hpp"
 #include "gc/export/project.hpp"
@@ -73,6 +77,7 @@ struct Studio {
                                 ("gc_studio_ui_" + std::to_string(QCoreApplication::applicationPid()));
     std::unique_ptr<core::ProjectsStore> store;
     core::SequentialIdSource ids;
+    std::unique_ptr<studio::Thumbnails> thumbs; // antes que home, que lo usa
     std::unique_ptr<studio::HomeModel> home;
     std::unique_ptr<studio::EditorModel> editor;
     std::unique_ptr<core::SettingsFile> settings_file;
@@ -113,7 +118,9 @@ struct Studio {
         QImage solid(160, 90, QImage::Format_RGB32);
         solid.fill(kImageColor);
         REQUIRE(solid.save(QString::fromStdString(image.string())));
-        home = std::make_unique<studio::HomeModel>(*store, ids);
+        thumbs = std::make_unique<studio::Thumbnails>();
+        thumbs->setCacheDir(dir / "thumbs");
+        home = std::make_unique<studio::HomeModel>(*store, ids, thumbs.get());
         editor = std::make_unique<studio::EditorModel>(*store);
         editor->setProxyDir(dir / "proxies");
         REQUIRE(editor->openProject("p1"));
@@ -133,6 +140,8 @@ struct Studio {
     ~Studio() {
         engine.reset();
         editor.reset(); // para el hilo de la vista previa, que puede estar leyendo la carpeta
+        home.reset();
+        thumbs.reset(); // y el de las miniaturas
         try { // aun con error_code, el remove_all de MSVC puede lanzar bad_alloc al copiar rutas
             std::filesystem::remove_all(dir);
         } catch (...) { // NOLINT(bugprone-empty-catch): la carpeta temporal se queda, el destructor no lanza
@@ -880,5 +889,132 @@ TEST_CASE("studio sin pantalla: un export cancelado no deja nada y una timeline 
     CHECK_FALSE(s.editor->exportVideo());
     CHECK_FALSE(job.running());
     CHECK(job.error() == "No hay nada en la timeline para exportar.");
+}
+#endif
+
+#ifdef GC_STUDIO_PREVIEW
+namespace {
+
+// Un vídeo vertical de w × h a 30 fps en tres franjas horizontales: rojo, verde y azul.
+void write_bands(const std::filesystem::path& path, int w, int h, int frames) {
+    std::filesystem::create_directories(path.parent_path());
+    media::EncodeSettings settings;
+    settings.width = w;
+    settings.height = h;
+    settings.fps = 30;
+    settings.audio = false;
+    auto writer = media::Mp4Writer::open(path, settings);
+    REQUIRE(writer);
+    std::vector<std::uint8_t> rgba(static_cast<std::size_t>(w) * h * 4, 255);
+    for (int y = 0; y < h; ++y) {
+        const int band = 3 * y / h;
+        for (int x = 0; x < w; ++x) {
+            std::uint8_t* p = &rgba[((static_cast<std::size_t>(y) * w) + x) * 4];
+            p[0] = band == 0 ? 255 : 0;
+            p[1] = band == 1 ? 255 : 0;
+            p[2] = band == 2 ? 255 : 0;
+        }
+    }
+    for (int k = 0; k < frames; ++k) {
+        REQUIRE(writer->video(rgba));
+    }
+    REQUIRE(writer->finish());
+}
+
+bool green(QColor c) {
+    return c.green() > 180 && c.red() < 90 && c.blue() < 90;
+}
+
+} // namespace
+
+TEST_CASE("miniaturas: el primer fotograma recortado al centro, en la caché, y caducan con el archivo",
+          "[studio][thumbs]") {
+    app();
+    const auto dir = std::filesystem::temp_directory_path() /
+                     ("gc_thumbs_" + std::to_string(QCoreApplication::applicationPid()));
+    std::filesystem::remove_all(dir);
+    const auto cache = dir / "thumbs";
+    const auto video = dir / "v.mp4";
+    write_bands(video, 180, 320, 3);
+    CHECK_FALSE(studio::find_thumbnail(cache, video));
+
+    // Como `object-fit: cover`: el vídeo de 9:16 cubre el recuadro de 440 × 248 y se queda la franja
+    // del medio (encajado, se verían las tres; estirado, el rojo arriba).
+    const auto made = studio::make_thumbnail(cache, video);
+    REQUIRE(made);
+    CHECK(made->parent_path() == cache);
+    CHECK(made->extension() == ".jpg");
+    CHECK(studio::find_thumbnail(cache, video) == *made);
+    const QImage thumb(QString::fromStdString(core::path_to_utf8(*made)));
+    REQUIRE(thumb.size() == QSize(studio::kThumbWidth, studio::kThumbHeight));
+    for (const int y : {2, studio::kThumbHeight / 2, studio::kThumbHeight - 3}) {
+        for (const int x : {2, studio::kThumbWidth / 2, studio::kThumbWidth - 3}) {
+            INFO(x << ", " << y);
+            CHECK(green(thumb.pixelColor(x, y)));
+        }
+    }
+    const auto again = studio::make_thumbnail(cache, video); // ya hecha: la misma
+    REQUIRE(again);
+    CHECK(*again == *made);
+
+    // Otro vídeo en el mismo archivo: la de antes ya no es la suya.
+    write_bands(video, 320, 180, 5);
+    CHECK_FALSE(studio::find_thumbnail(cache, video));
+    const auto remade = studio::make_thumbnail(cache, video);
+    REQUIRE(remade);
+    CHECK(*remade != *made);
+
+    // Lo que no se puede leer: un error y nada a medias en la caché.
+    const auto broken = dir / "roto.mp4";
+    std::ofstream(broken, std::ios::binary) << "no es un vídeo";
+    CHECK_FALSE(studio::make_thumbnail(cache, broken));
+    CHECK_FALSE(studio::make_thumbnail(cache, dir / "no_existe.mp4"));
+    CHECK_FALSE(studio::make_thumbnail({}, video)); // sin caché
+    for (const auto& entry : std::filesystem::directory_iterator(cache)) {
+        CHECK(entry.path().extension() == ".jpg");
+    }
+    std::filesystem::remove_all(dir);
+}
+
+TEST_CASE("studio sin pantalla: la tarjeta del inicio enseña la miniatura de su primer clip",
+          "[studio][ui][thumbs]") {
+    const Studio s;
+    // «p1» con un primer clip (un vídeo de su carpeta) y «p2» sin ninguno.
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    write_bands(core::project_base(s.store->clips_dir(), **project) / "video" / "v.mp4", 180, 320, 3);
+    core::SequentialIdSource ids;
+    core::ClipInfo first;
+    first.filename = "v.mp4";
+    first.url = "/api/media/p1/video/v.mp4";
+    first.end = 0.1;
+    REQUIRE(s.store->add_clips("p1", {first}, ids));
+    REQUIRE(s.store->create_project("Dos", std::nullopt, ids));
+    s.editor->closeProject();
+    s.home->reload();
+
+    REQUIRE(QTest::qWaitFor([&] { return s.home->thumbs().contains("p1"); }, 60000));
+    const auto file = core::path_from_utf8(s.home->thumbs().value("p1").toString().toStdString());
+    CHECK(file.parent_path() == s.dir / "thumbs"); // en la caché, no en la carpeta del proyecto
+    CHECK(s.home->thumbs().size() == 1);
+    QQuickItem* image = s.item("project:thumb:p1");
+    REQUIRE(image);
+    CHECK(image->property("loaded").toBool());
+
+    // Se pinta en el recuadro con las esquinas de arriba redondeadas: el centro es el vídeo y la
+    // esquina, el fondo de la página.
+    REQUIRE(QTest::qWaitFor([&] {
+        const QImage shot = s.window->grabWindow();
+        const QPoint center = image->mapToScene(QPointF(image->width() / 2, image->height() / 2)).toPoint();
+        return green(shot.pixelColor(center));
+    }, 5000));
+    const QImage shot = s.window->grabWindow();
+    CHECK_FALSE(green(shot.pixelColor(image->mapToScene(QPointF(1, 1)).toPoint())));
+    CHECK(green(shot.pixelColor(image->mapToScene(QPointF(image->width() / 2, 2)).toPoint())));
+
+    // Renombrar no recrea la tarjeta sin su miniatura.
+    s.home->renameProject("p1", "Uno bis");
+    CHECK(s.home->thumbs().contains("p1"));
 }
 #endif

@@ -243,6 +243,7 @@ Item {
                             id: projectCard
                             required property var modelData
                             project: projectCard.modelData
+                            thumb: home.model.thumbs[projectCard.modelData.id] || ""
                             dragLayer: dragOverlay
                             onOpen: home.openProject(projectCard.modelData.id)
                             onRenamed: (n) => home.model.renameProject(projectCard.modelData.id, n)

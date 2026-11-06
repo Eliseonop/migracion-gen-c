@@ -5,6 +5,10 @@
 #include <string>
 #include <unordered_map>
 
+#include "gc/core/io.hpp"
+
+#include "thumbnails.hpp"
+
 namespace gc::studio {
 
 namespace {
@@ -23,9 +27,27 @@ std::optional<std::string_view> group_arg(const std::string& gid) {
 
 } // namespace
 
-HomeModel::HomeModel(core::ProjectsStore& store, core::IdSource& ids, QObject* parent)
-    : QObject(parent), store_(store), ids_(ids) {
+HomeModel::HomeModel(core::ProjectsStore& store, core::IdSource& ids, Thumbnails* thumbnails, QObject* parent)
+    : QObject(parent), store_(store), ids_(ids), thumbnails_(thumbnails) {
+    if (thumbnails_ != nullptr) {
+        connect(thumbnails_, &Thumbnails::changed, this, &HomeModel::update_thumbs);
+    }
     reload();
+}
+
+void HomeModel::update_thumbs() {
+    QVariantMap next;
+    if (thumbnails_ != nullptr) {
+        for (const auto& [pid, source] : sources_) {
+            if (const auto file = thumbnails_->find(source); !file.empty()) {
+                next[pid] = QString::fromStdString(core::path_to_utf8(file));
+            }
+        }
+    }
+    if (next != thumbs_) {
+        thumbs_ = std::move(next);
+        emit thumbsChanged();
+    }
 }
 
 template <class T>
@@ -84,14 +106,29 @@ void HomeModel::reload() {
         group_id_.clear();
     }
     visible_.clear();
+    sources_.clear();
+    std::vector<std::filesystem::path> wanted;
     for (const core::Project& p : all_) {
-        if (groupOf(p) == group_id_) {
-            visible_.push_back(QVariantMap{{"id", qstr(p.id)},
-                                           {"name", qstr(p.name)},
-                                           {"clips", static_cast<int>(p.clips.size())},
-                                           {"date", qstr(p.created_at.substr(0, 10))}});
+        if (groupOf(p) != group_id_) {
+            continue;
+        }
+        visible_.push_back(QVariantMap{{"id", qstr(p.id)},
+                                       {"name", qstr(p.name)},
+                                       {"clips", static_cast<int>(p.clips.size())},
+                                       {"date", qstr(p.created_at.substr(0, 10))}});
+        // La miniatura es el primer fotograma del primer clip: el `<video src={p.clips[0].url}>` de
+        // Home.jsx, cuya URL (/api/media/<pid>/video/<archivo>) sirve storage.resolve_media.
+        if (!p.clips.empty()) {
+            if (auto path = core::resolve_project_media(store_.clips_dir(), p, "video", p.clips.front().filename)) {
+                sources_.emplace_back(qstr(p.id), *path);
+                wanted.push_back(std::move(*path));
+            }
         }
     }
+    if (thumbnails_ != nullptr) {
+        thumbnails_->request(std::move(wanted));
+    }
+    update_thumbs();
     emit changed();
 }
 
