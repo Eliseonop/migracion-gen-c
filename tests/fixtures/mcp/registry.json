@@ -1,0 +1,1002 @@
+{
+ "access_levels": [
+  "read",
+  "write",
+  "destructive"
+ ],
+ "error_codes": [
+  "invalid_parameter",
+  "resource_not_found",
+  "operation_not_allowed",
+  "configuration_error",
+  "dependency_error",
+  "processing_error",
+  "temporary_error",
+  "job_running"
+ ],
+ "mcp_errors": [
+  {
+   "input": [
+    "invalid_parameter",
+    "Velocidad fuera de rango",
+    null,
+    true,
+    "speed"
+   ],
+   "payload": {
+    "error": {
+     "code": "invalid_parameter",
+     "message": "Velocidad fuera de rango",
+     "retryable": true,
+     "param": "speed"
+    }
+   },
+   "str": "Velocidad fuera de rango",
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"Velocidad fuera de rango\", \"retryable\": true, \"param\": \"speed\"}}"
+  },
+  {
+   "input": [
+    "resource_not_found",
+    "Clip no encontrado: c9",
+    "Relee la timeline con get_timeline",
+    false,
+    null
+   ],
+   "payload": {
+    "error": {
+     "code": "resource_not_found",
+     "message": "Clip no encontrado: c9",
+     "retryable": false,
+     "hint": "Relee la timeline con get_timeline"
+    }
+   },
+   "str": "Clip no encontrado: c9",
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"Clip no encontrado: c9\", \"retryable\": false, \"hint\": \"Relee la timeline con get_timeline\"}}"
+  },
+  {
+   "input": [
+    "job_running",
+    "Hay un export en curso",
+    "",
+    false,
+    ""
+   ],
+   "payload": {
+    "error": {
+     "code": "job_running",
+     "message": "Hay un export en curso",
+     "retryable": false
+    }
+   },
+   "str": "Hay un export en curso",
+   "tool_error": "{\"error\": {\"code\": \"job_running\", \"message\": \"Hay un export en curso\", \"retryable\": false}}"
+  },
+  {
+   "input": [
+    "configuration_error",
+    "",
+    null,
+    false,
+    null
+   ],
+   "payload": {
+    "error": {
+     "code": "configuration_error",
+     "message": "",
+     "retryable": false
+    }
+   },
+   "str": "",
+   "tool_error": "{\"error\": {\"code\": \"configuration_error\", \"message\": \"\", \"retryable\": false}}"
+  },
+  {
+   "input": [
+    "processing_error",
+    "Falló «ffmpeg» con ñ y \"comillas\"\n\ty más",
+    "barra \\ y \u0001",
+    true,
+    "p"
+   ],
+   "payload": {
+    "error": {
+     "code": "processing_error",
+     "message": "Falló «ffmpeg» con ñ y \"comillas\"\n\ty más",
+     "retryable": true,
+     "hint": "barra \\ y \u0001",
+     "param": "p"
+    }
+   },
+   "str": "Falló «ffmpeg» con ñ y \"comillas\"\n\ty más",
+   "tool_error": "{\"error\": {\"code\": \"processing_error\", \"message\": \"Falló «ffmpeg» con ñ y \\\"comillas\\\"\\n\\ty más\", \"retryable\": true, \"hint\": \"barra \\\\ y \\u0001\", \"param\": \"p\"}}"
+  },
+  {
+   "input": [
+    "temporary_error",
+    "red caída",
+    "reintenta",
+    true,
+    null
+   ],
+   "payload": {
+    "error": {
+     "code": "temporary_error",
+     "message": "red caída",
+     "retryable": true,
+     "hint": "reintenta"
+    }
+   },
+   "str": "red caída",
+   "tool_error": "{\"error\": {\"code\": \"temporary_error\", \"message\": \"red caída\", \"retryable\": true, \"hint\": \"reintenta\"}}"
+  }
+ ],
+ "value_errors": [
+  {
+   "message": "Clip no encontrado: c1",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"Clip no encontrado: c1\", \"retryable\": false}}"
+  },
+  {
+   "message": "Proyecto NO ENCONTRADO",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"Proyecto NO ENCONTRADO\", \"retryable\": false}}"
+  },
+  {
+   "message": "Track not found",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"Track not found\", \"retryable\": false}}"
+  },
+  {
+   "message": "Pista inexistente",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"Pista inexistente\", \"retryable\": false}}"
+  },
+  {
+   "message": "El clip no existe",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"El clip no existe\", \"retryable\": false}}"
+  },
+  {
+   "message": "No se encuentra el archivo",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"No se encuentra el archivo\", \"retryable\": false}}"
+  },
+  {
+   "message": "Ningún proyecto coincide con: x",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"Ningún proyecto coincide con: x\", \"retryable\": false}}"
+  },
+  {
+   "message": "NINGUNA pista",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"NINGUNA pista\", \"retryable\": false}}"
+  },
+  {
+   "message": "No se encontró el audio",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"No se encontró el audio\", \"retryable\": false}}"
+  },
+  {
+   "message": "Valor INVÁLIDO",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"Valor INVÁLIDO\", \"retryable\": true}}"
+  },
+  {
+   "message": "invalid value",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"invalid value\", \"retryable\": true}}"
+  },
+  {
+   "message": "Formato no válido",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"Formato no válido\", \"retryable\": true}}"
+  },
+  {
+   "message": "debe ser positivo",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"debe ser positivo\", \"retryable\": true}}"
+  },
+  {
+   "message": "Texto vacío",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"Texto vacío\", \"retryable\": true}}"
+  },
+  {
+   "message": "Lista VACÍA",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"Lista VACÍA\", \"retryable\": true}}"
+  },
+  {
+   "message": "Falta 'query'",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"Falta 'query'\", \"retryable\": true}}"
+  },
+  {
+   "message": "kind desconocido",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"kind desconocido\", \"retryable\": true}}"
+  },
+  {
+   "message": "Desconocida",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"Desconocida\", \"retryable\": true}}"
+  },
+  {
+   "message": "No hay audio",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"No hay audio\", \"retryable\": true}}"
+  },
+  {
+   "message": "no encontrado e inválido",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"no encontrado e inválido\", \"retryable\": false}}"
+  },
+  {
+   "message": "inválido y no encontrado",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"inválido y no encontrado\", \"retryable\": false}}"
+  },
+  {
+   "message": "algo raro pasó",
+   "classified": [
+    "processing_error",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"processing_error\", \"message\": \"algo raro pasó\", \"retryable\": false}}"
+  },
+  {
+   "message": "",
+   "classified": [
+    "processing_error",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"processing_error\", \"message\": \"\", \"retryable\": false}}"
+  },
+  {
+   "message": "ÍNDICE fuera de rango",
+   "classified": [
+    "processing_error",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"processing_error\", \"message\": \"ÍNDICE fuera de rango\", \"retryable\": false}}"
+  },
+  {
+   "message": "İnválido",
+   "classified": [
+    "processing_error",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"processing_error\", \"message\": \"İnválido\", \"retryable\": false}}"
+  },
+  {
+   "message": "no encontrada",
+   "classified": [
+    "resource_not_found",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"resource_not_found\", \"message\": \"no encontrada\", \"retryable\": false}}"
+  },
+  {
+   "message": "NO HAY",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"NO HAY\", \"retryable\": true}}"
+  },
+  {
+   "message": "failed: timeout",
+   "classified": [
+    "processing_error",
+    false
+   ],
+   "tool_error": "{\"error\": {\"code\": \"processing_error\", \"message\": \"failed: timeout\", \"retryable\": false}}"
+  },
+  {
+   "message": "Nº de clips vacío",
+   "classified": [
+    "invalid_parameter",
+    true
+   ],
+   "tool_error": "{\"error\": {\"code\": \"invalid_parameter\", \"message\": \"Nº de clips vacío\", \"retryable\": true}}"
+  }
+ ],
+ "job_dto_checks": [
+  [
+   {
+    "id": "j1",
+    "status": "running",
+    "progress": 0.5,
+    "message": "x"
+   },
+   true
+  ],
+  [
+   {
+    "id": "",
+    "status": null,
+    "progress": null,
+    "message": null
+   },
+   true
+  ],
+  [
+   {
+    "id": "j1",
+    "status": "done",
+    "progress": 1
+   },
+   false
+  ],
+  [
+   {
+    "id": 5,
+    "status": "done",
+    "progress": 1,
+    "message": ""
+   },
+   false
+  ],
+  [
+   {
+    "status": "done",
+    "progress": 1,
+    "message": ""
+   },
+   false
+  ],
+  [
+   {
+    "id": "j1",
+    "progress": 1,
+    "message": "",
+    "extra": 1
+   },
+   false
+  ],
+  [
+   {
+    "id": "j1",
+    "status": "done",
+    "message": ""
+   },
+   false
+  ],
+  [
+   [
+    1,
+    2
+   ],
+   false
+  ],
+  [
+   "j1",
+   false
+  ],
+  [
+   null,
+   false
+  ],
+  [
+   5,
+   false
+  ],
+  [
+   {},
+   false
+  ]
+ ],
+ "registrations": [
+  {
+   "name": "get_timeline",
+   "access": "read",
+   "tool": {
+    "name": "get_timeline",
+    "meta": {
+     "domain": "project",
+     "access": "read"
+    },
+    "kwargs": [],
+    "annotations": {
+     "readOnlyHint": true,
+     "destructiveHint": false
+    }
+   }
+  },
+  {
+   "name": "remove_clip",
+   "access": "destructive",
+   "tool": {
+    "name": "remove_clip",
+    "meta": {
+     "domain": "clips",
+     "access": "destructive"
+    },
+    "kwargs": [],
+    "annotations": {
+     "readOnlyHint": false,
+     "destructiveHint": true
+    }
+   }
+  },
+  {
+   "name": "update_clip",
+   "access": "write",
+   "tool": {
+    "name": "update_clip",
+    "meta": {
+     "domain": "clips",
+     "access": "write"
+    },
+    "kwargs": [],
+    "annotations": {
+     "readOnlyHint": false,
+     "destructiveHint": false
+    }
+   }
+  },
+  {
+   "name": "herramienta_nueva",
+   "access": "write",
+   "tool": {
+    "name": "herramienta_nueva",
+    "meta": {
+     "domain": "other",
+     "access": "write"
+    },
+    "kwargs": [],
+    "annotations": {
+     "readOnlyHint": false,
+     "destructiveHint": false
+    }
+   }
+  },
+  {
+   "name": "get_timeline",
+   "access": "read",
+   "error": "tool duplicada: get_timeline"
+  },
+  {
+   "name": "get_timeline",
+   "access": "nope",
+   "error": "access inválido: 'nope' (usa ('read', 'write', 'destructive'))"
+  },
+  {
+   "name": "x",
+   "access": "admin",
+   "error": "access inválido: 'admin' (usa ('read', 'write', 'destructive'))"
+  },
+  {
+   "name": "y",
+   "access": "",
+   "error": "access inválido: '' (usa ('read', 'write', 'destructive'))"
+  },
+  {
+   "name": "z",
+   "access": "READ",
+   "error": "access inválido: 'READ' (usa ('read', 'write', 'destructive'))"
+  },
+  {
+   "name": "describe_capabilities",
+   "access": "read",
+   "tool": {
+    "name": "describe_capabilities",
+    "meta": {
+     "domain": "discovery",
+     "access": "read"
+    },
+    "kwargs": [],
+    "annotations": {
+     "readOnlyHint": true,
+     "destructiveHint": false
+    }
+   }
+  },
+  {
+   "name": "delete_media",
+   "access": "destructive",
+   "tool": {
+    "name": "delete_media",
+    "meta": {
+     "domain": "media",
+     "access": "destructive"
+    },
+    "kwargs": [],
+    "annotations": {
+     "readOnlyHint": false,
+     "destructiveHint": true
+    }
+   }
+  }
+ ],
+ "registered": [
+  [
+   "get_timeline",
+   "read"
+  ],
+  [
+   "remove_clip",
+   "destructive"
+  ],
+  [
+   "update_clip",
+   "write"
+  ],
+  [
+   "herramienta_nueva",
+   "write"
+  ],
+  [
+   "describe_capabilities",
+   "read"
+  ],
+  [
+   "delete_media",
+   "destructive"
+  ]
+ ],
+ "builtin_tools": [
+  [
+   "describe_capabilities",
+   "read"
+  ],
+  [
+   "list_projects",
+   "read"
+  ],
+  [
+   "resolve_project",
+   "read"
+  ],
+  [
+   "get_project_context",
+   "read"
+  ],
+  [
+   "get_timeline",
+   "read"
+  ],
+  [
+   "inspect_clip",
+   "read"
+  ],
+  [
+   "list_media",
+   "read"
+  ],
+  [
+   "search_transcript",
+   "read"
+  ],
+  [
+   "get_job",
+   "read"
+  ],
+  [
+   "wait_for_job",
+   "read"
+  ],
+  [
+   "add_to_timeline",
+   "write"
+  ],
+  [
+   "move_clip",
+   "write"
+  ],
+  [
+   "split_clip",
+   "write"
+  ],
+  [
+   "remove_clip",
+   "destructive"
+  ],
+  [
+   "update_clip",
+   "write"
+  ],
+  [
+   "freeze_frame",
+   "write"
+  ],
+  [
+   "detect_beats",
+   "write"
+  ],
+  [
+   "set_timeline_markers",
+   "write"
+  ],
+  [
+   "paste_clip_attributes",
+   "write"
+  ],
+  [
+   "track_object",
+   "write"
+  ],
+  [
+   "sound_design",
+   "write"
+  ],
+  [
+   "add_adjustment_layer",
+   "write"
+  ],
+  [
+   "add_cinema_bars",
+   "write"
+  ],
+  [
+   "apply_recipe",
+   "write"
+  ],
+  [
+   "reframe_clip",
+   "write"
+  ],
+  [
+   "crop_clip",
+   "write"
+  ],
+  [
+   "add_subtitles",
+   "write"
+  ],
+  [
+   "set_project_format",
+   "write"
+  ],
+  [
+   "set_clip_effects",
+   "write"
+  ],
+  [
+   "list_effects",
+   "read"
+  ],
+  [
+   "apply_effect",
+   "write"
+  ],
+  [
+   "set_clip_animation",
+   "write"
+  ],
+  [
+   "set_clip_masks",
+   "write"
+  ],
+  [
+   "set_clip_audio_fx",
+   "write"
+  ],
+  [
+   "set_clip_volume",
+   "write"
+  ],
+  [
+   "set_track_audio",
+   "write"
+  ],
+  [
+   "set_clip_keyframes",
+   "write"
+  ],
+  [
+   "animate_clip",
+   "write"
+  ],
+  [
+   "duplicate_clip",
+   "write"
+  ],
+  [
+   "add_shape",
+   "write"
+  ],
+  [
+   "add_track",
+   "write"
+  ],
+  [
+   "rename_track",
+   "write"
+  ],
+  [
+   "reorder_track",
+   "write"
+  ],
+  [
+   "remove_track",
+   "destructive"
+  ],
+  [
+   "link_tracks",
+   "write"
+  ],
+  [
+   "unlink_track",
+   "write"
+  ],
+  [
+   "undo",
+   "write"
+  ],
+  [
+   "redo",
+   "write"
+  ],
+  [
+   "checkpoint",
+   "write"
+  ],
+  [
+   "restore_checkpoint",
+   "write"
+  ],
+  [
+   "analyze_youtube",
+   "read"
+  ],
+  [
+   "create_clips_from_segments",
+   "write"
+  ],
+  [
+   "fetch_image",
+   "write"
+  ],
+  [
+   "generate_image",
+   "write"
+  ],
+  [
+   "download_youtube_video",
+   "write"
+  ],
+  [
+   "replace_media_version",
+   "write"
+  ],
+  [
+   "delete_media",
+   "destructive"
+  ],
+  [
+   "transcribe",
+   "write"
+  ],
+  [
+   "generate_subtitles",
+   "write"
+  ],
+  [
+   "generate_voice",
+   "write"
+  ],
+  [
+   "search_sfx",
+   "read"
+  ],
+  [
+   "export_project",
+   "write"
+  ],
+  [
+   "list_jobs",
+   "read"
+  ],
+  [
+   "cancel_job",
+   "write"
+  ],
+  [
+   "create_short_from_youtube",
+   "write"
+  ],
+  [
+   "make_short_from_library",
+   "write"
+  ],
+  [
+   "upgrade_timeline_quality",
+   "write"
+  ],
+  [
+   "get_frame",
+   "read"
+  ],
+  [
+   "set_clip_ai_description",
+   "write"
+  ],
+  [
+   "analyze_materials",
+   "write"
+  ],
+  [
+   "motion_segment_context",
+   "read"
+  ],
+  [
+   "motion_segment_frames",
+   "read"
+  ],
+  [
+   "motion_list_templates",
+   "read"
+  ],
+  [
+   "motion_get_composition",
+   "read"
+  ],
+  [
+   "motion_get_frame",
+   "read"
+  ],
+  [
+   "motion_create_composition",
+   "write"
+  ],
+  [
+   "motion_update_composition",
+   "write"
+  ],
+  [
+   "motion_stick_library",
+   "read"
+  ],
+  [
+   "motion_create_stick_scene",
+   "write"
+  ],
+  [
+   "motion_add_to_timeline",
+   "write"
+  ],
+  [
+   "scene_get_blueprint",
+   "read"
+  ],
+  [
+   "scene_generate_blueprint",
+   "write"
+  ],
+  [
+   "scene_set_blueprint",
+   "write"
+  ],
+  [
+   "scene_plan_all",
+   "write"
+  ],
+  [
+   "scene_direction_get",
+   "read"
+  ],
+  [
+   "scene_direction_status",
+   "read"
+  ],
+  [
+   "scene_direction_pack",
+   "read"
+  ],
+  [
+   "scene_rank_materials",
+   "read"
+  ],
+  [
+   "scene_direction_auto_split",
+   "read"
+  ],
+  [
+   "scene_direction_update_segment",
+   "write"
+  ],
+  [
+   "scene_direction_set",
+   "write"
+  ],
+  [
+   "scene_set_material_meta",
+   "write"
+  ],
+  [
+   "scene_place_material",
+   "write"
+  ],
+  [
+   "scene_reuse_reference",
+   "write"
+  ],
+  [
+   "motion_scene_directions",
+   "read"
+  ],
+  [
+   "motion_scene_questions",
+   "read"
+  ],
+  [
+   "motion_plan_scene",
+   "read"
+  ],
+  [
+   "motion_build_scene",
+   "write"
+  ],
+  [
+   "scene_validate_segment",
+   "read"
+  ],
+  [
+   "render_timeline_frame",
+   "read"
+  ]
+ ]
+}

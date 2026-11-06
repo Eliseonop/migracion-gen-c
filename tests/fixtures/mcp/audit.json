@@ -1,0 +1,2202 @@
+{
+ "extract_meta": [
+  {
+   "tool": "update_clip",
+   "params": {
+    "project_id": "p1",
+    "clip_id": "c1",
+    "patch": {
+     "opacity": 0.5
+    },
+    "opacity": 0.123456,
+    "muted": false,
+    "speed": 2,
+    "name": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+    "text": "largo",
+    "start": 0.0,
+    "at_time": null,
+    "query": "",
+    "count": true,
+    "volume": 1e-05,
+    "position": "top",
+    "segments": [
+     1,
+     2
+    ],
+    "kind": "video"
+   },
+   "settings_model": "base",
+   "meta": {
+    "clip_id": "c1",
+    "opacity": 0.1235,
+    "muted": false,
+    "speed": 2,
+    "name": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+    "start": 0.0,
+    "count": true,
+    "volume": 0.0,
+    "position": "top",
+    "kind": "video"
+   }
+  },
+  {
+   "tool": "move_clip",
+   "params": {
+    "start": -4e-05,
+    "track_id": "V1",
+    "width": 1152921504606846976,
+    "height": -3,
+    "fps": NaN,
+    "aspect": "ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ",
+    "category": Infinity,
+    "blend": -Infinity
+   },
+   "settings_model": "base",
+   "meta": {
+    "start": -0.0,
+    "track_id": "V1",
+    "width": 1152921504606846976,
+    "height": -3,
+    "fps": NaN,
+    "aspect": "ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ",
+    "category": Infinity,
+    "blend": -Infinity
+   }
+  },
+  {
+   "tool": "move_clip",
+   "params": null,
+   "settings_model": "base",
+   "meta": {}
+  },
+  {
+   "tool": "transcribe",
+   "params": null,
+   "settings_model": "medium",
+   "meta": {
+    "model_source": "ajustes",
+    "model": "medium"
+   }
+  },
+  {
+   "tool": "transcribe",
+   "params": {
+    "model": "small",
+    "language": "es"
+   },
+   "settings_model": "base",
+   "meta": {
+    "model": "small",
+    "language": "es"
+   }
+  },
+  {
+   "tool": "transcribe",
+   "params": {
+    "model": "giant"
+   },
+   "settings_model": "base",
+   "meta": {
+    "model": "base"
+   }
+  },
+  {
+   "tool": "transcribe",
+   "params": {
+    "model": ""
+   },
+   "settings_model": "small",
+   "meta": {
+    "model_source": "ajustes",
+    "model": "small"
+   }
+  },
+  {
+   "tool": "transcribe",
+   "params": {
+    "model": null,
+    "clip_index": 3
+   },
+   "settings_model": "tiny",
+   "meta": {
+    "clip_index": 3,
+    "model_source": "ajustes",
+    "model": "tiny"
+   }
+  },
+  {
+   "tool": "generate_subtitles",
+   "params": {
+    "model": 5,
+    "filename": "voz.wav",
+    "asset_kind": "audios"
+   },
+   "settings_model": "base",
+   "meta": {
+    "model": "base",
+    "filename": "voz.wav",
+    "asset_kind": "audios"
+   }
+  },
+  {
+   "tool": "generate_subtitles",
+   "params": {
+    "model": 0
+   },
+   "settings_model": "large-v3",
+   "meta": {
+    "model": "large-v3",
+    "model_source": "ajustes"
+   }
+  },
+  {
+   "tool": "create_short_from_youtube",
+   "params": {
+    "model": true
+   },
+   "settings_model": "base",
+   "meta": {
+    "model": "base"
+   }
+  },
+  {
+   "tool": "make_short_from_library",
+   "params": {
+    "model": 1.5,
+    "asset_id": "0"
+   },
+   "settings_model": "small",
+   "meta": {
+    "model": "small",
+    "asset_id": "0"
+   }
+  },
+  {
+   "tool": "make_short_from_library",
+   "params": {
+    "model": "LARGE-V3"
+   },
+   "settings_model": "medium",
+   "meta": {
+    "model": "medium"
+   }
+  },
+  {
+   "tool": "make_short_from_library",
+   "params": {
+    "model": "large-v3"
+   },
+   "settings_model": "medium",
+   "meta": {
+    "model": "large-v3"
+   }
+  },
+  {
+   "tool": "transcribe",
+   "params": {
+    "model": "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+   },
+   "settings_model": "base",
+   "meta": {
+    "model": "base"
+   }
+  }
+ ],
+ "steps": [
+  {
+   "op": [
+    "read_all"
+   ],
+   "ret": []
+  },
+  {
+   "op": [
+    "read_recent",
+    80,
+    null
+   ],
+   "ret": []
+  },
+  {
+   "op": [
+    "now",
+    1767225600123456
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "begin",
+    "get_timeline",
+    "read",
+    "p1",
+    {
+     "clip_id": "c1"
+    }
+   ],
+   "ret": "000001ab0000"
+  },
+  {
+   "op": [
+    "active",
+    null
+   ],
+   "ret": [
+    {
+     "token": "000001ab0000",
+     "ts": "2026-01-01T00:00:00.123+00:00",
+     "tool": "get_timeline",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "clip_id": "c1"
+     },
+     "progress": null,
+     "message": null
+    }
+   ]
+  },
+  {
+   "op": [
+    "active",
+    "p1"
+   ],
+   "ret": [
+    {
+     "token": "000001ab0000",
+     "ts": "2026-01-01T00:00:00.123+00:00",
+     "tool": "get_timeline",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "clip_id": "c1"
+     },
+     "progress": null,
+     "message": null
+    }
+   ]
+  },
+  {
+   "op": [
+    "active",
+    "p2"
+   ],
+   "ret": []
+  },
+  {
+   "op": [
+    "now",
+    1767225600001999
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "finish",
+    "000001ab0000",
+    {
+     "status": "ok",
+     "ms": 12.345,
+     "param_keys": [
+      "project_id",
+      "clip_id"
+     ]
+    }
+   ],
+   "ret": {
+    "ts": "2026-01-01T00:00:00.001+00:00",
+    "tool": "get_timeline",
+    "access": "read",
+    "project_id": "p1",
+    "param_keys": [
+     "clip_id",
+     "project_id"
+    ],
+    "status": "ok",
+    "ms": 12.3,
+    "meta": {
+     "clip_id": "c1"
+    }
+   },
+   "file": "{\"ts\": \"2026-01-01T00:00:00.001+00:00\", \"tool\": \"get_timeline\", \"access\": \"read\", \"project_id\": \"p1\", \"param_keys\": [\"clip_id\", \"project_id\"], \"status\": \"ok\", \"ms\": 12.3, \"meta\": {\"clip_id\": \"c1\"}}\r\n"
+  },
+  {
+   "op": [
+    "active",
+    null
+   ],
+   "ret": []
+  },
+  {
+   "op": [
+    "source",
+    "ai_chat"
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "now",
+    1830297599999999
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "begin",
+    "update_clip",
+    "write",
+    null,
+    {
+     "speed": 2
+    }
+   ],
+   "ret": "000002ab0000"
+  },
+  {
+   "op": [
+    "finish",
+    "000002ab0000",
+    {
+     "status": "error",
+     "ms": 0.05,
+     "error": "ValueError: speed inválida",
+     "param_keys": [],
+     "extra_meta": {
+      "job_id": "j1",
+      "speed": 3
+     }
+    }
+   ],
+   "ret": {
+    "ts": "2027-12-31T23:59:59.999+00:00",
+    "tool": "update_clip",
+    "access": "write",
+    "project_id": null,
+    "param_keys": [],
+    "status": "error",
+    "ms": 0.1,
+    "error": "ValueError: speed inválida",
+    "meta": {
+     "speed": 3,
+     "job_id": "j1"
+    },
+    "source": "ai_chat"
+   },
+   "file": "{\"ts\": \"2026-01-01T00:00:00.001+00:00\", \"tool\": \"get_timeline\", \"access\": \"read\", \"project_id\": \"p1\", \"param_keys\": [\"clip_id\", \"project_id\"], \"status\": \"ok\", \"ms\": 12.3, \"meta\": {\"clip_id\": \"c1\"}}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"update_clip\", \"access\": \"write\", \"project_id\": null, \"param_keys\": [], \"status\": \"error\", \"ms\": 0.1, \"error\": \"ValueError: speed inválida\", \"meta\": {\"speed\": 3, \"job_id\": \"j1\"}, \"source\": \"ai_chat\"}\r\n"
+  },
+  {
+   "op": [
+    "source",
+    null
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "finish",
+    "nadie",
+    {}
+   ],
+   "ret": {
+    "ts": "2027-12-31T23:59:59.999+00:00",
+    "tool": "unknown",
+    "access": "read",
+    "project_id": null,
+    "param_keys": [],
+    "status": "ok"
+   },
+   "file": "{\"ts\": \"2026-01-01T00:00:00.001+00:00\", \"tool\": \"get_timeline\", \"access\": \"read\", \"project_id\": \"p1\", \"param_keys\": [\"clip_id\", \"project_id\"], \"status\": \"ok\", \"ms\": 12.3, \"meta\": {\"clip_id\": \"c1\"}}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"update_clip\", \"access\": \"write\", \"project_id\": null, \"param_keys\": [], \"status\": \"error\", \"ms\": 0.1, \"error\": \"ValueError: speed inválida\", \"meta\": {\"speed\": 3, \"job_id\": \"j1\"}, \"source\": \"ai_chat\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\"}\r\n"
+  },
+  {
+   "op": [
+    "finish",
+    "nadie",
+    {
+     "extra_meta": {
+      "x": 1
+     },
+     "ms": 0.25
+    }
+   ],
+   "ret": {
+    "ts": "2027-12-31T23:59:59.999+00:00",
+    "tool": "unknown",
+    "access": "read",
+    "project_id": null,
+    "param_keys": [],
+    "status": "ok",
+    "ms": 0.2,
+    "meta": {
+     "x": 1
+    }
+   },
+   "file": "{\"ts\": \"2026-01-01T00:00:00.001+00:00\", \"tool\": \"get_timeline\", \"access\": \"read\", \"project_id\": \"p1\", \"param_keys\": [\"clip_id\", \"project_id\"], \"status\": \"ok\", \"ms\": 12.3, \"meta\": {\"clip_id\": \"c1\"}}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"update_clip\", \"access\": \"write\", \"project_id\": null, \"param_keys\": [], \"status\": \"error\", \"ms\": 0.1, \"error\": \"ValueError: speed inválida\", \"meta\": {\"speed\": 3, \"job_id\": \"j1\"}, \"source\": \"ai_chat\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\", \"ms\": 0.2, \"meta\": {\"x\": 1}}\r\n"
+  },
+  {
+   "op": [
+    "now",
+    1835395200000000
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "log",
+    "export_project",
+    "write",
+    {
+     "project_id": "p1",
+     "param_keys": [
+      "z",
+      "á",
+      "a",
+      "Z"
+     ],
+     "ms": NaN,
+     "error": "ñññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ",
+     "meta": {
+      "aspect": "9:16"
+     }
+    }
+   ],
+   "ret": {
+    "ts": "2028-02-29T00:00:00.000+00:00",
+    "tool": "export_project",
+    "access": "write",
+    "project_id": "p1",
+    "param_keys": [
+     "Z",
+     "a",
+     "z",
+     "á"
+    ],
+    "status": "ok",
+    "ms": NaN,
+    "error": "ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ",
+    "meta": {
+     "aspect": "9:16"
+    }
+   },
+   "file": "{\"ts\": \"2026-01-01T00:00:00.001+00:00\", \"tool\": \"get_timeline\", \"access\": \"read\", \"project_id\": \"p1\", \"param_keys\": [\"clip_id\", \"project_id\"], \"status\": \"ok\", \"ms\": 12.3, \"meta\": {\"clip_id\": \"c1\"}}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"update_clip\", \"access\": \"write\", \"project_id\": null, \"param_keys\": [], \"status\": \"error\", \"ms\": 0.1, \"error\": \"ValueError: speed inválida\", \"meta\": {\"speed\": 3, \"job_id\": \"j1\"}, \"source\": \"ai_chat\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\", \"ms\": 0.2, \"meta\": {\"x\": 1}}\r\n{\"ts\": \"2028-02-29T00:00:00.000+00:00\", \"tool\": \"export_project\", \"access\": \"write\", \"project_id\": \"p1\", \"param_keys\": [\"Z\", \"a\", \"z\", \"á\"], \"status\": \"ok\", \"ms\": NaN, \"error\": \"ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ\", \"meta\": {\"aspect\": \"9:16\"}}\r\n"
+  },
+  {
+   "op": [
+    "log",
+    "t",
+    "read",
+    {
+     "ms": 0.35,
+     "error": "",
+     "meta": {},
+     "status": "weird"
+    }
+   ],
+   "ret": {
+    "ts": "2028-02-29T00:00:00.000+00:00",
+    "tool": "t",
+    "access": "read",
+    "project_id": null,
+    "param_keys": [],
+    "status": "weird",
+    "ms": 0.3
+   },
+   "file": "{\"ts\": \"2026-01-01T00:00:00.001+00:00\", \"tool\": \"get_timeline\", \"access\": \"read\", \"project_id\": \"p1\", \"param_keys\": [\"clip_id\", \"project_id\"], \"status\": \"ok\", \"ms\": 12.3, \"meta\": {\"clip_id\": \"c1\"}}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"update_clip\", \"access\": \"write\", \"project_id\": null, \"param_keys\": [], \"status\": \"error\", \"ms\": 0.1, \"error\": \"ValueError: speed inválida\", \"meta\": {\"speed\": 3, \"job_id\": \"j1\"}, \"source\": \"ai_chat\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\", \"ms\": 0.2, \"meta\": {\"x\": 1}}\r\n{\"ts\": \"2028-02-29T00:00:00.000+00:00\", \"tool\": \"export_project\", \"access\": \"write\", \"project_id\": \"p1\", \"param_keys\": [\"Z\", \"a\", \"z\", \"á\"], \"status\": \"ok\", \"ms\": NaN, \"error\": \"ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ\", \"meta\": {\"aspect\": \"9:16\"}}\r\n{\"ts\": \"2028-02-29T00:00:00.000+00:00\", \"tool\": \"t\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"weird\", \"ms\": 0.3}\r\n"
+  },
+  {
+   "op": [
+    "log",
+    "t2",
+    "destructive",
+    {
+     "ms": Infinity,
+     "param_keys": null
+    }
+   ],
+   "ret": {
+    "ts": "2028-02-29T00:00:00.000+00:00",
+    "tool": "t2",
+    "access": "destructive",
+    "project_id": null,
+    "param_keys": [],
+    "status": "ok",
+    "ms": Infinity
+   },
+   "file": "{\"ts\": \"2026-01-01T00:00:00.001+00:00\", \"tool\": \"get_timeline\", \"access\": \"read\", \"project_id\": \"p1\", \"param_keys\": [\"clip_id\", \"project_id\"], \"status\": \"ok\", \"ms\": 12.3, \"meta\": {\"clip_id\": \"c1\"}}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"update_clip\", \"access\": \"write\", \"project_id\": null, \"param_keys\": [], \"status\": \"error\", \"ms\": 0.1, \"error\": \"ValueError: speed inválida\", \"meta\": {\"speed\": 3, \"job_id\": \"j1\"}, \"source\": \"ai_chat\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\", \"ms\": 0.2, \"meta\": {\"x\": 1}}\r\n{\"ts\": \"2028-02-29T00:00:00.000+00:00\", \"tool\": \"export_project\", \"access\": \"write\", \"project_id\": \"p1\", \"param_keys\": [\"Z\", \"a\", \"z\", \"á\"], \"status\": \"ok\", \"ms\": NaN, \"error\": \"ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ\", \"meta\": {\"aspect\": \"9:16\"}}\r\n{\"ts\": \"2028-02-29T00:00:00.000+00:00\", \"tool\": \"t\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"weird\", \"ms\": 0.3}\r\n{\"ts\": \"2028-02-29T00:00:00.000+00:00\", \"tool\": \"t2\", \"access\": \"destructive\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\", \"ms\": Infinity}\r\n"
+  },
+  {
+   "op": [
+    "source",
+    "ui"
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "log",
+    "t3",
+    "read",
+    {}
+   ],
+   "ret": {
+    "ts": "2028-02-29T00:00:00.000+00:00",
+    "tool": "t3",
+    "access": "read",
+    "project_id": null,
+    "param_keys": [],
+    "status": "ok",
+    "source": "ui"
+   },
+   "file": "{\"ts\": \"2026-01-01T00:00:00.001+00:00\", \"tool\": \"get_timeline\", \"access\": \"read\", \"project_id\": \"p1\", \"param_keys\": [\"clip_id\", \"project_id\"], \"status\": \"ok\", \"ms\": 12.3, \"meta\": {\"clip_id\": \"c1\"}}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"update_clip\", \"access\": \"write\", \"project_id\": null, \"param_keys\": [], \"status\": \"error\", \"ms\": 0.1, \"error\": \"ValueError: speed inválida\", \"meta\": {\"speed\": 3, \"job_id\": \"j1\"}, \"source\": \"ai_chat\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\"}\r\n{\"ts\": \"2027-12-31T23:59:59.999+00:00\", \"tool\": \"unknown\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\", \"ms\": 0.2, \"meta\": {\"x\": 1}}\r\n{\"ts\": \"2028-02-29T00:00:00.000+00:00\", \"tool\": \"export_project\", \"access\": \"write\", \"project_id\": \"p1\", \"param_keys\": [\"Z\", \"a\", \"z\", \"á\"], \"status\": \"ok\", \"ms\": NaN, \"error\": \"ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ\", \"meta\": {\"aspect\": \"9:16\"}}\r\n{\"ts\": \"2028-02-29T00:00:00.000+00:00\", \"tool\": \"t\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"weird\", \"ms\": 0.3}\r\n{\"ts\": \"2028-02-29T00:00:00.000+00:00\", \"tool\": \"t2\", \"access\": \"destructive\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\", \"ms\": Infinity}\r\n{\"ts\": \"2028-02-29T00:00:00.000+00:00\", \"tool\": \"t3\", \"access\": \"read\", \"project_id\": null, \"param_keys\": [], \"status\": \"ok\", \"source\": \"ui\"}\r\n"
+  },
+  {
+   "op": [
+    "source",
+    null
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "track_job",
+    "j1",
+    "transcribe",
+    "write",
+    {
+     "project_id": "p1",
+     "meta": {
+      "model": "base"
+     }
+    }
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "track_job",
+    "",
+    "transcribe",
+    "write",
+    {}
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "track_job",
+    "j2",
+    "export_project",
+    "write",
+    {
+     "project_id": "p2",
+     "source_name": "ui"
+    }
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "source",
+    "ai_chat"
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "track_job",
+    "j4",
+    "sound_design",
+    "write",
+    {}
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "source",
+    null
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "jobs",
+    {
+     "j1": {
+      "status": "running",
+      "progress": 0.0,
+      "message": "Transcribiendo…"
+     },
+     "j2": {
+      "status": "running",
+      "progress": 0.5
+     },
+     "j4": {
+      "status": "pending"
+     }
+    }
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "begin",
+    "wait_for_job",
+    "read",
+    "p1",
+    {
+     "job_id": "j1"
+    }
+   ],
+   "ret": "000003ab0000"
+  },
+  {
+   "op": [
+    "begin",
+    "get_job",
+    "read",
+    "p1",
+    {
+     "job_id": 5
+    }
+   ],
+   "ret": "000004ab0000"
+  },
+  {
+   "op": [
+    "begin",
+    "list_jobs",
+    "read",
+    "",
+    {}
+   ],
+   "ret": "000005ab0000"
+  },
+  {
+   "op": [
+    "active",
+    null
+   ],
+   "ret": [
+    {
+     "job_id": "j1",
+     "tool": "transcribe",
+     "access": "write",
+     "project_id": "p1",
+     "status": "running",
+     "meta": {
+      "model": "base"
+     },
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "progress": 0,
+     "message": "Transcribiendo…"
+    },
+    {
+     "job_id": "j2",
+     "tool": "export_project",
+     "access": "write",
+     "project_id": "p2",
+     "status": "running",
+     "meta": {},
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "source": "ui",
+     "progress": 0.5,
+     "message": "En cola…"
+    },
+    {
+     "job_id": "j4",
+     "tool": "sound_design",
+     "access": "write",
+     "project_id": null,
+     "status": "pending",
+     "meta": {},
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "source": "ai_chat",
+     "progress": 0,
+     "message": "En cola…"
+    },
+    {
+     "token": "000004ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "get_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": 5
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000005ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "list_jobs",
+     "access": "read",
+     "project_id": "",
+     "status": "run",
+     "meta": {},
+     "progress": null,
+     "message": null
+    }
+   ]
+  },
+  {
+   "op": [
+    "active",
+    "p1"
+   ],
+   "ret": [
+    {
+     "job_id": "j1",
+     "tool": "transcribe",
+     "access": "write",
+     "project_id": "p1",
+     "status": "running",
+     "meta": {
+      "model": "base"
+     },
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "progress": 0,
+     "message": "Transcribiendo…"
+    },
+    {
+     "job_id": "j4",
+     "tool": "sound_design",
+     "access": "write",
+     "project_id": null,
+     "status": "pending",
+     "meta": {},
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "source": "ai_chat",
+     "progress": 0,
+     "message": "En cola…"
+    },
+    {
+     "token": "000004ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "get_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": 5
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000005ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "list_jobs",
+     "access": "read",
+     "project_id": "",
+     "status": "run",
+     "meta": {},
+     "progress": null,
+     "message": null
+    }
+   ]
+  },
+  {
+   "op": [
+    "active",
+    "p2"
+   ],
+   "ret": [
+    {
+     "job_id": "j2",
+     "tool": "export_project",
+     "access": "write",
+     "project_id": "p2",
+     "status": "running",
+     "meta": {},
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "source": "ui",
+     "progress": 0.5,
+     "message": "En cola…"
+    },
+    {
+     "job_id": "j4",
+     "tool": "sound_design",
+     "access": "write",
+     "project_id": null,
+     "status": "pending",
+     "meta": {},
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "source": "ai_chat",
+     "progress": 0,
+     "message": "En cola…"
+    },
+    {
+     "token": "000005ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "list_jobs",
+     "access": "read",
+     "project_id": "",
+     "status": "run",
+     "meta": {},
+     "progress": null,
+     "message": null
+    }
+   ]
+  },
+  {
+   "op": [
+    "active",
+    ""
+   ],
+   "ret": [
+    {
+     "job_id": "j1",
+     "tool": "transcribe",
+     "access": "write",
+     "project_id": "p1",
+     "status": "running",
+     "meta": {
+      "model": "base"
+     },
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "progress": 0,
+     "message": "Transcribiendo…"
+    },
+    {
+     "job_id": "j2",
+     "tool": "export_project",
+     "access": "write",
+     "project_id": "p2",
+     "status": "running",
+     "meta": {},
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "source": "ui",
+     "progress": 0.5,
+     "message": "En cola…"
+    },
+    {
+     "job_id": "j4",
+     "tool": "sound_design",
+     "access": "write",
+     "project_id": null,
+     "status": "pending",
+     "meta": {},
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "source": "ai_chat",
+     "progress": 0,
+     "message": "En cola…"
+    },
+    {
+     "token": "000004ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "get_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": 5
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000005ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "list_jobs",
+     "access": "read",
+     "project_id": "",
+     "status": "run",
+     "meta": {},
+     "progress": null,
+     "message": null
+    }
+   ]
+  },
+  {
+   "op": [
+    "jobs",
+    {
+     "j1": {
+      "status": "done"
+     },
+     "j2": null,
+     "j4": {
+      "status": "running",
+      "progress": 1.0
+     }
+    }
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "active",
+    "p1"
+   ],
+   "ret": [
+    {
+     "job_id": "j4",
+     "tool": "sound_design",
+     "access": "write",
+     "project_id": null,
+     "status": "running",
+     "meta": {},
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "source": "ai_chat",
+     "progress": 1.0,
+     "message": "En cola…"
+    },
+    {
+     "token": "000003ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "wait_for_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": "j1"
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000004ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "get_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": 5
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000005ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "list_jobs",
+     "access": "read",
+     "project_id": "",
+     "status": "run",
+     "meta": {},
+     "progress": null,
+     "message": null
+    }
+   ]
+  },
+  {
+   "op": [
+    "active",
+    null
+   ],
+   "ret": [
+    {
+     "job_id": "j4",
+     "tool": "sound_design",
+     "access": "write",
+     "project_id": null,
+     "status": "running",
+     "meta": {},
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "source": "ai_chat",
+     "progress": 1.0,
+     "message": "En cola…"
+    },
+    {
+     "token": "000003ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "wait_for_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": "j1"
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000004ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "get_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": 5
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000005ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "list_jobs",
+     "access": "read",
+     "project_id": "",
+     "status": "run",
+     "meta": {},
+     "progress": null,
+     "message": null
+    }
+   ]
+  },
+  {
+   "op": [
+    "track_job",
+    "j3",
+    "transcribe",
+    "write",
+    {
+     "project_id": "p1"
+    }
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "track_job",
+    "j5",
+    "transcribe",
+    "write",
+    {
+     "project_id": "p1"
+    }
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "track_job",
+    "j3",
+    "generate_subtitles",
+    "write",
+    {
+     "project_id": null,
+     "meta": {
+      "a": 1
+     }
+    }
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "jobs",
+    {
+     "j3": {
+      "status": "pending",
+      "progress": 0.25,
+      "message": "En cola…"
+     },
+     "j5": {
+      "status": "error"
+     },
+     "j4": {
+      "status": "cancelled"
+     }
+    }
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "active",
+    "p1"
+   ],
+   "ret": [
+    {
+     "job_id": "j3",
+     "tool": "generate_subtitles",
+     "access": "write",
+     "project_id": null,
+     "status": "pending",
+     "meta": {
+      "a": 1
+     },
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "progress": 0.25,
+     "message": "En cola…"
+    },
+    {
+     "token": "000003ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "wait_for_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": "j1"
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000004ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "get_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": 5
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000005ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "list_jobs",
+     "access": "read",
+     "project_id": "",
+     "status": "run",
+     "meta": {},
+     "progress": null,
+     "message": null
+    }
+   ]
+  },
+  {
+   "op": [
+    "active",
+    null
+   ],
+   "ret": [
+    {
+     "job_id": "j3",
+     "tool": "generate_subtitles",
+     "access": "write",
+     "project_id": null,
+     "status": "pending",
+     "meta": {
+      "a": 1
+     },
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "progress": 0.25,
+     "message": "En cola…"
+    },
+    {
+     "token": "000003ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "wait_for_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": "j1"
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000004ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "get_job",
+     "access": "read",
+     "project_id": "p1",
+     "status": "run",
+     "meta": {
+      "job_id": 5
+     },
+     "progress": null,
+     "message": null
+    },
+    {
+     "token": "000005ab0000",
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "list_jobs",
+     "access": "read",
+     "project_id": "",
+     "status": "run",
+     "meta": {},
+     "progress": null,
+     "message": null
+    }
+   ]
+  },
+  {
+   "op": [
+    "reset_runtime"
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "active",
+    null
+   ],
+   "ret": []
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "ret": [
+    {
+     "ts": "2026-01-01T00:00:00.001+00:00",
+     "tool": "get_timeline",
+     "access": "read",
+     "project_id": "p1",
+     "param_keys": [
+      "clip_id",
+      "project_id"
+     ],
+     "status": "ok",
+     "ms": 12.3,
+     "meta": {
+      "clip_id": "c1"
+     }
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "update_clip",
+     "access": "write",
+     "project_id": null,
+     "param_keys": [],
+     "status": "error",
+     "ms": 0.1,
+     "error": "ValueError: speed inválida",
+     "meta": {
+      "speed": 3,
+      "job_id": "j1"
+     },
+     "source": "ai_chat"
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "unknown",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok"
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "unknown",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": 0.2,
+     "meta": {
+      "x": 1
+     }
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "export_project",
+     "access": "write",
+     "project_id": "p1",
+     "param_keys": [
+      "Z",
+      "a",
+      "z",
+      "á"
+     ],
+     "status": "ok",
+     "ms": NaN,
+     "error": "ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ",
+     "meta": {
+      "aspect": "9:16"
+     }
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "weird",
+     "ms": 0.3
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t2",
+     "access": "destructive",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": Infinity
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    2,
+    null
+   ],
+   "ret": [
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t2",
+     "access": "destructive",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": Infinity
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    "1",
+    "p1"
+   ],
+   "ret": [
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    0,
+    null
+   ],
+   "ret": [
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    500,
+    null
+   ],
+   "ret": [
+    {
+     "ts": "2026-01-01T00:00:00.001+00:00",
+     "tool": "get_timeline",
+     "access": "read",
+     "project_id": "p1",
+     "param_keys": [
+      "clip_id",
+      "project_id"
+     ],
+     "status": "ok",
+     "ms": 12.3,
+     "meta": {
+      "clip_id": "c1"
+     }
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "update_clip",
+     "access": "write",
+     "project_id": null,
+     "param_keys": [],
+     "status": "error",
+     "ms": 0.1,
+     "error": "ValueError: speed inválida",
+     "meta": {
+      "speed": 3,
+      "job_id": "j1"
+     },
+     "source": "ai_chat"
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "unknown",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok"
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "unknown",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": 0.2,
+     "meta": {
+      "x": 1
+     }
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "export_project",
+     "access": "write",
+     "project_id": "p1",
+     "param_keys": [
+      "Z",
+      "a",
+      "z",
+      "á"
+     ],
+     "status": "ok",
+     "ms": NaN,
+     "error": "ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ",
+     "meta": {
+      "aspect": "9:16"
+     }
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "weird",
+     "ms": 0.3
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t2",
+     "access": "destructive",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": Infinity
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    "abc",
+    null
+   ],
+   "ret": [
+    {
+     "ts": "2026-01-01T00:00:00.001+00:00",
+     "tool": "get_timeline",
+     "access": "read",
+     "project_id": "p1",
+     "param_keys": [
+      "clip_id",
+      "project_id"
+     ],
+     "status": "ok",
+     "ms": 12.3,
+     "meta": {
+      "clip_id": "c1"
+     }
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "update_clip",
+     "access": "write",
+     "project_id": null,
+     "param_keys": [],
+     "status": "error",
+     "ms": 0.1,
+     "error": "ValueError: speed inválida",
+     "meta": {
+      "speed": 3,
+      "job_id": "j1"
+     },
+     "source": "ai_chat"
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "unknown",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok"
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "unknown",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": 0.2,
+     "meta": {
+      "x": 1
+     }
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "export_project",
+     "access": "write",
+     "project_id": "p1",
+     "param_keys": [
+      "Z",
+      "a",
+      "z",
+      "á"
+     ],
+     "status": "ok",
+     "ms": NaN,
+     "error": "ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ",
+     "meta": {
+      "aspect": "9:16"
+     }
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "weird",
+     "ms": 0.3
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t2",
+     "access": "destructive",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": Infinity
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    null,
+    "p2"
+   ],
+   "ret": [
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "update_clip",
+     "access": "write",
+     "project_id": null,
+     "param_keys": [],
+     "status": "error",
+     "ms": 0.1,
+     "error": "ValueError: speed inválida",
+     "meta": {
+      "speed": 3,
+      "job_id": "j1"
+     },
+     "source": "ai_chat"
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "unknown",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok"
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "unknown",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": 0.2,
+     "meta": {
+      "x": 1
+     }
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "weird",
+     "ms": 0.3
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t2",
+     "access": "destructive",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": Infinity
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    7.9,
+    null
+   ],
+   "ret": [
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "update_clip",
+     "access": "write",
+     "project_id": null,
+     "param_keys": [],
+     "status": "error",
+     "ms": 0.1,
+     "error": "ValueError: speed inválida",
+     "meta": {
+      "speed": 3,
+      "job_id": "j1"
+     },
+     "source": "ai_chat"
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "unknown",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok"
+    },
+    {
+     "ts": "2027-12-31T23:59:59.999+00:00",
+     "tool": "unknown",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": 0.2,
+     "meta": {
+      "x": 1
+     }
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "export_project",
+     "access": "write",
+     "project_id": "p1",
+     "param_keys": [
+      "Z",
+      "a",
+      "z",
+      "á"
+     ],
+     "status": "ok",
+     "ms": NaN,
+     "error": "ññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññññ",
+     "meta": {
+      "aspect": "9:16"
+     }
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "weird",
+     "ms": 0.3
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t2",
+     "access": "destructive",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": Infinity
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    true,
+    null
+   ],
+   "ret": [
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    -5,
+    ""
+   ],
+   "ret": [
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    " 3 ",
+    "p1"
+   ],
+   "ret": [
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "weird",
+     "ms": 0.3
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t2",
+     "access": "destructive",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "ms": Infinity
+    },
+    {
+     "ts": "2028-02-29T00:00:00.000+00:00",
+     "tool": "t3",
+     "access": "read",
+     "project_id": null,
+     "param_keys": [],
+     "status": "ok",
+     "source": "ui"
+    }
+   ]
+  },
+  {
+   "op": [
+    "write_raw",
+    "﻿{\"tool\": \"x\"}\n"
+   ],
+   "ret": null,
+   "file": "﻿{\"tool\": \"x\"}\n"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "error": "JSONDecodeError: Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)"
+  },
+  {
+   "op": [
+    "write_raw",
+    "\n  {\"tool\": \"a\", \"project_id\": null}  \r\n\r\n{\"tool\": \"b\", \"project_id\": \"\"}\n{\"tool\": \"c\", \"project_id\": \"p1\"}\n\t{\"tool\": \"d\"}　\n{\"tool\": \"e\", \"project_id\": \"p2\", \"x\": NaN}"
+   ],
+   "ret": null,
+   "file": "\n  {\"tool\": \"a\", \"project_id\": null}  \r\n\r\n{\"tool\": \"b\", \"project_id\": \"\"}\n{\"tool\": \"c\", \"project_id\": \"p1\"}\n\t{\"tool\": \"d\"}　\n{\"tool\": \"e\", \"project_id\": \"p2\", \"x\": NaN}"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "ret": [
+    {
+     "tool": "a",
+     "project_id": null
+    },
+    {
+     "tool": "b",
+     "project_id": ""
+    },
+    {
+     "tool": "c",
+     "project_id": "p1"
+    },
+    {
+     "tool": "d"
+    },
+    {
+     "tool": "e",
+     "project_id": "p2",
+     "x": NaN
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    80,
+    "p1"
+   ],
+   "ret": [
+    {
+     "tool": "a",
+     "project_id": null
+    },
+    {
+     "tool": "b",
+     "project_id": ""
+    },
+    {
+     "tool": "c",
+     "project_id": "p1"
+    },
+    {
+     "tool": "d"
+    }
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    2,
+    "p2"
+   ],
+   "ret": [
+    {
+     "tool": "d"
+    },
+    {
+     "tool": "e",
+     "project_id": "p2",
+     "x": NaN
+    }
+   ]
+  },
+  {
+   "op": [
+    "write_raw",
+    "{\"tool\": \"a b\"}\n"
+   ],
+   "ret": null,
+   "file": "{\"tool\": \"a b\"}\n"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "error": "JSONDecodeError: Unterminated string starting at: line 1 column 10 (char 9)"
+  },
+  {
+   "op": [
+    "write_raw",
+    "{\"tool\": \"ab\"}\n"
+   ],
+   "ret": null,
+   "file": "{\"tool\": \"ab\"}\n"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "error": "JSONDecodeError: Unterminated string starting at: line 1 column 10 (char 9)"
+  },
+  {
+   "op": [
+    "write_raw",
+    "{\"tool\": \"a\"}\r\n{\"b\": 1}"
+   ],
+   "ret": null,
+   "file": "{\"tool\": \"a\"}\r\n{\"b\": 1}"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "error": "JSONDecodeError: Unterminated string starting at: line 1 column 10 (char 9)"
+  },
+  {
+   "op": [
+    "write_raw",
+    "[1, 2]\n5\n\"texto\"\n"
+   ],
+   "ret": null,
+   "file": "[1, 2]\n5\n\"texto\"\n"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "ret": [
+    [
+     1,
+     2
+    ],
+    5,
+    "texto"
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    80,
+    null
+   ],
+   "ret": [
+    [
+     1,
+     2
+    ],
+    5,
+    "texto"
+   ]
+  },
+  {
+   "op": [
+    "read_recent",
+    80,
+    "p1"
+   ],
+   "error": "AttributeError: 'list' object has no attribute 'get'"
+  },
+  {
+   "op": [
+    "write_raw",
+    "{\"a\": 1}\r{\"b\": 2}\f{\"c\": 3}\u001c{\"d\": 4}\u001d{\"e\": 5}\u001e{\"f\": 6}\u000b{\"g\": 7}"
+   ],
+   "ret": null,
+   "file": "{\"a\": 1}\r{\"b\": 2}\f{\"c\": 3}\u001c{\"d\": 4}\u001d{\"e\": 5}\u001e{\"f\": 6}\u000b{\"g\": 7}"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "ret": [
+    {
+     "a": 1
+    },
+    {
+     "b": 2
+    },
+    {
+     "c": 3
+    },
+    {
+     "d": 4
+    },
+    {
+     "e": 5
+    },
+    {
+     "f": 6
+    },
+    {
+     "g": 7
+    }
+   ]
+  },
+  {
+   "op": [
+    "write_raw",
+    "{\"a\": 1} {\"b\": 2}"
+   ],
+   "ret": null,
+   "file": "{\"a\": 1} {\"b\": 2}"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "ret": [
+    {
+     "a": 1
+    },
+    {
+     "b": 2
+    }
+   ]
+  },
+  {
+   "op": [
+    "write_hex",
+    "7b2261223a2022ff227d0a"
+   ],
+   "ret": null,
+   "file_hex": "7b2261223a2022ff227d0a"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 7: invalid start byte"
+  },
+  {
+   "op": [
+    "write_raw",
+    "{\"a\": 1} {\"b\": 2}\n"
+   ],
+   "ret": null,
+   "file": "{\"a\": 1} {\"b\": 2}\n"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "error": "JSONDecodeError: Extra data: line 1 column 10 (char 9)"
+  },
+  {
+   "op": [
+    "write_raw",
+    ""
+   ],
+   "ret": null,
+   "file": ""
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "ret": []
+  },
+  {
+   "op": [
+    "remove_file"
+   ],
+   "ret": null,
+   "file": null
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "ret": []
+  },
+  {
+   "op": [
+    "read_recent",
+    80,
+    null
+   ],
+   "ret": []
+  },
+  {
+   "op": [
+    "now",
+    1767225600000000
+   ],
+   "ret": null
+  },
+  {
+   "op": [
+    "begin",
+    "undo",
+    "write",
+    "p3",
+    null
+   ],
+   "ret": "000006ab0000"
+  },
+  {
+   "op": [
+    "finish",
+    "000006ab0000",
+    {
+     "param_keys": [
+      "project_id"
+     ],
+     "extra_meta": {
+      "job_id": "j9",
+      "job_status": "done"
+     }
+    }
+   ],
+   "ret": {
+    "ts": "2026-01-01T00:00:00.000+00:00",
+    "tool": "undo",
+    "access": "write",
+    "project_id": "p3",
+    "param_keys": [
+     "project_id"
+    ],
+    "status": "ok",
+    "meta": {
+     "job_id": "j9",
+     "job_status": "done"
+    }
+   },
+   "file": "{\"ts\": \"2026-01-01T00:00:00.000+00:00\", \"tool\": \"undo\", \"access\": \"write\", \"project_id\": \"p3\", \"param_keys\": [\"project_id\"], \"status\": \"ok\", \"meta\": {\"job_id\": \"j9\", \"job_status\": \"done\"}}\r\n"
+  },
+  {
+   "op": [
+    "read_all"
+   ],
+   "ret": [
+    {
+     "ts": "2026-01-01T00:00:00.000+00:00",
+     "tool": "undo",
+     "access": "write",
+     "project_id": "p3",
+     "param_keys": [
+      "project_id"
+     ],
+     "status": "ok",
+     "meta": {
+      "job_id": "j9",
+      "job_status": "done"
+     }
+    }
+   ]
+  }
+ ]
+}

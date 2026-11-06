@@ -1,0 +1,1080 @@
+{
+ "catalog": [
+  {
+   "uri": "capabilities://index",
+   "kwargs": {
+    "mime_type": "application/json",
+    "description": "Dominios, verbos y defaults del editor (descubrimiento)."
+   }
+  },
+  {
+   "uri": "help://{domain}",
+   "kwargs": {
+    "description": "Guía de uso de un dominio."
+   }
+  },
+  {
+   "uri": "config://runtime",
+   "kwargs": {
+    "mime_type": "application/json",
+    "description": "GPU, proveedor de IA, binarios, defaults y rutas."
+   }
+  },
+  {
+   "uri": "project://{pid}",
+   "kwargs": {
+    "mime_type": "application/json",
+    "description": "Resumen del proyecto (formato, material, timeline, historial)."
+   }
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "kwargs": {
+    "mime_type": "application/json",
+    "description": "Timeline en detalle (pistas y clips, sin words/keyframes)."
+   }
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "kwargs": {
+    "mime_type": "application/json",
+    "description": "Un clip de la timeline en detalle COMPLETO."
+   }
+  },
+  {
+   "uri": "project://{pid}/media",
+   "kwargs": {
+    "mime_type": "application/json",
+    "description": "Inventario de material del proyecto."
+   }
+  }
+ ],
+ "histories": [
+  {
+   "pid": "p-none",
+   "summary": {
+    "can_undo": false,
+    "can_redo": false,
+    "checkpoints": []
+   }
+  },
+  {
+   "pid": "p-empty",
+   "summary": {
+    "can_undo": true,
+    "can_redo": false,
+    "checkpoints": [
+     "inicio"
+    ]
+   }
+  },
+  {
+   "pid": "p-marks",
+   "summary": {
+    "can_undo": false,
+    "can_redo": true,
+    "checkpoints": [
+     "v1",
+     "antes de cortar",
+     "ñandú"
+    ]
+   }
+  },
+  {
+   "pid": "p-kinds",
+   "summary": {
+    "can_undo": true,
+    "can_redo": true,
+    "checkpoints": []
+   }
+  },
+  {
+   "pid": "p-odd",
+   "summary": {
+    "can_undo": false,
+    "can_redo": false,
+    "checkpoints": []
+   }
+  },
+  {
+   "pid": "p-beats",
+   "summary": {
+    "can_undo": false,
+    "can_redo": false,
+    "checkpoints": []
+   }
+  },
+  {
+   "pid": "p-beats-bool",
+   "summary": {
+    "can_undo": false,
+    "can_redo": false,
+    "checkpoints": []
+   }
+  },
+  {
+   "pid": "p-beats-float",
+   "summary": {
+    "can_undo": false,
+    "can_redo": false,
+    "checkpoints": []
+   }
+  },
+  {
+   "pid": "p-media",
+   "summary": {
+    "can_undo": true,
+    "can_redo": false,
+    "checkpoints": [
+     "a"
+    ]
+   }
+  },
+  {
+   "pid": "p-45",
+   "summary": {
+    "can_undo": false,
+    "can_redo": false,
+    "checkpoints": []
+   }
+  },
+  {
+   "pid": "p-odd-size",
+   "summary": {
+    "can_undo": false,
+    "can_redo": false,
+    "checkpoints": []
+   }
+  },
+  {
+   "pid": "p-zero",
+   "summary": {
+    "can_undo": false,
+    "can_redo": false,
+    "checkpoints": []
+   }
+  }
+ ],
+ "calls": [
+  {
+   "env": "todo disponible",
+   "uri": "capabilities://index",
+   "params": {},
+   "text": "{\"domains\": [{\"domain\": \"audio\", \"verbs\": [\"detect_beats\", \"generate_voice\", \"search_sfx\", \"set_clip_audio_fx\", \"set_clip_volume\", \"set_track_audio\", \"sound_design\"]}, {\"domain\": \"clips\", \"verbs\": [\"add_adjustment_layer\", \"add_cinema_bars\", \"add_shape\", \"animate_clip\", \"apply_effect\", \"apply_recipe\", \"crop_clip\", \"duplicate_clip\", \"freeze_frame\", \"list_effects\", \"move_clip\", \"paste_clip_attributes\", \"reframe_clip\", \"remove_clip\", \"set_clip_animation\", \"set_clip_effects\", \"set_clip_keyframes\", \"set_clip_masks\", \"split_clip\", \"track_object\", \"update_clip\"]}, {\"domain\": \"discovery\", \"verbs\": [\"describe_capabilities\", \"list_projects\", \"resolve_project\"]}, {\"domain\": \"history\", \"verbs\": [\"checkpoint\", \"redo\", \"restore_checkpoint\", \"undo\"]}, {\"domain\": \"jobs\", \"verbs\": [\"cancel_job\", \"get_job\", \"list_jobs\", \"wait_for_job\"]}, {\"domain\": \"media\", \"verbs\": [\"analyze_youtube\", \"create_clips_from_segments\", \"delete_media\", \"download_youtube_video\", \"fetch_image\", \"generate_image\", \"replace_media_version\"]}, {\"domain\": \"motion\", \"verbs\": [\"motion_add_to_timeline\", \"motion_create_composition\", \"motion_create_stick_scene\", \"motion_get_composition\", \"motion_get_frame\", \"motion_list_templates\", \"motion_segment_context\", \"motion_segment_frames\", \"motion_stick_library\", \"motion_update_composition\"]}, {\"domain\": \"project\", \"verbs\": [\"get_project_context\", \"get_timeline\", \"inspect_clip\", \"list_media\", \"set_project_format\"]}, {\"domain\": \"render\", \"verbs\": [\"export_project\"]}, {\"domain\": \"scene\", \"verbs\": [\"motion_build_scene\", \"motion_plan_scene\", \"motion_scene_directions\", \"motion_scene_questions\", \"render_timeline_frame\", \"scene_direction_auto_split\", \"scene_direction_get\", \"scene_direction_pack\", \"scene_direction_set\", \"scene_direction_status\", \"scene_direction_update_segment\", \"scene_generate_blueprint\", \"scene_get_blueprint\", \"scene_place_material\", \"scene_plan_all\", \"scene_rank_materials\", \"scene_reuse_reference\", \"scene_set_blueprint\", \"scene_set_material_meta\", \"scene_validate_segment\"]}, {\"domain\": \"text\", \"verbs\": [\"add_subtitles\", \"search_transcript\"]}, {\"domain\": \"timeline\", \"verbs\": [\"add_to_timeline\", \"add_track\", \"link_tracks\", \"remove_track\", \"rename_track\", \"reorder_track\", \"set_timeline_markers\", \"unlink_track\"]}, {\"domain\": \"transcription\", \"verbs\": [\"generate_subtitles\", \"transcribe\"]}, {\"domain\": \"vision\", \"verbs\": [\"analyze_materials\", \"get_frame\", \"set_clip_ai_description\"]}, {\"domain\": \"workflow\", \"verbs\": [\"create_short_from_youtube\", \"make_short_from_library\", \"upgrade_timeline_quality\"]}], \"defaults\": {\"aspect\": \"9:16\", \"transcribe_model\": \"small\", \"tts_engines_available\": [\"kokoro\", \"gemini\"]}, \"hint\": \"describe_capabilities(domain) para valores válidos y la guía del dominio; get_project_context(project_id) para el estado del proyecto; list_projects/resolve_project para elegir proyecto.\"}"
+  },
+  {
+   "env": "todo disponible",
+   "uri": "config://runtime",
+   "params": {},
+   "text": "{\"ffmpeg\": true, \"ffprobe\": false, \"transcribe_default\": \"small\", \"tts_engines\": [{\"id\": \"kokoro\", \"available\": true, \"voices\": [\"ef_dora\", \"em_alex\"]}, {\"id\": \"piper\", \"available\": false, \"voices\": []}, {\"id\": \"gemini\", \"available\": true, \"reason\": null, \"voices\": [\"Kore\", \"Puck\"]}, {\"id\": \"azure\", \"available\": false, \"reason\": \"Falta la clave de Azure\", \"voices\": [\"es-ES-ElviraNeural\"]}], \"data_dir\": \"C:\\\\datos\\\\video-yt\\\\data\", \"gpu\": {\"name\": \"RTX 4070\", \"cuda\": true, \"vram_mb\": 12282}, \"ai_provider\": {\"provider\": \"foundry\", \"model\": \"gpt-5\", \"configured\": true}}"
+  },
+  {
+   "env": "nada disponible",
+   "uri": "capabilities://index",
+   "params": {},
+   "text": "{\"domains\": [{\"domain\": \"audio\", \"verbs\": [\"detect_beats\", \"generate_voice\", \"search_sfx\", \"set_clip_audio_fx\", \"set_clip_volume\", \"set_track_audio\", \"sound_design\"]}, {\"domain\": \"clips\", \"verbs\": [\"add_adjustment_layer\", \"add_cinema_bars\", \"add_shape\", \"animate_clip\", \"apply_effect\", \"apply_recipe\", \"crop_clip\", \"duplicate_clip\", \"freeze_frame\", \"list_effects\", \"move_clip\", \"paste_clip_attributes\", \"reframe_clip\", \"remove_clip\", \"set_clip_animation\", \"set_clip_effects\", \"set_clip_keyframes\", \"set_clip_masks\", \"split_clip\", \"track_object\", \"update_clip\"]}, {\"domain\": \"discovery\", \"verbs\": [\"describe_capabilities\", \"list_projects\", \"resolve_project\"]}, {\"domain\": \"history\", \"verbs\": [\"checkpoint\", \"redo\", \"restore_checkpoint\", \"undo\"]}, {\"domain\": \"jobs\", \"verbs\": [\"cancel_job\", \"get_job\", \"list_jobs\", \"wait_for_job\"]}, {\"domain\": \"media\", \"verbs\": [\"analyze_youtube\", \"create_clips_from_segments\", \"delete_media\", \"download_youtube_video\", \"fetch_image\", \"generate_image\", \"replace_media_version\"]}, {\"domain\": \"motion\", \"verbs\": [\"motion_add_to_timeline\", \"motion_create_composition\", \"motion_create_stick_scene\", \"motion_get_composition\", \"motion_get_frame\", \"motion_list_templates\", \"motion_segment_context\", \"motion_segment_frames\", \"motion_stick_library\", \"motion_update_composition\"]}, {\"domain\": \"project\", \"verbs\": [\"get_project_context\", \"get_timeline\", \"inspect_clip\", \"list_media\", \"set_project_format\"]}, {\"domain\": \"render\", \"verbs\": [\"export_project\"]}, {\"domain\": \"scene\", \"verbs\": [\"motion_build_scene\", \"motion_plan_scene\", \"motion_scene_directions\", \"motion_scene_questions\", \"render_timeline_frame\", \"scene_direction_auto_split\", \"scene_direction_get\", \"scene_direction_pack\", \"scene_direction_set\", \"scene_direction_status\", \"scene_direction_update_segment\", \"scene_generate_blueprint\", \"scene_get_blueprint\", \"scene_place_material\", \"scene_plan_all\", \"scene_rank_materials\", \"scene_reuse_reference\", \"scene_set_blueprint\", \"scene_set_material_meta\", \"scene_validate_segment\"]}, {\"domain\": \"text\", \"verbs\": [\"add_subtitles\", \"search_transcript\"]}, {\"domain\": \"timeline\", \"verbs\": [\"add_to_timeline\", \"add_track\", \"link_tracks\", \"remove_track\", \"rename_track\", \"reorder_track\", \"set_timeline_markers\", \"unlink_track\"]}, {\"domain\": \"transcription\", \"verbs\": [\"generate_subtitles\", \"transcribe\"]}, {\"domain\": \"vision\", \"verbs\": [\"analyze_materials\", \"get_frame\", \"set_clip_ai_description\"]}, {\"domain\": \"workflow\", \"verbs\": [\"create_short_from_youtube\", \"make_short_from_library\", \"upgrade_timeline_quality\"]}], \"defaults\": {\"aspect\": \"9:16\", \"transcribe_model\": \"base\", \"tts_engines_available\": []}, \"hint\": \"describe_capabilities(domain) para valores válidos y la guía del dominio; get_project_context(project_id) para el estado del proyecto; list_projects/resolve_project para elegir proyecto.\"}"
+  },
+  {
+   "env": "nada disponible",
+   "uri": "config://runtime",
+   "params": {},
+   "text": "{\"ffmpeg\": false, \"ffprobe\": true, \"transcribe_default\": \"base\", \"tts_engines\": [], \"data_dir\": \"D:\\\\data\", \"gpu\": null, \"ai_provider\": null}"
+  },
+  {
+   "env": "motor disponible con valor no booleano",
+   "uri": "capabilities://index",
+   "params": {},
+   "text": "{\"domains\": [{\"domain\": \"audio\", \"verbs\": [\"detect_beats\", \"generate_voice\", \"search_sfx\", \"set_clip_audio_fx\", \"set_clip_volume\", \"set_track_audio\", \"sound_design\"]}, {\"domain\": \"clips\", \"verbs\": [\"add_adjustment_layer\", \"add_cinema_bars\", \"add_shape\", \"animate_clip\", \"apply_effect\", \"apply_recipe\", \"crop_clip\", \"duplicate_clip\", \"freeze_frame\", \"list_effects\", \"move_clip\", \"paste_clip_attributes\", \"reframe_clip\", \"remove_clip\", \"set_clip_animation\", \"set_clip_effects\", \"set_clip_keyframes\", \"set_clip_masks\", \"split_clip\", \"track_object\", \"update_clip\"]}, {\"domain\": \"discovery\", \"verbs\": [\"describe_capabilities\", \"list_projects\", \"resolve_project\"]}, {\"domain\": \"history\", \"verbs\": [\"checkpoint\", \"redo\", \"restore_checkpoint\", \"undo\"]}, {\"domain\": \"jobs\", \"verbs\": [\"cancel_job\", \"get_job\", \"list_jobs\", \"wait_for_job\"]}, {\"domain\": \"media\", \"verbs\": [\"analyze_youtube\", \"create_clips_from_segments\", \"delete_media\", \"download_youtube_video\", \"fetch_image\", \"generate_image\", \"replace_media_version\"]}, {\"domain\": \"motion\", \"verbs\": [\"motion_add_to_timeline\", \"motion_create_composition\", \"motion_create_stick_scene\", \"motion_get_composition\", \"motion_get_frame\", \"motion_list_templates\", \"motion_segment_context\", \"motion_segment_frames\", \"motion_stick_library\", \"motion_update_composition\"]}, {\"domain\": \"project\", \"verbs\": [\"get_project_context\", \"get_timeline\", \"inspect_clip\", \"list_media\", \"set_project_format\"]}, {\"domain\": \"render\", \"verbs\": [\"export_project\"]}, {\"domain\": \"scene\", \"verbs\": [\"motion_build_scene\", \"motion_plan_scene\", \"motion_scene_directions\", \"motion_scene_questions\", \"render_timeline_frame\", \"scene_direction_auto_split\", \"scene_direction_get\", \"scene_direction_pack\", \"scene_direction_set\", \"scene_direction_status\", \"scene_direction_update_segment\", \"scene_generate_blueprint\", \"scene_get_blueprint\", \"scene_place_material\", \"scene_plan_all\", \"scene_rank_materials\", \"scene_reuse_reference\", \"scene_set_blueprint\", \"scene_set_material_meta\", \"scene_validate_segment\"]}, {\"domain\": \"text\", \"verbs\": [\"add_subtitles\", \"search_transcript\"]}, {\"domain\": \"timeline\", \"verbs\": [\"add_to_timeline\", \"add_track\", \"link_tracks\", \"remove_track\", \"rename_track\", \"reorder_track\", \"set_timeline_markers\", \"unlink_track\"]}, {\"domain\": \"transcription\", \"verbs\": [\"generate_subtitles\", \"transcribe\"]}, {\"domain\": \"vision\", \"verbs\": [\"analyze_materials\", \"get_frame\", \"set_clip_ai_description\"]}, {\"domain\": \"workflow\", \"verbs\": [\"create_short_from_youtube\", \"make_short_from_library\", \"upgrade_timeline_quality\"]}], \"defaults\": {\"aspect\": \"9:16\", \"transcribe_model\": \"large-v3\", \"tts_engines_available\": [\"kokoro\"]}, \"hint\": \"describe_capabilities(domain) para valores válidos y la guía del dominio; get_project_context(project_id) para el estado del proyecto; list_projects/resolve_project para elegir proyecto.\"}"
+  },
+  {
+   "env": "motor disponible con valor no booleano",
+   "uri": "config://runtime",
+   "params": {},
+   "text": "{\"ffmpeg\": true, \"ffprobe\": true, \"transcribe_default\": \"large-v3\", \"tts_engines\": [{\"id\": \"kokoro\", \"available\": 1, \"voices\": []}, {\"id\": \"piper\", \"available\": \"\", \"voices\": [\"x\"]}], \"data_dir\": \"data\", \"gpu\": {}, \"ai_provider\": []}"
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "audio"
+   },
+   "text": "Audio de clips y pistas + TTS + SFX:\n- detect_beats(clip_id, every=1): detecta los beats de la música de un clip de audio/vídeo y los guarda en el clip (puntos de imán al mover/recortar clips en el editor; every 2|4 deja uno de cada N). Devuelve bpm y nº de beats.\n- set_clip_volume(clip_id, volume?, muted?, fade?, fade_dur=0.5): volume 0–2 (1=100%, máx 200%); fade in|out crea keyframes de volumen (no recorta el audio).\n- set_track_audio(track_id, volume?, muted?, audio_fx?, fade?, fade_dur=0.5): aplica a TODOS los clips de una pista de audio (o vídeo con audio). Úsalo cuando el usuario hable de 'esa línea'/'esa pista'.\n- sound_design(clip_id, apply=True): sonoriza una escena de vídeo/imagen con IA (mira sus fotogramas si hay Foundry): elige SFX de la biblioteca (ambiente a volumen bajo + sonidos puntuales en su momento) y los coloca en pistas SFX. Job: wait_for_job; result.missing dice qué sonidos faltan en la biblioteca.\n- set_clip_audio_fx(clip_id, audio_fx, replace=False, ramp?): efectos eq, compressor, reverb, echo, denoise, distortion y filtros de sonido underwater (bajo el agua), telephone, radio, megaphone, muffled (habitación de al lado), 0–1 = intensidad. MERGE por defecto; solo vídeo/audio. ramp={start, end, from=0} (s del clip) anima la intensidad: «la música se va hundiendo al entrar al agua» = set_clip_audio_fx(id, {underwater: 1}, ramp={start: 2, end: 3.5}).\n- generate_voice(text, engine=kokoro, voice=ef_dora, voice2?, blend=0.5, speed=1, pause=0.4, name?, style?): TTS de narrador → audio del proyecto. engine kokoro|piper|gemini|azure (deben estar disponibles). Devuelve job.\n- search_sfx(query='', category='', limit=50): busca efectos de sonido en la biblioteca local. No necesita proyecto. Usa el id devuelto en add_to_timeline(asset_kind='sfx')."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "clips"
+   },
+   "text": "Operaciones sobre clips de la timeline (todas deshacibles con undo):\n- Estructura: move_clip(clip_id, start?, track_id?), split_clip(clip_id, at_time) [instante ABSOLUTO de timeline], remove_clip(clip_id) [destructivo, deshacible], duplicate_clip(clip_id, start?) [por defecto detrás del original].\n- Colocación: add_to_timeline(asset_kind, asset_id, track_id?, start=0, in_point?, out_point?). asset_kind clips|audios|images|sfx; asset_id = index del clip / id del audio o imagen / id de SFX de search_sfx. Un SFX entra como clip de audio (crea pista si falta). Por defecto usa el material completo; si el asset no tiene duración conocida, pasa out_point.\n- Propiedades escalares (UNA operación): update_clip(clip_id, patch). patch admite: opacity (0–1); speed (0.1–10) + keep_pitch/reverse [no en texto/imagen/figura]; appear/exit (none|fade|dissolve|wipe|zoom|slide_*|pop); position (full|top|bottom|free) + start + duration; role (caption|free, solo texto); note (qué REPRESENTA ese fragmento en la historia, p.ej. 'el científico escribe la ecuación'; \"\" la borra); flip_h / flip_v (voltear en horizontal/vertical vídeo, imagen, figura o texto: el reflejo de un título es una copia con flip_v); blend_mode (modo de fusión con lo de debajo: normal|darken|multiply|color_burn|lighten|screen|color_dodge|overlay|soft_light|hard_light|difference|exclusion; screen quita el negro de un overlay de luces, multiply el blanco). Ej.: update_clip(id, {\"position\":\"top\", \"opacity\":0.8}).\n- Pegar atributos (como Ctrl+Alt+V de CapCut): paste_clip_attributes(source_clip_id, target_clip_ids, groups?) copia de un clip a otros, en un solo undo, los grupos elegidos: transform (posición/escala/giro), flip, blend (opacidad + fusión), animation (keyframes de pose), transitions (appear/exit), crop (encuadre), effects (filtro + efectos + ajustes), mask, chroma (croma + contorno; nunca el recorte IA), style (texto→texto o figura→figura), speed, audio (volumen + fx). Sin groups pega todos los que apliquen; el contenido y los tiempos no cambian.\n- Recetas (trucos completos en un paso, un solo undo): apply_recipe(recipe, clip_ids?, params?). cinema_grade = etalonaje de cine (capa de ajuste + barras); text_reflection = reflejo de un texto (copia volteada, máscara y Superponer); pass_through_text = la cámara atraviesa el texto (escala ×60 al final); film_strips = 2–6 clips en franjas que entran en los beats (detect_beats antes); subject_pop = el sujeto recortado aparece antes que su plano (luego hay que generar su recorte IA en el editor).\n- Barras de cine: add_cinema_bars(ratio=2.39|2|1.85|16:9, start=0, duration?, animate=False): figura letterbox encima de todo; sin duration llega al final. En 9:16 las barras de 2.39 son muy gruesas: para un toque sutil usa 16:9 o ajusta shape.bar (alto de cada barra, 0–0.45).\n- Capa de ajuste (etalonaje de toda una escena): add_adjustment_layer(start, duration=5, filters?, effects?, intensity=1) filtra todo lo que tiene debajo (vídeos, imágenes, figuras; los textos quedan encima). Se edita con set_clip_effects y update_clip(opacity = intensidad).\n- Seguimiento (tracking): track_object(clip_id, box, at_time, follower_clip_id?, mode=position_scale) sigue un objeto de un vídeo desde at_time (hacia delante y atrás, en su tramo). box = {cx, cy, w, h} en 0–1 del fotograma FUENTE (mira get_frame(clip_id, at_time) para situarlo). Con follower_clip_id ese texto/figura/imagen acompaña al objeto (keyframes; mode position | position_scale | position_scale_rotation). Es un job: wait_for_job.\n- Congelar fotograma: freeze_frame(clip_id, at_time, duration=3) parte un vídeo en at_time (s de timeline) e inserta una imagen fija de ese fotograma con la misma pose/recorte/efectos; lo que viene detrás en la pista se desplaza.\n- Notas de contexto: la nota de cada clip llega en existingElements[].note de motion_segment_context. Léela antes de diseñar (dice qué significa el fragmento, cosa que los frames no cuentan) y escríbela con update_clip cuando la sepas.\n- Encuadre de FUENTE (no es animación): reframe_clip(clip_id, mode, zoom?, pan_from?, pan_to?). mode center (zoom) | manual (zoom + paneo estático en pan_from, o animado pan_from→pan_to; cada uno {cx,cy}).\n- Recorte (como el modal Recortar/CapCut) de objetos libres: crop_clip(clip_ids?, track_id?, reset?, cx?, cy?, w?, h?). Ventana sobre la fuente en 0-1, fija en todo el clip. reset=true = Restablecer (fotograma completo); track_id = toda la pista en un solo undo.\n- Efectos visuales: set_clip_effects(effects, replace=False) blur|grayscale|sepia|brightness|contrast|saturation y ajustes de color exposure (-1..1, pasos de diafragma) | whites (-1..1, punto blanco) | temperature (-1..1, >0 cálido) | hue (-180..180°) (MERGE por defecto, solo visuales). Filtros de color apilables (como CapCut): set_clip_effects(clip_id, filters=[{id, amount 0–1}, …]) en orden de aplicación; ids bw, noir, sepia, vintage, faded, matte, cinematic, teal_orange, night, matrix, contrast, saturated, warm, golden, cool (filters=[] los quita). Etalonaje de cine = p. ej. [{id: teal_orange, amount: 0.7}, {id: faded, amount: 0.3}].\n- Máscaras (como CapCut): set_clip_masks(clip_id, masks) sustituye la lista. Cada máscara {type, x, y (0-1 del lienzo), w, h (unidades de ALTO), rotation, feather (0-0.25), invert, opacity, target}. type: linear (división) | film (rollo de película: banda de alto h) | circle | rectangle | star | heart | text | brush. target: clip (qué parte del clip se ve) | adjust (los ajustes de color solo actúan dentro). Vale para vídeo, imagen, figura y TEXTO. masks[0] anima con keyframes (mx,my,mw,mh,msx,msy,mrot,mfeather).\n- Animación de aparición: usa animate_clip, NO set_clip_keyframes a mano. animate_clip(clip_id, motion, duration?, follow_audio_id?, intensity=1, turns=1). motion: zoom_in, zoom_out, spin, spin_in, slide_left, slide_right, slide_up, slide_down, fade_in, fade_out, pop, pulse, draw_in (solo figuras: el trazo se dibuja de 0 a 100 % en duration s, ~1.5). duration = ventana de la intro (~0.45s). turns = vueltas (spin/spin_in). follow_audio_id = id de un clip de audio/SFX en la timeline: la animación sigue su volumen (aparece/gira/entra con los golpes). Ej.: «haz zoom»→zoom_in; «que entre girando»→spin_in; «que aparezca de la izquierda con el sfx»→slide_left + follow_audio_id.\n- set_clip_keyframes(clip_id, keyframes|None): escape hatch experto. {enabled, items:[{id,t,interpolation,bezier?,props}]}. props: x/y/scale/rotation/opacity (en textos también rot_x/rot_y: giro 3D, −75…75°) y también volume (0–2) y fx de audio. interpolation = curva con que se LLEGA a ese keyframe: linear, ease-in, ease-out, ease-in-out, cubic-in, cubic-out, cubic-in-out, back-out (rebote), hold o bezier (+ bezier:[x1,y1,x2,y2] como cubic-bezier de CSS; x 0–1, y −1…2). Casi nunca a mano.\n- add_shape(shape, track_id?, start=0, duration?, points?): figura vectorial (rect/línea/flecha/estrella/corazón…) en una pista de vídeo. shape.dash = solid|dash|dot (trazo continuo, discontinuo o punteado). Trazado libre (ruta sobre un mapa, subrayado a mano): points = [[x, y], …] en 0–1 del cuadro; la curva pasa por todos (shape.smooth=false → rectas; shape.closed=true lo cierra). Para que se dibuje solo: animate_clip(id, draw_in)."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "discovery"
+   },
+   "text": "Descubrir capacidades y proyecto (no obligan a conocer la arquitectura):\n- describe_capabilities(domain?): sin domain, mapa de dominios + verbos + defaults; con domain (transcription/audio/clips/media/project/text/…), los VALORES VÁLIDOS (modelos, voces disponibles, motions, crop_modes…) y la guía de ese dominio. Úsalo antes de usar un dominio nuevo, para no adivinar.\n- list_projects(): proyectos del editor (id, nombre, formato, duración).\n- resolve_project(query): resuelve por id/prefijo o por nombre → {project_id} o {candidates:[…]} si es ambiguo (entonces pregunta, no adivines). El project_id es obligatorio en el resto de tools."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "history"
+   },
+   "text": "Toda edición estructural de la timeline es transaccional y deshacible:\n- undo() / redo(): deshace/rehace la última operación.\n- checkpoint(name): marca un punto seguro con nombre.\n- restore_checkpoint(name): vuelve a un checkpoint (también deshacible).\nRecomendado: un checkpoint antes de un cambio grande."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "jobs"
+   },
+   "text": "Operaciones largas (transcribe, subtitles, tts, create_clips, export, workflows) devuelven un job {id, status, progress, message, result}.\n- Espera con wait_for_job(job_id, timeout_s=60): bloquea en el threadpool hasta done/error, o devuelve el estado con timed_out:true. PREFIÉRELO al polling manual.\n- get_job(job_id): estado puntual. list_jobs(): todos los de este proceso.\n- cancel_job(job_id): cancelación cooperativa best-effort (aborta en el siguiente tick; un FFmpeg en marcha no se corta hasta ahí).\nNota: los jobs viven en memoria del proceso; se pierden al reiniciar."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "media"
+   },
+   "text": "Material y YouTube:\n- analyze_youtube(url, min_score=0.40, max_clips=10, max_duration=60, padding=10): analiza el heatmap y devuelve los tramos más vistos (segments). Síncrono. Los segments se pasan tal cual a create_clips_from_segments.\n- create_clips_from_segments(url, segments, crop_mode=center): job que recorta los segments a clips del proyecto. crop_mode: center | smart_face | split_left | split_right. Espera con wait_for_job y mira list_media.\n- fetch_image(url, label?): descarga una imagen y la añade al proyecto (devuelve id para add_to_timeline con asset_kind=images).\n- generate_image(prompt, aspect=9:16, model=auto, label?): genera una imagen con IA (Foundry: MAI-Image 2.5/2.6, FLUX.2 pro/flex) y la añade al proyecto. Si un modelo falla o agota su cuota pasa solo al siguiente; model fija el preferido. aspect 9:16|16:9|1:1|3:4|4:3. Prompt detallado (sujeto, estilo, luz, encuadre); en inglés suele rendir mejor. Devuelve id para add_to_timeline con asset_kind=images.\n- delete_media(kind, ident): borra material Y su archivo. kind clips|audios|images; ident = index del clip o id del audio/imagen. NO deshacible.\n- download_youtube_video(url, quality?): job que baja el vídeo COMPLETO al material. quality = lado corto (720, 1080, 1440, 2160…); None = la máxima (analyze_youtube devuelve video.qualities). result: clip_index, quality y upgradable (versiones de menos calidad del mismo vídeo que la timeline podría cambiar por ésta).\n- replace_media_version(clip_index, old_indexes?, dry_run=False): pone clip_index (vídeo completo) en la timeline en lugar de sus otras versiones (mismo vídeo de YouTube, menos calidad) conservando cortes, encuadre y animaciones; desplaza in/out si la versión vieja era un tramo. dry_run=True solo lista versions/upgradable. Deshacible con undo. Rechaza versiones con otra proporción (recorte 9:16 horneado). «Quitar fondo» hay que regenerarlo."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "motion"
+   },
+   "text": "Motion graphics EDITABLES (composición JSON → HTML/GSAP → render con alfa). Flujo contextual 'Generar Motion':\n1. motion_segment_context(project_id, start?, end?): guion de ESE tramo (previous/current/next + keyTerms), clip activo, elementos que ya ocupan el tramo (motionInRange = posibles duplicados), assets relevantes y estilo (formato, fuente/acento de subtítulos, avoidY = franja de subtítulos que no hay que tapar). Sin tiempos usa el rango marcado en el editor (teclas I/O). No pidas get_timeline para esto.\n1b. (opcional) motion_segment_frames(project_id, start?, end?, n?): un montage de fotogramas de la FUENTE del vídeo del tramo (sin overlays) para VER qué se muestra antes de proponer. Sin tiempos usa el rango marcado.\n2. motion_create_composition(project_id, composition | template+params): duration = fin − inicio EXACTO del tramo; width/height/fps = style.format.\n3. motion_get_frame(project_id, composition_id, n?): mírala antes de insertar.\n4. motion_add_to_timeline(project_id, composition_id, start): la coloca como clip 'motion' (overlay con alfa) en el segundo indicado.\nAjustes posteriores: motion_get_composition + motion_update_composition (solo esa composición).\nESQUEMA: composition = {name, width, height, fps, duration, background: 'transparent' | '#rrggbb', layers: [...]}. Cada layer: {id único, type: 'text' | 'shape' | 'html', x, y, start, end (s, end ≤ duration), opacity, scale, rotation, z_index, animation: {entrance, exit}, effect}. ORIGEN de x,y: para 'text'/'shape' es el CENTRO en px; para 'html' a pantalla completa usa x=0, y=0, width=W, height=H (arriba-izquierda, llena el lienzo) — NO lo centres con x=W/2,y=H/2.\n- text: content + style {font (familia CSS; disponibles: Inter, Poppins, Montserrat, Oswald, 'Bebas Neue', 'Playfair Display', Caveat/Kalam (manuscrita), Pacifico (script), 'JetBrains Mono'), fontSize, fontWeight, color, letterSpacing, lineHeight, textTransform, shadow}. Efectos de texto: degradado (gradientFrom+gradientTo+gradientAngle), contorno (outlineWidth+outlineColor), resaltado (background+padding+borderRadius).\n- shape: shape {kind: 'circle' (radius, fill, stroke, thickness) | 'rect' (width, height, fill, stroke, borderRadius, shadow) | 'line' (x2, y2, thickness, stroke; va de x,y a x2,y2)}. fill 'none' = solo contorno. Para TARJETAS limpias usa rect con fill=surface, stroke=border, borderRadius y shadow (sombra CSS suave).\n- entrance/exit: {type: fade | slide | scale | zoom | rotate | draw (líneas), direction (slide: left/right/up/down), distance (px), from_scale, degrees, duration ≤ vida de la capa, delay, ease (power1-4.in/out/inOut, back.*, elastic.*, bounce.*, sine.*, expo.out, circ.out, none)}.\n- effect (continuo): {type: pulse (amount) | glow | flow (punto que recorre una línea; duration = periodo), delay}.\nPLANTILLAS VISUALES (antes que las de texto): stack_list (elementos que caen y se apilan), card_grid (cuadrícula), sequence_rows (filas editoriales), versus (cara a cara), before_after, flow_steps (proceso con flechas), decision_tree, concept_map, line_graph (trazo que se dibuja), timeline_track (hitos fechados), asset_showcase (PNG del material como protagonistas), annotate (flecha sobre el vídeo), assemble (piezas que convergen). Reciben contenido: items=[{label, sublabel?, image?}] con image = id de una imagen del material (se incrusta el PNG REAL; nunca dibujes un logo falso). motion_list_templates trae best_for/slots de cada una. Las de categoría 'user' (u_…) son composiciones guardadas por el usuario: se rellenan con params={texts:{original:nuevo}, images:{id_original:id_nuevo}}.\nPLANTILLAS de texto: pro_title (antetítulo+título+subrayado), title (título simple), bullet_list (lista escalonada), quote (cita), stat (número grande con conteo), bar_chart (barras que crecen + conteo), lower-third, subscribe, neural_network. Acepta params theme ('light' por defecto|'dark'|'editorial') y accent (#rrggbb). PREFIÉRELAS: se ven mejor que un JSON a mano.\nCAPA type:'html' (bloque HTML+GSAP) para efectos ricos que las primitivas no cubren (números que cuentan, barras que se llenan, aparición por letras, flip, reveals): {type:'html', html (markup SIN <script>), css, js}. 'js' = CUERPO de una función (tl, root, gsap, ctx) que añade tweens a la timeline 'tl' del bloque (seekable). ctx={width,height,duration,life,start,end,theme}. USA SIEMPRE tl.fromTo(el,{ini},{fin}) y NUNCA tl.from()/tl.to() (con .from() el preview se rebobina mal y en la 2ª reproducción los elementos quedan invisibles). NADA de Date.now/Math.random; para contar anima un proxy con fromTo({v:0},{v:target,onUpdate...}) y escribe textContent en onUpdate; envuelve <img>/<video> en un <div> y anima el <div>.\nDISEÑO (minimalista tipo Tailwind UI): un solo protagonista por plano, superficies limpias y neutras (tarjetas con borde fino + sombra suave; formas rect con borderRadius+shadow), UN acento sobrio, mucho espacio, tipografía Inter con jerarquía. NADA de neón/glow ni colores saturados. Movimiento SUTIL: fade + desplazamiento corto con power2.out/power3.out; NUNCA back/elastic/bounce; stagger 0.08–0.15s. Respeta style.avoidY. Para diagramas complejos usa un template.\nHISTORIAS CON STICKMAN (para contar una anécdota/ilustrar el guion con personajes): motion_stick_library(project_id) → vocabulario + reparto existente; motion_create_stick_scene(project_id, storyboard, composition_id?, for_range?). storyboard = {title, style:{preset: clean|paper|chalk|transparent, captions}, environment:{preset}, characters:[{id, name, body, hair, outfit, shirt, pants, accessory, description}], shots:[{duration, description, caption, camera: wide|medium|close, focus, moving, fx:[{type, target, at}], actors:[{id, pose, expression, x 0..1, to_x?, facing ±1}]}]}. Reutiliza id y aspecto del reparto existente (continuidad). Violencia SIEMPRE no gráfica (poses + fx impact/shake), sin estereotipos."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "project"
+   },
+   "text": "Contexto en capas (mínimo → detalle):\n- get_project_context(project_id): formato de salida, inventario de material (clips/audios/imágenes/transcripciones con listas breves), timeline resumida e historial (undo/redo/checkpoints). Primer paso.\n- get_timeline: pistas y clips con sus propiedades (posición, duración, frame/layout/look/speed…), SIN datos pesados (words, keyframes).\n- Regla de pistas: una pista NUNCA tiene dos clips a la vez. Un clip colocado/movido encima de otro sube a la pista vecina libre de su tipo (o a una nueva) en el mismo instante; uno que crece (speed/duración) empuja a los de detrás. Mira warnings/changed para saber dónde quedó. Una pista con magnetic=true no tiene huecos: lo que entra se inserta y empuja.\n- inspect_clip(clip_id): un clip COMPLETO (reframe/keyframes, words, transform, origin). Úsalo solo para el clip que vas a tocar.\n- list_media: inventario detallado del material.\n- set_project_format(aspect|resolution|width/height, fps): aspect 16:9/9:16/1:1/4:3/3:4/4:5 (conserva el lado corto); resolution 480/720/1080/2160 = lado corto (conserva la proporción). Reescala/reencuadra todo (deshacible con undo)."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "render"
+   },
+   "text": "Export final:\n- export_project(timeline?): renderiza el vídeo componiendo toda la timeline (job). Por defecto usa la timeline guardada del proyecto; pasa timeline solo para exportar una distinta. Espera con wait_for_job y recoge result.export_url. Operación cara: no deshacible."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "scene"
+   },
+   "text": "DIRECCIÓN DE ESCENA: dirige el vídeo entero tramo a tramo. La app hace lo mecánico (cortar el guion, preparar contexto); tú solo decides QUÉ se ve en cada tramo. Pensado para funcionar con cualquier modelo: el contexto llega compacto y ya decidido, no tienes que entender el proyecto entero.\nFlujo:\n0. DIRECCIÓN GLOBAL primero (Fase 5): scene_get_blueprint(project_id) para ver la identidad visual del vídeo entero (estilo, vocabulario permitido, reglas) y las direcciones creativas disponibles. Si no hay ninguna, scene_generate_blueprint(project_id) la PROPONE con IA a partir del guion completo y el material (apply=true la guarda); scene_set_blueprint(project_id, blueprint) la fija/edita a mano (direction, identity, vocabulary[], rules[], intensity_curve). Entra en TODOS los packs y da coherencia: decide el LENGUAJE del vídeo antes de bajar a cada tramo.\n0b. PLAN de todo el vídeo de una vez (opcional, tras tener escaleta y blueprint): scene_plan_all(project_id) rellena en UNA pasada barata el plan editorial de CADA tramo (mode + composition_intent + complexity 1-5 + no_visual), guiado por la dirección global. Es el 'plan de fabricación' antes de montar tramo a tramo; luego afinas con scene_direction_update_segment.\n1. scene_direction_status(project_id): el MAPA. Tramos, su estado (empty→ready→generated→placed), modo, si ya tienen material/escena, y 'pending' = los que aún necesitan visual. Empieza aquí para saber qué falta.\n2. scene_direction_get(project_id): la escaleta completa + el guion en frases con tiempos + los modos + el catálogo de materiales (título+descripción; la DESCRIPCIÓN es lo que usas para elegir). Si no hay escaleta, scene_direction_auto_split la propone (no guarda; persiste con scene_direction_set).\n3. scene_direction_pack(project_id, segment={start,end,mode?,instruction?,strict?,materials?}): el PACK de UN tramo, lo ÚNICO que necesitas para decidir. 'text' es el prompt exacto e incluye la ZONA DE SUBTÍTULOS a respetar (no tapes ahí texto/caras/sujeto principal). 'skeleton' son los beats ya cortados: solo rellenas qué se ve en cada uno. 'brief_defaults' arranca Generar Escena.\n   - scene_rank_materials(project_id, text): candidatos por relevancia a demanda (sin pedir el pack), con 'match' = términos coincidentes.\n   - scene_set_material_meta(project_id, kind, material_id, meta, scope?): enriquece un material con metadata semántica (subjects/actions/environment/mood/composition/visual_content/suggested_usage/visual_priority) para que elijas por concepto y no solo por palabras. Puebla lo que ves (get_frame) y mejora el ranking y el pack.\n4. scene_direction_update_segment(project_id, segment_id, patch): dirige un tramo (mode/instruction/strict/materials/reference_id) o marca su estado tras montarlo. Plan editorial (§SCENE PLAN): composition_intent (en lenguaje natural: qué es principal, qué acompaña, qué zonas dejar libres), complexity 1–5 (1 simple … 5 clímax; no lo revientes en cada tramo) y no_visual=true (este tramo no necesita nada nuevo: basta mantener el plano + subtítulos). MODOS: propose (propón el enfoque) · explain (haz entender lo narrado) · represent (metáfora visual, sin texto) · reinforce (repite la escena de reference_id) · material (el protagonista es el material indicado). strict=true → seguir el guion frase a frase.\n5. Composición HÍBRIDA (§3.4-3.5): un tramo NO tiene por qué ser un solo recurso; combina b-roll + motion + stickman cuando aporte. Planifícalo en el campo `components` del tramo (update_segment): lista de {source: material|motion|stickman|text|graphic|keep, role, material?, source_range?, note}. role: full|broll|overlay|pip|side_panel|circular|background|reference. Es el SCENE PLAN.\n6. Ejecuta con scene_place_material(project_id, segment_id, material?, role, source?, size?, pos?, opacity?, transform?): coloca un material (recortado al fragmento) con su rol (pip a la derecha, panel lateral, fondo…). Para motion/stickman usa las tools de motion (motion_add_to_timeline). Coloca varios para una composición híbrida.\n7. GENERAR ESCENA (cuando ningún material sirve; la IA crea motion graphics/stickman): motion_scene_directions (elige una direction_id/estilo) → motion_scene_questions(direction_id) → responde con motion_plan_scene(answers) → revisa/edita los beats → motion_build_scene(plan): crea el borrador (composition_id) y, con direction_id, lo enlaza al tramo (status 'generated'). Insértalo con motion_add_to_timeline (dominio motion). Para 'reinforce' (repetir una escena previa) usa scene_reuse_reference (sin IA).\n8. VERIFICA el montaje antes de darlo por bueno: scene_validate_segment(segment_id) detecta por geometría colisiones con la zona de subtítulos, elementos fuera de pantalla y solapes; devuelve issues con sugerencias. Corrige con scene_place_material y vuelve a validar (bucle montar→validar→corregir). Para ver el frame REAL compuesto usa render_timeline_frame(at_time) (más lento).\nRegla editorial: EDIT > COMBINE > GENERATE. Antes de generar algo nuevo, mira si un material existente (o combinado/recortado) ya lo cuenta. Estados del tramo: empty→ready (dirigido)→generated (escena creada)→placed (en la timeline)."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "text"
+   },
+   "text": "Editar por CONTENIDO y subtítulos:\n- search_transcript(query, limit=20): busca texto en las transcripciones y devuelve dónde se dice con tiempos (scope project/clip, clip_index o transcript_id, start/end, text). Úsalo para 'corta donde dice X' o 'quita la intro': localiza el texto y luego split_clip/remove_clip/layout.\n- add_subtitles(source_clip_id, segments, track_id?, transcript_id?, style?): crea clips de texto con words[] reales desde los segments de una transcripción, alineados al clip fuente. Crea la pista de texto si falta.\n- Rol de un clip de texto: update_clip(clip_id, {role: caption|free})."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "timeline"
+   },
+   "text": "Pistas y colocación:\n- set_timeline_markers(markers): sustituye los marcadores de la timeline [{t (s), label?, color?}] ([] los borra); get_timeline los devuelve en 'markers'. Son puntos de imán como los beats.\n- add_track(kind, name?): kind video|audio|text; name opcional (SFX, Voz…); si se omite, A1/A2/V1…\n- rename_track(track_id, name): el id no cambia; el nombre es lo que se ve.\n- reorder_track(track_id, target_track_id, place=above|below): orden de capas. Vídeo y texto forman UNA pila (la pista de arriba se ve delante): un texto debajo de un vídeo queda detrás de él. Texto detrás de una persona = vídeo completo, encima el texto y encima el mismo vídeo con el fondo eliminado.\n- remove_track(track_id): elimina la pista y TODOS sus clips (deshacible).\n- link_tracks(track_id, to_track_id) / unlink_track(track_id): liga audio↔texto (al cambiar velocidad, la ligada se escala).\n- add_to_timeline: ver dominio clips."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "transcription"
+   },
+   "text": "Generar guion con words[] reales (faster-whisper, local):\n- transcribe(source? | clip_index?, model?, language?): pasa O source (URL de YouTube → guion del proyecto) O clip_index (transcribe ese clip del material), no ambos. model: tiny|base|small|medium|large-v3 (si se omite, el de Ajustes). Devuelve job.\n- generate_subtitles(filename, asset_kind=audios, model?, language?, asset_scope=project, source_clip_id?): transcribe un audio Y crea la pista de subtítulos en la timeline en un paso. filename = archivo del audio; asset_kind clips|audios; asset_scope project|library; source_clip_id = clip de la timeline a subtitular (si se omite, se busca por filename). Espera el job; los subtítulos quedan en la timeline al terminar."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "vision"
+   },
+   "text": "Ojos de la IA + descripción de material:\n- get_frame(clip_index, at_time?): devuelve un fotograma (imagen) de un clip del material para que lo VEAS. at_time = segundo dentro del clip (por defecto el centro). Úsalo para entender/etiquetar un clip antes de editarlo.\n- set_clip_ai_description(clip_index, description): guarda tu descripción en un campo APARTE (description_ai); NO pisa la del usuario.\n- analyze_materials(only_missing=True, rename_generic=True): EN LOTE con la visión de Microsoft Foundry (3 fotogramas por clip + el guion). Guarda description_ai + semantic en clips e imágenes; rellena description solo si estaba vacía y el título solo si era genérico (vacío, nombre de archivo, 'image', o repetido como el del tráiler). Devuelve job; result = resumen. Úsalo ANTES de dirigir escenas: mejora scene_rank_materials y el pack."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "workflow"
+   },
+   "text": "Objetivos completos en UN job (úsalos cuando la petición es el objetivo entero, no cuando el usuario quiere iterar paso a paso):\n- create_short_from_youtube(url, crop_mode=smart_face, count=1, model?, language?, subtitles=True, export=True, min_score=0.40, max_duration=60, padding=10): heatmap → recorte a vertical → timeline 9:16 → transcribe → subtítulos → export. result.export_url.\n- make_short_from_library(asset_id, asset_kind=clips, model?, language?, subtitles=True, export=True): igual pero desde un clip ya en el proyecto (asset_id = index del clip), sin descargar.\n- upgrade_timeline_quality(url?, quality?, replace=True): edición rápida en baja calidad → final en alta. Por cada vídeo de YouTube que usa la timeline (o solo url) reutiliza la versión completa ya descargada si llega a quality (None = máxima) o la baja, y cambia los clips a ella (replace_media_version). result.videos[]: quality, downloaded, replaced.\nPon export=False para frenar antes del render."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "discovery"
+   },
+   "text": "Descubrir capacidades y proyecto (no obligan a conocer la arquitectura):\n- describe_capabilities(domain?): sin domain, mapa de dominios + verbos + defaults; con domain (transcription/audio/clips/media/project/text/…), los VALORES VÁLIDOS (modelos, voces disponibles, motions, crop_modes…) y la guía de ese dominio. Úsalo antes de usar un dominio nuevo, para no adivinar.\n- list_projects(): proyectos del editor (id, nombre, formato, duración).\n- resolve_project(query): resuelve por id/prefijo o por nombre → {project_id} o {candidates:[…]} si es ambiguo (entonces pregunta, no adivines). El project_id es obligatorio en el resto de tools."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "project"
+   },
+   "text": "Contexto en capas (mínimo → detalle):\n- get_project_context(project_id): formato de salida, inventario de material (clips/audios/imágenes/transcripciones con listas breves), timeline resumida e historial (undo/redo/checkpoints). Primer paso.\n- get_timeline: pistas y clips con sus propiedades (posición, duración, frame/layout/look/speed…), SIN datos pesados (words, keyframes).\n- Regla de pistas: una pista NUNCA tiene dos clips a la vez. Un clip colocado/movido encima de otro sube a la pista vecina libre de su tipo (o a una nueva) en el mismo instante; uno que crece (speed/duración) empuja a los de detrás. Mira warnings/changed para saber dónde quedó. Una pista con magnetic=true no tiene huecos: lo que entra se inserta y empuja.\n- inspect_clip(clip_id): un clip COMPLETO (reframe/keyframes, words, transform, origin). Úsalo solo para el clip que vas a tocar.\n- list_media: inventario detallado del material.\n- set_project_format(aspect|resolution|width/height, fps): aspect 16:9/9:16/1:1/4:3/3:4/4:5 (conserva el lado corto); resolution 480/720/1080/2160 = lado corto (conserva la proporción). Reescala/reencuadra todo (deshacible con undo)."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "text"
+   },
+   "text": "Editar por CONTENIDO y subtítulos:\n- search_transcript(query, limit=20): busca texto en las transcripciones y devuelve dónde se dice con tiempos (scope project/clip, clip_index o transcript_id, start/end, text). Úsalo para 'corta donde dice X' o 'quita la intro': localiza el texto y luego split_clip/remove_clip/layout.\n- add_subtitles(source_clip_id, segments, track_id?, transcript_id?, style?): crea clips de texto con words[] reales desde los segments de una transcripción, alineados al clip fuente. Crea la pista de texto si falta.\n- Rol de un clip de texto: update_clip(clip_id, {role: caption|free})."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "jobs"
+   },
+   "text": "Operaciones largas (transcribe, subtitles, tts, create_clips, export, workflows) devuelven un job {id, status, progress, message, result}.\n- Espera con wait_for_job(job_id, timeout_s=60): bloquea en el threadpool hasta done/error, o devuelve el estado con timed_out:true. PREFIÉRELO al polling manual.\n- get_job(job_id): estado puntual. list_jobs(): todos los de este proceso.\n- cancel_job(job_id): cancelación cooperativa best-effort (aborta en el siguiente tick; un FFmpeg en marcha no se corta hasta ahí).\nNota: los jobs viven en memoria del proceso; se pierden al reiniciar."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "media"
+   },
+   "text": "Material y YouTube:\n- analyze_youtube(url, min_score=0.40, max_clips=10, max_duration=60, padding=10): analiza el heatmap y devuelve los tramos más vistos (segments). Síncrono. Los segments se pasan tal cual a create_clips_from_segments.\n- create_clips_from_segments(url, segments, crop_mode=center): job que recorta los segments a clips del proyecto. crop_mode: center | smart_face | split_left | split_right. Espera con wait_for_job y mira list_media.\n- fetch_image(url, label?): descarga una imagen y la añade al proyecto (devuelve id para add_to_timeline con asset_kind=images).\n- generate_image(prompt, aspect=9:16, model=auto, label?): genera una imagen con IA (Foundry: MAI-Image 2.5/2.6, FLUX.2 pro/flex) y la añade al proyecto. Si un modelo falla o agota su cuota pasa solo al siguiente; model fija el preferido. aspect 9:16|16:9|1:1|3:4|4:3. Prompt detallado (sujeto, estilo, luz, encuadre); en inglés suele rendir mejor. Devuelve id para add_to_timeline con asset_kind=images.\n- delete_media(kind, ident): borra material Y su archivo. kind clips|audios|images; ident = index del clip o id del audio/imagen. NO deshacible.\n- download_youtube_video(url, quality?): job que baja el vídeo COMPLETO al material. quality = lado corto (720, 1080, 1440, 2160…); None = la máxima (analyze_youtube devuelve video.qualities). result: clip_index, quality y upgradable (versiones de menos calidad del mismo vídeo que la timeline podría cambiar por ésta).\n- replace_media_version(clip_index, old_indexes?, dry_run=False): pone clip_index (vídeo completo) en la timeline en lugar de sus otras versiones (mismo vídeo de YouTube, menos calidad) conservando cortes, encuadre y animaciones; desplaza in/out si la versión vieja era un tramo. dry_run=True solo lista versions/upgradable. Deshacible con undo. Rechaza versiones con otra proporción (recorte 9:16 horneado). «Quitar fondo» hay que regenerarlo."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "transcription"
+   },
+   "text": "Generar guion con words[] reales (faster-whisper, local):\n- transcribe(source? | clip_index?, model?, language?): pasa O source (URL de YouTube → guion del proyecto) O clip_index (transcribe ese clip del material), no ambos. model: tiny|base|small|medium|large-v3 (si se omite, el de Ajustes). Devuelve job.\n- generate_subtitles(filename, asset_kind=audios, model?, language?, asset_scope=project, source_clip_id?): transcribe un audio Y crea la pista de subtítulos en la timeline en un paso. filename = archivo del audio; asset_kind clips|audios; asset_scope project|library; source_clip_id = clip de la timeline a subtitular (si se omite, se busca por filename). Espera el job; los subtítulos quedan en la timeline al terminar."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "timeline"
+   },
+   "text": "Pistas y colocación:\n- set_timeline_markers(markers): sustituye los marcadores de la timeline [{t (s), label?, color?}] ([] los borra); get_timeline los devuelve en 'markers'. Son puntos de imán como los beats.\n- add_track(kind, name?): kind video|audio|text; name opcional (SFX, Voz…); si se omite, A1/A2/V1…\n- rename_track(track_id, name): el id no cambia; el nombre es lo que se ve.\n- reorder_track(track_id, target_track_id, place=above|below): orden de capas. Vídeo y texto forman UNA pila (la pista de arriba se ve delante): un texto debajo de un vídeo queda detrás de él. Texto detrás de una persona = vídeo completo, encima el texto y encima el mismo vídeo con el fondo eliminado.\n- remove_track(track_id): elimina la pista y TODOS sus clips (deshacible).\n- link_tracks(track_id, to_track_id) / unlink_track(track_id): liga audio↔texto (al cambiar velocidad, la ligada se escala).\n- add_to_timeline: ver dominio clips."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "clips"
+   },
+   "text": "Operaciones sobre clips de la timeline (todas deshacibles con undo):\n- Estructura: move_clip(clip_id, start?, track_id?), split_clip(clip_id, at_time) [instante ABSOLUTO de timeline], remove_clip(clip_id) [destructivo, deshacible], duplicate_clip(clip_id, start?) [por defecto detrás del original].\n- Colocación: add_to_timeline(asset_kind, asset_id, track_id?, start=0, in_point?, out_point?). asset_kind clips|audios|images|sfx; asset_id = index del clip / id del audio o imagen / id de SFX de search_sfx. Un SFX entra como clip de audio (crea pista si falta). Por defecto usa el material completo; si el asset no tiene duración conocida, pasa out_point.\n- Propiedades escalares (UNA operación): update_clip(clip_id, patch). patch admite: opacity (0–1); speed (0.1–10) + keep_pitch/reverse [no en texto/imagen/figura]; appear/exit (none|fade|dissolve|wipe|zoom|slide_*|pop); position (full|top|bottom|free) + start + duration; role (caption|free, solo texto); note (qué REPRESENTA ese fragmento en la historia, p.ej. 'el científico escribe la ecuación'; \"\" la borra); flip_h / flip_v (voltear en horizontal/vertical vídeo, imagen, figura o texto: el reflejo de un título es una copia con flip_v); blend_mode (modo de fusión con lo de debajo: normal|darken|multiply|color_burn|lighten|screen|color_dodge|overlay|soft_light|hard_light|difference|exclusion; screen quita el negro de un overlay de luces, multiply el blanco). Ej.: update_clip(id, {\"position\":\"top\", \"opacity\":0.8}).\n- Pegar atributos (como Ctrl+Alt+V de CapCut): paste_clip_attributes(source_clip_id, target_clip_ids, groups?) copia de un clip a otros, en un solo undo, los grupos elegidos: transform (posición/escala/giro), flip, blend (opacidad + fusión), animation (keyframes de pose), transitions (appear/exit), crop (encuadre), effects (filtro + efectos + ajustes), mask, chroma (croma + contorno; nunca el recorte IA), style (texto→texto o figura→figura), speed, audio (volumen + fx). Sin groups pega todos los que apliquen; el contenido y los tiempos no cambian.\n- Recetas (trucos completos en un paso, un solo undo): apply_recipe(recipe, clip_ids?, params?). cinema_grade = etalonaje de cine (capa de ajuste + barras); text_reflection = reflejo de un texto (copia volteada, máscara y Superponer); pass_through_text = la cámara atraviesa el texto (escala ×60 al final); film_strips = 2–6 clips en franjas que entran en los beats (detect_beats antes); subject_pop = el sujeto recortado aparece antes que su plano (luego hay que generar su recorte IA en el editor).\n- Barras de cine: add_cinema_bars(ratio=2.39|2|1.85|16:9, start=0, duration?, animate=False): figura letterbox encima de todo; sin duration llega al final. En 9:16 las barras de 2.39 son muy gruesas: para un toque sutil usa 16:9 o ajusta shape.bar (alto de cada barra, 0–0.45).\n- Capa de ajuste (etalonaje de toda una escena): add_adjustment_layer(start, duration=5, filters?, effects?, intensity=1) filtra todo lo que tiene debajo (vídeos, imágenes, figuras; los textos quedan encima). Se edita con set_clip_effects y update_clip(opacity = intensidad).\n- Seguimiento (tracking): track_object(clip_id, box, at_time, follower_clip_id?, mode=position_scale) sigue un objeto de un vídeo desde at_time (hacia delante y atrás, en su tramo). box = {cx, cy, w, h} en 0–1 del fotograma FUENTE (mira get_frame(clip_id, at_time) para situarlo). Con follower_clip_id ese texto/figura/imagen acompaña al objeto (keyframes; mode position | position_scale | position_scale_rotation). Es un job: wait_for_job.\n- Congelar fotograma: freeze_frame(clip_id, at_time, duration=3) parte un vídeo en at_time (s de timeline) e inserta una imagen fija de ese fotograma con la misma pose/recorte/efectos; lo que viene detrás en la pista se desplaza.\n- Notas de contexto: la nota de cada clip llega en existingElements[].note de motion_segment_context. Léela antes de diseñar (dice qué significa el fragmento, cosa que los frames no cuentan) y escríbela con update_clip cuando la sepas.\n- Encuadre de FUENTE (no es animación): reframe_clip(clip_id, mode, zoom?, pan_from?, pan_to?). mode center (zoom) | manual (zoom + paneo estático en pan_from, o animado pan_from→pan_to; cada uno {cx,cy}).\n- Recorte (como el modal Recortar/CapCut) de objetos libres: crop_clip(clip_ids?, track_id?, reset?, cx?, cy?, w?, h?). Ventana sobre la fuente en 0-1, fija en todo el clip. reset=true = Restablecer (fotograma completo); track_id = toda la pista en un solo undo.\n- Efectos visuales: set_clip_effects(effects, replace=False) blur|grayscale|sepia|brightness|contrast|saturation y ajustes de color exposure (-1..1, pasos de diafragma) | whites (-1..1, punto blanco) | temperature (-1..1, >0 cálido) | hue (-180..180°) (MERGE por defecto, solo visuales). Filtros de color apilables (como CapCut): set_clip_effects(clip_id, filters=[{id, amount 0–1}, …]) en orden de aplicación; ids bw, noir, sepia, vintage, faded, matte, cinematic, teal_orange, night, matrix, contrast, saturated, warm, golden, cool (filters=[] los quita). Etalonaje de cine = p. ej. [{id: teal_orange, amount: 0.7}, {id: faded, amount: 0.3}].\n- Máscaras (como CapCut): set_clip_masks(clip_id, masks) sustituye la lista. Cada máscara {type, x, y (0-1 del lienzo), w, h (unidades de ALTO), rotation, feather (0-0.25), invert, opacity, target}. type: linear (división) | film (rollo de película: banda de alto h) | circle | rectangle | star | heart | text | brush. target: clip (qué parte del clip se ve) | adjust (los ajustes de color solo actúan dentro). Vale para vídeo, imagen, figura y TEXTO. masks[0] anima con keyframes (mx,my,mw,mh,msx,msy,mrot,mfeather).\n- Animación de aparición: usa animate_clip, NO set_clip_keyframes a mano. animate_clip(clip_id, motion, duration?, follow_audio_id?, intensity=1, turns=1). motion: zoom_in, zoom_out, spin, spin_in, slide_left, slide_right, slide_up, slide_down, fade_in, fade_out, pop, pulse, draw_in (solo figuras: el trazo se dibuja de 0 a 100 % en duration s, ~1.5). duration = ventana de la intro (~0.45s). turns = vueltas (spin/spin_in). follow_audio_id = id de un clip de audio/SFX en la timeline: la animación sigue su volumen (aparece/gira/entra con los golpes). Ej.: «haz zoom»→zoom_in; «que entre girando»→spin_in; «que aparezca de la izquierda con el sfx»→slide_left + follow_audio_id.\n- set_clip_keyframes(clip_id, keyframes|None): escape hatch experto. {enabled, items:[{id,t,interpolation,bezier?,props}]}. props: x/y/scale/rotation/opacity (en textos también rot_x/rot_y: giro 3D, −75…75°) y también volume (0–2) y fx de audio. interpolation = curva con que se LLEGA a ese keyframe: linear, ease-in, ease-out, ease-in-out, cubic-in, cubic-out, cubic-in-out, back-out (rebote), hold o bezier (+ bezier:[x1,y1,x2,y2] como cubic-bezier de CSS; x 0–1, y −1…2). Casi nunca a mano.\n- add_shape(shape, track_id?, start=0, duration?, points?): figura vectorial (rect/línea/flecha/estrella/corazón…) en una pista de vídeo. shape.dash = solid|dash|dot (trazo continuo, discontinuo o punteado). Trazado libre (ruta sobre un mapa, subrayado a mano): points = [[x, y], …] en 0–1 del cuadro; la curva pasa por todos (shape.smooth=false → rectas; shape.closed=true lo cierra). Para que se dibuje solo: animate_clip(id, draw_in)."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "audio"
+   },
+   "text": "Audio de clips y pistas + TTS + SFX:\n- detect_beats(clip_id, every=1): detecta los beats de la música de un clip de audio/vídeo y los guarda en el clip (puntos de imán al mover/recortar clips en el editor; every 2|4 deja uno de cada N). Devuelve bpm y nº de beats.\n- set_clip_volume(clip_id, volume?, muted?, fade?, fade_dur=0.5): volume 0–2 (1=100%, máx 200%); fade in|out crea keyframes de volumen (no recorta el audio).\n- set_track_audio(track_id, volume?, muted?, audio_fx?, fade?, fade_dur=0.5): aplica a TODOS los clips de una pista de audio (o vídeo con audio). Úsalo cuando el usuario hable de 'esa línea'/'esa pista'.\n- sound_design(clip_id, apply=True): sonoriza una escena de vídeo/imagen con IA (mira sus fotogramas si hay Foundry): elige SFX de la biblioteca (ambiente a volumen bajo + sonidos puntuales en su momento) y los coloca en pistas SFX. Job: wait_for_job; result.missing dice qué sonidos faltan en la biblioteca.\n- set_clip_audio_fx(clip_id, audio_fx, replace=False, ramp?): efectos eq, compressor, reverb, echo, denoise, distortion y filtros de sonido underwater (bajo el agua), telephone, radio, megaphone, muffled (habitación de al lado), 0–1 = intensidad. MERGE por defecto; solo vídeo/audio. ramp={start, end, from=0} (s del clip) anima la intensidad: «la música se va hundiendo al entrar al agua» = set_clip_audio_fx(id, {underwater: 1}, ramp={start: 2, end: 3.5}).\n- generate_voice(text, engine=kokoro, voice=ef_dora, voice2?, blend=0.5, speed=1, pause=0.4, name?, style?): TTS de narrador → audio del proyecto. engine kokoro|piper|gemini|azure (deben estar disponibles). Devuelve job.\n- search_sfx(query='', category='', limit=50): busca efectos de sonido en la biblioteca local. No necesita proyecto. Usa el id devuelto en add_to_timeline(asset_kind='sfx')."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "render"
+   },
+   "text": "Export final:\n- export_project(timeline?): renderiza el vídeo componiendo toda la timeline (job). Por defecto usa la timeline guardada del proyecto; pasa timeline solo para exportar una distinta. Espera con wait_for_job y recoge result.export_url. Operación cara: no deshacible."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "workflow"
+   },
+   "text": "Objetivos completos en UN job (úsalos cuando la petición es el objetivo entero, no cuando el usuario quiere iterar paso a paso):\n- create_short_from_youtube(url, crop_mode=smart_face, count=1, model?, language?, subtitles=True, export=True, min_score=0.40, max_duration=60, padding=10): heatmap → recorte a vertical → timeline 9:16 → transcribe → subtítulos → export. result.export_url.\n- make_short_from_library(asset_id, asset_kind=clips, model?, language?, subtitles=True, export=True): igual pero desde un clip ya en el proyecto (asset_id = index del clip), sin descargar.\n- upgrade_timeline_quality(url?, quality?, replace=True): edición rápida en baja calidad → final en alta. Por cada vídeo de YouTube que usa la timeline (o solo url) reutiliza la versión completa ya descargada si llega a quality (None = máxima) o la baja, y cambia los clips a ella (replace_media_version). result.videos[]: quality, downloaded, replaced.\nPon export=False para frenar antes del render."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "vision"
+   },
+   "text": "Ojos de la IA + descripción de material:\n- get_frame(clip_index, at_time?): devuelve un fotograma (imagen) de un clip del material para que lo VEAS. at_time = segundo dentro del clip (por defecto el centro). Úsalo para entender/etiquetar un clip antes de editarlo.\n- set_clip_ai_description(clip_index, description): guarda tu descripción en un campo APARTE (description_ai); NO pisa la del usuario.\n- analyze_materials(only_missing=True, rename_generic=True): EN LOTE con la visión de Microsoft Foundry (3 fotogramas por clip + el guion). Guarda description_ai + semantic en clips e imágenes; rellena description solo si estaba vacía y el título solo si era genérico (vacío, nombre de archivo, 'image', o repetido como el del tráiler). Devuelve job; result = resumen. Úsalo ANTES de dirigir escenas: mejora scene_rank_materials y el pack."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "history"
+   },
+   "text": "Toda edición estructural de la timeline es transaccional y deshacible:\n- undo() / redo(): deshace/rehace la última operación.\n- checkpoint(name): marca un punto seguro con nombre.\n- restore_checkpoint(name): vuelve a un checkpoint (también deshacible).\nRecomendado: un checkpoint antes de un cambio grande."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "motion"
+   },
+   "text": "Motion graphics EDITABLES (composición JSON → HTML/GSAP → render con alfa). Flujo contextual 'Generar Motion':\n1. motion_segment_context(project_id, start?, end?): guion de ESE tramo (previous/current/next + keyTerms), clip activo, elementos que ya ocupan el tramo (motionInRange = posibles duplicados), assets relevantes y estilo (formato, fuente/acento de subtítulos, avoidY = franja de subtítulos que no hay que tapar). Sin tiempos usa el rango marcado en el editor (teclas I/O). No pidas get_timeline para esto.\n1b. (opcional) motion_segment_frames(project_id, start?, end?, n?): un montage de fotogramas de la FUENTE del vídeo del tramo (sin overlays) para VER qué se muestra antes de proponer. Sin tiempos usa el rango marcado.\n2. motion_create_composition(project_id, composition | template+params): duration = fin − inicio EXACTO del tramo; width/height/fps = style.format.\n3. motion_get_frame(project_id, composition_id, n?): mírala antes de insertar.\n4. motion_add_to_timeline(project_id, composition_id, start): la coloca como clip 'motion' (overlay con alfa) en el segundo indicado.\nAjustes posteriores: motion_get_composition + motion_update_composition (solo esa composición).\nESQUEMA: composition = {name, width, height, fps, duration, background: 'transparent' | '#rrggbb', layers: [...]}. Cada layer: {id único, type: 'text' | 'shape' | 'html', x, y, start, end (s, end ≤ duration), opacity, scale, rotation, z_index, animation: {entrance, exit}, effect}. ORIGEN de x,y: para 'text'/'shape' es el CENTRO en px; para 'html' a pantalla completa usa x=0, y=0, width=W, height=H (arriba-izquierda, llena el lienzo) — NO lo centres con x=W/2,y=H/2.\n- text: content + style {font (familia CSS; disponibles: Inter, Poppins, Montserrat, Oswald, 'Bebas Neue', 'Playfair Display', Caveat/Kalam (manuscrita), Pacifico (script), 'JetBrains Mono'), fontSize, fontWeight, color, letterSpacing, lineHeight, textTransform, shadow}. Efectos de texto: degradado (gradientFrom+gradientTo+gradientAngle), contorno (outlineWidth+outlineColor), resaltado (background+padding+borderRadius).\n- shape: shape {kind: 'circle' (radius, fill, stroke, thickness) | 'rect' (width, height, fill, stroke, borderRadius, shadow) | 'line' (x2, y2, thickness, stroke; va de x,y a x2,y2)}. fill 'none' = solo contorno. Para TARJETAS limpias usa rect con fill=surface, stroke=border, borderRadius y shadow (sombra CSS suave).\n- entrance/exit: {type: fade | slide | scale | zoom | rotate | draw (líneas), direction (slide: left/right/up/down), distance (px), from_scale, degrees, duration ≤ vida de la capa, delay, ease (power1-4.in/out/inOut, back.*, elastic.*, bounce.*, sine.*, expo.out, circ.out, none)}.\n- effect (continuo): {type: pulse (amount) | glow | flow (punto que recorre una línea; duration = periodo), delay}.\nPLANTILLAS VISUALES (antes que las de texto): stack_list (elementos que caen y se apilan), card_grid (cuadrícula), sequence_rows (filas editoriales), versus (cara a cara), before_after, flow_steps (proceso con flechas), decision_tree, concept_map, line_graph (trazo que se dibuja), timeline_track (hitos fechados), asset_showcase (PNG del material como protagonistas), annotate (flecha sobre el vídeo), assemble (piezas que convergen). Reciben contenido: items=[{label, sublabel?, image?}] con image = id de una imagen del material (se incrusta el PNG REAL; nunca dibujes un logo falso). motion_list_templates trae best_for/slots de cada una. Las de categoría 'user' (u_…) son composiciones guardadas por el usuario: se rellenan con params={texts:{original:nuevo}, images:{id_original:id_nuevo}}.\nPLANTILLAS de texto: pro_title (antetítulo+título+subrayado), title (título simple), bullet_list (lista escalonada), quote (cita), stat (número grande con conteo), bar_chart (barras que crecen + conteo), lower-third, subscribe, neural_network. Acepta params theme ('light' por defecto|'dark'|'editorial') y accent (#rrggbb). PREFIÉRELAS: se ven mejor que un JSON a mano.\nCAPA type:'html' (bloque HTML+GSAP) para efectos ricos que las primitivas no cubren (números que cuentan, barras que se llenan, aparición por letras, flip, reveals): {type:'html', html (markup SIN <script>), css, js}. 'js' = CUERPO de una función (tl, root, gsap, ctx) que añade tweens a la timeline 'tl' del bloque (seekable). ctx={width,height,duration,life,start,end,theme}. USA SIEMPRE tl.fromTo(el,{ini},{fin}) y NUNCA tl.from()/tl.to() (con .from() el preview se rebobina mal y en la 2ª reproducción los elementos quedan invisibles). NADA de Date.now/Math.random; para contar anima un proxy con fromTo({v:0},{v:target,onUpdate...}) y escribe textContent en onUpdate; envuelve <img>/<video> en un <div> y anima el <div>.\nDISEÑO (minimalista tipo Tailwind UI): un solo protagonista por plano, superficies limpias y neutras (tarjetas con borde fino + sombra suave; formas rect con borderRadius+shadow), UN acento sobrio, mucho espacio, tipografía Inter con jerarquía. NADA de neón/glow ni colores saturados. Movimiento SUTIL: fade + desplazamiento corto con power2.out/power3.out; NUNCA back/elastic/bounce; stagger 0.08–0.15s. Respeta style.avoidY. Para diagramas complejos usa un template.\nHISTORIAS CON STICKMAN (para contar una anécdota/ilustrar el guion con personajes): motion_stick_library(project_id) → vocabulario + reparto existente; motion_create_stick_scene(project_id, storyboard, composition_id?, for_range?). storyboard = {title, style:{preset: clean|paper|chalk|transparent, captions}, environment:{preset}, characters:[{id, name, body, hair, outfit, shirt, pants, accessory, description}], shots:[{duration, description, caption, camera: wide|medium|close, focus, moving, fx:[{type, target, at}], actors:[{id, pose, expression, x 0..1, to_x?, facing ±1}]}]}. Reutiliza id y aspecto del reparto existente (continuidad). Violencia SIEMPRE no gráfica (poses + fx impact/shake), sin estereotipos."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "scene"
+   },
+   "text": "DIRECCIÓN DE ESCENA: dirige el vídeo entero tramo a tramo. La app hace lo mecánico (cortar el guion, preparar contexto); tú solo decides QUÉ se ve en cada tramo. Pensado para funcionar con cualquier modelo: el contexto llega compacto y ya decidido, no tienes que entender el proyecto entero.\nFlujo:\n0. DIRECCIÓN GLOBAL primero (Fase 5): scene_get_blueprint(project_id) para ver la identidad visual del vídeo entero (estilo, vocabulario permitido, reglas) y las direcciones creativas disponibles. Si no hay ninguna, scene_generate_blueprint(project_id) la PROPONE con IA a partir del guion completo y el material (apply=true la guarda); scene_set_blueprint(project_id, blueprint) la fija/edita a mano (direction, identity, vocabulary[], rules[], intensity_curve). Entra en TODOS los packs y da coherencia: decide el LENGUAJE del vídeo antes de bajar a cada tramo.\n0b. PLAN de todo el vídeo de una vez (opcional, tras tener escaleta y blueprint): scene_plan_all(project_id) rellena en UNA pasada barata el plan editorial de CADA tramo (mode + composition_intent + complexity 1-5 + no_visual), guiado por la dirección global. Es el 'plan de fabricación' antes de montar tramo a tramo; luego afinas con scene_direction_update_segment.\n1. scene_direction_status(project_id): el MAPA. Tramos, su estado (empty→ready→generated→placed), modo, si ya tienen material/escena, y 'pending' = los que aún necesitan visual. Empieza aquí para saber qué falta.\n2. scene_direction_get(project_id): la escaleta completa + el guion en frases con tiempos + los modos + el catálogo de materiales (título+descripción; la DESCRIPCIÓN es lo que usas para elegir). Si no hay escaleta, scene_direction_auto_split la propone (no guarda; persiste con scene_direction_set).\n3. scene_direction_pack(project_id, segment={start,end,mode?,instruction?,strict?,materials?}): el PACK de UN tramo, lo ÚNICO que necesitas para decidir. 'text' es el prompt exacto e incluye la ZONA DE SUBTÍTULOS a respetar (no tapes ahí texto/caras/sujeto principal). 'skeleton' son los beats ya cortados: solo rellenas qué se ve en cada uno. 'brief_defaults' arranca Generar Escena.\n   - scene_rank_materials(project_id, text): candidatos por relevancia a demanda (sin pedir el pack), con 'match' = términos coincidentes.\n   - scene_set_material_meta(project_id, kind, material_id, meta, scope?): enriquece un material con metadata semántica (subjects/actions/environment/mood/composition/visual_content/suggested_usage/visual_priority) para que elijas por concepto y no solo por palabras. Puebla lo que ves (get_frame) y mejora el ranking y el pack.\n4. scene_direction_update_segment(project_id, segment_id, patch): dirige un tramo (mode/instruction/strict/materials/reference_id) o marca su estado tras montarlo. Plan editorial (§SCENE PLAN): composition_intent (en lenguaje natural: qué es principal, qué acompaña, qué zonas dejar libres), complexity 1–5 (1 simple … 5 clímax; no lo revientes en cada tramo) y no_visual=true (este tramo no necesita nada nuevo: basta mantener el plano + subtítulos). MODOS: propose (propón el enfoque) · explain (haz entender lo narrado) · represent (metáfora visual, sin texto) · reinforce (repite la escena de reference_id) · material (el protagonista es el material indicado). strict=true → seguir el guion frase a frase.\n5. Composición HÍBRIDA (§3.4-3.5): un tramo NO tiene por qué ser un solo recurso; combina b-roll + motion + stickman cuando aporte. Planifícalo en el campo `components` del tramo (update_segment): lista de {source: material|motion|stickman|text|graphic|keep, role, material?, source_range?, note}. role: full|broll|overlay|pip|side_panel|circular|background|reference. Es el SCENE PLAN.\n6. Ejecuta con scene_place_material(project_id, segment_id, material?, role, source?, size?, pos?, opacity?, transform?): coloca un material (recortado al fragmento) con su rol (pip a la derecha, panel lateral, fondo…). Para motion/stickman usa las tools de motion (motion_add_to_timeline). Coloca varios para una composición híbrida.\n7. GENERAR ESCENA (cuando ningún material sirve; la IA crea motion graphics/stickman): motion_scene_directions (elige una direction_id/estilo) → motion_scene_questions(direction_id) → responde con motion_plan_scene(answers) → revisa/edita los beats → motion_build_scene(plan): crea el borrador (composition_id) y, con direction_id, lo enlaza al tramo (status 'generated'). Insértalo con motion_add_to_timeline (dominio motion). Para 'reinforce' (repetir una escena previa) usa scene_reuse_reference (sin IA).\n8. VERIFICA el montaje antes de darlo por bueno: scene_validate_segment(segment_id) detecta por geometría colisiones con la zona de subtítulos, elementos fuera de pantalla y solapes; devuelve issues con sugerencias. Corrige con scene_place_material y vuelve a validar (bucle montar→validar→corregir). Para ver el frame REAL compuesto usa render_timeline_frame(at_time) (más lento).\nRegla editorial: EDIT > COMBINE > GENERATE. Antes de generar algo nuevo, mira si un material existente (o combinado/recortado) ya lo cuenta. Estados del tramo: empty→ready (dirigido)→generated (escena creada)→placed (en la timeline)."
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": " Audio "
+   },
+   "error": "Dominio sin guía:  Audio . Válidos: ['audio', 'clips', 'discovery', 'history', 'jobs', 'media', 'motion', 'project', 'render', 'scene', 'text', 'timeline', 'transcription', 'vision', 'workflow']"
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "CLIPS"
+   },
+   "error": "Dominio sin guía: CLIPS. Válidos: ['audio', 'clips', 'discovery', 'history', 'jobs', 'media', 'motion', 'project', 'render', 'scene', 'text', 'timeline', 'transcription', 'vision', 'workflow']"
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "Clips "
+   },
+   "error": "Dominio sin guía: Clips . Válidos: ['audio', 'clips', 'discovery', 'history', 'jobs', 'media', 'motion', 'project', 'render', 'scene', 'text', 'timeline', 'transcription', 'vision', 'workflow']"
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "timeline\n"
+   },
+   "error": "Dominio sin guía: timeline\n. Válidos: ['audio', 'clips', 'discovery', 'history', 'jobs', 'media', 'motion', 'project', 'render', 'scene', 'text', 'timeline', 'transcription', 'vision', 'workflow']"
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "nada"
+   },
+   "error": "Dominio sin guía: nada. Válidos: ['audio', 'clips', 'discovery', 'history', 'jobs', 'media', 'motion', 'project', 'render', 'scene', 'text', 'timeline', 'transcription', 'vision', 'workflow']"
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": ""
+   },
+   "error": "Dominio sin guía: . Válidos: ['audio', 'clips', 'discovery', 'history', 'jobs', 'media', 'motion', 'project', 'render', 'scene', 'text', 'timeline', 'transcription', 'vision', 'workflow']"
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "   "
+   },
+   "error": "Dominio sin guía:    . Válidos: ['audio', 'clips', 'discovery', 'history', 'jobs', 'media', 'motion', 'project', 'render', 'scene', 'text', 'timeline', 'transcription', 'vision', 'workflow']"
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "other"
+   },
+   "error": "Dominio sin guía: other. Válidos: ['audio', 'clips', 'discovery', 'history', 'jobs', 'media', 'motion', 'project', 'render', 'scene', 'text', 'timeline', 'transcription', 'vision', 'workflow']"
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "ÁUDIO"
+   },
+   "error": "Dominio sin guía: ÁUDIO. Válidos: ['audio', 'clips', 'discovery', 'history', 'jobs', 'media', 'motion', 'project', 'render', 'scene', 'text', 'timeline', 'transcription', 'vision', 'workflow']"
+  },
+  {
+   "uri": "help://{domain}",
+   "params": {
+    "domain": "Proyecto"
+   },
+   "error": "Dominio sin guía: Proyecto. Válidos: ['audio', 'clips', 'discovery', 'history', 'jobs', 'media', 'motion', 'project', 'render', 'scene', 'text', 'timeline', 'transcription', 'vision', 'workflow']"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-none"
+   },
+   "text": "{\"project\": {\"id\": \"p-none\", \"name\": \"Sin timeline\", \"created_at\": \"2026-01-01T00:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": false, \"tracks\": [], \"clip_count\": 0, \"duration\": 0.0, \"kinds\": {\"video\": 0, \"audio\": 0, \"text\": 0}}, \"history\": {\"can_undo\": false, \"can_redo\": false, \"checkpoints\": []}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-none"
+   },
+   "text": "{\"present\": false, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"tracks\": [], \"clips\": [], \"duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-none"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-none",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-empty"
+   },
+   "text": "{\"project\": {\"id\": \"p-empty\", \"name\": \"Vacía\", \"created_at\": \"2026-01-02T00:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [], \"clip_count\": 0, \"duration\": 0.0, \"kinds\": {\"video\": 0, \"audio\": 0, \"text\": 0}}, \"history\": {\"can_undo\": true, \"can_redo\": false, \"checkpoints\": [\"inicio\"]}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-empty"
+   },
+   "text": "{\"present\": true, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"tracks\": [], \"clips\": [], \"markers\": [], \"duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-empty"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-empty",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-marks"
+   },
+   "text": "{\"project\": {\"id\": \"p-marks\", \"name\": \"Marcadores\", \"created_at\": \"2026-01-03T00:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"9:16\", \"width\": 1080, \"height\": 1920, \"fps\": 25}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [{\"id\": \"T1\", \"kind\": \"text\", \"name\": \"T1\", \"linked_track_id\": null}], \"clip_count\": 0, \"duration\": 0.0, \"kinds\": {\"video\": 0, \"audio\": 0, \"text\": 0}}, \"history\": {\"can_undo\": false, \"can_redo\": true, \"checkpoints\": [\"v1\", \"antes de cortar\", \"ñandú\"]}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-marks"
+   },
+   "text": "{\"present\": true, \"format\": {\"aspect\": \"9:16\", \"width\": 1080, \"height\": 1920, \"fps\": 25}, \"tracks\": [{\"id\": \"T1\", \"kind\": \"text\", \"name\": \"T1\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}], \"clips\": [], \"markers\": [{\"id\": \"m1\", \"t\": 0.5}, {\"t\": 2, \"label\": \"sin id\", \"extra\": [1, 2]}], \"duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-marks"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-marks",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-kinds"
+   },
+   "text": "{\"project\": {\"id\": \"p-kinds\", \"name\": \"Todos los tipos\", \"created_at\": \"2026-02-01T10:00:00\", \"folder\": \"D:\\\\videos\"}, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [{\"id\": \"V1\", \"kind\": \"video\", \"name\": \"Principal\", \"linked_track_id\": null}, {\"id\": \"V2\", \"kind\": \"video\", \"name\": \"V2\", \"linked_track_id\": null}, {\"id\": \"A1\", \"kind\": \"audio\", \"name\": \"A1\", \"linked_track_id\": \"T1\"}, {\"id\": \"T1\", \"kind\": \"text\", \"name\": \"T1\", \"linked_track_id\": \"A1\"}], \"clip_count\": 9, \"duration\": 12.5, \"kinds\": {\"video\": 2, \"audio\": 1, \"text\": 4, \"image\": 1, \"shape\": 1}}, \"history\": {\"can_undo\": true, \"can_redo\": true, \"checkpoints\": []}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-kinds"
+   },
+   "text": "{\"present\": true, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"tracks\": [{\"id\": \"V1\", \"kind\": \"video\", \"name\": \"Principal\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}, {\"id\": \"V2\", \"kind\": \"video\", \"name\": \"V2\", \"hidden\": true, \"muted\": false, \"locked\": false, \"linked_track_id\": null, \"magnetic\": true}, {\"id\": \"A1\", \"kind\": \"audio\", \"name\": \"A1\", \"hidden\": false, \"muted\": true, \"locked\": false, \"linked_track_id\": \"T1\"}, {\"id\": \"T1\", \"kind\": \"text\", \"name\": \"T1\", \"hidden\": false, \"muted\": false, \"locked\": true, \"linked_track_id\": \"A1\"}], \"clips\": [{\"id\": \"v1\", \"track_id\": \"V1\", \"track_kind\": \"video\", \"kind\": \"video\", \"name\": \"Entrevista\", \"start\": 0.0, \"duration\": 5.25, \"in_point\": 2.0, \"out_point\": 12.5, \"frame\": \"top\", \"layout\": \"overlay\", \"look\": \"cinematic\", \"speed\": 2.0, \"muted\": false, \"has_reframe\": true, \"face_track_mode\": \"smooth\", \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 2, \"description\": \"Plano general\", \"trim\": {\"in_point\": 2.0, \"out_point\": 12.5, \"source_duration\": 60.0}, \"flip\": {\"h\": true, \"v\": false}, \"blend_mode\": \"screen\", \"beats\": {\"bpm\": 120, \"count\": 3, \"every\": 1}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"v2\", \"track_id\": \"V2\", \"track_kind\": \"video\", \"kind\": \"video\", \"name\": null, \"start\": 6.25, \"duration\": 3.0, \"in_point\": 0.0, \"out_point\": 3.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": true, \"has_reframe\": true, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": \"v1\", \"dup_count\": 2, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 3.0, \"source_duration\": 0.0}, \"flip\": {\"h\": false, \"v\": true}, \"disabled\": true, \"beats\": {\"bpm\": null, \"count\": 4, \"every\": 4}, \"volume\": 0.123, \"has_audio_fx\": true}, {\"id\": \"a1\", \"track_id\": \"A1\", \"track_kind\": \"audio\", \"kind\": \"audio\", \"name\": null, \"start\": 1.0, \"duration\": 8.0, \"in_point\": 0.5, \"out_point\": 8.5, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"audios\", \"asset_scope\": \"library\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.5, \"out_point\": 8.5, \"source_duration\": 0.0}, \"volume\": 1.5, \"has_audio_fx\": false}, {\"id\": \"t1\", \"track_id\": \"T1\", \"track_kind\": \"text\", \"kind\": \"text\", \"name\": null, \"start\": 0.0, \"duration\": 2.0, \"in_point\": 0.0, \"out_point\": 2.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 4.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"text\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 2.0, \"source_duration\": 0.0}, \"text\": \"hola mundo\", \"text_role\": \"caption\", \"word_count\": 2}, {\"id\": \"t2\", \"track_id\": \"T1\", \"track_kind\": \"text\", \"kind\": \"text\", \"name\": null, \"start\": 2.0, \"duration\": 3.0, \"in_point\": 0.0, \"out_point\": 3.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"text\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 3.0, \"source_duration\": 0.0}, \"text\": \"Título\", \"text_role\": \"free\", \"word_count\": 0}, {\"id\": \"t3\", \"track_id\": \"T1\", \"track_kind\": \"text\", \"kind\": \"text\", \"name\": null, \"start\": 5.0, \"duration\": 1.0, \"in_point\": 1.0, \"out_point\": 2.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"text\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 1.0, \"out_point\": 2.0, \"source_duration\": 0.0}, \"text\": null, \"text_role\": \"caption\", \"word_count\": 0}, {\"id\": \"t4\", \"track_id\": \"T1\", \"track_kind\": \"text\", \"kind\": \"text\", \"name\": null, \"start\": 6.0, \"duration\": 1.0, \"in_point\": 0.0, \"out_point\": 1.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"text\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 1.0, \"source_duration\": 0.0}, \"text\": \"sin rol\", \"text_role\": \"free\", \"word_count\": 0}, {\"id\": \"i1\", \"track_id\": \"V2\", \"track_kind\": \"video\", \"kind\": \"image\", \"name\": null, \"start\": 3.0, \"duration\": 4.0, \"in_point\": 0.0, \"out_point\": 4.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 0.5, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"img1\", \"asset_kind\": \"images\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 4.0, \"source_duration\": 0.0}}, {\"id\": \"s1\", \"track_id\": \"V1\", \"track_kind\": \"video\", \"kind\": \"shape\", \"name\": null, \"start\": 12.0, \"duration\": 0.5, \"in_point\": 0.0, \"out_point\": 1.5, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 3.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"shape\", \"asset_scope\": \"project\", \"dup_of\": \"v1\", \"dup_count\": 2, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 1.5, \"source_duration\": 0.0}}], \"markers\": [{\"id\": \"m1\", \"t\": 1.5, \"label\": \"Golpe\"}, {\"id\": \"m2\", \"t\": 3.0, \"color\": \"#ff0000\"}], \"duration\": 12.5}"
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-kinds"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-kinds",
+    "cid": "v1"
+   },
+   "text": "{\"id\": \"v1\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"v1.mp4\", \"name\": \"Entrevista\", \"start\": 0.0, \"in_point\": 2.0, \"out_point\": 12.5, \"source_duration\": 60.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": {\"zoom\": 0.8, \"keyframes\": [], \"pan_mode\": \"smooth\", \"dual_crop\": false, \"split_orientation\": \"vertical\", \"zoom2\": null, \"keyframes2\": [], \"crop_w\": null, \"crop_h\": null, \"master\": false, \"split_layout\": \"auto\", \"face_track_mode\": \"smooth\"}, \"text\": null, \"style\": null, \"layout\": \"overlay\", \"transform\": null, \"frame\": \"top\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"cinematic\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 2.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": true, \"flip_v\": false, \"blend_mode\": \"screen\", \"disabled\": false, \"beats\": {\"times\": [0.5, 1.0, 1.5], \"bpm\": 120}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": \"Plano general\", \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 5.25}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-kinds",
+    "cid": "v2"
+   },
+   "text": "{\"id\": \"v2\", \"track_id\": \"V2\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"v2.mp4\", \"name\": null, \"start\": 6.25, \"in_point\": 0.0, \"out_point\": 3.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 0.123456, \"media_version\": null, \"reframe\": {\"zoom\": 1.0, \"keyframes\": [], \"pan_mode\": \"smooth\", \"dual_crop\": false, \"split_orientation\": \"vertical\", \"zoom2\": null, \"keyframes2\": [], \"crop_w\": null, \"crop_h\": null, \"master\": false, \"split_layout\": \"auto\", \"face_track_mode\": null}, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": {\"eq\": 0.5}, \"muted\": true, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": true, \"blend_mode\": null, \"disabled\": true, \"beats\": {\"times\": [1, 2, 3, 4], \"bpm\": null, \"every\": 4}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": \"v1\", \"composition_id\": null, \"timeline_duration\": 3.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-kinds",
+    "cid": "a1"
+   },
+   "text": "{\"id\": \"a1\", \"track_id\": \"A1\", \"kind\": \"audio\", \"asset_kind\": \"audios\", \"asset_id\": \"0\", \"filename\": \"a1.mp4\", \"name\": null, \"start\": 1.0, \"in_point\": 0.5, \"out_point\": 8.5, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.5, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": {}, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": {\"times\": [], \"bpm\": 90}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"library\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 8.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-kinds",
+    "cid": "t1"
+   },
+   "text": "{\"id\": \"t1\", \"track_id\": \"T1\", \"kind\": \"text\", \"asset_kind\": \"text\", \"asset_id\": \"0\", \"filename\": \"t1.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 0.0, \"out_point\": 2.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": \"hola mundo\", \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 4.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [{\"text\": \"hola\", \"start\": 0.0, \"end\": 0.4, \"prob\": 0.9}, {\"text\": \"mundo\", \"start\": 0.4, \"end\": 0.9, \"prob\": null}], \"origin\": null, \"text_role\": \"caption\", \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 2.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-kinds",
+    "cid": "t2"
+   },
+   "text": "{\"id\": \"t2\", \"track_id\": \"T1\", \"kind\": \"text\", \"asset_kind\": \"text\", \"asset_id\": \"0\", \"filename\": \"t2.mp4\", \"name\": null, \"start\": 2.0, \"in_point\": 0.0, \"out_point\": 3.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": \"Título\", \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": {\"transcript_id\": \"tr1\"}, \"text_role\": \"free\", \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 3.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-kinds",
+    "cid": "t3"
+   },
+   "text": "{\"id\": \"t3\", \"track_id\": \"T1\", \"kind\": \"text\", \"asset_kind\": \"text\", \"asset_id\": \"0\", \"filename\": \"t3.mp4\", \"name\": null, \"start\": 5.0, \"in_point\": 1.0, \"out_point\": 2.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": {\"transcript_id\": \"tr1\", \"segment_index\": 0}, \"text_role\": \"caption\", \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 1.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-kinds",
+    "cid": "t4"
+   },
+   "text": "{\"id\": \"t4\", \"track_id\": \"T1\", \"kind\": \"text\", \"asset_kind\": \"text\", \"asset_id\": \"0\", \"filename\": \"t4.mp4\", \"name\": null, \"start\": 6.0, \"in_point\": 0.0, \"out_point\": 1.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": \"sin rol\", \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": {}, \"text_role\": \"free\", \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 1.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-kinds",
+    "cid": "i1"
+   },
+   "text": "{\"id\": \"i1\", \"track_id\": \"V2\", \"kind\": \"image\", \"asset_kind\": \"images\", \"asset_id\": \"img1\", \"filename\": \"logo.png\", \"name\": null, \"start\": 3.0, \"in_point\": 0.0, \"out_point\": 4.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 0.5, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 4.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-kinds",
+    "cid": "s1"
+   },
+   "text": "{\"id\": \"s1\", \"track_id\": \"V1\", \"kind\": \"shape\", \"asset_kind\": \"shape\", \"asset_id\": \"0\", \"filename\": \"s1.mp4\", \"name\": null, \"start\": 12.0, \"in_point\": 0.0, \"out_point\": 1.5, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 3.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": {\"type\": \"rect\"}, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": \"v1\", \"composition_id\": null, \"timeline_duration\": 0.5}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-kinds",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-odd"
+   },
+   "text": "{\"project\": {\"id\": \"p-odd\", \"name\": \"Valores raros\", \"created_at\": \"2026-02-02T10:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"16:9\", \"width\": 854, \"height\": 480, \"fps\": 24}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [{\"id\": \"V1\", \"kind\": \"video\", \"name\": \"V1\", \"linked_track_id\": null}, {\"id\": \"V1\", \"kind\": \"audio\", \"name\": \"mismo id\", \"linked_track_id\": null}, {\"id\": \"X\", \"kind\": \"\", \"name\": \"X\", \"linked_track_id\": null}, {\"id\": \"A1\", \"kind\": \"audio\", \"name\": \"A1\", \"linked_track_id\": null}], \"clip_count\": 16, \"duration\": Infinity, \"kinds\": {\"video\": 8, \"audio\": 4, \"text\": 0, \"\": 1, \"weird\": 1, \"image\": 1, \"shape\": 1}}, \"history\": {\"can_undo\": false, \"can_redo\": false, \"checkpoints\": []}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-odd"
+   },
+   "text": "{\"present\": true, \"format\": {\"aspect\": \"16:9\", \"width\": 854, \"height\": 480, \"fps\": 24}, \"tracks\": [{\"id\": \"V1\", \"kind\": \"video\", \"name\": \"V1\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}, {\"id\": \"V1\", \"kind\": \"audio\", \"name\": \"mismo id\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}, {\"id\": \"X\", \"kind\": \"\", \"name\": \"X\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}, {\"id\": \"A1\", \"kind\": \"audio\", \"name\": \"A1\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}], \"clips\": [{\"id\": \"z0\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"video\", \"name\": null, \"start\": 0.0, \"duration\": 2.0, \"in_point\": 1.0, \"out_point\": 3.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 0.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 1.0, \"out_point\": 3.0, \"source_duration\": 0.0}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"z1\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"video\", \"name\": null, \"start\": 0.0, \"duration\": 4.0, \"in_point\": 0.0, \"out_point\": 4.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": -2.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 4.0, \"source_duration\": 0.0}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"z2\", \"track_id\": \"A1\", \"track_kind\": \"audio\", \"kind\": \"audio\", \"name\": null, \"start\": 0.0, \"duration\": 2.0, \"in_point\": 0.0, \"out_point\": 2.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": NaN, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"audios\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 1, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 2.0, \"source_duration\": 0.0}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"z3\", \"track_id\": \"A1\", \"track_kind\": \"audio\", \"kind\": \"audio\", \"name\": null, \"start\": 0.0, \"duration\": 0.0, \"in_point\": 0.0, \"out_point\": 2.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": Infinity, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"audios\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 2.0, \"source_duration\": 0.0}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"z4\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"video\", \"name\": null, \"start\": 0.0, \"duration\": 0.0, \"in_point\": 5.0, \"out_point\": 2.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 5.0, \"out_point\": 2.0, \"source_duration\": 0.0}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"z5\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"video\", \"name\": null, \"start\": 0.0, \"duration\": Infinity, \"in_point\": 0.0, \"out_point\": Infinity, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": Infinity, \"source_duration\": 0.0}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"z6\", \"track_id\": \"nadie\", \"track_kind\": \"video\", \"kind\": \"video\", \"name\": null, \"start\": NaN, \"duration\": 1.0, \"in_point\": 0.0, \"out_point\": 1.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 1.0, \"source_duration\": 0.0}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"z7\", \"track_id\": \"X\", \"track_kind\": \"audio\", \"kind\": \"audio\", \"name\": null, \"start\": 100.0, \"duration\": 0.001, \"in_point\": 0.0, \"out_point\": 0.0005, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"audios\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 0.0005, \"source_duration\": 0.0}, \"volume\": -0.0, \"has_audio_fx\": false}, {\"id\": \"z8\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"\", \"name\": null, \"start\": 2.0, \"duration\": 1.0, \"in_point\": 0.0, \"out_point\": 1.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 3, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 1.0, \"source_duration\": 0.0}}, {\"id\": \"z8\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"weird\", \"name\": null, \"start\": 1.0, \"duration\": 1.0, \"in_point\": 0.0, \"out_point\": 1.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": \"\", \"dup_count\": 3, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 1.0, \"source_duration\": 0.0}}, {\"id\": \"z9\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"video\", \"name\": null, \"start\": 0.0, \"duration\": 0.0, \"in_point\": 0.0, \"out_point\": 0.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": \"z8\", \"dup_count\": 3, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 0.0, \"source_duration\": 0.0}, \"beats\": {\"bpm\": null, \"count\": 3, \"every\": 1}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"z10\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"video\", \"name\": null, \"start\": 0.0, \"duration\": 0.0, \"in_point\": 0.0, \"out_point\": 0.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": \"z8\", \"dup_count\": 3, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 0.0, \"source_duration\": 0.0}, \"beats\": {\"bpm\": null, \"count\": 2, \"every\": 1}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"z11\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"video\", \"name\": null, \"start\": 0.0, \"duration\": 0.0, \"in_point\": 0.0, \"out_point\": 0.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": \"z2\", \"dup_count\": 1, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 0.0, \"source_duration\": 0.0}, \"volume\": 1.0, \"has_audio_fx\": false}, {\"id\": \"z12\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"image\", \"name\": null, \"start\": 0.0, \"duration\": 2.5, \"in_point\": 0.0, \"out_point\": 2.5, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 0.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"images\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 2.5, \"source_duration\": 0.0}, \"beats\": {\"bpm\": null, \"count\": 1, \"every\": null}}, {\"id\": \"z13\", \"track_id\": \"A1\", \"track_kind\": \"audio\", \"kind\": \"audio\", \"name\": null, \"start\": -3.0, \"duration\": 1.0, \"in_point\": 0.0, \"out_point\": 1.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"audios\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 1.0, \"source_duration\": 0.0}, \"volume\": 2.001, \"has_audio_fx\": false}, {\"id\": \"z14\", \"track_id\": \"V1\", \"track_kind\": \"audio\", \"kind\": \"shape\", \"name\": null, \"start\": 7.5, \"duration\": 0.625, \"in_point\": 1.0, \"out_point\": 2.25, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 2.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"shape\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 1.0, \"out_point\": 2.25, \"source_duration\": 0.0}}], \"markers\": [], \"duration\": Infinity}"
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-odd"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z0"
+   },
+   "text": "{\"id\": \"z0\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"z0.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 1.0, \"out_point\": 3.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 0.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 2.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z1"
+   },
+   "text": "{\"id\": \"z1\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"z1.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 0.0, \"out_point\": 4.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": -2.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 4.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z2"
+   },
+   "text": "{\"id\": \"z2\", \"track_id\": \"A1\", \"kind\": \"audio\", \"asset_kind\": \"audios\", \"asset_id\": \"0\", \"filename\": \"z2.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 0.0, \"out_point\": 2.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": NaN, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 2.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z3"
+   },
+   "text": "{\"id\": \"z3\", \"track_id\": \"A1\", \"kind\": \"audio\", \"asset_kind\": \"audios\", \"asset_id\": \"0\", \"filename\": \"z3.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 0.0, \"out_point\": 2.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": Infinity, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z4"
+   },
+   "text": "{\"id\": \"z4\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"z4.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 5.0, \"out_point\": 2.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z5"
+   },
+   "text": "{\"id\": \"z5\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"z5.mp4\", \"name\": null, \"start\": -0.0, \"in_point\": 0.0, \"out_point\": Infinity, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": Infinity}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z6"
+   },
+   "text": "{\"id\": \"z6\", \"track_id\": \"nadie\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"z6.mp4\", \"name\": null, \"start\": NaN, \"in_point\": 0.0, \"out_point\": 1.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 1.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z7"
+   },
+   "text": "{\"id\": \"z7\", \"track_id\": \"X\", \"kind\": \"audio\", \"asset_kind\": \"audios\", \"asset_id\": \"0\", \"filename\": \"z7.mp4\", \"name\": null, \"start\": 100.0004, \"in_point\": 0.0, \"out_point\": 0.0005, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": -4e-05, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 0.001}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z8"
+   },
+   "text": "{\"id\": \"z8\", \"track_id\": \"V1\", \"kind\": \"\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"z8.mp4\", \"name\": null, \"start\": 2.0, \"in_point\": 0.0, \"out_point\": 1.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 1.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z9"
+   },
+   "text": "{\"id\": \"z9\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"z9.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 0.0, \"out_point\": 0.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": \"\", \"disabled\": false, \"beats\": {\"times\": \"abc\"}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": \"z8\", \"composition_id\": null, \"timeline_duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z10"
+   },
+   "text": "{\"id\": \"z10\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"z10.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 0.0, \"out_point\": 0.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": {\"times\": {\"a\": 1, \"b\": 2}}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": \"z8\", \"composition_id\": null, \"timeline_duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z11"
+   },
+   "text": "{\"id\": \"z11\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"z11.mp4\", \"name\": null, \"start\": 0.0001, \"in_point\": 0.0, \"out_point\": 0.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": {}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": \"z2\", \"composition_id\": null, \"timeline_duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z12"
+   },
+   "text": "{\"id\": \"z12\", \"track_id\": \"V1\", \"kind\": \"image\", \"asset_kind\": \"images\", \"asset_id\": \"0\", \"filename\": \"z12.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 0.0, \"out_point\": 2.5, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 0.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": {\"times\": [1], \"every\": null}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 2.5}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z13"
+   },
+   "text": "{\"id\": \"z13\", \"track_id\": \"A1\", \"kind\": \"audio\", \"asset_kind\": \"audios\", \"asset_id\": \"0\", \"filename\": \"z13.mp4\", \"name\": null, \"start\": -3.0, \"in_point\": 0.0, \"out_point\": 1.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 2.0005, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": {\"bpm\": 100}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 1.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "z14"
+   },
+   "text": "{\"id\": \"z14\", \"track_id\": \"V1\", \"kind\": \"shape\", \"asset_kind\": \"shape\", \"asset_id\": \"0\", \"filename\": \"z14.mp4\", \"name\": null, \"start\": 7.5, \"in_point\": 1.0, \"out_point\": 2.25, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 2.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 0.625}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-beats"
+   },
+   "text": "{\"project\": {\"id\": \"p-beats\", \"name\": \"Beats sin len\", \"created_at\": \"2026-02-03T10:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [{\"id\": \"A1\", \"kind\": \"audio\", \"name\": \"A1\", \"linked_track_id\": null}], \"clip_count\": 1, \"duration\": 4.0, \"kinds\": {\"video\": 0, \"audio\": 1, \"text\": 0}}, \"history\": {\"can_undo\": false, \"can_redo\": false, \"checkpoints\": []}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-beats"
+   },
+   "error": "TypeError: object of type 'int' has no len()",
+   "crash": true
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-beats"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-beats",
+    "cid": "b1"
+   },
+   "text": "{\"id\": \"b1\", \"track_id\": \"A1\", \"kind\": \"audio\", \"asset_kind\": \"audios\", \"asset_id\": \"0\", \"filename\": \"b1.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 0.0, \"out_point\": 4.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": {\"times\": 5, \"bpm\": 100}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 4.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-beats",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-beats-bool"
+   },
+   "text": "{\"project\": {\"id\": \"p-beats-bool\", \"name\": \"Beats con True\", \"created_at\": \"2026-02-03T11:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [{\"id\": \"A1\", \"kind\": \"audio\", \"name\": \"A1\", \"linked_track_id\": null}], \"clip_count\": 1, \"duration\": 4.0, \"kinds\": {\"video\": 0, \"audio\": 1, \"text\": 0}}, \"history\": {\"can_undo\": false, \"can_redo\": false, \"checkpoints\": []}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-beats-bool"
+   },
+   "error": "TypeError: object of type 'bool' has no len()",
+   "crash": true
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-beats-bool"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-beats-bool",
+    "cid": "b1"
+   },
+   "text": "{\"id\": \"b1\", \"track_id\": \"A1\", \"kind\": \"audio\", \"asset_kind\": \"audios\", \"asset_id\": \"0\", \"filename\": \"b1.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 0.0, \"out_point\": 4.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": {\"times\": true}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 4.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-beats-bool",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-beats-float"
+   },
+   "text": "{\"project\": {\"id\": \"p-beats-float\", \"name\": \"Beats con real\", \"created_at\": \"2026-02-03T12:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [{\"id\": \"A1\", \"kind\": \"audio\", \"name\": \"A1\", \"linked_track_id\": null}], \"clip_count\": 1, \"duration\": 4.0, \"kinds\": {\"video\": 0, \"audio\": 1, \"text\": 0}}, \"history\": {\"can_undo\": false, \"can_redo\": false, \"checkpoints\": []}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-beats-float"
+   },
+   "error": "TypeError: object of type 'float' has no len()",
+   "crash": true
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-beats-float"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-beats-float",
+    "cid": "b1"
+   },
+   "text": "{\"id\": \"b1\", \"track_id\": \"A1\", \"kind\": \"audio\", \"asset_kind\": \"audios\", \"asset_id\": \"0\", \"filename\": \"b1.mp4\", \"name\": null, \"start\": 0.0, \"in_point\": 0.0, \"out_point\": 4.0, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": {\"times\": 2.5}, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 4.0}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-beats-float",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-media"
+   },
+   "text": "{\"project\": {\"id\": \"p-media\", \"name\": \"Material\", \"created_at\": \"2026-02-04T10:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"1:1\", \"width\": 1080, \"height\": 1080, \"fps\": 60}, \"media\": {\"clips\": 3, \"audios\": 2, \"images\": 2, \"transcripts\": 2, \"clip_list\": [{\"id\": \"0\", \"index\": 0, \"label\": \"Intro\", \"description\": \"La intro\", \"duration\": 15.555, \"has_transcript\": true}, {\"id\": \"1\", \"index\": 1, \"label\": \"clip1.mp4\", \"description\": null, \"duration\": 3.0, \"has_transcript\": false}, {\"id\": \"custom-id\", \"index\": 7, \"label\": \"clip7.mp4\", \"description\": null, \"duration\": -3.0, \"has_transcript\": false}], \"audio_list\": [{\"id\": \"au1\", \"label\": \"Narrador\", \"description\": \"Voz\", \"duration\": 12.5}, {\"id\": \"au2\", \"label\": \"musica.mp3\", \"description\": null, \"duration\": null}], \"image_list\": [{\"id\": \"img1\", \"label\": \"Logo\", \"description\": \"El logo\", \"width\": 512, \"height\": 256}, {\"id\": \"img2\", \"label\": \"foto.jpg\", \"description\": null, \"width\": null, \"height\": null}]}, \"timeline\": {\"present\": true, \"tracks\": [{\"id\": \"V1\", \"kind\": \"video\", \"name\": \"V1\", \"linked_track_id\": null}], \"clip_count\": 1, \"duration\": 15.556, \"kinds\": {\"video\": 1, \"audio\": 0, \"text\": 0}}, \"history\": {\"can_undo\": true, \"can_redo\": false, \"checkpoints\": [\"a\"]}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-media"
+   },
+   "text": "{\"present\": true, \"format\": {\"aspect\": \"1:1\", \"width\": 1080, \"height\": 1080, \"fps\": 60}, \"tracks\": [{\"id\": \"V1\", \"kind\": \"video\", \"name\": \"V1\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}], \"clips\": [{\"id\": \"m1\", \"track_id\": \"V1\", \"track_kind\": \"video\", \"kind\": \"video\", \"name\": null, \"start\": 0.0, \"duration\": 15.556, \"in_point\": 0.0, \"out_point\": 15.5555, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 15.5555, \"source_duration\": 0.0}, \"volume\": 1.0, \"has_audio_fx\": false}], \"markers\": [], \"duration\": 15.556}"
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-media"
+   },
+   "text": "{\"clips\": [{\"id\": \"0\", \"index\": 0, \"filename\": \"clip0.mp4\", \"label\": \"Intro\", \"description\": \"La intro\", \"start\": 10.0, \"end\": 25.5555, \"duration\": 15.555, \"origin\": \"youtube\", \"source\": \"external\", \"has_transcript\": true}, {\"id\": \"1\", \"index\": 1, \"filename\": \"clip1.mp4\", \"label\": \"\", \"description\": null, \"start\": 0.0, \"end\": 3.0, \"duration\": 3.0, \"origin\": null, \"source\": null, \"has_transcript\": false}, {\"id\": \"custom-id\", \"index\": 7, \"filename\": \"clip7.mp4\", \"label\": null, \"description\": null, \"start\": 5.0, \"end\": 2.0, \"duration\": -3.0, \"origin\": \"compose\", \"source\": \"generated\", \"has_transcript\": false}], \"audios\": [{\"id\": \"au1\", \"filename\": \"voz.wav\", \"label\": \"Narrador\", \"duration\": 12.5, \"voice\": \"ef_dora\", \"engine\": \"kokoro\", \"description\": \"Voz\", \"origin\": \"tts\", \"source\": \"generated\"}, {\"id\": \"au2\", \"filename\": \"musica.mp3\", \"label\": \"\", \"duration\": null, \"voice\": null, \"engine\": null, \"description\": null, \"origin\": null, \"source\": null}], \"images\": [{\"id\": \"img1\", \"filename\": \"logo.png\", \"label\": \"Logo\", \"description\": \"El logo\", \"width\": 512, \"height\": 256, \"origin\": \"upload\", \"source\": \"external\"}, {\"id\": \"img2\", \"filename\": \"foto.jpg\", \"label\": null, \"description\": null, \"width\": null, \"height\": null, \"origin\": \"pexels\", \"source\": \"generated\"}], \"transcripts\": [{\"id\": \"tr1\", \"title\": \"Guion\", \"language\": \"es\", \"segment_count\": 2, \"duration\": 61.5}, {\"id\": \"tr2\", \"title\": null, \"language\": null, \"segment_count\": 0, \"duration\": null}]}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-media",
+    "cid": "m1"
+   },
+   "text": "{\"id\": \"m1\", \"track_id\": \"V1\", \"kind\": \"video\", \"asset_kind\": \"clips\", \"asset_id\": \"0\", \"filename\": \"m1.mp4\", \"name\": null, \"start\": 0.0004, \"in_point\": 0.0, \"out_point\": 15.5555, \"source_duration\": 0.0, \"ref_segment\": null, \"volume\": 1.0, \"media_version\": null, \"reframe\": null, \"text\": null, \"style\": null, \"layout\": \"fill\", \"transform\": null, \"frame\": \"full\", \"appear\": \"none\", \"exit\": \"none\", \"look\": \"none\", \"effects\": null, \"filters\": null, \"audio_fx\": null, \"muted\": false, \"speed\": 1.0, \"keep_pitch\": true, \"reverse\": false, \"speed_curve\": null, \"opacity\": null, \"flip_h\": false, \"flip_v\": false, \"blend_mode\": null, \"disabled\": false, \"beats\": null, \"loop\": null, \"words\": [], \"origin\": null, \"text_role\": null, \"shape\": null, \"masks\": [], \"bg_removal\": null, \"anim\": null, \"vfx\": null, \"animations\": null, \"keyframes\": null, \"asset_scope\": \"project\", \"description\": null, \"note\": null, \"note_source\": null, \"dup_of\": null, \"composition_id\": null, \"timeline_duration\": 15.556}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-media",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-45"
+   },
+   "text": "{\"project\": {\"id\": \"p-45\", \"name\": \"4:5\", \"created_at\": \"2026-01-05T00:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"4:5\", \"width\": 1080, \"height\": 1350, \"fps\": 30}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [], \"clip_count\": 0, \"duration\": 0.0, \"kinds\": {\"video\": 0, \"audio\": 0, \"text\": 0}}, \"history\": {\"can_undo\": false, \"can_redo\": false, \"checkpoints\": []}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-45"
+   },
+   "text": "{\"present\": true, \"format\": {\"aspect\": \"4:5\", \"width\": 1080, \"height\": 1350, \"fps\": 30}, \"tracks\": [], \"clips\": [], \"markers\": [], \"duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-45"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-45",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-odd-size"
+   },
+   "text": "{\"project\": {\"id\": \"p-odd-size\", \"name\": \"Raro\", \"created_at\": \"2026-01-06T00:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"1234:567\", \"width\": 1234, \"height\": 567, \"fps\": 0}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [], \"clip_count\": 0, \"duration\": 0.0, \"kinds\": {\"video\": 0, \"audio\": 0, \"text\": 0}}, \"history\": {\"can_undo\": false, \"can_redo\": false, \"checkpoints\": []}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-odd-size"
+   },
+   "text": "{\"present\": true, \"format\": {\"aspect\": \"1234:567\", \"width\": 1234, \"height\": 567, \"fps\": 0}, \"tracks\": [], \"clips\": [], \"markers\": [], \"duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-odd-size"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-odd-size",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "p-zero"
+   },
+   "text": "{\"project\": {\"id\": \"p-zero\", \"name\": \"Cero\", \"created_at\": \"2026-01-07T00:00:00\", \"folder\": null}, \"format\": {\"aspect\": \"?\", \"width\": 720, \"height\": 0, \"fps\": 30}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [], \"clip_count\": 0, \"duration\": 0.0, \"kinds\": {\"video\": 0, \"audio\": 0, \"text\": 0}}, \"history\": {\"can_undo\": false, \"can_redo\": false, \"checkpoints\": []}}"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "p-zero"
+   },
+   "text": "{\"present\": true, \"format\": {\"aspect\": \"?\", \"width\": 720, \"height\": 0, \"fps\": 30}, \"tracks\": [], \"clips\": [], \"markers\": [], \"duration\": 0.0}"
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "p-zero"
+   },
+   "text": "{\"clips\": [], \"audios\": [], \"images\": [], \"transcripts\": []}"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "p-zero",
+    "cid": "nadie"
+   },
+   "error": "Clip no encontrado en la timeline: nadie"
+  },
+  {
+   "uri": "project://{pid}",
+   "params": {
+    "pid": "no-existe"
+   },
+   "error": "Proyecto no encontrado: no-existe"
+  },
+  {
+   "uri": "project://{pid}/timeline",
+   "params": {
+    "pid": "no-existe"
+   },
+   "error": "Proyecto no encontrado: no-existe"
+  },
+  {
+   "uri": "project://{pid}/media",
+   "params": {
+    "pid": "no-existe"
+   },
+   "error": "Proyecto no encontrado: no-existe"
+  },
+  {
+   "uri": "project://{pid}/clip/{cid}",
+   "params": {
+    "pid": "no-existe",
+    "cid": "v1"
+   },
+   "error": "Proyecto no encontrado: no-existe"
+  }
+ ]
+}

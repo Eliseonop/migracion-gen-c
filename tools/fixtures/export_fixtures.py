@@ -30,6 +30,8 @@ Salida (al repo):
   tests/fixtures/layers/synthetic.json     capas de un instante: layers_cases.py (layersAt con Node)
   tests/fixtures/editor/timeline_ui.json   timeline del editor: editor_cases.py (editorModel.js con Node)
   tests/fixtures/ai/model_manager.json     modelos de IA en RAM (model_manager.py): model_manager_cases.py (--solo modelos)
+  tests/fixtures/mcp/*.json                núcleo sin red del servidor MCP (mcp_server: dto, capabilities, help_content,
+                                           registry, resources y audit): mcp_cases.py (--solo mcp)
   tests/fixtures/editor/lru_bytes.json     caché LRU con tope en bytes: lru_cases.py (lib/lruBytes.js con Node; --solo lru)
   tests/fixtures/render/platform.json      marco de TikTok/Shorts del preview (platformChrome.js en Chromium; --solo plataforma)
   tests/fixtures/frame/synthetic.json      fotograma: frame_cases.py (drawComposite con Node)
@@ -3800,6 +3802,334 @@ def real_bg_derive_fixtures(matte_root: Path) -> dict:
     return _pure(_nan_safe({"cases": cases}))
 
 
+# --- Servidor MCP sin red (mcp_server: dto, capabilities, help_content, registry, resources, audit)
+
+class _FakeMcp:
+    """Lo que registry.tool y resources.register piden al MCPServer: guarda lo que se registra."""
+
+    def __init__(self):
+        self.tools: list[dict] = []
+        self.resources: list[tuple[str, dict, object]] = []
+
+    def tool(self, name=None, meta=None, annotations=None, **kwargs):
+        def deco(fn):
+            self.tools.append({"name": name, "meta": meta, "kwargs": sorted(kwargs),
+                               "annotations": annotations.model_dump(by_alias=True, exclude_none=True)})
+            return fn
+        return deco
+
+    def resource(self, uri, **kwargs):
+        def deco(fn):
+            self.resources.append((uri, kwargs, fn))
+            return fn
+        return deco
+
+
+class _Patches:
+    """Atributos sustituidos durante un bloque y restaurados al salir (aunque falle)."""
+
+    def __init__(self):
+        self.saved: list[tuple[object, str, object]] = []
+
+    def set(self, obj, name: str, value) -> None:
+        self.saved.append((obj, name, getattr(obj, name)))
+        setattr(obj, name, value)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        for obj, name, value in reversed(self.saved):
+            setattr(obj, name, value)
+        self.saved.clear()
+
+
+def _mcp_env(p: _Patches, env: dict) -> None:
+    """Lo que capabilities.py pregunta a la máquina y a los ajustes, con los valores de `env` (la
+    entrada que recibe gc_core ya resuelta): modelo de transcripción, motores TTS, categorías de
+    SFX, ffmpeg/ffprobe en el PATH, data/, GPU y proveedor de IA."""
+    import shutil as shutil_mod
+    from app import config, gpu, transcribe_settings
+    from app.ai import providers
+    from app.mcp_server import capabilities
+    p.set(capabilities, "tts_engines", lambda: copy.deepcopy(env["tts_engines"]))
+    p.set(capabilities, "sfx_categories", lambda: list(env["sfx_categories"]))
+    p.set(transcribe_settings, "load", lambda: {"model": env["transcribe_model"]})
+    p.set(shutil_mod, "which", lambda name, *a, **k: f"C:\\bin\\{name}.exe" if env.get(name) else None)
+    p.set(config, "DATA_DIR", Path(env["data_dir"]))
+    p.set(gpu, "summary", lambda: copy.deepcopy(env["gpu"]))
+    p.set(providers, "ai_config", lambda: copy.deepcopy(env["ai_provider"]))
+
+
+def _exc_text(e: Exception) -> str:
+    return f"{type(e).__name__}: {e}"
+
+
+def _mcp_dto_fixtures(ctx: Ctx, mc) -> dict:
+    """dto.py: el DTO semántico de cada proyecto (con cada historial resumido), su timeline en
+    detalle, el material, cada clip completo; aspect_ratio, analyze_dto y job_dto."""
+    from app.mcp_server import dto
+    projects = []
+    for name, raw, _hist in mc.PROJECTS:
+        proj = ctx.projects._project_from_dict(copy.deepcopy(raw))
+        tl = proj.timeline
+        case = {"name": name, "input": raw,
+                "project_context": [_pure(dto.project_context(proj, history=copy.deepcopy(h)))
+                                    for h in mc.CONTEXT_HISTORIES],
+                "media_list": _pure(dto.media_list(proj)),
+                "timeline_dto": _pure(dto._timeline_dto(tl))}
+        try:
+            case["timeline_detail"] = _pure(dto.timeline_detail(tl))
+        except Exception as e:  # noqa: BLE001 — Python también falla aquí: C++ debe fallar
+            case["timeline_detail"] = {"error": _exc_text(e)}
+        case["clips"] = [{"id": c.id, "timeline_duration": dto._clip_timeline_duration(c),
+                          "detail": _pure(dto.clip_detail(c))} for c in (tl.clips if tl else [])]
+        projects.append(case)
+    analyze = []
+    for name, raw in mc.ANALYZE:
+        resp = ctx.schemas.AnalyzeResponse.model_validate(copy.deepcopy(raw))
+        analyze.append({"name": name, "input": raw, "dumped": resp.model_dump(mode="json"),
+                        "expected": _pure(dto.analyze_dto(resp))})
+    jobs = []
+    for name, raw in mc.JOBS:
+        job = ctx.schemas.Job.model_validate(copy.deepcopy(raw))
+        jobs.append({"name": name, "input": raw, "dumped": job.model_dump(mode="json"),
+                     "expected": _pure(dto.job_dto(job))})
+    return {"capabilities": dto.capabilities(),
+            "aspect_ratio": [[w, h, dto.aspect_ratio(w, h)] for w, h in mc.ASPECTS],
+            "projects": projects, "analyze": analyze, "jobs": jobs}
+
+
+def _mcp_capabilities_fixtures(ctx: Ctx, mc) -> dict:
+    """capabilities.py: los enums de valores válidos, verbos por dominio y, con cada entorno,
+    overview, describe(dominio), transcribe_models y runtime_info; project_summary de cada proyecto."""
+    from app.mcp_server import capabilities as cap
+    enums = {"ASPECTS": cap.ASPECTS, "MOTIONS": cap.MOTIONS, "DASH_STYLES": cap.DASH_STYLES,
+             "TRANSITIONS": cap.TRANSITIONS, "VISUAL_FX": cap.VISUAL_FX, "MASK_TYPES": cap.MASK_TYPES,
+             "AUDIO_FX": cap.AUDIO_FX, "LOOKS": cap.LOOKS, "POSITIONS": cap.POSITIONS,
+             "REFRAME_MODES": cap.REFRAME_MODES, "TEXT_ROLES": cap.TEXT_ROLES, "TRACK_KINDS": cap.TRACK_KINDS,
+             "crop_modes": cap.crop_modes()}
+    envs = []
+    for name, env in mc.ENVIRONMENTS:
+        with _Patches() as p:
+            _mcp_env(p, env)
+            describe = []
+            for q in mc.DOMAIN_QUERIES:
+                try:
+                    describe.append([q, _pure(cap.describe(q))])
+                except ValueError as e:
+                    describe.append([q, {"error": str(e)}])
+            envs.append({"name": name, "env": env, "overview": _pure(cap.overview()),
+                         "transcribe_models": _pure(cap.transcribe_models()),
+                         "runtime_info": _pure(cap.runtime_info()), "describe": describe})
+    summaries = [{"name": name, "input": raw,
+                  "expected": _pure(cap.project_summary(ctx.projects._project_from_dict(copy.deepcopy(raw))))}
+                 for name, raw, _hist in mc.PROJECTS]
+    return {"enums": enums, "verbs_by_domain": cap.verbs_by_domain(), "domains": cap.domains(),
+            "environments": envs, "project_summaries": summaries}
+
+
+def _mcp_help_fixtures(mc) -> dict:
+    """help_content.py: TOOL_DOMAINS y HELP en su orden (textos byte a byte), domains() y guide()."""
+    from app.mcp_server import help_content as hc
+    return {"tool_domains": [[k, v] for k, v in hc.TOOL_DOMAINS.items()],
+            "help": [[k, v] for k, v in hc.HELP.items()],
+            "domains": hc.domains(),
+            "guide": [[q, hc.guide(q)] for q in mc.DOMAIN_QUERIES]}
+
+
+def _mcp_registry_fixtures(mc) -> dict:
+    """registry.py: niveles de acceso y códigos de error, el payload de MCPError, la clasificación
+    de los ValueError sueltos y su ToolError (el JSON que llega al agente), _is_job_dto, el
+    registro de tools (meta, anotaciones y errores) y las tools REALES del servidor (server.py)."""
+    from app.mcp_server import registry, server  # noqa: F401 — server registra las tools reales
+    builtin = [[n, s.access] for n, s in registry.registered().items()]
+    saved = registry.registered()
+    mcp_errors = []
+    for code, message, hint, retryable, param in mc.MCP_ERRORS:
+        err = registry.MCPError(code, message, hint=hint, retryable=retryable, param=param)
+        mcp_errors.append({"input": [code, message, hint, retryable, param], "payload": err.payload(),
+                           "str": str(err), "tool_error": str(registry._to_tool_error(err))})
+    value_errors = [{"message": m, "classified": list(registry._classify_value_error(m)),
+                     "tool_error": str(registry._to_tool_error(ValueError(m)))} for m in mc.VALUE_ERRORS]
+    assert registry._to_tool_error(TypeError("x")) is None  # un crash no es un error de tool
+    fake = _FakeMcp()
+    registrations = []
+    registry.reset()
+    try:
+        for name, access in mc.REGISTRATIONS:
+            try:
+                registry.tool(fake, access=access, name=name)(lambda: None)
+                registrations.append({"name": name, "access": access, "tool": fake.tools[-1]})
+            except ValueError as e:
+                registrations.append({"name": name, "access": access, "error": str(e)})
+        registered = [[n, s.access] for n, s in registry.registered().items()]
+    finally:
+        registry.reset()
+        registry._registry.update(saved)
+    return {"access_levels": list(registry.ACCESS_LEVELS), "error_codes": list(registry.ERROR_CODES),
+            "mcp_errors": mcp_errors, "value_errors": value_errors,
+            "job_dto_checks": [[v, registry._is_job_dto(copy.deepcopy(v))] for v in mc.JOB_DTO_CHECKS],
+            "registrations": registrations, "registered": registered, "builtin_tools": builtin}
+
+
+def _mcp_resources_fixtures(ctx: Ctx, mc) -> dict:
+    """resources.py: el catálogo (uri, mime_type, description) y lo que devuelve cada resource,
+    con projects.get_project y timeline_store._load_history sobre los proyectos de los casos."""
+    from app import projects as projects_mod, timeline_store
+    from app.mcp_server import help_content, resources
+    fake = _FakeMcp()
+    resources.register(fake)
+    handlers = {uri: fn for uri, _kw, fn in fake.resources}
+    catalog = [{"uri": uri, "kwargs": kw} for uri, kw, _fn in fake.resources]
+    raw_by_id = {raw["id"]: (raw, hist) for _n, raw, hist in mc.PROJECTS}
+
+    def call(uri: str, **params) -> dict:
+        try:
+            return {"uri": uri, "params": params, "text": handlers[uri](**params)}
+        except ValueError as e:
+            return {"uri": uri, "params": params, "error": str(e)}
+        except Exception as e:  # noqa: BLE001 — un fallo de Python (TypeError…): C++ también debe fallar
+            return {"uri": uri, "params": params, "error": _exc_text(e), "crash": True}
+
+    calls, histories = [], []
+    for name, env in mc.ENVIRONMENTS:
+        with _Patches() as p:
+            _mcp_env(p, env)
+            calls.append({"env": name, **call("capabilities://index")})
+            calls.append({"env": name, **call("config://runtime")})
+    for q in [*help_content.domains(), *mc.DOMAIN_QUERIES]:
+        calls.append(call("help://{domain}", domain=q))
+    with _Patches() as p:
+        p.set(projects_mod, "get_project", lambda pid: ctx.projects._project_from_dict(
+            copy.deepcopy(raw_by_id[pid][0])) if pid in raw_by_id else None)
+        p.set(timeline_store, "_load_history", lambda pid: copy.deepcopy(raw_by_id[pid][1]))
+        for pid, (raw, _hist) in raw_by_id.items():
+            histories.append({"pid": pid, "summary": resources._history(pid)})
+            calls.append(call("project://{pid}", pid=pid))
+            calls.append(call("project://{pid}/timeline", pid=pid))
+            calls.append(call("project://{pid}/media", pid=pid))
+            ids = list(dict.fromkeys(c["id"] for c in (raw.get("timeline") or {}).get("clips", [])))
+            for cid in [*ids, "nadie"]:
+                calls.append(call("project://{pid}/clip/{cid}", pid=pid, cid=cid))
+        for uri in ("project://{pid}", "project://{pid}/timeline", "project://{pid}/media"):
+            calls.append(call(uri, pid="no-existe"))
+        calls.append(call("project://{pid}/clip/{cid}", pid="no-existe", cid="v1"))
+    return {"catalog": catalog, "histories": histories, "calls": calls}
+
+
+class _FakeAuditClock:
+    """datetime de audit.py: now() da el instante fijado (µs desde 1970, en UTC)."""
+    us = 0
+
+    @classmethod
+    def now(cls, tz=None):
+        from datetime import datetime, timedelta, timezone
+        return datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(microseconds=cls.us)
+
+
+def _mcp_audit_fixtures(mc) -> dict:
+    """audit.py: extract_meta con cada modelo de los ajustes, y los pasos de AUDIT_STEPS sobre un
+    data/ temporal (que log crea), con el reloj, uuid4 y jobs.get_job falsos; tras los pasos que
+    escriben, el archivo de auditoría tal cual."""
+    from app import config, jobs as jobs_mod, transcribe_settings
+    from app.mcp_server import audit
+    extract = []
+    for tool, params, model in mc.EXTRACT_META:
+        with _Patches() as p:
+            p.set(transcribe_settings, "load", lambda m=model: {"model": m})
+            extract.append({"tool": tool, "params": params, "settings_model": model,
+                            "meta": _pure(audit.extract_meta(tool, copy.deepcopy(params)))})
+    tmp = Path(tempfile.mkdtemp(prefix="gc_mcp_audit_"))
+    data_dir = tmp / "nuevo" / "data"
+    path = data_dir / "mcp_audit.jsonl"
+    fake_jobs: dict = {}
+
+    def get_job(jid):
+        spec = fake_jobs.get(jid)
+        if spec is None:
+            return None
+        if spec["status"] in {s.value for s in schemas_mod.JobStatus}:
+            return schemas_mod.Job(id=jid, **spec)
+        # Un estado que Job no admite (p. ej. «cancelled»): un objeto cualquiera con esos atributos.
+        return types.SimpleNamespace(id=jid, progress=spec.get("progress", 0.0),
+                                     message=spec.get("message", "En cola…"), status=spec["status"])
+
+    from app import schemas as schemas_mod
+    steps = []
+    audit.reset_runtime()
+    try:
+        with _Patches() as p:
+            p.set(config, "DATA_DIR", data_dir)
+            p.set(uuid, "uuid4", _SequentialUuid())
+            p.set(audit, "datetime", _FakeAuditClock)
+            p.set(jobs_mod, "get_job", get_job)
+            for op in mc.AUDIT_STEPS:
+                kind, ret, out = op[0], None, {"op": op}
+                try:
+                    if kind == "now":
+                        _FakeAuditClock.us = op[1]
+                    elif kind == "source":
+                        audit._source_var.set(op[1])
+                    elif kind == "begin":
+                        ret = audit.begin(op[1], op[2], project_id=op[3], meta=copy.deepcopy(op[4]))
+                    elif kind == "finish":
+                        ret = audit.finish(op[1], **copy.deepcopy(op[2]))
+                    elif kind == "log":
+                        ret = audit.log(op[1], op[2], **copy.deepcopy(op[3]))
+                    elif kind == "track_job":
+                        audit.track_job(op[1], op[2], op[3], **copy.deepcopy(op[4]))
+                    elif kind == "jobs":
+                        fake_jobs.clear()
+                        fake_jobs.update({k: v for k, v in copy.deepcopy(op[1]).items() if v is not None})
+                    elif kind == "active":
+                        ret = audit.active(op[1])
+                    elif kind == "reset_runtime":
+                        audit.reset_runtime()
+                    elif kind == "read_all":
+                        ret = audit.read_all()
+                    elif kind == "read_recent":
+                        ret = audit.read_recent(limit=op[1], project_id=op[2])
+                    elif kind == "write_raw":
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        path.write_bytes(op[1].encode("utf-8"))
+                    elif kind == "write_hex":
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        path.write_bytes(bytes.fromhex(op[1]))
+                    elif kind == "remove_file":
+                        path.unlink()
+                    else:
+                        raise SystemExit(f"paso desconocido: {op}")
+                    out["ret"] = _pure(ret)
+                except (ValueError, AttributeError, TypeError, OSError) as e:
+                    out["error"] = _exc_text(e)
+                if kind in ("finish", "log", "write_raw", "write_hex", "remove_file"):
+                    if not path.exists():
+                        out["file"] = None
+                    else:
+                        data = path.read_bytes()
+                        try:
+                            out["file"] = data.decode("utf-8")
+                        except UnicodeDecodeError:
+                            out["file_hex"] = data.hex()
+                steps.append(out)
+            audit._source_var.set(None)
+    finally:
+        audit.reset_runtime()
+        shutil.rmtree(tmp, ignore_errors=True)
+    return {"extract_meta": extract, "steps": steps}
+
+
+def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
+    """El núcleo sin red del servidor MCP con los módulos REALES (mcp_cases.py), un archivo por
+    módulo de app/mcp_server: dto, capabilities, help, registry, resources y audit."""
+    sys.path.insert(0, str(HERE))
+    import mcp_cases as mc
+    return {"dto": _mcp_dto_fixtures(ctx, mc), "capabilities": _mcp_capabilities_fixtures(ctx, mc),
+            "help": _mcp_help_fixtures(mc), "registry": _mcp_registry_fixtures(mc),
+            "resources": _mcp_resources_fixtures(ctx, mc), "audit": _mcp_audit_fixtures(mc)}
+
+
 # --- Salida -----------------------------------------------------------------------------------
 
 def write(path: Path, payload, count: int, errors: int) -> None:
@@ -3815,7 +4145,7 @@ def main() -> None:
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
                                        "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake",
-                                       "anchos", "matte", "lru", "plataforma", "decode", "modelos"],
+                                       "anchos", "matte", "lru", "plataforma", "decode", "modelos", "mcp"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json; "
                          "decode: media/decode.json y media/seek.json)")
     ap.add_argument("--conservar", action="store_true",
@@ -3875,6 +4205,32 @@ def main() -> None:
 
     if args.solo == "modelos":
         models_group()
+        return
+
+    def mcp_group() -> None:
+        mcp = synthetic_mcp_fixtures(ctx)
+        counts = {
+            "dto": lambda d: len(d["projects"]) + len(d["analyze"]) + len(d["jobs"]) + len(d["aspect_ratio"]),
+            "capabilities": lambda d: len(d["environments"]) + len(d["project_summaries"]),
+            "help": lambda d: len(d["help"]) + len(d["guide"]),
+            "registry": lambda d: len(d["mcp_errors"]) + len(d["value_errors"]) + len(d["registrations"]),
+            "resources": lambda d: len(d["calls"]),
+            "audit": lambda d: len(d["extract_meta"]) + len(d["steps"]),
+        }
+        errors = {
+            "dto": lambda d: sum("error" in (p["timeline_detail"] or {}) for p in d["projects"]),
+            "capabilities": lambda d: sum("error" in r for e in d["environments"] for _q, r in e["describe"]),
+            "help": lambda d: 0,
+            "registry": lambda d: sum("error" in r for r in d["registrations"]),
+            "resources": lambda d: sum("error" in c for c in d["calls"]),
+            "audit": lambda d: sum("error" in s for s in d["steps"]),
+        }
+        for name, payload in mcp.items():
+            write(REPO / "tests" / "fixtures" / "mcp" / f"{name}.json", payload, counts[name](payload),
+                  errors[name](payload))
+
+    if args.solo == "mcp":
+        mcp_group()
         return
 
     def platform_group() -> None:
@@ -4102,6 +4458,7 @@ def main() -> None:
     lru_group()
     platform_group()
     models_group()
+    mcp_group()
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)
