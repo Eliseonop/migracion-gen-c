@@ -1101,6 +1101,47 @@ Rectangle {
                 Small { objectName: "insp:fadeout"; text: "Fade out"; onClicked: panel.model.fadeVolume("out") }
                 Small { objectName: "insp:mute"; text: panel.has && panel.clip.muted ? "Activar" : "Mute"; onClicked: panel.model.toggleMuted() }
             }
+
+            // Beats (BeatsSection de EdInspector): detectar, densidad de las marcas y quitar.
+            Section { visible: panel.sound; text: "BEATS" }
+            RowLayout {
+                visible: panel.sound
+                Layout.fillWidth: true
+                spacing: 6
+                Small {
+                    objectName: "insp:beats:detect"
+                    enabled: !panel.model.beatBusy
+                    text: panel.has && panel.model.beatBusy === panel.clip.id ? "Detectando…"
+                        : panel.has && panel.clip.beats ? "Volver a detectar" : "Detectar beats"
+                    onClicked: panel.model.detectBeats(panel.clip.id)
+                }
+                Small {
+                    visible: panel.has && !!panel.clip.beats
+                    objectName: "insp:beats:remove"
+                    text: "Quitar"
+                    onClicked: panel.model.removeBeats(panel.clip.id)
+                }
+            }
+            RowLayout {
+                visible: panel.sound && !!panel.clip.beats
+                Layout.fillWidth: true
+                spacing: 6
+                Label { text: "Marcas"; color: Theme.textSecondary }
+                Choice {
+                    objectName: "insp:beats:every"
+                    options: [["1", "Todos los beats"], ["2", "Uno de cada 2"], ["4", "Uno de cada 4"]]
+                    current: panel.has && panel.clip.beats ? String(panel.clip.beats.every) : "1"
+                    onPicked: (v) => panel.model.setBeatsEvery(panel.clip.id, Number(v))
+                }
+            }
+            Label {
+                visible: panel.sound && !!panel.clip.beats
+                objectName: "insp:beats:meta"
+                text: panel.has && panel.clip.beats
+                      ? panel.clip.beats.count + " beats · " + Math.round(panel.clip.beats.bpm) + " BPM" : ""
+                color: Theme.muted
+                font.pixelSize: 11
+            }
             }
 
             ColumnLayout {

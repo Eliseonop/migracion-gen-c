@@ -146,6 +146,41 @@ QString clip_label(const core::TimelineClip& c) {
 
 // Puntos de keyframe del clip (ClipBlock de EdTimeline): fracción 0–1 de su ancho. Los de pose van
 // en tiempo local; sin ellos, los del encuadre, que van en tiempo de la fuente.
+// clipBeats de lib/beats.js: los beats del clip (cuántos tiempos finitos, el bpm y uno de cada
+// 1, 2 o 4), o nada si no hay tiempos.
+struct BeatsView {
+    int count = 0;
+    double bpm = 0;
+    int every = 1;
+};
+std::optional<BeatsView> clip_beats_view(const core::TimelineClip& c) {
+    if (!c.beats || !c.beats->is_object()) {
+        return std::nullopt;
+    }
+    const Json& b = *c.beats;
+    const auto times = b.find("times");
+    if (times == b.end() || !times->is_array() || times->empty()) {
+        return std::nullopt;
+    }
+    BeatsView v;
+    for (const Json& t : *times) {
+        v.count += std::isfinite(core::js_number(t)) ? 1 : 0;
+    }
+    const double bpm = core::js_number(b.value("bpm", Json()));
+    v.bpm = std::isnan(bpm) ? 0.0 : bpm; // Number(b.bpm) || 0
+    const double every = core::js_number(b.value("every", Json()));
+    v.every = every == 2 || every == 4 ? static_cast<int>(every) : 1;
+    return v;
+}
+
+QVariant beats_variant(const core::TimelineClip& c) {
+    const auto v = clip_beats_view(c);
+    if (!v) {
+        return {};
+    }
+    return QVariantMap{{"count", v->count}, {"bpm", v->bpm}, {"every", v->every}};
+}
+
 // Beats del clip como fracción de su ancho (las rayitas de EdTimeline).
 QVariantList beat_marks(const core::TimelineClip& c) {
     QVariantList out;
@@ -198,6 +233,74 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     });
     // Cada proxy que acaba, a la vista previa.
     connect(&proxy_maker_, &ProxyMaker::proxiesChanged, this, [this] { preview_.setProxies(proxy_maker_.proxies()); });
+    connect(&beat_detector_, &BeatDetector::finished, this, &EditorModel::beats_detected);
+}
+
+void EditorModel::set_notice(const QString& type, const QString& message) {
+    notice_ = QVariantMap{{"type", type}, {"message", message}};
+    emit noticeChanged();
+}
+
+void EditorModel::clearNotice() {
+    if (!notice_.isEmpty()) {
+        notice_.clear();
+        emit noticeChanged();
+    }
+}
+
+void EditorModel::detectBeats(const QString& clipId) {
+    const core::TimelineClip* c = clip(clipId);
+    if (!c || (c->kind != "audio" && c->kind != "video") || !beat_busy_.isEmpty()) {
+        return;
+    }
+    if (!beat_detector_.start(store_.file().parent_path().parent_path(), project_id_, *c)) {
+        set_notice("error", "No se pudieron detectar los beats.");
+        return;
+    }
+    beat_busy_ = clipId;
+    beat_project_ = project_id_;
+    emit beatBusyChanged();
+}
+
+void EditorModel::beats_detected(const QString& clipId, const QVariantList& times, double bpm, const QString& error) {
+    beat_busy_.clear();
+    emit beatBusyChanged();
+    if (!error.isEmpty()) {
+        set_notice("error", error);
+        return;
+    }
+    // En el clip tal como está ahora (si el proyecto sigue abierto): {times, bpm || 0, every || 1}.
+    const core::TimelineClip* c = session_ && beat_project_ == project_id_ ? clip(clipId) : nullptr;
+    if (c) {
+        const auto before = clip_beats_view(*c);
+        Json list = Json::array();
+        for (const QVariant& t : times) {
+            list.push_back(t.toDouble());
+        }
+        core::Timeline next = *session_->timeline();
+        for (auto& x : next.clips) {
+            if (x->id == clipId.toStdString()) {
+                x.mut().beats = Json{{"times", std::move(list)}, {"bpm", bpm}, {"every", before ? before->every : 1}};
+                break;
+            }
+        }
+        commit(std::move(next), "beats", {clipId.toStdString()});
+    }
+    set_notice("success", QString("%1 beats · %2 BPM").arg(times.size()).arg(static_cast<int>(std::floor(bpm + 0.5))));
+}
+
+void EditorModel::setBeatsEvery(const QString& clipId, int every) {
+    const core::TimelineClip* c = clip(clipId);
+    if (!c || !c->beats || !c->beats->is_object()) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& x : next.clips) {
+        if (x->id == clipId.toStdString()) {
+            (*x.mut().beats)["every"] = every;
+        }
+    }
+    commit(std::move(next), "beats", {clipId.toStdString()});
 }
 
 EditorModel::~EditorModel() = default;
@@ -739,6 +842,7 @@ QVariantMap EditorModel::selectedClip() const {
              return masks.empty() ? QVariantMap() : to_variant(masks.front());
          }()},
         {"maskCount", static_cast<int>(c->masks.size())},
+        {"beats", beats_variant(*c)}, // {count, bpm, every} o nada
         {"vfx", [&] { // la pila con lo que pinta el inspector: nombre y parámetros del catálogo
              QVariantList out;
              const auto catalog = core::fx_catalog();
@@ -1613,7 +1717,7 @@ QVariantMap EditorModel::clipMenu(const QString& clipId) const {
             {"canLayer", core::can_layer_clip(*c)},
             {"canBack", layer.can_back},
             {"canFront", layer.can_front},
-            {"hasBeats", !core::clip_beat_times(*c).empty()},
+            {"hasBeats", clip_beats_view(*c).has_value()}, // clipBeats(clip), aunque caigan fuera del tramo
             {"sfx", fav_id.has_value()},
             {"favorite", fav_id && std::ranges::find(sfx, Json(*fav_id)) != sfx.end()},
             {"canPasteAttrs", attr_clipboard_ && attr_clipboard_->id != c->id}};

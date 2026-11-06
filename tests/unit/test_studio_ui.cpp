@@ -26,7 +26,6 @@
 #include "thumbnails.hpp"
 
 #ifdef GC_STUDIO_PREVIEW
-#include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -35,6 +34,7 @@
 
 #include "gc/export/frame.hpp"
 #include "gc/export/project.hpp"
+#include "gc/media/audio.hpp"
 #include "gc/media/encode.hpp"
 #include "gc/media/probe.hpp"
 #endif
@@ -931,6 +931,92 @@ TEST_CASE("studio sin pantalla: un export cancelado no deja nada y una timeline 
 #endif
 
 #ifdef GC_STUDIO_PREVIEW
+TEST_CASE("studio sin pantalla: detectar los beats de un audio los guarda en el clip y lo avisa", "[studio][ui][beats]") {
+    const Studio s;
+    // El audio «a1» de la fixture (m.mp3) pasa a ser la batería a 120 BPM de los medios de prueba.
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    const auto audio = core::project_base(s.store->clips_dir(), **project) / "audio" / "m.mp3";
+    std::filesystem::create_directories(audio.parent_path());
+    std::filesystem::copy_file(core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files" / "drums120.m4a", audio);
+    double y = -1;
+    for (const QVariant& t : s.editor->tracks()) {
+        if (t.toMap()["id"] == "A1") {
+            y = t.toMap()["y"].toDouble() + (t.toMap()["height"].toDouble() / 2);
+        }
+    }
+    s.editor->dropMaterial("audios:a1", 0, y, false);
+    QString id;
+    for (const QVariant& v : s.editor->clips()) {
+        if (v.toMap()["kind"] == "audio") {
+            id = v.toMap()["clipId"].toString();
+        }
+    }
+    REQUIRE_FALSE(id.isEmpty());
+    CHECK(s.editor->clipMenu(id)["hasBeats"] == false);
+
+    s.editor->detectBeats(id);
+    CHECK(s.editor->beatBusy() == id);
+    s.editor->detectBeats("a"); // uno cada vez
+    CHECK(s.editor->beatBusy() == id);
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->beatBusy().isEmpty(); }, 120000));
+    const QVariantMap notice = s.editor->notice();
+    INFO(notice["message"].toString().toStdString());
+    REQUIRE(notice["type"] == "success");
+
+    // Los de gc::media::detect_beats, guardados en projects.json con every 1.
+    const auto expected = media::detect_beats(audio);
+    REQUIRE(expected);
+    CHECK(std::abs(expected->bpm - 120) < 2);
+    auto saved = s.store->get_project("p1");
+    REQUIRE(saved);
+    REQUIRE(*saved);
+    const auto& clips = (**saved).timeline->clips;
+    const auto it = std::ranges::find_if(clips, [&](const auto& c) { return c->id == id.toStdString(); });
+    REQUIRE(it != clips.end());
+    REQUIRE((*it)->beats);
+    const Json& beats = *(*it)->beats;
+    REQUIRE(beats["times"].size() == expected->times.size());
+    for (std::size_t i = 0; i < expected->times.size(); ++i) {
+        CHECK(beats["times"][i].get<double>() == expected->times[i]);
+    }
+    CHECK(beats["bpm"].get<double>() == expected->bpm);
+    CHECK(beats["every"] == 1);
+    CHECK(notice["message"].toString() == QString("%1 beats · %2 BPM")
+                                              .arg(expected->times.size())
+                                              .arg(static_cast<int>(std::floor(expected->bpm + 0.5))));
+    // El aviso flotante lo enseña y se cierra.
+    QQuickItem* toast = s.item("toast");
+    REQUIRE(toast);
+    QQuickItem* message = s.item("toast:message", toast);
+    REQUIRE(message);
+    CHECK(message->property("text").toString() == notice["message"].toString());
+    s.editor->clearNotice();
+    QCoreApplication::processEvents();
+    CHECK_FALSE(s.item("toast"));
+
+    // La densidad de las marcas, el inspector y el menú; deshacer la quita y luego los beats.
+    s.editor->select(id);
+    s.editor->setBeatsEvery(id, 2);
+    const QVariantMap view = s.editor->selectedClip()["beats"].toMap();
+    CHECK(view["every"] == 2);
+    CHECK(view["count"].toInt() == static_cast<int>(expected->times.size()));
+    CHECK(s.editor->clipMenu(id)["hasBeats"] == true);
+    s.editor->undo();
+    CHECK(s.editor->selectedClip()["beats"].toMap()["every"] == 1);
+    s.editor->undo();
+    CHECK(s.editor->clipMenu(id)["hasBeats"] == false);
+
+    // Un vídeo sin su archivo: el error de main.py. Una imagen: nada.
+    s.editor->detectBeats("a");
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->beatBusy().isEmpty(); }, 60000));
+    CHECK(s.editor->notice()["type"] == "error");
+    CHECK(s.editor->notice()["message"] == "No se encuentra el archivo del clip.");
+    s.editor->detectBeats("b");
+    CHECK(s.editor->beatBusy().isEmpty());
+}
+
 namespace {
 
 // Un vídeo vertical de w × h a 30 fps en tres franjas horizontales: rojo, verde y azul.

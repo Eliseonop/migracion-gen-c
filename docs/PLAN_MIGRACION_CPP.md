@@ -1774,3 +1774,12 @@ Decisión de Edu (§6):
 - **Como EdTimeline.jsx:** `pseudoWaveform(asset_id, max(16, round(ancho/5)))` (ya portada con paridad, `pseudo_waveform`) pintada en un `Canvas` por clip de audio con lo de `.ed-clip-wave` de editor.css: margen de 4 × 8 px, 1 px entre barras, el color rgba(120, 160, 255, 0,55), la altura redondeada al 1 % y al 28 % de opacidad si el clip está silenciado. Las barras no salen del audio: son decorativas, como en video-yt. Se rehacen al cambiar el ancho (zoom).
 - **Test** sin pantalla: `EditorModel::waveform` da las barras de `pseudo_waveform`, y un audio soltado en A1 enseña su lienzo con las que tocan por su ancho; un vídeo, ninguno.
 - **Verificado:** MSVC Debug y Release 299/299, MinGW 164/164 (sin el studio), 0 warnings.
+
+### 2026-11-05 — F5/F6: «Detectar beats» en el editor
+
+- **Como video-yt:** el menú del clip ofrece «Detectar beats» en un audio o un vídeo sin beats (y «Quitar beats» si los tiene), y la pestaña Audio del inspector tiene la sección BEATS de EdInspector (detectar o volver a detectar, quitar, «Marcas»: todos, uno de cada 2 o de cada 4, y «N beats · BPM»).
+- **El análisis** (`BeatDetector`, `apps/studio/beat_detector.hpp`): el POST /beats de main.py, en un hilo: el tipo del clip, su archivo (`exporter::clip_path`, el `compose._clip_path` de Python) y `gc::media::detect_beats` del archivo ENTERO (los tiempos son del archivo), con la caché de `beats.detect_beats` (ruta, tamaño y fecha; se vacía al pasar de 32). Uno cada vez; si el proyecto cambia antes de acabar, el resultado no se aplica a otro.
+- **El resultado** se guarda como en detectClipBeats: `{times, bpm || 0, every}` con el `every` que tuviera el clip (o 1), en un paso de deshacer. Y un aviso flotante (`Toast.qml`, el de components/Toast.jsx: éxito, error o información; 4 s y cerrar) con «N beats · BPM» o el error («No se encuentra el archivo del clip.», «Los beats solo se detectan en clips de audio o vídeo.»).
+- **De paso:** `hasBeats` del menú pasa a ser el `clipBeats` de JS (unos beats que caen todos fuera del tramo también cuentan), y la casilla de beats de F6 queda cerrada.
+- **Test** sin pantalla con la batería a 120 BPM de los medios de prueba: los tiempos y el BPM de `detect_beats` guardados en projects.json, el aviso en pantalla y su cierre, la densidad en el inspector, deshacer dos veces y el error de un vídeo sin archivo.
+- **Verificado:** MSVC Debug y Release 300/300, MinGW 164/164 (sin el studio), 0 warnings, 0 avisos de clang-tidy en el studio.

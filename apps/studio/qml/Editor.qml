@@ -210,6 +210,16 @@ Item {
         }
     }
 
+    // Los avisos de las acciones del editor (los beats detectados, un error…).
+    Toast {
+        z: 95
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 24
+        notice: editor.model.notice
+        onClosed: editor.model.clearNotice()
+    }
+
     // El export (export_job.hpp): su progreso y, al acabar, el archivo, la cancelación o el error.
     Rectangle {
         id: exportCard

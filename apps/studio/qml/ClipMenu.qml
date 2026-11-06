@@ -48,9 +48,16 @@ Menu {
         onTriggered: menu.only(() => menu.model.toggleDisabled())
     }
     Entry {
-        visible: !!menu.info.hasBeats
+        visible: (menu.info.kind === "audio" || menu.info.kind === "video") && !!menu.info.hasBeats
         text: "Quitar beats"
         onTriggered: menu.model.removeBeats(menu.clipId)
+    }
+    Entry {
+        objectName: "ctx:beats"
+        visible: (menu.info.kind === "audio" || menu.info.kind === "video") && !menu.info.hasBeats
+        enabled: !menu.model.beatBusy
+        text: "Detectar beats"
+        onTriggered: menu.model.detectBeats(menu.clipId)
     }
     Entry { visible: menu.info.kind !== "audio"; text: "Voltear horizontal"; onTriggered: menu.only(() => menu.model.toggleFlip("h")) }
     Entry { visible: menu.info.kind !== "audio"; text: "Voltear vertical"; onTriggered: menu.only(() => menu.model.toggleFlip("v")) }

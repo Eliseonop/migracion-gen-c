@@ -23,6 +23,7 @@
 #include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
 
+#include "beat_detector.hpp"
 #include "clip_list_model.hpp"
 #include "crop_editor.hpp"
 #include "export_job.hpp"
@@ -72,6 +73,10 @@ class EditorModel : public QObject {
     Q_PROPERTY(double pps READ pps WRITE setPps NOTIFY zoomChanged)
     Q_PROPERTY(int rowHeight READ rowHeight WRITE setRowHeight NOTIFY timelineChanged)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
+    // «Detectar beats» (beat_detector.hpp): el clip que se está analizando («» si ninguno).
+    Q_PROPERTY(QString beatBusy READ beatBusy NOTIFY beatBusyChanged)
+    // El aviso flotante (Toast.jsx): {type: success|error|info, message}; vacío si no hay.
+    Q_PROPERTY(QVariantMap notice READ notice NOTIFY noticeChanged)
 
 public:
     // `settings` (opcional) da la carpeta de los SFX; la biblioteca está junto a projects.json.
@@ -187,6 +192,15 @@ public:
     Q_INVOKABLE void toggleClipFavorite(const QString& clipId);
     Q_INVOKABLE void applyGlobalTemplate(const QString& clipId);
     Q_INVOKABLE void removeBeats(const QString& clipId);
+    // detectClipBeats de VideoEditor.jsx: los beats del audio de un clip de audio o vídeo, en un
+    // hilo; al acabar se guardan en el clip ({times, bpm, every}, un paso de deshacer) y el aviso
+    // dice cuántos y a qué BPM (o el error). Uno cada vez.
+    Q_INVOKABLE void detectBeats(const QString& clipId);
+    // La densidad de las marcas: uno de cada 1, 2 o 4 beats.
+    Q_INVOKABLE void setBeatsEvery(const QString& clipId, int every);
+    [[nodiscard]] QString beatBusy() const { return beat_busy_; }
+    [[nodiscard]] QVariantMap notice() const { return notice_; }
+    Q_INVOKABLE void clearNotice();
     Q_INVOKABLE void toggleMarker();
     // patchMarker de VideoEditor.jsx: mover (al fotograma), renombrar (vacío = sin nombre) o quitar.
     Q_INVOKABLE void moveMarker(const QString& id, double t);
@@ -322,8 +336,12 @@ signals:
     void playheadChanged();
     void zoomChanged();
     void errorChanged();
+    void beatBusyChanged();
+    void noticeChanged();
 
 private:
+    void beats_detected(const QString& clipId, const QVariantList& times, double bpm, const QString& error);
+    void set_notice(const QString& type, const QString& message);
     void patch_marker(const QString& id, const std::optional<Json>& patch);
     void set_vfx(Json list);
     template <class Edit>
@@ -393,6 +411,10 @@ private:
     double pps_ = 40;
     int row_height_ = 52;
     QString error_;
+    QString beat_busy_;
+    std::string beat_project_; // el proyecto del clip que se analiza
+    QVariantMap notice_;
+    BeatDetector beat_detector_; // con su hilo, mientras analiza
     ProxyMaker proxy_maker_; // con su hilo
     ExportJob export_job_;   // con su hilo, mientras exporta
     Player player_;          // con su hilo de la mezcla
