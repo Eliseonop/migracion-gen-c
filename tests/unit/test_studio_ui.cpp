@@ -36,6 +36,9 @@
 
 #include "gc/export/frame.hpp"
 #include "gc/export/project.hpp"
+#include "gc/render/canvas.hpp"
+#include "gc/render/platform.hpp"
+#include "platform_chrome.hpp"
 #include "gc/media/audio.hpp"
 #include "gc/media/encode.hpp"
 #include "gc/media/probe.hpp"
@@ -781,6 +784,50 @@ TEST_CASE("studio sin pantalla: la vista previa pinta el fotograma del export en
     s.editor->closeProject();
     REQUIRE(QTest::qWaitFor([&] { return p.revision() > since; }, 60000));
     CHECK_FALSE(p.hasFrame());
+}
+
+TEST_CASE("studio sin pantalla: el marco de TikTok o Shorts encima de la vista previa", "[studio][ui][preview]") {
+    const Studio s;
+    auto* chrome = qobject_cast<studio::PlatformChrome*>(s.item("preview:chrome"));
+    QQuickItem* picker = s.item("preview:overlay");
+    REQUIRE(chrome);
+    REQUIRE(picker);
+    // Las opciones de PLATFORM_OVERLAYS, con «Sin marco» al principio.
+    const QVariantList options = chrome->property("overlays").toList();
+    REQUIRE(options.size() == 3);
+    CHECK(options[0].toMap()["label"] == "Sin marco");
+    CHECK(options[1].toMap()["id"] == "tiktok");
+    CHECK(options[2].toMap()["label"] == "YouTube Shorts");
+    const auto pick = [&](int index) {
+        picker->setProperty("currentIndex", index);
+        QMetaObject::invokeMethod(picker, "activated", Q_ARG(int, index));
+        (void)s.window->grabWindow(); // pinta la escena (y el marco)
+    };
+    (void)s.window->grabWindow();
+    CHECK(chrome->image().isNull()); // sin marco al abrir
+    pick(1);
+    CHECK(chrome->property("kind") == "tiktok");
+    const QImage got = chrome->image();
+    REQUIRE_FALSE(got.isNull());
+    const double dpr = s.window->effectiveDevicePixelRatio();
+    CHECK(got.width() == static_cast<int>(std::lround(chrome->width() * dpr)));
+    CHECK(got.height() == static_cast<int>(std::lround(chrome->height() * dpr)));
+    // Lo mismo que dibuja gc_render al tamaño del recuadro, píxel a píxel.
+    auto canvas = render::Canvas::make(got.width(), got.height());
+    REQUIRE(canvas);
+    canvas->clear({0, 0, 0, 0});
+    render::draw_platform_chrome(*canvas, 0, 0, got.width(), got.height(), "tiktok");
+    const render::Image want = canvas->snapshot();
+    const QImage rgba = got.convertToFormat(QImage::Format_RGBA8888);
+    bool same = rgba.width() * 4 == rgba.bytesPerLine();
+    same = same && std::equal(want.pixels.begin(), want.pixels.end(), rgba.constBits());
+    CHECK(same);
+    pick(2);
+    CHECK(chrome->property("kind") == "shorts");
+    CHECK_FALSE(chrome->image().isNull());
+    CHECK(chrome->image() != got); // se vuelve a dibujar con el otro marco
+    pick(0);
+    CHECK(chrome->image().isNull());
 }
 
 TEST_CASE("studio sin pantalla: la vista previa de una timeline vacía lo dice", "[studio][ui][preview]") {

@@ -42,7 +42,8 @@ private:
     bool dirty_ = false; // hay que subirlo a una textura nueva
 };
 
-// Registra FramePreview y RoundedImage en QML (import GenClip.Preview). Antes de cargar el QML.
+// Registra FramePreview, RoundedImage y PlatformChrome en QML (import GenClip.Preview). Antes de
+// cargar el QML.
 void register_qml_types();
 
 } // namespace gc::studio

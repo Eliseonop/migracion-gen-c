@@ -1827,3 +1827,10 @@ Decisión de Edu (§6):
 - **De paso, `decode_image`:** los yuvj* de JPEG pasan a su YUV con el rango completo aparte (swscale avisaba de formato obsoleto); el ajuste de rango ya se usa y su mutación se detecta (7/7).
 - **Tests:** el del modelo (los dos avisos de nada que importar y `dropFileKind`, con .MPEG y un .ogv por su MIME) y uno sin pantalla con eventos de arrastre reales sobre la ventana: un .txt da «Formato no compatible», no se importa y el aviso se quita al salir; una imagen con una nota se importa, sale «Suelta la imagen aquí» y el panel acaba en Proyecto › Imágenes. 4/4 mutaciones del studio. El cursor de «no se puede» no se comprueba (el evento del test no lo refleja).
 - **Verificado:** MSVC Debug y Release 305/305, 0 warnings; clang-tidy, 0 avisos.
+
+### 2026-11-06 — F4/F5: el marco de TikTok o Shorts en la vista previa
+
+- **Como `drawMainView` de canvas.js** (que llama a `drawPlatformChrome` encima del recuadro exportable): `PlatformChrome` (GenClip.Preview, `apps/studio/platform_chrome.hpp`) va encima de la vista previa y pinta el marco con `gc::render::draw_platform_chrome` a los píxeles de la pantalla (con el devicePixelRatio). Solo se vuelve a dibujar si cambia el tamaño o el marco. Sin gc_render, nada (ni el selector).
+- **El selector** de EdViewerTools («Sin marco», «TikTok», «YouTube Shorts», de `kPlatformOverlays`, con su tooltip) bajo la vista previa; el marco es estado del editor (`platformOverlay` de VideoEditor.jsx: «none» al abrir, no se guarda). No se exporta.
+- **Test sin pantalla:** las tres opciones; elegir TikTok pinta, píxel a píxel, lo que da `draw_platform_chrome` a ese tamaño; Shorts lo redibuja distinto; «Sin marco», nada. 4/4 mutaciones (no redibujar al cambiar, el recuadro a la mitad, fondo opaco, el selector desconectado).
+- **Verificado:** MSVC Debug y Release 306/306, 0 warnings; clang-tidy, 0 avisos.

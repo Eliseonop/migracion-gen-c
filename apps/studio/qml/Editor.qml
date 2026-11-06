@@ -9,6 +9,8 @@ Item {
     required property var model
     signal closed
     signal openSettings
+    // El marco de plataforma del visor (platformOverlay de VideoEditor.jsx): solo vista previa.
+    property string platformOverlay: "none"
 
     Shortcut { sequences: [StandardKey.Undo]; enabled: editor.visible; onActivated: editor.model.undo() }
     Shortcut { sequences: [StandardKey.Redo, "Ctrl+Y"]; enabled: editor.visible; onActivated: editor.model.redo() }
@@ -171,6 +173,33 @@ Item {
                                                               : editor.model.preview.error
                         color: Theme.muted
                     }
+                    // Marco de TikTok o Shorts encima del recuadro exportable (drawPlatformChrome).
+                    PlatformChrome {
+                        id: chrome
+                        objectName: "preview:chrome"
+                        anchors.fill: preview
+                        kind: editor.platformOverlay
+                    }
+                }
+                // El selector del marco de EdViewerTools (solo vista previa).
+                ComboBox {
+                    id: overlayPicker
+                    objectName: "preview:overlay"
+                    visible: chrome.overlays.length > 0
+                    anchors.top: frame.bottom
+                    anchors.topMargin: 4
+                    anchors.right: frame.right
+                    width: 150
+                    height: 26
+                    font.pixelSize: 11
+                    model: chrome.overlays
+                    textRole: "label"
+                    valueRole: "id"
+                    currentIndex: Math.max(0, chrome.overlays.findIndex((o) => o.id === editor.platformOverlay))
+                    onActivated: editor.platformOverlay = currentValue
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 600
+                    ToolTip.text: "Marco de plataforma (solo vista previa): simula cómo se verá dentro de TikTok o YouTube Shorts"
                 }
                 Label {
                     id: timeLabel

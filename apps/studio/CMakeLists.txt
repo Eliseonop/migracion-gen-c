@@ -5,7 +5,7 @@
 qt_standard_project_setup()
 
 add_library(gc_studio STATIC app.cpp beat_detector.cpp clip_list_model.cpp crop_editor.cpp editor_model.cpp export_job.cpp frame_preview.cpp
-                             home_model.cpp player.cpp preview_source.cpp proxy_maker.cpp rounded_image.cpp
+                             home_model.cpp platform_chrome.cpp player.cpp preview_source.cpp proxy_maker.cpp rounded_image.cpp
                              settings_model.cpp thumbnails.cpp)
 target_include_directories(gc_studio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gc_studio PUBLIC gc::core Qt6::Core Qt6::Gui Qt6::Quick Qt6::QuickControls2)

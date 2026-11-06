@@ -6,6 +6,7 @@
 #include <QtQml/qqml.h>
 #include <algorithm>
 
+#include "platform_chrome.hpp"
 #include "rounded_image.hpp"
 
 namespace gc::studio {
@@ -104,6 +105,7 @@ QSGNode* FramePreview::updatePaintNode(QSGNode* old, UpdatePaintNodeData* /*data
 void register_qml_types() {
     qmlRegisterType<FramePreview>("GenClip.Preview", 1, 0, "FramePreview");
     qmlRegisterType<RoundedImage>("GenClip.Preview", 1, 0, "RoundedImage");
+    qmlRegisterType<PlatformChrome>("GenClip.Preview", 1, 0, "PlatformChrome");
     qmlRegisterUncreatableType<PreviewSource>("GenClip.Preview", 1, 0, "PreviewSource",
                                               "lo crea el editor (EditorModel.preview)");
 }
