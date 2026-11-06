@@ -6,7 +6,8 @@
 //   tests/fixtures/render/platform.json   las escenas (lienzo, recuadro, marco, fondo) y el PNG.
 //
 // No es exacta: Skia por CPU frente al Canvas 2D de Chromium (también Skia, pero con su propio
-// antialias de trazados y sombras) y los textos sin HarfBuzz (sin interletraje). Se compara la luma
+// antialias de trazados, sombras y glifos; la forma del texto es la misma, con HarfBuzz). Los
+// umbrales dependen de la Segoe UI de Windows con la que se generó la fixture. Se compara la luma
 // de los colores premultiplicados y el alfa por PSNR; los casos que no dibujan nada, exactos.
 
 #include <catch2/catch_test_macros.hpp>

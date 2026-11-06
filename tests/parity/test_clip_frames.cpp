@@ -6,8 +6,10 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <filesystem>
+#include <map>
 #include <optional>
 #include <string>
 #include <utility>
@@ -92,6 +94,51 @@ TEST_CASE("ClipFrames da los mismos fotogramas que export_frame_at", "[media][de
             auto want = gc::media::export_frame_at(c, kFiles / c.filename, fps, k);
             REQUIRE(want);
             CHECK(md5_of(*got) == md5_of(*want ? &**want : nullptr));
+        }
+    }
+}
+
+// Al revés con bloques pequeños (1 y 3 fotogramas): los clips de prueba caben enteros en los 256 MB
+// de un bloque normal, así que aquí se pasa por varios bloques, por su borde y por los saltos hacia
+// atrás y hacia delante del cabezal, siempre frente a export_frame_at.
+TEST_CASE("ClipFrames al revés por varios bloques da los mismos fotogramas que export_frame_at", "[media][decode]") {
+    gc::media::silence_ffmpeg_log();
+    const int fps = 30;
+    const std::vector<std::pair<std::string, TimelineClip>> cases{
+        {"al revés", clip("moving30.mp4", 0.0, 0.0, 1.2, 1.0, false, true)},
+        {"al revés, de 25 en 30 y empieza en 0,29", clip("moving25.mp4", 0.29, 0.1, 1.4, 1.0, false, true)},
+        {"al revés a velocidad 1,5", clip("moving30.mp4", 0.0, 0.0, 1.8, 1.5, false, true)},
+        {"al revés con salto previo", clip("keys30.mp4", 0.2, 3.3, 4.6, 1.0, false, true)},
+    };
+    // En orden (con repeticiones), un salto atrás, otro adelante dentro y fuera del bloque, y pasado
+    // el final.
+    std::vector<std::int64_t> ticks;
+    for (std::int64_t k = 0; k < 45; ++k) {
+        ticks.push_back(k);
+        if (k % 7 == 0) {
+            ticks.push_back(k);
+        }
+    }
+    ticks.insert(ticks.end(), {44, 20, 21, 19, 30, 2, 0, 60, 8});
+    for (const std::size_t block : {std::size_t{1}, std::size_t{3}}) {
+        for (const auto& [name, c] : cases) {
+            INFO(name << ", bloques de " << block);
+            auto frames = gc::media::ClipFrames::open(c, kFiles / c.filename, fps);
+            REQUIRE(frames);
+            frames->set_reverse_block(block);
+            std::map<std::int64_t, std::string> want_md5; // export_frame_at, una vez por tick
+            for (const std::int64_t k : ticks) {
+                INFO("tick " << k);
+                auto got = frames->at(k);
+                REQUIRE(got);
+                auto [it, fresh] = want_md5.try_emplace(k);
+                if (fresh) {
+                    auto want = gc::media::export_frame_at(c, kFiles / c.filename, fps, k);
+                    REQUIRE(want);
+                    it->second = md5_of(*want ? &**want : nullptr);
+                }
+                CHECK(md5_of(*got) == it->second);
+            }
         }
     }
 }

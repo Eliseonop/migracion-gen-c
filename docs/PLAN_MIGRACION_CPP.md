@@ -1795,3 +1795,10 @@ Decisión de Edu (§6):
 - Con la build Release de MSVC (la de `42bec1d`), `genclip render` sobre todos tus proyectos con timeline (`render_all.py` del scratchpad: primero sin `--omitir`; solo si fallara, con él): los 18 salen en modo estricto, sin omitir nada. 4K de 1,3 a 83 s (TAREA2, 27 clips, el más lento; los demás, 25 s o menos). El único aviso: el GIF de un clip de «lucy» que no está en disco (el export de Python también lo salta: `media_exists`).
 - Es la parte de la «Salida» de F4 que se puede comprobar con tus datos. Queda recorrer los 50 documentos de `docs/` de video-yt con una escena por función, para lo que tus timelines no usan.
 
+### 2026-11-06 — F3, revisión de `7202cf4..42bec1d`: el revés por varios bloques probado
+
+- **Revisor (`revisor-migracion`): APROBADO**, con menores. El port de `platformChrome.js` no tiene divergencias con el JS; la caché de `FrameRenderer` y `LruBytes`, bien. El hueco: los clips de prueba caben enteros en un bloque de 256 MB, así que el revés por bloques nunca pasaba por varios bloques (`window_from > 0`).
+- **Cerrado:** `ClipFrames::set_reverse_block(fotogramas)` fija el tamaño del bloque (para los tests; da los mismos fotogramas). El test nuevo «ClipFrames al revés por varios bloques…» repite 4 casos al revés con bloques de 1 y 3 fotogramas, con ticks en orden (y repetidos), saltos atrás y adelante dentro y fuera del bloque y pasado el final, frente a `export_frame_at`. Un mutante que lee el bloque sin restar su inicio pasa el test anterior y falla este.
+- **Menores anotados (TODO, notas de F3):** el primer tick al revés decodifica el tramo entero y cada bloque se para (saltar al bloque con preroll queda como mejora); 256 MB por lector al revés visible; los umbrales del marco dependen de la Segoe UI con la que se generó la fixture (comentario del test corregido: el texto ya va con HarfBuzz).
+- **MSVC:** 302/302 (Debug y Release), 0 warnings; MinGW 164/164; clang-tidy, 0 avisos. (Las cifras incluyen el trabajo sin commitear de otra sesión, `media_import`, que compila y pasa; no se toca.)
+

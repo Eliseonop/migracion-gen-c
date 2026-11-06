@@ -121,6 +121,10 @@ public:
     // El fotograma del tick (nullptr si la cadena no da ninguno). Vale hasta la siguiente llamada.
     [[nodiscard]] Result<const RgbaFrame*> at(std::int64_t tick);
 
+    // Al revés: bloques de `frames` fotogramas (≥ 1) en vez de los que quepan en 256 MB. Para los
+    // tests, que así pasan por varios bloques con clips cortos; da los mismos fotogramas.
+    void set_reverse_block(std::size_t frames);
+
 private:
     struct Impl;
     explicit ClipFrames(std::unique_ptr<Impl> impl);

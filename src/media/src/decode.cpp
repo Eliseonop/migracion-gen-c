@@ -1073,6 +1073,7 @@ struct ClipFrames::Impl {
     std::int64_t window_from = 0;
     std::vector<RgbaFrame> window;
     static constexpr std::size_t kReverseWindowBytes = std::size_t{256} * 1024 * 1024;
+    std::size_t reverse_block = 0; // fotogramas por bloque fijados (set_reverse_block); 0 = por bytes
 
     // El fotograma del tick al revés: el m-ésimo que suelta el filtro reverse es el (N−1−m)-ésimo
     // del tramo, como en export_frame_at. Al reproducir, los índices del tramo bajan: cada vez se
@@ -1103,7 +1104,8 @@ struct ClipFrames::Impl {
         const std::int64_t chosen = k == n ? n - 1 : chain.pts_of(k) == tick || k == 0 ? k : k - 1;
         const std::int64_t wanted = n - 1 - chosen;
         if (wanted < window_from || wanted >= window_from + static_cast<std::int64_t>(window.size())) {
-            const auto fit = static_cast<std::int64_t>(std::max<std::size_t>(1, kReverseWindowBytes / reverse_frame_bytes));
+            const auto fit = static_cast<std::int64_t>(
+                std::max<std::size_t>(1, reverse_block > 0 ? reverse_block : kReverseWindowBytes / reverse_frame_bytes));
             window.clear();
             window_from = std::max<std::int64_t>(0, wanted - fit + 1);
             std::int64_t i = 0;
@@ -1197,6 +1199,12 @@ Result<ClipFrames> ClipFrames::open_bake_input(const core::TimelineClip& clip, c
         return std::unexpected(r.error());
     }
     return ClipFrames(std::move(impl));
+}
+
+void ClipFrames::set_reverse_block(std::size_t frames) {
+    impl_->reverse_block = std::max<std::size_t>(frames, 1);
+    impl_->window.clear(); // el bloque que hubiera se vuelve a decodificar con el tamaño nuevo
+    impl_->window_from = 0;
 }
 
 Result<const RgbaFrame*> ClipFrames::at(std::int64_t tick) {
