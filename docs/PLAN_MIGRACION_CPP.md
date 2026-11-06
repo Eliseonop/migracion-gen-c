@@ -1790,3 +1790,8 @@ Decisión de Edu (§6):
 - **Ahora:** al arrastrarlo (la vista previa del arrastre y el soltar pasan por `planMaterialDrop`), `probe_material` sondea su archivo una vez (`media::probe_duration`; el SFX por su ruta en la carpeta de SFX y el de una colección por «<colección>/<ruta>») y la duración queda en su material; si se rehace la búsqueda, se recupera de lo ya sondeado. Sin gc_export, como antes.
 - **Test:** un SFX y un audio de colección reales: la vista previa del arrastre y el clip soltado duran lo que su archivo, también tras una búsqueda nueva.
 - **Verificado:** MSVC Debug y Release 301/301, 0 warnings, 0 avisos de clang-tidy.
+### 2026-10-31 — F4: tus 18 timelines con `genclip render`, en modo estricto
+
+- Con la build Release de MSVC (la de `42bec1d`), `genclip render` sobre todos tus proyectos con timeline (`render_all.py` del scratchpad: primero sin `--omitir`; solo si fallara, con él): los 18 salen en modo estricto, sin omitir nada. 4K de 1,3 a 83 s (TAREA2, 27 clips, el más lento; los demás, 25 s o menos). El único aviso: el GIF de un clip de «lucy» que no está en disco (el export de Python también lo salta: `media_exists`).
+- Es la parte de la «Salida» de F4 que se puede comprobar con tus datos. Queda recorrer los 50 documentos de `docs/` de video-yt con una escena por función, para lo que tus timelines no usan.
+
