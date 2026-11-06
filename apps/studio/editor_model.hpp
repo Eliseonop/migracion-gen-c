@@ -101,6 +101,10 @@ public:
     [[nodiscard]] ExportJob& exportJob() { return export_job_; }
     // Exporta la timeline a la carpeta exports del proyecto (ExportJob). false si no se puede empezar.
     Q_INVOKABLE bool exportVideo();
+    // Importar material del disco (el botón de la pestaña Proyecto; upload_video y upload_audio de
+    // main.py, media_import.hpp): copia cada vídeo o audio a la carpeta del proyecto y lo da de
+    // alta; el aviso dice cuántos entraron o qué falló. Las imágenes, todavía no. Da cuántos entraron.
+    Q_INVOKABLE int importFiles(const QList<QUrl>& files);
     // Las filas de clipModel (para los tests).
     [[nodiscard]] QVariantList clips() const;
     [[nodiscard]] double duration() const;
@@ -340,6 +344,10 @@ signals:
     void noticeChanged();
 
 private:
+    // Una tarjeta del material con su dragPayload; y las del proyecto (sus vídeos, imágenes y audios).
+    void add_material(const char* source, const char* asset_kind, const QString& key, const Json& item,
+                      const char* kind, QVariantList& into);
+    void project_materials(const core::Project& project, QVariantList& into);
     void beats_detected(const QString& clipId, const QVariantList& times, double bpm, const QString& error);
     void set_notice(const QString& type, const QString& message);
     void patch_marker(const QString& id, const std::optional<Json>& patch);

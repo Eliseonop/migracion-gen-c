@@ -25,6 +25,7 @@
 #include "gc/core/edit.hpp"
 #include "gc/core/ids.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/media_import.hpp"
 #include "gc/core/media_upgrade.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/segments.hpp"
@@ -61,6 +62,7 @@ Json dump(bool v) { return v; }
 Json dump(const Project& v) { return to_json(v); }
 Json dump(const ProjectGroup& v) { return to_json(v); }
 Json dump(const ClipInfo& v) { return to_json(v); }
+Json dump(const AudioInfo& v) { return to_json(v); }
 template <class T>
 Json dump(const std::optional<T>& v) {
     return v ? dump(*v) : Json();
@@ -276,6 +278,31 @@ std::size_t run_steps(const Json& fixture, const std::string& fname) {
                 ok = std::unexpected(r.error());
             } else if (*r) {
                 result = Json::array({to_json((*r)->clip), (*r)->quality ? Json(*(*r)->quality) : Json()});
+            }
+        } else if (kind == "import_video" || kind == "import_audio") { // la sonda da a[4] (null: falla, y vale 0)
+            const Json& dur = a[4];
+            const DurationProbe probe = [&dur](const fs::path&) -> std::optional<double> {
+                return dur.is_null() ? std::nullopt : std::optional(dur.get<double>());
+            };
+            const std::string data = text(3);
+            if (kind == "import_video") {
+                ImportMeta meta;
+                const auto field = [&](const char* key) -> std::optional<std::string> {
+                    return a[5].contains(key) && a[5][key].is_string() ? std::optional(a[5][key].get<std::string>())
+                                                                        : std::nullopt;
+                };
+                meta.label = field("label");
+                meta.description = field("description");
+                meta.origin = field("origin");
+                meta.source = field("source");
+                meta.provider = field("provider");
+                meta.external_id = field("external_id");
+                meta.source_url = field("source_url");
+                meta.author = field("author");
+                meta.license_info = field("license_info");
+                take(import_video(store, text(1), text(2), data, probe, ids, meta));
+            } else {
+                take(import_audio(store, text(1), text(2), data, probe, ids));
             }
         } else if (kind == "retarget") {
             ok = store.retarget_timeline_asset(text(1), text(2), a[3], a[4], a[5], a[6], a[7].get<bool>());

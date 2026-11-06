@@ -1170,12 +1170,16 @@ _PROJECTS_MESSAGES = {"El nombre no puede estar vacío.", "La carpeta no existe.
                       "El rango es demasiado corto para analizar caras.",
                       # media_upgrade.py
                       "Material de vídeo no encontrado (usa el vídeo completo, no un segmento).",
-                      "No se puede reemplazar un material por sí mismo.", "URL de YouTube no válida."}
+                      "No se puede reemplazar un material por sí mismo.", "URL de YouTube no válida.",
+                      # videos.py
+                      "Formato de vídeo no válido. Usa MP4, MOV, MKV, WEBM…",
+                      "Formato de audio no válido. Usa MP3, WAV, M4A…", "Archivo vacío.",
+                      "No se pudo guardar el vídeo.", "No se pudo guardar el audio."}
 # Los pasos que pueden escribir projects.json: tras ellos se guarda su texto.
 _PROJECTS_WRITES = {"create", "create_group", "rename_group", "delete_group", "move", "rename", "duplicate",
                     "set_folder", "delete", "add_clips", "add_transcript", "add_audio", "add_image", "update",
                     "remove_material", "manifest", "timeline", "motion", "delete_motion", "scenes", "blueprint",
-                    "retarget", "segments", "face_track", "upgrade"}
+                    "retarget", "segments", "face_track", "upgrade", "import_video", "import_audio"}
 
 
 class _FixedNow:
@@ -1193,13 +1197,13 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
     """Ejecuta los pasos con el projects.py REAL sobre un projects.json temporal (y los clips por
     defecto en {TMP}/clips), con uuid4 y _now fijados. «{TMP}» es la carpeta temporal (con «/»)
     en los argumentos, y vuelve a serlo en los resultados y en el texto de projects.json."""
-    from app import config, detect, media_upgrade, segments, timeline_store, youtube_audio
+    from app import config, detect, media_upgrade, segments, timeline_store, videos, youtube_audio
     projects, schemas = ctx.projects, ctx.schemas
     tmp = Path(tempfile.mkdtemp(prefix="gc_prj_"))
     posix = tmp.as_posix()
     saved = (projects._FILE, config.OUTPUT_DIR, uuid.uuid4, projects._now)
     saved_seg = (segments._now, detect.face_track, youtube_audio.probe_duration, detect.dims,
-                 timeline_store.HISTORY_DIR)
+                 timeline_store.HISTORY_DIR, videos.probe_duration)
     timeline_store.HISTORY_DIR = tmp / "data" / "history"
     projects._FILE = tmp / "data" / "projects.json"
     config.OUTPUT_DIR = tmp / "clips"
@@ -1253,6 +1257,23 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
         with_dims(dims)
         return media_upgrade.best_full_version(pid, vid)
 
+    # videos.import_video / import_audio sobre el proyecto tal como está, con la sonda de duración
+    # de videos.py dando `dur` (None: falla, y vale 0).
+    def with_probe(dur):
+        def probe(_path):
+            if dur is None:
+                raise RuntimeError("sin sonda")
+            return dur
+        videos.probe_duration = probe
+
+    def import_video(pid, filename, data, dur, meta):
+        with_probe(dur)
+        return videos.import_video(projects.get_project(pid), filename, data.encode("utf-8"), **meta)
+
+    def import_audio(pid, filename, data, dur):
+        with_probe(dur)
+        return videos.import_audio(projects.get_project(pid), filename, data.encode("utf-8"))
+
     def tmp_of(value):
         return json.loads(json.dumps(value, ensure_ascii=False).replace(posix, "{TMP}"))
 
@@ -1275,6 +1296,7 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
         "add_image": lambda pid, i: projects.add_image(pid, schemas.ImageInfo(**i)),
         "segments": create_segments, "face_track": face_track, "versions": versions, "upgrade": upgrade,
         "yt_sources": media_upgrade.youtube_sources, "best_full": best_full,
+        "import_video": import_video, "import_audio": import_audio,
     }
     out = []
     try:
@@ -1320,7 +1342,7 @@ def _run_projects_steps(ctx: Ctx, steps: list, record_file: bool = True) -> list
     finally:
         projects._FILE, config.OUTPUT_DIR, uuid.uuid4, projects._now = saved
         (segments._now, detect.face_track, youtube_audio.probe_duration, detect.dims,
-         timeline_store.HISTORY_DIR) = saved_seg
+         timeline_store.HISTORY_DIR, videos.probe_duration) = saved_seg
         shutil.rmtree(tmp, ignore_errors=True)
     return _pure(out)
 

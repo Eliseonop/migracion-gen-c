@@ -36,6 +36,9 @@ los clips por defecto es «{TMP}/clips».
   tree                         los archivos bajo {TMP}/clips (ruta relativa y contenido)
   segments pid id rangos dur   segments.create_segments(pid, id, rangos), con la sonda de duración
                                dando `dur` (None: falla, y vale 0)
+  import_video pid nombre datos dur meta / import_audio pid nombre datos dur
+                               videos.import_video / import_audio, con la sonda de duración
+                               dando `dur` (None: falla, y vale 0)
   face_track pid id a b muestras forzar info
                                segments.face_track_material(...), con detect.face_track dando
                                `info` (None: falla)
@@ -489,3 +492,34 @@ STEPS_UPG = [
     ("get", "n1"),
 ]
 STEPS += STEPS_UPG
+
+# Importar un vídeo o un audio local (videos.import_video e import_audio):
+#   import_video pid nombre datos dur meta   con los datos como texto (sus bytes en UTF-8), la sonda de
+#                                            duración dando `dur` (None: falla, y vale 0) y `meta` los
+#                                            argumentos con nombre (label, description, origin…)
+#   import_audio pid nombre datos dur
+STEPS_IMPORT = [
+    ("file", START),
+    ("import_video", "aaaa0001", "Mi vídeo.MP4", "datos del vídeo", 12.5, {}),
+    ("import_video", "aaaa0001", "carpeta/otro.mov", "x", None,
+     {"label": "Etiqueta", "description": "Una descripción", "origin": "pexels", "source": "stock",
+      "provider": "pexels", "external_id": "123", "source_url": "https://www.pexels.com/video/123/",
+      "author": "Ana", "license_info": "Pexels License"}),
+    ("import_video", "aaaa0001", "etiqueta vacía.webm", "x", 2.0, {"label": "", "origin": "", "source": ""}),
+    ("import_video", "aaaa0001", "a.b.mkv", "x", 3.25, {}),
+    ("import_video", "aaaa0001", '<>raro?*|"..avi', "x", 1.0, {}),
+    ("import_video", "aaaa0001", "  espacios   en medio .m4v", "x", 0.0, {}),
+    ("import_video", "aaaa0001", "malo.txt", "x", 1.0, {}),
+    ("import_video", "aaaa0001", ".mp4", "x", 1.0, {}),
+    ("import_video", "aaaa0001", "sin_ext", "x", 1.0, {}),
+    ("import_video", "aaaa0001", "vacio.mp4", "", 1.0, {}),
+    ("import_video", "bbbb0002", "en su carpeta.mp4", "y", 4.0, {}),
+    ("import_video", "cccc0003", "ñandú.FLV", "z", 7.5, {}),
+    ("import_audio", "aaaa0001", "Voz.WAV", "audio", 4.25),
+    ("import_audio", "aaaa0001", "música.flac", "y", None),
+    ("import_audio", "aaaa0001", "malo.mp4", "x", 1.0),
+    ("import_audio", "aaaa0001", "vacio.mp3", "", 1.0),
+    ("import_audio", "cccc0003", "ñandú.m4a", "z", 0.5),
+    ("tree",), ("get", "aaaa0001"), ("get", "bbbb0002"), ("get", "cccc0003"),
+]
+STEPS += [("remove",), *STEPS_IMPORT]

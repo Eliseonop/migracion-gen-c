@@ -808,11 +808,28 @@ MCP = [
     ("ayuda: dominios repetidos", MH, "    out.erase(first, last);\n", ""),
 ]
 
+MI = "src/core/src/media_import.cpp"
+IMPORT = [
+    ("extensión sin minúsculas", MI, "return detail::py_lower(detail::py_path_suffix(filename));",
+     "return detail::py_path_suffix(filename);"),
+    ("índice desde 0", MI, "std::int64_t top = 99999;", "std::int64_t top = 0;"),
+    ("etiqueta vacía cuenta", MI, "return v && !v->empty() ? *v : std::string(fallback);",
+     "return v ? *v : std::string(fallback);"),
+    ("url sin quote", MI, "detail::py_quote(placed->dest_name)", "placed->dest_name"),
+    ("sonda que falla da 1", MI, "probe(*dest).value_or(0.0)", "probe(*dest).value_or(1.0)"),
+    ("vídeo vacío sin error", MI, "    if (data.empty()) {", "    if (false) {"),
+    ("nombre sin sanear", MI, "safe_file_name(detail::py_path_stem(filename))", "std::string(detail::py_path_stem(filename))"),
+    ("audio con el nombre guardado", MI, "info.label = detail::py_path_stem(filename);", "info.label = placed->dest_name;"),
+    ("origen por defecto upload", MI, 'or_text(meta.origin, "import")', 'or_text(meta.origin, "upload")'),
+    ("audio con extensiones de vídeo", MI, "if (!has(kImportAudioExts, lower_suffix(filename))) {",
+     "if (!has(kImportVideoExts, lower_suffix(filename))) {"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

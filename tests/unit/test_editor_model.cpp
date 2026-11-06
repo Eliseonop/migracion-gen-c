@@ -14,6 +14,7 @@
 
 #include "gc/core/io.hpp"
 #include "gc/core/fx_catalog.hpp"
+#include "gc/core/projects_store.hpp"
 #include "gc/core/serialize.hpp"
 
 #include "editor_model.hpp"
@@ -756,6 +757,72 @@ TEST_CASE("editor: material de la biblioteca y de la carpeta de SFX", "[studio]"
     CHECK(std::ranges::none_of(m.materials(), [](const QVariant& v) { return v.toMap()["source"] == "sfx"; }));
     m.searchSfx("pum", "");
     CHECK(std::ranges::any_of(m.materials(), [](const QVariant& v) { return v.toMap()["source"] == "sfx"; }));
+}
+
+TEST_CASE("editor: importar vídeos y audios del disco al material del proyecto", "[studio]") {
+    Fixture f;
+    const auto media_dir = core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files";
+    const auto in = f.dir / "fuera";
+    std::filesystem::create_directories(in);
+    std::filesystem::copy_file(media_dir / "v_2s.mp4", in / "Mi clip.mp4");
+    std::filesystem::copy_file(media_dir / "a.wav", in / "voz.WAV");
+    std::filesystem::copy_file(media_dir / "still.png", in / "foto.png");
+    { std::ofstream(in / "nota.txt") << "x"; }
+    { std::ofstream(in / "vacío.mp4"); }
+    const auto url = [&](const char* name) {
+        return QUrl::fromLocalFile(QString::fromStdString(core::path_to_utf8(in / core::path_from_utf8(name))));
+    };
+    studio::EditorModel m(f.store);
+    CHECK(m.importFiles({url("Mi clip.mp4")}) == 0); // sin proyecto abierto
+    REQUIRE(m.openProject("p1"));
+    const auto project_names = [&] {
+        QStringList out;
+        for (const QVariant& v : m.materials()) {
+            if (v.toMap()["source"] == "project") {
+                out << v.toMap()["kind"].toString() + ":" + v.toMap()["name"].toString();
+            }
+        }
+        return out;
+    };
+    REQUIRE(project_names().isEmpty());
+    CHECK(m.importFiles({url("Mi clip.mp4"), url("foto.png"), url("voz.WAV"), url("nota.txt"), url("vacío.mp4")}) == 2);
+    CHECK(project_names() == QStringList{"video:Mi clip", "audio:voz"});
+    CHECK(m.materials().front().toMap()["source"] == "project"); // delante, como al abrir el proyecto
+    CHECK(m.notice()["type"] == "error");
+    const QString msg = m.notice()["message"].toString();
+    CHECK(msg.contains("foto.png: las imágenes aún no se importan desde aquí."));
+    CHECK(msg.contains("nota.txt: formato no válido."));
+    CHECK(msg.contains("vacío.mp4: Archivo vacío."));
+    CHECK_FALSE(msg.contains("Mi clip"));
+
+    // En projects.json, con el archivo copiado (el original sigue donde estaba).
+    auto p = f.store.get_project("p1");
+    REQUIRE(p);
+    REQUIRE(*p);
+    REQUIRE((*p)->clips.size() == 1);
+    REQUIRE((*p)->audios.size() == 1);
+    const core::ClipInfo& clip = (*p)->clips.front();
+    CHECK(clip.label == "Mi clip");
+    CHECK(clip.index == 100000);
+    CHECK(clip.origin == "import");
+    CHECK((*p)->audios.front().label == "voz");
+    CHECK(std::filesystem::exists(in / "Mi clip.mp4"));
+    const auto copied = core::resolve_project_media(f.store.clips_dir(), **p, "video", clip.filename);
+    REQUIRE(copied);
+    CHECK(std::filesystem::file_size(*copied) == std::filesystem::file_size(in / "Mi clip.mp4"));
+#ifdef GC_STUDIO_PREVIEW
+    CHECK(clip.end == media::probe_duration(in / "Mi clip.mp4"));
+    CHECK((*p)->audios.front().duration == media::probe_duration(in / "voz.WAV"));
+    CHECK(clip.end > 1.5);
+#endif
+
+    // Uno solo: el aviso de React con su nombre; el material se rehace sin duplicar.
+    CHECK(m.importFiles({url("voz.WAV")}) == 1);
+    CHECK(m.notice()["type"] == "success");
+    CHECK(m.notice()["message"] == "«voz.WAV» está en el material.");
+    CHECK(project_names() == QStringList{"video:Mi clip", "audio:voz", "audio:voz"});
+    CHECK(m.importFiles({url("Mi clip.mp4"), url("voz.WAV")}) == 2);
+    CHECK(m.notice()["message"] == "2 archivos añadidos al material.");
 }
 
 #ifdef GC_STUDIO_PREVIEW

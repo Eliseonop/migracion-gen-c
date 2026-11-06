@@ -117,6 +117,22 @@ Rectangle {
                 }
             }
         }
+        // La zona «Arrastra vídeo, imagen o audio, o elige un archivo» de EdMaterial (por ahora sin imágenes).
+        SmallButton {
+            objectName: "material:import"
+            visible: panel.source === "project"
+            Layout.fillWidth: true
+            text: "Importar vídeo o audio…"
+            onClicked: importDialog.open()
+        }
+        FileDialog {
+            id: importDialog
+            title: "Importar al proyecto"
+            fileMode: FileDialog.OpenFiles
+            nameFilters: ["Vídeo y audio (*.mp4 *.mov *.mkv *.webm *.avi *.m4v *.mp4v *.mpg *.mpeg *.wmv *.flv *.mp3 *.wav *.m4a *.aac *.ogg *.flac *.wma)",
+                          "Todos (*)"]
+            onAccepted: panel.model.importFiles(selectedFiles)
+        }
         RowLayout {
             visible: panel.source === "collection"
             SmallButton {

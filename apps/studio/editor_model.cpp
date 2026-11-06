@@ -32,6 +32,7 @@
 #include "gc/core/mask_edit.hpp"
 #include "gc/core/masks.hpp"
 #include "gc/core/material_drop.hpp"
+#include "gc/core/media_import.hpp"
 #include "gc/core/no_overlap.hpp"
 #include "gc/core/pose.hpp"
 #include "gc/core/serialize.hpp"
@@ -322,6 +323,90 @@ void EditorModel::setError(const QString& message) {
     }
 }
 
+void EditorModel::add_material(const char* source, const char* asset_kind, const QString& key, const Json& item,
+                               const char* kind, QVariantList& into) {
+    const Json payload = core::drag_payload(asset_kind, item);
+    payloads_[key] = payload;
+    into << QVariantMap{{"key", key},
+                        {"source", source},
+                        {"assetKind", asset_kind},
+                        {"kind", kind},
+                        {"name", qstr(payload.value("name", Json("")).is_string() ? payload.value("name", "") : "")},
+                        {"duration", core::js_number(payload.value("duration", Json(0)))}};
+}
+
+void EditorModel::project_materials(const core::Project& project, QVariantList& into) {
+    for (const auto& c : project.clips) {
+        add_material("project", "clips", QString("clips:%1").arg(c.index), core::to_json(c), "video", into);
+    }
+    for (const auto& i : project.images) {
+        add_material("project", "images", "images:" + qstr(i.id), core::to_json(i), "image", into);
+    }
+    for (const auto& a : project.audios) {
+        add_material("project", "audios", "audios:" + qstr(a.id), core::to_json(a), "audio", into);
+    }
+}
+
+int EditorModel::importFiles(const QList<QUrl>& files) {
+    if (!session_) {
+        return 0;
+    }
+    const core::DurationProbe probe = [](const std::filesystem::path& path) -> std::optional<double> {
+#ifdef GC_STUDIO_PREVIEW
+        return media::probe_duration(path);
+#else
+        (void)path;
+        return std::nullopt;
+#endif
+    };
+    int imported = 0;
+    QString last;
+    QStringList problems;
+    for (const QUrl& url : files) {
+        const auto path = core::path_from_utf8((url.isLocalFile() ? url.toLocalFile() : url.toString()).toStdString());
+        const std::string name = core::path_to_utf8(path.filename());
+        const auto kind = core::import_kind(name);
+        std::optional<Error> failed;
+        if (kind == "video") {
+            if (auto r = core::import_video_file(store_, project_id_, path, name, probe, ids_); !r) {
+                failed = r.error();
+            }
+        } else if (kind == "audio") {
+            if (auto r = core::import_audio_file(store_, project_id_, path, name, probe, ids_); !r) {
+                failed = r.error();
+            }
+        } else {
+            problems << qstr(name) + ": " +
+                            (kind == "image" ? QString("las imágenes aún no se importan desde aquí.")
+                                             : QString("formato no válido. Usa vídeo (MP4, MOV, MKV, WEBM…) o audio (MP3, WAV, M4A…)."));
+            continue;
+        }
+        if (failed) {
+            problems << qstr(name) + ": " + qstr(failed->message);
+        } else {
+            ++imported;
+            last = qstr(name);
+        }
+    }
+    if (imported > 0) { // el material nuevo, delante (como el del proyecto al abrirlo)
+        if (const auto project = store_.get_project(project_id_); project && *project) {
+            materials_.removeIf([](const QVariant& m) { return m.toMap()["source"] == "project"; });
+            QVariantList fresh;
+            project_materials(**project, fresh);
+            materials_ = fresh + materials_;
+            emit projectChanged();
+        }
+    }
+    // Los textos de importMedia (EdMaterial.jsx); React para en el primer fallo, aquí se dice cada uno.
+    if (!problems.isEmpty()) {
+        set_notice("error", problems.join("\n"));
+    } else if (imported > 0) {
+        set_notice("success", imported == 1 ? QString("«%1» está en el material.").arg(last)
+                                            : QString("%1 archivos añadidos al material.").arg(imported));
+    }
+    return imported;
+}
+
 bool EditorModel::openProject(const QString& pid) {
     const auto project = store_.get_project(pid.toStdString());
     if (!ok(project)) {
@@ -336,26 +421,8 @@ bool EditorModel::openProject(const QString& pid) {
     materials_.clear();
     payloads_.clear();
     const auto add = [&](const char* source, const char* asset_kind, const QString& key, const Json& item,
-                         const char* kind) {
-        const Json payload = core::drag_payload(asset_kind, item);
-        payloads_[key] = payload;
-        materials_ << QVariantMap{
-            {"key", key},
-            {"source", source},
-            {"assetKind", asset_kind},
-            {"kind", kind},
-            {"name", qstr(payload.value("name", Json("")).is_string() ? payload.value("name", "") : "")},
-            {"duration", core::js_number(payload.value("duration", Json(0)))}};
-    };
-    for (const auto& c : (*project)->clips) {
-        add("project", "clips", QString("clips:%1").arg(c.index), core::to_json(c), "video");
-    }
-    for (const auto& i : (*project)->images) {
-        add("project", "images", "images:" + qstr(i.id), core::to_json(i), "image");
-    }
-    for (const auto& a : (*project)->audios) {
-        add("project", "audios", "audios:" + qstr(a.id), core::to_json(a), "audio");
-    }
+                         const char* kind) { add_material(source, asset_kind, key, item, kind, materials_); };
+    project_materials(**project, materials_);
     const auto add_text = [&](const Json* theme) { // dragTextPayload
         const std::string id = theme ? theme->value("id", std::string()) : std::string();
         const std::string name = theme ? theme->value("name", std::string()) : std::string(core::kDefaultText);
