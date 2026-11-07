@@ -75,6 +75,7 @@ add_library(gc_core
     src/clip_layout_ui.cpp
     src/text_clip_ui.cpp
     src/mask_edit.cpp
+    src/mask_ui.cpp
     src/vfx_stack.cpp
     src/timeline_view.cpp
     src/yt_history.cpp

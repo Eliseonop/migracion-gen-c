@@ -7,6 +7,7 @@ clips tal como los deja pydantic.
 """
 from __future__ import annotations
 
+import math
 import random
 
 from ops_cases import clip, track
@@ -663,6 +664,79 @@ def _free_layout_case(rng: random.Random) -> dict:
     return {"name": "objeto libre", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
 
 
+def _mask_ui_case(rng: random.Random) -> dict:
+    """La máscara editada sobre la vista previa (lib/clipMask.js y features/editor/interactions.js): su
+    geometría en el lienzo, los tiradores, qué arrastra un punto (sobre todo cerca de los tiradores), el
+    parche de cada arrastre, el trazo del pincel y los contornos de la estrella y el corazón."""
+    frames = [{"x": 157.5, "y": 0, "w": 405, "h": 720}, {"x": 0, "y": 60, "w": 1920, "h": 1080},
+              {"x": 33.25, "y": 12.5, "w": 300, "h": 300}]
+    masks: list = []
+    for kind in ("circle", "rectangle", "linear", "film", "star", "heart", "text", "brush"):
+        for _ in range(2):
+            m = {"id": "m1", "type": kind, "x": round(rng.uniform(0.1, 0.9), 4), "y": round(rng.uniform(0.1, 0.9), 4),
+                 "w": round(rng.uniform(0.1, 1.2), 4), "h": round(rng.uniform(0.1, 1.2), 4),
+                 "scale_x": round(rng.uniform(0.5, 2), 3), "scale_y": round(rng.uniform(0.5, 2), 3),
+                 "rotation": round(rng.uniform(-200, 200), 2), "feather": round(rng.uniform(0, 0.2), 4),
+                 "radius": round(rng.uniform(0, 0.5), 3)}
+            if kind == "brush":
+                m["brush"] = {"size": 0.1, "points": [{"x": 0.1, "y": -0.2, "m": 1}, {"x": 0.12, "y": -0.18}]}
+            masks.append(m)
+    masks.append({"id": "m0", "type": "circle", "x": 0.5, "y": 0.5, "w": 0.5, "h": 0.5})  # sin giro, escala ni pluma
+    masks.append({"id": "mt", "type": "rectangle", "x": 0.3, "y": 0.6, "w": 0.01, "h": 0.01, "scale_x": 0.02,
+                  "scale_y": 0.02})  # semiejes en su mínimo de 0,5 px
+
+    def handles(m: dict, f: dict) -> list:  # aproximados: solo para tirar puntos cerca
+        ref = f["h"]
+        cx, cy = f["x"] + m["x"] * f["w"], f["y"] + m["y"] * f["h"]
+        hw = max(0.5, m["w"] * m.get("scale_x", 1) * ref / 2)
+        hh = max(0.5, m["h"] * m.get("scale_y", 1) * ref / 2)
+        if m["type"] == "linear":
+            hw, hh = f["w"] * 0.3, max(18, f["h"] * 0.035)
+        elif m["type"] == "film":
+            hw = f["w"] * 0.3
+        rot = m.get("rotation", 0) * math.pi / 180
+        c, s = math.cos(rot), math.sin(rot)
+        pad = max(16, f["h"] * 0.022)
+        return [(cx + lx * c - ly * s, cy + lx * s + ly * c)
+                for lx, ly in ((0, 0), (hw, 0), (0, hh), (hw, hh), (0, -hh - pad), (-hw - pad, 0))]
+
+    calls: list = []
+    for i, m in enumerate(masks):
+        for f in (frames[i % 3], frames[(i + 1) % 3]):
+            calls += [["maskGeometry", m, f], ["maskHandleBox", m, f], ["maskHandles", m, f]]
+            hs = handles(m, f)
+            near = [(round(x + rng.uniform(-18, 18), 2), round(y + rng.uniform(-18, 18), 2)) for x, y in hs]
+            far = [(round(rng.uniform(f["x"] - 50, f["x"] + f["w"] + 50), 2),
+                    round(rng.uniform(f["y"] - 50, f["y"] + f["h"] + 50), 2)) for _ in range(3)]
+            for px, py in near + far:
+                calls.append(["maskHitMode", px, py, m, f, None])
+                calls.append(["maskCursor", px, py, m, f, False])
+            calls.append(["maskCursor", *near[0], m, f, True])  # con el pincel: solo en las de pincel
+            calls.append(["maskHitMode", *near[1], m, f, 6])
+            calls += [["toMaskLocal", px, py, m, f] for px, py in far[:2]]
+            for mode in ("move", "rotate", "feather", "width", "height", "corner", "nada"):
+                x0, y0 = hs[rng.randrange(len(hs))]
+                p0 = {"x": round(x0, 2), "y": round(y0, 2)}
+                p = {"x": round(x0 + rng.uniform(-220, 220), 2), "y": round(y0 + rng.uniform(-220, 220), 2)}
+                calls.append(["maskDragPatch", mode, m, f, p0, p])
+                if mode == "move":  # hasta salirse: la posición se acota a [-1, 2]
+                    calls.append(["maskDragPatch", mode, m, f, p0, {"x": p0["x"] + 6000, "y": p0["y"] - 6000}])
+            if m["type"] in ("brush", "circle"):  # una máscara sin `brush` también: el JS empieza de cero
+                x, y = hs[0]
+                stroke = []
+                for _ in range(14):
+                    step = 0.4 if rng.random() < 0.4 else rng.uniform(3, 25)  # los pasos cortos no dejan punto
+                    ang = rng.uniform(0, 2 * math.pi)
+                    x, y = x + step * math.cos(ang), y + step * math.sin(ang)
+                    stroke.append({"x": round(x, 3), "y": round(y, 3)})
+                calls.append(["maskBrushStroke", m, f, stroke])
+    calls += [["resizeCursor", d] for d in (-400, -202.5, -180, -67.5, -22.5, 0, 22.5, 22.49, 44, 67.5, 90, 112.5,
+                                             135, 157.5, 179.9, 180, 202.5, 359, 3601.5)]
+    calls += [["starPoints", 40, 30, None, None], ["starPoints", 12.5, 80, 7, 0.3], ["starPoints", 5, 5, 2, 0.5],
+              ["heartPoints", 50, 40, None], ["heartPoints", 10, 20, 12]]
+    return {"name": "máscara en el preview", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -692,4 +766,5 @@ def cases() -> list[dict]:
     out.append(_sfx_name_case())
     out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
     out.append(_waveform_case(rng))
+    out.append(_mask_ui_case(random.Random(20261107)))  # su propio rng, el último: no mueve nada
     return out

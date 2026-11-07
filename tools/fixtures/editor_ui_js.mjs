@@ -27,6 +27,7 @@ const shapes = await load('lib/shapes.js')
 const themes = await load('lib/subtitleThemes.js')
 const fxRuntime = await load('fx/core/runtime.js')
 const maskLib = await load('lib/clipMask.js')
+const selection = await load('lib/selectionFrame.js')
 const favorites = await load('lib/favorites.js')
 const sfxName = await load('lib/sfxName.js')
 const projectFps = await load('lib/projectFps.js')
@@ -46,6 +47,36 @@ const confirmCrop = (clip, crop, rotation, t, fps) => {
   const body = ['changeReframe', 'upsertKeyframe', 'changeTransform', 'srcTOf', 'confirmCrop'].map((n) => extractFunction(src, n)).join('\n')
   new Function(...Object.keys(deps), `${body}\nreturn confirmCrop`)(...Object.values(deps))({ crop, rotation })
   return made
+}
+// startMaskDrag y startMaskBrush de interactions.js con el puntero de mentira: el primer punto empieza el
+// arrastre y cada uno de los demás es un pointermove. Dan el último parche (commitMask o changeMask).
+const maskPointer = (name, start, moves) => {
+  let move = null
+  let out = null
+  const deps = { listenMove: (fn) => { move = fn }, canvasPointer: (e) => e, clamp: panning.clamp,
+    maskHandleBox: maskLib.maskHandleBox, toMaskLocal: maskLib.toMaskLocal, MASK_FEATHER_MAX: maskLib.MASK_FEATHER_MAX }
+  const fn = new Function(...Object.keys(deps), `return ${extractFunction(`${root}/features/editor/interactions.js`, name)}`)(
+    ...Object.values(deps))
+  const ctx = { commitMask: (_, patch) => { out = patch }, changeMask: (_, patch) => { out = patch },
+    playingRef: { current: false } }
+  start(fn, ctx)
+  for (const p of moves) move(p)
+  return out
+}
+const maskDragPatch = (mode, mask, frame, p0, p) =>
+  maskPointer('startMaskDrag', (fn, ctx) => fn(p0, null, { id: 'c' }, mask, mode, ctx, frame), [p])
+const maskBrushStroke = (mask, frame, pts) =>
+  maskPointer('startMaskBrush', (fn, ctx) => fn(pts[0], null, { id: 'c' }, mask, ctx, frame), pts.slice(1))?.brush?.points ?? null
+// maskCursor de interactions.js sobre una máscara ya activa (el cursor de girar, «rotate»; ninguno, «»).
+const maskCursor = (px, py, mask, frame, drawing) => {
+  const src = `${root}/features/editor/interactions.js`
+  const handleOf = /const MASK_HANDLE_OF = (\{[^}]*\})/.exec(readFileSync(src, 'utf8'))[1]
+  const deps = { activeMask: () => ({ mask }), frameRectOf: () => frame, maskHitMode: maskLib.maskHitMode,
+    maskHandleBox: maskLib.maskHandleBox, ROTATE_CURSOR: selection.ROTATE_CURSOR, handleCursor: selection.handleCursor,
+    MASK_HANDLE_OF: new Function(`return ${handleOf}`)() }
+  const fn = new Function(...Object.keys(deps), `return ${extractFunction(src, 'maskCursor')}`)(...Object.values(deps))
+  const got = fn(px, py, { width: 0, height: 0 }, { maskDrawRef: { current: drawing }, viewZoomRef: { current: 1 } })
+  return got === selection.ROTATE_CURSOR ? 'rotate' : (got ?? '')
 }
 // applyFreeLayout de VideoEditor.jsx (con needsFreeLayout y wantsBaseFit) sobre un clip, con un medio de
 // srcW × srcH, la salida oW × oH y el cabezal en `playhead`. null si el clip no cambia.
@@ -326,6 +357,17 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       return { masks: masksOf(c), keyframes: noIds(c).keyframes ?? null }
     },
     freeLayout: (id, srcW, srcH, oW, oH, playhead) => freeLayout(byId(id), srcW, srcH, oW, oH, playhead),
+    maskGeometry: (mask, frame) => maskLib.maskGeometry(maskLib.normalizeMask(mask), frame),
+    maskHandleBox: (mask, frame) => maskLib.maskHandleBox(maskLib.normalizeMask(mask), frame),
+    maskHandles: (mask, frame) => maskLib.maskHandles(maskLib.normalizeMask(mask), frame),
+    toMaskLocal: (px, py, mask, frame) => maskLib.toMaskLocal(px, py, maskLib.normalizeMask(mask), frame),
+    maskHitMode: (px, py, mask, frame, pad) => maskLib.maskHitMode(px, py, maskLib.normalizeMask(mask), frame, pad ?? undefined) ?? null,
+    maskDragPatch: (mode, mask, frame, p0, p) => maskDragPatch(mode, maskLib.normalizeMask(mask), frame, p0, p),
+    maskBrushStroke: (mask, frame, pts) => maskBrushStroke(maskLib.normalizeMask(mask), frame, pts),
+    maskCursor: (px, py, mask, frame, drawing) => maskCursor(px, py, maskLib.normalizeMask(mask), frame, drawing),
+    resizeCursor: (deg) => selection.resizeCursor(deg),
+    starPoints: (hw, hh, spikes, inner) => maskLib.starPoints(hw, hh, spikes ?? undefined, inner ?? undefined),
+    heartPoints: (hw, hh, n) => maskLib.heartPoints(hw, hh, n ?? undefined),
     confirmCrop: (id, crop, rotation, t, fps) => {
       const c = confirmCrop(byId(id), crop, rotation, t, fps)
       const strip = (arr) => (arr || []).map(({ id: _, ...k }) => k)

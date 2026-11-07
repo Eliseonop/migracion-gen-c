@@ -15,6 +15,8 @@
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/mask_edit.hpp"
+#include "gc/core/mask_ui.hpp"
+#include "gc/core/masks.hpp"
 #include "gc/core/material_drop.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/sfx_name.hpp"
@@ -129,6 +131,15 @@ Json dest_json(const DestRect& d) {
 }
 
 double opt_num(const Json& v) { return v.is_number() ? v.get<double>() : 0; }
+
+Rect rect_of(const Json& f) {
+    return {f.at("x").get<double>(), f.at("y").get<double>(), f.at("w").get<double>(), f.at("h").get<double>()};
+}
+Point point_of(const Json& p) { return {p.at("x").get<double>(), p.at("y").get<double>()}; }
+Json point_json(const Point& p) { return {{"x", p.x}, {"y", p.y}}; }
+Json geometry_json(const MaskGeometry& g) {
+    return {{"cx", g.cx}, {"cy", g.cy}, {"hw", g.hw}, {"hh", g.hh}, {"rot", g.rot}, {"ref", g.ref}, {"feather", g.feather}};
+}
 
 // Geometría con senos y cosenos o divisiones encadenadas: la de V8 y la de la libc difieren en ulps.
 bool near(const Json& a, const Json& b) {
@@ -663,6 +674,61 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         return {{"reframe", rf}, {"transform", j.value("transform", Json())}, {"frame", j.value("frame", Json())},
                 {"keyframes", out->keyframes ? without_ids(*out->keyframes) : Json()}};
     }
+    if (fn == "maskGeometry" || fn == "maskHandleBox") {
+        const Json m = normalize_mask(call.at(1));
+        const Rect f = rect_of(call.at(2));
+        return geometry_json(fn == "maskGeometry" ? mask_geometry(m, f) : mask_handle_box(m, f));
+    }
+    if (fn == "maskHandles") {
+        const MaskHandles h = mask_handles(normalize_mask(call.at(1)), rect_of(call.at(2)));
+        return {{"c", point_json(h.c)},     {"r", point_json(h.r)},     {"b", point_json(h.b)},
+                {"br", point_json(h.br)},   {"rot", point_json(h.rot)}, {"fea", point_json(h.fea)},
+                {"box", geometry_json(h.box)}};
+    }
+    if (fn == "toMaskLocal") {
+        return point_json(to_mask_local(num(1), num(2), normalize_mask(call.at(3)), rect_of(call.at(4))));
+    }
+    if (fn == "maskHitMode") {
+        const auto mode = mask_hit_mode(num(1), num(2), normalize_mask(call.at(3)), rect_of(call.at(4)),
+                                        call.at(5).is_null() ? 13 : num(5));
+        return mode ? Json(*mode) : Json();
+    }
+    if (fn == "maskDragPatch") {
+        const Json patch = mask_drag_patch(call.at(1).get<std::string>(), normalize_mask(call.at(2)),
+                                           rect_of(call.at(3)), point_of(call.at(4)), point_of(call.at(5)));
+        return patch.empty() ? Json() : patch;
+    }
+    if (fn == "maskBrushStroke") { // el trazo entero: cada punto, tras los que ya tenía la máscara
+        const Json m = normalize_mask(call.at(1));
+        const Rect f = rect_of(call.at(2));
+        Json pts = m.contains("brush") ? m.at("brush").value("points", Json::array()) : Json::array();
+        bool first = true;
+        for (const Json& p : call.at(3)) {
+            if (auto pt = mask_brush_point(m, f, point_of(p), first, pts.empty() ? nullptr : &pts.back())) {
+                pts.push_back(std::move(*pt));
+            }
+            first = false;
+        }
+        return pts;
+    }
+    if (fn == "maskCursor") {
+        return mask_cursor(num(1), num(2), normalize_mask(call.at(3)), rect_of(call.at(4)), call.at(5).get<bool>());
+    }
+    if (fn == "resizeCursor") {
+        return resize_cursor(num(1));
+    }
+    if (fn == "starPoints" || fn == "heartPoints") {
+        const std::vector<Point> pts =
+            fn == "starPoints"
+                ? star_points(num(1), num(2), call.at(3).is_null() ? 5 : call.at(3).get<int>(),
+                              call.at(4).is_null() ? 0.42 : num(4))
+                : heart_points(num(1), num(2), call.at(3).is_null() ? 96 : call.at(3).get<int>());
+        Json out = Json::array();
+        for (const Point& q : pts) {
+            out.push_back({q.x, q.y});
+        }
+        return out;
+    }
     if (fn == "freeLayout") {
         auto out = free_layout(clip(call.at(1)), num(2), num(3), num(4), num(5), num(6));
         REQUIRE(out);
@@ -930,7 +996,8 @@ TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]
                 CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(expected.dump()));
             } else if (calls[i].at(0) == "zoomByDrag") { // Math.pow de V8 y el pow de la libc: hasta 1 ulp
                 CHECK(std::abs(got.get<double>() / results[i].get<double>() - 1) < 1e-15);
-            } else if (c.at("name") == "encuadre" || c.at("name") == "forma de onda") { // sin: 1 ulp
+            } else if (c.at("name") == "encuadre" || c.at("name") == "forma de onda" ||
+                       c.at("name") == "máscara en el preview") { // sin, cos y atan2: 1 ulp
                 CHECK(near(nlohmann::json::parse(got.dump()), nlohmann::json::parse(results[i].dump())));
             } else {
                 CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(results[i].dump()));
