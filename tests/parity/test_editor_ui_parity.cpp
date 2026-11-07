@@ -10,6 +10,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "gc/core/captions_ui.hpp"
 #include "gc/core/clip_layout_ui.hpp"
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
@@ -674,6 +675,24 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         return {{"reframe", rf}, {"transform", j.value("transform", Json())}, {"frame", j.value("frame", Json())},
                 {"keyframes", out->keyframes ? without_ids(*out->keyframes) : Json()}};
     }
+    if (fn == "canCaptionClip") {
+        return can_caption_clip(clip(call.at(1)));
+    }
+    if (fn == "sourceRefOf") {
+        return source_ref_of(clip(call.at(1)));
+    }
+    if (fn == "textClipsFromTranscript") { // como se guardan: por el modelo y sin ids
+        SequentialIdSource ids;
+        Json out = Json::array();
+        for (const TimelineClip& c : caption_text_clips(clip(call.at(1)), call.at(2), str(3), call.at(4), call.at(5),
+                                                        call.at(6), ids)) {
+            Json j = to_json(c);
+            j.erase("id");
+            j.erase("asset_id");
+            out.push_back(std::move(j));
+        }
+        return out;
+    }
     if (fn == "maskGeometry" || fn == "maskHandleBox") {
         const Json m = normalize_mask(call.at(1));
         const Rect f = rect_of(call.at(2));
@@ -993,6 +1012,19 @@ TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]
                 const Json norm = to_json(*saved);
                 const Json expected = {{"layout", norm["layout"]}, {"frame", norm["frame"]}, {"reframe", norm["reframe"]},
                                        {"transform", norm["transform"]}};
+                CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(expected.dump()));
+            } else if (calls[i].at(0) == "textClipsFromTranscript") { // el JS da los objetos tal cual
+                Json expected = Json::array();
+                for (Json raw : results[i]) {
+                    raw["id"] = "x";
+                    raw["asset_id"] = "x";
+                    auto saved = clip_from_json(raw);
+                    REQUIRE(saved);
+                    Json j = to_json(*saved);
+                    j.erase("id");
+                    j.erase("asset_id");
+                    expected.push_back(std::move(j));
+                }
                 CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(expected.dump()));
             } else if (calls[i].at(0) == "zoomByDrag") { // Math.pow de V8 y el pow de la libc: hasta 1 ulp
                 CHECK(std::abs(got.get<double>() / results[i].get<double>() - 1) < 1e-15);

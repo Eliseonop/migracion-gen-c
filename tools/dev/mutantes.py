@@ -898,11 +898,43 @@ MASK_UI = [
     ("corazón: el alto normalizado por el ancho", MU, "(max_y.y - min_y.y)", "(max_x.x - min_x.x)"),
 ]
 
+CU = "src/core/src/captions_ui.cpp"
+# Equivalentes (no están): un texto vuelve a dar «no» por no ser vídeo; un nombre vacío no llega (el modelo lo
+# deja sin nombre); el final de una palabra nunca queda antes de su inicio (los dos se recortan igual), y sin
+# su final cuenta lo mismo caer al inicio que a 0 (end = max(inicio, fin)); la duración mínima de 0,4 s no
+# cambia nada: makeTextClip ya pone 0,5.
+CAPTIONS_UI = [
+    ("subtítulos: sin los SFX", CU, ' || clip.asset_kind == "sfx"', ""),
+    ("subtítulos: los de la biblioteca también", CU, 'if (scope == "library" || scope == "collection") {',
+     'if (scope == "collection") {'),
+    ("subtítulos: sin material también", CU, "return !clip.asset_id.empty();", "return true;"),
+    ("subtítulos: la referencia sin el nombre", CU, '        ref["name"] = *clip.name;\n', ""),
+    ("subtítulos: max_words sin su defecto", CU, "const Json max_words = given != nullptr ? *given : Json(8);",
+     "const Json max_words = given != nullptr ? *given : Json();"),
+    ("subtítulos: los segmentos de antes", CU, "if (le <= 0 || ls >= clip_len) {", "if (ls >= clip_len) {"),
+    ("subtítulos: el tramo sin recortar por delante", CU, "const double start = src.start + std::max(0.0, ls);",
+     "const double start = src.start + ls;"),
+    ("subtítulos: el tramo sin recortar por detrás", CU, "const double end = src.start + std::min(clip_len, le);",
+     "const double end = src.start + le;"),
+    ("subtítulos: sin el rol de subtítulo", CU, '        made["text_role"] = "caption";\n', ""),
+    ("subtítulos: el índice nulo cuenta", CU, 'const Json* index = present(s, "index");',
+     'const Json* index = s.contains("index") ? &s.at("index") : nullptr;'),
+    ("subtítulos: sin la referencia al material", CU, '            origin["source_ref"] = source_ref;\n', ""),
+    ("subtítulos: sin la transcripción", CU, '{"transcript_id", transcript_id != nullptr ? *transcript_id : Json()}',
+     '{"transcript_id", Json()}'),
+    ("palabras: sin recortar al clip", CU, "const double rs = std::min(std::max(0.0, tl_start - clip_start), dur);",
+     "const double rs = tl_start - clip_start;"),
+    ("palabras: sin la probabilidad", CU, '            item["prob"] = *prob;\n', ""),
+    ("palabras: sin quitar los espacios", CU,
+     "return v != nullptr && v->is_string() ? js_trim(v->get<std::string>()) : std::string();",
+     "return v != nullptr && v->is_string() ? v->get<std::string>() : std::string();"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

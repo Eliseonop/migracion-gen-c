@@ -737,6 +737,54 @@ def _mask_ui_case(rng: random.Random) -> dict:
     return {"name": "máscara en el preview", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
 
 
+def _captions_case(rng: random.Random) -> dict:
+    """Subtítulos del editor desde una transcripción (canCaptionClip, sourceRefOf y textClipsFromTranscript de
+    editorModel.js): qué clips se pueden transcribir, la referencia al material y los clips de texto del tramo
+    del clip fuente, con sus palabras reales y partidos en cuadros de max_words."""
+    clips = [clip("au", "A1", kind="audio", start=2, inp=1, out=9, filename="voz.mp3", asset_id="a1"),
+             clip("vi", "V1", start=0, inp=0.5, out=6, name="Mi vídeo"),
+             clip("lb", "V1", start=7, out=3, asset_scope="library"),
+             clip("co", "V1", start=11, out=3, asset_scope="collection"),
+             clip("sf", "A1", kind="audio", asset_kind="sfx", start=12, out=2, filename="boom.wav"),
+             clip("tx", "T1", kind="text", start=0, out=3, text="Hola"),
+             clip("im", "V2", kind="image", start=0, out=3),
+             clip("vn", "V2", start=20, out=2, asset_id="")]
+
+    def words(text: str, t0: float, t1: float) -> list:
+        ws = text.split()
+        step = (t1 - t0) / max(1, len(ws))
+        out = []
+        for i, w in enumerate(ws):
+            item = {"text": f" {w} ", "start": round(t0 + i * step, 3)}
+            if rng.random() < 0.8:
+                item["end"] = round(t0 + (i + 1) * step - 0.01, 3)
+            if rng.random() < 0.5:
+                item["prob"] = round(rng.uniform(0.3, 1), 3)
+            out.append(item)
+        return out
+
+    long_text = "una frase larga con muchas palabras para partir en varios cuadros seguidos"
+    segments = [{"index": 0, "start": 0.0, "end": 0.8, "text": "antes"},                       # antes del tramo
+                {"index": 1, "start": 0.5, "end": 2.0, "text": "empieza antes del tramo",
+                 "words": words("empieza antes del tramo", 0.5, 2.0)},
+                {"index": 2, "start": 3.0, "end": 5.2, "text": long_text, "words": words(long_text, 3.0, 5.2)},
+                {"start": 6.0, "end": 6.1, "text": "corto"},                                   # sin índice: el suyo
+                {"index": None, "start": 7.0, "end": 8.0, "text": "   "},                         # vacío
+                {"index": 5, "start": 8.5, "end": 9.5, "text": "se sale del final",
+                 "words": words("se sale del final", 8.5, 9.5)},
+                {"index": 6, "start": 9.0, "end": 10.0, "text": "después"},                    # tras el tramo
+                {"index": None, "start": 4.0, "end": 4.5, "text": "índice nulo y cuatro"}]      # null: el suyo
+    calls: list = [["canCaptionClip", c["id"]] for c in clips] + [["sourceRefOf", c["id"]] for c in clips]
+    styles = [{"max_words": 3}, {}, None, {"max_words": None, "size": 0.05}]
+    refs = [None, {"kind": "audio", "asset_id": "a1", "filename": "voz.mp3"}]
+    for cid in ("au", "vi"):
+        for st in styles:
+            for tr in (None, {"id": "tr1"}):
+                for ref in refs:
+                    calls.append(["textClipsFromTranscript", cid, segments, "T1", st, tr, ref])
+    return {"name": "subtítulos del editor", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -767,4 +815,5 @@ def cases() -> list[dict]:
     out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
     out.append(_waveform_case(rng))
     out.append(_mask_ui_case(random.Random(20261107)))  # su propio rng, el último: no mueve nada
+    out.append(_captions_case(random.Random(20261108)))
     return out

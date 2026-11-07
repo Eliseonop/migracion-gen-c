@@ -357,6 +357,11 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       return { masks: masksOf(c), keyframes: noIds(c).keyframes ?? null }
     },
     freeLayout: (id, srcW, srcH, oW, oH, playhead) => freeLayout(byId(id), srcW, srcH, oW, oH, playhead),
+    canCaptionClip: (id) => m.canCaptionClip(byId(id)),
+    sourceRefOf: (id) => m.sourceRefOf(byId(id)),
+    textClipsFromTranscript: (id, segments, track, style, transcript, ref) =>
+      m.textClipsFromTranscript(byId(id), segments, track, style ?? undefined, transcript, ref)
+        .map(({ id: _, asset_id: __, ...rest }) => rest),
     maskGeometry: (mask, frame) => maskLib.maskGeometry(maskLib.normalizeMask(mask), frame),
     maskHandleBox: (mask, frame) => maskLib.maskHandleBox(maskLib.normalizeMask(mask), frame),
     maskHandles: (mask, frame) => maskLib.maskHandles(maskLib.normalizeMask(mask), frame),
