@@ -47,6 +47,24 @@ const confirmCrop = (clip, crop, rotation, t, fps) => {
   new Function(...Object.keys(deps), `${body}\nreturn confirmCrop`)(...Object.values(deps))({ crop, rotation })
   return made
 }
+// applyFreeLayout de VideoEditor.jsx (con needsFreeLayout y wantsBaseFit) sobre un clip, con un medio de
+// srcW × srcH, la salida oW × oH y el cabezal en `playhead`. null si el clip no cambia.
+const freeLayout = (clip, srcW, srcH, oW, oH, playhead) => {
+  let made = clip
+  const setClips = (fn) => { made = fn([made])[0] }
+  const src = `${root}/features/editor/VideoEditor.jsx`
+  const needsFreeLayout = new Function('isVisualClip', 'isOverlay', `return ${extractFunction(src, 'needsFreeLayout')}`)(
+    m.isVisualClip, layout.isOverlay)
+  const deps = { setClips, mediaSize: layout.mediaSize, outRef: { current: { w: oW, h: oH } }, needsFreeLayout,
+    isOverlay: layout.isOverlay, newReframe: m.newReframe, clamp: panning.clamp, timelineToSource: m.timelineToSource,
+    playheadRef: { current: playhead }, cropWindow: layout.cropWindow, sourceCropPx: layout.sourceCropPx }
+  const body = ['wantsBaseFit', 'applyFreeLayout'].map((n) => extractFunction(src, n)).join('\n')
+  new Function(...Object.keys(deps), `${body}\nreturn applyFreeLayout`)(...Object.values(deps))(
+    clip, { videoWidth: srcW, videoHeight: srcH })
+  if (made === clip) return null
+  return { layout: made.layout ?? null, frame: made.frame ?? null, reframe: made.reframe ?? null,
+    transform: made.transform ?? null }
+}
 // Máscaras de VideoEditor.jsx (addMask, removeMask, duplicateMask, changeMask y commitMask) sobre un clip.
 const maskOps = (clip, aspect, fps, t) => {
   let made = clip
@@ -307,6 +325,7 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
         : op === 'changeMask' || op === 'commitMask' ? ops.run(op, id, arg) : ops.run(op)
       return { masks: masksOf(c), keyframes: noIds(c).keyframes ?? null }
     },
+    freeLayout: (id, srcW, srcH, oW, oH, playhead) => freeLayout(byId(id), srcW, srcH, oW, oH, playhead),
     confirmCrop: (id, crop, rotation, t, fps) => {
       const c = confirmCrop(byId(id), crop, rotation, t, fps)
       const strip = (arr) => (arr || []).map(({ id: _, ...k }) => k)

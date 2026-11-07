@@ -631,6 +631,38 @@ def _crop_case(rng: random.Random) -> dict:
     return {"name": "recortar", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
 
 
+def _free_layout_case(rng: random.Random) -> dict:
+    """Pasar un clip a objeto libre al conocer su medio (applyFreeLayout). Los clips llevan `layout` y
+    `frame` como los deja el modelo (en el JS, un `frame` que falta cuenta como «free»)."""
+    face = [{"id": "r1", "t": 1.5, "cx": 0.3, "cy": 0.5, "pan_mode": "smooth"},
+            {"id": "r2", "t": 4.0, "cx": 0.7, "cy": 0.45, "pan_mode": "smooth"}]
+    clips = [clip("f1", "V1", start=0, inp=0, out=5, layout="fill", frame="full"),          # sin encuadre: altura completa
+             clip("f2", "V1", start=6, inp=1, out=6, layout="fill", frame="full", reframe={"zoom": 0.8, "keyframes": face}),
+             clip("f3", "V1", start=12, out=4, layout="fill", frame="full",
+                  reframe={"zoom": 1, "crop_w": 0.5, "crop_h": 0.6, "keyframes": []}),
+             clip("zq", "V1", start=17, out=3, layout="fill", frame="full", reframe={"zoom": 0.9995, "keyframes": []}),
+             clip("zm", "V1", start=21, out=3, layout="fill", frame="full", reframe={"zoom": 0.995, "keyframes": []}),
+             clip("fk", "V1", start=28, out=5, layout="fill", frame="full", reframe={"zoom": 1, "keyframes": face}),  # paneo sin zoom
+             clip("ov", "V2", start=0, out=5, layout="overlay", frame="free", transform={"x": 0.3, "y": 0.4, "scale": 0.5}),
+             clip("oc", "V2", start=6, out=5, layout="overlay", frame="full",
+                  reframe={"zoom": 1, "crop_w": 0.4, "crop_h": 0.7, "keyframes": []}, transform={"x": 0.6, "scale": 0.8}),
+             clip("on", "V2", start=12, out=4, layout="overlay", frame="top", transform={"x": 0.2, "scale": 2}),
+             clip("dc", "V2", start=17, out=4, layout="fill", frame="full", reframe={"dual_crop": True, "zoom": 0.7}),
+             clip("im", "V1", kind="image", start=25, out=3, layout="fill", frame="full"),
+             clip("rv", "V2", start=22, inp=2, out=9, layout="fill", frame="full", speed=2, reverse=True,
+                  reframe={"zoom": 0.6, "keyframes": face}),
+             clip("tx", "T1", kind="text", start=0, out=3, text="Hola")]
+    sizes = [(1920, 1080), (1080, 1920), (3840, 2160), (640, 480), (1000, 1000), (0, 0)]
+    outs = [(720, 1280), (1920, 1080)]
+    calls: list = []
+    for c in clips:
+        for sw, sh in sizes:
+            for ow, oh in outs:
+                for head in (c["start"], c["start"] + round(rng.uniform(0, 3), 3), c["start"] - 1):
+                    calls.append(["freeLayout", c["id"], sw, sh, ow, oh, head])
+    return {"name": "objeto libre", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -656,6 +688,7 @@ def cases() -> list[dict]:
     out.append(_mask_case(rng))
     out.append(_fragment_case(rng))
     out.append(_crop_case(rng))
+    out.append(_free_layout_case(random.Random(20261106)))  # su propio rng: no mueve los casos de después
     out.append(_sfx_name_case())
     out.append({"name": "textos", "timeline": {"tracks": TRACKS, "clips": TEXT_CLIPS}, "calls": _text_calls(rng)})
     out.append(_waveform_case(rng))

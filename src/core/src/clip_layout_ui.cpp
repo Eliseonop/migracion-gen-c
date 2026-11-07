@@ -6,6 +6,7 @@
 #include <tuple>
 
 #include "gc/core/clip_pose_edit.hpp"
+#include "gc/core/frame.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/timeline_view.hpp"
@@ -482,6 +483,85 @@ Result<TimelineClip> confirm_crop(const TimelineClip& clip, const CropWindow& cr
         }
     }
     return out;
+}
+
+bool needs_free_layout(const TimelineClip& clip) {
+    if (!visual_kind(clip) || (clip.reframe && clip.reframe->dual_crop)) {
+        return false;
+    }
+    return !(is_overlay(clip) && (clip.frame.empty() || clip.frame == "free"));
+}
+
+namespace {
+
+// wantsBaseFit: un clip «plano» (sin recorte ni paneo horneado) se coloca a la altura del cuadro.
+bool wants_base_fit(const TimelineClip& clip) {
+    if (!clip.reframe) {
+        return true;
+    }
+    const Reframe& rf = *clip.reframe;
+    if (!rf.keyframes.empty()) {
+        return false;
+    }
+    if (rf.crop_w || rf.crop_h) {
+        return false;
+    }
+    return !(std::abs(rf.zoom - 1) > 0.001);
+}
+
+// {...(c.reframe || newReframe()), ...patch}, sobre el JSON del clip.
+Json reframe_with(const Json& clip_json, const Json& patch) {
+    Json rf = clip_json.value("reframe", Json());
+    if (!rf.is_object()) {
+        rf = {{"zoom", 1},
+              {"pan_mode", "smooth"},
+              {"dual_crop", false},
+              {"split_orientation", "vertical"},
+              {"split_layout", "auto"},
+              {"master", false},
+              {"face_track_mode", nullptr},
+              {"keyframes", Json::array()},
+              {"keyframes2", Json::array()}};
+    }
+    for (const auto& [key, value] : patch.items()) {
+        rf[key] = value;
+    }
+    return rf;
+}
+
+} // namespace
+
+Result<std::optional<TimelineClip>> free_layout(const TimelineClip& clip, double src_w, double src_h, double out_w,
+                                                double out_h, double playhead) {
+    if (!(src_w > 0) || !(src_h > 0) || !needs_free_layout(clip)) {
+        return std::optional<TimelineClip>();
+    }
+    Json j = to_json(clip);
+    if (is_overlay(clip) && clip.reframe && clip.reframe->crop_w && clip.reframe->crop_h) {
+        j["frame"] = "free";
+    } else if (wants_base_fit(clip)) {
+        j["layout"] = "overlay";
+        j["frame"] = "free";
+        j["reframe"] = reframe_with(j, {{"crop_w", 1}, {"crop_h", 1}, {"dual_crop", false}, {"keyframes", Json::array()}});
+        j["transform"] = {{"x", 0.5}, {"y", 0.5}, {"scale", js_fixed(out_h / src_h, 5)}, {"rotation", 0}};
+    } else {
+        TimelineClip fill = clip;
+        fill.layout = "fill";
+        const double src_t = source_time(clip, playhead, clip.start);
+        const double local = std::max(0.0, playhead - clip.start);
+        const CropWindow crop = crop_window(fill, src_w / src_h, out_w / out_h, src_t, local);
+        const SourceCrop px = source_crop_px(crop, src_w, src_h);
+        const double scale = std::max(out_w / std::max(1.0, px.sw), out_h / std::max(1.0, px.sh));
+        j["layout"] = "overlay";
+        j["frame"] = "free";
+        j["reframe"] = reframe_with(j, {{"crop_w", crop.wf}, {"crop_h", crop.hf}, {"dual_crop", false}});
+        j["transform"] = {{"x", 0.5}, {"y", 0.5}, {"scale", js_fixed(scale, 5)}, {"rotation", 0}};
+    }
+    auto back = clip_from_json(j);
+    if (!back) {
+        return std::unexpected(back.error());
+    }
+    return std::optional(std::move(*back));
 }
 
 } // namespace gc::core

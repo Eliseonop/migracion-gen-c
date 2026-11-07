@@ -836,11 +836,29 @@ IMPORT = [
      "meta.description ? meta.description"),
 ]
 
+CLU = "src/core/src/clip_layout_ui.cpp"
+# Equivalentes (no están): no acotar el tiempo local (antes del primer keyframe vale lo mismo en −1
+# que en 0) y no vaciar los keyframes al poner la altura completa (solo pasa si ya estaban vacíos).
+FREE_LAYOUT = [
+    ("libre: el doble encuadre también", CLU, "if (!visual_kind(clip) || (clip.reframe && clip.reframe->dual_crop)) {",
+     "if (!visual_kind(clip)) {"),
+    ("libre: un overlay pegado ya es libre", CLU, 'return !(is_overlay(clip) && (clip.frame.empty() || clip.frame == "free"));',
+     "return !is_overlay(clip);"),
+    ("libre: tolerancia del zoom 0,01", CLU, "return !(std::abs(rf.zoom - 1) > 0.001);", "return !(std::abs(rf.zoom - 1) > 0.01);"),
+    ("libre: con keyframes de encuadre a altura completa", CLU, "    if (!rf.keyframes.empty()) {\n        return false;\n    }\n", ""),
+    ("libre: altura completa por el ancho", CLU, '{"scale", js_fixed(out_h / src_h, 5)}', '{"scale", js_fixed(out_w / src_w, 5)}'),
+    ("libre: llenar con min", CLU, "std::max(out_w / std::max(1.0, px.sw), out_h / std::max(1.0, px.sh))",
+     "std::min(out_w / std::max(1.0, px.sw), out_h / std::max(1.0, px.sh))"),
+    ("libre: el overlay recortado se reencuadra", CLU,
+     "if (is_overlay(clip) && clip.reframe && clip.reframe->crop_w && clip.reframe->crop_h) {", "if (false) {"),
+    ("libre: escala a 4 decimales", CLU, "{\"scale\", js_fixed(scale, 5)}", "{\"scale\", js_fixed(scale, 4)}"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

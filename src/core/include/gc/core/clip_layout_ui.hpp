@@ -111,6 +111,23 @@ struct TransformView {
 [[nodiscard]] Json transform_scale_patch(const TimelineClip& clip, double pct, double height_scale = 1);
 [[nodiscard]] Json transform_reset_patch(const TimelineClip& clip, double height_scale = 1);
 
+// --- Objeto libre (applyFreeLayout de VideoEditor.jsx) ---------------------------------------
+
+// needsFreeLayout: un clip visual que todavía no es un objeto libre (overlay con frame «free»); todo
+// lo que llega con el layout antiguo («fill», el «Fijar vídeo», o un overlay pegado a un hueco) se
+// convierte. Salvo el doble encuadre, que un objeto libre no sabe hacer.
+[[nodiscard]] bool needs_free_layout(const TimelineClip& clip);
+// applyFreeLayout: el clip como objeto libre en cuanto se sabe el tamaño de su medio (src_w × src_h),
+// con la salida de out_w × out_h y el cabezal en `playhead` (s de la timeline):
+//   * un overlay con recorte (crop_w y crop_h): solo suelta el hueco (frame «free»);
+//   * sin encuadre horneado (wantsBaseFit: sin keyframes de encuadre, sin recorte y con zoom 1):
+//     centrado y a la altura del cuadro (escala out_h / src_h), recorte 1 × 1;
+//   * con encuadre (zoom o paneo de seguimiento): la ventana de recorte de ese instante, escalada
+//     hasta llenar el cuadro, así que en pantalla no se mueve nada.
+// nada si no lo necesita o no se sabe el tamaño.
+[[nodiscard]] Result<std::optional<TimelineClip>> free_layout(const TimelineClip& clip, double src_w, double src_h,
+                                                              double out_w, double out_h, double playhead);
+
 // confirmCrop de VideoEditor.jsx: el recorte (fracciones de la fuente) y el giro del modal Recortar.
 // En un clip animado (keyframes o varios del encuadre) el centro entra como keyframe en el cabezal
 // (`local_t`, y `src_t` en la fuente); si no, el recorte vale para todo el clip.

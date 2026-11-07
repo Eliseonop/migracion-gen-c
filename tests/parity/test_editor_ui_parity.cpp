@@ -663,6 +663,16 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         return {{"reframe", rf}, {"transform", j.value("transform", Json())}, {"frame", j.value("frame", Json())},
                 {"keyframes", out->keyframes ? without_ids(*out->keyframes) : Json()}};
     }
+    if (fn == "freeLayout") {
+        auto out = free_layout(clip(call.at(1)), num(2), num(3), num(4), num(5), num(6));
+        REQUIRE(out);
+        if (!*out) {
+            return Json();
+        }
+        const Json j = to_json(**out);
+        return {{"layout", j.value("layout", Json())}, {"frame", j.value("frame", Json())},
+                {"reframe", j.value("reframe", Json())}, {"transform", j.value("transform", Json())}};
+    }
     if (fn == "styleKfState") {
         return style_kf_state(clip(call.at(1)), num(2), strings(call.at(3)), num(4));
     }
@@ -899,6 +909,24 @@ TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]
                 }
                 const Json expected = {{"reframe", norm["reframe"]}, {"transform", norm["transform"]},
                                        {"frame", norm["frame"]}, {"keyframes", norm["keyframes"]}};
+                CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(expected.dump()));
+            } else if (calls[i].at(0) == "freeLayout" && !results[i].is_null()) { // por el modelo, como se guarda
+                Json j = to_json([&] -> const TimelineClip& {
+                    for (const auto& x : tl->clips) {
+                        if (x->id == calls[i].at(1).get<std::string>()) {
+                            return *x;
+                        }
+                    }
+                    throw std::runtime_error("clip");
+                }());
+                for (const char* key : {"layout", "frame", "reframe", "transform"}) {
+                    j[key] = results[i].at(key);
+                }
+                auto saved = clip_from_json(j);
+                REQUIRE(saved);
+                const Json norm = to_json(*saved);
+                const Json expected = {{"layout", norm["layout"]}, {"frame", norm["frame"]}, {"reframe", norm["reframe"]},
+                                       {"transform", norm["transform"]}};
                 CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(expected.dump()));
             } else if (calls[i].at(0) == "zoomByDrag") { // Math.pow de V8 y el pow de la libc: hasta 1 ulp
                 CHECK(std::abs(got.get<double>() / results[i].get<double>() - 1) < 1e-15);
