@@ -357,6 +357,17 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       return { masks: masksOf(c), keyframes: noIds(c).keyframes ?? null }
     },
     freeLayout: (id, srcW, srcH, oW, oH, playhead) => freeLayout(byId(id), srcW, srcH, oW, oH, playhead),
+    followTrackMaskKeys: (id, track, dims, gap) => layout.followTrackMaskKeys(byId(id), track, dims, gap ?? undefined),
+    enableKeyframes: (id, t, src) => noIds(kf.enableKeyframes(byId(id), t, src)).keyframes ?? null,
+    // El setClips de followMaskFace (VideoEditor.jsx): los keyframes encendidos en el primero y mx/my en cada uno.
+    followMaskFace: (id, track, dims, src, fps) => {
+      const c = byId(id)
+      const keys = layout.followTrackMaskKeys(c, track, dims)
+      if (!keys.length) return null
+      let next = kf.keyframesOn(c) ? c : kf.enableKeyframes(c, keys[0].t, src)
+      for (const k of keys) next = kf.upsertKeyframeAt(next, k.t, { mx: k.mx, my: k.my }, undefined, fps)
+      return noIds(next).keyframes ?? null
+    },
     canCaptionClip: (id) => m.canCaptionClip(byId(id)),
     sourceRefOf: (id) => m.sourceRefOf(byId(id)),
     textClipsFromTranscript: (id, segments, track, style, transcript, ref) =>

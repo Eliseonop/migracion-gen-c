@@ -29,6 +29,9 @@ namespace gc::core {
 [[nodiscard]] bool pose_keyframed(const TimelineClip& clip);
 // ¿El cambio `patch` ({prop: valor}) cae en un keyframe?
 [[nodiscard]] bool should_keyframe(const TimelineClip& clip, const Json& patch);
+// enableKeyframes de lib/clipKeyframes.js: los keyframes encendidos; si no tenía ninguno, el primero con lo
+// que se ve en `local_t` (con el encuadre del instante `src_t` del archivo).
+void enable_keyframes(TimelineClip& clip, double local_t, double src_t, IdSource& ids);
 // upsertKeyframeAt: el snapshot en `local_t` con `patch` encima (actualiza el de ese fotograma).
 void upsert_keyframe_ui(TimelineClip& clip, double local_t, const Json& patch,
                         const std::optional<std::string>& interpolation, double fps, IdSource& ids);

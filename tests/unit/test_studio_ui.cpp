@@ -1384,6 +1384,82 @@ TEST_CASE("studio sin pantalla: recortar un vídeo enseña su fotograma en el ca
     s.editor->confirmCrop();
     CHECK_FALSE(s.editor->canUndo());
 }
+
+TEST_CASE("studio sin pantalla: «Seguir cara» pone keyframes de la máscara donde el backend vio la cara",
+          "[studio][ui][backend][preview]") {
+    const Studio s;
+    // «a» pasa a ser v_rot90.mp4 (48 × 64, ya girado) y se vuelve a abrir; con una máscara.
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    const auto video = core::project_base(s.store->clips_dir(), **project) / "video" / "a.mp4";
+    std::filesystem::create_directories(video.parent_path());
+    std::filesystem::copy_file(core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files" / "v_rot90.mp4", video);
+    REQUIRE(s.editor->openProject("p1"));
+    s.editor->select("a");
+    s.click("insp:tab:mask");
+    s.click("insp:mask:type:circle");
+    const Json track = Json::array({{{"t", 0.1}, {"cx", 0.3}, {"cy", 0.4}},
+                                    {{"t", 0.5}, {"cx", 0.6}, {"cy", 0.5}},
+                                    {{"t", 0.9}, {"cx", 0.7}, {"cy", 0.6}}});
+    int polls = 0;
+    FakeBackend backend([&](const QString& method, const QString& path, const Json&) -> std::pair<int, Json> {
+        if (method == "POST" && path == "/api/projects/p1/clips/a/face-track") {
+            return {200, {{"id", "f1"}, {"status", "pending"}, {"progress", 0.0}, {"message", "En cola…"}}};
+        }
+        if (method == "GET" && path == "/api/job/f1") {
+            if (++polls == 1) {
+                return {200, {{"id", "f1"}, {"status", "running"}, {"progress", 0.4}, {"message", "Analizando caras…"}}};
+            }
+            return {200, {{"id", "f1"}, {"status", "done"}, {"progress", 1.0},
+                          {"reframe_prep", {{"proxy_url", ""}, {"duration", 1.0}, {"width", 48}, {"height", 64}, {"track", track}}}}};
+        }
+        return {404, {{"detail", "No existe."}}};
+    });
+    s.editor->faceBackend().setBaseUrl(backend.url());
+    s.editor->faceBackend().setPollInterval(20);
+    REQUIRE(s.item("insp:mask:follow"));
+    QMetaObject::invokeMethod(s.item("insp:mask:follow"), "clicked");
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->maskFollow()["message"] == "Analizando caras…"; }, 10000));
+    CHECK(s.item("insp:mask:follow")->property("text") == "Siguiendo… 40 %");
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->maskFollow().isEmpty(); }, 10000));
+    CHECK(backend.requests.front().body == Json{{"start", 0.0}, {"end", 4.0}});
+    CHECK(s.editor->notice()["type"] == "success");
+    CHECK(s.editor->notice()["message"] == "La máscara sigue la cara (3 keyframes).");
+
+    // Los keyframes son los de follow_track_mask_keys sobre el clip y el tamaño de su vídeo (girado).
+    const auto saved = s.store->get_project("p1");
+    REQUIRE(saved);
+    REQUIRE(*saved);
+    const core::Timeline& tl = *(*saved)->timeline;
+    const auto a = std::ranges::find(tl.clips, std::string("a"), [](const auto& c) { return c->id; });
+    REQUIRE(a != tl.clips.end());
+    const auto keys = core::follow_track_mask_keys(**a, track, 48, 64, tl.width, tl.height);
+    REQUIRE(keys.size() == 3);
+    REQUIRE((*a)->keyframes);
+    for (const core::MaskFollowKey& k : keys) {
+        const Json& items = (*a)->keyframes->at("items");
+        const auto item = std::ranges::find_if(items, [&](const Json& i) { return std::abs(i.at("t").get<double>() - k.t) < 1e-9; });
+        REQUIRE(item != items.end());
+        CHECK(item->at("props").at("mx").get<double>() == k.mx);
+        CHECK(item->at("props").at("my").get<double>() == k.my);
+    }
+    s.editor->undo(); // un paso
+    CHECK(s.editor->notice()["type"] == "success");
+
+    // Si el backend no ve ninguna cara, lo dice.
+    FakeBackend empty([](const QString& method, const QString&, const Json&) -> std::pair<int, Json> {
+        if (method == "POST") {
+            return {200, {{"id", "f2"}, {"status", "pending"}}};
+        }
+        return {200, {{"id", "f2"}, {"status", "done"}, {"reframe_prep", {{"proxy_url", ""}, {"duration", 1.0}, {"width", 48},
+                                                                             {"height", 64}, {"track", Json::array()}}}}};
+    });
+    s.editor->faceBackend().setBaseUrl(empty.url());
+    s.editor->followMaskFace();
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->notice()["type"] == "error"; }, 10000));
+    CHECK(s.editor->notice()["message"] == "No se detectó ninguna cara en este tramo.");
+}
 #endif
 
 #ifdef GC_STUDIO_PREVIEW

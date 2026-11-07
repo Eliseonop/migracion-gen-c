@@ -23,6 +23,7 @@
 #include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_layout_ui.hpp"
 #include "gc/core/clip_media.hpp"
+#include "gc/core/face_follow.hpp"
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/collections.hpp"
@@ -234,6 +235,7 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     connect(&proxy_maker_, &ProxyMaker::proxiesChanged, this, [this] { preview_.setProxies(proxy_maker_.proxies()); });
     connect(&beat_detector_, &BeatDetector::finished, this, &EditorModel::beats_detected);
     connect(&crop_frames_, &FrameGrabber::frameChanged, this, &EditorModel::cropFrameChanged);
+    face_jobs_.setPollInterval(500); // followMaskFace sondea cada medio segundo
     // La máscara que se edita cambia con el clip elegido, la timeline, el cabezal y el modo.
     for (const auto signal : {&EditorModel::selectionChanged, &EditorModel::timelineChanged,
                               &EditorModel::playheadChanged, &EditorModel::maskModeChanged}) {
@@ -2794,6 +2796,70 @@ void EditorModel::dismissSubtitleJob() {
         subtitle_job_.clear();
         emit subtitleJobChanged();
     }
+}
+
+void EditorModel::followMaskFace() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!session_ || !c || c->kind != "video" || core::clip_masks(*c).empty() || !mask_follow_.isEmpty()) {
+        return;
+    }
+    if ((c->asset_scope.empty() ? std::string("project") : c->asset_scope) != "project" || c->asset_kind != "clips") {
+        set_notice("error", "Seguir solo funciona con vídeos del material del proyecto.");
+        return;
+    }
+    const auto size = source_size(*c); // mediaSize del <video>: sin él, nada
+    if (!size || !(size->first > 0) || !(size->second > 0)) {
+        return;
+    }
+    follow_clip_ = c->id;
+    follow_size_ = *size;
+    mask_follow_ = {{"clipId", qstr(c->id)}, {"progress", 0.02}, {"message", "Buscando la cara…"}};
+    emit maskFollowChanged();
+    face_jobs_.start(QString("/api/projects/%1/clips/%2/face-track")
+                         .arg(qstr(project_id_), QString::fromLatin1(QUrl::toPercentEncoding(qstr(c->asset_id)))),
+                     {{"start", c->in_point}, {"end", c->out_point}}, [this](const Json& job) { follow_update(job); });
+}
+
+void EditorModel::follow_update(const Json& job) {
+    const std::string status = job_text(job, "status");
+    if (status != "done" && status != "error") { // progress: job.progress || el de antes; message, igual
+        const auto progress = job.find("progress");
+        if (progress != job.end() && progress->is_number() && progress->get<double>() != 0) {
+            mask_follow_["progress"] = progress->get<double>();
+        }
+        if (const std::string message = job_text(job, "message"); !message.empty()) {
+            mask_follow_["message"] = qstr(message);
+        }
+        emit maskFollowChanged();
+        return;
+    }
+    mask_follow_.clear();
+    emit maskFollowChanged();
+    if (status == "error") {
+        const std::string error = job_text(job, "error");
+        set_notice("error", error.empty() ? QString("No se pudo seguir la cara.") : qstr(error));
+        return;
+    }
+    const core::TimelineClip* fresh = clip(qstr(follow_clip_));
+    const auto prep = job.find("reframe_prep");
+    const Json track = prep != job.end() && prep->is_object() ? prep->value("track", Json::array()) : Json::array();
+    const auto keys = fresh ? core::follow_track_mask_keys(*fresh, track, follow_size_.first, follow_size_.second,
+                                                           static_cast<double>(session_->timeline()->width),
+                                                           static_cast<double>(session_->timeline()->height))
+                            : std::vector<core::MaskFollowKey>();
+    if (keys.empty()) {
+        set_notice("error", "No se detectó ninguna cara en este tramo.");
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == follow_clip_) {
+            const double src = core::source_time(*item, playhead_, item->start); // srcTOf
+            core::apply_follow_keys(item.mut(), keys, src, fps(), ids_);
+        }
+    }
+    commit(std::move(next), "mask-follow", {follow_clip_});
+    set_notice("success", QString("La máscara sigue la cara (%1 keyframes).").arg(keys.size()));
 }
 
 QVariantList EditorModel::vfxCatalog() {

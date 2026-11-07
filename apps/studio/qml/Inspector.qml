@@ -1377,6 +1377,16 @@ Rectangle {
                     spacing: 4
                     Toggle { objectName: "insp:mask:edit"; implicitWidth: implicitContentWidth + 16; text: "Editar en el preview"
                              on: panel.model.maskMode; onClicked: panel.model.maskMode = !on }
+                    Toggle { // followMaskFace: la cara la busca el backend de video-yt
+                        objectName: "insp:mask:follow"
+                        readonly property var follow: panel.model.maskFollow
+                        visible: panel.has && panel.clip.kind === "video"
+                        enabled: !follow.clipId
+                        implicitWidth: implicitContentWidth + 16
+                        text: follow.clipId ? "Siguiendo… " + Math.round((follow.progress || 0) * 100) + " %" : "Seguir cara"
+                        on: !!follow.clipId
+                        onClicked: panel.model.followMaskFace()
+                    }
                     Toggle { objectName: "insp:mask:invert"; implicitWidth: implicitContentWidth + 16; text: "Invertir"; on: !!panel.mk.invert; onClicked: panel.model.changeMask({ invert: !on }) }
                     Toggle { implicitWidth: implicitContentWidth + 16; text: "Activa"; on: !!panel.mk.enabled; onClicked: panel.model.changeMask({ enabled: !on }) }
                     Toggle { implicitWidth: 26; text: "⧉"; onClicked: panel.model.duplicateMask() }

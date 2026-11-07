@@ -930,11 +930,33 @@ CAPTIONS_UI = [
      "return v != nullptr && v->is_string() ? v->get<std::string>() : std::string();"),
 ]
 
+FF = "src/core/src/face_follow.cpp"
+CPE = "src/core/src/clip_pose_edit.cpp"
+# Equivalentes (no están): la velocidad mínima de 0,01 (las del caso son positivas) y volver a encender unos
+# keyframes que ya lo estaban (enableKeyframes los deja igual).
+FACE_FOLLOW = [
+    ("seguir: sin la velocidad", FF, "const double local = clip.reverse ? (clip.out_point - p.t) / sp : (p.t - clip.in_point) / sp;",
+     "const double local = clip.reverse ? (clip.out_point - p.t) : (p.t - clip.in_point);"),
+    ("seguir: sin el revés", FF, "const double local = clip.reverse ? (clip.out_point - p.t) / sp : (p.t - clip.in_point) / sp;",
+     "const double local = (p.t - clip.in_point) / sp;"),
+    ("seguir: sin la separación mínima", FF, "if (!out.empty() && local - out.back().t < min_gap) {", "if (false) {"),
+    ("seguir: fuera del tramo también", FF, "if (at < clip.in_point - 1e-6 || at > clip.out_point + 1e-6) {", "if (false) {"),
+    ("seguir: sin ordenar", FF, "    std::ranges::stable_sort(pts, {}, &P::t);\n", ""),
+    ("seguir: cy sin su defecto", FF, ": 0.5}); // p.cy ?? 0.5", ": 0.0}); // p.cy ?? 0.5"),
+    ("seguir: x a 3 decimales", FF, "js_fixed(o.x, 4)", "js_fixed(o.x, 3)"),
+    ("seguir: sin encender los keyframes", FF, "        enable_keyframes(clip, keys.front().t, src_t, ids);\n", ""),
+    ("keyframes: el primero sin el encuadre del archivo", CPE,
+     "const Frame fr = frame_at(snap.reframe->keyframes, src_t, snap.reframe->zoom, snap.reframe->pan_mode);",
+     "const Frame fr = frame_at(snap.reframe->keyframes, local_t, snap.reframe->zoom, snap.reframe->pan_mode);"),
+    ("keyframes: el primero sin ajustar al fotograma", CPE, '{"t", js_fixed(snap_to_frame(local_t, 30), 6)}',
+     '{"t", js_fixed(local_t, 6)}'),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"), "seguir_cara": (FACE_FOLLOW, "[editor]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

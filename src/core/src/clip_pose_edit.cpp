@@ -392,6 +392,12 @@ void toggle_keyframe_at(TimelineClip& clip, double local_t, double fps, IdSource
         return;
     }
     // enableKeyframes y luego upsertKeyframeAt con el parche vacío.
+    enable_keyframes(clip, t, std::min(clip.out_point, std::max(clip.in_point, timeline_to_source(clip, local_t))),
+                     ids); // srcTOf
+    upsert_keyframe_ui(clip, t, Json::object(), std::nullopt, fps, ids);
+}
+
+void enable_keyframes(TimelineClip& clip, double local_t, double src_t, IdSource& ids) {
     const Json prev = clip.keyframes && clip.keyframes->is_object() ? *clip.keyframes : Json::object();
     std::vector<Json> items = items_of(clip, ids);
     if (truthy(field(prev, "enabled")) && !items.empty()) {
@@ -399,28 +405,24 @@ void toggle_keyframe_at(TimelineClip& clip, double local_t, double fps, IdSource
         next["enabled"] = true;
         next["items"] = items;
         clip.keyframes = std::move(next);
-    } else {
-        if (items.empty()) {
-            TimelineClip snap = clip;
-            snap.keyframes.reset();
-            KfProps base = static_props(snap);
-            if (snap.reframe) {
-                const double src = std::min(
-                    clip.out_point, std::max(clip.in_point, timeline_to_source(clip, local_t))); // srcTOf
-                const Frame fr =
-                    frame_at(snap.reframe->keyframes, src, snap.reframe->zoom, snap.reframe->pan_mode);
-                base.set("cx", std::isfinite(fr.cx) ? fr.cx : 0.5);
-                base.set("cy", std::isfinite(fr.cy) ? fr.cy : 0.5);
-                base.set("zoom", std::isfinite(fr.zoom) ? fr.zoom : snap.reframe->zoom);
-            }
-            items.push_back({{"id", make_uid(ids, "k")},
-                             {"t", js_fixed(snap_to_frame(t, 30), 6)},
-                             {"interpolation", "linear"},
-                             {"props", base.to_json()}});
-        }
-        clip.keyframes = Json{{"enabled", true}, {"items", items}};
+        return;
     }
-    upsert_keyframe_ui(clip, t, Json::object(), std::nullopt, fps, ids);
+    if (items.empty()) { // snapshotProps: lo que se ve en local_t, con el encuadre del instante src_t
+        TimelineClip snap = clip;
+        snap.keyframes.reset();
+        KfProps base = static_props(snap);
+        if (snap.reframe) {
+            const Frame fr = frame_at(snap.reframe->keyframes, src_t, snap.reframe->zoom, snap.reframe->pan_mode);
+            base.set("cx", std::isfinite(fr.cx) ? fr.cx : 0.5);
+            base.set("cy", std::isfinite(fr.cy) ? fr.cy : 0.5);
+            base.set("zoom", std::isfinite(fr.zoom) ? fr.zoom : snap.reframe->zoom);
+        }
+        items.push_back({{"id", make_uid(ids, "k")},
+                         {"t", js_fixed(snap_to_frame(local_t, 30), 6)},
+                         {"interpolation", "linear"},
+                         {"props", base.to_json()}});
+    }
+    clip.keyframes = Json{{"enabled", true}, {"items", items}};
 }
 
 namespace {

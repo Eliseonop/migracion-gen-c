@@ -57,6 +57,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantMap editMask READ editMask NOTIFY editMaskChanged)
     // El job de subtítulos del backend (useSubtitles): {status, progress, message, error, video}; vacío si no hay.
     Q_PROPERTY(QVariantMap subtitleJob READ subtitleJob NOTIFY subtitleJobChanged)
+    // «Seguir cara» en curso (maskFollow): {clipId, progress, message}; vacío si no.
+    Q_PROPERTY(QVariantMap maskFollow READ maskFollow NOTIFY maskFollowChanged)
     // El fotograma de la timeline en el cabezal (preview_source.hpp), para FramePreview.
     Q_PROPERTY(QObject* preview READ preview CONSTANT)
     // Reproducir y parar, con el reloj del audio (player.hpp).
@@ -116,6 +118,8 @@ public:
     [[nodiscard]] QVariantMap subtitleJob() const { return subtitle_job_; }
     // El puente con el backend de video-yt (para los tests: su dirección y cada cuánto se sondea).
     [[nodiscard]] BackendJobs& subtitleBackend() { return subtitle_jobs_; }
+    [[nodiscard]] QVariantMap maskFollow() const { return mask_follow_; }
+    [[nodiscard]] BackendJobs& faceBackend() { return face_jobs_; }
     [[nodiscard]] QObject* preview() { return &preview_; }
     [[nodiscard]] PreviewSource& previewSource() { return preview_; }
     [[nodiscard]] QObject* player() { return &player_; }
@@ -308,6 +312,9 @@ public:
     Q_INVOKABLE void requestSubtitles(const QString& clipId);
     // Quita el aviso del job (el de error se cierra con un clic).
     Q_INVOKABLE void dismissSubtitleJob();
+    // followMaskFace: la máscara del vídeo elegido sigue la cara (el seguimiento de caras del material, que hace
+    // el backend con el job face-track, pasado a keyframes de su posición), en un paso de deshacer.
+    Q_INVOKABLE void followMaskFace();
     // Pila de efectos animados (addVfx y EdVfxStack): añadir, parámetros, activar, rango, orden y quitar.
     // listEffects de fx/registry.js para la biblioteca: categoría y palabras (sin tildes ni mayúsculas).
     Q_INVOKABLE QVariantList searchVfx(const QString& q, const QString& category) const;
@@ -399,6 +406,7 @@ signals:
     void maskModeChanged();
     void editMaskChanged();
     void subtitleJobChanged();
+    void maskFollowChanged();
 
 private:
     // Una tarjeta del material con su dragPayload; y las del proyecto (sus vídeos, imágenes y audios).
@@ -495,6 +503,12 @@ private:
     BackendJobs subtitle_jobs_;
     std::optional<core::TimelineClip> subtitle_src_;
     QVariantMap subtitle_job_;
+    // «Seguir cara»: el clip, el tamaño de su vídeo y cómo va el job.
+    void follow_update(const Json& job);
+    BackendJobs face_jobs_;
+    std::string follow_clip_;
+    std::pair<double, double> follow_size_;
+    QVariantMap mask_follow_;
     void reload_collections();
     void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);

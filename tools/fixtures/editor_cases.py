@@ -785,6 +785,48 @@ def _captions_case(rng: random.Random) -> dict:
     return {"name": "subtítulos del editor", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
 
 
+def _face_follow_case(rng: random.Random) -> dict:
+    """«Seguir cara» de una máscara: el seguimiento de caras del material pasado a keyframes de su posición
+    (followTrackMaskKeys de lib/clipLayout.js), enableKeyframes y el setClips de followMaskFace."""
+    face = [{"id": "r1", "t": 1.0, "cx": 0.3, "cy": 0.5, "pan_mode": "smooth"},
+            {"id": "r2", "t": 4.0, "cx": 0.7, "cy": 0.45, "pan_mode": "smooth"}]
+    on = {"enabled": True, "items": [{"id": "k1", "t": 0.5, "interpolation": "linear",
+                                      "props": {"x": 0.5, "y": 0.5, "scale": 1, "rotation": 0, "opacity": 1}}]}
+    clips = [clip("f1", "V1", start=2, inp=1, out=6),
+             clip("f2", "V1", start=8, inp=0, out=8, speed=2),
+             clip("f3", "V1", start=13, inp=2, out=7, reverse=True),
+             clip("f4", "V2", start=0, inp=0, out=5, reframe={"zoom": 0.7, "pan_mode": "smooth", "keyframes": face}),
+             clip("f5", "V2", start=6, inp=0, out=5, layout="overlay", frame="free",
+                  transform={"x": 0.4, "y": 0.6, "scale": 0.8, "rotation": 15},
+                  reframe={"zoom": 1, "crop_w": 0.6, "crop_h": 0.8, "keyframes": []}),
+             clip("f6", "V1", start=20, inp=0, out=4, keyframes=on),
+             clip("f7", "V1", start=25, inp=0, out=3,
+                  masks=[{"id": "m1", "type": "circle", "x": 0.5, "y": 0.5, "w": 0.4, "h": 0.4}])]
+    track = []
+    t = 0.0
+    while t < 9:
+        p = {"t": round(t, 3), "cx": round(rng.uniform(0.2, 0.8), 4)}
+        if rng.random() < 0.9:
+            p["cy"] = round(rng.uniform(0.3, 0.7), 4)
+        track.append(p)
+        t += rng.uniform(0.08, 0.3)
+    rng.shuffle(track)  # en desorden: se ordena por t
+    track += [{"t": None, "cx": 0.5, "cy": 0.5}, {"cx": 0.5, "cy": 0.5}]  # sin un t válido: fuera
+    dims = [{"srcW": 1920, "srcH": 1080, "outW": 720, "outH": 1280}, {"srcW": 1080, "srcH": 1920, "outW": 1920, "outH": 1080}]
+    calls: list = []
+    for c in clips:
+        for d in dims:
+            for gap in (None, 0.5):
+                calls.append(["followTrackMaskKeys", c["id"], track, d, gap])
+            calls.append(["followMaskFace", c["id"], track, d, c["in_point"] + 0.3, 30])
+        calls.append(["followMaskFace", c["id"], track, dims[0], c["in_point"], 25])
+        # el primer keyframe con el encuadre del cabezal (srcTOf), entre dos del encuadre animado
+        calls.append(["followMaskFace", c["id"], track, dims[0], c["in_point"] + 2.5, 30])
+        for lt in (0.0, 0.5):
+            calls.append(["enableKeyframes", c["id"], lt, c["in_point"] + lt])
+    return {"name": "seguir cara", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -816,4 +858,5 @@ def cases() -> list[dict]:
     out.append(_waveform_case(rng))
     out.append(_mask_ui_case(random.Random(20261107)))  # su propio rng, el último: no mueve nada
     out.append(_captions_case(random.Random(20261108)))
+    out.append(_face_follow_case(random.Random(20261109)))
     return out

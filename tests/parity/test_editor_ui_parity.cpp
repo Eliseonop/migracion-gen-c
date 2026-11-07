@@ -12,6 +12,7 @@
 
 #include "gc/core/captions_ui.hpp"
 #include "gc/core/clip_layout_ui.hpp"
+#include "gc/core/face_follow.hpp"
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/io.hpp"
@@ -674,6 +675,37 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         }
         return {{"reframe", rf}, {"transform", j.value("transform", Json())}, {"frame", j.value("frame", Json())},
                 {"keyframes", out->keyframes ? without_ids(*out->keyframes) : Json()}};
+    }
+    if (fn == "followTrackMaskKeys" || fn == "followMaskFace") {
+        const Json& d = call.at(3);
+        const double sw = d.at("srcW").get<double>();
+        const double sh = d.at("srcH").get<double>();
+        const double ow = d.at("outW").get<double>();
+        const double oh = d.at("outH").get<double>();
+        const TimelineClip& c = clip(call.at(1));
+        const auto keys = fn == "followTrackMaskKeys" && !call.at(4).is_null()
+                              ? follow_track_mask_keys(c, call.at(2), sw, sh, ow, oh, num(4))
+                              : follow_track_mask_keys(c, call.at(2), sw, sh, ow, oh);
+        if (fn == "followTrackMaskKeys") {
+            Json out = Json::array();
+            for (const MaskFollowKey& k : keys) {
+                out.push_back({{"t", k.t}, {"mx", k.mx}, {"my", k.my}});
+            }
+            return out;
+        }
+        if (keys.empty()) {
+            return Json();
+        }
+        SequentialIdSource ids;
+        TimelineClip next = c;
+        apply_follow_keys(next, keys, num(4), num(5), ids);
+        return next.keyframes ? without_ids(*next.keyframes) : Json();
+    }
+    if (fn == "enableKeyframes") {
+        SequentialIdSource ids;
+        TimelineClip next = clip(call.at(1));
+        enable_keyframes(next, num(2), num(3), ids);
+        return next.keyframes ? without_ids(*next.keyframes) : Json();
     }
     if (fn == "canCaptionClip") {
         return can_caption_clip(clip(call.at(1)));
