@@ -4,7 +4,9 @@
 // de la timeline, coge de la caché los proxies que ya hay y hace, uno a uno, los que faltan (los
 // vídeos de 1440p o más). Cada uno que acaba va a la vista previa, que desde entonces lee ese vídeo
 // del proxy. Un cambio de la timeline no corta el que se está haciendo; cerrar o abrir otro
-// proyecto, sí (y no deja nada a medias). Sin gc_export (Linux sin vcpkg), no hace nada.
+// proyecto, sí (y no deja nada a medias). Al abrir un proyecto y al hacer proxies nuevos, la caché
+// se limpia hasta su tope (exporter::prune_proxies, sin tocar los de este proyecto). Sin gc_export
+// (Linux sin vcpkg), no hace nada.
 
 #include <QObject>
 #include <QString>

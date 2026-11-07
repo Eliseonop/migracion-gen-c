@@ -1,17 +1,20 @@
 // Los proxies de la vista previa (gc/export/proxy.hpp): cuándo se hacen, que la caché los reconoce y
 // caducan con el archivo, que pararlos no deja nada, que su fotograma k es el del original y que la
-// vista previa con proxy coloca los clips igual que sin él.
+// vista previa con proxy coloca los clips igual que sin él; y que la caché se limpia.
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
 #include <limits>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "disk_steps.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/export/frame.hpp"
@@ -140,9 +143,14 @@ TEST_CASE("proxies: se hacen, la caché los reconoce y caducan con el archivo", 
     CHECK(made->file.source_height == 1440);
     CHECK(fs::is_regular_file(made->file.path));
     CHECK(last > 0.9);
+    // Al encontrarlo, su .json queda como recién usado (lo que mira prune_proxies).
+    const fs::path json = fs::path(made->file.path).replace_extension(".json");
+    const auto old = fs::file_time_type::clock::now() - std::chrono::hours(5);
+    fs::last_write_time(json, old);
     const auto found = gc::exporter::find_proxy(cache, big, 30);
     CHECK(found.state == ProxyState::Ready);
     CHECK(found.file.path == made->file.path);
+    CHECK(fs::last_write_time(json) > old + std::chrono::hours(4));
     CHECK(found.file.source_width == 2560);
     // Otro fps, otro proxy.
     CHECK(gc::exporter::find_proxy(cache, big, 25).state == ProxyState::Missing);
@@ -178,6 +186,107 @@ TEST_CASE("proxies: se hacen, la caché los reconoce y caducan con el archivo", 
     // Con el archivo cambiado, el de antes ya no vale.
     make_video(big, 2560, 1440, 21);
     CHECK(gc::exporter::find_proxy(cache, big, 30).state == ProxyState::Missing);
+}
+
+TEST_CASE("proxies: la caché se limpia (a medias, caducados, huérfanos y por tope)", "[export][proxy]") {
+    gc::media::silence_ffmpeg_log();
+    const TempDir dir("gc_test_proxy_prune");
+    const fs::path cache = dir.path / "cache";
+    fs::create_directories(cache);
+    const auto write = [](const fs::path& p, std::size_t bytes) { REQUIRE(gc::test::write_file(p, std::string(bytes, 'x'))); };
+    const auto source = [&](const char* name) {
+        const fs::path p = dir.path / name;
+        write(p, 100);
+        return p;
+    };
+    const fs::path s1 = source("uno.mp4");
+    const fs::path s2 = source("dos.mp4");
+    const fs::path s3 = source("tres.mp4");
+    const auto now = fs::file_time_type::clock::now();
+    // Una entrada como las de make_proxy: el .json (con el original) y, si es proxy, el .mp4.
+    const auto entry = [&](const char* base, const fs::path& src, std::optional<std::uintmax_t> size, int version,
+                           bool mp4, std::chrono::hours age) {
+        const auto id_size = size ? *size : fs::file_size(src);
+        const Json meta = {{"version", version},
+                           {"source", gc::core::path_to_utf8(src)},
+                           {"size", id_size},
+                           {"mtime", static_cast<std::int64_t>(fs::last_write_time(src).time_since_epoch().count())},
+                           {"fps", 30},
+                           {"proxy", mp4}};
+        const fs::path json = cache / (std::string(base) + ".json");
+        REQUIRE(gc::core::write_json_file(json, meta));
+        if (mp4) {
+            write(cache / (std::string(base) + ".mp4"), 1000);
+        }
+        fs::last_write_time(json, now - age);
+    };
+    using std::chrono::hours;
+    entry("a", s1, std::nullopt, 1, true, hours(3));
+    entry("b", s2, std::nullopt, 1, true, hours(2));
+    entry("c", s3, std::nullopt, 1, true, hours(0));
+    entry("marca", s3, std::nullopt, 1, false, hours(5)); // «no hace falta»: solo el .json
+    entry("cambiado", s1, 999, 1, true, hours(0));        // el original ya no es ese
+    entry("version", s2, std::nullopt, 0, true, hours(0)); // otra versión de proxy
+    const fs::path s4 = source("cuatro.mp4");
+    entry("retocado", s4, std::nullopt, 1, true, hours(0));
+    fs::last_write_time(s4, fs::last_write_time(s4) - hours(1)); // mismo tamaño, otra fecha
+    const fs::path gone = dir.path / "borrado.mp4";
+    write(gone, 10);
+    entry("borrado", gone, std::nullopt, 1, true, hours(0));
+    fs::remove(gone);
+    write(cache / "huerfano.mp4", 500); // sin .json
+    write(cache / "viejo.part.mp4", 500);
+    fs::last_write_time(cache / "viejo.part.mp4", now - hours(1));
+    write(cache / "nuevo.part.mp4", 500); // alguien lo está escribiendo
+    const auto here = [&](const char* name) { return fs::exists(cache / name); };
+    const auto bytes = [&](const char* base) { // el .json y el .mp4 de una entrada
+        return fs::file_size(cache / (std::string(base) + ".json")) + 1000;
+    };
+    const std::uintmax_t a_bytes = bytes("a");
+    const std::uintmax_t c_bytes = bytes("c");
+    const std::uintmax_t all_bytes = a_bytes + bytes("b") + c_bytes + fs::file_size(cache / "marca.json");
+
+    // Sin pasar del tope: solo lo que no se volverá a usar.
+    auto r = gc::exporter::prune_proxies(cache, std::uintmax_t{1} << 40U);
+    CHECK(r.removed == 10); // cambiado ×2, retocado ×2, version ×2, borrado ×2, huerfano, viejo.part
+    CHECK_FALSE(here("retocado.json"));
+    CHECK_FALSE(here("cambiado.json"));
+    CHECK_FALSE(here("cambiado.mp4"));
+    CHECK_FALSE(here("version.json"));
+    CHECK_FALSE(here("borrado.mp4"));
+    CHECK_FALSE(here("huerfano.mp4"));
+    CHECK_FALSE(here("viejo.part.mp4"));
+    CHECK(here("nuevo.part.mp4"));
+    CHECK(here("a.mp4"));
+    CHECK(here("marca.json"));
+    CHECK(r.kept == all_bytes);
+
+    // Con tope: fuera lo usado hace más tiempo (la marca y después «a»), salvo lo del proyecto abierto.
+    r = gc::exporter::prune_proxies(cache, a_bytes + c_bytes, {cache / "a.mp4"});
+    CHECK_FALSE(here("marca.json"));
+    CHECK(here("a.mp4")); // protegido aunque sea el más viejo
+    CHECK_FALSE(here("b.mp4"));
+    CHECK_FALSE(here("b.json"));
+    CHECK(here("c.mp4"));
+    CHECK(r.kept == a_bytes + c_bytes);
+    // Ya cabe: no se toca nada.
+    CHECK(gc::exporter::prune_proxies(cache, a_bytes + c_bytes).removed == 0);
+
+    // find_proxy pone al día la fecha de uso de lo que encuentra.
+    const fs::path small = dir.path / "small.mp4";
+    make_video(small, 640, 360, 3);
+    REQUIRE(gc::exporter::make_proxy(cache, small, 30));
+    fs::path mark;
+    for (const auto& e : fs::directory_iterator(cache)) {
+        const std::string n = e.path().filename().string();
+        if (n.ends_with(".json") && n != "a.json" && n != "c.json") {
+            mark = e.path();
+        }
+    }
+    REQUIRE_FALSE(mark.empty());
+    fs::last_write_time(mark, now - hours(9));
+    CHECK(gc::exporter::find_proxy(cache, small, 30).state == ProxyState::NotNeeded);
+    CHECK(fs::last_write_time(mark) > now - hours(1));
 }
 
 TEST_CASE("proxies: el fotograma k del proxy es el fotograma k del original", "[export][proxy]") {

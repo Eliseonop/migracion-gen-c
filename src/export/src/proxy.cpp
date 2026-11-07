@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <format>
@@ -9,6 +10,7 @@
 #include <string>
 #include <string_view>
 #include <system_error>
+#include <vector>
 
 #include "gc/core/io.hpp"
 #include "gc/core/json.hpp"
@@ -68,6 +70,12 @@ fs::path with_suffix(fs::path base, std::string_view suffix) {
     return base;
 }
 
+// El último uso de una entrada de la caché: la fecha de su .json (lo que mira prune_proxies).
+void touch(const fs::path& json) {
+    std::error_code ignored;
+    fs::last_write_time(json, fs::file_time_type::clock::now(), ignored);
+}
+
 bool has_alpha(const media::RgbaFrame& frame) {
     for (std::size_t i = 3; i < frame.pixels.size(); i += 4) {
         if (frame.pixels[i] != 255) {
@@ -111,6 +119,7 @@ ProxyLookup find_proxy(const fs::path& cache_dir, const fs::path& source, int fp
         return {};
     }
     if (!meta->value("proxy", false)) {
+        touch(with_suffix(base, ".json"));
         return {ProxyState::NotNeeded, {}};
     }
     std::error_code ec;
@@ -118,7 +127,105 @@ ProxyLookup find_proxy(const fs::path& cache_dir, const fs::path& source, int fp
     if (!fs::is_regular_file(mp4, ec)) {
         return {};
     }
+    touch(with_suffix(base, ".json"));
     return {ProxyState::Ready, {mp4, meta->value("source_width", 0), meta->value("source_height", 0)}};
+}
+
+ProxyPrune prune_proxies(const fs::path& cache_dir, std::uintmax_t max_bytes, const std::set<fs::path>& keep) {
+    ProxyPrune out;
+    std::error_code ec;
+    if (!fs::is_directory(cache_dir, ec)) {
+        return out;
+    }
+    std::set<fs::path> kept;
+    for (const fs::path& k : keep) {
+        kept.insert(k.lexically_normal());
+    }
+    const auto protected_mp4 = [&](const fs::path& mp4) { return kept.contains(mp4.lexically_normal()); };
+    const auto remove = [&](const fs::path& file) {
+        std::error_code e;
+        const std::uintmax_t size = fs::file_size(file, e);
+        if (!e && fs::remove(file, e) && !e) {
+            ++out.removed;
+            out.freed += size;
+        }
+    };
+    const auto size_of = [](const fs::path& file) {
+        std::error_code e;
+        const std::uintmax_t size = fs::file_size(file, e);
+        return e ? std::uintmax_t{0} : size;
+    };
+    std::vector<fs::path> files;
+    for (const auto& entry : fs::directory_iterator(cache_dir, ec)) {
+        std::error_code e;
+        if (entry.is_regular_file(e)) {
+            files.push_back(entry.path());
+        }
+    }
+    struct Live {
+        fs::path json;
+        fs::path mp4; // vacía en una marca de «no hace falta»
+        fs::file_time_type used;
+        std::uintmax_t bytes = 0;
+    };
+    std::vector<Live> live;
+    const auto now = fs::file_time_type::clock::now();
+    for (const fs::path& file : files) {
+        const std::string name = core::path_to_utf8(file.filename());
+        std::error_code e;
+        if (name.ends_with(".part.mp4")) { // (1) a medias y abandonado
+            const auto written = fs::last_write_time(file, e);
+            if (!e && now - written > std::chrono::minutes(10)) {
+                remove(file);
+            }
+        } else if (name.ends_with(".mp4")) { // sin su .json no se usa nunca
+            if (!fs::exists(fs::path(file).replace_extension(".json"), e) && !protected_mp4(file)) {
+                remove(file);
+            }
+        } else if (name.ends_with(".json")) { // (2) ¿sigue siendo del original tal como está?
+            const fs::path mp4 = fs::path(file).replace_extension(".mp4");
+            const auto meta = core::read_json_file(file);
+            bool valid = meta && meta->is_object() && meta->value("version", 0) == kProxyVersion &&
+                         meta->contains("source") && meta->at("source").is_string();
+            if (valid) {
+                const auto id = source_id(core::path_from_utf8(meta->at("source").get<std::string>()));
+                valid = id && meta->value("size", std::uintmax_t{0}) == id->size &&
+                        meta->value("mtime", std::int64_t{0}) == id->mtime;
+            }
+            const bool has_mp4 = fs::is_regular_file(mp4, e);
+            if (!valid && !protected_mp4(mp4)) {
+                remove(file);
+                if (has_mp4) {
+                    remove(mp4);
+                }
+                continue;
+            }
+            const auto used = fs::last_write_time(file, e);
+            live.push_back({file, has_mp4 ? mp4 : fs::path(), e ? fs::file_time_type::min() : used,
+                            size_of(file) + (has_mp4 ? size_of(mp4) : 0)});
+        }
+    }
+    // (3) el tope: fuera los usados hace más tiempo.
+    std::uintmax_t total = 0;
+    for (const Live& l : live) {
+        total += l.bytes;
+    }
+    std::ranges::sort(live, {}, &Live::used);
+    for (const Live& l : live) {
+        if (total <= max_bytes) {
+            break;
+        }
+        if (!l.mp4.empty() && protected_mp4(l.mp4)) {
+            continue;
+        }
+        remove(l.json);
+        if (!l.mp4.empty()) {
+            remove(l.mp4);
+        }
+        total -= l.bytes;
+    }
+    out.kept = total;
+    return out;
 }
 
 Result<ProxyLookup> make_proxy(const fs::path& cache_dir, const fs::path& source, int fps,

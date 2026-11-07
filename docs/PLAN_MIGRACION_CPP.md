@@ -1738,7 +1738,7 @@ Decisión de Edu (§6):
 - **En el render** (`FrameOptions::proxies`): el clip se lee del proxy, la evaluación ve el tamaño del original y los blits pasan a píxeles del proxy (el recorte por la escala y la transformación a la inversa), así que llega al mismo sitio.
 - **En el studio** (`ProxyMaker`): al abrir el proyecto y con cada vídeo nuevo de la timeline, un hilo de baja prioridad coge los que ya hay y hace, uno a uno, los que faltan; la vista previa vuelve a preparar el render con cada uno. Progreso bajo la vista previa. La caché, la de la app (`QStandardPaths::CacheLocation`/proxies).
 - **Tests:** tamaños; hacerlo, reconocerlo, otro fps, el que no hace falta, pararlo y caducar con el archivo; el fotograma k del proxy y del original (el gris de cada fotograma dice cuál es) en un clip que empieza dentro del vídeo; `FrameRenderer` con y sin proxy a ½ (un relleno con recorte y un superpuesto) a 30 dB o más; y en el studio, un vídeo de 2560 × 1440 que se hace proxy en la caché y la vista previa que lo usa (byte a byte lo de `FrameRenderer` con él).
-- **Falta:** limpiar la caché (hoy solo crece) y hacerlos al importar, cuando el studio importe material.
+- **Falta:** limpiar la caché (hoy solo crece) y hacerlos al importar, cuando el studio importe material. *(La caché se limpia desde el 2026-11-06; un vídeo importado tiene proxy en cuanto entra en la timeline.)*
 - **Verificado:** MSVC Debug y Release 287/287, MinGW Debug y Release 157/157, 0 warnings, 0 avisos de clang-tidy.
 
 ### 2026-11-05 — F5: exportar desde el editor
@@ -1834,3 +1834,10 @@ Decisión de Edu (§6):
 - **El selector** de EdViewerTools («Sin marco», «TikTok», «YouTube Shorts», de `kPlatformOverlays`, con su tooltip) bajo la vista previa; el marco es estado del editor (`platformOverlay` de VideoEditor.jsx: «none» al abrir, no se guarda). No se exporta.
 - **Test sin pantalla:** las tres opciones; elegir TikTok pinta, píxel a píxel, lo que da `draw_platform_chrome` a ese tamaño; Shorts lo redibuja distinto; «Sin marco», nada. 4/4 mutaciones (no redibujar al cambiar, el recuadro a la mitad, fondo opaco, el selector desconectado).
 - **Verificado:** MSVC Debug y Release 306/306, 0 warnings; clang-tidy, 0 avisos.
+
+### 2026-11-06 — F5: la caché de proxies se limpia
+
+- **Antes solo crecía.** Ahora `exporter::prune_proxies(caché, tope, keep)` (`gc/export/proxy.hpp`) quita: (1) los `.part.mp4` de un proxy a medias que nadie escribe (más de 10 min sin cambios: otro studio abierto podría estar escribiendo uno); (2) los proxies y las marcas de «no hace falta» cuyo original ya no existe, tiene otro tamaño u otra fecha, o son de otra versión de proxy (nunca se volverían a usar), y los `.mp4` sin su `.json`; (3) si lo que queda pasa del tope, los usados hace más tiempo. El uso es la fecha del `.json`, que `find_proxy` pone al día al encontrar el proxy o la marca. Los de `keep` (los proxies del proyecto abierto) nunca se borran.
+- **El studio** (`ProxyMaker`): al abrir un proyecto, después de buscar sus proxies (que así quedan los más recientes y además protegidos), y cada vez que hace alguno nuevo. Tope: `kProxyCacheMaxBytes`, 10 GiB (unas 5 h de proxies a 960 px).
+- **Test** con una caché fabricada: tres proxies con distintas fechas de uso, una marca, uno de un original cambiado de tamaño, otro de un original retocado (mismo tamaño, otra fecha), uno de otra versión, uno de un original borrado, un `.mp4` huérfano y dos `.part.mp4` (uno abandonado y otro reciente); y la fecha de uso que pone `find_proxy`, en un proxy hecho y en una marca. 10/10 mutaciones.
+- **Verificado:** MSVC Debug y Release 307/307, 0 warnings; clang-tidy, 0 avisos.

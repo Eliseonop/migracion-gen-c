@@ -9,6 +9,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <optional>
+#include <set>
 #include <thread>
 #include <vector>
 
@@ -119,7 +120,7 @@ struct ProxyMaker::Worker {
                 current = std::move(new_timeline);
             }
             if (project && current && !cache.empty()) {
-                make_all(*project, *current, cache);
+                make_all(*project, *current, cache, reload_now);
             }
         }
     }
@@ -140,7 +141,19 @@ struct ProxyMaker::Worker {
         return out;
     }
 
-    void make_all(const exporter::LoadedProject& project, const core::Timeline& tl, const std::filesystem::path& cache) {
+    // La caché, por debajo de su tope (prune_proxies), sin tocar los proxies de este proyecto.
+    static void prune(const std::filesystem::path& cache, const PreviewProxies& made) {
+        std::set<std::filesystem::path> keep;
+        for (const auto& [source, proxy] : made) {
+            keep.insert(proxy.file);
+        }
+        (void)exporter::prune_proxies(cache, exporter::kProxyCacheMaxBytes, keep);
+    }
+
+    // Los proxies de la timeline: los que ya hay y, uno a uno, los que faltan. Al abrir el proyecto
+    // (`opened`), y siempre que se haga alguno nuevo, se limpia la caché.
+    void make_all(const exporter::LoadedProject& project, const core::Timeline& tl, const std::filesystem::path& cache,
+                  bool opened) {
         const int fps = tl.fps > 0 ? static_cast<int>(tl.fps) : 30;
         PreviewProxies made;
         std::vector<std::filesystem::path> todo;
@@ -159,6 +172,9 @@ struct ProxyMaker::Worker {
                 .arg(static_cast<int>(std::lround(part * 100)));
         };
         post(made, todo.empty() ? QString() : status(0, 0.0));
+        if (opened) { // tras buscarlos: los de este proyecto son los usados más hace menos
+            prune(cache, made);
+        }
         QString failed;
         for (std::size_t i = 0; i < todo.size(); ++i) {
             auto last = std::chrono::steady_clock::now();
@@ -183,6 +199,9 @@ struct ProxyMaker::Worker {
                 made[todo[i]] = {r->file.path, r->file.source_width, r->file.source_height};
             }
             post(made, i + 1 < todo.size() ? status(i + 1, 0.0) : failed);
+        }
+        if (!todo.empty()) {
+            prune(cache, made);
         }
     }
 };

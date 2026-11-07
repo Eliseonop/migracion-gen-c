@@ -11,10 +11,13 @@
 // con la clave sacada del original (ruta, tamaño y fecha) y de los fps. El vídeo se escribe en
 // <clave>.part.mp4 y se renombra al acabar: uno a medias nunca se usa.
 
+#include <cstddef>
+#include <cstdint>
 #include <filesystem>
 #include <functional>
 #include <map>
 #include <optional>
+#include <set>
 #include <utility>
 
 #include "gc/core/error.hpp"
@@ -49,8 +52,27 @@ struct ProxyLookup {
 [[nodiscard]] std::optional<std::pair<int, int>> proxy_size(int width, int height);
 
 // Lo que hay en la caché para `source` a `fps`: el proxy hecho (si sigue siendo del archivo tal como
-// está), la marca de que no hace falta, o nada.
+// está), la marca de que no hace falta, o nada. Al encontrarlo, pone al día la fecha de su .json
+// (su último uso, para prune_proxies).
 [[nodiscard]] ProxyLookup find_proxy(const std::filesystem::path& cache_dir, const std::filesystem::path& source, int fps);
+
+// El tope de la caché de proxies que usa el studio (10 GiB: unas 5 h de proxies a 960 px).
+inline constexpr std::uintmax_t kProxyCacheMaxBytes = std::uintmax_t{10} << 30U;
+
+struct ProxyPrune {
+    std::size_t removed = 0; // archivos borrados
+    std::uintmax_t freed = 0;
+    std::uintmax_t kept = 0; // lo que queda en la caché
+};
+
+// Limpia la caché, que si no solo crece: (1) los .part.mp4 de un proxy a medias que nadie escribe
+// (sin cambios desde hace más de 10 min); (2) los proxies y las marcas cuyo original ya no existe,
+// ha cambiado (otro tamaño o fecha) o son de otra versión de proxy: nunca se volverían a usar, y los
+// .mp4 sin su .json; (3) si lo que queda pasa de `max_bytes`, los usados hace más tiempo (la fecha
+// de su .json, que find_proxy pone al día al encontrarlos) hasta caber. Los .mp4 de `keep` (los del
+// proyecto abierto) nunca se borran. Lo que no se puede borrar se deja.
+[[nodiscard]] ProxyPrune prune_proxies(const std::filesystem::path& cache_dir, std::uintmax_t max_bytes,
+                                       const std::set<std::filesystem::path>& keep = {});
 
 // Hace el proxy (o la marca de que no hace falta) y lo deja en la caché. `progress` recibe la parte
 // hecha (0–1); si devuelve false, se para sin dejar nada y devuelve Missing. Error si el original no
