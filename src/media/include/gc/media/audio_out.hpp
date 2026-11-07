@@ -1,8 +1,9 @@
 #pragma once
 
 // La reproducción de audio (miniaudio): un PCM estéreo en float que suena desde un instante. Lo
-// que ya ha pedido la tarjeta es el reloj del reproductor del editor (el «reloj de audio maestro»
-// del plan): la imagen sigue al sonido, no al revés.
+// que ya se oye es el reloj del reproductor del editor (el «reloj de audio maestro» del plan): la
+// imagen sigue al sonido, no al revés. Lo que se oye va por detrás de lo que ha pedido la tarjeta
+// lo que tarda en salir su búfer (la latencia).
 
 #include <cstdint>
 #include <memory>
@@ -26,7 +27,8 @@ public:
 
     // Cambia lo que suena sin moverse de donde va (otra mezcla de la misma timeline).
     void set_pcm(Pcm pcm);
-    void seek(double seconds);
+    // A `seconds` (a la muestra más cercana; antes de 0 o NaN, 0). Da la posición que queda, en s.
+    double seek(double seconds);
     // Llena `out` (muestras estéreo entrelazadas: out.size() / 2 por canal) desde la posición y la
     // avanza otro tanto.
     void fill(std::span<float> out);
@@ -40,6 +42,13 @@ private:
     std::int64_t frame_ = 0; // muestras por canal
     int rate_;
 };
+
+// Lo que se oye de un PCM que suena desde `from` y del que la tarjeta ya ha pedido hasta `filled`,
+// con `latency` s esperando en su búfer: filled − latency, sin bajar de `from` (lo primero que se
+// mandó aún no ha salido).
+[[nodiscard]] constexpr double heard_position(double filled, double from, double latency) noexcept {
+    return filled - latency > from ? filled - latency : from;
+}
 
 class AudioOut {
 public:
@@ -59,8 +68,13 @@ public:
     [[nodiscard]] Result<void> play_from(double seconds);
     void pause();
     [[nodiscard]] bool playing() const noexcept;
-    // El reloj, en s.
+    // El reloj, en s: lo que ya se oye (heard_position de filled() y latency()).
     [[nodiscard]] double position() const;
+    // Lo que ya ha pedido la tarjeta, en s (lo que se oirá dentro de latency()).
+    [[nodiscard]] double filled() const;
+    // En s: lo que cabe en el búfer de la tarjeta (sus periodos), lo que tarda en oírse lo que se le
+    // manda. 0 si no se sabe.
+    [[nodiscard]] double latency() const;
     // «WASAPI», «Core Audio», «PulseAudio», «Null»…
     [[nodiscard]] std::string backend() const;
 

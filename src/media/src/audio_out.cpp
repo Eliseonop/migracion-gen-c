@@ -15,9 +15,10 @@ void PcmCursor::set_pcm(Pcm pcm) {
     pcm_ = std::move(pcm);
 }
 
-void PcmCursor::seek(double seconds) {
+double PcmCursor::seek(double seconds) {
     const std::scoped_lock lock(mutex_);
     frame_ = std::isfinite(seconds) && seconds > 0 ? std::llround(seconds * rate_) : 0;
+    return static_cast<double>(frame_) / rate_;
 }
 
 void PcmCursor::fill(std::span<float> out) {
@@ -76,6 +77,7 @@ struct AudioOut::Impl {
     bool has_context = false;
     bool has_device = false;
     bool playing = false;
+    double from = 0.0; // desde dónde suena (el último play_from)
 };
 
 AudioOut::AudioOut(std::unique_ptr<Impl> impl) : impl_(std::move(impl)) {}
@@ -110,7 +112,7 @@ Result<AudioOut> AudioOut::open(bool null_device, int rate) {
 void AudioOut::set_pcm(Pcm pcm) { impl_->cursor.set_pcm(std::move(pcm)); }
 
 Result<void> AudioOut::play_from(double seconds) {
-    impl_->cursor.seek(seconds);
+    impl_->from = impl_->cursor.seek(seconds);
     if (!impl_->playing) {
         if (ma_device_start(&impl_->device) != MA_SUCCESS) {
             return fail(ErrorCode::Io, "no se pudo empezar a reproducir el audio");
@@ -129,7 +131,18 @@ void AudioOut::pause() {
 
 bool AudioOut::playing() const noexcept { return impl_->playing; }
 
-double AudioOut::position() const { return impl_->cursor.position(); }
+double AudioOut::position() const { return heard_position(filled(), impl_->from, latency()); }
+
+double AudioOut::filled() const { return impl_->cursor.position(); }
+
+double AudioOut::latency() const {
+    const auto& playback = impl_->device.playback;
+    if (!impl_->has_device || playback.internalSampleRate == 0) {
+        return 0.0;
+    }
+    return static_cast<double>(playback.internalPeriodSizeInFrames) * playback.internalPeriods /
+           playback.internalSampleRate;
+}
 
 std::string AudioOut::backend() const { return ma_get_backend_name(impl_->context.backend); }
 

@@ -1841,3 +1841,10 @@ Decisión de Edu (§6):
 - **El studio** (`ProxyMaker`): al abrir un proyecto, después de buscar sus proxies (que así quedan los más recientes y además protegidos), y cada vez que hace alguno nuevo. Tope: `kProxyCacheMaxBytes`, 10 GiB (unas 5 h de proxies a 960 px).
 - **Test** con una caché fabricada: tres proxies con distintas fechas de uso, una marca, uno de un original cambiado de tamaño, otro de un original retocado (mismo tamaño, otra fecha), uno de otra versión, uno de un original borrado, un `.mp4` huérfano y dos `.part.mp4` (uno abandonado y otro reciente); y la fecha de uso que pone `find_proxy`, en un proxy hecho y en una marca. 10/10 mutaciones.
 - **Verificado:** MSVC Debug y Release 307/307, 0 warnings; clang-tidy, 0 avisos.
+
+### 2026-11-06 — F5: el reloj del reproductor resta la latencia de la tarjeta
+
+- **Antes**, el reloj era lo que ya había pedido la tarjeta: iba por delante de lo que se oye lo que tarda en salir su búfer (unos 30 ms con WASAPI; más con Bluetooth), así que la imagen se adelantaba al sonido.
+- **Ahora** `AudioOut::position()` es lo que ya se oye: `heard_position(filled, from, latency)` = lo pedido menos `latency()` (los periodos del búfer de la tarjeta × su tamaño, a su frecuencia interna, de miniaudio), sin bajar de donde empezó a sonar (`from`, el último `play_from`). Al empezar, el cabezal espera ese rato; al saltar sonando, se queda en el salto mientras sale lo de antes. `filled()` es lo pedido (el reloj de antes).
+- **Test** con el backend nulo de miniaudio (que tiene su búfer de verdad): cuando la tarjeta ya ha pedido más que su búfer, lo oído es lo pedido menos el búfer; y la fórmula, exacta. 4/4 mutaciones (el reloj sin restar, latencia 0, sin el inicio, la latencia sumada). Los tests del reproductor siguen igual.
+- **Verificado:** MSVC Debug y Release 308/308, 0 warnings; clang-tidy, 0 avisos.

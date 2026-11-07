@@ -59,6 +59,34 @@ TEST_CASE("audio: el cursor llena desde su posición y sigue en silencio pasado 
     CHECK(out == std::vector<float>(6, 0.0F));
 }
 
+TEST_CASE("audio: lo que se oye va por detrás de lo pedido lo que tarda el búfer", "[media][audio_out]") {
+    using gc::media::heard_position;
+    CHECK(heard_position(5.0, 2.0, 0.25) == 4.75);
+    CHECK(heard_position(2.1, 2.0, 0.25) == 2.0); // lo primero aún no ha salido: donde empezó
+    CHECK(heard_position(2.0, 2.0, 0.0) == 2.0);
+
+    auto out = AudioOut::open(true); // el backend nulo, con su búfer de verdad
+    REQUIRE(out);
+    const double latency = out->latency();
+    CHECK(latency > 0.0);
+    CHECK(latency < 0.5);
+    out->set_pcm(ramp());
+    REQUIRE(out->play_from(2.0));
+    CHECK(out->position() >= 2.0);
+    // Cuando la tarjeta ya ha pedido más que su búfer, lo que se oye es eso menos el búfer.
+    const auto until = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+    while (out->filled() - 2.0 < latency && std::chrono::steady_clock::now() < until) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+    const double heard = out->position(); // primero lo que se oye y luego lo pedido: este solo crece
+    const double sent = out->filled();
+    REQUIRE(sent - 2.0 >= latency);
+    CHECK(heard >= 2.0);
+    CHECK(heard <= sent - latency + 1e-9);
+    CHECK(heard > sent - latency - 0.25); // y no mucho menos (el tiempo entre las dos lecturas)
+    out->pause();
+}
+
 TEST_CASE("audio: el reloj de la salida corre al sonar, se para y salta", "[media][audio_out]") {
     auto out = AudioOut::open(true); // el backend nulo: sin altavoces
     REQUIRE(out);
