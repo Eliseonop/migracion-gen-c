@@ -6,6 +6,7 @@
 #include <QtQml/qqml.h>
 #include <algorithm>
 
+#include "frame_image.hpp"
 #include "platform_chrome.hpp"
 #include "rounded_image.hpp"
 
@@ -106,6 +107,7 @@ void register_qml_types() {
     qmlRegisterType<FramePreview>("GenClip.Preview", 1, 0, "FramePreview");
     qmlRegisterType<RoundedImage>("GenClip.Preview", 1, 0, "RoundedImage");
     qmlRegisterType<PlatformChrome>("GenClip.Preview", 1, 0, "PlatformChrome");
+    qmlRegisterType<FrameImage>("GenClip.Preview", 1, 0, "FrameImage");
     qmlRegisterUncreatableType<PreviewSource>("GenClip.Preview", 1, 0, "PreviewSource",
                                               "lo crea el editor (EditorModel.preview)");
 }

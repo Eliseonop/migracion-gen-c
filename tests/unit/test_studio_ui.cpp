@@ -11,6 +11,7 @@
 #include <QQuickWindow>
 #include <QTest>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -39,7 +40,9 @@
 #include "gc/render/canvas.hpp"
 #include "gc/render/platform.hpp"
 #include "platform_chrome.hpp"
+#include "gc/core/export_input.hpp"
 #include "gc/media/audio.hpp"
+#include "gc/media/decode.hpp"
 #include "gc/media/encode.hpp"
 #include "gc/media/probe.hpp"
 #endif
@@ -567,6 +570,7 @@ TEST_CASE("studio sin pantalla: el modal Recortar se abre desde la barra y confi
     s.editor->select("b");
     s.click("cropButton");
     QTest::qWait(50);
+    CHECK_FALSE(s.item("cropVideoFrame")); // una imagen se pinta de su archivo
     QMetaObject::invokeMethod(s.editor->cropEditor(), "pickRatio", Q_ARG(QString, "1:1"));
     s.click("cropConfirm");
     QTest::qWait(50);
@@ -819,7 +823,7 @@ TEST_CASE("studio sin pantalla: el marco de TikTok o Shorts encima de la vista p
     render::draw_platform_chrome(*canvas, 0, 0, got.width(), got.height(), "tiktok");
     const render::Image want = canvas->snapshot();
     const QImage rgba = got.convertToFormat(QImage::Format_RGBA8888);
-    bool same = rgba.width() * 4 == rgba.bytesPerLine();
+    bool same = static_cast<qsizetype>(rgba.width()) * 4 == rgba.bytesPerLine();
     same = same && std::equal(want.pixels.begin(), want.pixels.end(), rgba.constBits());
     CHECK(same);
     pick(2);
@@ -986,6 +990,90 @@ TEST_CASE("studio sin pantalla: un vídeo grande se hace proxy y la vista previa
     CHECK(QTest::qWaitFor([&] { return same_pixels(p.image(), expected); }, 60000));
     // Y el proxy se ve: el clip «a» deja de ser el negro de «sin material».
     CHECK(has_color(expected, QColor(40, 90, 160)));
+
+    // El modal Recortar también lo lee: su fotograma mide lo del proxy, no lo del original.
+    s.editor->select("a");
+    REQUIRE_FALSE(s.editor->openCrop().isEmpty());
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->hasCropFrame(); }, 60000));
+    const auto small = media::frame_at(proxy.file, 0.0);
+    REQUIRE(small);
+    REQUIRE(*small);
+    CHECK(s.editor->cropFrame().size() == QSize((*small)->width, (*small)->height));
+    CHECK(s.editor->cropFrame().width() < 2560);
+    s.editor->closeCrop();
+}
+
+TEST_CASE("studio sin pantalla: recortar un vídeo enseña su fotograma en el cabezal", "[studio][ui][preview]") {
+    const Studio s;
+    // «a» pasa a ser v_rot90.mp4 (64 × 48 girado: 48 × 64, 1 s) y se vuelve a abrir: entra como objeto libre.
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    const auto video = core::project_base(s.store->clips_dir(), **project) / "video" / "a.mp4";
+    std::filesystem::create_directories(video.parent_path());
+    std::filesystem::copy_file(core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files" / "v_rot90.mp4", video);
+    REQUIRE(s.editor->openProject("p1"));
+    const auto frame_at = [&](double t) {
+        const auto f = media::frame_at(video, t);
+        REQUIRE(f);
+        REQUIRE(*f);
+        const media::RgbaFrame& r = **f;
+        return QImage(r.pixels.data(), r.width, r.height, static_cast<qsizetype>(r.width) * 4, QImage::Format_RGBA8888)
+            .copy();
+    };
+    s.editor->select("a");
+    s.click("cropButton");
+    QTest::qWait(50);
+    REQUIRE(s.item("cropConfirm"));
+    const auto* crop = qobject_cast<studio::CropEditor*>(s.editor->cropEditor());
+    REQUIRE(crop);
+    CHECK(crop->srcAspect() == 0.75); // el del vídeo girado, como lo dibuja el render
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->hasCropFrame(); }, 30000));
+    CHECK(s.editor->cropFrame() == frame_at(0.0));
+    QQuickItem* shown = s.item("cropVideoFrame");
+    REQUIRE(shown);
+    CHECK(shown->property("image").value<QImage>() == frame_at(0.0));
+    // Y llega a la pantalla: el color medio del centro (sin el borde ni los tiradores) es el del fotograma.
+    const auto mean = [](const QImage& image, QRectF part) {
+        const QRect r = QRect(qRound(part.x() * image.width()), qRound(part.y() * image.height()),
+                              qRound(part.width() * image.width()), qRound(part.height() * image.height()))
+                            .intersected(image.rect());
+        std::array<double, 3> sum{};
+        for (int y = r.top(); y <= r.bottom(); ++y) {
+            for (int x = r.left(); x <= r.right(); ++x) {
+                const QColor p = image.pixelColor(x, y);
+                sum[0] += p.red();
+                sum[1] += p.green();
+                sum[2] += p.blue();
+            }
+        }
+        const double n = std::max(1.0, static_cast<double>(r.width()) * r.height());
+        return std::array<double, 3>{sum[0] / n, sum[1] / n, sum[2] / n};
+    };
+    const QRect area = shown->mapRectToScene(QRectF(0, 0, shown->width(), shown->height())).toAlignedRect();
+    const auto on_screen = mean(s.window->grabWindow().copy(area), QRectF(0.25, 0.25, 0.5, 0.5));
+    const auto decoded = mean(frame_at(0.0), QRectF(0.25, 0.25, 0.5, 0.5));
+    for (std::size_t i = 0; i < 3; ++i) {
+        CHECK(std::abs(on_screen[i] - decoded[i]) < 16);
+    }
+
+    // El scrub lleva el cabezal y el fotograma lo sigue; pasado el final del archivo, su último fotograma.
+    s.editor->setPlayhead(0.5);
+    CHECK(QTest::qWaitFor([&] { return s.editor->cropFrame() == frame_at(0.5); }, 30000));
+    s.editor->setPlayhead(3.0); // el clip dura 4 s; el archivo, 1 s
+    const QImage last = frame_at(std::max(0.0, media::probe_duration(video) - core::kLastFramePull));
+    CHECK(QTest::qWaitFor([&] { return s.editor->cropFrame() == last; }, 30000));
+
+    // Cerrarlo (Esc) olvida el fotograma y el clip: no sigue el cabezal ni se puede confirmar.
+    QTest::keyClick(s.window, Qt::Key_Escape);
+    QTest::qWait(50);
+    CHECK_FALSE(s.item("cropConfirm"));
+    CHECK_FALSE(s.editor->hasCropFrame());
+    s.editor->setPlayhead(0.5);
+    QTest::qWait(300);
+    CHECK_FALSE(s.editor->hasCropFrame());
+    s.editor->confirmCrop();
+    CHECK_FALSE(s.editor->canUndo());
 }
 #endif
 

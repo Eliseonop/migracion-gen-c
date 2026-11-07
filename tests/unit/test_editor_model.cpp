@@ -1137,7 +1137,7 @@ TEST_CASE("editor: recortar un clip superpuesto", "[studio]") {
     m.select("a");
     CHECK(m.openCrop().isEmpty()); // un clip a pantalla completa no se recorta
     m.select("v");
-    CHECK(m.openCrop().isEmpty()); // un vídeo, hasta saber su tamaño
+    CHECK(m.openCrop().isEmpty()); // un vídeo sin su archivo: sin su tamaño no se recorta
     CHECK(m.error().contains("vídeo"));
     m.select("b");
     const QVariantMap start = m.openCrop();

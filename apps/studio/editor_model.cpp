@@ -242,6 +242,7 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     // Cada proxy que acaba, a la vista previa.
     connect(&proxy_maker_, &ProxyMaker::proxiesChanged, this, [this] { preview_.setProxies(proxy_maker_.proxies()); });
     connect(&beat_detector_, &BeatDetector::finished, this, &EditorModel::beats_detected);
+    connect(&crop_frames_, &FrameGrabber::frameChanged, this, &EditorModel::cropFrameChanged);
 }
 
 void EditorModel::set_notice(const QString& type, const QString& message) {
@@ -1061,6 +1062,7 @@ void EditorModel::setPlayhead(double t) {
         playhead_ = clamped;
         preview_.request(playhead_);
         player_.seeked(playhead_); // si no lo mueve el reproductor, su reloj salta ahí
+        request_crop_frame();      // con el modal Recortar de un vídeo abierto
         emit playheadChanged();
         if (!selection_.ids.empty() && !player_.playing()) {
             emit selectionChanged(); // la pose del inspector es la del cabezal
@@ -1873,19 +1875,15 @@ QVariantMap EditorModel::openCrop() {
     if (!c || (c->kind != "video" && c->kind != "image") || !core::is_overlay(*c)) {
         return {};
     }
-    if (c->kind == "video") {
-        setError("Recortar un vídeo llega con el preview: todavía no se lee su tamaño.");
+    // canCropClip: el medio tiene que estar, con su tamaño (el de un vídeo, con gc_media).
+    const auto path = media_path(*c);
+    const auto size = path ? source_size(*c) : std::nullopt;
+    if (!size || size->first <= 0 || size->second <= 0) {
+        setError(c->kind == "video" ? "No se puede leer el vídeo del clip." : "No se puede leer la imagen del clip.");
         return {};
     }
-    const auto path = media_path(*c); // canCropClip: el medio tiene que estar
-    const QString file = path ? QString::fromStdString(core::path_to_utf8(*path)) : QString();
-    const QSize size = QImageReader(file).size();
-    if (size.isEmpty()) {
-        setError("No se puede leer la imagen del clip.");
-        return {};
-    }
-    const double src_aspect = static_cast<double>(size.width()) / size.height();
-    const QString source = QUrl::fromLocalFile(file).toString();
+    const double src_aspect = size->first / size->second;
+    const QString file = QString::fromStdString(core::path_to_utf8(*path));
     const double end = core::ui_clip_end(*c);
     if (playhead_ < c->start || playhead_ >= end) {
         setPlayhead(c->start + 0.02);
@@ -1897,8 +1895,33 @@ QVariantMap EditorModel::openCrop() {
     crop_editor_.load({{"srcAspect", src_aspect}, {"outAspect", aspect()}, {"cx", crop.cx}, {"cy", crop.cy},
                        {"wf", crop.wf}, {"hf", crop.hf},
                        {"rotation", core::js_number(c->transform.value_or(Json::object()).value("rotation", Json(0)))}});
-    return {{"clipId", qstr(c->id)}, {"kind", qstr(c->kind)}, {"source", source}, {"start", c->start},
+    crop_media_.clear();
+    if (c->kind == "video") { // como la vista previa: el proxy si lo hay
+        const auto& proxies = proxy_maker_.proxies();
+        const auto proxy = proxies.find(*path);
+        crop_media_ = proxy != proxies.end() ? proxy->second.file : *path;
+        request_crop_frame();
+    }
+    // De una imagen, el archivo (la pinta CropModal); de un vídeo, cropFrame.
+    return {{"clipId", qstr(c->id)},
+            {"kind", qstr(c->kind)},
+            {"source", c->kind == "image" ? QUrl::fromLocalFile(file).toString() : QString()},
+            {"start", c->start},
             {"duration", end - c->start}};
+}
+
+// EdCropModal: el <video> oculto del editor llevado al cabezal, en segundos del archivo dentro del tramo
+// del clip (safeMediaTime lo acota en el hilo, con la duración del archivo).
+void EditorModel::request_crop_frame() {
+    const core::TimelineClip* c = crop_media_.empty() ? nullptr : clip(qstr(crop_clip_));
+    if (c) {
+        crop_frames_.request(crop_media_, core::source_time(*c, playhead_, c->start), fps());
+    }
+}
+
+void EditorModel::closeCrop() {
+    crop_clip_.clear(); // ni confirma ni pide más fotogramas
+    crop_frames_.clear();
 }
 
 void EditorModel::confirmCrop() {

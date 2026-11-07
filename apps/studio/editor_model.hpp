@@ -4,6 +4,7 @@
 // EditSession, con la lógica de arrastre y recorte de React (gc/core/timeline_ui.hpp). Cada cambio
 // se guarda en projects.json, como el PUT /timeline de video-yt.
 
+#include <QImage>
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -27,6 +28,7 @@
 #include "clip_list_model.hpp"
 #include "crop_editor.hpp"
 #include "export_job.hpp"
+#include "frame_grabber.hpp"
 #include "player.hpp"
 #include "preview_source.hpp"
 #include "proxy_maker.hpp"
@@ -40,6 +42,9 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList tracks READ tracks NOTIFY timelineChanged)
     Q_PROPERTY(QObject* clipModel READ clipModel CONSTANT)
     Q_PROPERTY(QObject* cropEditor READ cropEditor CONSTANT)
+    // El fotograma del vídeo del modal Recortar en el cabezal (nulo con una imagen o hasta que llega).
+    Q_PROPERTY(QImage cropFrame READ cropFrame NOTIFY cropFrameChanged)
+    Q_PROPERTY(bool hasCropFrame READ hasCropFrame NOTIFY cropFrameChanged)
     // El fotograma de la timeline en el cabezal (preview_source.hpp), para FramePreview.
     Q_PROPERTY(QObject* preview READ preview CONSTANT)
     // Reproducir y parar, con el reloj del audio (player.hpp).
@@ -89,6 +94,8 @@ public:
     [[nodiscard]] QVariantList tracks() const { return tracks_; }
     [[nodiscard]] QObject* clipModel() { return &clip_model_; }
     [[nodiscard]] QObject* cropEditor() { return &crop_editor_; }
+    [[nodiscard]] QImage cropFrame() const { return crop_frames_.frame(); }
+    [[nodiscard]] bool hasCropFrame() const { return !crop_frames_.frame().isNull(); }
     [[nodiscard]] QObject* preview() { return &preview_; }
     [[nodiscard]] PreviewSource& previewSource() { return preview_; }
     [[nodiscard]] QObject* player() { return &player_; }
@@ -234,8 +241,11 @@ public:
     Q_INVOKABLE void setRotation(double deg);
     Q_INVOKABLE void resetTransform();
     // Modal Recortar: carga cropEditor con el clip seleccionado (vacío si no se puede recortar) y lo aplica.
+    // De un vídeo pide su fotograma en el cabezal (cropFrame) y lo sigue mientras está abierto.
     Q_INVOKABLE QVariantMap openCrop();
     Q_INVOKABLE void confirmCrop();
+    // El modal se cerró, confirmado o no: deja de seguir el cabezal y olvida el fotograma.
+    Q_INVOKABLE void closeCrop();
     // toggleFlip: voltear en horizontal ("h") o vertical ("v"); todos quedan como el opuesto del principal.
     Q_INVOKABLE void toggleFlip(const QString& axis);
     // Velocidad, tono y reversa (patchClipFx de VideoEditor.jsx; los textos no cambian).
@@ -348,6 +358,7 @@ signals:
     void errorChanged();
     void beatBusyChanged();
     void noticeChanged();
+    void cropFrameChanged();
 
 private:
     // Una tarjeta del material con su dragPayload; y las del proyecto (sus vídeos, imágenes y audios).
@@ -417,6 +428,8 @@ private:
     // medio tiene medidas. Da los ids de los que cambian.
     std::vector<std::string> free_layouts(core::Timeline& tl) const;
     mutable std::map<std::string, std::optional<std::pair<double, double>>> sizes_;
+    // El fotograma del vídeo del modal Recortar en el cabezal (del proxy si lo hay).
+    void request_crop_frame();
     void reload_collections();
     void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);
@@ -434,7 +447,10 @@ private:
     mutable std::map<QString, double> probed_; // lo que dio la sonda de cada uno (0: nada)
     ClipListModel clip_model_;
     CropEditor crop_editor_;
-    std::string crop_clip_;
+    std::string crop_clip_; // el del modal Recortar abierto
+    // Lo que se decodifica de su vídeo (el proxy si lo hay), resuelto al abrir: media_path lee projects.json.
+    std::filesystem::path crop_media_;
+    FrameGrabber crop_frames_; // con su hilo
     core::ClipSelection selection_;
     double playhead_ = 0;
     double pps_ = 40;

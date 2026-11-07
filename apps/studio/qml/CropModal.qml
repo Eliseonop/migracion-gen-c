@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
+import GenClip.Preview
 
 Popup {
     id: modal
@@ -18,9 +19,10 @@ Popup {
         open()
     }
     function confirm() {
+        model.confirmCrop() // antes de cerrar: al cerrarse, closeCrop olvida el clip
         close()
-        model.confirmCrop()
     }
+    onClosed: model.closeCrop()
     function timecode(t) {
         const f = Math.max(1, Math.round(model.fps || 30))
         const total = Math.max(0, Math.round((t || 0) * f))
@@ -64,11 +66,18 @@ Popup {
                 readonly property real by: (modal.crop.cy - modal.crop.hf / 2) * height
                 readonly property real bw: modal.crop.wf * width
                 readonly property real bh: modal.crop.hf * height
+                readonly property bool videoFrame: modal.info.kind === "video" && modal.model.hasCropFrame
 
                 Image { anchors.fill: parent; source: modal.info.source || ""; visible: !!modal.info.source }
+                FrameImage { // el del cabezal, del hilo de FrameGrabber
+                    objectName: "cropVideoFrame"
+                    anchors.fill: parent
+                    visible: frame.videoFrame
+                    image: modal.model.cropFrame
+                }
                 Rectangle {
                     anchors.fill: parent
-                    visible: !modal.info.source
+                    visible: !modal.info.source && !frame.videoFrame
                     color: Theme.card2
                     Label { anchors.centerIn: parent; text: "Fotograma del vídeo"; color: Theme.muted }
                 }
