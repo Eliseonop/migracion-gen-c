@@ -31,6 +31,7 @@
 #include "gc/core/keyframes.hpp"
 #include "gc/core/library.hpp"
 #include "gc/core/mask_edit.hpp"
+#include "gc/core/mask_ui.hpp"
 #include "gc/core/masks.hpp"
 #include "gc/core/material_drop.hpp"
 #include "gc/core/media_import.hpp"
@@ -46,6 +47,7 @@
 #include "gc/core/timeline_rules.hpp"
 #include "gc/core/timeline_view.hpp"
 #include "gc/core/vfx_stack.hpp"
+#include "qt_json.hpp"
 
 #ifdef GC_STUDIO_PREVIEW
 #include "gc/export/image_import.hpp"
@@ -63,18 +65,6 @@ const std::vector<std::pair<const char*, std::vector<std::pair<const char*, cons
     {"Flechas", {{"arrow", "Flecha"}, {"arrow_curve", "Flecha curva"}, {"arrow_double", "Flecha doble"}}},
     {"Geométricas", {{"triangle", "Triángulo"}, {"star", "Estrella"}, {"polygon", "Polígono"}}},
     {"UI", {{"speech", "Burbuja"}, {"check", "Check"}, {"x", "X"}, {"marker", "Marcador"}, {"heart", "Corazón"}}}};
-
-Json to_json(const QVariantMap& map) {
-    return Json::parse(QJsonDocument(QJsonObject::fromVariantMap(map)).toJson().toStdString());
-}
-
-QVariantMap to_variant(const Json& json) {
-    return QJsonDocument::fromJson(QByteArray::fromStdString(json.dump())).object().toVariantMap();
-}
-
-QVariant to_qvariant(const Json& json) {
-    return QJsonDocument::fromJson(QByteArray::fromStdString(Json::array({json}).dump())).array().at(0).toVariant();
-}
 
 const std::map<std::string, std::vector<std::string>>& text_kf_sections() {
     static const std::map<std::string, std::vector<std::string>> kSections{
@@ -243,6 +233,11 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     connect(&proxy_maker_, &ProxyMaker::proxiesChanged, this, [this] { preview_.setProxies(proxy_maker_.proxies()); });
     connect(&beat_detector_, &BeatDetector::finished, this, &EditorModel::beats_detected);
     connect(&crop_frames_, &FrameGrabber::frameChanged, this, &EditorModel::cropFrameChanged);
+    // La máscara que se edita cambia con el clip elegido, la timeline, el cabezal y el modo.
+    for (const auto signal : {&EditorModel::selectionChanged, &EditorModel::timelineChanged,
+                              &EditorModel::playheadChanged, &EditorModel::maskModeChanged}) {
+        connect(this, signal, this, &EditorModel::editMaskChanged);
+    }
 }
 
 void EditorModel::set_notice(const QString& type, const QString& message) {
@@ -551,6 +546,8 @@ bool EditorModel::openProject(const QString& pid) {
         emit selectionChanged(); // el inspector pinta el clip ya cambiado
     });
     selection_ = {};
+    mask_drag_.reset();
+    mask_live_.reset();
     // La raíz del proyecto, como la de video-yt: <raíz>/data/projects.json y <raíz>/clips.
     const auto root = store_.file().parent_path().parent_path();
     player_.close();
@@ -2508,10 +2505,12 @@ void EditorModel::mask_edit(const char* cause, Edit edit) {
 
 void EditorModel::addMask(const QString& type) {
     mask_edit("mask", [&](core::TimelineClip& c) { core::add_mask(c, type.toStdString(), "clip", aspect(), ids_); });
+    setMaskMode(true); // addMask de VideoEditor.jsx: la deja lista para moverla en la vista previa
 }
 
 void EditorModel::removeMask() {
     mask_edit("mask", [](core::TimelineClip& c) { core::remove_mask(c); });
+    setMaskDraw(false);
 }
 
 void EditorModel::duplicateMask() {
@@ -2526,6 +2525,162 @@ void EditorModel::changeMask(const QVariantMap& patch) {
 void EditorModel::commitMask(const QVariantMap& patch) {
     const Json p = to_json(patch);
     mask_edit("mask", [&](core::TimelineClip& c) { core::commit_mask(c, p, playhead_ - c.start, fps(), ids_); });
+}
+
+void EditorModel::setMaskMode(bool on) {
+    if (on != mask_mode_) {
+        mask_mode_ = on;
+        emit maskModeChanged();
+    }
+}
+
+void EditorModel::setMaskDraw(bool on) {
+    if (on != mask_draw_) {
+        mask_draw_ = on;
+        emit maskModeChanged();
+    }
+}
+
+void EditorModel::maskPanel(bool open) {
+    setMaskMode(open);
+    if (!open) {
+        setMaskDraw(false);
+    }
+}
+
+// activeMask de interactions.js: la primera máscara en el cabezal del clip elegido (también las de ajuste).
+std::optional<Json> EditorModel::edit_mask() const {
+    if (!mask_mode_ || !session_ || selection_.ids.empty()) {
+        return std::nullopt;
+    }
+    const core::Timeline& tl = mask_live_ ? *mask_live_ : *session_->timeline();
+    for (const auto& c : tl.clips) {
+        if (c->id == selection_.ids.front()) {
+            auto masks = core::clip_masks_at(*c, std::max(0.0, playhead_ - c->start), true);
+            return masks.empty() ? std::nullopt : std::optional<Json>(std::move(masks.front()));
+        }
+    }
+    return std::nullopt;
+}
+
+QVariantMap EditorModel::editMask() const {
+    const auto mask = edit_mask();
+    return mask ? to_variant(*mask) : QVariantMap();
+}
+
+bool EditorModel::maskPress(double x, double y, const QRectF& frame, double scale) {
+    auto mask = edit_mask();
+    if (!mask || frame.isEmpty() || !(scale > 0)) {
+        return false;
+    }
+    MaskDrag drag{.clip = selection_.ids.front(),
+                  .mode = {},
+                  .mask = std::move(*mask),
+                  .frame = {frame.x() * scale, frame.y() * scale, frame.width() * scale, frame.height() * scale},
+                  .scale = scale,
+                  .p0 = {x * scale, y * scale}};
+    const bool brush = mask_draw_ && drag.mask.value("type", "") == "brush"; // pinta desde cualquier punto
+    if (brush) {
+        drag.mode = "brush";
+        drag.points = drag.mask.contains("brush") ? drag.mask["brush"].value("points", Json::array()) : Json::array();
+        if (auto pt = core::mask_brush_point(drag.mask, drag.frame, drag.p0, true, nullptr)) {
+            drag.points.push_back(std::move(*pt));
+        }
+    } else {
+        auto mode = core::mask_hit_mode(drag.p0.x, drag.p0.y, drag.mask, drag.frame);
+        if (!mode) {
+            return false;
+        }
+        drag.mode = std::move(*mode);
+    }
+    if (player_.playing()) {
+        player_.pause(); // startMaskDrag: arrastrar para la reproducción
+    }
+    mask_drag_ = std::move(drag);
+    if (brush) {
+        apply_mask_live();
+    }
+    return true;
+}
+
+void EditorModel::maskMove(double x, double y) {
+    if (!mask_drag_) {
+        return;
+    }
+    MaskDrag& d = *mask_drag_;
+    const core::Point p{x * d.scale, y * d.scale};
+    if (d.mode == "brush") {
+        auto pt = core::mask_brush_point(d.mask, d.frame, p, false, d.points.empty() ? nullptr : &d.points.back());
+        if (!pt) {
+            return; // a menos de 0,004 del anterior
+        }
+        d.points.push_back(std::move(*pt));
+    } else {
+        Json patch = core::mask_drag_patch(d.mode, d.mask, d.frame, d.p0, p);
+        if (patch.empty()) {
+            return;
+        }
+        d.patch = std::move(patch);
+    }
+    apply_mask_live();
+}
+
+void EditorModel::maskRelease() {
+    if (!mask_drag_) {
+        return;
+    }
+    const bool moved = mask_live_ != nullptr;
+    mask_live_.reset();
+    if (moved) { // un solo paso de deshacer: en React, el debounce del historial junta los del arrastre
+        mask_edit("mask", [this](core::TimelineClip& c) { mask_drag_edit(c); });
+    }
+    mask_drag_.reset();
+    if (session_) {
+        preview_.setTimeline(session_->timeline());
+        preview_.request(playhead_);
+    }
+    emit editMaskChanged();
+}
+
+// El parche del arrastre sobre el clip: commitMask (geometría animable: en un clip animado, keyframe en
+// el cabezal) o, con el pincel, changeMask({brush: {...mask.brush, points}}).
+void EditorModel::mask_drag_edit(core::TimelineClip& c) const {
+    const MaskDrag& d = *mask_drag_;
+    if (d.mode == "brush") {
+        Json brush = d.mask.value("brush", Json::object());
+        brush["points"] = d.points;
+        core::change_mask(c, {{"brush", std::move(brush)}}, aspect(), ids_);
+    } else {
+        core::commit_mask(c, d.patch, playhead_ - c.start, fps(), ids_);
+    }
+}
+
+// Lo arrastrado sobre la timeline de la sesión, sin guardarlo: la vista previa y la guía lo enseñan ya.
+void EditorModel::apply_mask_live() {
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == mask_drag_->clip) {
+            mask_drag_edit(item.mut());
+        }
+    }
+    mask_live_ = std::make_shared<const core::Timeline>(std::move(next));
+    preview_.setTimeline(mask_live_);
+    preview_.request(playhead_);
+    emit editMaskChanged();
+}
+
+int EditorModel::maskCursor(double x, double y, const QRectF& frame, double scale) const {
+    const auto mask = edit_mask();
+    if (!mask || frame.isEmpty() || !(scale > 0)) {
+        return Qt::ArrowCursor;
+    }
+    const core::Rect f{frame.x() * scale, frame.y() * scale, frame.width() * scale, frame.height() * scale};
+    static const std::map<std::string, Qt::CursorShape, std::less<>> kShapes{
+        {"crosshair", Qt::CrossCursor},     {"move", Qt::SizeAllCursor},       {"rotate", Qt::OpenHandCursor},
+        {"ew-resize", Qt::SizeHorCursor},   {"nwse-resize", Qt::SizeFDiagCursor},
+        {"ns-resize", Qt::SizeVerCursor},   {"nesw-resize", Qt::SizeBDiagCursor}};
+    const auto it = kShapes.find(core::mask_cursor(x * scale, y * scale, *mask, f, mask_draw_));
+    return it != kShapes.end() ? it->second : Qt::ArrowCursor;
 }
 
 QVariantList EditorModel::vfxCatalog() {

@@ -181,6 +181,35 @@ Item {
                         kind: editor.platformOverlay
                     }
                 }
+                // La guía de la máscara (drawMaskOverlay) y su arrastre (handleMaskPointer), con la pestaña
+                // Máscara abierta. Más grande que el recuadro: los tiradores pueden caer fuera.
+                MaskOverlay {
+                    id: maskOverlay
+                    objectName: "maskOverlay"
+                    readonly property real pad: 24
+                    readonly property rect out: preview.frameRect.width > 0 ? preview.frameRect
+                                                                            : Qt.rect(0, 0, preview.width, preview.height)
+                    anchors.fill: frame
+                    anchors.margins: -pad
+                    frame: Qt.rect(pad + preview.x + out.x, pad + preview.y + out.y, out.width, out.height)
+                    mask: editor.model.editMask
+                    visible: editor.model.maskMode && !!editor.model.editMask.type
+                }
+                MouseArea {
+                    objectName: "maskArea"
+                    anchors.fill: maskOverlay
+                    enabled: maskOverlay.visible
+                    hoverEnabled: enabled
+                    onPressed: (m) => m.accepted = editor.model.maskPress(m.x, m.y, maskOverlay.frame, maskOverlay.canvasScale)
+                    onPositionChanged: (m) => {
+                        if (pressed)
+                            editor.model.maskMove(m.x, m.y)
+                        else
+                            cursorShape = editor.model.maskCursor(m.x, m.y, maskOverlay.frame, maskOverlay.canvasScale)
+                    }
+                    onReleased: editor.model.maskRelease()
+                    onCanceled: editor.model.maskRelease()
+                }
                 // El selector del marco de EdViewerTools (solo vista previa).
                 ComboBox {
                     id: overlayPicker

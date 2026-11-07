@@ -21,6 +21,8 @@ Rectangle {
         .concat(has && ["video", "image", "shape", "text"].indexOf(clip.kind) >= 0 ? [["mask", "Máscara"]] : [])
         .concat(has && clip.kind !== "adjustment" ? [["anim", "Animar"]] : [])
     readonly property string tabNow: tabList.some((t) => t[0] === tab) ? tab : "clip"
+    // La máscara se maneja en la vista previa solo con su pestaña abierta (onMaskPanel de EdInspector).
+    onTabNowChanged: model.maskPanel(tabNow === "mask")
     readonly property var tf: has ? clip.transform : ({})
     readonly property var speeds: [0.3, 0.5, 1, 1.5, 2, 3, 5, 10]
     readonly property var trk: model.selectedTrack
@@ -1373,6 +1375,8 @@ Rectangle {
                 RowLayout {
                     visible: panel.hasMask
                     spacing: 4
+                    Toggle { objectName: "insp:mask:edit"; implicitWidth: implicitContentWidth + 16; text: "Editar en el preview"
+                             on: panel.model.maskMode; onClicked: panel.model.maskMode = !on }
                     Toggle { objectName: "insp:mask:invert"; implicitWidth: implicitContentWidth + 16; text: "Invertir"; on: !!panel.mk.invert; onClicked: panel.model.changeMask({ invert: !on }) }
                     Toggle { implicitWidth: implicitContentWidth + 16; text: "Activa"; on: !!panel.mk.enabled; onClicked: panel.model.changeMask({ enabled: !on }) }
                     Toggle { implicitWidth: 26; text: "⧉"; onClicked: panel.model.duplicateMask() }
@@ -1426,6 +1430,31 @@ Rectangle {
                     color: Theme.text
                     background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
                     onEditingFinished: panel.model.changeMask({ text: Object.assign({}, panel.mk.text, { content: text }) })
+                }
+                ColumnLayout { // Pincel (EdMask): pintar sobre el reproductor, borrar el trazo y su grosor
+                    id: brushBox
+                    visible: panel.hasMask && panel.mk.type === "brush"
+                    Layout.fillWidth: true
+                    spacing: 4
+                    readonly property var brush: panel.mk.brush || ({ size: 0.12, points: [] })
+                    Label { text: "Pincel"; color: Theme.textSecondary; font.pixelSize: 11; font.bold: true }
+                    Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.Wrap
+                        text: "Activa «Dibujar» y arrastra sobre el reproductor; el trazo se guarda con el proyecto."
+                        color: Theme.muted
+                        font.pixelSize: 11
+                    }
+                    RowLayout {
+                        spacing: 4
+                        Toggle { objectName: "insp:mask:draw"; implicitWidth: implicitContentWidth + 16; text: "Dibujar"
+                                 on: panel.model.maskDraw; onClicked: panel.model.maskDraw = !on }
+                        Toggle { objectName: "insp:mask:clearBrush"; implicitWidth: 26; text: "↺"
+                                 onClicked: panel.model.changeMask({ brush: Object.assign({}, brushBox.brush, { points: [] }) }) }
+                    }
+                    Num { objectName: "insp:mask:brushSize"; title: "Grosor"; suffix: "%"; value: Math.round((brushBox.brush.size ?? 0.12) * 100)
+                          onCommitted: (v) => panel.model.changeMask({ brush: Object.assign({}, brushBox.brush, { size: Math.max(1, Math.min(60, v)) / 100 }) }) }
+                    Label { objectName: "insp:mask:points"; text: (brushBox.brush.points || []).length + " puntos"; color: Theme.muted; font.pixelSize: 11 }
                 }
             }
         }

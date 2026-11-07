@@ -1,7 +1,9 @@
 // genclip-studio entero sin pantalla: el QML real con los ViewModels, manejado con el ratón y el
 // teclado de QTest. Comprueba que los gestos de la timeline llegan al modelo y a projects.json.
 
+#include <QColor>
 #include <QCoreApplication>
+#include <QCursor>
 #include <QGuiApplication>
 #include <QDropEvent>
 #include <QImage>
@@ -21,11 +23,13 @@
 
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/mask_ui.hpp"
 #include "gc/core/timeline_view.hpp"
 
 #include "editor_model.hpp"
 #include "frame_preview.hpp"
 #include "home_model.hpp"
+#include "qt_json.hpp"
 #include "settings_model.hpp"
 #include "thumbnails.hpp"
 
@@ -576,6 +580,133 @@ TEST_CASE("studio sin pantalla: el modal Recortar se abre desde la barra y confi
     QTest::qWait(50);
     CHECK_FALSE(s.item("cropConfirm"));
     CHECK(s.editor->canUndo());
+}
+
+TEST_CASE("studio sin pantalla: la máscara se arrastra sobre la vista previa y el pincel pinta", "[studio][ui]") {
+    const Studio s;
+    s.editor->select("b");
+    s.click("insp:tab:mask");
+    CHECK(s.editor->maskMode()); // con la pestaña abierta, la máscara se maneja en la vista previa
+    s.click("insp:mask:type:circle");
+    QQuickItem* overlay = s.item("maskOverlay");
+    REQUIRE(overlay);
+    const QVariantMap m0 = s.editor->editMask();
+    REQUIRE(m0["type"] == "circle");
+    const QRectF frame = overlay->property("frame").toRectF();
+    REQUIRE(!frame.isEmpty());
+    { // su recuadro de salida es, en la pantalla, el de la vista previa
+        QQuickItem* preview = s.item("preview");
+        REQUIRE(preview);
+        const QRectF fit = preview->property("frameRect").toRectF();
+        const QRectF want = preview->mapRectToScene(fit.isEmpty() ? QRectF(0, 0, preview->width(), preview->height()) : fit);
+        const QRectF got = overlay->mapRectToScene(frame);
+        CHECK(std::abs(got.x() - want.x()) < 0.5);
+        CHECK(std::abs(got.y() - want.y()) < 0.5);
+        CHECK(std::abs(got.width() - want.width()) < 0.5);
+        CHECK(std::abs(got.height() - want.height()) < 0.5);
+    }
+    const auto at = [&](double fx, double fy) { // una fracción del recuadro de salida, en la ventana
+        return overlay->mapToScene(QPointF(frame.x() + (fx * frame.width()), frame.y() + (fy * frame.height()))).toPoint();
+    };
+    const auto saved_mask = [&] {
+        const auto project = s.store->get_project("p1");
+        REQUIRE(project);
+        REQUIRE(*project);
+        for (const auto& c : (*project)->timeline->clips) {
+            if (c->id == "b") {
+                return c->masks.empty() ? Json() : c->masks.front();
+            }
+        }
+        return Json();
+    };
+
+    // La guía se ve (el azul de sus tiradores, #38bdf8) y encima del centro el cursor es el de mover.
+    const auto shows_guide = [&] {
+        const QImage shot = s.window->grabWindow();
+        const QRect area =
+            overlay->mapRectToScene(QRectF(0, 0, overlay->width(), overlay->height())).toAlignedRect().intersected(shot.rect());
+        for (int y = area.top(); y <= area.bottom(); ++y) {
+            for (int x = area.left(); x <= area.right(); ++x) {
+                const QColor p = shot.pixelColor(x, y);
+                if (std::abs(p.red() - 56) <= 12 && std::abs(p.green() - 189) <= 12 && std::abs(p.blue() - 248) <= 12) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    CHECK(shows_guide());
+    const QPoint from = at(m0["x"].toDouble(), m0["y"].toDouble());
+    QTest::mouseMove(s.window, from);
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("maskArea"));
+    CHECK(s.item("maskArea")->cursor().shape() == Qt::SizeAllCursor);
+
+    // Mover desde el centro: se ve mientras se arrastra, se guarda al soltar y es un paso de deshacer.
+    QTest::mousePress(s.window, Qt::LeftButton, {}, from);
+    for (int i = 1; i <= 6; ++i) {
+        QTest::mouseMove(s.window, from + QPoint(30 * i / 6, 12 * i / 6));
+    }
+    QCoreApplication::processEvents();
+    const double want_x = m0["x"].toDouble() + (30 / frame.width());
+    const double want_y = m0["y"].toDouble() + (12 / frame.height());
+    CHECK(std::abs(s.editor->editMask()["x"].toDouble() - want_x) < 2e-4);
+    CHECK(saved_mask().value("x", 0.0) == m0["x"].toDouble()); // todavía no
+    QTest::mouseRelease(s.window, Qt::LeftButton, {}, from + QPoint(30, 12));
+    QCoreApplication::processEvents();
+    CHECK(std::abs(saved_mask().value("x", 0.0) - want_x) < 2e-4);
+    CHECK(std::abs(saved_mask().value("y", 0.0) - want_y) < 2e-4);
+    s.editor->undo();
+    CHECK(s.editor->editMask()["x"] == m0["x"]);
+    s.editor->redo();
+
+    // Girar: el tirador de giro, llevado un cuarto de vuelta alrededor del centro.
+    const double k = overlay->property("canvasScale").toDouble();
+    const core::Rect canvas{frame.x() * k, frame.y() * k, frame.width() * k, frame.height() * k};
+    const core::MaskHandles h = core::mask_handles(studio::to_json(s.editor->editMask()), canvas);
+    const QPointF center = overlay->mapToScene(QPointF(h.c.x / k, h.c.y / k));
+    const QPointF rot = overlay->mapToScene(QPointF(h.rot.x / k, h.rot.y / k));
+    s.drag(rot.toPoint(), QPointF(center.x() + (center.y() - rot.y()), center.y()).toPoint());
+    CHECK(std::abs(s.editor->editMask()["rotation"].toDouble() - 90) < 1.5);
+    // Una máscara de ajuste también se maneja en la vista previa (clipMasksAt con includeAdjust).
+    s.editor->changeMask({{"target", "adjust"}});
+    CHECK(s.editor->editMask()["target"] == "adjust");
+    s.editor->changeMask({{"target", "clip"}});
+
+    // El pincel: una máscara de pincel con «Dibujar»; un trazo deja sus puntos en un paso de deshacer.
+    s.click("insp:mask:type:brush");
+    REQUIRE(s.item("insp:mask:draw"));
+    QMetaObject::invokeMethod(s.item("insp:mask:draw"), "clicked");
+    CHECK(s.editor->maskDraw());
+    s.drag(at(0.3, 0.3), at(0.6, 0.5));
+    const QVariantList points = s.editor->editMask()["brush"].toMap()["points"].toList();
+    CHECK(points.size() >= 3);
+    CHECK(points.front().toMap()["m"] == 1);
+    CHECK(s.item("insp:mask:points")->property("text").toString() == QString("%1 puntos").arg(points.size()));
+    s.editor->undo();
+    CHECK(s.editor->editMask()["brush"].toMap()["points"].toList().isEmpty());
+    // Con «Dibujar» aún encendido, una máscara que no es de pincel se mueve, no se pinta.
+    s.click("insp:mask:type:circle");
+    const QVariantMap c0 = s.editor->editMask();
+    s.drag(at(c0["x"].toDouble(), c0["y"].toDouble()), at(c0["x"].toDouble(), c0["y"].toDouble()) + QPoint(20, 0));
+    CHECK(s.editor->editMask()["x"].toDouble() > c0["x"].toDouble());
+
+    // «Editar en el preview» la apaga; quitar la máscara apaga el pincel, y añadir otra vuelve a encenderla.
+    QMetaObject::invokeMethod(s.item("insp:mask:edit"), "clicked");
+    CHECK_FALSE(s.editor->maskMode());
+    CHECK_FALSE(s.item("maskOverlay"));
+    QMetaObject::invokeMethod(s.item("insp:mask:remove"), "clicked");
+    CHECK_FALSE(s.editor->maskDraw());
+    s.click("insp:mask:type:star");
+    CHECK(s.editor->maskMode());
+    CHECK(s.editor->editMask()["type"] == "star");
+
+    // Fuera de la pestaña, ni guía ni pincel.
+    s.editor->setMaskDraw(true);
+    s.click("insp:tab:clip");
+    CHECK_FALSE(s.editor->maskMode());
+    CHECK_FALSE(s.editor->maskDraw());
+    CHECK_FALSE(s.item("maskOverlay"));
 }
 
 TEST_CASE("studio sin pantalla: el tirador de la curva del keyframe la vuelve personalizada", "[studio][ui]") {

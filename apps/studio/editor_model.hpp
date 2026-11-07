@@ -6,6 +6,7 @@
 
 #include <QImage>
 #include <QObject>
+#include <QRectF>
 #include <QString>
 #include <QStringList>
 #include <QUrl> // moc pide el tipo completo de QList<QUrl> (Qt 6.11; la 6.4 lo dejaba pasar)
@@ -18,6 +19,7 @@
 #include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/history_store.hpp"
+#include "gc/core/mask_ui.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/session.hpp"
 #include "gc/core/settings.hpp"
@@ -45,6 +47,13 @@ class EditorModel : public QObject {
     // El fotograma del vídeo del modal Recortar en el cabezal (nulo con una imagen o hasta que llega).
     Q_PROPERTY(QImage cropFrame READ cropFrame NOTIFY cropFrameChanged)
     Q_PROPERTY(bool hasCropFrame READ hasCropFrame NOTIFY cropFrameChanged)
+    // La máscara sobre la vista previa (maskMode y maskDraw de VideoEditor.jsx): se enciende con la pestaña
+    // Máscara abierta, al añadir una o con «Editar en el preview»; maskDraw es el pincel de una de pincel.
+    Q_PROPERTY(bool maskMode READ maskMode WRITE setMaskMode NOTIFY maskModeChanged)
+    Q_PROPERTY(bool maskDraw READ maskDraw WRITE setMaskDraw NOTIFY maskModeChanged)
+    // La que se edita: la primera activa del clip elegido en el cabezal, normalizada (vacía con maskMode
+    // apagado). Durante un arrastre, como va quedando.
+    Q_PROPERTY(QVariantMap editMask READ editMask NOTIFY editMaskChanged)
     // El fotograma de la timeline en el cabezal (preview_source.hpp), para FramePreview.
     Q_PROPERTY(QObject* preview READ preview CONSTANT)
     // Reproducir y parar, con el reloj del audio (player.hpp).
@@ -96,6 +105,11 @@ public:
     [[nodiscard]] QObject* cropEditor() { return &crop_editor_; }
     [[nodiscard]] QImage cropFrame() const { return crop_frames_.frame(); }
     [[nodiscard]] bool hasCropFrame() const { return !crop_frames_.frame().isNull(); }
+    [[nodiscard]] bool maskMode() const { return mask_mode_; }
+    void setMaskMode(bool on);
+    [[nodiscard]] bool maskDraw() const { return mask_draw_; }
+    void setMaskDraw(bool on);
+    [[nodiscard]] QVariantMap editMask() const;
     [[nodiscard]] QObject* preview() { return &preview_; }
     [[nodiscard]] PreviewSource& previewSource() { return preview_; }
     [[nodiscard]] QObject* player() { return &player_; }
@@ -271,6 +285,17 @@ public:
     Q_INVOKABLE void duplicateMask();
     Q_INVOKABLE void changeMask(const QVariantMap& patch);
     Q_INVOKABLE void commitMask(const QVariantMap& patch);
+    // onMaskPanel: la edición en la vista previa vive con la pestaña Máscara abierta; al cerrarla, sin pincel.
+    Q_INVOKABLE void maskPanel(bool open);
+    // Arrastrar la máscara sobre la vista previa (handleMaskPointer, startMaskDrag y startMaskBrush de
+    // interactions.js): el punto en píxeles del item, `frame` el recuadro de salida en él y `scale` la del
+    // lienzo de React. maskPress dice si el arrastre es suyo; mientras dura se ve en la vista previa sin
+    // guardarse, y al soltar es un solo paso de deshacer.
+    Q_INVOKABLE bool maskPress(double x, double y, const QRectF& frame, double scale);
+    Q_INVOKABLE void maskMove(double x, double y);
+    Q_INVOKABLE void maskRelease();
+    // maskCursor: el Qt::CursorShape de ese punto (el de girar, la mano abierta: el «grab» de React).
+    Q_INVOKABLE [[nodiscard]] int maskCursor(double x, double y, const QRectF& frame, double scale) const;
     // Pila de efectos animados (addVfx y EdVfxStack): añadir, parámetros, activar, rango, orden y quitar.
     // listEffects de fx/registry.js para la biblioteca: categoría y palabras (sin tildes ni mayúsculas).
     Q_INVOKABLE QVariantList searchVfx(const QString& q, const QString& category) const;
@@ -359,6 +384,8 @@ signals:
     void beatBusyChanged();
     void noticeChanged();
     void cropFrameChanged();
+    void maskModeChanged();
+    void editMaskChanged();
 
 private:
     // Una tarjeta del material con su dragPayload; y las del proyecto (sus vídeos, imágenes y audios).
@@ -430,6 +457,25 @@ private:
     mutable std::map<std::string, std::optional<std::pair<double, double>>> sizes_;
     // El fotograma del vídeo del modal Recortar en el cabezal (del proxy si lo hay).
     void request_crop_frame();
+    // La máscara que se edita (editMask) y el arrastre sobre la vista previa: la máscara y el recuadro (en
+    // píxeles del lienzo) del principio, el punto de partida, y el último parche de commitMask o el trazo.
+    [[nodiscard]] std::optional<Json> edit_mask() const;
+    struct MaskDrag {
+        std::string clip;
+        std::string mode; // move, rotate, feather, width, height, corner; brush, el pincel
+        Json mask;
+        core::Rect frame;
+        double scale = 1;
+        core::Point p0;
+        Json patch = Json::object();
+        Json points = Json::array();
+    };
+    std::optional<MaskDrag> mask_drag_;
+    core::TimelineSnapshot mask_live_; // la timeline con el arrastre a medias: la que ve la vista previa
+    void apply_mask_live();
+    void mask_drag_edit(core::TimelineClip& c) const;
+    bool mask_mode_ = false;
+    bool mask_draw_ = false;
     void reload_collections();
     void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);
