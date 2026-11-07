@@ -43,6 +43,7 @@ for p in "${presets[@]}"; do
     echo "WARNINGS: $warnings"
     status=1
   fi
-  ctest --test-dir "$dir" -j 8 --output-on-failure 2>&1 | tail -n 15 || status=1
+  # Con tope por test: uno colgado falla en vez de esperar siempre.
+  ctest --test-dir "$dir" -j 8 --timeout 1800 --output-on-failure 2>&1 | tail -n 15 || status=1
 done
 exit $status

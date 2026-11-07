@@ -18,4 +18,5 @@ if not exist E:\vcpkg-cache mkdir E:\vcpkg-cache
 cd /d "%~dp0..\.." || exit /b 1
 cmake --preset %PRESET% || exit /b 1
 cmake --build build/%PRESET% -- -k 0 || exit /b 1
-ctest --test-dir build/%PRESET% -j 8 --output-on-failure
+rem Con tope por test (los de render en Debug tardan minutos): uno colgado falla en vez de esperar siempre.
+ctest --test-dir build/%PRESET% -j 8 --timeout 1800 --output-on-failure

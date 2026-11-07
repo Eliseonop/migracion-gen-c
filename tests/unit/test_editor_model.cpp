@@ -8,6 +8,7 @@
 #include <QUrl>
 #include <filesystem>
 #include <fstream>
+#include <stdexcept>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
@@ -16,6 +17,7 @@
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/timeline_ui.hpp"
 
 #include "editor_model.hpp"
 
@@ -866,6 +868,127 @@ TEST_CASE("editor: importar vídeos, imágenes y audios del disco al material de
     CHECK(m.dropFileKind({url("x.ogv")}) == "video");     // por su tipo MIME (video/ogg), como el navegador
 }
 
+namespace {
+
+// Una copia: f.saved() devuelve una timeline temporal.
+core::TimelineClip saved_clip(const core::Timeline& tl, const QString& id) {
+    for (const auto& c : tl.clips) {
+        if (c->id == id.toStdString()) {
+            return *c;
+        }
+    }
+    FAIL("no está " << id.toStdString());
+    throw std::logic_error("inalcanzable");
+}
+
+} // namespace
+
+TEST_CASE("editor: lo soltado queda como objeto libre, a la altura del cuadro (applyFreeLayout)", "[studio]") {
+    Fixture f;
+    const auto media_dir = core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files";
+    std::filesystem::create_directories(f.dir / "fuera");
+    std::filesystem::copy_file(media_dir / "still.png", f.dir / "fuera" / "foto.png"); // 64 × 48
+    std::filesystem::copy_file(media_dir / "v_rot90.mp4", f.dir / "fuera" / "giro.mp4"); // 64 × 48 girado: 48 × 64
+    const auto before = core::read_json_file(f.dir / "data" / "projects.json");
+    REQUIRE(before);
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    CHECK(core::read_json_file(f.dir / "data" / "projects.json").value() == *before); // nada que convertir: no guarda
+    const auto url = [&](const char* name) {
+        return QUrl::fromLocalFile(QString::fromStdString(core::path_to_utf8(f.dir / "fuera" / name)));
+    };
+    REQUIRE(m.importFiles({url("foto.png"), url("giro.mp4")}) == 2);
+    QString image_key;
+    QString video_key;
+    for (const QVariant& v : m.materials()) {
+        const QVariantMap item = v.toMap();
+        if (item["source"] == "project" && item["kind"] == "image") {
+            image_key = item["key"].toString();
+        } else if (item["source"] == "project" && item["kind"] == "video") {
+            video_key = item["key"].toString();
+        }
+    }
+    REQUIRE_FALSE(image_key.isEmpty());
+    REQUIRE_FALSE(video_key.isEmpty());
+    double y = -1;
+    for (const QVariant& t : m.tracks()) {
+        if (t.toMap()["id"] == "V1") {
+            y = t.toMap()["y"].toDouble() + (t.toMap()["height"].toDouble() / 2);
+        }
+    }
+    REQUIRE(y >= 0);
+    const double out_h = static_cast<double>(f.saved().height);
+
+    // La imagen: centrada y a la altura del cuadro (escala alto / 48), en el mismo paso que el soltar.
+    m.dropMaterial(image_key, 12 * m.pps(), y, false);
+    REQUIRE(m.selection().size() == 1);
+    const QString image = m.selection().front();
+    {
+        const core::TimelineClip c = saved_clip(f.saved(), image);
+        CHECK(c.layout == "overlay");
+        CHECK(c.frame == "free");
+        REQUIRE(c.transform);
+        CHECK(c.transform->value("scale", 0.0) == core::js_fixed(out_h / 48, 5));
+        REQUIRE(c.reframe);
+        CHECK(c.reframe->crop_w == 1.0);
+    }
+    // heightScale: «Escala 100 %» es la altura del cuadro.
+    CHECK(m.selectedClip()["transform"].toMap()["scalePct"].toDouble() == 100);
+    m.setScalePct(50);
+    CHECK(saved_clip(f.saved(), image).transform->value("scale", 0.0) == core::js_fixed(0.5 * out_h / 48, 5));
+    m.resetTransform();
+    CHECK(saved_clip(f.saved(), image).transform->value("scale", 0.0) == out_h / 48);
+    m.undo();
+    m.undo();
+    m.undo(); // soltar y convertir era un solo paso
+    CHECK(std::ranges::none_of(f.saved().clips, [&](const auto& c) { return c->id == image.toStdString(); }));
+
+#ifdef GC_STUDIO_PREVIEW
+    // El vídeo girado: su tamaño es el que dibuja el render (con el autogiro), 48 × 64.
+    m.dropMaterial(video_key, 12 * m.pps(), y, false);
+    REQUIRE(m.selection().size() == 1);
+    const core::TimelineClip v = saved_clip(f.saved(), m.selection().front());
+    CHECK(v.layout == "overlay");
+    CHECK(v.frame == "free");
+    REQUIRE(v.transform);
+    CHECK(v.transform->value("scale", 0.0) == core::js_fixed(out_h / 64, 5));
+    CHECK(m.selectedClip()["transform"].toMap()["scalePct"].toDouble() == 100);
+#endif
+}
+
+TEST_CASE("editor: un clip antiguo («fill») entra como objeto libre al abrir, sin paso de deshacer", "[studio]") {
+    Fixture f;
+    // p1 con una imagen en su carpeta y un clip que la usa como en el «Fijar vídeo» de antes.
+    auto data = core::read_json_file(f.dir / "data" / "projects.json");
+    REQUIRE(data);
+    Json& p1 = (*data)["projects"][0];
+    p1["images"] = Json::array({{{"id", "i1"}, {"filename", "foto.png"}, {"url", "/i"}}});
+    p1["timeline"]["clips"].push_back({{"id", "img"},        {"track_id", "V2"},    {"kind", "image"},
+                                       {"asset_kind", "images"}, {"asset_id", "i1"}, {"filename", "foto.png"},
+                                       {"start", 0.0},       {"in_point", 0.0},     {"out_point", 3.0},
+                                       {"layout", "fill"},   {"frame", "full"}});
+    REQUIRE(core::write_json_file(f.dir / "data" / "projects.json", *data));
+    const auto project = f.store.get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    const auto file = core::resolve_project_media(f.store.clips_dir(), **project, "image", "foto.png");
+    REQUIRE(file);
+    std::filesystem::create_directories(file->parent_path());
+    std::filesystem::copy_file(core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files" / "still.png", *file);
+
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    CHECK_FALSE(m.canUndo());            // la conversión no es un paso
+    const core::Timeline tl = f.saved(); // y ya está guardada, como tras el autoguardado de video-yt
+    const core::TimelineClip c = saved_clip(tl, "img");
+    CHECK(c.layout == "overlay");
+    CHECK(c.frame == "free");
+    REQUIRE(c.transform);
+    CHECK(c.transform->value("scale", 0.0) == core::js_fixed(static_cast<double>(tl.height) / 48, 5));
+    // Los de sin medio (a.mp4 no está) se quedan como estaban.
+    CHECK(saved_clip(tl, "a").layout == "fill");
+}
+
 #ifdef GC_STUDIO_PREVIEW
 TEST_CASE("editor: un SFX o un audio de colección soltado dura lo que su archivo", "[studio]") {
     Fixture f;
@@ -999,8 +1122,9 @@ TEST_CASE("editor: recortar un clip superpuesto", "[studio]") {
     const auto file = f.dir / "data" / "projects.json";
     Json data = *core::read_json_file(file);
     Json& clips = data["projects"][0]["timeline"]["clips"];
+    // Ya un objeto libre: si no, al abrir se convertiría (centrado, a la altura del cuadro y sin giro).
     clips[1].update({{"kind", "image"}, {"asset_kind", "images"}, {"filename", "foto.png"}, {"layout", "overlay"},
-                     {"transform", {{"rotation", 5}}}});
+                     {"frame", "free"}, {"transform", {{"rotation", 5}}}});
     clips.push_back(clip("v", "V2", "video", 0, 4));
     clips.back()["layout"] = "overlay";
     REQUIRE(core::write_json_file(file, data));

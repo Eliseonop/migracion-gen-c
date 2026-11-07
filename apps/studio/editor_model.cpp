@@ -49,6 +49,7 @@
 
 #ifdef GC_STUDIO_PREVIEW
 #include "gc/export/image_import.hpp"
+#include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
 #endif
 
@@ -528,8 +529,16 @@ bool EditorModel::openProject(const QString& pid) {
     // Deshacer sobrevive a cerrar el proyecto: data/history/<pid>.json, el mismo archivo que video-yt.
     autosave_.reset();
     const auto history_file = core::history_path(store_.file().parent_path(), project_id_);
-    session_ = std::make_unique<core::EditSession>((*project)->timeline.value_or(default_timeline()),
-                                                   core::load_history(history_file));
+    sizes_.clear();
+    // Lo antiguo («fill», un overlay pegado a un hueco) entra ya como objeto libre, sin paso de deshacer:
+    // en video-yt lo convierte el efecto en cuanto carga el medio, dentro del debounce del historial, y
+    // el autoguardado lo guarda a los 800 ms. Aquí se guarda al abrir.
+    core::Timeline start = (*project)->timeline.value_or(default_timeline());
+    playhead_ = 0;
+    if (!free_layouts(start).empty()) {
+        (void)ok(store_.save_timeline(project_id_, core::to_json(start)));
+    }
+    session_ = std::make_unique<core::EditSession>(std::move(start), core::load_history(history_file));
     autosave_ = std::make_unique<core::Autosave>(*session_, history_file, [this](const core::Timeline& tl) {
         const auto saved = store_.save_timeline(project_id_, core::to_json(tl));
         return saved ? Result<void>{} : Result<void>(std::unexpected(saved.error()));
@@ -541,7 +550,6 @@ bool EditorModel::openProject(const QString& pid) {
         emit selectionChanged(); // el inspector pinta el clip ya cambiado
     });
     selection_ = {};
-    playhead_ = 0;
     // La raíz del proyecto, como la de video-yt: <raíz>/data/projects.json y <raíz>/clips.
     const auto root = store_.file().parent_path().parent_path();
     player_.close();
@@ -915,8 +923,8 @@ QVariantMap EditorModel::selectedClip() const {
     const double local = playhead_ - c->start;
     const core::Pose pose = core::clip_pose(*c, std::max(0.0, local));
     const auto& tl = *session_->timeline();
-    const core::TransformView tv =
-        core::transform_view(*c, local, static_cast<double>(tl.width), static_cast<double>(tl.height));
+    const core::TransformView tv = core::transform_view(*c, local, static_cast<double>(tl.width),
+                                                        static_cast<double>(tl.height), height_scale(*c));
     return {
         {"transform", QVariantMap{{"show", tv.show},
                                   {"xy", tv.xy},
@@ -1512,6 +1520,12 @@ void EditorModel::trimClip(const QString& id, bool left, double delta) {
 
 void EditorModel::commit(core::Timeline next, std::string cause, std::vector<std::string> changed,
                          std::vector<std::string> emptied) {
+    // Lo que entra o cambia se queda como objeto libre en el mismo paso (el efecto de VideoEditor.jsx).
+    for (std::string& id : free_layouts(next)) {
+        if (std::ranges::find(changed, id) == changed.end()) {
+            changed.push_back(std::move(id));
+        }
+    }
     if (auto settled = core::settle_timeline(*session_->timeline(), next, ids_)) {
         next = std::move(settled->timeline);
     }
@@ -1780,7 +1794,7 @@ void EditorModel::setPosition(double x, double y) {
 }
 
 void EditorModel::setScalePct(double pct) {
-    pose_each("transform", [&](const core::TimelineClip& c) { return core::transform_scale_patch(c, pct); });
+    pose_each("transform", [&](const core::TimelineClip& c) { return core::transform_scale_patch(c, pct, height_scale(c)); });
 }
 
 void EditorModel::setRotation(double deg) {
@@ -1788,7 +1802,7 @@ void EditorModel::setRotation(double deg) {
 }
 
 void EditorModel::resetTransform() {
-    pose_each("transform", [](const core::TimelineClip& c) { return core::transform_reset_patch(c); });
+    pose_each("transform", [&](const core::TimelineClip& c) { return core::transform_reset_patch(c, height_scale(c)); });
 }
 
 std::optional<std::filesystem::path> EditorModel::media_path(const core::TimelineClip& c) const {
@@ -1800,6 +1814,58 @@ std::optional<std::filesystem::path> EditorModel::media_path(const core::Timelin
     const Json settings = settings_ ? settings_->load() : Json::object();
     return core::clip_media_path(**project, c, {store_.clips_dir(), data_dir,
                                                 core::collections_root(settings, assets_dir(data_dir) / "material")});
+}
+
+std::optional<std::pair<double, double>> EditorModel::source_size(const core::TimelineClip& c) const {
+    if (c.kind != "video" && c.kind != "image") {
+        return std::nullopt;
+    }
+    // La clave del material: ámbito, tipo, id y archivo (el «|» no cabe en un nombre de archivo de Windows).
+    const std::string key = c.asset_scope + '|' + c.asset_kind + '|' + c.asset_id + '|' + c.filename;
+    if (const auto it = sizes_.find(key); it != sizes_.end()) {
+        return it->second;
+    }
+    std::optional<std::pair<double, double>> size;
+    if (const auto path = media_path(c)) {
+#ifdef GC_STUDIO_PREVIEW
+        if (const auto first = media::frame_at(*path, 0.0); first && first->has_value()) {
+            size = std::pair<double, double>((*first)->width, (*first)->height);
+        }
+#endif
+        if (!size && c.kind == "image") { // sin gc_media (o si FFmpeg no la lee)
+            const QSize s = QImageReader(QString::fromStdString(core::path_to_utf8(*path))).size();
+            if (!s.isEmpty()) {
+                size = std::pair<double, double>(s.width(), s.height());
+            }
+        }
+    }
+    sizes_[key] = size;
+    return size;
+}
+
+double EditorModel::height_scale(const core::TimelineClip& c) const {
+    const auto size = source_size(c);
+    return size && size->second > 0 && session_ ? static_cast<double>(session_->timeline()->height) / size->second : 1.0;
+}
+
+std::vector<std::string> EditorModel::free_layouts(core::Timeline& tl) const {
+    std::vector<std::string> changed;
+    for (auto& c : tl.clips) {
+        if (!core::needs_free_layout(*c)) {
+            continue;
+        }
+        const auto size = source_size(*c);
+        if (!size) {
+            continue;
+        }
+        auto free = core::free_layout(*c, size->first, size->second, static_cast<double>(tl.width),
+                                      static_cast<double>(tl.height), playhead_);
+        if (free && *free) {
+            c.mut() = std::move(**free);
+            changed.push_back(c->id);
+        }
+    }
+    return changed;
 }
 
 QVariantMap EditorModel::openCrop() {

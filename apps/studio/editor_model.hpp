@@ -408,6 +408,15 @@ private:
     std::pair<std::string, std::string> collections_query_; // q y colección de la última búsqueda
     [[nodiscard]] std::optional<std::filesystem::path> collections_base() const;
     [[nodiscard]] std::optional<std::filesystem::path> media_path(const core::TimelineClip& c) const;
+    // mediaSize de su medio (videoWidth / naturalWidth): el tamaño con el que lo dibuja el render (el
+    // primer fotograma, con el autogiro de un vídeo de móvil). Una vez por material (sizes_).
+    [[nodiscard]] std::optional<std::pair<double, double>> source_size(const core::TimelineClip& c) const;
+    // heightScale de VideoEditor.jsx: alto de la salida / alto de la fuente (1 si no se sabe).
+    [[nodiscard]] double height_scale(const core::TimelineClip& c) const;
+    // El efecto de VideoEditor.jsx que deja como objeto libre (applyFreeLayout) todo clip visual cuyo
+    // medio tiene medidas. Da los ids de los que cambian.
+    std::vector<std::string> free_layouts(core::Timeline& tl) const;
+    mutable std::map<std::string, std::optional<std::pair<double, double>>> sizes_;
     void reload_collections();
     void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);
