@@ -33,6 +33,12 @@ Menu {
         text: menu.info.favorite ? "Quitar de favoritos" : "Favorito"
         onTriggered: menu.model.toggleClipFavorite(menu.clipId)
     }
+    Entry { // useSubtitles: la transcripción la hace el backend de video-yt
+        objectName: "ctx:subtitles"
+        visible: !!menu.info.canCaption
+        text: menu.info.kind === "video" ? "Generar transcripción" : "Generar subtítulos"
+        onTriggered: menu.model.requestSubtitles(menu.clipId)
+    }
     Entry {
         visible: menu.info.kind === "text"
         text: "Aplicar como plantilla global"

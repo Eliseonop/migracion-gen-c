@@ -26,6 +26,7 @@
 #include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
 
+#include "backend_jobs.hpp"
 #include "beat_detector.hpp"
 #include "clip_list_model.hpp"
 #include "crop_editor.hpp"
@@ -54,6 +55,8 @@ class EditorModel : public QObject {
     // La que se edita: la primera activa del clip elegido en el cabezal, normalizada (vacía con maskMode
     // apagado). Durante un arrastre, como va quedando.
     Q_PROPERTY(QVariantMap editMask READ editMask NOTIFY editMaskChanged)
+    // El job de subtítulos del backend (useSubtitles): {status, progress, message, error, video}; vacío si no hay.
+    Q_PROPERTY(QVariantMap subtitleJob READ subtitleJob NOTIFY subtitleJobChanged)
     // El fotograma de la timeline en el cabezal (preview_source.hpp), para FramePreview.
     Q_PROPERTY(QObject* preview READ preview CONSTANT)
     // Reproducir y parar, con el reloj del audio (player.hpp).
@@ -110,6 +113,9 @@ public:
     [[nodiscard]] bool maskDraw() const { return mask_draw_; }
     void setMaskDraw(bool on);
     [[nodiscard]] QVariantMap editMask() const;
+    [[nodiscard]] QVariantMap subtitleJob() const { return subtitle_job_; }
+    // El puente con el backend de video-yt (para los tests: su dirección y cada cuánto se sondea).
+    [[nodiscard]] BackendJobs& subtitleBackend() { return subtitle_jobs_; }
     [[nodiscard]] QObject* preview() { return &preview_; }
     [[nodiscard]] PreviewSource& previewSource() { return preview_; }
     [[nodiscard]] QObject* player() { return &player_; }
@@ -296,6 +302,12 @@ public:
     Q_INVOKABLE void maskRelease();
     // maskCursor: el Qt::CursorShape de ese punto (el de girar, la mano abierta: el «grab» de React).
     Q_INVOKABLE [[nodiscard]] int maskCursor(double x, double y, const QRectF& frame, double scale) const;
+    // requestSubtitles de useSubtitles: transcribe el clip en el backend de video-yt (un vídeo con
+    // clips/{id}/transcribe, un audio o un SFX con subtitles; el modelo, el de los ajustes) y, al acabar, pone
+    // sus subtítulos en la pista de texto en un paso de deshacer. Mientras, subtitleJob dice cómo va.
+    Q_INVOKABLE void requestSubtitles(const QString& clipId);
+    // Quita el aviso del job (el de error se cierra con un clic).
+    Q_INVOKABLE void dismissSubtitleJob();
     // Pila de efectos animados (addVfx y EdVfxStack): añadir, parámetros, activar, rango, orden y quitar.
     // listEffects de fx/registry.js para la biblioteca: categoría y palabras (sin tildes ni mayúsculas).
     Q_INVOKABLE QVariantList searchVfx(const QString& q, const QString& category) const;
@@ -386,6 +398,7 @@ signals:
     void cropFrameChanged();
     void maskModeChanged();
     void editMaskChanged();
+    void subtitleJobChanged();
 
 private:
     // Una tarjeta del material con su dragPayload; y las del proyecto (sus vídeos, imágenes y audios).
@@ -476,6 +489,12 @@ private:
     void mask_drag_edit(core::TimelineClip& c) const;
     bool mask_mode_ = false;
     bool mask_draw_ = false;
+    // Subtítulos del backend: el clip fuente tal como era al pedirlos (srcClip) y cómo va el job.
+    void subtitle_update(const Json& job, bool video);
+    void add_subtitles(const core::TimelineClip& src, const Json& transcript);
+    BackendJobs subtitle_jobs_;
+    std::optional<core::TimelineClip> subtitle_src_;
+    QVariantMap subtitle_job_;
     void reload_collections();
     void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);

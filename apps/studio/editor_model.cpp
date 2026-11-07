@@ -18,6 +18,7 @@
 #include <unordered_map>
 #include <utility>
 
+#include "gc/core/captions_ui.hpp"
 #include "gc/core/clip_attrs.hpp"
 #include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_layout_ui.hpp"
@@ -1970,7 +1971,8 @@ QVariantMap EditorModel::clipMenu(const QString& clipId) const {
             {"hasBeats", clip_beats_view(*c).has_value()}, // clipBeats(clip), aunque caigan fuera del tramo
             {"sfx", fav_id.has_value()},
             {"favorite", fav_id && std::ranges::find(sfx, Json(*fav_id)) != sfx.end()},
-            {"canPasteAttrs", attr_clipboard_ && attr_clipboard_->id != c->id}};
+            {"canPasteAttrs", attr_clipboard_ && attr_clipboard_->id != c->id},
+            {"canCaption", core::can_caption_clip(*c)}};
 }
 
 void EditorModel::moveLayer(const QString& clipId, const QString& action) {
@@ -2681,6 +2683,117 @@ int EditorModel::maskCursor(double x, double y, const QRectF& frame, double scal
         {"ns-resize", Qt::SizeVerCursor},   {"nesw-resize", Qt::SizeBDiagCursor}};
     const auto it = kShapes.find(core::mask_cursor(x * scale, y * scale, *mask, f, mask_draw_));
     return it != kShapes.end() ? it->second : Qt::ArrowCursor;
+}
+
+namespace {
+
+// Un texto del Job (o «» si falta o es null).
+std::string job_text(const Json& job, const char* key) {
+    const auto it = job.find(key);
+    return it != job.end() && it->is_string() ? it->get<std::string>() : std::string();
+}
+
+} // namespace
+
+void EditorModel::requestSubtitles(const QString& clipId) {
+    const core::TimelineClip* c = clip(clipId);
+    if (!session_ || !c || !core::can_caption_clip(*c)) {
+        return;
+    }
+    // getSettings().transcribe.model: el modelo de Whisper elegido en los ajustes, si hay.
+    const Json settings = settings_ ? settings_->load() : Json::object();
+    const auto tr = settings.find("transcribe");
+    const Json model = tr != settings.end() && tr->is_object() ? tr->value("model", Json()) : Json();
+    const bool use_model = (model.is_string() && !model.get<std::string>().empty()) || (!model.is_null() && !model.is_string());
+    const bool video = c->kind == "video";
+    QString path;
+    Json body = Json::object();
+    if (video) { // transcribeClip(projectId, clip.asset_id || clip.index, model)
+        path = QString("/api/projects/%1/clips/%2/transcribe").arg(qstr(project_id_), qstr(c->asset_id));
+        if (use_model) {
+            body["model"] = model;
+        }
+    } else { // generateSubtitles: {filename, asset_kind, model?, asset_scope}
+        path = QString("/api/projects/%1/subtitles").arg(qstr(project_id_));
+        body = {{"filename", c->filename}, {"asset_kind", c->asset_kind}};
+        if (use_model) {
+            body["model"] = model;
+        }
+        body["asset_scope"] = c->asset_scope.empty() ? std::string("project") : c->asset_scope;
+    }
+    subtitle_src_ = *c;
+    subtitle_job_ = {{"status", "pending"}, {"progress", 0.0}, {"message", QString()}, {"error", QString()}, {"video", video}};
+    emit subtitleJobChanged();
+    subtitle_jobs_.start(path, body, [this, video](const Json& job) { subtitle_update(job, video); });
+}
+
+void EditorModel::subtitle_update(const Json& job, bool video) {
+    const std::string status = job_text(job, "status");
+    const auto transcript = job.find("transcript");
+    if (status == "done") {
+        if (transcript != job.end() && transcript->is_object() && subtitle_src_) {
+            add_subtitles(*subtitle_src_, *transcript);
+        }
+        subtitle_src_.reset();
+        subtitle_job_.clear();
+    } else {
+        if (status == "error") {
+            subtitle_src_.reset();
+        }
+        const auto progress = job.find("progress");
+        subtitle_job_ = {{"status", qstr(status)},
+                         {"progress", progress != job.end() && progress->is_number() ? progress->get<double>() : 0.0},
+                         {"message", qstr(job_text(job, "message"))},
+                         {"error", qstr(job_text(job, "error"))},
+                         {"video", video}};
+    }
+    emit subtitleJobChanged();
+}
+
+// buildSubtitleClips de useSubtitles: con el estilo de la primera pista de texto (o el de subtítulo), en la
+// pista de ensureTextTrack (la elegida si es de texto, la primera de texto o una nueva con ese estilo).
+void EditorModel::add_subtitles(const core::TimelineClip& src, const Json& transcript) {
+    if (!session_) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    const auto text_track = std::ranges::find(next.tracks, std::string("text"), &core::TimelineTrack::kind);
+    const Json style = text_track != next.tracks.end() && text_track->style ? *text_track->style : core::subtitle_style();
+    const auto chosen = std::ranges::find(next.tracks, selected_track_, &core::TimelineTrack::id);
+    std::string tid;
+    bool created = false;
+    if (chosen != next.tracks.end() && chosen->kind == "text") {
+        tid = chosen->id;
+    } else if (text_track != next.tracks.end()) {
+        tid = text_track->id;
+    } else {
+        core::TimelineTrack t = core::build_track("text", next.tracks, ids_.hex32().substr(0, 8));
+        t.style = style;
+        tid = t.id;
+        core::insert_track(next.tracks, std::move(t));
+        created = true;
+    }
+    const auto segments = transcript.find("segments");
+    std::vector<core::TimelineClip> news =
+        core::caption_text_clips(src, segments != transcript.end() ? *segments : Json::array(), tid, style, transcript,
+                                 core::source_ref_of(src), ids_);
+    if (news.empty() && !created) {
+        return;
+    }
+    std::vector<std::string> changed;
+    changed.reserve(news.size());
+    for (core::TimelineClip& c : news) {
+        changed.push_back(c.id);
+        next.clips.emplace_back(std::move(c));
+    }
+    commit(std::move(next), "subtitles", std::move(changed));
+}
+
+void EditorModel::dismissSubtitleJob() {
+    if (!subtitle_job_.isEmpty()) {
+        subtitle_job_.clear();
+        emit subtitleJobChanged();
+    }
 }
 
 QVariantList EditorModel::vfxCatalog() {

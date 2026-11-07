@@ -6,6 +6,9 @@
 #include <QCursor>
 #include <QGuiApplication>
 #include <QDropEvent>
+#include <QHostAddress>
+#include <QTcpServer>
+#include <QTcpSocket>
 #include <QImage>
 #include <QMimeData>
 #include <QQmlApplicationEngine>
@@ -17,7 +20,10 @@
 #include <cmath>
 #include <filesystem>
 #include <fstream>
+#include <functional>
+#include <memory>
 #include <string>
+#include <utility>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -707,6 +713,178 @@ TEST_CASE("studio sin pantalla: la máscara se arrastra sobre la vista previa y 
     CHECK_FALSE(s.editor->maskMode());
     CHECK_FALSE(s.editor->maskDraw());
     CHECK_FALSE(s.item("maskOverlay"));
+}
+
+namespace {
+
+// Un backend de video-yt de mentira, en 127.0.0.1: a cada petición contesta lo que diga `reply` (con el
+// método, la ruta y el cuerpo: estado HTTP y JSON) y apunta lo que le llega.
+class FakeBackend {
+public:
+    using Reply = std::function<std::pair<int, Json>(const QString& method, const QString& path, const Json& body)>;
+    struct Request {
+        QString method;
+        QString path;
+        Json body;
+    };
+
+    explicit FakeBackend(Reply reply) : reply_(std::move(reply)) {
+        REQUIRE(server_.listen(QHostAddress::LocalHost));
+        QObject::connect(&server_, &QTcpServer::newConnection, &server_, [this] {
+            while (QTcpSocket* socket = server_.nextPendingConnection()) {
+                auto buffer = std::make_shared<QByteArray>();
+                QObject::connect(socket, &QTcpSocket::readyRead, socket, [this, socket, buffer] { serve(*socket, *buffer); });
+                QObject::connect(socket, &QTcpSocket::disconnected, socket, &QObject::deleteLater);
+            }
+        });
+    }
+    [[nodiscard]] QUrl url() const { return QUrl(QString("http://127.0.0.1:%1").arg(server_.serverPort())); }
+    std::vector<Request> requests;
+
+private:
+    void serve(QTcpSocket& socket, QByteArray& buffer) {
+        buffer.append(socket.readAll());
+        const qsizetype head_end = buffer.indexOf("\r\n\r\n");
+        if (head_end < 0) {
+            return;
+        }
+        const QList<QByteArray> head = buffer.left(head_end).split('\n');
+        qsizetype length = 0;
+        for (const QByteArray& line : head) {
+            if (line.toLower().startsWith("content-length:")) {
+                length = line.mid(15).trimmed().toLongLong();
+            }
+        }
+        if (buffer.size() < head_end + 4 + length) {
+            return; // falta el cuerpo
+        }
+        const QList<QByteArray> first = head.front().trimmed().split(' ');
+        const QByteArray raw = buffer.mid(head_end + 4, length);
+        const Json body = raw.isEmpty() ? Json() : Json::parse(raw.toStdString(), nullptr, false);
+        requests.push_back({QString::fromLatin1(first.value(0)), QString::fromLatin1(first.value(1)), body});
+        const auto [status, json] = reply_(requests.back().method, requests.back().path, body);
+        const QByteArray out = QByteArray::fromStdString(json.dump());
+        socket.write(QString("HTTP/1.1 %1 X\r\nContent-Type: application/json\r\nContent-Length: %2\r\nConnection: close\r\n\r\n")
+                         .arg(status)
+                         .arg(out.size())
+                         .toLatin1() +
+                     out);
+        socket.disconnectFromHost();
+    }
+
+    Reply reply_;
+    QTcpServer server_;
+};
+
+} // namespace
+
+TEST_CASE("studio sin pantalla: «Generar subtítulos» pide la transcripción al backend y pone los textos", "[studio][ui][backend]") {
+    const Studio s;
+    // Un audio del proyecto (m.mp3, 5 s) soltado en A1, a 10 s.
+    QString key;
+    for (const QVariant& v : s.editor->materials()) {
+        if (v.toMap()["source"] == "project" && v.toMap()["kind"] == "audio") {
+            key = v.toMap()["key"].toString();
+        }
+    }
+    REQUIRE_FALSE(key.isEmpty());
+    double lane = -1;
+    for (const QVariant& t : s.editor->tracks()) {
+        if (t.toMap()["id"] == "A1") {
+            lane = t.toMap()["y"].toDouble() + (t.toMap()["height"].toDouble() / 2);
+        }
+    }
+    REQUIRE(lane >= 0);
+    s.editor->dropMaterial(key, 10 * s.editor->pps(), lane, false);
+    REQUIRE(s.editor->selection().size() == 1);
+    const QString audio = s.editor->selection().front();
+    const QVariantMap made = s.editor->selectedClip();
+    REQUIRE(made["kind"] == "audio");
+    const auto text_clips = [&] {
+        std::vector<QVariantMap> out;
+        for (const QVariant& v : s.editor->clips()) {
+            if (v.toMap()["kind"] == "text") {
+                out.push_back(v.toMap());
+            }
+        }
+        std::ranges::sort(out, {}, [](const QVariantMap& c) { return c["start"].toDouble(); });
+        return out;
+    };
+
+    int polls = 0;
+    FakeBackend backend([&](const QString& method, const QString& path, const Json&) -> std::pair<int, Json> {
+        if (method == "POST" && path == "/api/projects/p1/subtitles") {
+            return {200, {{"id", "j1"}, {"status", "pending"}, {"progress", 0.0}, {"message", "En cola…"}}};
+        }
+        if (method == "GET" && path == "/api/job/j1") {
+            if (++polls == 1) {
+                return {200, {{"id", "j1"}, {"status", "running"}, {"progress", 0.5}, {"message", "Transcribiendo…"}}};
+            }
+            const Json segments = Json::array({{{"index", 0}, {"start", 0.2}, {"end", 1.4}, {"text", " Hola a todos "}},
+                                                {{"index", 1}, {"start", 2.0}, {"end", 3.1}, {"text", "esto es una prueba"}}});
+            return {200, {{"id", "j1"}, {"status", "done"}, {"progress", 1.0}, {"transcript", {{"id", "tr1"}, {"segments", segments}}}}};
+        }
+        return {404, {{"detail", "No existe."}}};
+    });
+    s.editor->subtitleBackend().setBaseUrl(backend.url());
+    s.editor->subtitleBackend().setPollInterval(20);
+
+    // Desde el menú del clic derecho del audio.
+    QTest::mouseClick(s.window, Qt::RightButton, {}, s.at(audio, 0.5));
+    QTest::qWait(50);
+    REQUIRE(s.item("ctx:subtitles"));
+    CHECK(s.item("ctx:subtitles")->property("text") == "Generar subtítulos");
+    QMetaObject::invokeMethod(s.item("ctx:subtitles"), "triggered");
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->subtitleJob()["status"] == "running"; }, 10000));
+    REQUIRE(s.item("subtitles:message"));
+    CHECK(s.item("subtitles:message")->property("text") == "Transcribiendo…");
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->subtitleJob().isEmpty(); }, 10000));
+
+    // Lo que se pidió (sin modelo en los ajustes) y los textos, en una pista de texto nueva, dentro del tramo.
+    REQUIRE_FALSE(backend.requests.empty());
+    CHECK(backend.requests.front().body == Json{{"filename", "m.mp3"}, {"asset_kind", "audios"}, {"asset_scope", "project"}});
+    const auto texts = text_clips();
+    REQUIRE(texts.size() >= 2);
+    QStringList words;
+    for (const QVariantMap& t : texts) {
+        words << t["label"].toString();
+        CHECK(t["trackId"] != made["trackId"]);
+    }
+    CHECK(words.join(' ') == "Hola a todos esto es una prueba");
+    CHECK(std::abs(texts.front()["start"].toDouble() - (made["start"].toDouble() + 0.2)) < 1e-6);
+    s.editor->undo(); // un paso: se van todos
+    CHECK(text_clips().empty());
+
+    // De un vídeo, la transcripción del clip (clips/{id}/transcribe, sin modelo); aquí el backend no la tiene.
+    QTest::mouseClick(s.window, Qt::RightButton, {}, s.at("a", 0.5));
+    QTest::qWait(50);
+    REQUIRE(s.item("ctx:subtitles"));
+    CHECK(s.item("ctx:subtitles")->property("text") == "Generar transcripción");
+    QMetaObject::invokeMethod(s.item("ctx:subtitles"), "triggered");
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->subtitleJob()["status"] == "error"; }, 10000));
+    CHECK(backend.requests.back().path == "/api/projects/p1/clips/a/transcribe");
+    CHECK(backend.requests.back().body == Json::object());
+    CHECK(s.editor->subtitleJob()["video"] == true);
+    s.editor->dismissSubtitleJob();
+
+    // Un error del backend se dice y se cierra con un clic.
+    // NOLINTNEXTLINE(misc-const-correctness): su servidor cambia por dentro (Qt) mientras atiende
+    FakeBackend failing([](const QString&, const QString&, const Json&) -> std::pair<int, Json> {
+        return {404, {{"detail", "Proyecto no encontrado."}}};
+    });
+    s.editor->subtitleBackend().setBaseUrl(failing.url());
+    s.editor->requestSubtitles(audio);
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->subtitleJob()["status"] == "error"; }, 10000));
+    CHECK(s.editor->subtitleJob()["error"] == "Proyecto no encontrado.");
+    CHECK(s.item("subtitles:message")->property("text").toString().contains("Proyecto no encontrado."));
+    s.click("subtitles:toast");
+    CHECK(s.editor->subtitleJob().isEmpty());
+
+    // Sin backend, lo dice.
+    s.editor->subtitleBackend().setBaseUrl(QUrl("http://127.0.0.1:1"));
+    s.editor->requestSubtitles(audio);
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->subtitleJob()["status"] == "error"; }, 20000));
+    CHECK(s.editor->subtitleJob()["error"].toString().contains("No se pudo conectar"));
 }
 
 TEST_CASE("studio sin pantalla: el tirador de la curva del keyframe la vuelve personalizada", "[studio][ui]") {

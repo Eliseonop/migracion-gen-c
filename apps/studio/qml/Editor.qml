@@ -278,6 +278,37 @@ Item {
         onClosed: editor.model.clearNotice()
     }
 
+    // El job de subtítulos del backend (el ed-sub-toast de useSubtitles): cómo va y, si falla, por qué.
+    Rectangle {
+        id: subtitleToast
+        objectName: "subtitles:toast"
+        readonly property var job: editor.model.subtitleJob
+        readonly property bool working: job.status === "pending" || job.status === "running"
+        readonly property bool failed: job.status === "error"
+        visible: working || failed
+        z: 96
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 72
+        width: Math.min(subtitleLabel.implicitWidth + 28, parent.width - 40)
+        height: subtitleLabel.implicitHeight + 16
+        radius: Theme.radiusMd
+        color: Theme.card3
+        border.color: failed ? Theme.danger : Theme.accent2
+        Label {
+            id: subtitleLabel
+            objectName: "subtitles:message"
+            anchors.centerIn: parent
+            width: parent.width - 28
+            wrapMode: Text.WordWrap
+            color: Theme.text
+            text: subtitleToast.failed ? "⚠️ " + (subtitleToast.job.error || "")
+                                       : (subtitleToast.job.message
+                                          || (subtitleToast.job.video ? "Transcribiendo…" : "Generando subtítulos…"))
+        }
+        MouseArea { anchors.fill: parent; enabled: subtitleToast.failed; onClicked: editor.model.dismissSubtitleJob() }
+    }
+
     // El export (export_job.hpp): su progreso y, al acabar, el archivo, la cancelación o el error.
     Rectangle {
         id: exportCard

@@ -3,14 +3,16 @@
 # gc_set_warnings. Los tests enlazan los dos para manejar la interfaz sin pantalla.
 
 qt_standard_project_setup()
+# El puente REST con el backend de video-yt (backend_jobs.hpp), hasta F6 y F7: QtNetwork, sin TLS (es local).
+find_package(Qt6 REQUIRED COMPONENTS Network)
 
-add_library(gc_studio STATIC app.cpp beat_detector.cpp clip_list_model.cpp crop_editor.cpp editor_model.cpp export_job.cpp
-                             frame_grabber.cpp frame_image.cpp frame_preview.cpp
+add_library(gc_studio STATIC app.cpp backend_jobs.cpp beat_detector.cpp clip_list_model.cpp crop_editor.cpp editor_model.cpp
+                             export_job.cpp frame_grabber.cpp frame_image.cpp frame_preview.cpp
                              home_model.cpp mask_overlay.cpp platform_chrome.cpp player.cpp preview_source.cpp proxy_maker.cpp
                              rounded_image.cpp
                              settings_model.cpp thumbnails.cpp)
 target_include_directories(gc_studio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-target_link_libraries(gc_studio PUBLIC gc::core Qt6::Core Qt6::Gui Qt6::Quick Qt6::QuickControls2)
+target_link_libraries(gc_studio PUBLIC gc::core Qt6::Core Qt6::Gui Qt6::Network Qt6::Quick Qt6::QuickControls2)
 gc_set_warnings(gc_studio)
 # La vista previa compone con gc_export, que solo existe con FFmpeg y Skia (presets msvc-vcpkg-*):
 # sin él, el studio se compila igual y la vista previa lo dice.
