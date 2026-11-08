@@ -24,7 +24,15 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-CLION = Path(os.environ.get("CLION_HOME", r"C:\Program Files\JetBrains\CLion 2026.2.3"))
+def _clion() -> Path:
+    """CLION_HOME o, si no está, el CLion más nuevo de Program Files\\JetBrains."""
+    if os.environ.get("CLION_HOME"):
+        return Path(os.environ["CLION_HOME"])
+    found = sorted(Path(r"C:\Program Files\JetBrains").glob("CLion *"))
+    return found[-1] if found else Path(r"C:\Program Files\JetBrains\CLion")
+
+
+CLION = _clion()
 ENV = dict(os.environ)
 ENV["PATH"] = os.pathsep.join([str(CLION / "bin" / "mingw" / "bin"), str(CLION / "bin" / "ninja" / "win" / "x64"),
                                str(CLION / "bin" / "cmake" / "win" / "x64" / "bin"), ENV["PATH"]])

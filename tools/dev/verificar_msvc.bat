@@ -10,7 +10,9 @@ setlocal
 set "PRESET=%~1"
 if "%PRESET%"=="" set "PRESET=msvc-vcpkg-debug"
 call "D:\visual\VC\Auxiliary\Build\vcvars64.bat" >nul || exit /b 1
-set "CLION=C:\Program Files\JetBrains\CLion 2026.2.3"
+rem CLION_HOME o, si no está, el último CLion de Program Files\JetBrains (por orden alfabético).
+set "CLION=%CLION_HOME%"
+if "%CLION%"=="" for /d %%D in ("C:\Program Files\JetBrains\CLion *") do set "CLION=%%~fD"
 set "PATH=%CLION%\bin\ninja\win\x64;%CLION%\bin\cmake\win\x64\bin;%PATH%"
 set "VCPKG_ROOT=E:\vcpkg"
 set "VCPKG_DEFAULT_BINARY_CACHE=E:\vcpkg-cache"

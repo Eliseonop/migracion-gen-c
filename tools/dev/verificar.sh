@@ -8,9 +8,14 @@
 # Sale con error si falla la compilación, falla algún test o aparece algún warning.
 set -uo pipefail
 
-CLION="${CLION_HOME:-/c/Program Files/JetBrains/CLion 2026.2.3}"
+# CLION_HOME o, si no está, el CLion más nuevo de Program Files/JetBrains.
+CLION="${CLION_HOME:-$(ls -d "/c/Program Files/JetBrains/CLion "* 2>/dev/null | sort -V | tail -n 1)}"
 export PATH="$CLION/bin/mingw/bin:$CLION/bin/ninja/win/x64:$CLION/bin/cmake/win/x64/bin:$PATH"
 cd "$(dirname "$0")/../.." || exit 1
+# La consola en UTF-8: CMake lee con su página de códigos la lista de tests de Catch2 y, con la
+# 850 o la 1252 de un Windows sin «UTF-8 para todo el mundo», estropea las tildes de los nombres
+# y ctest ya no los encuentra.
+command -v chcp.com >/dev/null && chcp.com 65001 >/dev/null
 
 limpio=()
 presets=()

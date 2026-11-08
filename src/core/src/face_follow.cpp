@@ -16,11 +16,15 @@ bool keyframes_on(const TimelineClip& clip) {
     if (!clip.keyframes || !clip.keyframes->is_object()) {
         return false;
     }
-    const auto enabled = clip.keyframes->find("enabled");
-    const auto items = clip.keyframes->find("items");
-    const bool on = enabled != clip.keyframes->end() &&
-                    ((enabled->is_boolean() && enabled->get<bool>()) || (enabled->is_number() && enabled->get<double>() != 0));
-    return on && items != clip.keyframes->end() && items->is_array() && !items->empty();
+    // Sin iteradores de find(): con ellos, GCC 15 da un falso positivo de -Wnull-dereference en nlohmann.
+    const Json& kf = *clip.keyframes;
+    if (!kf.contains("enabled") || !kf.contains("items")) {
+        return false;
+    }
+    const Json& enabled = kf.at("enabled");
+    const Json& items = kf.at("items");
+    const bool on = (enabled.is_boolean() && enabled.get<bool>()) || (enabled.is_number() && enabled.get<double>() != 0);
+    return on && items.is_array() && items.size() > 0;
 }
 
 } // namespace

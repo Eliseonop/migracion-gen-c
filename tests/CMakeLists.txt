@@ -106,6 +106,16 @@ endif()
 if(MSVC)
     target_compile_options(gc_tests PRIVATE /wd4702)
     target_sources(gc_tests PRIVATE utf8.manifest)
+elseif(WIN32)
+    # MinGW no entiende un .manifest como fuente: va como recurso RT_MANIFEST (24) con windres.
+    enable_language(RC)
+    file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/utf8_manifest.rc"
+         CONTENT "1 24 \"${CMAKE_CURRENT_SOURCE_DIR}/utf8.manifest\"\n")
+    target_sources(gc_tests PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/utf8_manifest.rc")
+    # Sin shell: con popen, windres llama al preprocesador con su ruta sin comillas y falla si
+    # tiene espacios («C:\Program Files\JetBrains\CLion …»).
+    set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/utf8_manifest.rc"
+        PROPERTIES COMPILE_OPTIONS --use-temp-file)
 endif()
 
 if(catch2_SOURCE_DIR)
