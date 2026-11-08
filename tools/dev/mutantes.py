@@ -1042,7 +1042,7 @@ MCP_SERVER = [
     ("args: null no vale en opcional", MS, 'if (value.is_null()) {\n            return nullptr;\n        }\n        for (const Json& option', 'for (const Json& option'),
     ("args: sin los elementos de la lista", MS, 'if (!schema.contains("items") || schema["items"].empty()) {', 'if (true) {'),
     ("args: sin JSON dentro de un texto", MS, 'parsed[key] = properties.contains(key) ? pre_parsed(properties[key], value) : value;', 'parsed[key] = value;'),
-    ("args: JSON también en un str", MS, 'if (!value.is_string() || schema.value("type", "") == "string") {', 'if (!value.is_string()) {'),
+    ("args: JSON también en un str", MS, 'if (!value.is_string() || schema_type(schema) == "string") {', 'if (!value.is_string()) {'),
     ("args: «null» sigue siendo texto", MS, "parsed->is_null() || parsed->is_array()", "parsed->is_array()"),
     ("args: sin los valores por defecto", MS, 'out[name] = field.value("default", Json());', ""),
     ("args: lo que sobra se queda", MS, "for (const auto& [name, field] : properties.items()) {", "out = parsed;\n    for (const auto& [name, field] : properties.items()) {"),
