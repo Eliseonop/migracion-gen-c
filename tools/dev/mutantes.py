@@ -960,11 +960,37 @@ FACE_FOLLOW = [
      '{"t", js_fixed(local_t, 6)}'),
 ]
 
+TR = "src/core/src/mcp_tools_read.cpp"
+MCP_TOOLS = [
+    ("resolver: sin quitar los espacios", TR, "const std::string q = py_strip(raw);", "const std::string q = raw;"),
+    ("resolver: sin minúsculas", TR, "const std::string ql = py_lower(q);", "const std::string ql = q;"),
+    ("resolver: el nombre exacto sin strip", TR, "return py_lower(py_strip(p.name)) == ql;", "return py_lower(p.name) == ql;"),
+    ("resolver: prefijo del id en mayúsculas", TR, "return py_lower(p.id).starts_with(ql);", "return p.id.starts_with(ql);"),
+    ("resolver: sin quitar ids repetidos", TR, "if (matches(p) && seen.insert(p.id).second) {", "if (matches(p)) {"),
+    ("resolver: más de 10 candidatos", TR, "i < uniq.size() && i < 10;", "i < uniq.size();"),
+    ("resolver: el id exacto no gana", TR, "        if (p.id == q) {\n", "        if (false) {\n"),
+    ("historial: un texto no cuenta", TR, "        return py_len(v.get_ref<const std::string&>());", "        return std::size_t{0};"),
+    ("historial: un dict no cuenta", TR, "    if (v.is_array() || v.is_object()) {\n        return v.size();", "    if (v.is_array()) {\n        return v.size();"),
+    ("historial: claves repetidas", TR, "                seen = true; // la clave", "                seen = false; // la clave"),
+    ("historial: NaN distintos", TR, "std::isnan(b.get<double>())) {\n        return true;", "std::isnan(b.get<double>())) {\n        return false;"),
+    ("historial: un par de tres vale", TR, "if (pair->size() != 2) {", "if (pair->size() < 2) {"),
+    ("historial: lo que no es dict, vacío", TR, "    if (!h.is_object()) {\n        return crash(", "    if (!h.is_object()) {\n        return history_summary(Json::object());\n        return crash("),
+    ("historial: ilegible es un error", TR, "return history_summary(raw ? *raw : Json(nullptr));", "if (!raw) { return std::unexpected(raw.error()); }\n    return history_summary(*raw);"),
+    ("buscar: sin minúsculas en el texto", TR, "return py_lower(seg.text).contains(q)", "return seg.text.contains(q)"),
+    ("buscar: sin los clips", TR, "        if (!c.transcript) {\n            continue;", "        if (true) {\n            continue;"),
+    ("buscar: límite 0 vale", TR, "*n < 1 ? 1 :", "*n < 0 ? 0 :"),
+    ("buscar: el NaN es un crash", TR, 'return value_error("cannot convert float NaN to integer");', 'return crash("ValueError", "nan");'),
+    ("buscar: cuenta las que se dan", TR, "const std::size_t count = matches.size();\n    if (matches.size() > keep) {\n        matches.erase(matches.begin() + static_cast<std::ptrdiff_t>(keep), matches.end());\n    }",
+     "if (matches.size() > keep) {\n        matches.erase(matches.begin() + static_cast<std::ptrdiff_t>(keep), matches.end());\n    }\n    const std::size_t count = matches.size();"),
+    ("contexto: sin el historial", TR, "return project_context(*proj, *history);", "return project_context(*proj, nullptr);"),
+    ("capacidades: el vacío pide describe", TR, "    if (py_truthy(domain)) {\n        if (!domain.is_string())", "    if (!domain.is_null()) {\n        if (!domain.is_string())"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"), "seguir_cara": (FACE_FOLLOW, "[editor]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"), "seguir_cara": (FACE_FOLLOW, "[editor]"), "mcp_tools": (MCP_TOOLS, "[mcp]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

@@ -447,3 +447,77 @@ AUDIT_STEPS = [
     ["finish", "000006ab0000", {"param_keys": ["project_id"], "extra_meta": {"job_id": "j9", "job_status": "done"}}],
     ["read_all"],
 ]
+
+# --- Tools de lectura (tools_capabilities.py, tools_context.py y tools_read.py) -----------------
+#
+# Se escriben en un data/ temporal: projects.json con PROJECTS + TOOL_PROJECTS (en ese orden) y
+# data/history/<pid>.json con el historial de cada uno (None = sin archivo; un texto se escribe tal
+# cual: JSON roto, BOM…). Después se llaman las tools REALES con TOOL_CALLS.
+
+def _tp(pid: str, name: str, **kw) -> dict:
+    return {"id": pid, "name": name, "created_at": "2026-03-01T00:00:00", **kw}
+
+
+_SEARCH = _tp("p-busca", "Búsqueda", clips=[
+    {"index": 3, "filename": "a.mp4", "url": "/c/3", "start": 0, "end": 9,
+     "transcript": {"id": "tca", "model": "base", "segments": [
+         {"start": 0, "end": 1.5, "text": "Hola MUNDO"}, {"start": 1.5, "end": 3, "text": "adiós"},
+         {"start": 3, "end": 4, "text": ""}]}},
+    {"index": 4, "filename": "b.mp4", "url": "/c/4", "start": 0, "end": 2},
+], transcripts=[
+    {"id": "t1", "model": "small", "segments": [
+        {"start": 0, "end": 2, "text": "hola, ¿qué tal?"}, {"start": 2, "end": 4, "text": "ΟΔΟΣ y hola"},
+        {"start": 4, "end": 6, "text": "İstanbul"}]},
+    {"id": "t2", "model": "base", "segments": [{"start": 10, "end": 12.25, "text": "otra vez hola"}]},
+])
+
+# [proyecto crudo, historial crudo (dict/list/…, None = sin archivo, ["raw", texto] = el texto tal cual)]
+TOOL_PROJECTS = [
+    [_tp("abc12345", "Mi Proyecto"), {"undo": "ab", "redo": [], "checkpoints": [["x", 1], ["y", 2]]}],
+    [_tp("abc99999", "  mi proyecto "), ["raw", "{roto"]],
+    [_tp("zz-ÑANDÚ", "ÑANDÚ grande"), ["raw", "﻿{\"undo\": [{}]}"]],
+    [_tp("İd-1", "Istanbul"), [1, 2]],
+    [_tp("x-vacío", ""), {"undo": 5}],
+    [_tp("x-sigma", "ΟΔΟΣ"), {"undo": [], "redo": {"a": 1}, "checkpoints": "ab"}],
+    [_tp("dup", "Doble"), {"checkpoints": [[1, "a"], [1.0, "b"], [True, "c"], ["1", "d"], [None, "e"]]}],
+    [_tp("dup", "Doble (segunda)"), None],
+    [_tp("x-cp3", "Puntos de tres"), {"checkpoints": [["a", 1, 2]]}],
+    [_tp("x-cpnum", "Puntos con número"), {"checkpoints": [7]}],
+    [_tp("x-cplist", "Puntos con clave lista"), {"checkpoints": [[[1], 2]]}],
+    [_tp("x-cpstr", "Puntos de texto"), {"checkpoints": ["ab", "cd", "ab"]}],
+    [_tp("x-cpdict", "Puntos con dicts"), {"checkpoints": [{"k": 1, "v": 2}]}],
+    [_tp("x-false", "Falso"), False],
+    [_tp("x-cero", "Cero"), 0],
+    [_tp("x-texto", "Texto"), "hola"],
+    [_tp("x-true", "Verdadero"), True],
+    [_tp("x-redo-true", "Redo verdadero"), {"redo": True}],
+    [_tp("x-nan", "NaN"), {"checkpoints": [[float("nan"), 1], [float("nan"), 2]]}],
+    [_SEARCH, {"undo": [{}], "redo": [], "checkpoints": {"z": {}, "a": {}}}],
+    [_tp("p-a1", "Alfa uno"), None], [_tp("p-a2", "Alfa dos"), None], [_tp("p-a3", "Alfa tres"), None],
+]
+
+TOOL_CALLS = (
+    [["describe_capabilities", [d]] for d in (None, "", "audio", " Clips ", "nada")]
+    + [["list_projects", []]]
+    + [["resolve_project", [q]] for q in (
+        "p-none", "  p-none\t", "", "   ", None, "mi proyecto", "MI PROYECTO", "abc1", "abc", "ABC9",
+        "ñandú", "zz-ñ", "ZZ-Ñ", "i̇d", "İd", "οδος", "ΟΔΟΣ", "nada que ver", "p-", "a", "doble",
+        "Doble (segunda)", "dup", "du", "dobl", "alfa", "x-", "x-vacío", "busca")]
+    + [["get_project_context", [pid]] for pid in (
+        "p-none", "p-empty", "p-marks", "p-media", "abc12345", "abc99999", "zz-ÑANDÚ", "İd-1", "x-vacío",
+        "x-sigma", "dup", "x-cp3", "x-cpnum", "x-cplist", "x-cpstr", "x-cpdict", "x-false", "x-cero",
+        "x-texto", "x-true", "x-redo-true", "x-nan", "p-busca", "no-existe", "")]
+    + [["get_timeline", [pid]] for pid in ("p-none", "p-empty", "p-marks", "p-45", "p-zero", "no-existe")]
+    + [["inspect_clip", [pid, cid]] for pid, cid in (
+        ("p-marks", "nada"), ("p-none", "c1"), ("no-existe", "c1"), ("p-45", ""))]
+    + [["list_media", [pid]] for pid in ("p-media", "p-none", "p-busca", "no-existe")]
+    + [["search_transcript", args] for args in (
+        ["p-busca", "hola"], ["p-busca", "HOLA"], ["p-busca", "  hola  "], ["p-busca", "hola", 1],
+        ["p-busca", "hola", 0], ["p-busca", "hola", -5], ["p-busca", "hola", "2"], ["p-busca", "hola", 2.9],
+        ["p-busca", "hola", True], ["p-busca", "hola", "x"], ["p-busca", "hola", None],
+        ["p-busca", "hola", float("nan")], ["p-busca", "hola", float("inf")], ["p-busca", "zzz", "x"],
+        ["p-busca", "οδος"], ["p-busca", "i̇stanbul"], ["p-busca", "mundo"], ["p-busca", ""],
+        ["p-busca", "   "], ["p-busca", None], ["p-media", "hola"], ["p-media", "o"], ["no-existe", "hola"],
+        ["p-busca", "hola", " 3 "], ["p-busca", "hola", "+2"], ["p-busca", "hola", "1_0"],
+        ["p-busca", "hola", "2.0"])]
+)

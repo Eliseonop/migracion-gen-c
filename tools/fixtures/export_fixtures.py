@@ -4173,6 +4173,58 @@ def _mcp_audit_fixtures(mc) -> dict:
     return {"extract_meta": extract, "steps": steps}
 
 
+def _mcp_tools_read_fixtures(mc) -> dict:
+    """Las tools de lectura REALES (tools_capabilities, tools_context y tools_read) sobre un data/
+    temporal: projects.json con PROJECTS + TOOL_PROJECTS y el historial de cada uno en
+    data/history/<pid>.json. Cada llamada da su resultado o el error (`value_error`: el que llega
+    al agente; si no, el servidor lo oculta). describe_capabilities, con el primer entorno."""
+    import tempfile
+
+    from app import projects, timeline_store
+    from app.mcp_server import tools_capabilities, tools_context, tools_read
+    fns = {"describe_capabilities": tools_capabilities.describe_capabilities,
+           "list_projects": tools_capabilities.list_projects,
+           "resolve_project": tools_capabilities.resolve_project,
+           "get_project_context": tools_context.get_project_context,
+           "get_timeline": tools_read.get_timeline, "inspect_clip": tools_read.inspect_clip,
+           "list_media": tools_read.list_media, "search_transcript": tools_read.search_transcript}
+    entries = [[raw, hist] for _n, raw, hist in mc.PROJECTS] + [list(e) for e in mc.TOOL_PROJECTS]
+    calls = [list(c) for c in mc.TOOL_CALLS]
+    # La timeline y cada clip de los proyectos de dto (todos los tipos, valores raros, beats…).
+    for _n, raw, _h in mc.PROJECTS:
+        clips = ((raw.get("timeline") or {}).get("clips")) or []
+        if clips:
+            calls.append(["get_timeline", [raw["id"]]])
+            calls += [["inspect_clip", [raw["id"], c["id"]]] for c in clips]
+    with tempfile.TemporaryDirectory() as td, _Patches() as p:
+        data = Path(td) / "data"
+        (data / "history").mkdir(parents=True)
+        p.set(projects, "_FILE", data / "projects.json")
+        p.set(timeline_store, "HISTORY_DIR", data / "history")
+        _mcp_env(p, mc.ENVIRONMENTS[0][1])
+        projects._FILE.write_text(json.dumps({"projects": [raw for raw, _h in entries]}, ensure_ascii=False),
+                                  encoding="utf-8")
+        files: dict[str, object] = {}
+        for raw, hist in entries:
+            if hist is None or raw["id"] in files:  # un id repetido: vale el historial del primero
+                continue
+            text = hist[1] if isinstance(hist, list) and hist[:1] == ["raw"] else json.dumps(hist, ensure_ascii=False)
+            files[raw["id"]] = text
+            (data / "history" / f"{raw['id']}.json").write_text(text, encoding="utf-8")
+        out = []
+        for name, args in calls:
+            case = {"tool": name, "args": args}
+            try:
+                case["result"] = _pure(fns[name](*args))
+            except Exception as e:  # noqa: BLE001 — el C++ debe fallar igual
+                case["error"] = str(e)
+                case["error_type"] = type(e).__name__
+                case["value_error"] = isinstance(e, ValueError)
+            out.append(case)
+    return {"environment": mc.ENVIRONMENTS[0][1], "projects": [raw for raw, _h in entries],
+            "history_files": files, "calls": out}
+
+
 def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
     """El núcleo sin red del servidor MCP con los módulos REALES (mcp_cases.py), un archivo por
     módulo de app/mcp_server: dto, capabilities, help, registry, resources y audit."""
@@ -4180,7 +4232,8 @@ def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
     import mcp_cases as mc
     return {"dto": _mcp_dto_fixtures(ctx, mc), "capabilities": _mcp_capabilities_fixtures(ctx, mc),
             "help": _mcp_help_fixtures(mc), "registry": _mcp_registry_fixtures(mc),
-            "resources": _mcp_resources_fixtures(ctx, mc), "audit": _mcp_audit_fixtures(mc)}
+            "resources": _mcp_resources_fixtures(ctx, mc), "audit": _mcp_audit_fixtures(mc),
+            "tools_read": _mcp_tools_read_fixtures(mc)}
 
 
 # --- Salida -----------------------------------------------------------------------------------
@@ -4360,6 +4413,7 @@ def main() -> None:
             "registry": lambda d: len(d["mcp_errors"]) + len(d["value_errors"]) + len(d["registrations"]),
             "resources": lambda d: len(d["calls"]),
             "audit": lambda d: len(d["extract_meta"]) + len(d["steps"]),
+            "tools_read": lambda d: len(d["calls"]),
         }
         errors = {
             "dto": lambda d: sum("error" in (p["timeline_detail"] or {}) for p in d["projects"]),
@@ -4368,6 +4422,7 @@ def main() -> None:
             "registry": lambda d: sum("error" in r for r in d["registrations"]),
             "resources": lambda d: sum("error" in c for c in d["calls"]),
             "audit": lambda d: sum("error" in s for s in d["steps"]),
+            "tools_read": lambda d: sum("error" in c for c in d["calls"]),
         }
         for name, payload in mcp.items():
             write(REPO / "tests" / "fixtures" / "mcp" / f"{name}.json", payload, counts[name](payload),

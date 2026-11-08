@@ -9,6 +9,8 @@
 //   tests/fixtures/mcp/capabilities.json  capabilities.py: enums, verbos y, con cada entorno, overview,
 //                                         describe y runtime_info; project_summary
 //   tests/fixtures/mcp/resources.json     resources.py: el catálogo y el texto de cada resource
+//   tests/fixtures/mcp/tools_read.json  tools_capabilities, tools_context y tools_read: las tools de lectura
+//                                         sobre un data/ temporal, con el resultado o el error de cada llamada
 //   tests/fixtures/mcp/audit.json         audit.py: extract_meta y los pasos sobre un data/ temporal, con
 //                                         el reloj, los uuid y los jobs sustituidos, y el archivo tras cada uno
 
@@ -33,6 +35,8 @@
 #include "gc/core/mcp_help.hpp"
 #include "gc/core/mcp_registry.hpp"
 #include "gc/core/mcp_resources.hpp"
+#include "gc/core/mcp_tools_read.hpp"
+#include "gc/core/projects_store.hpp"
 #include "gc/core/serialize.hpp"
 
 #include "json_diff.hpp"
@@ -565,4 +569,79 @@ TEST_CASE("MCP: el error de UTF-8 como el de Python y splitlines", "[mcp]") {
     CHECK(mcp::py_splitlines("a\xc2\x85" "b\xe2\x80\xa8" "c\xe2\x80\xa9" "d") == V{"a", "b", "c", "d"});
     CHECK(mcp::py_splitlines("\n\nx") == V{"", "", "x"});
     CHECK(mcp::py_splitlines("a\x1f" "b") == V{"a\x1f" "b"}); // \x1f es espacio, no salto
+}
+
+// tools_read.json: las tools de lectura REALES sobre un data/ temporal (projects.json y el historial
+// de cada proyecto, tal cual), con el resultado o el error de cada llamada.
+TEST_CASE("paridad MCP: las tools de lectura (tools_capabilities, tools_context y tools_read)", "[parity][mcp]") {
+    const Json f = load("tools_read");
+    const auto tmp = std::filesystem::temp_directory_path() / "gc_mcp_tools_read_parity";
+    std::filesystem::remove_all(tmp);
+    const auto data = tmp / "data";
+    std::filesystem::create_directories(data / "history");
+    {
+        auto text = gc::core::py_json_dumps(Json{{"projects", f["projects"]}});
+        REQUIRE(text);
+        std::ofstream(data / "projects.json", std::ios::binary) << *text;
+    }
+    for (const auto& [pid, text] : f["history_files"].items()) {
+        std::ofstream(gc::core::history_path(data, pid), std::ios::binary) << text.get<std::string>();
+    }
+    const gc::core::ProjectsStore store(data / "projects.json", tmp / "clips");
+
+    mcp::RuntimeEnv env;
+    const Json& e = f["environment"];
+    env.transcribe_model = e["transcribe_model"].get<std::string>();
+    env.tts_engines = e["tts_engines"];
+    env.sfx_categories = e["sfx_categories"].get<std::vector<std::string>>();
+    env.ffmpeg = e["ffmpeg"].get<bool>();
+    env.ffprobe = e["ffprobe"].get<bool>();
+    env.data_dir = e["data_dir"].get<std::string>();
+    env.gpu = e["gpu"];
+    env.ai_provider = e["ai_provider"];
+
+    std::size_t errors = 0;
+    for (const Json& c : f["calls"]) {
+        const std::string tool = c["tool"].get<std::string>();
+        const Json& a = c["args"];
+        const auto s = [&](std::size_t i) { return a[i].get<std::string>(); };
+        gc::Result<Json> r = gc::fail(gc::ErrorCode::Internal, "tool sin probar: " + tool);
+        if (tool == "describe_capabilities") {
+            r = mcp::describe_capabilities(a[0], env);
+        } else if (tool == "list_projects") {
+            r = mcp::list_projects(store);
+        } else if (tool == "resolve_project") {
+            r = mcp::resolve_project(store, a[0]);
+        } else if (tool == "get_project_context") {
+            r = mcp::get_project_context(store, data, s(0));
+        } else if (tool == "get_timeline") {
+            r = mcp::get_timeline(store, s(0));
+        } else if (tool == "inspect_clip") {
+            r = mcp::inspect_clip(store, s(0), s(1));
+        } else if (tool == "list_media") {
+            r = mcp::list_media(store, s(0));
+        } else if (tool == "search_transcript") {
+            r = a.size() > 2 ? mcp::search_transcript(store, s(0), a[1], a[2]) : mcp::search_transcript(store, s(0), a[1]);
+        }
+        const std::string what = tool + a.dump();
+        INFO(what);
+        if (c.contains("error")) {
+            ++errors;
+            REQUIRE_FALSE(r);
+            INFO(r.error().message);
+            if (c["value_error"].get<bool>()) {
+                // Llega al agente: el mismo texto (y el mismo ToolError).
+                CHECK(r.error().code != gc::ErrorCode::Internal);
+                CHECK(r.error().message == c["error"].get<std::string>());
+            } else {
+                CHECK(r.error().code == gc::ErrorCode::Internal); // el servidor lo oculta
+            }
+        } else {
+            REQUIRE(r);
+            same(c["result"], *r, what);
+        }
+    }
+    CHECK(errors > 30);
+    std::error_code ec;
+    std::filesystem::remove_all(tmp, ec);
 }

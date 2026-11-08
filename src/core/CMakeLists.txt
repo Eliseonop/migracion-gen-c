@@ -96,6 +96,7 @@ add_library(gc_core
     src/mcp_help.cpp
     src/mcp_registry.cpp
     src/mcp_resources.cpp
+    src/mcp_tools_read.cpp
 )
 add_library(gc::core ALIAS gc_core)
 
