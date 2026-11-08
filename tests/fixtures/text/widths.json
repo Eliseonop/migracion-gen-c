@@ -9,12 +9,12 @@
    "crc32": 1074857411
   },
   "system/arial.ttf": {
-   "size": 1016724,
-   "crc32": 2582205424
+   "size": 1045720,
+   "crc32": 2343507647
   },
   "system/arialbd.ttf": {
-   "size": 960832,
-   "crc32": 2184961989
+   "size": 989780,
+   "crc32": 3510646685
   },
   "system/ariblk.ttf": {
    "size": 167592,
@@ -45,12 +45,12 @@
    "crc32": 3209318799
   },
   "system/cour.ttf": {
-   "size": 828760,
-   "crc32": 1908662345
+   "size": 817164,
+   "crc32": 3882946898
   },
   "system/courbd.ttf": {
-   "size": 827444,
-   "crc32": 2704703143
+   "size": 818292,
+   "crc32": 2452193766
   },
   "system/georgia.ttf": {
    "size": 219712,
@@ -65,16 +65,16 @@
    "crc32": 2658836555
   },
   "system/segoeui.ttf": {
-   "size": 959752,
-   "crc32": 3258591233
+   "size": 960076,
+   "crc32": 4101891174
   },
   "system/segoeuib.ttf": {
-   "size": 947092,
-   "crc32": 454170067
+   "size": 947364,
+   "crc32": 717028906
   },
   "system/seguibl.ttf": {
-   "size": 318708,
-   "crc32": 2275827316
+   "size": 318948,
+   "crc32": 3222523725
   },
   "system/tahoma.ttf": {
    "size": 919260,
@@ -85,12 +85,12 @@
    "crc32": 1362662326
   },
   "system/times.ttf": {
-   "size": 1177252,
-   "crc32": 534548511
+   "size": 1190736,
+   "crc32": 2108509057
   },
   "system/timesbd.ttf": {
-   "size": 1156684,
-   "crc32": 2682727603
+   "size": 1170096,
+   "crc32": 3680064964
   },
   "system/trebuc.ttf": {
    "size": 254396,
@@ -66993,8 +66993,8 @@
  "fallback": {
   "arial.ttf": {
    "path": "arial.ttf",
-   "size": 1016724,
-   "crc32": 2582205424
+   "size": 1045720,
+   "crc32": 2343507647
   },
   "Anton-Regular.ttf": null
  }
