@@ -158,7 +158,7 @@ Result<EditResult> run(const Timeline& tl, const ops::SetClipBlend& op, IdSource
         }
         const std::string mode = has_text(op.blend_mode) ? *op.blend_mode : "normal";
         if (!in(kBlendModes, mode)) {
-            return invalid("blend_mode debe ser uno de los modos de fusión");
+            return invalid("blend_mode debe ser uno de " + py_list_repr(kBlendModes));
         }
         c.mut().blend_mode = mode == "normal" ? std::nullopt : std::optional<std::string>(mode);
         return {};
@@ -238,14 +238,14 @@ Result<EditResult> run(const Timeline& tl, const ops::UpdateClip& op, IdSource& 
     if (!patch.is_object()) {
         return invalid("patch debe ser un objeto");
     }
-    std::string unknown;
+    std::vector<std::string> unknown;
     for (const auto& [key, value] : patch.items()) {
         if (!in(kKeys, key)) {
-            unknown += (unknown.empty() ? "'" : ", '") + key + "'";
+            unknown.push_back(key);
         }
     }
     if (!unknown.empty()) {
-        return invalid("patch: claves no válidas [" + unknown + "]");
+        return invalid("patch: claves no válidas " + py_list_repr(unknown) + " (usa " + py_list_repr(kKeys) + ")");
     }
     if (patch.empty()) {
         return invalid("patch vacío: indica al menos una propiedad a cambiar");
@@ -603,7 +603,7 @@ Result<EditResult> run(const Timeline& tl, const ops::SetClipEffects& op, IdSour
             for (const Json& f : *items) {
                 const Json& fid = f.is_object() ? field(f, "id") : f;
                 if (!fid.is_string() || !in(kFilterIds, fid.get<std::string>())) {
-                    return invalid("filtro desconocido: " + fid.dump());
+                    return invalid("filtro desconocido: " + py_str(fid) + " (usa " + py_list_repr(kFilterIds) + ")");
                 }
                 double amount = 1.0;
                 if (f.is_object()) {

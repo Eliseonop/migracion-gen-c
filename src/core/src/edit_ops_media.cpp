@@ -111,7 +111,8 @@ Result<Json> fx_entry(const FxCatalog& catalog, const Json& eid, const Json& par
                       const Json& to, const Json& uid, IdSource& ids) {
     const Json* man = catalog.effect(eid);
     if (man == nullptr) {
-        return invalid("efecto desconocido: " + (py_truthy(eid) ? py_str(eid) : std::string()));
+        return invalid("efecto desconocido: " + (py_truthy(eid) ? py_str(eid) : std::string()) +
+                       " (list_effects da el catálogo)");
     }
     if (field(*man, "engine") == "generator") {
         return invalid(py_str(eid) + " es un generador: va en su propio clip, no sobre otro");
@@ -238,10 +239,10 @@ Result<EditResult> run(const Timeline& tl, const ops::SetClipAnimation& op, IdSo
     if (py_truthy(op.animation)) {
         anim = catalog->anim(op.animation);
         if (anim == nullptr) {
-            return invalid("animación desconocida: " + py_str(op.animation));
+            return invalid("animación desconocida: " + py_str(op.animation) + " (list_effects da el catálogo)");
         }
         if (field(*anim, "slot") != slot) {
-            return invalid(py_str(op.animation) + " es de otra ranura, no " + slot);
+            return invalid(py_str(op.animation) + " es de la ranura " + py_str(field(*anim, "slot")) + ", no " + slot);
         }
     }
     Timeline out = tl;
@@ -307,7 +308,8 @@ Result<EditResult> run(const Timeline& tl, const ops::FreezeFrame& op, IdSource&
     GC_TRY(at, to_py_float(op.at_time, "at_time"));
     double rel = at - v.start;
     if (rel < -1e-3 || rel > tdur + 1e-3) {
-        return invalid("at_time debe caer dentro del clip");
+        return invalid("at_time " + py_repr(op.at_time) + " debe caer dentro del clip [" + py_repr(v.start) + ", " +
+                       py_repr(v.start + tdur) + "]");
     }
     rel = std::min(std::max(rel, 0.0), tdur);
     const double sp = clip_speed(v);
@@ -579,7 +581,7 @@ Result<EditResult> run(const Timeline& tl, const ops::AddCinemaBars& op, IdSourc
     } else {
         const auto f = py_float(op.ratio);
         if (!f) {
-            return invalid("ratio: usa 2.39, 2, 1.85, 16:9 o un número");
+            return invalid("ratio: usa ['2.39', '2', '1.85', '16:9'] o un número");
         }
         r = *f;
     }

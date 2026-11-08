@@ -4225,6 +4225,97 @@ def _mcp_tools_read_fixtures(mc) -> dict:
             "history_files": files, "calls": out}
 
 
+def _mcp_tools_edit_fixtures(mc) -> dict:
+    """Las tools REALES de tools_edit.py paso a paso sobre un data/ temporal, con uuid4 en secuencia.
+    Lo que lee el material va sustituido igual que en C++: _probe_duration (2,5 s) y, para seguir un
+    audio, compose._clip_path y clip_motion.sample_rms_envelope. Cada paso da su resultado o su error y
+    el estado del archivo: la timeline (si cambió) y el tamaño del historial."""
+    import tempfile
+
+    from app import clip_motion, compose, fx_catalog, projects, settings, sfx, timeline_store
+    from app.mcp_server import tools_edit
+
+    registered: list[list[str]] = []
+
+    def fake_tool(_mcp, access="read", **_kw):
+        return lambda fn: registered.append([fn.__name__, access]) or fn
+
+    def envelope(_path, src, dur):
+        return [(0.0, round(src / 100, 4)), (round(dur / 2, 3), 1.0), (round(dur, 3), 0.5)]
+
+    def clip_path(_proj, clip, *_a):
+        return None if clip.filename == "falta.mp3" else Path(__file__)
+
+    def fill(v, names):
+        if isinstance(v, str) and v.startswith("$"):
+            return names.get(v[1:], v[1:])
+        if isinstance(v, list):
+            return [fill(x, names) for x in v]
+        if isinstance(v, dict):
+            return {k: fill(x, names) for k, x in v.items()}
+        return v
+
+    with tempfile.TemporaryDirectory() as td, _Patches() as p:
+        data = Path(td) / "data"
+        (data / "history").mkdir(parents=True)
+        base = Path(td) / "sfx"
+        for rel in mc.EDIT_SFX_FILES:
+            (base / rel).parent.mkdir(parents=True, exist_ok=True)
+            (base / rel).write_bytes(b"x")
+        p.set(projects, "_FILE", data / "projects.json")
+        p.set(timeline_store, "HISTORY_DIR", data / "history")
+        p.set(settings, "_FILE", data / "settings.json")
+        p.set(sfx, "get_base", lambda: base)
+        p.set(sfx, "resolve", _REAL_SFX.get("resolve", sfx.resolve))  # otras fixtures lo sustituyen
+        p.set(tools_edit, "_probe_duration", lambda _path: 2.5)
+        p.set(tools_edit, "tool", fake_tool)
+        p.set(compose, "_clip_path", clip_path)
+        p.set(clip_motion, "sample_rms_envelope", envelope)
+        p.set(uuid, "uuid4", _SequentialUuid())
+        tools_edit.register(None)
+        settings._FILE.write_text(json.dumps(mc.EDIT_SETTINGS), encoding="utf-8")
+        projects._FILE.write_text(json.dumps({"projects": mc.EDIT_PROJECTS}, ensure_ascii=False), encoding="utf-8")
+
+        def state(pid: str, last: dict) -> dict:
+            raw = next((x for x in json.loads(projects._FILE.read_text(encoding="utf-8"))["projects"]
+                        if x["id"] == pid), None)
+            out: dict = {}
+            tl = raw.get("timeline") if raw else None
+            if tl != last.get(pid):
+                out["timeline"] = tl
+                last[pid] = tl
+            hist = data / "history" / f"{pid}.json"
+            if hist.exists():
+                h = json.loads(hist.read_text(encoding="utf-8"))
+                out["history"] = {"undo": len(h["undo"]), "redo": len(h["redo"]),
+                                  "checkpoints": sorted(h["checkpoints"])}
+            return out
+
+        names: dict[str, str] = {}
+        last: dict = {}
+        steps = []
+        for tool, kwargs, save in mc.EDIT_STEPS:
+            args = fill(kwargs, names)
+            case: dict = {"tool": tool, "args": args}
+            try:
+                res = getattr(tools_edit, tool)(**args)
+                case["result"] = _pure(res)
+                for name, value in zip(save, res.get("changed") or []):
+                    names[name] = value
+            except Exception as e:  # noqa: BLE001 — el C++ debe fallar igual
+                case["error"] = str(e)
+                case["error_type"] = type(e).__name__
+                case["value_error"] = isinstance(e, ValueError)
+                case["param"] = getattr(e, "param", None)
+            if "project_id" in args:
+                case.update(state(args["project_id"], last))
+            steps.append(case)
+        p.set(fx_catalog, "catalog", lambda: mc.EDIT_CATALOG)
+        catalog_calls = [{"args": a, "result": _pure(tools_edit.list_effects(**a))} for a in mc.EDIT_CATALOG_CALLS]
+    return {"settings": mc.EDIT_SETTINGS, "sfx_files": mc.EDIT_SFX_FILES, "projects": mc.EDIT_PROJECTS,
+            "registered": registered, "steps": steps, "catalog": mc.EDIT_CATALOG, "catalog_calls": catalog_calls}
+
+
 def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
     """El núcleo sin red del servidor MCP con los módulos REALES (mcp_cases.py), un archivo por
     módulo de app/mcp_server: dto, capabilities, help, registry, resources y audit."""
@@ -4233,7 +4324,7 @@ def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
     return {"dto": _mcp_dto_fixtures(ctx, mc), "capabilities": _mcp_capabilities_fixtures(ctx, mc),
             "help": _mcp_help_fixtures(mc), "registry": _mcp_registry_fixtures(mc),
             "resources": _mcp_resources_fixtures(ctx, mc), "audit": _mcp_audit_fixtures(mc),
-            "tools_read": _mcp_tools_read_fixtures(mc)}
+            "tools_read": _mcp_tools_read_fixtures(mc), "tools_edit": _mcp_tools_edit_fixtures(mc)}
 
 
 # --- Salida -----------------------------------------------------------------------------------
@@ -4414,6 +4505,7 @@ def main() -> None:
             "resources": lambda d: len(d["calls"]),
             "audit": lambda d: len(d["extract_meta"]) + len(d["steps"]),
             "tools_read": lambda d: len(d["calls"]),
+            "tools_edit": lambda d: len(d["steps"]),
         }
         errors = {
             "dto": lambda d: sum("error" in (p["timeline_detail"] or {}) for p in d["projects"]),
@@ -4423,6 +4515,7 @@ def main() -> None:
             "resources": lambda d: sum("error" in c for c in d["calls"]),
             "audit": lambda d: sum("error" in s for s in d["steps"]),
             "tools_read": lambda d: sum("error" in c for c in d["calls"]),
+            "tools_edit": lambda d: sum("error" in c for c in d["steps"]),
         }
         for name, payload in mcp.items():
             write(REPO / "tests" / "fixtures" / "mcp" / f"{name}.json", payload, counts[name](payload),

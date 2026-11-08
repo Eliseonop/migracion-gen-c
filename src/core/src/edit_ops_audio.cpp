@@ -41,14 +41,14 @@ Result<void> apply_audio(TimelineClip& c, const AudioPatch& p, IdSource& ids) {
         if (!p.audio_fx.is_object()) {
             return invalid("audio_fx debe ser un objeto");
         }
-        std::string bad;
+        std::vector<std::string> bad;
         for (const auto& [key, value] : p.audio_fx.items()) {
             if (std::ranges::find(kAudioFxIds, key) == kAudioFxIds.end()) {
-                bad += (bad.empty() ? "'" : ", '") + key + "'";
+                bad.push_back(key);
             }
         }
         if (!bad.empty()) {
-            return invalid("audio_fx: efectos no válidos [" + bad + "]");
+            return invalid("audio_fx: efectos no válidos " + py_list_repr(bad) + " (usa " + py_list_repr(kAudioFxIds) + ")");
         }
         Json base = !p.replace_fx && c.audio_fx && c.audio_fx->is_object() ? *c.audio_fx : Json::object();
         for (const auto& [key, value] : p.audio_fx.items()) {
@@ -134,7 +134,7 @@ Result<EditResult> run(const Timeline& tl, const ops::SetClipAudioFx& op, IdSour
         }
         GC_TRY(v0, to_py_float(op.ramp.contains("from") ? op.ramp["from"] : Json(0.0), "ramp.from"));
         if (!(0 <= *ramp_start && *ramp_start < *ramp_end && *ramp_end <= dur + 1e-6)) {
-            return invalid("ramp: 0 <= start < end <= duración del clip");
+            return invalid(std::format("ramp: 0 <= start < end <= {:.2f} (duración del clip)", dur));
         }
         if (!op.audio_fx.is_object()) {
             return invalid("ramp necesita audio_fx");

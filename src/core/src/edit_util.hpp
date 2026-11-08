@@ -14,6 +14,16 @@ namespace gc::core::detail {
 
 inline double round3(double v) { return py_round(v, 3); }
 
+// repr(list(items)) de Python para unos textos: «['a', 'b']».
+template <class Range>
+[[nodiscard]] std::string py_list_repr(const Range& items) {
+    std::string out = "[";
+    for (const auto& item : items) {
+        out += (out.size() > 1 ? ", " : "") + py_repr(Json(std::string(item)));
+    }
+    return out + "]";
+}
+
 inline std::unexpected<Error> invalid(std::string message) {
     return fail(ErrorCode::InvalidArgument, std::move(message));
 }

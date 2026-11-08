@@ -11,21 +11,29 @@
 //   tests/fixtures/mcp/resources.json     resources.py: el catálogo y el texto de cada resource
 //   tests/fixtures/mcp/tools_read.json  tools_capabilities, tools_context y tools_read: las tools de lectura
 //                                         sobre un data/ temporal, con el resultado o el error de cada llamada
+//   tests/fixtures/mcp/tools_edit.json  tools_edit y timeline_store: las tools de edición paso a paso,
+//                                         con el resultado o el error y el archivo tras cada una
 //   tests/fixtures/mcp/audit.json         audit.py: extract_meta y los pasos sobre un data/ temporal, con
 //                                         el reloj, los uuid y los jobs sustituidos, y el archivo tras cada uno
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <map>
+#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
+#include <system_error>
+#include <utility>
 #include <vector>
 
+#include "gc/core/fx_catalog.hpp"
 #include "gc/core/history_store.hpp"
 #include "gc/core/ids.hpp"
 #include "gc/core/io.hpp"
@@ -35,6 +43,7 @@
 #include "gc/core/mcp_help.hpp"
 #include "gc/core/mcp_registry.hpp"
 #include "gc/core/mcp_resources.hpp"
+#include "gc/core/mcp_tools_edit.hpp"
 #include "gc/core/mcp_tools_read.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/serialize.hpp"
@@ -642,6 +651,123 @@ TEST_CASE("paridad MCP: las tools de lectura (tools_capabilities, tools_context 
         }
     }
     CHECK(errors > 30);
+    std::error_code ec;
+    std::filesystem::remove_all(tmp, ec);
+}
+
+TEST_CASE("paridad MCP: las tools de edición (tools_edit y timeline_store)", "[parity][mcp]") {
+    const Json f = load("tools_edit");
+    const auto tmp = std::filesystem::temp_directory_path() / "gc_mcp_tools_edit_parity";
+    std::filesystem::remove_all(tmp);
+    const auto data = tmp / "data";
+    std::filesystem::create_directories(data / "history");
+    const auto write_json = [](const std::filesystem::path& file, const Json& value) {
+        auto text = gc::core::py_json_dumps(value);
+        REQUIRE(text);
+        std::ofstream(file, std::ios::binary) << *text;
+    };
+    write_json(data / "settings.json", f["settings"]);
+    write_json(data / "projects.json", Json{{"projects", f["projects"]}});
+    for (const Json& rel : f["sfx_files"]) {
+        const auto file = tmp / "sfx" / gc::core::path_from_utf8(rel.get<std::string>());
+        std::filesystem::create_directories(file.parent_path());
+        std::ofstream(file, std::ios::binary) << "x";
+    }
+    auto catalog = gc::core::FxCatalog::load(gc::core::path_from_utf8(GC_RESOURCES_DIR) / "fx" / "catalog.json");
+    REQUIRE(catalog);
+    gc::core::set_fx_catalog(std::make_shared<const gc::core::FxCatalog>(std::move(*catalog)));
+
+    gc::core::ProjectsStore store(data / "projects.json", tmp / "clips");
+    gc::core::SequentialIdSource ids;
+    mcp::EditToolsEnv env{.store = store, .data_dir = data, .ids = ids, .sfx_base = tmp / "sfx"};
+    env.probe_duration = [](const std::filesystem::path&) { return 2.5; };
+    env.audio_envelope = [](const gc::core::Project&, const gc::core::TimelineClip& audio, double src, double dur)
+        -> std::optional<std::vector<std::pair<double, double>>> {
+        if (audio.filename == "falta.mp3") {
+            return std::nullopt;
+        }
+        const auto round_to = [](double v, double scale) { return std::round(v * scale) / scale; };
+        return std::vector<std::pair<double, double>>{
+            {0.0, round_to(src / 100, 10000)}, {round_to(dur / 2, 1000), 1.0}, {round_to(dur, 1000), 0.5}};
+    };
+
+    // Las tools de tools_edit.register: las hechas, en su orden, más las que faltan.
+    std::vector<std::pair<std::string, std::string>> done;
+    for (const Json& t : f["registered"]) {
+        const auto name = t[0].get<std::string>();
+        if (std::ranges::find(mcp::kPendingEditTools, name) == mcp::kPendingEditTools.end()) {
+            done.emplace_back(name, t[1].get<std::string>());
+        }
+    }
+    REQUIRE(done.size() == mcp::edit_tools().size());
+    for (std::size_t i = 0; i < done.size(); ++i) {
+        CHECK(done[i].first == mcp::edit_tools()[i].name);
+        CHECK(done[i].second == mcp::edit_tools()[i].access);
+    }
+
+    std::size_t errors = 0;
+    std::map<std::string, Json> timelines;
+    for (const Json& c : f["steps"]) {
+        const std::string tool = c["tool"].get<std::string>();
+        const Json& a = c["args"];
+        const auto r = mcp::call_edit_tool(env, tool, a);
+        const std::string what = tool + a.dump();
+        INFO(what);
+        if (c.contains("error")) {
+            ++errors;
+            REQUIRE_FALSE(r);
+            INFO(r.error().message);
+            REQUIRE(c["value_error"].get<bool>()); // ningún paso es un crash
+            CHECK(r.error().code != gc::ErrorCode::Internal);
+            CHECK(r.error().message == c["error"].get<std::string>());
+            CHECK(r.error().path == (c["param"].is_string() ? c["param"].get<std::string>() : std::string()));
+        } else {
+            if (!r) {
+                INFO(r.error().message);
+                REQUIRE(r);
+            }
+            same(c["result"], *r, what);
+        }
+        if (!a.contains("project_id")) {
+            continue;
+        }
+        const auto pid = a["project_id"].get<std::string>();
+        if (c.contains("timeline")) {
+            timelines[pid] = c["timeline"];
+        }
+        const Json saved = store.load();
+        for (const Json& p : saved["projects"]) {
+            if (p["id"] == pid) {
+                same(timelines.contains(pid) ? timelines[pid] : Json(), p.value("timeline", Json()), what + " (archivo)");
+            }
+        }
+        const auto file = gc::core::history_path(data, pid);
+        CHECK(std::filesystem::exists(file) == c.contains("history"));
+        if (c.contains("history")) {
+            const auto history = gc::core::load_history(file);
+            CHECK(history.undo_stack().size() == c["history"]["undo"].get<std::size_t>());
+            CHECK(history.redo_stack().size() == c["history"]["redo"].get<std::size_t>());
+            auto names = history.checkpoints();
+            std::ranges::sort(names);
+            CHECK(Json(names) == c["history"]["checkpoints"]);
+        }
+    }
+    CHECK(errors > 60);
+
+    gc::core::set_fx_catalog(std::make_shared<const gc::core::FxCatalog>(f["catalog"]));
+    for (const Json& c : f["catalog_calls"]) {
+        const auto r = mcp::call_edit_tool(env, "list_effects", c["args"]);
+        REQUIRE(r);
+        same(c["result"], *r, "list_effects" + c["args"].dump());
+    }
+    // Los demás tests no deben ver este catálogo.
+    auto real = gc::core::FxCatalog::load(gc::core::path_from_utf8(GC_RESOURCES_DIR) / "fx" / "catalog.json");
+    REQUIRE(real);
+    gc::core::set_fx_catalog(std::make_shared<const gc::core::FxCatalog>(std::move(*real)));
+
+    const auto unknown = mcp::call_edit_tool(env, "freeze_frame", Json{{"project_id", "e-main"}});
+    REQUIRE_FALSE(unknown);
+    CHECK(unknown.error().code == gc::ErrorCode::NotFound);
     std::error_code ec;
     std::filesystem::remove_all(tmp, ec);
 }

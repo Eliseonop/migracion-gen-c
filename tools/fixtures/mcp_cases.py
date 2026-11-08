@@ -521,3 +521,254 @@ TOOL_CALLS = (
         ["p-busca", "hola", " 3 "], ["p-busca", "hola", "+2"], ["p-busca", "hola", "1_0"],
         ["p-busca", "hola", "2.0"])]
 )
+
+
+# --- Las tools de edición (tools_edit.py), paso a paso sobre un data/ temporal --------------------
+#
+# Cada paso es [tool, argumentos, nombres]: `nombres` guarda los ids de `changed` por posición y
+# «$nombre» los usa en los pasos siguientes. El proyecto es e-main si no se dice otro.
+
+def _clip(index, start, end, **kw):
+    return {"index": index, "filename": f"c{index}.mp4", "url": f"/m/c{index}.mp4", "start": start, "end": end, **kw}
+
+
+# Un catálogo con lo que el de verdad no trae: generadores, sin tags, sin dur y sin categorías.
+EDIT_CATALOG = {
+    "effects": [
+        {"id": "gen", "name": "Generador", "category": "basic", "description": "Hace cosas", "engine": "generator",
+         "tags": ["cosas"], "params": []},
+        {"id": "sin-tags", "name": "Ñandú", "category": "basic", "description": "Sin etiquetas",
+         "params": [{"id": "a", "label": "A", "type": "range"}, {"id": "b", "type": "bool"}]},
+        {"id": "con-tags", "name": "Otro", "category": "retro", "description": "", "tags": ["COSAS", "Más"], "params": []},
+    ],
+    "anims": [
+        {"id": "a1", "name": "Uno", "slot": "in", "dur": 0.5, "tags": ["cosas"]},
+        {"id": "a2", "name": "Dos", "slot": "in"},
+        {"id": "a3", "name": "Ñu", "slot": "out", "dur": None},
+    ],
+}
+EDIT_CATALOG_CALLS = [{}, {"query": "cosas"}, {"query": "ÑANDÚ"}, {"query": "ñu"}, {"category": "retro"},
+                      {"category": "basic", "query": "etiquetas"}, {"query": "más cosas"}, {"query": "sin-tags ñandú"},
+                      {"query": "generador"}, {"category": "basic"}]
+
+EDIT_SETTINGS = {"export": {"fps": 24, "quality": "standard"}}
+EDIT_SFX_FILES = ["golpes/pum.wav", "viento.mp3"]
+
+EDIT_PROJECTS = [
+    {"id": "e-main", "name": "Edición", "created_at": "2026-01-01T00:00:00+00:00",
+     "clips": [
+         _clip(0, 2.0, 12.5, label="Primer tramo"),
+         _clip(1, 0.0, 100.0, id="ref-1", in_point=20.125, out_point=28.5, label="",
+               face_track={"start": 20.125, "end": 28.5, "fps": 30.0}, reframe={"zoom": 0.5, "pan_mode": "direct"}),
+         _clip(2, 3.0, 4.5, id="c-2", reframe={"zoom": 0.75}),
+     ],
+     "audios": [
+         {"id": "a1", "filename": "voz.mp3", "url": "/m/voz.mp3", "duration": 4.25, "label": "Voz"},
+         {"id": "a0", "filename": "sin.mp3", "url": "/m/sin.mp3"},
+         {"id": "a-falta", "filename": "falta.mp3", "url": "/m/falta.mp3", "duration": 2.0, "label": ""},
+     ],
+     "images": [{"id": "i1", "filename": "foto.png", "url": "/m/foto.png"},
+                {"id": "i2", "filename": "otra.png", "url": "/m/otra.png", "label": "Portada"}]},
+    {"id": "e-fresh", "name": "Sin timeline", "created_at": "2026-01-01T00:00:00+00:00"},
+    {"id": "e-solo", "name": "Para seguir sin timeline", "created_at": "2026-01-01T00:00:00+00:00"},
+    {"id": "e-tl", "name": "Con timeline", "created_at": "2026-01-01T00:00:00+00:00",
+     "timeline": {"fps": 25, "width": 1280, "height": 720,
+                  "tracks": [{"id": "tv", "kind": "video", "name": "V1"}, {"id": "ta", "kind": "audio", "name": "A1"}],
+                  "clips": [{"id": "free", "track_id": "tv", "kind": "video", "asset_kind": "clips", "asset_id": "0",
+                             "filename": "c0.mp4", "layout": "overlay", "start": 0.0, "in_point": 0.0, "out_point": 4.0,
+                             "source_duration": 4.0},
+                            {"id": "free2", "track_id": "tv", "kind": "image", "asset_kind": "images", "asset_id": "i1",
+                             "filename": "f.png", "layout": "overlay", "start": 5.0, "in_point": 0.0, "out_point": 3.0,
+                             "source_duration": 5.0},
+                            {"id": "tl-a", "track_id": "ta", "kind": "audio", "asset_kind": "audios", "asset_id": "a1",
+                             "filename": "v.mp3", "start": 1.0, "in_point": 0.5, "out_point": 3.0,
+                             "source_duration": 4.0},
+                            {"id": "free3", "track_id": "tv", "kind": "image", "asset_kind": "images", "asset_id": "i1",
+                             "filename": "f.png", "layout": "overlay", "start": 3.0, "in_point": 0.0, "out_point": 2.0,
+                             "source_duration": 5.0}]}},
+]
+
+
+def _e(tool, names=None, pid="e-main", **kw):
+    return [tool, {"project_id": pid, **kw}, names or []]
+
+
+def _fx(tool, **kw):
+    return [tool, kw, []]
+
+
+_KF = {"enabled": True, "items": [
+    {"id": "k1", "t": 0.0, "interpolation": "linear", "props": {"opacity": 0.0}},
+    {"id": "k2", "t": 1.0, "interpolation": "linear", "props": {"opacity": 1.0}}]}
+_SEGS = [{"start": 0.0, "end": 1.0, "text": "hola mundo",
+          "words": [{"word": "hola", "start": 0.0, "end": 0.5}, {"word": "mundo", "start": 0.5, "end": 1.0}]},
+         {"start": 1.0, "end": 2.0, "text": "adiós"}]
+
+EDIT_STEPS = [
+    # Sin nada que deshacer y sin timeline (e-fresh sigue sin ella hasta añadir una pista: fps de los ajustes).
+    _e("undo", pid="e-fresh"), _e("redo", pid="e-fresh"), _e("checkpoint", ["cp0"], pid="e-fresh", name="vacío"),
+    _e("restore_checkpoint", pid="e-fresh", name="nada"), _e("restore_checkpoint", pid="e-fresh", name="vacío"),
+    _e("undo", pid="e-fresh"), _e("redo", pid="e-fresh"),
+    _e("add_track", ["tf"], pid="e-fresh", kind="video"), _e("undo", pid="e-fresh"),
+    # Proyecto inexistente: cada capa con su texto.
+    _e("undo", pid="no-existe"), _e("redo", pid="no-existe"), _e("checkpoint", pid="no-existe", name="x"),
+    _e("restore_checkpoint", pid="no-existe", name="x"), _e("move_clip", pid="no-existe", clip_id="x", start=1.0),
+    _e("add_to_timeline", pid="no-existe", asset_kind="clips", asset_id="0"),
+    _e("animate_clip", pid="no-existe", clip_id="x", motion="pop"),
+    _e("animate_clip", pid="no-existe", clip_id="x", motion="pop", follow_audio_id="y"),
+    _e("animate_clip", pid="e-solo", clip_id="x", motion="pop", follow_audio_id="y"),
+    # Material → timeline.
+    _e("add_to_timeline", ["tv1", "v1"], asset_kind="clips", asset_id="0"),
+    _e("add_to_timeline", ["v2"], asset_kind="clips", asset_id="ref-1", start=20.0),
+    _e("add_to_timeline", ["v3"], asset_kind="clips", asset_id="2", start=40.0, in_point=0.25, out_point=1.0),
+    _e("add_to_timeline", ["v3b"], asset_kind="clips", asset_id="c-2", start=45.0, in_point=0.1234, out_point=1.2345),
+    _e("add_to_timeline", ["ta1", "a1"], asset_kind="audios", asset_id="a1"),
+    _e("add_to_timeline", ["a2"], asset_kind="audios", asset_id="a1", start=6.0, in_point=1.5, out_point=2.0),
+    _e("add_to_timeline", ["a3"], asset_kind="audios", asset_id="a0", start=10.0, out_point=2.0),
+    _e("add_to_timeline", ["af"], asset_kind="audios", asset_id="a-falta", start=20.0),
+    _e("add_to_timeline", ["im1"], asset_kind="images", asset_id="i1", start=60.0),
+    _e("add_to_timeline", ["im2"], asset_kind="images", asset_id="i2", start=70.0, track_id="$tv1"),
+    _e("add_to_timeline", ["s1"], asset_kind="sfx", asset_id="golpes/pum.wav", start=30.0),
+    _e("add_to_timeline", ["s2"], asset_kind="sfx", asset_id="viento.mp3", start=34.0, track_id="$ta1", out_point=1.0),
+    _e("add_to_timeline", ["solape"], asset_kind="clips", asset_id="0", start=1.0),
+    _e("add_to_timeline", asset_kind="clips", asset_id="99"),
+    _e("add_to_timeline", asset_kind="audios", asset_id="no"),
+    _e("add_to_timeline", asset_kind="images", asset_id="no"),
+    _e("add_to_timeline", asset_kind="sfx", asset_id="nada.wav"),
+    _e("add_to_timeline", asset_kind="sfx", asset_id="../fuera.wav"),
+    _e("add_to_timeline", asset_kind="raro", asset_id="0"),
+    _e("add_to_timeline", asset_kind="clips", asset_id="0", in_point=5.0, out_point=1.0),
+    _e("add_to_timeline", asset_kind="audios", asset_id="a0"),
+    _e("add_to_timeline", asset_kind="clips", asset_id="0", track_id="nada"),
+    _e("add_to_timeline", asset_kind="audios", asset_id="a1", track_id="$tv1", start=90.0),
+    # Pistas.
+    _e("add_track", ["tt1"], kind="text"), _e("add_track", ["tv2"], kind="video", name="V extra"),
+    _e("add_track", ["ta2"], kind="audio", name="SFX"), _e("add_track", kind="raro"),
+    _e("rename_track", track_id="$ta2", name="Música"), _e("rename_track", track_id="nada", name="x"),
+    _e("reorder_track", track_id="$tv2", target_track_id="$tv1"),
+    _e("reorder_track", track_id="$tt1", target_track_id="$tv1", place="below"),
+    _e("reorder_track", track_id="$tv2", target_track_id="$tv2"),
+    _e("reorder_track", track_id="$tv2", target_track_id="nada"),
+    _e("reorder_track", track_id="$tv2", target_track_id="$tv1", place="raro"),
+    _e("link_tracks", track_id="$ta2", to_track_id="$tt1"), _e("link_tracks", track_id="$ta2", to_track_id="nada"),
+    _e("unlink_track", track_id="$ta2"), _e("unlink_track", track_id="nada"),
+    # Clips.
+    _e("move_clip", clip_id="$v1", start=1.5), _e("move_clip", clip_id="$v3", track_id="$tv2"),
+    _e("move_clip", clip_id="$v3", start=41.0, track_id="$tv1"), _e("move_clip", clip_id="nada", start=1.0),
+    _e("move_clip", clip_id="$v1", start=-3.0), _e("move_clip", clip_id="$v1", track_id="$ta1"),
+    _e("split_clip", ["v1a", "v1b"], clip_id="$v1", at_time=4.0), _e("split_clip", clip_id="$v1a", at_time=500.0),
+    _e("split_clip", clip_id="nada", at_time=1.0),
+    _e("duplicate_clip", ["d1"], clip_id="$v3"), _e("duplicate_clip", ["d2"], clip_id="$im1", start=80.0),
+    _e("duplicate_clip", clip_id="nada"), _e("remove_clip", clip_id="$d1"), _e("remove_clip", clip_id="nada"),
+    _e("update_clip", clip_id="$v2", patch={"opacity": 0.5, "note": "la escena"}),
+    _e("update_clip", clip_id="$v2", patch={"speed": 2.0, "keep_pitch": True}),
+    _e("update_clip", clip_id="$v2", patch={"flip_h": True, "blend_mode": "screen", "disabled": True}),
+    _e("update_clip", clip_id="$v2", patch={"blend_mode": "raro"}), _e("update_clip", clip_id="nada", patch={}),
+    _e("update_clip", clip_id="$v2", patch={}), _e("update_clip", clip_id="$v2", patch={"campo_raro": 1}),
+    # Marcadores y atributos.
+    _e("set_timeline_markers", markers=[{"t": 1.0, "label": "A"}, {"t": 3.5, "color": "#ff0000"}]),
+    _e("set_timeline_markers", markers=[]), _e("set_timeline_markers", markers=[{"label": "sin t"}]),
+    _e("paste_clip_attributes", source_clip_id="$v2", target_clip_ids=["$v3", "$im1"]),
+    _e("paste_clip_attributes", source_clip_id="$v2", target_clip_ids=["$v3"], groups=["blend", "flip"]),
+    _e("paste_clip_attributes", source_clip_id="$v2", target_clip_ids=None),
+    _e("paste_clip_attributes", source_clip_id="nada", target_clip_ids=["$v3"]),
+    _e("paste_clip_attributes", source_clip_id="$v2", target_clip_ids=["nada"]),
+    # Capas y barras.
+    _e("add_adjustment_layer", ["adj"]),
+    _e("add_adjustment_layer", ["adj2"], start=50.0, duration=2.0, intensity=0.5,
+       filters=[{"id": "cinematic", "amount": 0.5}], effects={"brightness": 0.2}),
+    _e("add_adjustment_layer", start=1.0, duration=-1.0),
+    _e("add_cinema_bars", ["bars"]), _e("add_cinema_bars", ["bars2"], ratio="16:9", start=1.0, duration=3.0, animate=True),
+    _e("add_cinema_bars", ratio="raro"),
+    # Encuadre y recorte.
+    _e("reframe_clip", clip_id="$v3", zoom=1.5), _e("reframe_clip", clip_id="$v3", zoom=0.5),
+    _e("reframe_clip", clip_id="$v3", mode="manual", zoom=0.75,
+                                                     pan_from={"cx": 0.25, "cy": 0.5}, pan_to={"cx": 0.75, "cy": 0.5}),
+    _e("reframe_clip", clip_id="$v3", mode="raro"), _e("reframe_clip", clip_id="nada"),
+    _e("crop_clip", clip_ids=["$v3"], cx=0.5, cy=0.5, w=0.5, h=0.5), _e("crop_clip", clip_ids=["$v3"], reset=True),
+    _e("crop_clip", track_id="$tv1", cx=0.25, cy=0.25, w=0.5, h=0.5), _e("crop_clip", clip_ids=["nada"], w=0.5, h=0.5),
+    _e("crop_clip"),
+    _e("crop_clip", pid="e-tl", clip_ids=["free"], cx=0.5, cy=0.5, w=0.5, h=0.5),
+    _e("crop_clip", pid="e-tl", track_id="tv", cx=0.25, cy=0.25, w=0.5, h=0.25),
+    _e("crop_clip", pid="e-tl", clip_ids=["free"]), _e("crop_clip", pid="e-tl", clip_ids=["tl-a"], w=0.5, h=0.5),
+    _e("crop_clip", pid="e-tl", clip_ids=["free"], reset=True),
+    _e("add_to_timeline", ["tl-v"], pid="e-tl", asset_kind="clips", asset_id="0"),
+    _e("animate_clip", pid="e-tl", clip_id="free", motion="pulse", follow_audio_id="tl-a"),
+    _e("animate_clip", pid="e-tl", clip_id="free2", motion="pulse", follow_audio_id="tl-a"),
+    _e("animate_clip", pid="e-tl", clip_id="free3", motion="pulse", follow_audio_id="tl-a"),
+    # Subtítulos y formato.
+    _e("add_subtitles", ["sub1", "sub2"], source_clip_id="$v3", segments=_SEGS),
+    _e("add_subtitles", source_clip_id="$v3", segments=_SEGS, track_id="$tt1", transcript_id="tr1",
+       style={"fontSize": 40}),
+    _e("add_subtitles", source_clip_id="nada", segments=_SEGS), _e("add_subtitles", source_clip_id="$v3", segments=[]),
+    _e("set_project_format", aspect="16:9"), _e("set_project_format", resolution=1080), _e("set_project_format", fps=60),
+    _e("set_project_format", width=640, height=480), _e("set_project_format", aspect="raro"), _e("set_project_format"),
+    # Efectos y animaciones.
+    _e("set_clip_effects", clip_id="$v3", effects={"blur": 0.5, "sepia": 0.25}),
+    _e("set_clip_effects", clip_id="$v3", effects={"contrast": 1.2}),
+    _e("set_clip_effects", clip_id="$v3", effects={"hue": 10}, replace=True),
+    _e("set_clip_effects", clip_id="$v3", filters=[{"id": "cinematic", "amount": 0.5}]),
+    _e("set_clip_effects", clip_id="$v3", filters=[]), _e("set_clip_effects", clip_id="$a1", effects={"blur": 1}),
+    _e("set_clip_effects", clip_id="nada", effects={"blur": 1}),
+    _e("apply_effect", ["fx1"], clip_ids=["$v3"], effect="glitch_rgb", params={"amount": 0.25}, start=0.0, end=0.5),
+    _e("apply_effect", clip_ids=["$v3", "$im1"], effect="vhs"),
+    _e("apply_effect", clip_ids=["$v3"], effect="raro"), _e("apply_effect", clip_ids=["nada"], effect="vhs"),
+    _e("apply_effect", clip_ids=None, effect="vhs"), _e("apply_effect", clip_ids=["$v3"]),
+    _e("apply_effect", clip_ids=["$v3"], stack=[]),
+    _e("set_clip_animation", clip_ids=["$v3"], slot="in", animation="fade_in", duration=0.5),
+    _e("set_clip_animation", clip_ids=["$v3"], slot="in"), _e("set_clip_animation", clip_ids=["$v3"], slot="raro"),
+    _e("set_clip_animation", clip_ids=["$v3"], slot="in", animation="raro"),
+    _e("set_clip_animation", clip_ids=None, slot="in", animation="fade_in"),
+    _e("set_clip_masks", clip_id="$v3", masks=[{"type": "circle"}]), _e("set_clip_masks", clip_id="$v3"),
+    _e("set_clip_masks", clip_id="$v3", masks=[{"type": "raro"}]), _e("set_clip_masks", clip_id="nada"),
+    # Audio.
+    _e("set_clip_audio_fx", clip_id="$a1", audio_fx={"reverb": 0.5}),
+    _e("set_clip_audio_fx", clip_id="$a1", audio_fx={"echo": 0.25}, ramp={"start": 0.0, "end": 1.0}),
+    _e("set_clip_audio_fx", clip_id="$a1", audio_fx={"eq": 0.5}, replace=True),
+    _e("set_clip_audio_fx", clip_id="$a1", audio_fx={"raro": 0.5}), _e("set_clip_audio_fx", clip_id="$im1", audio_fx={"eq": 1}),
+    _e("set_clip_audio_fx", clip_id="nada", audio_fx={}),
+    _e("set_clip_volume", clip_id="$a1", volume=0.5), _e("set_clip_volume", clip_id="$a1", muted=True),
+    _e("set_clip_volume", clip_id="$a1", fade="in"), _e("set_clip_volume", clip_id="$a1", fade="out", fade_dur=1.0),
+    _e("set_clip_volume", clip_id="$a1", fade="raro"), _e("set_clip_volume", clip_id="$im1", volume=1.0),
+    _e("set_clip_volume", clip_id="nada", volume=1.0), _e("set_clip_volume", clip_id="$a1", volume=5.0),
+    _e("set_track_audio", track_id="$ta1", volume=0.75), _e("set_track_audio", track_id="$ta1", muted=False),
+    _e("set_track_audio", track_id="$ta1", audio_fx={"reverb": 0.25}),
+    _e("set_track_audio", track_id="$ta1", fade="out", fade_dur=0.25),
+    _e("set_track_audio", track_id="$tv1", volume=0.5), _e("set_track_audio", track_id="nada", volume=0.5),
+    # Keyframes y animación.
+    _e("set_clip_keyframes", clip_id="$v3", keyframes=_KF), _e("set_clip_keyframes", clip_id="$v3", keyframes=None),
+    _e("set_clip_keyframes", clip_id="nada", keyframes=None),
+    _e("animate_clip", clip_id="$v3", motion="zoom_in"), _e("animate_clip", clip_id="$v3", motion="pop", duration=0.5),
+    _e("animate_clip", clip_id="$v3", motion="spin", intensity=0.5, turns=2.0),
+    _e("animate_clip", clip_id="$v3", motion="raro"), _e("animate_clip", clip_id="nada", motion="pop"),
+    _e("animate_clip", clip_id="$v2", motion="pulse", follow_audio_id="$af"),
+    _e("animate_clip", clip_id="$v2", motion="pulse", follow_audio_id="$a1"),
+    _e("animate_clip", clip_id="$v2", motion="pulse", follow_audio_id="$s1"),
+    _e("animate_clip", clip_id="$v3", motion="pulse", follow_audio_id="$v2"),
+    _e("animate_clip", clip_id="$v2", motion="pulse", follow_audio_id="nada"),
+    _e("animate_clip", clip_id="nada", motion="pulse", follow_audio_id="$a1"),
+    _e("animate_clip", clip_id="$v2", motion="pulse", follow_audio_id="$im1"),
+    _e("animate_clip", clip_id="$v2", motion="pulse", follow_audio_id=""),
+    _e("animate_clip", clip_id="$v2", motion="pulse", follow_audio_id="$af2"),
+    # Figuras.
+    _e("add_shape", ["sh1"], shape={"type": "rect", "fill": "#ff0000"}),
+    _e("add_shape", ["sh2"], shape={"type": "star"}, track_id="$tv2", start=2.0, duration=1.5),
+    _e("add_shape", ["sh3"], points=[[0.0, 0.0], [1.0, 1.0]], start=5.0), _e("add_shape"),
+    _e("add_shape", shape={"type": "raro"}), _e("add_shape", shape={"type": "rect"}, track_id="nada"),
+    # Recetas.
+    _e("apply_recipe", recipe="cinema_grade"), _e("apply_recipe", recipe="raro"),
+    _e("apply_recipe", recipe="text_reflection", clip_ids=["$sub1"]),
+    _e("apply_recipe", recipe="film_strips", clip_ids=["$v3", "$im1"], params={"frames": 2}),
+    _e("apply_recipe", recipe="film_strips", clip_ids=None), _e("apply_recipe", recipe="subject_pop", clip_ids=["$v3"]),
+    _e("apply_recipe", recipe="pass_through_text", clip_ids=["$sub1"], params=None),
+    # Historial.
+    _e("checkpoint", ["cp1"], name="antes"), _e("checkpoint", name="otro ñ"), _e("checkpoint", name="antes"),
+    _e("remove_track", track_id="$tv2"), _e("remove_track", track_id="nada"),
+    _e("undo"), _e("redo"), _e("undo"), _e("undo"), _e("redo"), _e("redo"), _e("redo"),
+    _e("restore_checkpoint", name="antes"), _e("restore_checkpoint", name="nada"), _e("undo"), _e("redo"),
+    # El catálogo.
+    _fx("list_effects"), _fx("list_effects", category="glitch"), _fx("list_effects", category="raro"),
+    _fx("list_effects", query="GLITCH"), _fx("list_effects", query="vhs retro"), _fx("list_effects", query="  "),
+    _fx("list_effects", category="", query=None), _fx("list_effects", category="retro", query="film"),
+    _fx("list_effects", query="zoom"), _fx("list_effects", query="nada-de-nada"), _fx("list_effects", query="FADE in"),
+]

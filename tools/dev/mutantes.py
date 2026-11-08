@@ -986,11 +986,52 @@ MCP_TOOLS = [
     ("capacidades: el vacío pide describe", TR, "    if (py_truthy(domain)) {\n        if (!domain.is_string())", "    if (!domain.is_null()) {\n        if (!domain.is_string())"),
 ]
 
+TE = "src/core/src/mcp_tools_edit.cpp"
+MCP_EDIT = [
+    ("fps de una timeline nueva sin los ajustes", TE, 'fresh.fps = exported->at("fps").get<std::int64_t>();', "fresh.fps = 30;"),
+    ("sin apilar el estado anterior", TE, "history.record(std::make_shared<const Timeline>(std::move(*current)));\n    if (auto saved = persist(env, pid, history, &res->timeline)", "if (auto saved = persist(env, pid, history, &res->timeline)"),
+    ("la op no guarda la timeline", TE, "persist(env, pid, history, &res->timeline)", "persist(env, pid, history, nullptr)"),
+    ("deshacer y rehacer cambiados", TE, "undo ? history.undo(snapshot) : history.redo(snapshot)", "undo ? history.redo(snapshot) : history.undo(snapshot)"),
+    ("sin el aviso de nada que deshacer", TE, '{undo ? "nada que deshacer" : "nada que rehacer"}', "{}"),
+    ("el checkpoint no se guarda", TE, "if (auto saved = persist(env, pid, history, nullptr); !saved) {\n        return std::unexpected(saved.error());\n    }\n", ""),
+    ("volver al checkpoint no se deshace", TE, "history.record(std::make_shared<const Timeline>(std::move(*current)));\n    if (auto saved = persist(env, pid, history, state.get())", "if (auto saved = persist(env, pid, history, state.get())"),
+    ("checkpoint: primero el proyecto", TE, 'const TimelineSnapshot state = history.checkpoint_state(name);\n    if (state == nullptr) {', 'const TimelineSnapshot state = history.checkpoint_state(name);\n    if (auto cur = current_timeline(env, pid); !cur) {\n        return std::unexpected(cur.error());\n    }\n    if (state == nullptr) {'),
+    ("material: sin el id del clip", TE, ' && !(c.id && !c.id->empty() && *c.id == id)', ""),
+    ("material: un segmento sin desplazar", TE, "info.offset = *c.in_point;", "info.offset = 0.0;"),
+    ("material: un segmento dura lo del clip", TE, "info.source_duration = py_round(*c.out_point - *c.in_point, 3);", ""),
+    ("material: encuadre sin seguimiento", TE, "if (c.face_track && c.reframe) {", "if (c.reframe) {"),
+    ("material: la etiqueta vacía vale", TE, "return item.label && !item.label->empty() ? *item.label : item.filename;", "return item.label ? *item.label : item.filename;"),
+    ("material: imagen de 3 s", TE, "constexpr double kImageDefaultDur = 5.0;", "constexpr double kImageDefaultDur = 3.0;"),
+    ("material: sin el nombre del SFX", TE, ".name = py_path_stem(id)}", ".name = id}"),
+    ("material: asset_kind sin param", TE, '" (usa clips|audios|images|sfx)", "asset_kind")', '" (usa clips|audios|images|sfx)")'),
+    ("añadir: out_point igual vale", TE, "if (*op_end <= *ip) {", "if (*op_end < *ip) {"),
+    ("añadir: sin redondear", TE, 'clip["in_point"] = py_round(*ip + info->offset, 3);', 'clip["in_point"] = *ip + info->offset;'),
+    ("añadir: siempre una pista nueva", TE, "if (it != tracks.end()) {", "if (false) {"),
+    ("añadir: otro layout", TE, 'clip["layout"] = "fill";', 'clip["layout"] = "overlay";'),
+    ("añadir: sin marcar el segmento", TE, 'clip["ref_segment"] = true;', ""),
+    ("añadir: la pista nueva no se cuenta", TE, "changed.insert(changed.begin(), track->first);", ""),
+    ("seguir: el vídeo no vale", TE, 'if (audio->kind != "audio" && audio->kind != "video") {', 'if (audio->kind != "audio") {'),
+    ("seguir: sin alinear al clip", TE, "py_round(window->first - visual->start + t, 3)", "t"),
+    ("seguir: sin el aviso de no solapar", TE, 'out.warnings.emplace_back("el audio no se solapa con el clip; se usa desde el inicio del audio");', ""),
+    ("seguir: desde el principio del audio", TE, "window ? audio_src_at(*audio, window->first) : audio->in_point", "audio->in_point"),
+    ("animar: intensidad por defecto", TE, 'or_default("intensity", 1.0)', 'or_default("intensity", 0.5)'),
+    ("efectos: con los generadores", TE, 'arg(e, "engine") == "generator" || ', ""),
+    ("efectos: sin categoría", TE, ' || (py_truthy(category) && arg(e, "category") != category)', ""),
+    ("efectos: sin minúsculas en la búsqueda", TE, 'py_split(py_lower(query.is_string()', 'py_split((query.is_string()'),
+    ("efectos: con la etiqueta", TE, 'copy.erase("label");', ""),
+    ("efectos: sin las tags", TE, 'for (const Json& t : tags) {\n            add(t);\n        }', ""),
+    ("op: barras por defecto", TE, '{"ratio", "2.39"}', '{"ratio", "16:9"}'),
+    ("op: marcadores con otro nombre", TE, '"set_timeline_markers", "set_markers"', '"set_timeline_markers", "set_marker"'),
+    ("op: una lista nula no es []", TE, "if (!py_truthy(v)) {\n            v = Json::array();\n            continue;\n        }", ""),
+    ("textos: el ratio sin la lista", "src/core/src/edit_ops_media.cpp", "['2.39', '2', '1.85', '16:9']", "2.39, 2, 1.85, 16:9"),
+    ("textos: el efecto sin la pista", "src/core/src/edit_ops_media.cpp", '" (list_effects da el catálogo)");\n    }\n    if (field(*man', '"");\n    }\n    if (field(*man'),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
-          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"), "seguir_cara": (FACE_FOLLOW, "[editor]"), "mcp_tools": (MCP_TOOLS, "[mcp]"),
+          "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"), "seguir_cara": (FACE_FOLLOW, "[editor]"), "mcp_tools": (MCP_TOOLS, "[mcp]"), "mcp_edit": (MCP_EDIT, "[mcp]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 
