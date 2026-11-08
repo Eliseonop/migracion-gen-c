@@ -24,6 +24,18 @@ FetchContent_Declare(spdlog
     FIND_PACKAGE_ARGS 1.12 CONFIG)
 FetchContent_MakeAvailable(spdlog)
 
+# Servidor HTTP del MCP (gc_agent). Solo la cabecera, sin OpenSSL ni zlib: es local.
+set(HTTPLIB_USE_OPENSSL_IF_AVAILABLE OFF CACHE BOOL "" FORCE)
+set(HTTPLIB_USE_ZLIB_IF_AVAILABLE OFF CACHE BOOL "" FORCE)
+set(HTTPLIB_USE_BROTLI_IF_AVAILABLE OFF CACHE BOOL "" FORCE)
+set(HTTPLIB_USE_ZSTD_IF_AVAILABLE OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(httplib
+    URL https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.59.0.tar.gz
+    URL_HASH SHA256=7c8cc7df044abb837d75f7c1e56333305acb40335c3788b8f5fbf5927e63e148
+    SYSTEM
+    FIND_PACKAGE_ARGS 0.20 CONFIG)
+FetchContent_MakeAvailable(httplib)
+
 # FFmpeg (gc_media): solo con vcpkg (feature `media`), sin FetchContent. Sin él no se compila
 # gc_media y el resto sigue igual (la MinGW de CLion no lo tiene).
 find_package(FFMPEG QUIET)

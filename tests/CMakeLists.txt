@@ -38,6 +38,8 @@ add_executable(gc_tests
     parity/test_layers_parity.cpp
     parity/test_lru_bytes_parity.cpp
     parity/test_mcp_parity.cpp
+    parity/test_mcp_server_parity.cpp
+    unit/test_mcp_http.cpp
     parity/test_model_manager_parity.cpp
     parity/test_layout_parity.cpp
     parity/test_library_parity.cpp
@@ -55,12 +57,16 @@ add_executable(gc_tests
 )
 # support/: utilidades de los tests. src/core/src: tests de caja blanca de piezas internas (py.hpp).
 target_include_directories(gc_tests PRIVATE support "${PROJECT_SOURCE_DIR}/src/core/src")
-target_link_libraries(gc_tests PRIVATE gc::core gc::log Catch2::Catch2WithMain)
+target_link_libraries(gc_tests PRIVATE gc::core gc::log gc::agent httplib::httplib Catch2::Catch2WithMain)
 # Fixtures: tests/fixtures/model (al repo) y tests/fixtures/local (tus datos, ignorado por git).
 target_compile_definitions(gc_tests PRIVATE
     GC_FIXTURES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fixtures"
     GC_RESOURCES_DIR="${PROJECT_SOURCE_DIR}/resources")
 gc_set_warnings(gc_tests)
+if(WIN32)
+    # Windows 10: lo pide cpp-httplib y hay que decirlo con MinGW.
+    set_source_files_properties(unit/test_mcp_http.cpp PROPERTIES COMPILE_DEFINITIONS _WIN32_WINNT=0x0A00)
+endif()
 # Con FFmpeg (vcpkg), los tests de gc_media.
 if(TARGET gc_media)
     target_sources(gc_tests PRIVATE parity/test_probe_parity.cpp parity/test_decode_parity.cpp

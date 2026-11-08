@@ -25,6 +25,7 @@ include(GcDependencies)
 
 add_subdirectory(src/core)
 add_subdirectory(src/log)
+add_subdirectory(src/agent)
 if(FFMPEG_FOUND)
     add_subdirectory(src/media)
 endif()

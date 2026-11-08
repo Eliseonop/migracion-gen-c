@@ -8,6 +8,7 @@
     "overlay-ports": [ "./cmake/vcpkg-ports" ]
   },
   "dependencies": [
+    "cpp-httplib",
     "nlohmann-json",
     "spdlog"
   ],

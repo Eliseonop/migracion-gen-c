@@ -772,3 +772,148 @@ EDIT_STEPS = [
     _fx("list_effects", category="", query=None), _fx("list_effects", category="retro", query="film"),
     _fx("list_effects", query="zoom"), _fx("list_effects", query="nada-de-nada"), _fx("list_effects", query="FADE in"),
 ]
+
+
+# --- El servidor por HTTP: lo que responde el servidor MCP real a cada petición -------------------
+#
+# WIRE_STEPS: [nombre, {method?, session? (cur|none|gone|otro texto), headers?, rpc? | raw?}]. `rpc` es
+# el mensaje JSON-RPC; `raw`, el cuerpo tal cual. ARG_MATRIX: [tool, parámetro, valores] para la
+# validación de los argumentos (la de Pydantic, antes de entrar en la tool).
+
+WIRE_PROJECTS = [
+    {"id": "w1", "name": "Uno ñ", "created_at": "2026-01-01T00:00:00+00:00",
+     "timeline": {"tracks": [{"id": "tv", "kind": "video", "name": "V1"}],
+                  "clips": [{"id": "c1", "track_id": "tv", "kind": "video", "asset_kind": "clips", "asset_id": "0",
+                             "filename": "c0.mp4", "start": 0.0, "in_point": 0.0, "out_point": 4.0,
+                             "source_duration": 4.0}]}},
+    {"id": "w-crash", "name": "Historial raro", "created_at": "2026-01-01T00:00:00+00:00"},
+]
+WIRE_HISTORIES = {"w-crash": "[[1, 2, 3]]"}
+WIRE_INIT = {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "t", "version": "1"}}
+
+
+def _rpc(method, params=None, id_=1):
+    msg = {"jsonrpc": "2.0", "id": id_, "method": method}
+    if params is not None:
+        msg["params"] = params
+    return msg
+
+
+def _call(_tool, /, **arguments):
+    return _rpc("tools/call", {"name": _tool, "arguments": arguments})
+
+
+def _n(name, method, session="cur", **kw):
+    return [name, {"rpc": _rpc(method, kw.pop("params", None), kw.pop("id_", 1)), "session": session, **kw}]
+
+
+WIRE_STEPS = [
+    ["ping sin sesión", {"rpc": _rpc("ping"), "session": "none"}],
+    ["initialize", {"rpc": _rpc("initialize", WIRE_INIT), "session": "none"}],
+    ["initialize versión vieja", {"rpc": _rpc("initialize", {**WIRE_INIT, "protocolVersion": "2025-03-26"}), "session": "none", "keep_session": True}],
+    ["initialize versión rara", {"rpc": _rpc("initialize", {**WIRE_INIT, "protocolVersion": "1999-01-01"}), "session": "none", "keep_session": True}],
+    ["initialize sin params", {"rpc": _rpc("initialize"), "session": "none", "keep_session": True}],
+    ["initialize otra vez", {"rpc": _rpc("initialize", WIRE_INIT)}],
+    ["sin initialized", {"rpc": _rpc("ping")}],
+    ["initialized", {"rpc": {"jsonrpc": "2.0", "method": "notifications/initialized"}}],
+    ["otra notificación", {"rpc": {"jsonrpc": "2.0", "method": "notifications/cancelled", "params": {"requestId": 1}}}],
+    ["notificación rara", {"rpc": {"jsonrpc": "2.0", "method": "notifications/nada"}}],
+    ["ping", {"rpc": _rpc("ping", id_=3)}],
+    ["ping id de texto", {"rpc": _rpc("ping", id_="abc")}],
+    ["ping con params", {"rpc": _rpc("ping", {})}],
+    # Cabeceras.
+    ["sin Content-Type", {"rpc": _rpc("ping"), "headers": {"Content-Type": None}}],
+    ["otro Content-Type", {"rpc": _rpc("ping"), "headers": {"Content-Type": "text/plain"}}],
+    ["Content-Type con charset", {"rpc": _rpc("ping"), "headers": {"Content-Type": "application/json; charset=utf-8"}}],
+    ["Content-Type en mayúsculas", {"rpc": _rpc("ping"), "headers": {"Content-Type": "APPLICATION/JSON"}}],
+    ["Host raro", {"rpc": _rpc("ping"), "headers": {"Host": "evil.com:8000"}}],
+    ["Host sin puerto", {"rpc": _rpc("ping"), "headers": {"Host": "127.0.0.1"}}],
+    ["Host localhost", {"rpc": _rpc("ping"), "headers": {"Host": "localhost:8000"}}],
+    ["Host ipv6", {"rpc": _rpc("ping"), "headers": {"Host": "[::1]:8000"}}],
+    ["Origin raro", {"rpc": _rpc("ping"), "headers": {"Origin": "http://evil.com"}}],
+    ["Origin raro con puerto", {"rpc": _rpc("ping"), "headers": {"Origin": "http://evil.com:8000"}}],
+    ["Origin local", {"rpc": _rpc("ping"), "headers": {"Origin": "http://localhost:5173"}}],
+    ["Origin local sin puerto", {"rpc": _rpc("ping"), "headers": {"Origin": "http://localhost"}}],
+    ["Origin https local", {"rpc": _rpc("ping"), "headers": {"Origin": "https://127.0.0.1:5173"}}],
+    ["Accept json", {"rpc": _rpc("ping"), "headers": {"Accept": "application/json"}}],
+    ["Accept sse", {"rpc": _rpc("ping"), "headers": {"Accept": "text/event-stream"}}],
+    ["Accept todo", {"rpc": _rpc("ping"), "headers": {"Accept": "*/*"}}],
+    ["Accept application/*", {"rpc": _rpc("ping"), "headers": {"Accept": "application/*, text/*"}}],
+    ["Accept con q", {"rpc": _rpc("ping"), "headers": {"Accept": "application/json;q=0.9, text/event-stream;q=0.8"}}],
+    ["Accept otro", {"rpc": _rpc("ping"), "headers": {"Accept": "text/plain"}}],
+    ["versión de protocolo rara", {"rpc": _rpc("ping"), "headers": {"MCP-Protocol-Version": "1999-01-01"}}],
+    ["versión de protocolo vieja", {"rpc": _rpc("ping"), "headers": {"MCP-Protocol-Version": "2025-03-26"}}],
+    ["sesión desconocida", {"rpc": _rpc("ping"), "session": "no-existe"}],
+    # Cuerpos.
+    ["JSON roto", {"raw": "{nope"}], ["cuerpo vacío", {"raw": ""}], ["no es un objeto", {"raw": "3"}],
+    ["lista", {"raw": "[{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"ping\"}]"}], ["lista vacía", {"raw": "[]"}],
+    ["sin jsonrpc", {"raw": "{\"id\": 1, \"method\": \"ping\"}"}], ["jsonrpc viejo", {"raw": "{\"jsonrpc\": \"1.0\", \"id\": 1, \"method\": \"ping\"}"}],
+    ["sin method", {"raw": "{\"jsonrpc\": \"2.0\", \"id\": 1}"}], ["una respuesta", {"raw": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"result\": {}}"}],
+    ["id nulo", {"raw": "{\"jsonrpc\": \"2.0\", \"id\": null, \"method\": \"ping\"}"}],
+    ["método desconocido", {"rpc": _rpc("nada/nada")}],
+    # Tools.
+    ["tools/list", {"rpc": _rpc("tools/list"), "tools_list": True}],
+    ["tools/list con cursor", {"rpc": _rpc("tools/list", {"cursor": "x"}), "tools_list": True}],
+    ["lectura", {"rpc": _call("list_projects")}], ["lectura con args", {"rpc": _call("get_timeline", project_id="w1")}],
+    ["ValueError", {"rpc": _call("get_timeline", project_id="nada")}],
+    ["MCPError con param", {"rpc": _call("add_to_timeline", project_id="w1", asset_kind="raro", asset_id="0")}],
+    ["crash", {"rpc": _call("get_project_context", project_id="w-crash")}],
+    ["faltan argumentos", {"rpc": _call("move_clip")}], ["tipos mal", {"rpc": _call("move_clip", project_id=3, clip_id="c1", start="abc")}],
+    ["argumento de más", {"rpc": _call("get_timeline", project_id="w1", otro=1)}],
+    ["tool desconocida", {"rpc": _call("nada")}],
+    ["sin nombre", {"rpc": _rpc("tools/call", {"arguments": {}})}], ["sin params", {"rpc": _rpc("tools/call")}],
+    ["sin arguments", {"rpc": _rpc("tools/call", {"name": "list_projects"})}],
+    ["sin arguments con obligatorios", {"rpc": _rpc("tools/call", {"name": "get_timeline"})}],
+    ["arguments no es objeto", {"rpc": _rpc("tools/call", {"name": "list_projects", "arguments": 3})}],
+    ["con _meta", {"rpc": _rpc("tools/call", {"name": "list_projects", "arguments": {}, "_meta": {"progressToken": 1}})}],
+    # Escrituras: llegan a la timeline, con los números convertidos.
+    ["escribir", {"rpc": _call("add_track", project_id="w1", kind="audio", name="Ñ")}],
+    ["escribir con texto numérico", {"rpc": _call("move_clip", project_id="w1", clip_id="c1", start="1.5")}],
+    ["escribir con entero", {"rpc": _call("move_clip", project_id="w1", clip_id="c1", start=2)}],
+    ["JSON en un texto", {"rpc": _call("update_clip", project_id="w1", clip_id="c1", patch="{\"opacity\": 0.5}")}],
+    ["JSON de una lista", {"rpc": _call("set_timeline_markers", project_id="w1", markers="[{\"t\": 1}]")}],
+    ["deshacer", {"rpc": _call("undo", project_id="w1")}], ["rehacer", {"rpc": _call("redo", project_id="w1")}],
+    # Resources y prompts.
+    ["resources/list", {"rpc": _rpc("resources/list")}], ["plantillas", {"rpc": _rpc("resources/templates/list")}],
+    ["leer capacidades", {"rpc": _rpc("resources/read", {"uri": "capabilities://index"})}],
+    ["leer runtime", {"rpc": _rpc("resources/read", {"uri": "config://runtime"})}],
+    ["leer guía", {"rpc": _rpc("resources/read", {"uri": "help://clips"})}],
+    ["leer guía rara", {"rpc": _rpc("resources/read", {"uri": "help://nada"})}],
+    ["leer proyecto", {"rpc": _rpc("resources/read", {"uri": "project://w1"})}],
+    ["leer timeline", {"rpc": _rpc("resources/read", {"uri": "project://w1/timeline"})}],
+    ["leer clip", {"rpc": _rpc("resources/read", {"uri": "project://w1/clip/c1"})}],
+    ["leer clip raro", {"rpc": _rpc("resources/read", {"uri": "project://w1/clip/nada"})}],
+    ["leer material", {"rpc": _rpc("resources/read", {"uri": "project://w1/media"})}],
+    ["leer proyecto raro", {"rpc": _rpc("resources/read", {"uri": "project://nada"})}],
+    ["leer historial raro", {"rpc": _rpc("resources/read", {"uri": "project://w-crash"})}],
+    ["leer desconocido", {"rpc": _rpc("resources/read", {"uri": "nada://x"})}],
+    ["leer URI mala", {"rpc": _rpc("resources/read", {"uri": "sin esquema"})}],
+    ["leer sin uri", {"rpc": _rpc("resources/read", {})}], ["leer sin params", {"rpc": _rpc("resources/read")}],
+    ["prompts/list", {"rpc": _rpc("prompts/list")}], ["prompts/get", {"rpc": _rpc("prompts/get", {"name": "x"})}],
+    ["subscribe", {"rpc": _rpc("resources/subscribe", {"uri": "x://y"})}], ["logging", {"rpc": _rpc("logging/setLevel", {"level": "info"})}],
+    ["completion", {"rpc": _rpc("completion/complete", {"ref": {"type": "ref/prompt", "name": "x"}, "argument": {"name": "a", "value": "b"}})}],
+    # Otros métodos HTTP.
+    ["GET Accept raro", {"method": "GET", "headers": {"Accept": "text/plain"}}],
+    ["PUT", {"method": "PUT"}], ["DELETE sin sesión", {"method": "DELETE", "session": "none"}],
+    ["DELETE sesión rara", {"method": "DELETE", "session": "no-existe"}],
+    ["DELETE", {"method": "DELETE", "forget": True}], ["ping tras DELETE", {"rpc": _rpc("ping"), "session": "gone"}],
+    ["DELETE otra vez", {"method": "DELETE", "session": "gone"}],
+]
+
+_LARGO = "una-cadena-bastante-larga-con-ñ-para-ver-como-corta-el-valor-que-muestra-el-error"
+_NUMS = [1, 1.5, 0, -2, "-3", _LARGO, list(range(40)), {"clave": _LARGO}, "1.5", " 2 ", "abc", "", "1_000", "1e3", "inf", "nan", True, False, None, [], {}, [1], {"a": 1}, "[1]", "{\"a\": 1}", "3", "null", "true", "\"x\""]
+ARG_MATRIX = [
+    ["move_clip", "clip_id", ["x", "", 3, 1.5, True, None, [], {}, "[1]", "{\"a\": 1}", "3", "null"]],
+    ["move_clip", "start", _NUMS],
+    ["add_cinema_bars", "start", _NUMS],
+    ["move_clip", "track_id", ["x", "", 3, 1.5, True, None, [], {}, "[1]", "{\"a\": 1}", "3", "null", "true"]],
+    ["set_project_format", "fps", _NUMS + [2.0, 2.5, -1.0, "2.0", "2.5", "+4", "1e2"]],
+    ["add_cinema_bars", "animate", [True, False, 0, 1, 2, 0.0, 1.0, 0.5, "true", "True", "TRUE", "false", "t", "f", "y", "n", "yes", "no", "on", "off", "1", "0", "2", "abc", "", None, [], {}, "[1]", "{\"a\": 1}", "null"]],
+    ["set_clip_volume", "muted", [True, False, 0, 1, 2, "true", "off", "abc", None, [], "[1]", "null"]],
+    ["update_clip", "patch", [{}, {"a": 1}, [], [1], 3, 1.5, True, None, "x", "", "{\"a\": 1}", "[1]", "3", "null", "{nope"]],
+    ["set_clip_effects", "effects", [{}, {"a": 1}, [], 3, True, None, "x", "{\"a\": 1}", "[1]", "null"]],
+    ["set_timeline_markers", "markers", [[], [1], ["a", {"b": 1}], {}, 3, True, None, "x", "[1]", "{\"a\": 1}", "null", "3"]],
+    ["crop_clip", "clip_ids", [[], ["a"], ["a", "b"], [1], ["a", 2, None], [True], {}, 3, True, None, "x", "[\"a\"]", "[1]", "null"]],
+    ["apply_effect", "clip_ids", [[], ["a"], [1], {}, 3, None, "x", "[\"a\"]", "[1]"]],
+    ["paste_clip_attributes", "groups", [[], ["a"], [1], {}, 3, None, "x", "[\"a\"]", "[1]", "null"]],
+]

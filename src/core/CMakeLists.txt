@@ -98,6 +98,7 @@ add_library(gc_core
     src/mcp_resources.cpp
     src/mcp_tools_read.cpp
     src/mcp_tools_edit.cpp
+    src/mcp_server.cpp
 )
 add_library(gc::core ALIAS gc_core)
 

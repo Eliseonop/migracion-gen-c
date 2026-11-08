@@ -1,7 +1,7 @@
 # genclip: herramienta de línea de órdenes del motor (render, comprobaciones, paridad).
 
-add_executable(genclip main.cpp)
-target_link_libraries(genclip PRIVATE gc::core gc::log)
+add_executable(genclip main.cpp mcp_cmd.cpp)
+target_link_libraries(genclip PRIVATE gc::core gc::log gc::agent)
 if(WIN32)
     target_link_libraries(genclip PRIVATE shell32) # CommandLineToArgvW: argumentos en UTF-8
 endif()

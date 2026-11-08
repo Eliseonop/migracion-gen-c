@@ -1948,3 +1948,14 @@ Decisión de Edu (§6):
 - **Textos de error:** 8 de las ops eran más cortos que en Python (el efecto y la animación desconocidos, audio_fx, el ratio, blend_mode, las claves de patch, el filtro y la rampa; también «es de la ranura» y el at_time de freeze_frame). No importaba mientras solo los veía la interfaz, pero ahora llegan al agente: son exactos.
 - **Mutaciones:** 37/37 (`mutantes.py mcp_edit`).
 - **Verificado:** MinGW Debug y Release 166/166, 0 warnings, y 0 avisos de clang-tidy en el módulo. MSVC aún no, porque vcpkg está recompilando con las Build Tools nuevas.
+
+### 2026-11-08 — F7: el servidor MCP por HTTP
+
+- **Qué es:** lo que en video-yt hace el SDK de MCP, sin sockets en `gc/core/mcp_server.hpp` para poder probarlo entero: `validate_tool_args` (Pydantic en modo laxo), `handle_message` (JSON-RPC) y `handle_http` (Streamable HTTP). El socket va aparte, en `gc_agent`, con cpp-httplib. `genclip mcp --data <carpeta> --clips <carpeta>` lo abre en `http://127.0.0.1:8000/mcp`, con 44 de las 100 tools: se listan solo las hechas.
+- **Argumentos:** como llegan del agente: JSON dentro de un texto (Claude Desktop lo hace), números como texto («1_000», « 2 », «2.0» como entero), valores por defecto y el texto exacto de los errores de Pydantic, con su `input_value` cortado a 25 + «...» + 24 caracteres.
+- **Seguridad:** Host y Origin solo locales, como hace el SDK cuando escucha en 127.0.0.1 (un sitio web no debe llegar a un servidor con tools destructivas), y 4 MiB como mucho por petición.
+- **Diferencias, a propósito:** `GET` da 405, que el protocolo permite (no hay avisos que mandar); no está el modo sin sesión de 2026-07-28; un entero llega a 64 bits. Los mensajes de error del propio Pydantic sobre el cuerpo (JSON roto, no es JSON-RPC) tienen el mismo código pero otro texto.
+- **Paridad:** 331 casos contra el servidor real, por HTTP y sin red (TestClient): la matriz de argumentos y 109 peticiones, con su estado, tipo, cuerpo y sesión, y las entradas de la auditoría. Además, una sesión completa con el cliente MCP oficial contra `genclip mcp`, por un socket.
+- **Lo que encontró:** un `string_view` a un texto temporal al leer `Accept` (en Debug pasaba por casualidad; lo cazó Release), y que un `resources/read` de un proyecto con un historial ilegible debe fallar.
+- **Un fallo en las fixtures:** `_mcp_env` cambia `config.DATA_DIR`, y al llamar a las tools envueltas la auditoría acababa en la ruta de mentira `C:\\datos\\video-yt\\data`. Ahora va al data/ temporal (`audit._audit_path`). Cuidado con probar el servidor real sin sustituirla: escribe en el `data/` de video-yt.
+- **Verificado:** MinGW Debug y Release 169/169, 0 warnings. MSVC, pendiente.

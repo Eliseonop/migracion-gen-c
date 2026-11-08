@@ -26,6 +26,8 @@
 #include "gc/core/version.hpp"
 #include "gc/log/log.hpp"
 
+#include "mcp_cmd.hpp"
+
 #ifdef GC_WITH_RENDER
 #include "frame_cmd.hpp"
 #include "render_cmd.hpp"
@@ -79,7 +81,9 @@ void usage() {
               << "      Carga y valida todos los proyectos (mismas reglas que video-yt).\n"
               << "  genclip normalize <projects.json> <salida.json> [--preserve]\n"
               << "      Escribe el archivo normalizado como lo haría model_dump(); con\n"
-              << "      --preserve conserva también las claves que el modelo no conoce.\n";
+              << "      --preserve conserva también las claves que el modelo no conoce.\n"
+              << "  genclip mcp --data <carpeta> --clips <carpeta> [--fx <catalog.json>] [--sfx <carpeta>] [--port 8000]\n"
+              << "      El servidor MCP en http://127.0.0.1:<puerto>/mcp sobre los proyectos de esa carpeta.\n";
 }
 
 // Recorta a `n` bytes sin partir un carácter UTF-8.
@@ -177,6 +181,9 @@ int run(int argc, char* const* argv) {
     }
     if (cmd == "normalize") {
         return cmd_normalize(rest);
+    }
+    if (cmd == "mcp") {
+        return genclip::cmd_mcp(rest);
     }
 #ifdef GC_WITH_RENDER
     if (cmd == "frame") {

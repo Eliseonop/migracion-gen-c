@@ -4316,6 +4316,129 @@ def _mcp_tools_edit_fixtures(mc) -> dict:
             "registered": registered, "steps": steps, "catalog": mc.EDIT_CATALOG, "catalog_calls": catalog_calls}
 
 
+def _mcp_wire_fixtures(mc) -> dict:
+    """El servidor MCP REAL por HTTP (sin red, con TestClient) sobre un data/ temporal: tools/list, la
+    validación de los argumentos y lo que responde a cada petición de WIRE_STEPS. La auditoría también
+    va al data/ temporal: no debe escribir en el de video-yt."""
+    import logging
+    import tempfile
+    from contextlib import asynccontextmanager
+
+    import anyio
+    import pydantic
+    from mcp_types import version as mcp_version
+    from starlette.applications import Starlette
+    from starlette.routing import Mount
+    from starlette.testclient import TestClient
+
+    from app import projects, settings, timeline_store
+    from app.mcp_server import audit, server
+
+    base_headers = {"Accept": "application/json, text/event-stream", "Content-Type": "application/json"}
+
+    @asynccontextmanager
+    async def life(_app):
+        async with server.session_lifespan():
+            yield
+
+    def body_of(r):
+        text = r.text
+        if r.headers.get("content-type", "").startswith("text/event-stream"):
+            lines = [ln[6:] for ln in text.splitlines() if ln.startswith("data: ")]
+            return "sse", [json.loads(x) for x in lines]
+        try:
+            return "json", json.loads(text) if text else None
+        except ValueError:
+            return "text", text
+
+    logging.disable(logging.CRITICAL)
+    try:
+        with tempfile.TemporaryDirectory() as td, _Patches() as p:
+            data = Path(td) / "data"
+            (data / "history").mkdir(parents=True)
+            p.set(projects, "_FILE", data / "projects.json")
+            p.set(timeline_store, "HISTORY_DIR", data / "history")
+            p.set(settings, "_FILE", data / "settings.json")
+            _mcp_env(p, mc.ENVIRONMENTS[0][1])  # con su config.DATA_DIR, que es solo un texto para config://runtime
+            p.set(audit, "_audit_path", lambda: data / "mcp_audit.jsonl")
+            projects._FILE.write_text(json.dumps({"projects": mc.WIRE_PROJECTS}, ensure_ascii=False), encoding="utf-8")
+            for pid, text in mc.WIRE_HISTORIES.items():
+                (data / "history" / f"{pid}.json").write_text(text, encoding="utf-8")
+            audit.reset_runtime()
+
+            sys.path.insert(0, str(REPO / "tools" / "gen"))
+            from gen_mcp_tools import wire
+            tools_list = [wire(t) for t in anyio.run(server.mcp.list_tools)]
+            manager = server.mcp._tool_manager
+            matrix = []
+            for tool, param, values in mc.ARG_MATRIX:
+                meta = manager.get_tool(tool).fn_metadata
+                required = {k: "x" for k in manager.get_tool(tool).parameters.get("required", []) if k != param}
+                for v in values:
+                    case = {"tool": tool, "param": param, "value": v}
+                    args = {**required, param: v}
+                    try:
+                        model = meta.arg_model.model_validate(meta.pre_parse_json(args))
+                        case["coerced"] = _pure(model.model_dump_one_level())
+                    except pydantic.ValidationError as e:
+                        case["error"] = str(e)
+                    case["args"] = args
+                    matrix.append(case)
+
+            sessions: dict[str, str] = {}
+
+            def mark(sid):
+                if sid is None:
+                    return None
+                return sessions.get(sid, "$OTRA")
+
+            steps = []
+            app = Starlette(routes=[Mount("/mcp", server.asgi_app)], lifespan=life)
+            with TestClient(app, base_url="http://127.0.0.1:8000", raise_server_exceptions=False) as c:
+                current = None
+                gone = None
+                for name, spec in mc.WIRE_STEPS:
+                    headers = dict(base_headers)
+                    which = spec.get("session", "cur")
+                    sid = {"cur": current, "none": None, "gone": gone}.get(which, which)
+                    if sid:
+                        headers["Mcp-Session-Id"] = sid
+                    for k, v in (spec.get("headers") or {}).items():
+                        if v is None:
+                            headers.pop(k, None)
+                        else:
+                            headers[k] = v
+                    method = spec.get("method", "POST")
+                    raw = spec["raw"].encode("utf-8") if "raw" in spec else (
+                        json.dumps(spec["rpc"], ensure_ascii=False).encode("utf-8") if "rpc" in spec else b"")
+                    # Sin Content-Type: httpx no añade ninguno si se pasan bytes.
+                    r = c.request(method, "/mcp/", headers=headers, content=raw)
+                    returned = r.headers.get("mcp-session-id")
+                    if name == "initialize":
+                        current = returned
+                        sessions[returned] = "$SID"
+                    kind, body = body_of(r)
+                    case = {"name": name, "method": method, "session": which if which in ("cur", "none", "gone") else "literal",
+                            "literal": which if which not in ("cur", "none", "gone") else None,
+                            "headers": {k: v for k, v in (spec.get("headers") or {}).items()},
+                            "body": raw.decode("utf-8"), "status": r.status_code,
+                            "content_type": r.headers.get("content-type"), "kind": kind, "response": _pure(body),
+                            "session_header": mark(returned)}
+                    if spec.get("tools_list"):
+                        case["tools_list"] = True
+                    if spec.get("forget"):
+                        gone, current = current, current
+                    steps.append(case)
+            audit_lines = [json.loads(x) for x in (data / "mcp_audit.jsonl").read_text(encoding="utf-8").splitlines()]
+            return {"environment": mc.ENVIRONMENTS[0][1], "projects": mc.WIRE_PROJECTS, "histories": mc.WIRE_HISTORIES,
+                    "audit": audit_lines,
+                    "tools": tools_list, "instructions": server.INSTRUCTIONS,
+                    "handshake_versions": list(mcp_version.HANDSHAKE_PROTOCOL_VERSIONS),
+                    "modern_versions": list(mcp_version.MODERN_PROTOCOL_VERSIONS), "matrix": matrix, "steps": steps}
+    finally:
+        logging.disable(logging.NOTSET)
+
+
 def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
     """El núcleo sin red del servidor MCP con los módulos REALES (mcp_cases.py), un archivo por
     módulo de app/mcp_server: dto, capabilities, help, registry, resources y audit."""
@@ -4324,7 +4447,7 @@ def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
     return {"dto": _mcp_dto_fixtures(ctx, mc), "capabilities": _mcp_capabilities_fixtures(ctx, mc),
             "help": _mcp_help_fixtures(mc), "registry": _mcp_registry_fixtures(mc),
             "resources": _mcp_resources_fixtures(ctx, mc), "audit": _mcp_audit_fixtures(mc),
-            "tools_read": _mcp_tools_read_fixtures(mc), "tools_edit": _mcp_tools_edit_fixtures(mc)}
+            "tools_read": _mcp_tools_read_fixtures(mc), "tools_edit": _mcp_tools_edit_fixtures(mc), "wire": _mcp_wire_fixtures(mc)}
 
 
 # --- Salida -----------------------------------------------------------------------------------
@@ -4506,6 +4629,7 @@ def main() -> None:
             "audit": lambda d: len(d["extract_meta"]) + len(d["steps"]),
             "tools_read": lambda d: len(d["calls"]),
             "tools_edit": lambda d: len(d["steps"]),
+            "wire": lambda d: len(d["steps"]) + len(d["matrix"]),
         }
         errors = {
             "dto": lambda d: sum("error" in (p["timeline_detail"] or {}) for p in d["projects"]),
@@ -4516,6 +4640,7 @@ def main() -> None:
             "audit": lambda d: sum("error" in s for s in d["steps"]),
             "tools_read": lambda d: sum("error" in c for c in d["calls"]),
             "tools_edit": lambda d: sum("error" in c for c in d["steps"]),
+            "wire": lambda d: sum("error" in c for c in d["matrix"]),
         }
         for name, payload in mcp.items():
             write(REPO / "tests" / "fixtures" / "mcp" / f"{name}.json", payload, counts[name](payload),
