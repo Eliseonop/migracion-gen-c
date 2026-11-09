@@ -27,6 +27,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "gc/core/face_follow.hpp"
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/mask_ui.hpp"

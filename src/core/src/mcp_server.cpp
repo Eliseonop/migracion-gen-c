@@ -384,7 +384,7 @@ Json tool_text(const Json& id, std::string text, bool is_error) {
 
 const Json* find_tool(std::string_view name) {
     const Json& tools = all_tools();
-    const auto it = std::ranges::find_if(tools, [&](const Json& t) { return t["name"] == name; });
+    const auto it = std::ranges::find_if(tools, [&](const Json& t) { return t["name"].get_ref<const std::string&>() == name; });
     return it != tools.end() ? &*it : nullptr;
 }
 
