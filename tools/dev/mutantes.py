@@ -938,6 +938,25 @@ CAPTIONS_UI = [
      "return v != nullptr && v->is_string() ? v->get<std::string>() : std::string();"),
 ]
 
+SP = "src/core/src/script_prompt.cpp"
+SCRIPT_PROMPT = [
+    ("prompt: el tema sin recortar", SP, "const std::string_view trimmed = js_trim(topic);", "const std::string_view trimmed = topic;"),
+    ("prompt: sin el tema por defecto", SP, 'trimmed.empty() ? std::string("[ESCRIBE AQUÍ EL TEMA DEL VIDEO]") : std::string(trimmed)', "std::string(trimmed)"),
+    ("prompt: la descripción sin recortar", SP, "const std::string_view desc = js_trim(raw);", "const std::string_view desc = raw;"),
+    ("prompt: la etiqueta antes", SP, '{"description", "label", "filename"}', '{"label", "description", "filename"}'),
+    ("prompt: sin el archivo", SP, '{"description", "label", "filename"}', '{"description", "label"}'),
+    ("prompt: fin igual a inicio vale", SP, "std::isfinite(end) && end > start", "std::isfinite(end) && end >= start"),
+    ("prompt: sin la duración de reserva", SP, 'if (const double whole = js_number_of(c, "duration"); !std::isnan(whole))', 'if (const double whole = js_number_of(c, "duration"); false)'),
+    ("prompt: una duración negativa se escribe", SP, "if (dur > 0) {", "if (dur != 0) {"),
+    ("prompt: dos decimales", SP, "js_to_fixed(dur, 1)", "js_to_fixed(dur, 2)"),
+    ("prompt: el puesto cuenta los descartados", SP, "        ++row;\n", ""),
+    ("prompt: sin el índice", SP, "if (index.is_number()) {", "if (false) {"),
+    ("prompt: los espacios de JS, solo ASCII", SP, 'constexpr std::array<std::string_view, 25> kJsSpaces = {\n    "\\t",', 'constexpr std::array<std::string_view, 1> kJsSpaces = {\n    " "}; constexpr std::array<std::string_view, 25> kUnused = {\n    "\\t",'),
+    ("prompt: sin el bloque del material", SP, "if (!clip_list.empty()) {\n        out += R\"(MATERIAL", "if (false) {\n        out += R\"(MATERIAL"),
+    ("prompt: sin la línea final del montaje", SP, 'if (!clip_list.empty()) {\n        out += "Después', 'if (false) {\n        out += "Después'),
+    ("prompt: un 0 cuenta como texto", SP, "if (n != 0 && !std::isnan(n)) {", "if (!std::isnan(n)) {"),
+    ("prompt: false cuenta como texto", SP, 'if (value.get<bool>()) {\n                return "true";', 'if (true) {\n                return "true";'),
+]
 FF = "src/core/src/face_follow.cpp"
 CPE = "src/core/src/clip_pose_edit.cpp"
 # Equivalentes (no están): la velocidad mínima de 0,01 (las del caso son positivas) y volver a encender unos
@@ -1082,6 +1101,7 @@ GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FR
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
           "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"), "seguir_cara": (FACE_FOLLOW, "[editor]"), "mcp_tools": (MCP_TOOLS, "[mcp]"), "mcp_edit": (MCP_EDIT, "[mcp]"), "mcp_server": (MCP_SERVER, "[mcp]"),
+          "prompt": (SCRIPT_PROMPT, "[editor]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

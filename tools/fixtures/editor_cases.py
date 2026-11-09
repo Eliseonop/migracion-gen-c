@@ -827,6 +827,43 @@ def _face_follow_case(rng: random.Random) -> dict:
     return {"name": "seguir cara", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
 
 
+def _script_prompt_case() -> dict:
+    """«Prompt para el guion» (buildScriptPrompt de features/audio/scriptPrompt.js)."""
+    both = {"index": 3, "filename": "c.mp4", "start": 1.0, "end": 3.25}
+    clips = [
+        {**both, "description": "  La escena del puente  ", "label": "x"},  # la descripción, sin espacios
+        {**both, "index": 4, "description": "", "label": "Etiqueta"},
+        {**both, "index": 5, "description": None, "label": None},  # el archivo
+        {"index": 6, "description": "   ", "label": "no se mira", "filename": "f.mp4"},  # solo espacios: fuera
+        {"index": 7, "filename": "", "label": ""},  # sin nada: fuera
+        {"index": None, "description": "sin índice", "start": 2, "end": 2, "duration": 4.05},  # el puesto y la duración
+        {"description": "sin duración", "start": 5, "end": 1},
+        {"index": 9, "description": "duración negativa", "duration": -2},
+        {"index": 10, "description": "con null", "start": None, "end": 2.5},  # null es 0
+        {"index": 11, "description": "falta start", "end": 2.5, "duration": 1.25},
+        {"index": 12, "description": "textos", "start": "1", "end": "2.5"},
+        {"index": 13, "description": "no número", "start": "a", "end": "2.5", "duration": "b"},
+        {"index": 14, "description": "　﻿ ancho \n", "start": 0, "end": 0.05},  # espacios de JS
+        {"index": 15, "description": 42, "start": 0, "end": 1},  # String(42)
+        {"index": 16, "description": 0, "label": True, "start": 0, "end": 1},  # 0 no; String(true)
+        {"index": 17, "description": False, "filename": "z.mp4", "start": 0, "end": 1},
+        {"index": 18.5, "description": "índice real", "start": 0, "end": 0.15},
+        {"index": "ab", "description": "índice de texto", "start": 0, "end": 1},
+        None,  # sin clip: fuera, y no cuenta para el puesto
+        7,
+        {"description": "después del hueco", "start": 0, "end": 1234.56},
+    ]
+    calls: list = []
+    for topic in ("", "   ", "cómo el silicio de la arena termina en una GPU", "  con espacios\n ", "﻿«ñandú» 😀 "):
+        calls.append(["buildScriptPrompt", topic, []])
+        calls.append(["buildScriptPrompt", topic, clips])
+    calls.append(["buildScriptPrompt", "t", None])
+    calls.append(["buildScriptPrompt", "t", [{"index": 1}, {"index": 2, "description": " "}]])  # sin ninguna: sin bloques
+    for c in clips:
+        calls.append(["buildScriptPrompt", "t", [c]])
+    return {"name": "prompt del guion", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -859,4 +896,5 @@ def cases() -> list[dict]:
     out.append(_mask_ui_case(random.Random(20261107)))  # su propio rng, el último: no mueve nada
     out.append(_captions_case(random.Random(20261108)))
     out.append(_face_follow_case(random.Random(20261109)))
+    out.append(_script_prompt_case())
     return out

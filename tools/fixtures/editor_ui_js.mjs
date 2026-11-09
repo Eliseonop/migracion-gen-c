@@ -32,6 +32,7 @@ const favorites = await load('lib/favorites.js')
 const sfxName = await load('lib/sfxName.js')
 const projectFps = await load('lib/projectFps.js')
 const panning = await load('lib/panning.js')
+const scriptPrompt = await load('features/audio/scriptPrompt.js')
 // confirmCrop de VideoEditor.jsx (con changeReframe, upsertKeyframe, changeTransform y srcTOf) sobre un clip.
 const confirmCrop = (clip, crop, rotation, t, fps) => {
   let made = clip
@@ -368,6 +369,7 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       for (const k of keys) next = kf.upsertKeyframeAt(next, k.t, { mx: k.mx, my: k.my }, undefined, fps)
       return noIds(next).keyframes ?? null
     },
+    buildScriptPrompt: (topic, clips) => scriptPrompt.buildScriptPrompt(topic, clips),
     canCaptionClip: (id) => m.canCaptionClip(byId(id)),
     sourceRefOf: (id) => m.sourceRefOf(byId(id)),
     textClipsFromTranscript: (id, segments, track, style, transcript, ref) =>

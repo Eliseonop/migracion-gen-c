@@ -20,6 +20,7 @@
 #include "gc/core/mask_ui.hpp"
 #include "gc/core/masks.hpp"
 #include "gc/core/material_drop.hpp"
+#include "gc/core/script_prompt.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/sfx_name.hpp"
 #include "gc/core/shapes.hpp"
@@ -706,6 +707,9 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         TimelineClip next = clip(call.at(1));
         enable_keyframes(next, num(2), num(3), ids);
         return next.keyframes ? without_ids(*next.keyframes) : Json();
+    }
+    if (fn == "buildScriptPrompt") {
+        return build_script_prompt(str(1), call.at(2));
     }
     if (fn == "canCaptionClip") {
         return can_caption_clip(clip(call.at(1)));
