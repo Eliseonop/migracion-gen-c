@@ -1,6 +1,7 @@
 // genclip-studio entero sin pantalla: el QML real con los ViewModels, manejado con el ratón y el
 // teclado de QTest. Comprueba que los gestos de la timeline llegan al modelo y a projects.json.
 
+#include <QClipboard>
 #include <QColor>
 #include <QCoreApplication>
 #include <QCursor>
@@ -886,6 +887,201 @@ TEST_CASE("studio sin pantalla: «Generar subtítulos» pide la transcripción a
     s.editor->requestSubtitles(audio);
     REQUIRE(QTest::qWaitFor([&] { return s.editor->subtitleJob()["status"] == "error"; }, 20000));
     CHECK(s.editor->subtitleJob()["error"].toString().contains("No se pudo conectar"));
+}
+
+TEST_CASE("studio sin pantalla: «Cargar audio» genera la voz y extrae un enlace por el backend", "[studio][ui][backend]") {
+    const Studio s;
+    studio::Narrator& narrator = s.editor->narratorModel();
+    narrator.setSettings(s.settings_file.get());
+    REQUIRE(s.settings_file->save({{"tts", {{"engine", "kokoro"}, {"voice", "af_x"}, {"blend", 0.7}, {"speed", 1.2}, {"pause", 0.1}}}}));
+
+    const Json voices = Json::array({{{"id", "ef_dora"}, {"label", "Dora"}, {"gender", "female"}},
+                                     {{"id", "em_alex"}, {"label", "Alex"}, {"gender", "male"}}});
+    bool gemini_ready = false;
+    int polls = 0;
+    FakeBackend backend([&](const QString& method, const QString& path, const Json&) -> std::pair<int, Json> {
+        if (method == "GET" && path == "/api/voices") {
+            return {200, {{"engines", Json::array({{{"id", "gemini"}, {"label", "Gemini"}, {"available", gemini_ready}, {"reason", "Falta la key."},
+                                                    {"voices", Json::array({{{"id", "Kore"}, {"label", "Kore"}}})}},
+                                                   {{"id", "azure"}, {"label", "Azure"}, {"available", false}, {"needs_key", true},
+                                                    {"region", "eastus"}, {"voices", Json::array()}},
+                                                   {{"id", "kokoro"}, {"label", "Kokoro"}, {"available", true}, {"voices", voices}},
+                                                   {{"id", "piper"}, {"label", "Piper"}, {"available", false}, {"voices", Json::array()}}})}}};
+        }
+        if (method == "POST" && (path == "/api/tts" || path == "/api/youtube-audio")) {
+            polls = 0;
+            return {200, {{"id", "j1"}, {"status", "pending"}, {"progress", 0.0}, {"message", ""}}};
+        }
+        if (method == "GET" && path == "/api/job/j1") {
+            if (++polls == 1) {
+                return {200, {{"id", "j1"}, {"status", "running"}, {"progress", 0.5}, {"message", "Sintetizando…"}}};
+            }
+            // Lo que hace el backend al acabar: el audio nuevo en projects.json.
+            Json doc = *core::read_json_file(s.dir / "data" / "projects.json");
+            doc["projects"][0]["audios"].push_back({{"id", "n" + std::to_string(doc["projects"][0]["audios"].size())},
+                                                    {"filename", "voz.wav"}, {"url", "/v"}, {"duration", 2.0}, {"label", "Voz nueva"}});
+            REQUIRE(core::write_json_file(s.dir / "data" / "projects.json", doc));
+            return {200, {{"id", "j1"}, {"status", "done"}, {"progress", 1.0}, {"message", "Audio generado (2.0s)."}}};
+        }
+        return {404, {{"detail", "No existe."}}};
+    });
+    narrator.backend().setBaseUrl(backend.url());
+    narrator.backend().setPollInterval(20);
+
+    // Al abrir la pestaña: lo último que se usó y los motores. La voz guardada no es de Kokoro: la primera.
+    s.click("material:source:narrator");
+    REQUIRE(QTest::qWaitFor([&] { return narrator.engines().size() == 4; }, 10000));
+    CHECK(narrator.form()["engine"] == "kokoro");
+    CHECK(narrator.form()["voice"] == "ef_dora");
+    CHECK(narrator.form()["blend"] == 0.7);
+    CHECK(narrator.form()["speed"] == 1.2);
+    CHECK(narrator.form()["azureRegion"] == "eastus"); // la región guardada, sin clave
+    REQUIRE(s.item("narrator:generate"));
+    CHECK(s.item("narrator:generate")->property("enabled") == true);
+    CHECK_FALSE(s.item("material:search"));
+
+    // Sin guion no se pide nada.
+    const auto posts = [&] {
+        return std::ranges::count_if(backend.requests, [](const FakeBackend::Request& r) { return r.method == "POST"; });
+    };
+    const auto last_post = [&] {
+        const auto found = std::find_if(backend.requests.rbegin(), backend.requests.rend(),
+                                        [](const FakeBackend::Request& r) { return r.method == "POST"; });
+        REQUIRE(found != backend.requests.rend());
+        return *found;
+    };
+    s.click("narrator:generate");
+    CHECK(narrator.error() == "Escribe o pega el texto a narrar.");
+    CHECK(posts() == 0);
+
+    // El prompt del guion, con el tema y el material del proyecto, al portapapeles (su texto: la paridad del núcleo).
+    // Van por debajo del recuadro, con la barra: se pulsan sin el ratón.
+    s.item("narrator:promptBox")->setProperty("checked", true);
+    REQUIRE(s.item("narrator:topic"));
+    s.item("narrator:topic")->setProperty("text", "los volcanes");
+    QMetaObject::invokeMethod(s.item("narrator:copyPrompt"), "clicked");
+    CHECK(QGuiApplication::clipboard()->text().contains("TEMA:\n\nlos volcanes\n\n"));
+    CHECK(s.item("narrator:copyPrompt")->property("text") == "✓ Copiado");
+    s.item("narrator:promptBox")->setProperty("checked", false);
+
+    // Con guion: el cuerpo de generate, sin voz 2 ni nombre vacíos, y la elección en los ajustes.
+    narrator.set("text", "  Hola, esto es una prueba.  ");
+    narrator.set("name", "  intro ");
+    s.click("narrator:generate");
+    CHECK(narrator.error().isEmpty());
+    CHECK(narrator.busy());
+    CHECK(s.item("narrator:generate")->property("text") == "Generando…");
+    REQUIRE(QTest::qWaitFor([&] { return narrator.job()["status"] == "running"; }, 10000));
+    REQUIRE(s.item("narrator:message"));
+    CHECK(s.item("narrator:message")->property("text") == "Sintetizando…");
+    REQUIRE(QTest::qWaitFor([&] { return narrator.job()["status"] == "done"; }, 10000));
+    const auto post = std::ranges::find(backend.requests, QString("POST"), &FakeBackend::Request::method);
+    REQUIRE(post != backend.requests.end());
+    CHECK(post->path == "/api/tts");
+    CHECK(post->body == Json{{"project_id", "p1"}, {"text", "  Hola, esto es una prueba.  "}, {"engine", "kokoro"}, {"voice", "ef_dora"},
+                             {"blend", 0.7}, {"speed", 1.2}, {"pause", 0.1}, {"name", "intro"}});
+    CHECK(s.settings_file->load()["tts"]["voice"] == "ef_dora");
+    CHECK(s.settings_file->load()["tts"]["voice2"].is_null());
+
+    // Al acabar: el material vuelve a leerse y lo dice.
+    const auto has_voice = [&] {
+        return std::ranges::any_of(s.editor->materials(), [](const QVariant& m) { return m.toMap()["name"] == "Voz nueva"; });
+    };
+    CHECK(has_voice());
+    CHECK(s.editor->notice()["message"] == "Audio generado y guardado.");
+    CHECK_FALSE(narrator.busy());
+    CHECK(narrator.elapsed() == 0);
+
+    // Al pasar a otro motor: una voz suya y sin mezcla. Sin instalar, no se puede generar y dice por qué.
+    narrator.set("voice2", "em_alex");
+    narrator.set("engine", "gemini");
+    CHECK(narrator.form()["voice"] == "Kore");
+    CHECK(narrator.form()["voice2"] == "");
+    QTest::qWait(30);
+    CHECK(s.item("narrator:generate")->property("enabled") == false);
+    REQUIRE(s.item("narrator:geminiKey"));
+    narrator.saveGeminiKey();
+    CHECK(narrator.error() == "Pega la API key de Gemini.");
+    gemini_ready = true;
+    narrator.set("geminiKey", " AIzaFalsa ");
+    narrator.saveGeminiKey();
+    CHECK(narrator.error().isEmpty());
+    CHECK(s.settings_file->load()["gemini_api_key"] == "AIzaFalsa");
+    CHECK(narrator.form()["geminiKey"] == "");
+    REQUIRE(QTest::qWaitFor([&] { return narrator.current()["available"] == true; }, 10000));
+    CHECK(s.editor->notice()["message"] == "API key de Gemini guardada.");
+
+    // Con Gemini, el estilo va en el cuerpo. Con Kokoro y mezcla, la voz 2; los demás motores, no.
+    narrator.set("style", "close");
+    narrator.generate();
+    REQUIRE(QTest::qWaitFor([&] { return narrator.job()["status"] == "done"; }, 10000));
+    const Json gemini_body = last_post().body;
+    CHECK(gemini_body["style"] == "close");
+    CHECK_FALSE(gemini_body.contains("voice2"));
+
+    narrator.set("engine", "azure");
+    narrator.saveAzure();
+    CHECK(narrator.error() == "Pega la clave y la región de Azure (ej. eastus).");
+    narrator.set("azureKey", "clave-falsa");
+    narrator.saveAzure();
+    CHECK(narrator.error().isEmpty());
+    CHECK(s.settings_file->load()["azure_region"] == "eastus");
+    CHECK(s.settings_file->api_key("azure") == "clave-falsa");
+    CHECK(s.editor->notice()["message"] == "Credenciales de Azure guardadas.");
+
+    // Un enlace: se pide una vez, y el mismo ya no.
+    s.click("narrator:mode:youtube");
+    QTest::qWait(30);
+    CHECK(s.item("narrator:extract")->property("enabled") == false);
+    narrator.extractYoutube();
+    CHECK(narrator.error() == "Pega un enlace de YouTube.");
+    narrator.set("url", " https://youtu.be/abc ");
+    CHECK(s.item("narrator:extract")->property("enabled") == true);
+    s.click("narrator:extract");
+    REQUIRE(QTest::qWaitFor([&] { return narrator.job()["status"] == "done"; }, 10000));
+    CHECK(last_post().path == "/api/youtube-audio");
+    CHECK(last_post().body == Json{{"project_id", "p1"}, {"url", "https://youtu.be/abc"}});
+    CHECK(narrator.extracted() == "https://youtu.be/abc");
+    CHECK(s.editor->notice()["message"] == "Audio extraído y guardado.");
+    CHECK(s.item("narrator:extract")->property("text") == "Audio extraído");
+    const auto before = posts();
+    narrator.extractYoutube();
+    CHECK(posts() == before);
+
+    // Un error del backend al lanzarlo y un job que falla, cada uno en su sitio.
+    // NOLINTNEXTLINE(misc-const-correctness): su servidor cambia por dentro (Qt) mientras atiende
+    FakeBackend failing([](const QString& method, const QString& path, const Json&) -> std::pair<int, Json> {
+        if (method == "POST" && path == "/api/tts") {
+            return {400, {{"detail", "El texto está vacío."}}};
+        }
+        if (method == "POST") {
+            return {200, {{"id", "j2"}, {"status", "pending"}}};
+        }
+        return {200, {{"id", "j2"}, {"status", "error"}, {"error", "Vídeo privado."}}};
+    });
+    narrator.backend().setBaseUrl(failing.url());
+    s.click("narrator:mode:narrator");
+    narrator.set("engine", "kokoro");
+    narrator.generate();
+    REQUIRE(QTest::qWaitFor([&] { return narrator.error() == "El texto está vacío."; }, 10000));
+    CHECK_FALSE(narrator.busy());
+    narrator.set("url", "https://youtu.be/otro");
+    narrator.extractYoutube();
+    REQUIRE(QTest::qWaitFor([&] { return narrator.job()["status"] == "error"; }, 10000));
+    CHECK(s.item("narrator:jobError")->property("text") == "Vídeo privado.");
+    CHECK(narrator.extracted() == "https://youtu.be/abc");
+
+    // Sin backend, lo dice; los motores se quedan.
+    narrator.backend().setBaseUrl(QUrl("http://127.0.0.1:1"));
+    narrator.generate();
+    REQUIRE(QTest::qWaitFor([&] { return narrator.error().contains("No se pudo conectar"); }, 20000));
+
+    // Otro proyecto: todo de nuevo, y el job de antes ya no llega.
+    narrator.setProject("p2");
+    CHECK(narrator.form()["text"] == "");
+    CHECK(narrator.error().isEmpty());
+    CHECK(narrator.job().isEmpty());
+    CHECK(narrator.extracted().isEmpty());
 }
 
 TEST_CASE("studio sin pantalla: el tirador de la curva del keyframe la vuelve personalizada", "[studio][ui]") {

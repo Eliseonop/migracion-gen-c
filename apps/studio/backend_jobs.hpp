@@ -39,6 +39,9 @@ public:
     void start(const QString& path, const Json& body, Update update);
     // Deja de esperarlo (en el backend sigue).
     void stop();
+    // Una lectura suelta (GET `path`), aparte del job: `reply` recibe el JSON, o null si falla.
+    using Reply = std::function<void(const Json& body)>;
+    void get(const QString& path, Reply reply);
     [[nodiscard]] bool busy() const { return update_ != nullptr; }
 
 private:

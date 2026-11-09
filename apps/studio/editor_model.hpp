@@ -27,6 +27,7 @@
 #include "gc/core/timeline_ui.hpp"
 
 #include "backend_jobs.hpp"
+#include "narrator.hpp"
 #include "beat_detector.hpp"
 #include "clip_list_model.hpp"
 #include "crop_editor.hpp"
@@ -59,6 +60,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantMap subtitleJob READ subtitleJob NOTIFY subtitleJobChanged)
     // «Seguir cara» en curso (maskFollow): {clipId, progress, message}; vacío si no.
     Q_PROPERTY(QVariantMap maskFollow READ maskFollow NOTIFY maskFollowChanged)
+    // «Cargar audio» del material (narrator.hpp): el narrador y el audio de un enlace, por el backend.
+    Q_PROPERTY(QObject* narrator READ narrator CONSTANT)
     // El fotograma de la timeline en el cabezal (preview_source.hpp), para FramePreview.
     Q_PROPERTY(QObject* preview READ preview CONSTANT)
     // Reproducir y parar, con el reloj del audio (player.hpp).
@@ -120,6 +123,8 @@ public:
     [[nodiscard]] BackendJobs& subtitleBackend() { return subtitle_jobs_; }
     [[nodiscard]] QVariantMap maskFollow() const { return mask_follow_; }
     [[nodiscard]] BackendJobs& faceBackend() { return face_jobs_; }
+    [[nodiscard]] QObject* narrator() { return &narrator_; }
+    [[nodiscard]] Narrator& narratorModel() { return narrator_; }
     [[nodiscard]] QObject* preview() { return &preview_; }
     [[nodiscard]] PreviewSource& previewSource() { return preview_; }
     [[nodiscard]] QObject* player() { return &player_; }
@@ -315,6 +320,8 @@ public:
     // followMaskFace: la máscara del vídeo elegido sigue la cara (el seguimiento de caras del material, que hace
     // el backend con el job face-track, pasado a keyframes de su posición), en un paso de deshacer.
     Q_INVOKABLE void followMaskFace();
+    // copyPrompt de AudioTab: el prompt para pedirle el guion a una IA, con el material del proyecto, al portapapeles.
+    Q_INVOKABLE void copyScriptPrompt(const QString& topic);
     // Pila de efectos animados (addVfx y EdVfxStack): añadir, parámetros, activar, rango, orden y quitar.
     // listEffects de fx/registry.js para la biblioteca: categoría y palabras (sin tildes ni mayúsculas).
     Q_INVOKABLE QVariantList searchVfx(const QString& q, const QString& category) const;
@@ -509,6 +516,9 @@ private:
     std::string follow_clip_;
     std::pair<double, double> follow_size_;
     QVariantMap mask_follow_;
+    Narrator narrator_;
+    // Vuelve a leer el material del proyecto de projects.json y lo pone delante.
+    void reload_project_materials();
     void reload_collections();
     void load_collections(const std::string& q, const std::string& collection);
     void load_sfx(const std::string& q, const std::string& category);

@@ -1,5 +1,6 @@
 #include "editor_model.hpp"
 
+#include <QClipboard>
 #include <QColor>
 #include <QFile>
 #include <QFileInfo>
@@ -39,6 +40,7 @@
 #include "gc/core/media_import.hpp"
 #include "gc/core/no_overlap.hpp"
 #include "gc/core/pose.hpp"
+#include "gc/core/script_prompt.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/sfx_disk.hpp"
 #include "gc/core/sfx_name.hpp"
@@ -236,6 +238,12 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     connect(&beat_detector_, &BeatDetector::finished, this, &EditorModel::beats_detected);
     connect(&crop_frames_, &FrameGrabber::frameChanged, this, &EditorModel::cropFrameChanged);
     face_jobs_.setPollInterval(500); // followMaskFace sondea cada medio segundo
+    narrator_.setSettings(settings_);
+    connect(&narrator_, &Narrator::notice, this, &EditorModel::set_notice);
+    connect(&narrator_, &Narrator::audioAdded, this, [this](const QString& message) { // el onChange de AudioTab y su Toast
+        reload_project_materials();
+        set_notice("success", message);
+    });
     // La máscara que se edita cambia con el clip elegido, la timeline, el cabezal y el modo.
     for (const auto signal : {&EditorModel::selectionChanged, &EditorModel::timelineChanged,
                               &EditorModel::playheadChanged, &EditorModel::maskModeChanged}) {
@@ -451,14 +459,8 @@ int EditorModel::importFiles(const QList<QUrl>& files, bool dropped) {
             last = qstr(name);
         }
     }
-    if (imported > 0) { // el material nuevo, delante (como el del proyecto al abrirlo)
-        if (const auto project = store_.get_project(project_id_); project && *project) {
-            materials_.removeIf([](const QVariant& m) { return m.toMap()["source"] == "project"; });
-            QVariantList fresh;
-            project_materials(**project, fresh);
-            materials_ = fresh + materials_;
-            emit projectChanged();
-        }
+    if (imported > 0) {
+        reload_project_materials();
     }
     // Los textos de importMedia (EdMaterial.jsx); React para en el primer fallo, aquí se dice cada uno.
     if (!problems.isEmpty()) {
@@ -468,6 +470,17 @@ int EditorModel::importFiles(const QList<QUrl>& files, bool dropped) {
                                             : QString("%1 archivos añadidos al material.").arg(imported));
     }
     return imported;
+}
+
+// El material nuevo, delante (como el del proyecto al abrirlo).
+void EditorModel::reload_project_materials() {
+    if (const auto project = store_.get_project(project_id_); project && *project) {
+        materials_.removeIf([](const QVariant& m) { return m.toMap()["source"] == "project"; });
+        QVariantList fresh;
+        project_materials(**project, fresh);
+        materials_ = fresh + materials_;
+        emit projectChanged();
+    }
 }
 
 bool EditorModel::openProject(const QString& pid) {
@@ -481,6 +494,7 @@ bool EditorModel::openProject(const QString& pid) {
     }
     project_id_ = (*project)->id;
     project_name_ = qstr((*project)->name);
+    narrator_.setProject(qstr(project_id_));
     materials_.clear();
     payloads_.clear();
     const auto add = [&](const char* source, const char* asset_kind, const QString& key, const Json& item,
@@ -813,6 +827,7 @@ void EditorModel::closeProject() {
     player_.close();
     preview_.close();
     proxy_maker_.close();
+    narrator_.setProject({});
     autosave_.reset();
     session_.reset();
     project_id_.clear();
@@ -2796,6 +2811,12 @@ void EditorModel::dismissSubtitleJob() {
         subtitle_job_.clear();
         emit subtitleJobChanged();
     }
+}
+
+void EditorModel::copyScriptPrompt(const QString& topic) {
+    const auto project = store_.get_project(project_id_);
+    const Json clips = project && *project ? core::to_json(**project).value("clips", Json::array()) : Json::array();
+    QGuiApplication::clipboard()->setText(qstr(core::build_script_prompt(topic.toStdString(), clips)));
 }
 
 void EditorModel::followMaskFace() {

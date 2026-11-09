@@ -1959,3 +1959,17 @@ Decisión de Edu (§6):
 - **Lo que encontró:** un `string_view` a un texto temporal al leer `Accept` (en Debug pasaba por casualidad; lo cazó Release), y que un `resources/read` de un proyecto con un historial ilegible debe fallar.
 - **Un fallo en las fixtures:** `_mcp_env` cambia `config.DATA_DIR`, y al llamar a las tools envueltas la auditoría acababa en la ruta de mentira `C:\\datos\\video-yt\\data`. Ahora va al data/ temporal (`audit._audit_path`). Cuidado con probar el servidor real sin sustituirla: escribe en el `data/` de video-yt.
 - **Verificado:** MinGW Debug y Release 169/169, 0 warnings. MSVC, pendiente.
+
+### 2026-11-09 — F5: «Cargar audio» por el puente (narrador y audio de un enlace)
+
+- **Qué es:** la pestaña «Cargar audio» del material (AudioTab.jsx y TtsControls.jsx). El narrador y la extracción del audio de un enlace los hace el backend de video-yt: `Narrator` (`apps/studio/narrator.hpp`) lanza y sondea el job con `BackendJobs`, que ahora también hace lecturas sueltas (`get`, para GET /api/voices). `NarratorPanel.qml` es su panel.
+- **Lo que hace igual que React:** el cuerpo de cada POST (voice2 solo con Kokoro, style solo con Gemini, nombre sin espacios y sin campos vacíos), una voz del motor al cambiar de motor, `settings.tts` al generar y al abrir, las claves de Gemini y Azure en los ajustes, un enlace no se pide dos veces y los textos de error y de aviso.
+- **Diferencias, a propósito:** la pestaña se queda con el guion al cambiar de pestaña (React lo pierde al desmontarla) y el botón se bloquea desde el clic, no desde la respuesta del POST.
+- **El material:** el backend escribe projects.json, así que al acabar el job se vuelve a leer (`reload_project_materials`, sacado de `importFiles`).
+- **«Prompt para el guion»:** `build_script_prompt` en `gc/core/script_prompt.hpp`, con paridad contra el scriptPrompt.js real: 33 llamadas con los espacios de `trim()` de JS, las prioridades de descripción, etiqueta y archivo, las duraciones de reserva y `toFixed`. 16/16 mutaciones (`mutantes.py prompt`). GCC 15 vuelve a dar el falso `-Wnull-dereference` con iteradores de nlohmann: va con `value` y `contains`.
+- **Lo que encontró la captura y no los tests:** el aviso «Este proyecto no tiene material» dentro de la pestaña, las casillas blancas de Qt (ahora plegables con flecha, como `<details>`) y la falta de una barra de desplazamiento.
+- **MSVC, al día:** `verificar_msvc.bat` llevaba saltos LF (de8e371) y `cmd` se quedaba en un bucle infinito con «"la" no se reconoce…»: ya en CRLF, como pide `.gitattributes`. Con él, las Build Tools 2026 compilan todo lo de F7. Dos arreglos para MSVC: comparar el nombre de la tool con `get_ref` en `mcp_server.cpp` y el `#include` de `face_follow.hpp` en `test_studio_ui.cpp`.
+- **Estado de los documentos:** el botón «Seguir cara» ya estaba hecho y el TODO aún lo daba por pendiente; también estaban atrasadas las filas de F5 y F7.
+- **Un fallo que no era tal:** con MinGW y MSVC pasando tests a la vez, «las tools de edición» fallan en los dos: comparten la carpeta temporal `gc_mcp_tools_edit_parity`. Por separado, pasan.
+- **Sin probar:** contra el backend real (no estaba levantado): el test usa uno falso, en 127.0.0.1, con las respuestas de `main.py` y `jobs.py`. Falta generar una voz de verdad y escucharla.
+- **Verificado:** MinGW Debug y Release 169/169, 0 warnings. MSVC 14.51 320/320 (3 saltados por el archivo de `E:` sin permiso). clang-tidy, sin avisos en el código nuevo.

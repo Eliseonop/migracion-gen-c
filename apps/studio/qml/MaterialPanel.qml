@@ -36,7 +36,7 @@ Rectangle {
             spacing: 2
             Repeater {
                 model: [["project", "Proyecto"], ["library", "Biblioteca"], ["collection", "Colecciones"], ["sfx", "SFX"],
-                        ["text", "Texto"], ["fx", "Efectos"], ["shapes", "Figuras"]]
+                        ["text", "Texto"], ["fx", "Efectos"], ["shapes", "Figuras"], ["narrator", "Cargar audio"]]
                 TabButton {
                     required property var modelData
                     objectName: "material:source:" + modelData[0]
@@ -75,7 +75,7 @@ Rectangle {
             }
         }
         TextField {
-            visible: panel.source !== "shapes" && panel.source !== "text"
+            visible: panel.source !== "shapes" && panel.source !== "text" && panel.source !== "narrator"
             objectName: "material:search"
             Layout.fillWidth: true
             placeholderText: panel.source === "sfx" ? "Buscar sonidos…" : panel.source === "fx" ? "Buscar: glitch, papel, temblor…" : "Buscar…"
@@ -192,7 +192,7 @@ Rectangle {
             }
         }
         Label {
-            visible: list.count === 0 && ["fx", "shapes", "text"].indexOf(panel.source) < 0
+            visible: list.count === 0 && ["fx", "shapes", "text", "narrator"].indexOf(panel.source) < 0
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             text: panel.source === "library" ? "La biblioteca está vacía: guarda material de un proyecto para usarlo en todos."
@@ -370,9 +370,15 @@ Rectangle {
                 }
             }
         }
+        NarratorPanel {
+            visible: panel.source === "narrator"
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            model: panel.model
+        }
         ListView {
             id: list
-            visible: ["fx", "shapes", "text"].indexOf(panel.source) < 0
+            visible: ["fx", "shapes", "text", "narrator"].indexOf(panel.source) < 0
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true

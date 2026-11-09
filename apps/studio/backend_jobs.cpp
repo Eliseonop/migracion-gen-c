@@ -95,6 +95,17 @@ void BackendJobs::poll() {
     });
 }
 
+void BackendJobs::get(const QString& path, Reply reply) {
+    QNetworkReply* pending = net().get(QNetworkRequest(url(path)));
+    connect(pending, &QNetworkReply::finished, this, [pending, reply = std::move(reply)] {
+        pending->deleteLater();
+        const Json body = pending->error() == QNetworkReply::NoError
+                              ? Json::parse(pending->readAll().toStdString(), nullptr, false)
+                              : Json();
+        reply(body.is_discarded() ? Json() : body);
+    });
+}
+
 void BackendJobs::deliver(const Json& job) {
     const std::string status = job.value("status", std::string());
     const bool over = status == "done" || status == "error";
