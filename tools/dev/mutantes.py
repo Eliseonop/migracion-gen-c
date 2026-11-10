@@ -1096,12 +1096,38 @@ MCP_SERVER = [
     ("auditoría: el MCPError es ValueError", MS, 'std::string(structured ? "MCPError: " : "ValueError: ")', 'std::string("ValueError: ")'),
 ]
 
+BGU = "src/core/src/bg_ui.cpp"
+BG_UI = [
+    ("bg: SAM no es interactivo", BGU, 'get_ref<const std::string&>().starts_with("sam")', 'get_ref<const std::string&>().starts_with("samx")'),
+    ("bg: sin el bg por defecto", BGU, "    if (bg.is_null()) { // defaultBg()", "    if (false) { // defaultBg()"),
+    ("bg: activar no propone motor", BGU, "    if (from_sam || pristine) {", "    if (from_sam) {"),
+    ("bg: pristine sin mirar el estado", BGU, ' && a.at("status") == "idle" &&', " &&"),
+    ("bg: pristine sin mirar la clave", BGU, 'a.at("base_key").get_ref<const std::string&>().empty() &&', ""),
+    ("bg: desde SAM conserva las marcas", BGU, '        patch["edits"] = Json::array();\n', ""),
+    ("bg: apagar también propone", BGU, "const bool pristine = on && ", "const bool pristine = "),
+    ("bg: el motor nuevo sin su alto", BGU, '        next["mask_height"] = mask_height_of(*provider);\n', ""),
+    ("bg: el alto pedido se pisa", BGU, ' && !patch.contains("mask_height") && ', " && "),
+    ("bg: SAM también trae alto", BGU, " && !is_interactive_bg_provider(*provider)) {", ") {"),
+    ("bg: estabilizar no recalcula", BGU, ' || patch.contains("stabilize")', ""),
+    ("bg: el detalle no recalcula", BGU, ' || patch.contains("mask_height")) {', ") {"),
+    ("bg: recalcular conserva el error", BGU, '        next["error"] = nullptr;\n', ""),
+    ("bg: el cuerpo sin el tramo", BGU, '                 {"in_point", clip.in_point},\n', ""),
+    ("bg: el ámbito vacío se queda", BGU, 'clip.asset_scope.empty() ? std::string("project") : clip.asset_scope', "clip.asset_scope"),
+    ("bg: el cuerpo con el auto nuevo", BGU, '{"auto", bg.at("auto")}', '{"auto", bg_patch_auto(clip, {{"status", "running"}}).at("auto")}'),
+    ("bg: un audio también se lanza", BGU, "    if (!bg_capable(clip)) {\n        return std::nullopt;", "    if (false) {\n        return std::nullopt;"),
+    ("bg: lo que falta del resultado se queda", BGU, "                a.erase(key);", "                (void)key;"),
+    ("bg: sin la versión del modelo", BGU, '{"base_key", "provider", "model_version", "mask_fps", "mask_height"}', '{"base_key", "provider", "mask_fps", "mask_height"}'),
+    ("bg: un resultado vacío no vale", BGU, "result != job.end() && result->is_object()", "result != job.end() && result->is_object() && !result->empty()"),
+    ("bg: el error vacío se queda", BGU, '!error->get_ref<const std::string&>().empty()', "true"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
           "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"), "seguir_cara": (FACE_FOLLOW, "[editor]"), "mcp_tools": (MCP_TOOLS, "[mcp]"), "mcp_edit": (MCP_EDIT, "[mcp]"), "mcp_server": (MCP_SERVER, "[mcp]"),
           "prompt": (SCRIPT_PROMPT, "[editor]"),
+          "bg_ui": (BG_UI, "[editor]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

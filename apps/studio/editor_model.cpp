@@ -8,6 +8,7 @@
 #include <QPointF>
 #include <QRegularExpression>
 #include <QUrl>
+#include <QCoreApplication>
 #include <QGuiApplication>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -19,6 +20,8 @@
 #include <unordered_map>
 #include <utility>
 
+#include "gc/core/bg.hpp"
+#include "gc/core/bg_ui.hpp"
 #include "gc/core/captions_ui.hpp"
 #include "gc/core/clip_attrs.hpp"
 #include "gc/core/clip_filters.hpp"
@@ -238,6 +241,7 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     connect(&beat_detector_, &BeatDetector::finished, this, &EditorModel::beats_detected);
     connect(&crop_frames_, &FrameGrabber::frameChanged, this, &EditorModel::cropFrameChanged);
     face_jobs_.setPollInterval(500); // followMaskFace sondea cada medio segundo
+    bg_jobs_.setPollInterval(700);   // el job del matte, cada 700 ms (VideoEditor.jsx)
     narrator_.setSettings(settings_);
     connect(&narrator_, &Narrator::notice, this, &EditorModel::set_notice);
     connect(&narrator_, &Narrator::audioAdded, this, [this](const QString& message) { // el onChange de AudioTab y su Toast
@@ -495,6 +499,7 @@ bool EditorModel::openProject(const QString& pid) {
     project_id_ = (*project)->id;
     project_name_ = qstr((*project)->name);
     narrator_.setProject(qstr(project_id_));
+    load_bg_providers();
     materials_.clear();
     payloads_.clear();
     const auto add = [&](const char* source, const char* asset_kind, const QString& key, const Json& item,
@@ -828,6 +833,11 @@ void EditorModel::closeProject() {
     preview_.close();
     proxy_maker_.close();
     narrator_.setProject({});
+    bg_jobs_.stop(); // el editor se cierra: nadie espera su resultado (el backend lo termina)
+    if (!bg_job_.isEmpty()) {
+        bg_job_.clear();
+        emit bgJobChanged();
+    }
     autosave_.reset();
     session_.reset();
     project_id_.clear();
@@ -1000,6 +1010,9 @@ QVariantMap EditorModel::selectedClip() const {
              return masks.empty() ? QVariantMap() : to_variant(masks.front());
          }()},
         {"maskCount", static_cast<int>(c->masks.size())},
+        {"bgCapable", core::bg_capable(*c)},
+        {"bg", core::bg_capable(*c) ? to_variant(core::clip_bg_or_default(*c)) : QVariantMap()},
+        {"bgReady", core::bg_capable(*c) && core::bg_auto_active(core::clip_bg_or_default(*c))},
         {"beats", beats_variant(*c)}, // {count, bpm, every} o nada
         {"vfx", [&] { // la pila con lo que pinta el inspector: nombre y parámetros del catálogo
              QVariantList out;
@@ -2881,6 +2894,144 @@ void EditorModel::follow_update(const Json& job) {
     }
     commit(std::move(next), "mask-follow", {follow_clip_});
     set_notice("success", QString("La máscara sigue la cara (%1 keyframes).").arg(keys.size()));
+}
+
+// --- Eliminar fondo ----------------------------------------------------------------------------------------
+
+QVariantList EditorModel::bgProviders() const {
+    // provList de EdBgRemove: el orden y los textos de BG_PROVIDERS, con lo que dice el backend de cada uno
+    // (available y downloaded; disponible si no lo dice).
+    QVariantList out;
+    for (const core::BgProviderInfo& p : core::bg_provider_catalog()) {
+        QVariantMap row{{"id", qstr(std::string(p.id))},
+                        {"label", qstr(std::string(p.label))},
+                        {"hint", qstr(std::string(p.hint))},
+                        {"people", p.people},
+                        {"interactive", p.interactive},
+                        {"available", true},
+                        {"downloaded", true}};
+        for (const Json& q : bg_catalog_) {
+            if (q.is_object() && q.value("id", Json()) == std::string(p.id)) {
+                for (const char* key : {"available", "downloaded"}) {
+                    if (q.contains(key) && q.at(key).is_boolean()) {
+                        row[key] = q.at(key).get<bool>();
+                    }
+                }
+            }
+        }
+        out << row;
+    }
+    return out;
+}
+
+void EditorModel::load_bg_providers() {
+    // listBgProviders, una vez por editor: sin catálogo se usan los motores de siempre.
+    if (!QCoreApplication::instance()) { // los tests del modelo van sin app: sin red
+        return;
+    }
+    bg_jobs_.get("/api/bg/providers", [this](const Json& r) {
+        if (!r.is_object()) {
+            return;
+        }
+        const Json providers = r.value("providers", Json::array());
+        bg_catalog_ = providers.is_array() ? providers : Json::array();
+        const Json device = r.value("onnx_selected", Json());
+        bg_device_ = device.is_string() ? qstr(device.get<std::string>()) : QString();
+        emit bgProvidersChanged();
+    });
+}
+
+void EditorModel::set_bg(const std::string& clip_id, Json bg_removal, const char* cause) {
+    if (!session_) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    bool found = false;
+    for (auto& item : next.clips) {
+        if (item->id == clip_id) {
+            item.mut().bg_removal = bg_removal;
+            found = true;
+        }
+    }
+    if (found) {
+        commit(std::move(next), cause, {clip_id});
+    }
+}
+
+void EditorModel::toggleBgAuto(bool on) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c || !core::bg_capable(*c)) {
+        return;
+    }
+    set_bg(c->id, core::bg_toggle_auto(*c, on), "bg-auto");
+}
+
+void EditorModel::changeBgAuto(const QVariantMap& patch) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c || !core::bg_capable(*c)) {
+        return;
+    }
+    const std::string id = c->id;
+    const Json p = to_json(patch);
+    set_bg(id, core::bg_change_auto(*c, p), "bg-auto");
+    // Cambiar de motor quita el aviso del cálculo anterior.
+    if (p.contains("provider") && bg_job_.value("clipId").toString() == qstr(id) &&
+        bg_job_.value("status").toString() != "running" && bg_job_.value("status").toString() != "pending") {
+        bg_job_.clear();
+        emit bgJobChanged();
+    }
+}
+
+void EditorModel::applyBgAuto() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!session_ || !c) {
+        return;
+    }
+    auto start = core::bg_auto_start(*c);
+    if (!start) {
+        return;
+    }
+    const std::string id = c->id;
+    set_bg(id, std::move(start->bg_removal), "bg-auto");
+    bg_job_ = {{"clipId", qstr(id)}, {"status", "pending"}, {"progress", 0.0}, {"message", QString()},
+               {"error", QString()}, {"notice", QString()}};
+    emit bgJobChanged();
+    bg_jobs_.start(QString("/api/projects/%1/bg-removal").arg(qstr(project_id_)), start->body,
+                   [this, id](const Json& job) { bg_update(id, job); });
+}
+
+void EditorModel::cancelBgAuto() {
+    if (bg_job_.isEmpty() || !bg_jobs_.busy()) {
+        return;
+    }
+    bg_jobs_.cancel();
+    bg_job_["message"] = "Cancelando…";
+    emit bgJobChanged();
+}
+
+void EditorModel::bg_update(const std::string& clip_id, const Json& job) {
+    const std::string status = job_text(job, "status");
+    const core::TimelineClip* c = clip(qstr(clip_id));
+    const auto bg = c ? core::bg_auto_finished(*c, job) : std::nullopt;
+    if (bg) { // el clip se queda con la clave de caché (o con el error), en un paso de deshacer
+        set_bg(clip_id, *bg, "bg-auto");
+    }
+    if (status == "done") {
+        const auto r = job.find("bg_removal");
+        const std::string warning = r != job.end() && r->is_object() ? job_text(*r, "warning") : std::string();
+        bg_job_ = {{"clipId", qstr(clip_id)}, {"status", "done"}, {"progress", 1.0}, {"message", QString()},
+                   {"error", QString()}, {"notice", qstr(warning)}};
+    } else {
+        const auto progress = job.find("progress");
+        bg_job_ = {{"clipId", qstr(clip_id)},
+                   {"status", qstr(status)},
+                   {"progress", progress != job.end() && progress->is_number() ? progress->get<double>() : 0.0},
+                   {"message", qstr(job_text(job, "message"))},
+                   {"error", qstr(status == "error" && job_text(job, "error").empty() ? std::string("Error")
+                                                                                     : job_text(job, "error"))},
+                   {"notice", QString()}};
+    }
+    emit bgJobChanged();
 }
 
 QVariantList EditorModel::vfxCatalog() {

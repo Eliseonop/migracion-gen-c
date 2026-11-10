@@ -864,6 +864,52 @@ def _script_prompt_case() -> dict:
     return {"name": "prompt del guion", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
 
 
+def _bg_case() -> dict:
+    """«Eliminar fondo» del editor: toggleBgAuto, changeBgAuto, startBgAutoFor (el cuerpo del POST y el estado
+    «running») y el final del job (el efecto de bgJob.status) de VideoEditor.jsx, sobre clip.bg_removal."""
+    sam = {"enabled": True, "auto": {"enabled": True, "provider": "sam21_tiny", "base_key": "k-sam", "status": "ready",
+                                     "edits": [{"op": "keep", "size": 0.05, "points": [{"x": 0.5, "y": 0.5}], "t": 1.2,
+                                                "tool": "smart"}]}}
+    ready = {"enabled": True, "mode": "auto",
+             "auto": {"enabled": True, "provider": "rvm_mobilenetv3", "base_key": "abc123", "status": "ready",
+                      "mask_height": 720, "threshold": 0.4, "feather": 0.05, "model_version": "v2"},
+             "chroma": {"enabled": True, "color": "#0f0"}, "outline": {"enabled": True, "width": 0.5}}
+    clips = [clip("b1", "V1", start=0, inp=1, out=6),  # nunca tuvo bg_removal
+             clip("b2", "V1", start=7, inp=0, out=3, kind="image", filename="foto.png", source_duration=0.0),
+             clip("b3", "V1", start=11, inp=0, out=4, kind="image", filename="anim.GIF?v=2"),
+             clip("b4", "V2", start=0, inp=0, out=5, bg_removal=sam),
+             clip("b5", "V2", start=6, inp=2, out=8, bg_removal=ready, asset_scope="library", asset_id="lib-7"),
+             clip("b6", "V2", start=15, inp=0, out=2, bg_removal={"auto": {"provider": "u2net", "status": "error",
+                                                                            "error": "sin GPU"}}),
+             clip("b7", "V1", start=20, inp=0, out=3, bg_removal={"enabled": False, "auto": {"enabled": True}}),
+             clip("b8", "A1", start=0, inp=0, out=3, kind="audio"),
+             clip("b9", "V1", start=25, inp=0, out=3, bg_removal={"auto": {"provider": "u2net", "base_key": "x"}}),
+             clip("b10", "V1", start=30, inp=0, out=2, asset_scope="")]  # sin ámbito: el del proyecto
+    patches = [{"provider": "birefnet_lite"}, {"provider": "sam21_large"}, {"provider": "u2net", "mask_height": 1080},
+               {"provider": "nada"}, {"provider": None}, {"mask_height": 720}, {"stabilize": 0.3},
+               {"threshold": 0.62}, {"softness": 0.1}, {"feather": 0.2}, {"expansion": -0.35}, {"opacity": 0.5},
+               {"invert": True}, {"invert": False, "threshold": 1.5}, {}, {"base_key": "manual"}]
+    jobs = [{"status": "done", "bg_removal": {"base_key": "nuevo", "provider": "birefnet_lite", "model_version": "1.4",
+                                              "mask_fps": 12, "mask_height": 1080, "warning": "Va lento"}},
+            {"status": "done", "bg_removal": {"base_key": "solo-clave"}},
+            {"status": "done", "bg_removal": {}},
+            {"status": "done"},
+            {"status": "error", "error": "Cancelado"},
+            {"status": "error", "error": ""},
+            {"status": "error"},
+            {"status": "running", "progress": 0.4}]
+    calls: list = []
+    for c in clips:
+        for on in (True, False):
+            calls.append(["bgToggleAuto", c["id"], on])
+        for p in patches:
+            calls.append(["bgChangeAuto", c["id"], p])
+        calls.append(["bgStart", c["id"]])
+        for j in jobs:
+            calls.append(["bgFinished", c["id"], j])
+    return {"name": "eliminar fondo", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -897,4 +943,5 @@ def cases() -> list[dict]:
     out.append(_captions_case(random.Random(20261108)))
     out.append(_face_follow_case(random.Random(20261109)))
     out.append(_script_prompt_case())
+    out.append(_bg_case())
     return out

@@ -74,6 +74,7 @@ add_library(gc_core
     src/timeline_ui.cpp
     src/clip_layout_ui.cpp
     src/text_clip_ui.cpp
+    src/bg_ui.cpp
     src/captions_ui.cpp
     src/face_follow.cpp
     src/script_prompt.cpp

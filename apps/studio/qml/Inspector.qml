@@ -19,6 +19,7 @@ Rectangle {
         .concat(vfxable ? [["fx", "Efectos"]] : [])
         .concat(sound ? [["audio", "Audio"]] : [])
         .concat(has && ["video", "image", "shape", "text"].indexOf(clip.kind) >= 0 ? [["mask", "Máscara"]] : [])
+        .concat(has && clip.bgCapable ? [["bg", "Fondo"]] : [])
         .concat(has && clip.kind !== "adjustment" ? [["anim", "Animar"]] : [])
     readonly property string tabNow: tabList.some((t) => t[0] === tab) ? tab : "clip"
     // La máscara se maneja en la vista previa solo con su pestaña abierta (onMaskPanel de EdInspector).
@@ -66,6 +67,24 @@ Rectangle {
         ["distortion", "Distorsión", "effect"], ["underwater", "Bajo el agua", "filter"], ["telephone", "Teléfono", "filter"],
         ["radio", "Radio antigua", "filter"], ["megaphone", "Megáfono", "filter"], ["muffled", "Amortiguado", "filter"]]
     readonly property var mk: has && clip.mask ? clip.mask : ({})
+    // Eliminar fondo (EdBgRemove.jsx): la Eliminación automática y el ajuste del recorte.
+    readonly property var bgAuto: has && clip.bg && clip.bg.auto ? clip.bg.auto : ({})
+    readonly property bool bgAutoOn: !!bgAuto.enabled && !String(bgAuto.provider || "").startsWith("sam")
+    readonly property bool bgReady: has && !!clip.bgReady
+    readonly property var bgJob: has && model.bgJob.clipId === clip.id ? model.bgJob : ({})
+    readonly property bool bgRunning: bgJob.status === "pending" || bgJob.status === "running"
+    readonly property bool bgAnimated: has && (clip.kind === "video" || /\.gif(\?|#|$)/i.test(clip.filename || ""))
+    readonly property var bgModels: model.bgProviders.filter((p) => !p.interactive)
+    readonly property var bgInfo: bgModels.find((p) => p.id === bgAuto.provider) || ({})
+    // MASK_HEIGHT_OPTIONS, más el alto del clip si no es uno de ellos.
+    readonly property var bgHeights: {
+        const base = [[512, "Normal (512 px)"], [720, "Alto (720 px)"], [1080, "Máximo (1080 px)"]]
+        const h = bgAuto.mask_height
+        return !h || base.some((o) => o[0] === h) ? base : base.concat([[h, h + " px"]])
+    }
+    // StatusLine de EdBgRemove: calculando, error, aviso del motor o listo.
+    readonly property string bgState: bgRunning ? "run" : bgJob.status === "error" ? "err"
+        : bgReady && bgJob.notice ? "warn" : bgReady ? "ok" : bgAuto.status === "error" ? "err" : ""
     readonly property bool hasMask: !!mk.type
     readonly property var maskTypes: [["linear", "División"], ["film", "Película"], ["circle", "Círculo"], ["rectangle", "Rectángulo"],
         ["star", "Estrella"], ["heart", "Corazón"], ["text", "Texto"], ["brush", "Pincel"]]
@@ -226,6 +245,27 @@ Rectangle {
             model: parent.colors
             Rectangle { required property string modelData; width: 8; height: 14; color: modelData }
         }
+    }
+    // Un valor de «Eliminar fondo» en % en una barra: aplica al soltar.
+    component BgSlider: RowLayout {
+        id: bs
+        required property string title
+        required property real value
+        property real from: 0
+        signal committed(real value)
+        Layout.fillWidth: true
+        Label { Layout.preferredWidth: 70; text: bs.title; color: Theme.textSecondary }
+        Slider {
+            id: bsSlider
+            objectName: "insp:bg:" + bs.title
+            Layout.fillWidth: true
+            from: bs.from
+            to: 100
+            stepSize: 1
+            value: bs.value
+            onPressedChanged: if (!pressed) bs.committed(Math.round(value))
+        }
+        Label { Layout.preferredWidth: 40; text: Math.round(bsSlider.value) + " %"; color: Theme.text; horizontalAlignment: Text.AlignRight }
     }
     component Percent: RowLayout {
         id: row
@@ -1328,6 +1368,149 @@ Rectangle {
                     }
                 }
             }
+            }
+
+            ColumnLayout { // Eliminar fondo (EdBgRemove.jsx): automática y ajustar recorte
+                visible: panel.tabNow === "bg"
+                Layout.fillWidth: true
+                spacing: 6
+
+                Section { text: "Eliminación automática" }
+                Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: "Detecta el sujeto y lo separa del fondo con IA, sin marcar nada. El archivo original no se modifica: se guarda una máscara reutilizable en el proyecto."
+                    color: Theme.muted
+                    font.pixelSize: 11
+                }
+                Toggle {
+                    objectName: "insp:bg:auto"
+                    implicitWidth: implicitContentWidth + 16
+                    text: "Activada"
+                    on: panel.bgAutoOn
+                    onClicked: panel.model.toggleBgAuto(!on)
+                }
+                RowLayout {
+                    visible: panel.bgAutoOn
+                    Layout.fillWidth: true
+                    Label { Layout.preferredWidth: 70; text: "Motor"; color: Theme.textSecondary }
+                    Choice {
+                        objectName: "insp:bg:provider"
+                        options: panel.bgModels.map((p) => [p.id, p.available === false ? p.label + " (se descarga)" : p.label])
+                        current: panel.bgAuto.provider || ""
+                        onPicked: (v) => panel.model.changeBgAuto({ provider: v })
+                    }
+                }
+                Label {
+                    visible: panel.bgAutoOn && !!panel.bgInfo.hint
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: (panel.bgInfo.hint || "") + (panel.bgInfo.available === false ? " Se descarga al aplicar por primera vez." : "")
+                          + (panel.model.bgDevice ? " Se ejecuta en " + panel.model.bgDevice + "." : "")
+                    color: Theme.muted
+                    font.pixelSize: 11
+                }
+                Label {
+                    visible: panel.bgAutoOn && !!panel.bgInfo.people && panel.clip.kind !== "video"
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: "RVM está pensado para personas en vídeo; en una imagen suele ir mejor BiRefNet."
+                    color: Theme.warning
+                    font.pixelSize: 11
+                }
+                Label {
+                    visible: panel.bgAutoOn && panel.bgAuto.provider === "birefnet_lite" && panel.bgAnimated && panel.model.bgDevice === "cpu"
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: "Sin GPU, BiRefNet tarda varios segundos por fotograma: en clips largos puede tardar minutos."
+                    color: Theme.warning
+                    font.pixelSize: 11
+                }
+                RowLayout {
+                    visible: panel.bgAutoOn
+                    Layout.fillWidth: true
+                    Label { Layout.preferredWidth: 70; text: "Detalle"; color: Theme.textSecondary }
+                    Choice {
+                        objectName: "insp:bg:height"
+                        options: panel.bgHeights.map((o) => [String(o[0]), o[1]])
+                        current: String(panel.bgAuto.mask_height || 512)
+                        onPicked: (v) => panel.model.changeBgAuto({ mask_height: Number(v) })
+                    }
+                }
+                BgSlider {
+                    visible: panel.bgAutoOn && panel.has && panel.clip.kind === "video"
+                    title: "Estabilizar"
+                    value: Math.round((panel.bgAuto.stabilize ?? 0) * 100)
+                    onCommitted: (v) => panel.model.changeBgAuto({ stabilize: v / 100 })
+                }
+                RowLayout {
+                    visible: panel.bgAutoOn
+                    spacing: 4
+                    Small {
+                        objectName: "insp:bg:apply"
+                        visible: !panel.bgRunning
+                        highlighted: true
+                        text: panel.bgReady ? "Recalcular" : "Aplicar"
+                        onClicked: panel.model.applyBgAuto()
+                    }
+                    Small {
+                        objectName: "insp:bg:cancel"
+                        visible: panel.bgRunning
+                        text: "Cancelar"
+                        onClicked: panel.model.cancelBgAuto()
+                    }
+                }
+                ProgressBar {
+                    visible: panel.bgAutoOn && panel.bgRunning
+                    Layout.fillWidth: true
+                    from: 0
+                    to: 1
+                    value: panel.bgJob.progress || 0
+                }
+                Label {
+                    objectName: "insp:bg:status"
+                    visible: panel.bgAutoOn && panel.bgState !== ""
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    font.pixelSize: 11
+                    color: panel.bgState === "err" ? Theme.danger : panel.bgState === "ok" ? Theme.success
+                         : panel.bgState === "warn" ? Theme.warning : Theme.textSecondary
+                    text: panel.bgState === "run" ? (panel.bgJob.message || "Eliminando el fondo…") + " · " + Math.round((panel.bgJob.progress || 0) * 100) + " %"
+                        : panel.bgState === "err" ? (panel.bgJob.error || panel.bgAuto.error || "No se pudo eliminar el fondo.")
+                        : panel.bgState === "warn" ? panel.bgJob.notice
+                        : "Fondo separado" + (panel.model.bgDevice ? " · " + panel.model.bgDevice : "") + ". Se reutiliza sin recalcular."
+                }
+
+                ColumnLayout { // Ajustar recorte: al instante, sin volver a ejecutar el modelo
+                    visible: panel.bgReady
+                    Layout.fillWidth: true
+                    spacing: 4
+                    Section { text: "Ajustar recorte" }
+                    Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.Wrap
+                        text: "Se aplica al instante: no vuelve a ejecutar el modelo."
+                        color: Theme.muted
+                        font.pixelSize: 11
+                    }
+                    Toggle {
+                        objectName: "insp:bg:invert"
+                        implicitWidth: implicitContentWidth + 16
+                        text: "Invertir"
+                        on: !!panel.bgAuto.invert
+                        onClicked: panel.model.changeBgAuto({ invert: !on })
+                    }
+                    BgSlider { title: "Umbral"; value: Math.round((panel.bgAuto.threshold ?? 0.5) * 100)
+                               onCommitted: (v) => panel.model.changeBgAuto({ threshold: v / 100 }) }
+                    BgSlider { title: "Suavizado"; value: Math.round((panel.bgAuto.softness ?? 0.25) * 100)
+                               onCommitted: (v) => panel.model.changeBgAuto({ softness: v / 100 }) }
+                    BgSlider { title: "Pluma"; value: Math.round((panel.bgAuto.feather ?? 0) / 0.15 * 100) // MATTE_FEATHER_MAX
+                               onCommitted: (v) => panel.model.changeBgAuto({ feather: v / 100 * 0.15 }) }
+                    BgSlider { title: "Expandir"; from: -100; value: Math.round((panel.bgAuto.expansion ?? 0) * 100)
+                               onCommitted: (v) => panel.model.changeBgAuto({ expansion: v / 100 }) }
+                    BgSlider { title: "Opacidad"; value: Math.round((panel.bgAuto.opacity ?? 1) * 100)
+                               onCommitted: (v) => panel.model.changeBgAuto({ opacity: v / 100 }) }
+                }
             }
 
             ColumnLayout {

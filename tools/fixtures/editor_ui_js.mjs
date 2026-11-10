@@ -33,6 +33,7 @@ const sfxName = await load('lib/sfxName.js')
 const projectFps = await load('lib/projectFps.js')
 const panning = await load('lib/panning.js')
 const scriptPrompt = await load('features/audio/scriptPrompt.js')
+const bgLib = await load('lib/clipBg.js')
 // confirmCrop de VideoEditor.jsx (con changeReframe, upsertKeyframe, changeTransform y srcTOf) sobre un clip.
 const confirmCrop = (clip, crop, rotation, t, fps) => {
   let made = clip
@@ -114,6 +115,53 @@ const maskOps = (clip, aspect, fps, t) => {
 }
 const masksOf = (c) => (c.masks || []).map(({ id, ...m }) => m)
 const noUid = (e) => { if (!e) return null; const { uid, ...rest } = e; return rest }
+
+// «Eliminar fondo» de VideoEditor.jsx (patchBg, patchBgAuto, bgClipDescriptor, startBgAutoFor, toggleBgAuto y
+// changeBgAuto) sobre un clip: el bg_removal con el que queda y el cuerpo del POST /bg-removal.
+const bgOps = (clip) => {
+  let made = clip
+  let body = null
+  const setClips = (fn) => { made = fn([made])[0] }
+  const src = `${root}/features/editor/VideoEditor.jsx`
+  const deps = { setClips, clipBg: bgLib.clipBg, defaultBg: bgLib.defaultBg, normalizeBg: bgLib.normalizeBg,
+    isInteractiveProvider: bgLib.isInteractiveProvider, DEFAULT_PROVIDER: bgLib.DEFAULT_PROVIDER,
+    recommendedProvider: bgLib.recommendedProvider, providerMaskHeight: bgLib.providerMaskHeight,
+    bgCapable: bgLib.bgCapable, resetCutout: () => {}, stopBgAnalyze: () => {}, setBgBrush: () => {},
+    setBgNotice: () => {}, setBgJob: () => {}, project: { id: 'p' },
+    createBgRemovalJob: (_pid, b) => { body = b; return new Promise(() => {}) } }
+  const fns = ['patchBg', 'patchBgAuto', 'bgClipDescriptor', 'startBgAutoFor'].map((n) => extractFunction(src, n))
+  const arrows = ['toggleBgAuto', 'changeBgAuto'].map((n) => extractArrow(src, n))
+  const api = new Function(...Object.keys(deps), 'selectedClip',
+    [...fns, ...arrows, 'return { patchBgAuto, startBgAutoFor, toggleBgAuto, changeBgAuto }'].join(String.fromCharCode(10)))(
+    ...Object.values(deps), clip)
+  return { api, get bg() { return made.bg_removal ?? null }, get body() { return body } }
+}
+// El final del job (el useEffect de bgJob.status de VideoEditor.jsx), con su patchBgAuto.
+const bgFinished = (clip, job) => {
+  const ops = bgOps(clip)
+  if (job.status === 'done' && job.bg_removal) {
+    const r = job.bg_removal
+    ops.api.patchBgAuto(clip.id, { enabled: true, status: 'ready', error: null, base_key: r.base_key,
+      provider: r.provider, model_version: r.model_version, mask_fps: r.mask_fps, mask_height: r.mask_height })
+  } else if (job.status === 'error') {
+    ops.api.patchBgAuto(clip.id, { status: 'error', error: job.error || 'Error' })
+  } else {
+    return null
+  }
+  return ops.bg
+}
+// Como extractFunction, para `const name = (…) => {…}`.
+function extractArrow(file, name) {
+  const src = readFileSync(file, 'utf8')
+  const start = src.indexOf(`const ${name} = (`)
+  if (start < 0) throw new Error(`no encuentro ${name}`)
+  let depth = 0
+  for (let i = src.indexOf('=> {', start) + 3; i < src.length; i++) {
+    if (src[i] === '{') depth++
+    else if (src[i] === '}' && --depth === 0) return src.slice(start, i + 1)
+  }
+  throw new Error(`no encuentro ${name}`)
+}
 
 // applyStaticPose vive dentro de VideoEditor.jsx (no se exporta): se extrae su texto y se evalúa con
 // lo que usa. Es JS sin JSX.
@@ -369,6 +417,14 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       for (const k of keys) next = kf.upsertKeyframeAt(next, k.t, { mx: k.mx, my: k.my }, undefined, fps)
       return noIds(next).keyframes ?? null
     },
+    bgToggleAuto: (id, on) => { const o = bgOps(byId(id)); o.api.toggleBgAuto(on); return o.bg },
+    bgChangeAuto: (id, patch) => { const o = bgOps(byId(id)); o.api.changeBgAuto(patch); return o.bg },
+    bgStart: (id) => {
+      const o = bgOps(byId(id))
+      o.api.startBgAutoFor(byId(id))
+      return o.body ? { body: o.body, bg: o.bg } : null
+    },
+    bgFinished: (id, job) => bgFinished(byId(id), job),
     buildScriptPrompt: (topic, clips) => scriptPrompt.buildScriptPrompt(topic, clips),
     canCaptionClip: (id) => m.canCaptionClip(byId(id)),
     sourceRefOf: (id) => m.sourceRefOf(byId(id)),

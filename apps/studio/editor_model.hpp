@@ -60,6 +60,11 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantMap subtitleJob READ subtitleJob NOTIFY subtitleJobChanged)
     // «Seguir cara» en curso (maskFollow): {clipId, progress, message}; vacío si no.
     Q_PROPERTY(QVariantMap maskFollow READ maskFollow NOTIFY maskFollowChanged)
+    // «Eliminar fondo»: el job del matte ({clipId, status, progress, message, error, notice}), los motores
+    // (BG_PROVIDERS con lo que dice el backend de cada uno) y dónde se ejecutan (cpu, cuda…).
+    Q_PROPERTY(QVariantMap bgJob READ bgJob NOTIFY bgJobChanged)
+    Q_PROPERTY(QVariantList bgProviders READ bgProviders NOTIFY bgProvidersChanged)
+    Q_PROPERTY(QString bgDevice READ bgDevice NOTIFY bgProvidersChanged)
     // «Cargar audio» del material (narrator.hpp): el narrador y el audio de un enlace, por el backend.
     Q_PROPERTY(QObject* narrator READ narrator CONSTANT)
     // El fotograma de la timeline en el cabezal (preview_source.hpp), para FramePreview.
@@ -123,6 +128,12 @@ public:
     [[nodiscard]] BackendJobs& subtitleBackend() { return subtitle_jobs_; }
     [[nodiscard]] QVariantMap maskFollow() const { return mask_follow_; }
     [[nodiscard]] BackendJobs& faceBackend() { return face_jobs_; }
+    [[nodiscard]] QVariantMap bgJob() const { return bg_job_; }
+    [[nodiscard]] QVariantList bgProviders() const;
+    [[nodiscard]] QString bgDevice() const { return bg_device_; }
+    [[nodiscard]] BackendJobs& bgBackend() { return bg_jobs_; }
+    // Vuelve a pedir los motores de «Eliminar fondo» (al abrir un proyecto ya se piden).
+    void loadBgProviders() { load_bg_providers(); }
     [[nodiscard]] QObject* narrator() { return &narrator_; }
     [[nodiscard]] Narrator& narratorModel() { return narrator_; }
     [[nodiscard]] QObject* preview() { return &preview_; }
@@ -320,6 +331,13 @@ public:
     // followMaskFace: la máscara del vídeo elegido sigue la cara (el seguimiento de caras del material, que hace
     // el backend con el job face-track, pasado a keyframes de su posición), en un paso de deshacer.
     Q_INVOKABLE void followMaskFace();
+    // Eliminación automática del fondo del clip elegido (EdBgRemove y VideoEditor.jsx), en clip.bg_removal y
+    // con un paso de deshacer cada una: encenderla o apagarla, un cambio del panel (motor, detalle, umbral…),
+    // calcular el matte con el backend (POST /bg-removal; al acabar, su clave de caché va al clip) y cancelarlo.
+    Q_INVOKABLE void toggleBgAuto(bool on);
+    Q_INVOKABLE void changeBgAuto(const QVariantMap& patch);
+    Q_INVOKABLE void applyBgAuto();
+    Q_INVOKABLE void cancelBgAuto();
     // copyPrompt de AudioTab: el prompt para pedirle el guion a una IA, con el material del proyecto, al portapapeles.
     Q_INVOKABLE void copyScriptPrompt(const QString& topic);
     // Pila de efectos animados (addVfx y EdVfxStack): añadir, parámetros, activar, rango, orden y quitar.
@@ -414,6 +432,8 @@ signals:
     void editMaskChanged();
     void subtitleJobChanged();
     void maskFollowChanged();
+    void bgJobChanged();
+    void bgProvidersChanged();
 
 private:
     // Una tarjeta del material con su dragPayload; y las del proyecto (sus vídeos, imágenes y audios).
@@ -516,6 +536,15 @@ private:
     std::string follow_clip_;
     std::pair<double, double> follow_size_;
     QVariantMap mask_follow_;
+    // «Eliminar fondo»: el bg_removal nuevo de un clip en un paso de deshacer, el final del job y el catálogo
+    // de motores (GET /api/bg/providers, una vez por proyecto abierto).
+    void set_bg(const std::string& clip_id, Json bg_removal, const char* cause);
+    void bg_update(const std::string& clip_id, const Json& job);
+    void load_bg_providers();
+    BackendJobs bg_jobs_;
+    QVariantMap bg_job_;
+    Json bg_catalog_ = Json::array();
+    QString bg_device_;
     Narrator narrator_;
     // Vuelve a leer el material del proyecto de projects.json y lo pone delante.
     void reload_project_materials();

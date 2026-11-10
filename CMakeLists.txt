@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28...4.3)
 
 project(GenClipPro
-    VERSION 0.1.0
+    VERSION 0.2.0
     DESCRIPTION "Editor de clips verticales: motor C++ multiplataforma (migración de video-yt)"
     LANGUAGES CXX)
 

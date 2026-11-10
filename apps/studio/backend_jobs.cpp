@@ -118,6 +118,14 @@ void BackendJobs::deliver(const Json& job) {
     }
 }
 
+void BackendJobs::cancel() {
+    if (job_id_.isEmpty()) {
+        return;
+    }
+    QNetworkReply* reply = net().deleteResource(QNetworkRequest(url("/api/job/" + job_id_)));
+    connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater); // .catch(() => {})
+}
+
 void BackendJobs::stop() {
     timer_.stop();
     job_id_.clear();

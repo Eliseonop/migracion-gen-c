@@ -39,6 +39,9 @@ public:
     void start(const QString& path, const Json& body, Update update);
     // Deja de esperarlo (en el backend sigue).
     void stop();
+    // Pide al backend que lo cancele (DELETE /api/job/{id}, el cancelJob de React) y lo sigue esperando: acaba
+    // como acabe (el backend lo da por error). Nada si aún no tiene id.
+    void cancel();
     // Una lectura suelta (GET `path`), aparte del job: `reply` recibe el JSON, o null si falla.
     using Reply = std::function<void(const Json& body)>;
     void get(const QString& path, Reply reply);

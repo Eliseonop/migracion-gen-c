@@ -889,6 +889,132 @@ TEST_CASE("studio sin pantalla: «Generar subtítulos» pide la transcripción a
     CHECK(s.editor->subtitleJob()["error"].toString().contains("No se pudo conectar"));
 }
 
+TEST_CASE("studio sin pantalla: «Eliminar fondo» calcula el matte con el backend y se ajusta", "[studio][ui][backend]") {
+    const Studio s;
+    int polls = 0;
+    bool cancelled = false;
+    bool hold = false; // el job sigue calculando hasta que se cancele
+    FakeBackend backend([&](const QString& method, const QString& path, const Json&) -> std::pair<int, Json> {
+        if (method == "GET" && path == "/api/bg/providers") {
+            return {200, {{"providers", Json::array({{{"id", "birefnet_lite"}, {"available", false}},
+                                                     {{"id", "rvm_mobilenetv3"}, {"available", true}}})},
+                          {"onnx_selected", "cpu"}}};
+        }
+        if (method == "POST" && path == "/api/projects/p1/bg-removal") {
+            polls = 0;
+            return {200, {{"id", "j1"}, {"status", "pending"}, {"progress", 0.0}}};
+        }
+        if (method == "DELETE" && path == "/api/job/j1") {
+            cancelled = true;
+            return {200, {{"ok", true}}};
+        }
+        if (method == "GET" && path == "/api/job/j1") {
+            if (cancelled) {
+                return {200, {{"id", "j1"}, {"status", "error"}, {"error", "Cancelado"}}};
+            }
+            if (++polls == 1 || hold) {
+                return {200, {{"id", "j1"}, {"status", "running"}, {"progress", 0.4}, {"message", "Separando el fondo…"}}};
+            }
+            return {200, {{"id", "j1"},
+                          {"status", "done"},
+                          {"progress", 1.0},
+                          {"bg_removal", {{"base_key", "k1"}, {"provider", "rvm_mobilenetv3"}, {"model_version", "1.0"},
+                                          {"mask_fps", 15}, {"mask_height", 720}, {"warning", "Sin personas en 3 fotogramas."}}}}};
+        }
+        return {404, {{"detail", "No existe."}}};
+    });
+    s.editor->bgBackend().setBaseUrl(backend.url());
+    s.editor->bgBackend().setPollInterval(20);
+    s.editor->loadBgProviders();
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->bgDevice() == "cpu"; }, 10000));
+    const auto provider = [&](const char* id) {
+        for (const QVariant& v : s.editor->bgProviders()) {
+            if (v.toMap()["id"] == id) {
+                return v.toMap();
+            }
+        }
+        return QVariantMap();
+    };
+    CHECK(provider("birefnet_lite")["available"] == false); // lo que dice el backend
+    CHECK(provider("u2net")["available"] == true);           // lo que no dice: disponible
+    CHECK(s.editor->bgProviders().size() == 8);
+
+    // Un audio no tiene la pestaña; el vídeo «a», sí. Activarla propone RVM con su alto (720).
+    s.editor->select("a");
+    QCoreApplication::processEvents();
+    s.click("insp:tab:bg");
+    REQUIRE(s.item("insp:bg:auto"));
+    CHECK_FALSE(s.item("insp:bg:apply"));
+    s.click("insp:bg:auto");
+    const auto bg_auto = [&] { return s.editor->selectedClip()["bg"].toMap()["auto"].toMap(); };
+    CHECK(bg_auto()["enabled"] == true);
+    CHECK(bg_auto()["provider"] == "rvm_mobilenetv3");
+    CHECK(bg_auto()["mask_height"] == 720);
+    REQUIRE(s.item("insp:bg:apply"));
+    CHECK(s.item("insp:bg:apply")->property("text") == "Aplicar");
+
+    // Aplicar: el job con el material y su tramo, mientras «running»; al acabar, la clave de caché en el clip.
+    // El botón puede quedar bajo el borde visible del inspector (el Flickable lo recorta): su señal, como un clic.
+    QMetaObject::invokeMethod(s.item("insp:bg:apply"), "clicked");
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->bgJob()["status"] == "done"; }, 10000));
+    const auto post = std::ranges::find(backend.requests, QString("POST"), &FakeBackend::Request::method);
+    REQUIRE(post != backend.requests.end());
+    CHECK(post->body.at("clip_id") == "a");
+    CHECK(post->body.at("asset_kind") == "clips");
+    CHECK(post->body.at("asset_scope") == "project");
+    CHECK(post->body.at("out_point") == 4.0);
+    CHECK(post->body.at("auto").at("provider") == "rvm_mobilenetv3");
+    CHECK(post->body.at("auto").at("status") == "idle"); // el `auto` de antes de lanzarlo
+    CHECK(bg_auto()["status"] == "ready");
+    CHECK(bg_auto()["base_key"] == "k1");
+    CHECK(s.editor->selectedClip()["bgReady"] == true);
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("insp:bg:status"));
+    CHECK(s.item("insp:bg:status")->property("text") == "Sin personas en 3 fotogramas.");
+    CHECK(s.item("insp:bg:apply")->property("text") == "Recalcular");
+    CHECK(s.item("insp:bg:Umbral")); // Ajustar recorte, con el matte listo
+
+    // Ajustar no recalcula; cambiar de motor, sí (sin clave y con su alto). Cada cambio, un paso de deshacer.
+    s.editor->changeBgAuto({{"threshold", 0.3}});
+    CHECK(bg_auto()["threshold"] == 0.3);
+    CHECK(bg_auto()["base_key"] == "k1");
+    s.editor->changeBgAuto({{"provider", "u2net"}});
+    CHECK(bg_auto()["base_key"] == "");
+    CHECK(bg_auto()["status"] == "idle");
+    CHECK(bg_auto()["mask_height"] == 512);
+    CHECK(s.editor->selectedClip()["bgReady"] == false);
+    s.editor->undo();
+    CHECK(bg_auto()["base_key"] == "k1");
+    CHECK(bg_auto()["threshold"] == 0.3);
+
+    // Cancelar: DELETE /api/job/{id}; el backend lo da por error y el clip se queda con él.
+    cancelled = false;
+    hold = true;
+    s.editor->applyBgAuto();
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->bgJob()["status"] == "running"; }, 10000));
+    CHECK(bg_auto()["status"] == "running");
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("insp:bg:cancel"));
+    s.editor->cancelBgAuto();
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->bgJob()["status"] == "error"; }, 10000));
+    CHECK(std::ranges::any_of(backend.requests, [](const FakeBackend::Request& r) { return r.method == "DELETE"; }));
+    CHECK(s.editor->bgJob()["error"] == "Cancelado");
+    CHECK(bg_auto()["status"] == "error");
+    CHECK(bg_auto()["error"] == "Cancelado");
+
+    // Apagarla deja el resto como estaba.
+    s.editor->toggleBgAuto(false);
+    CHECK(bg_auto()["enabled"] == false);
+    CHECK(bg_auto()["provider"] == "rvm_mobilenetv3");
+
+    // Una imagen propone BiRefNet (1080); un audio no tiene la pestaña.
+    s.editor->select("b");
+    QCoreApplication::processEvents();
+    s.editor->toggleBgAuto(true);
+    CHECK(bg_auto()["provider"] == "birefnet_lite");
+    CHECK(bg_auto()["mask_height"] == 1080);
+}
+
 TEST_CASE("studio sin pantalla: «Cargar audio» genera la voz y extrae un enlace por el backend", "[studio][ui][backend]") {
     const Studio s;
     studio::Narrator& narrator = s.editor->narratorModel();

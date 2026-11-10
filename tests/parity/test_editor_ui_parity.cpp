@@ -10,6 +10,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "gc/core/bg_ui.hpp"
 #include "gc/core/captions_ui.hpp"
 #include "gc/core/clip_layout_ui.hpp"
 #include "gc/core/face_follow.hpp"
@@ -707,6 +708,19 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         TimelineClip next = clip(call.at(1));
         enable_keyframes(next, num(2), num(3), ids);
         return next.keyframes ? without_ids(*next.keyframes) : Json();
+    }
+    if (fn == "bgToggleAuto") {
+        return bg_toggle_auto(clip(call.at(1)), call.at(2).get<bool>());
+    }
+    if (fn == "bgChangeAuto") {
+        return bg_change_auto(clip(call.at(1)), call.at(2));
+    }
+    if (fn == "bgStart") {
+        const auto start = bg_auto_start(clip(call.at(1)));
+        return start ? Json{{"body", start->body}, {"bg", start->bg_removal}} : Json();
+    }
+    if (fn == "bgFinished") {
+        return bg_auto_finished(clip(call.at(1)), call.at(2)).value_or(Json());
     }
     if (fn == "buildScriptPrompt") {
         return build_script_prompt(str(1), call.at(2));
