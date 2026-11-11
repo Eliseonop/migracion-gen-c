@@ -1074,6 +1074,62 @@ TEST_CASE("studio sin pantalla: «Exportar recorte» hornea por el backend y añ
     CHECK(s.editor->cutoutJob()["error"] == "Cancelado");
 }
 
+TEST_CASE("studio sin pantalla: «Seguimiento de caras» del material lo aplica a sus clips", "[studio][ui][backend]") {
+    const Studio s;
+    // «a» es el material de vídeo «a» (asset_id a): su seguimiento de caras le llega a él, y no a la imagen «b».
+    int polls = 0;
+    bool forced = false;
+    FakeBackend backend([&](const QString& method, const QString& path, const Json& body) -> std::pair<int, Json> {
+        if (method == "POST" && path == "/api/projects/p1/clips/a/face-track") {
+            forced = body.value("force", false);
+            polls = 0;
+            return {200, {{"id", "f1"}, {"status", "pending"}}};
+        }
+        if (method == "GET" && path == "/api/job/f1") {
+            if (++polls == 1) {
+                return {200, {{"id", "f1"}, {"status", "running"}, {"progress", 0.5}, {"message", "Buscando caras…"}}};
+            }
+            const Json kfs = Json::array({{{"t", 1.0}, {"cx", 0.3}, {"cy", 0.5}}, {{"t", 3.0}, {"cx", 0.7}, {"cy", 0.45}}});
+            return {200, {{"id", "f1"}, {"status", "done"}, {"message", "2 caras"}, {"reframe_prep", {{"keyframes", kfs}}}}};
+        }
+        return {404, {{"detail", "No existe."}}};
+    });
+    s.editor->materialFaceBackend().setBaseUrl(backend.url());
+    s.editor->materialFaceBackend().setPollInterval(20);
+    s.editor->faceTrackMaterial("clips:a");
+    CHECK(s.editor->faceTrackBusy() == "a");
+    s.editor->faceTrackMaterial("clips:a"); // ocupado: no lanza otro
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->faceTrackBusy().isEmpty(); }, 10000));
+    CHECK_FALSE(forced);
+    CHECK(s.editor->notice()["message"] == "2 caras · aplicado a 1 clip");
+    const auto saved = [&](const char* id) -> core::TimelineClip {
+        const auto project = s.store->get_project("p1");
+        REQUIRE(project);
+        REQUIRE(*project);
+        for (const auto& c : (**project).timeline->clips) {
+            if (c->id == id) {
+                return *c;
+            }
+        }
+        FAIL("sin el clip");
+        return {};
+    };
+    const core::TimelineClip a = saved("a");
+    REQUIRE(a.reframe);
+    CHECK(a.reframe->keyframes.size() == 2);
+    CHECK(a.reframe->face_track_mode == "smooth");
+    CHECK(a.reframe->keyframes.front().pan_mode == "smooth");
+    CHECK(a.layout == "fill");
+    CHECK_FALSE((saved("b").reframe && saved("b").reframe->face_track_mode.has_value())); // la imagen no es de ese material
+    s.editor->undo(); // un paso
+    CHECK_FALSE(saved("a").reframe.has_value());
+
+    // «Volver a analizar» manda force.
+    s.editor->faceTrackMaterial("clips:a", true);
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->faceTrackBusy().isEmpty(); }, 10000));
+    CHECK(forced);
+}
+
 TEST_CASE("studio sin pantalla: «Cargar audio» genera la voz y extrae un enlace por el backend", "[studio][ui][backend]") {
     const Studio s;
     studio::Narrator& narrator = s.editor->narratorModel();

@@ -730,6 +730,31 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "bgCutout") {
         return bg_cutout_body(clip(call.at(1))).value_or(Json());
     }
+    if (fn == "faceTrackClip") {
+        SequentialIdSource ids;
+        TimelineClip c = clip(call.at(1));
+        face_track_clip(c, call.at(2), str(3), ids);
+        Json j = to_json(c);
+        Json rf = j.value("reframe", Json());
+        if (rf.is_object()) {
+            for (const char* key : {"keyframes", "keyframes2"}) {
+                for (Json& k : rf[key]) {
+                    k.erase("id");
+                }
+            }
+        }
+        return {{"layout", j["layout"]}, {"frame", j["frame"]}, {"reframe", rf}, {"transform", j.value("transform", Json())}};
+    }
+    if (fn == "applyFaceTrack") {
+        SequentialIdSource ids;
+        Json out = apply_face_track(call.at(1), call.at(2), str(3), ids);
+        for (const char* key : {"keyframes", "keyframes2"}) {
+            for (Json& k : out[key]) {
+                k.erase("id");
+            }
+        }
+        return out;
+    }
     if (fn == "bgToggleCustom") {
         return bg_toggle_custom(clip(call.at(1)), call.at(2).get<bool>(), call.at(3));
     }
@@ -1123,6 +1148,24 @@ TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]
                 }
                 const Json expected = {{"reframe", norm["reframe"]}, {"transform", norm["transform"]},
                                        {"frame", norm["frame"]}, {"keyframes", norm["keyframes"]}};
+                CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(expected.dump()));
+            } else if (calls[i].at(0) == "faceTrackClip") { // por el modelo, como se guarda
+                Json j = to_json([&] -> const TimelineClip& {
+                    for (const auto& x : tl->clips) {
+                        if (x->id == calls[i].at(1).get<std::string>()) {
+                            return *x;
+                        }
+                    }
+                    throw std::runtime_error("clip");
+                }());
+                for (const char* key : {"layout", "frame", "reframe", "transform"}) {
+                    j[key] = results[i].at(key);
+                }
+                auto saved = clip_from_json(j);
+                REQUIRE(saved);
+                const Json norm = to_json(*saved);
+                const Json expected = {{"layout", norm["layout"]}, {"frame", norm["frame"]}, {"reframe", norm["reframe"]},
+                                       {"transform", norm.value("transform", Json())}};
                 CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(expected.dump()));
             } else if (calls[i].at(0) == "freeLayout" && !results[i].is_null()) { // por el modelo, como se guarda
                 Json j = to_json([&] -> const TimelineClip& {

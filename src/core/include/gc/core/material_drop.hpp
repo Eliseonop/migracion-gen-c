@@ -37,4 +37,9 @@ namespace gc::core {
 [[nodiscard]] Json place_asset_clip(const Json& payload, std::string_view track_id, double start,
                                     std::optional<double> fit_duration, IdSource& ids);
 
+// newReframe y withKfIds de editorModel.js: el encuadre por defecto y {...newReframe(), ...reframe} con ids en
+// los keyframes que no lo tienen.
+[[nodiscard]] Json default_reframe();
+[[nodiscard]] Json reframe_with_kf_ids(const Json& reframe, IdSource& ids);
+
 } // namespace gc::core

@@ -827,6 +827,29 @@ def _face_follow_case(rng: random.Random) -> dict:
     return {"name": "seguir cara", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
 
 
+def _face_track_case() -> dict:
+    """«Seguimiento de caras» del material: applyFaceTrack y applyFaceTrackToClips de VideoEditor.jsx."""
+    kfs = [{"t": 1.0, "cx": 0.3, "cy": 0.4}, {"id": "ya", "t": 2.5, "cx": 0.6, "cy": 0.5, "pan_mode": "direct"},
+           {"t": 4.0, "cx": 0.7, "cy": 0.45, "zoom": 0.8}]
+    own = {"zoom": 0.6, "pan_mode": "smooth", "dual_crop": True, "crop_w": 0.5, "crop_h": 0.7, "zoom2": 0.9,
+           "keyframes": [{"t": 0.5, "cx": 0.2, "cy": 0.5}], "keyframes2": [{"t": 0.5, "cx": 0.8, "cy": 0.5}]}
+    clips = [clip("t1", "V1", start=0, inp=1, out=6),
+             clip("t2", "V1", start=7, inp=0, out=5, reframe=own, layout="overlay", frame="free",
+                  transform={"x": 0.4, "y": 0.6, "scale": 0.7, "rotation": 30}),
+             clip("t3", "V2", start=0, inp=0, out=3, kind="image", filename="i.png", source_duration=0.0),
+             clip("t4", "A1", start=0, inp=0, out=3, kind="audio"),
+             clip("t5", "V2", start=4, inp=0, out=3, reframe={"zoom": 1, "keyframes": [{"t": 0.2, "cx": 0.5, "cy": 0.5, "id": "k0"}]})]
+    calls: list = []
+    for c in clips:
+        for mode in ("smooth", "direct", "otro"):
+            calls.append(["faceTrackClip", c["id"], kfs, mode])
+            calls.append(["faceTrackClip", c["id"], [], mode])
+    for rf in (None, own, {"zoom": 0.5}):
+        for k in (kfs, [], None):
+            calls.append(["applyFaceTrack", rf, k, "direct"])
+    return {"name": "seguimiento de caras", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
+
+
 def _script_prompt_case() -> dict:
     """«Prompt para el guion» (buildScriptPrompt de features/audio/scriptPrompt.js)."""
     both = {"index": 3, "filename": "c.mp4", "start": 1.0, "end": 3.25}
@@ -1006,5 +1029,6 @@ def cases() -> list[dict]:
     out.append(_captions_case(random.Random(20261108)))
     out.append(_face_follow_case(random.Random(20261109)))
     out.append(_script_prompt_case())
+    out.append(_face_track_case())
     out += _bg_case()
     return out

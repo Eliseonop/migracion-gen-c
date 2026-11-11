@@ -962,6 +962,16 @@ CPE = "src/core/src/clip_pose_edit.cpp"
 # Equivalentes (no están): la velocidad mínima de 0,01 (las del caso son positivas) y volver a encender unos
 # keyframes que ya lo estaban (enableKeyframes los deja igual).
 FACE_FOLLOW = [
+    ("caras: el modo otro es directo", FF, 'const std::string pan = mode == "direct" ? "direct" : "smooth";', 'const std::string pan = mode == "smooth" ? "smooth" : "direct";'),
+    ("caras: sin keyframes, vacío", FF, '!incoming.empty() ? incoming : (own.is_array() ? own : Json::array())', 'incoming'),
+    ("caras: los keyframes sin su modo", FF, '            k["pan_mode"] = pan;\n', ""),
+    ("caras: sin face_track_mode", FF, '    base["face_track_mode"] = pan;\n', ""),
+    ("caras: conserva el doble encuadre", FF, '    base["dual_crop"] = false;\n', ""),
+    ("caras: conserva el zoom", FF, '    base["zoom"] = 1;\n', ""),
+    ("caras: conserva el recorte", FF, '    rf.erase("crop_w");\n', ""),
+    ("caras: conserva el transform", FF, '    c.erase("transform");\n', ""),
+    ("caras: conserva el overlay", FF, '    c["layout"] = "fill";\n', ""),
+    ("caras: un audio también", FF, 'if (clip.kind != "video" && clip.kind != "image") { // isVisualClip', 'if (false) { // isVisualClip'),
     ("seguir: sin la velocidad", FF, "const double local = clip.reverse ? (clip.out_point - p.t) / sp : (p.t - clip.in_point) / sp;",
      "const double local = clip.reverse ? (clip.out_point - p.t) : (p.t - clip.in_point);"),
     ("seguir: sin el revés", FF, "const double local = clip.reverse ? (clip.out_point - p.t) / sp : (p.t - clip.in_point) / sp;",

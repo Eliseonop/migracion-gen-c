@@ -9,12 +9,12 @@
    "crc32": 1074857411
   },
   "system/arial.ttf": {
-   "size": 1045720,
-   "crc32": 2343507647
+   "size": 1045956,
+   "crc32": 719131488
   },
   "system/arialbd.ttf": {
-   "size": 989780,
-   "crc32": 3510646685
+   "size": 990008,
+   "crc32": 4153044355
   },
   "system/ariblk.ttf": {
    "size": 167592,
@@ -85,12 +85,12 @@
    "crc32": 1362662326
   },
   "system/times.ttf": {
-   "size": 1190736,
-   "crc32": 2108509057
+   "size": 1190952,
+   "crc32": 1695930549
   },
   "system/timesbd.ttf": {
-   "size": 1170096,
-   "crc32": 3680064964
+   "size": 1170312,
+   "crc32": 511117752
   },
   "system/trebuc.ttf": {
    "size": 254396,
@@ -66993,8 +66993,8 @@
  "fallback": {
   "arial.ttf": {
    "path": "arial.ttf",
-   "size": 1045720,
-   "crc32": 2343507647
+   "size": 1045956,
+   "crc32": 719131488
   },
   "Anton-Regular.ttf": null
  }

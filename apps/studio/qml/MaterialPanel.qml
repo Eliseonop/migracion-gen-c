@@ -407,6 +407,30 @@ Rectangle {
                     Drag.keys: ["material"]
 
                     HoverHandler { id: hover }
+                    // El menú del material (EdMaterial): el seguimiento de caras de un vídeo del proyecto.
+                    TapHandler {
+                        acceptedButtons: Qt.RightButton
+                        enabled: slot.modelData.source === "project" && slot.modelData.kind === "video"
+                        onTapped: matMenu.popup()
+                    }
+                    Menu {
+                        id: matMenu
+                        objectName: "material:menu:" + slot.modelData.key
+                        MenuItem {
+                            objectName: "material:faceTrack:" + slot.modelData.key
+                            enabled: !panel.model.faceTrackBusy
+                            text: slot.modelData.faceTrack ? "Aplicar seguimiento de caras" : "Seguimiento de caras"
+                            onTriggered: panel.model.faceTrackMaterial(slot.modelData.key, false)
+                        }
+                        MenuItem {
+                            objectName: "material:faceRetrack:" + slot.modelData.key
+                            visible: !!slot.modelData.faceTrack
+                            height: visible ? implicitHeight : 0
+                            enabled: !panel.model.faceTrackBusy
+                            text: "Volver a analizar caras"
+                            onTriggered: panel.model.faceTrackMaterial(slot.modelData.key, true)
+                        }
+                    }
                     DragHandler {
                         id: drag
                         onActiveChanged: {

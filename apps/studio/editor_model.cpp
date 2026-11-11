@@ -245,6 +245,7 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     connect(&beat_detector_, &BeatDetector::finished, this, &EditorModel::beats_detected);
     connect(&crop_frames_, &FrameGrabber::frameChanged, this, &EditorModel::cropFrameChanged);
     face_jobs_.setPollInterval(500); // followMaskFace sondea cada medio segundo
+    mat_face_jobs_.setPollInterval(400); // faceTrackFromMaterial, cada 400 ms
     bg_jobs_.setPollInterval(700);   // el job del matte, cada 700 ms (VideoEditor.jsx)
     cutout_jobs_.setPollInterval(800);
     connect(this, &EditorModel::selectionChanged, this, [this] {
@@ -376,6 +377,10 @@ void EditorModel::add_material(const char* source, const char* asset_kind, const
 void EditorModel::project_materials(const core::Project& project, QVariantList& into) {
     for (const auto& c : project.clips) {
         add_material("project", "clips", QString("clips:%1").arg(c.index), core::to_json(c), "video", into);
+        // hasFaceTrack: con seguimiento guardado y keyframes en su encuadre
+        QVariantMap row = into.back().toMap();
+        row["faceTrack"] = c.face_track.has_value() && c.reframe && !c.reframe->keyframes.empty();
+        into.back() = row;
     }
     for (const auto& i : project.images) {
         add_material("project", "images", "images:" + qstr(i.id), core::to_json(i), "image", into);
@@ -2921,6 +2926,62 @@ void EditorModel::followMaskFace() {
     face_jobs_.start(QString("/api/projects/%1/clips/%2/face-track")
                          .arg(qstr(project_id_), QString::fromLatin1(QUrl::toPercentEncoding(qstr(c->asset_id)))),
                      {{"start", c->in_point}, {"end", c->out_point}}, [this](const Json& job) { follow_update(job); });
+}
+
+void EditorModel::faceTrackMaterial(const QString& key, bool force) {
+    if (!session_ || !mat_face_busy_.isEmpty() || !key.startsWith("clips:")) {
+        return;
+    }
+    const QString ident = key.mid(6); // String(item.index ?? item.id)
+    mat_face_busy_ = ident;
+    emit faceTrackBusyChanged();
+    set_notice("info", "Seguimiento de caras…");
+    Json body = Json::object();
+    if (force) {
+        body["force"] = true;
+    }
+    mat_face_jobs_.start(
+        QString("/api/projects/%1/clips/%2/face-track").arg(qstr(project_id_), QString::fromLatin1(QUrl::toPercentEncoding(ident))),
+        body, [this, ident](const Json& job) {
+            const std::string status = job_text(job, "status");
+            if (status != "done" && status != "error") {
+                const auto progress = job.find("progress");
+                const double p = progress != job.end() && progress->is_number() ? progress->get<double>() : 0.0;
+                const std::string message = job_text(job, "message");
+                set_notice("info", QString("%1 %2%").arg(message.empty() ? QString("Seguimiento de caras…") : qstr(message))
+                                       .arg(static_cast<int>(std::floor((p * 100) + 0.5))));
+                return;
+            }
+            mat_face_busy_.clear();
+            emit faceTrackBusyChanged();
+            if (status == "error") {
+                const std::string error = job_text(job, "error");
+                set_notice("error", error.empty() ? QString("No se pudo analizar.") : qstr(error));
+                return;
+            }
+            reload_project_materials(); // el seguimiento queda guardado en el material
+            const auto prep = job.find("reframe_prep");
+            const Json kfs = prep != job.end() && prep->is_object() ? prep->value("keyframes", Json::array()) : Json::array();
+            core::Timeline next = *session_->timeline();
+            std::vector<std::string> changed;
+            for (auto& item : next.clips) {
+                if (item->asset_kind == "clips" && qstr(item->asset_id) == ident) {
+                    core::TimelineClip c = *item;
+                    if (core::face_track_clip(c, kfs, "smooth", ids_)) {
+                        item = std::move(c);
+                        changed.push_back(item->id);
+                    }
+                }
+            }
+            if (!changed.empty()) {
+                commit(std::move(next), "face-track", changed);
+            }
+            const std::string message = job_text(job, "message");
+            const QString n = QString::number(changed.size());
+            set_notice("success", (message.empty() ? QString("Seguimiento listo") : qstr(message)) +
+                                      (changed.empty() ? QString(" · se aplicará al agregarlo")
+                                                       : QString(" · aplicado a %1 clip%2").arg(n, changed.size() > 1 ? "s" : "")));
+        });
 }
 
 void EditorModel::follow_update(const Json& job) {

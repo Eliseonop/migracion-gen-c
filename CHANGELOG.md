@@ -11,6 +11,15 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.6.0] — 2026-11-11
+
+### Añadido
+
+- **«Seguimiento de caras» del material** (clic derecho en un vídeo del proyecto): el backend analiza la cara del
+  vídeo (o reutiliza el análisis guardado; «Volver a analizar caras» lo repite) y el encuadre de sus clips de la
+  timeline pasa a seguirla, en un paso de deshacer. `apply_face_track` y `face_track_clip` en
+  `gc/core/face_follow.hpp`, con paridad contra `applyFaceTrack` y `applyFaceTrackToClips` reales y sus mutaciones.
+
 ## [0.5.0] — 2026-11-11
 
 ### Añadido

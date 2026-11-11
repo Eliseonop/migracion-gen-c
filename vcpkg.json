@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "genclippro",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Motor C++ multiplataforma de GenClipPro (migración de video-yt)",
   "builtin-baseline": "e456309491fd875487bf02b8a0dca76c1b1b00cc",
   "vcpkg-configuration": {

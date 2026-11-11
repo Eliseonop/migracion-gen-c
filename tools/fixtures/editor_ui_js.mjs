@@ -183,6 +183,19 @@ const bgGeo = (name, clip, args, vw, vh, oW, oH, head) => {
   const env = { mediaEls: { current: new Map([[clip.id, el]]) }, outRef: { current: { w: oW, h: oH } } }
   return fn(clip, ...args, { x: 0, y: 0, w: oW, h: oH }, env, head)
 }
+// applyFaceTrackToClips de VideoEditor.jsx sobre un clip (sin elementos de medios: el objeto libre lo hace
+// el editor al guardar). Lo que cambia, con los keyframes del encuadre sin ids.
+const faceTrackClip = (clip, kfs, mode) => {
+  let made = clip
+  const setClips = (fn) => { made = fn([made])[0] }
+  const deps = { setClips, isVisualClip: m.isVisualClip, applyFaceTrack: m.applyFaceTrack, newReframe: m.newReframe,
+    mediaEls: { current: new Map() }, applyFreeLayout: () => {} }
+  const fn = new Function(...Object.keys(deps), `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'applyFaceTrackToClips')}`)(...Object.values(deps))
+  fn([clip.id], kfs, mode)
+  const strip = (arr) => (arr || []).map(({ id: _, ...k }) => k)
+  const rf = made.reframe ? { ...made.reframe, keyframes: strip(made.reframe.keyframes), keyframes2: strip(made.reframe.keyframes2) } : null
+  return { layout: made.layout ?? null, frame: made.frame ?? null, reframe: rf, transform: made.transform ?? null }
+}
 // Como extractArrow, para `const name = useCallback(…)`.
 function extractCallback(file, name) {
   const src = readFileSync(file, 'utf8')
@@ -492,6 +505,12 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     bgChangeChroma: (id, patch) => { const o = bgOps(byId(id)); o.api.changeBgChroma(patch); return o.bg },
     bgResetChroma: (id) => { const o = bgOps(byId(id)); o.api.resetBgChroma(); return o.bg },
     bgChangeOutline: (id, patch) => { const o = bgOps(byId(id)); o.api.patchBgOutline(id, patch); return o.bg },
+    faceTrackClip: (id, kfs, mode) => faceTrackClip(byId(id), kfs, mode),
+    applyFaceTrack: (rf, kfs, mode) => {
+      const out = m.applyFaceTrack(rf ?? undefined, kfs ?? undefined, mode)
+      const strip = (arr) => (arr || []).map(({ id: _, ...k }) => k)
+      return { ...out, keyframes: strip(out.keyframes), keyframes2: strip(out.keyframes2) }
+    },
     buildScriptPrompt: (topic, clips) => scriptPrompt.buildScriptPrompt(topic, clips),
     canCaptionClip: (id) => m.canCaptionClip(byId(id)),
     sourceRefOf: (id) => m.sourceRefOf(byId(id)),

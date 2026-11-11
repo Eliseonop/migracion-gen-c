@@ -4,6 +4,7 @@
 // job face-track del backend, puntos {t, cx, cy} en segundos del archivo) pasado a keyframes de la posición de
 // la máscara (followTrackMaskKeys de lib/clipLayout.js) y puestos en el clip.
 
+#include <string_view>
 #include <vector>
 
 #include "gc/core/ids.hpp"
@@ -27,5 +28,14 @@ struct MaskFollowKey {
 // El final de followMaskFace: keyframes encendidos (en el primero, si no lo estaban) y en cada uno, mx y my.
 void apply_follow_keys(TimelineClip& clip, const std::vector<MaskFollowKey>& keys, double src_t, double fps,
                        IdSource& ids);
+
+// «Seguimiento de caras» del material (faceTrackFromMaterial).
+// applyFaceTrack: el encuadre con los keyframes de la cara (o los suyos, si no llegan) en el modo de paneo
+// ("direct" o "smooth"), y ids en los keyframes.
+[[nodiscard]] Json apply_face_track(const Json& reframe, const Json& keyframes, std::string_view mode, IdSource& ids);
+// applyFaceTrackToClips sobre un clip: vídeo o imagen pasa a relleno a pantalla completa, sin transform, con un
+// encuadre de una sola ventana, zoom 1 y sin recorte, que sigue la cara. Al guardarlo, el editor lo vuelve a
+// hacer objeto libre (applyFreeLayout). Devuelve si lo cambió.
+bool face_track_clip(TimelineClip& clip, const Json& keyframes, std::string_view mode, IdSource& ids);
 
 } // namespace gc::core

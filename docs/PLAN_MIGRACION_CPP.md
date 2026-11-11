@@ -2007,3 +2007,11 @@ Decisión de Edu (§6):
 - **SAM:** POST `/bg-segment` al soltar (`BackendJobs::postRaw`, que devuelve el PNG), con la regla de descartar lo que llega tarde o de otro fotograma; después, `/bg-analyze` una vez por clip, tramo y modelo.
 - **Lo que enseñó la captura:** el panel es más alto que el inspector y no había barra de desplazamiento.
 - **Sin probar:** contra un SAM de verdad (el test usa un backend falso que devuelve una máscara) ni con el ratón en la app abierta: el test llama a `bgPress`, `bgMove` y `bgRelease` directamente. La captura sí confirma la selección en cian sobre el clip.
+
+### 2026-11-11 — F5: el seguimiento de caras del material · versión 0.6.0
+
+- **Qué es:** `faceTrackFromMaterial` de VideoEditor.jsx, desde el menú del clic derecho de un vídeo del material: el job face-track del backend (sondeado cada 400 ms, con el progreso en el aviso) y, al acabar, el material releído (el seguimiento queda guardado en él) y sus clips de la timeline con el encuadre que sigue la cara, en un paso de deshacer.
+- **El núcleo:** `apply_face_track` y `face_track_clip` (applyFaceTrackToClips: relleno a pantalla completa, sin transform, una sola ventana, zoom 1 y sin recorte) en `face_follow.hpp`; el objeto libre lo hace `commit`, como `applyFreeLayout` en React. `default_reframe` y `reframe_with_kf_ids` salen de `material_drop.cpp` para usarlos fuera. Paridad: 35 llamadas, con los clips por el modelo, como se guardan.
+- **Lo que no:** `startFaceTrack`, el botón de la barra de la timeline, solo existe en el Clip Editor de React (`clipMode`), que el studio aún no tiene.
+- **Sin probar:** contra el backend real.
+- **Fuentes de Windows:** una actualización del 2026-11-10 cambió Arial y Times New Roman (arial, arialbd, times y timesbd): la fixture de la medida del texto (`--solo anchos`) se regeneró con ellas, y el C++ sigue midiendo exacto como Pillow (10 850 medidas).

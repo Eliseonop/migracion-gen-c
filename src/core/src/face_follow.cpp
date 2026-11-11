@@ -1,5 +1,8 @@
 #include "gc/core/face_follow.hpp"
 
+#include "gc/core/material_drop.hpp"
+#include "gc/core/serialize.hpp"
+
 #include <algorithm>
 #include <cmath>
 
@@ -78,6 +81,47 @@ void apply_follow_keys(TimelineClip& clip, const std::vector<MaskFollowKey>& key
     for (const MaskFollowKey& k : keys) {
         upsert_keyframe_ui(clip, k.t, {{"mx", k.mx}, {"my", k.my}}, std::nullopt, fps, ids);
     }
+}
+
+Json apply_face_track(const Json& reframe, const Json& keyframes, std::string_view mode, IdSource& ids) {
+    const std::string pan = mode == "direct" ? "direct" : "smooth";
+    Json base = reframe.is_object() ? reframe : default_reframe();
+    const Json incoming = keyframes.is_array() ? keyframes : Json::array();
+    const Json own = base.value("keyframes", Json::array());
+    Json kfs = Json::array();
+    for (Json k : !incoming.empty() ? incoming : (own.is_array() ? own : Json::array())) {
+        if (k.is_object()) {
+            k["pan_mode"] = pan;
+        }
+        kfs.push_back(std::move(k));
+    }
+    base["pan_mode"] = pan;
+    base["face_track_mode"] = pan;
+    base["keyframes"] = std::move(kfs);
+    return reframe_with_kf_ids(base, ids);
+}
+
+bool face_track_clip(TimelineClip& clip, const Json& keyframes, std::string_view mode, IdSource& ids) {
+    if (clip.kind != "video" && clip.kind != "image") { // isVisualClip
+        return false;
+    }
+    Json c = to_json(clip);
+    Json base = c.value("reframe", Json()).is_object() ? c["reframe"] : default_reframe();
+    base["dual_crop"] = false;
+    base["zoom"] = 1;
+    Json rf = apply_face_track(base, keyframes, mode, ids);
+    rf.erase("crop_w");
+    rf.erase("crop_h");
+    c["layout"] = "fill";
+    c["frame"] = "full";
+    c.erase("transform");
+    c["reframe"] = std::move(rf);
+    auto next = clip_from_json(c);
+    if (!next) {
+        return false;
+    }
+    clip = std::move(*next);
+    return true;
 }
 
 } // namespace gc::core

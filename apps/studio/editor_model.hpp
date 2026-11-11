@@ -66,6 +66,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantMap subtitleJob READ subtitleJob NOTIFY subtitleJobChanged)
     // «Seguir cara» en curso (maskFollow): {clipId, progress, message}; vacío si no.
     Q_PROPERTY(QVariantMap maskFollow READ maskFollow NOTIFY maskFollowChanged)
+    // El material cuyo seguimiento de caras se calcula («» si ninguno).
+    Q_PROPERTY(QString faceTrackBusy READ faceTrackBusy NOTIFY faceTrackBusyChanged)
     // «Eliminar fondo»: el job del matte ({clipId, status, progress, message, error, notice}), los motores
     // (BG_PROVIDERS con lo que dice el backend de cada uno) y dónde se ejecutan (cpu, cuda…).
     Q_PROPERTY(QVariantMap bgJob READ bgJob NOTIFY bgJobChanged)
@@ -146,6 +148,8 @@ public:
     [[nodiscard]] BackendJobs& subtitleBackend() { return subtitle_jobs_; }
     [[nodiscard]] QVariantMap maskFollow() const { return mask_follow_; }
     [[nodiscard]] BackendJobs& faceBackend() { return face_jobs_; }
+    [[nodiscard]] QString faceTrackBusy() const { return mat_face_busy_; }
+    [[nodiscard]] BackendJobs& materialFaceBackend() { return mat_face_jobs_; }
     [[nodiscard]] QVariantMap bgJob() const { return bg_job_; }
     [[nodiscard]] QVariantList bgProviders() const;
     [[nodiscard]] QString bgDevice() const { return bg_device_; }
@@ -361,6 +365,9 @@ public:
     // followMaskFace: la máscara del vídeo elegido sigue la cara (el seguimiento de caras del material, que hace
     // el backend con el job face-track, pasado a keyframes de su posición), en un paso de deshacer.
     Q_INVOKABLE void followMaskFace();
+    // «Seguimiento de caras» de un vídeo del material (faceTrackFromMaterial): el backend lo analiza (o reutiliza el
+    // guardado; con `force`, lo vuelve a analizar) y se aplica a sus clips de la timeline en un paso de deshacer.
+    Q_INVOKABLE void faceTrackMaterial(const QString& key, bool force = false);
     // Eliminación automática del fondo del clip elegido (EdBgRemove y VideoEditor.jsx), en clip.bg_removal y
     // con un paso de deshacer cada una: encenderla o apagarla, un cambio del panel (motor, detalle, umbral…),
     // calcular el matte con el backend (POST /bg-removal; al acabar, su clave de caché va al clip) y cancelarlo.
@@ -493,6 +500,7 @@ signals:
     void editMaskChanged();
     void subtitleJobChanged();
     void maskFollowChanged();
+    void faceTrackBusyChanged();
     void bgJobChanged();
     void bgProvidersChanged();
     void bgPickingChanged();
@@ -603,6 +611,8 @@ private:
     std::string follow_clip_;
     std::pair<double, double> follow_size_;
     QVariantMap mask_follow_;
+    BackendJobs mat_face_jobs_;
+    QString mat_face_busy_;
     // «Eliminar fondo»: el bg_removal nuevo de un clip en un paso de deshacer, el final del job y el catálogo
     // de motores (GET /api/bg/providers, una vez por proyecto abierto).
     void set_bg(const std::string& clip_id, Json bg_removal, const char* cause);

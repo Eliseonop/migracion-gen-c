@@ -390,4 +390,8 @@ Json place_asset_clip(const Json& payload, std::string_view track_id, double sta
     return clip;
 }
 
+Json default_reframe() { return new_reframe(); }
+
+Json reframe_with_kf_ids(const Json& reframe, IdSource& ids) { return with_kf_ids(reframe, ids); }
+
 } // namespace gc::core
