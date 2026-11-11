@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "frame_image.hpp"
+#include "bg_magic.hpp"
 #include "mask_overlay.hpp"
 #include "platform_chrome.hpp"
 #include "rounded_image.hpp"
@@ -110,6 +111,7 @@ void register_qml_types() {
     qmlRegisterType<PlatformChrome>("GenClip.Preview", 1, 0, "PlatformChrome");
     qmlRegisterType<FrameImage>("GenClip.Preview", 1, 0, "FrameImage");
     qmlRegisterType<MaskOverlay>("GenClip.Preview", 1, 0, "MaskOverlay");
+    qmlRegisterType<BgMagicOverlay>("GenClip.Preview", 1, 0, "BgMagicOverlay");
     qmlRegisterUncreatableType<PreviewSource>("GenClip.Preview", 1, 0, "PreviewSource",
                                               "lo crea el editor (EditorModel.preview)");
 }

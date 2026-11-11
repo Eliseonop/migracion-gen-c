@@ -11,6 +11,8 @@
 #include <QColor>
 #include <QCoreApplication>
 #include <QMimeDatabase>
+#include <QPainter>
+#include <QTransform>
 #include <QGuiApplication>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -245,6 +247,19 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     face_jobs_.setPollInterval(500); // followMaskFace sondea cada medio segundo
     bg_jobs_.setPollInterval(700);   // el job del matte, cada 700 ms (VideoEditor.jsx)
     cutout_jobs_.setPollInterval(800);
+    connect(this, &EditorModel::selectionChanged, this, [this] {
+        const std::string now = bgMagicOn() ? selection_.ids.front() : std::string();
+        if (now != bg_magic_clip_) { // otro clip elegido con el pincel puesto
+            bg_sync_preview();
+            emit bgMagicChanged();
+        }
+    });
+    connect(this, &EditorModel::playheadChanged, this, [this] {
+        if (bgMagicOn()) { // otro fotograma, otra selección
+            bg_magic_sync();
+            emit bgMagicChanged();
+        }
+    });
     cutout_clear_.setSingleShot(true);
     cutout_clear_.setInterval(3200);
     connect(&cutout_clear_, &QTimer::timeout, this, [this] {
@@ -843,6 +858,13 @@ void EditorModel::closeProject() {
     proxy_maker_.close();
     narrator_.setProject({});
     bg_jobs_.stop(); // el editor se cierra: nadie espera su resultado (el backend lo termina)
+    stopBgAnalyze();
+    bg_analyzed_.clear();
+    bg_stroke_.reset();
+    bg_magic_.clearAll();
+    bg_magic_sig_.clear();
+    bg_brush_["on"] = false;
+    emit bgBrushChanged();
     cutout_jobs_.stop();
     cutout_clear_.stop();
     if (!cutout_job_.isEmpty()) {
@@ -913,13 +935,17 @@ void EditorModel::rebuild() {
                             {"kfs", keyframe_marks(*c)},
                             {"beats", beat_marks(*c)}});
         }
-        preview_.setTimeline(session_->timeline()); // si es otra, el render se vuelve a preparar
+        preview_.setTimeline(preview_timeline()); // si es otra, el render se vuelve a preparar
         preview_.request(playhead_);
         player_.setTimeline(session_->timeline()); // sonando, se vuelve a mezclar
         proxy_maker_.setTimeline(session_->timeline()); // un vídeo nuevo, su proxy
     }
     clip_model_.sync(std::move(rows));
     emit timelineChanged();
+    if (bgMagicOn()) {
+        bg_magic_sync();
+        emit bgMagicChanged();
+    }
 }
 
 QVariantList EditorModel::clips() const {
@@ -1032,6 +1058,28 @@ QVariantMap EditorModel::selectedClip() const {
         {"bgCapable", core::bg_capable(*c)},
         {"bg", core::bg_capable(*c) ? to_variant(core::clip_bg_or_default(*c)) : QVariantMap()},
         {"bgReady", core::bg_capable(*c) && core::bg_auto_active(core::clip_bg_or_default(*c))},
+        {"bgMarks", [&] { // samMarkFrames, con su instante en la timeline para el botón
+             QVariantList out;
+             if (!core::bg_capable(*c)) {
+                 return out;
+             }
+             const Json a = core::clip_bg_or_default(*c).at("auto");
+             const double speed = core::clip_speed(*c);
+             for (const Json& m : core::bg_mark_frames(a.value("edits", Json::array()), a.value("mask_fps", Json()))) {
+                 QVariantMap row = to_variant(m);
+                 const double t = m.at("t").get<double>();
+                 row["at"] = c->reverse ? c->start + ((c->out_point - t) / speed) : c->start + ((t - c->in_point) / speed);
+                 out << row;
+             }
+             return out;
+         }()},
+        {"bgCurFrame", [&]() -> qint64 {
+             if (!core::bg_capable(*c)) {
+                 return -1;
+             }
+             return core::bg_matte_frame_index(core::source_time(*c, playhead_, c->start),
+                                               core::clip_bg_or_default(*c).at("auto").value("mask_fps", Json()));
+         }()},
         {"bgHasCut", core::bg_capable(*c) && (core::bg_auto_active(core::clip_bg_or_default(*c)) ||
                                               core::clip_bg_or_default(*c).at("chroma").at("enabled").get<bool>())},
         {"beats", beats_variant(*c)}, // {count, bpm, every} o nada
@@ -2689,7 +2737,7 @@ void EditorModel::maskRelease() {
     }
     mask_drag_.reset();
     if (session_) {
-        preview_.setTimeline(session_->timeline());
+        preview_.setTimeline(preview_timeline());
         preview_.request(playhead_);
     }
     emit editMaskChanged();
@@ -2984,7 +3032,17 @@ void EditorModel::toggleBgAuto(bool on) {
     if (!c || !core::bg_capable(*c)) {
         return;
     }
-    set_bg(c->id, core::bg_toggle_auto(*c, on), "bg-auto");
+    // Desde SAM se tiran las marcas: fuera su selección y su análisis.
+    const bool from_sam = on && core::is_interactive_bg_provider(core::clip_bg_or_default(*c).at("auto").value("provider", Json()));
+    const std::string id = c->id;
+    if (from_sam) {
+        bg_magic_.clear(id);
+        stopBgAnalyze();
+    }
+    if (!on || from_sam) {
+        bg_set_brush_off();
+    }
+    set_bg(id, core::bg_toggle_auto(*c, on), "bg-auto");
 }
 
 void EditorModel::changeBgAuto(const QVariantMap& patch) {
@@ -2995,6 +3053,9 @@ void EditorModel::changeBgAuto(const QVariantMap& patch) {
     const std::string id = c->id;
     const Json p = to_json(patch);
     set_bg(id, core::bg_change_auto(*c, p), "bg-auto");
+    if (p.contains("provider")) {
+        stopBgAnalyze();
+    }
     // Cambiar de motor quita el aviso del cálculo anterior.
     if (p.contains("provider") && bg_job_.value("clipId").toString() == qstr(id) &&
         bg_job_.value("status").toString() != "running" && bg_job_.value("status").toString() != "pending") {
@@ -3121,7 +3182,413 @@ bool EditorModel::pickChromaAt(double x, double y, const QRectF& frame) {
 void EditorModel::bgPanel(bool open) {
     if (!open) {
         setBgPicking(false);
+        bg_set_brush_off();
     }
+}
+
+// --- Pincel y Eliminación personalizada ---------------------------------------------------------------------
+
+bool EditorModel::bgMagicOn() const {
+    if (!bg_brush_.value("on").toBool() || selection_.ids.empty()) {
+        return false;
+    }
+    const core::TimelineClip* c = clip(qstr(selection_.ids.front()));
+    if (!c || !core::bg_capable(*c)) {
+        return false;
+    }
+    const Json bg = core::clip_bg_or_default(*c);
+    return bg["auto"].value("enabled", false) && core::is_interactive_bg_provider(bg["auto"].value("provider", Json()));
+}
+
+// El clip que se edita se ve SIN recortar (drawSourceFor con cutout: false): la selección va encima.
+core::TimelineSnapshot EditorModel::preview_timeline() {
+    bg_magic_clip_ = bgMagicOn() ? selection_.ids.front() : std::string();
+    if (bg_magic_clip_.empty()) {
+        return session_->timeline();
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == selection_.ids.front()) {
+            item.mut().bg_removal.reset();
+        }
+    }
+    return std::make_shared<const core::Timeline>(std::move(next));
+}
+
+void EditorModel::bg_sync_preview() {
+    if (session_) {
+        preview_.setTimeline(preview_timeline());
+        preview_.request(playhead_);
+    }
+}
+
+void EditorModel::bg_set_brush_off() {
+    if (bg_brush_.value("on").toBool()) {
+        changeBgBrush({{"on", false}});
+    }
+}
+
+void EditorModel::changeBgBrush(const QVariantMap& patch) {
+    for (auto it = patch.begin(); it != patch.end(); ++it) {
+        bg_brush_[it.key()] = it.value();
+    }
+    // El pincel y la manipulación de la máscara se pisan el puntero: al encender uno se apaga el otro.
+    if (patch.value("on").toBool()) {
+        setMaskMode(false);
+        setMaskDraw(false);
+        setBgPicking(false);
+    }
+    emit bgBrushChanged();
+    bg_sync_preview();
+    bg_magic_sync();
+    emit bgMagicChanged();
+}
+
+void EditorModel::toggleBgCustom(bool on) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c || !core::bg_capable(*c)) {
+        return;
+    }
+    const std::string id = c->id;
+    if (!on) {
+        set_bg(id, core::bg_toggle_custom(*c, false, bg_catalog_), "bg-auto");
+        bg_set_brush_off();
+        stopBgAnalyze();
+        return;
+    }
+    set_bg(id, core::bg_toggle_custom(*c, true, bg_catalog_), "bg-auto");
+    changeBgBrush({{"on", true}, {"tool", "smart"}, {"op", "keep"}, {"size", 0.05}});
+}
+
+void EditorModel::applyBgCustom() {
+    stopBgAnalyze();
+    applyBgAuto();
+    bg_set_brush_off();
+}
+
+void EditorModel::undoBgEdit() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (c && core::bg_capable(*c)) {
+        set_bg(c->id, core::bg_undo_edit(*c), "bg-stroke");
+    }
+}
+
+void EditorModel::clearBgEdits() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (c && core::bg_capable(*c)) {
+        set_bg(c->id, core::bg_clear_edits(*c), "bg-stroke");
+    }
+}
+
+void EditorModel::seekBgMark(double src_t) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c) {
+        return;
+    }
+    if (player_.playing()) {
+        player_.pause();
+    }
+    const double speed = core::clip_speed(*c); // sourceToTimeline
+    const double t = c->reverse ? c->start + ((c->out_point - src_t) / speed) : c->start + ((src_t - c->in_point) / speed);
+    setPlayhead(std::clamp(t, c->start, core::ui_clip_end(*c)));
+}
+
+std::optional<core::FrameLayer> EditorModel::bg_layer(const core::TimelineClip& c) const {
+    if (!session_) {
+        return std::nullopt;
+    }
+    const core::Timeline& tl = *session_->timeline();
+    const auto w = static_cast<double>(tl.width - (tl.width % 2));
+    const auto h = static_cast<double>(tl.height - (tl.height % 2));
+    auto layers = core::evaluate(tl, playhead_, core::FrameSpec{w, h, core::kRenderLayers},
+                                 [this](const core::TimelineClip& item) -> std::optional<core::MediaSize> {
+                                     const auto size = source_size(item);
+                                     return size ? std::optional(core::MediaSize{size->first, size->second}) : std::nullopt;
+                                 });
+    if (!layers) {
+        return std::nullopt;
+    }
+    const auto it = std::ranges::find_if(*layers, [&](const core::FrameLayer& l) { return !l.ghost && l.clip->id == c.id; });
+    return it != layers->end() ? std::optional(*it) : std::nullopt;
+}
+
+std::optional<core::Point> EditorModel::bg_to_source(const core::FrameLayer& layer, double x, double y, const QRectF& frame,
+                                                     double src_w, double src_h) const {
+    if (frame.isEmpty() || !session_) {
+        return std::nullopt;
+    }
+    const core::Timeline& tl = *session_->timeline();
+    const double ox = (x - frame.x()) / frame.width() * static_cast<double>(tl.width - (tl.width % 2));
+    const double oy = (y - frame.y()) / frame.height() * static_cast<double>(tl.height - (tl.height % 2));
+    return core::bg_frame_to_source(layer, ox, oy, src_w, src_h);
+}
+
+bool EditorModel::bgPress(double x, double y, const QRectF& frame) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!bg_brush_.value("on").toBool() || !c) {
+        return false;
+    }
+    const auto size = source_size(*c);
+    auto layer = bg_layer(*c);
+    if (!size || !layer) {
+        return false;
+    }
+    const auto first = bg_to_source(*layer, x, y, frame, size->first, size->second);
+    if (!first) {
+        return false;
+    }
+    if (player_.playing()) {
+        player_.pause();
+    }
+    Json stroke = core::bg_new_stroke(*c, bg_brush_.value("op").toString().toStdString(),
+                                      bg_brush_.value("tool").toString().toStdString(), bg_brush_.value("size").toDouble(),
+                                      playhead_, *first);
+    bg_stroke_ = BgStroke{c->id, std::move(stroke), *first, std::move(*layer), size->first, size->second, frame};
+    if (bgMagicOn()) {
+        emit bgMagicChanged();
+    } else { // el retoque se ve en el recorte mientras se pinta
+        core::Timeline next = *session_->timeline();
+        for (auto& item : next.clips) {
+            if (item->id == bg_stroke_->clip) {
+                item.mut().bg_removal = core::bg_add_stroke(*item, bg_stroke_->stroke);
+            }
+        }
+        preview_.setTimeline(std::make_shared<const core::Timeline>(std::move(next)));
+        preview_.request(playhead_);
+    }
+    return true;
+}
+
+void EditorModel::bgMove(double x, double y) {
+    if (!bg_stroke_) {
+        return;
+    }
+    BgStroke& s = *bg_stroke_;
+    const auto q = bg_to_source(s.layer, x, y, s.frame, s.src_w, s.src_h);
+    if (!q) {
+        return;
+    }
+    auto point = core::bg_stroke_point(s.last, *q);
+    if (!point) {
+        return;
+    }
+    s.last = *q;
+    s.stroke["points"].push_back(std::move(*point));
+    if (bgMagicOn()) {
+        emit bgMagicChanged();
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    for (auto& item : next.clips) {
+        if (item->id == s.clip) {
+            item.mut().bg_removal = core::bg_add_stroke(*item, s.stroke);
+        }
+    }
+    preview_.setTimeline(std::make_shared<const core::Timeline>(std::move(next)));
+    preview_.request(playhead_);
+}
+
+void EditorModel::bgRelease() {
+    if (!bg_stroke_) {
+        return;
+    }
+    BgStroke s = std::move(*bg_stroke_);
+    bg_stroke_.reset();
+    bg_magic_sig_.clear(); // al soltar se vuelve a pedir la selección
+    const core::TimelineClip* c = clip(qstr(s.clip));
+    if (c) { // un trazo, un paso de deshacer
+        set_bg(s.clip, core::bg_add_stroke(*c, s.stroke), "bg-stroke");
+    }
+}
+
+void EditorModel::bgHover(double x, double y, const QRectF& frame) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!bg_brush_.value("on").toBool() || !c || frame.isEmpty() || !session_) {
+        return;
+    }
+    const auto size = source_size(*c);
+    const auto layer = bg_layer(*c);
+    const auto out_h = static_cast<double>(session_->timeline()->height - (session_->timeline()->height % 2));
+    bg_brush_["px"] = x;
+    bg_brush_["py"] = y;
+    bg_brush_["r"] = size && layer ? core::bg_brush_radius(*layer, bg_brush_.value("size").toDouble(), size->second) * frame.height() / out_h : 0.0;
+    emit bgBrushChanged();
+}
+
+void EditorModel::bgLeave() {
+    if (bg_brush_.contains("px")) {
+        bg_brush_.remove("px");
+        bg_brush_.remove("py");
+        bg_brush_.remove("r");
+        emit bgBrushChanged();
+    }
+}
+
+std::optional<EditorModel::BgMagicView> EditorModel::bg_magic_view() const {
+    if (!bgMagicOn()) {
+        return std::nullopt;
+    }
+    const core::TimelineClip* c = clip(qstr(selection_.ids.front()));
+    const Json bg = bg_stroke_ && bg_stroke_->clip == c->id ? core::bg_add_stroke(*c, bg_stroke_->stroke) : core::clip_bg_or_default(*c);
+    const Json a = bg.at("auto");
+    const Json fps = a.value("mask_fps", Json());
+    const std::int64_t frame = core::bg_matte_frame_index(core::source_time(*c, playhead_, c->start), fps);
+    return BgMagicView{c->id, frame, core::bg_edits_at_frame(a.value("edits", Json::array()), frame, fps), a};
+}
+
+void EditorModel::paintBgMagic(QPainter& painter, const QRectF& frame) const {
+    const auto view = bg_magic_view();
+    if (!view || frame.isEmpty()) {
+        return;
+    }
+    const core::TimelineClip* c = clip(qstr(view->clip));
+    const auto size = c ? source_size(*c) : std::nullopt;
+    const auto layer = c ? bg_layer(*c) : std::nullopt;
+    if (!size || !layer) {
+        return;
+    }
+    const QImage image = bg_magic_.compose(view->clip, view->frame, view->marks, bg_stroke_.has_value(), size->first, size->second);
+    if (image.isNull()) {
+        return;
+    }
+    const core::Timeline& tl = *session_->timeline();
+    const double kx = frame.width() / static_cast<double>(tl.width - (tl.width % 2));
+    const double ky = frame.height() / static_cast<double>(tl.height - (tl.height % 2));
+    const double iw = image.width() / size->first;
+    const double ih = image.height() / size->second;
+    painter.setClipRect(frame);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    for (const core::Blit& b : layer->blits) {
+        painter.save();
+        painter.translate(frame.topLeft());
+        painter.scale(kx, ky);
+        painter.setTransform(QTransform(b.m.a, b.m.b, b.m.c, b.m.d, b.m.e, b.m.f), true);
+        painter.drawImage(QRectF(b.src.sx, b.src.sy, b.src.sw, b.src.sh), image,
+                          QRectF(b.src.sx * iw, b.src.sy * ih, b.src.sw * iw, b.src.sh * ih));
+        painter.restore();
+    }
+}
+
+// El efecto de magicSig: la selección de SAM de los trazos inteligentes, al soltar.
+void EditorModel::bg_magic_sync() {
+    const auto view = bg_magic_view();
+    const auto set_busy = [this](bool busy) {
+        if (bg_magic_busy_ != busy) {
+            bg_magic_busy_ = busy;
+            emit bgMagicChanged();
+        }
+    };
+    if (!view) {
+        set_busy(false);
+        return;
+    }
+    Json smart = Json::array();
+    for (const Json& m : view->marks) {
+        if (!core::bg_manual_mark(m)) {
+            smart.push_back(m);
+        }
+    }
+    if (smart.empty()) {
+        bg_magic_.clear(view->clip);
+        set_busy(false);
+        return;
+    }
+    if (bg_stroke_ || bg_magic_.covers(view->clip, view->frame, smart)) {
+        return;
+    }
+    const std::string sig = view->clip + '|' + view->auto_.value("provider", "") + '|' + std::to_string(view->frame) + '|' + smart.dump();
+    if (sig == bg_magic_sig_) {
+        return;
+    }
+    bg_magic_sig_ = sig;
+    const core::TimelineClip* c = clip(qstr(view->clip));
+    auto start = core::bg_auto_start(*c);
+    if (!start) {
+        return;
+    }
+    Json body = std::move(start->body);
+    Json a = view->auto_;
+    a["edits"] = smart;
+    body["auto"] = a;
+    body["src_time"] = core::bg_matte_frame_time(view->frame, a.value("mask_fps", Json()));
+    const int seq = ++bg_seq_sent_;
+    set_busy(true);
+    bg_segment_.setBaseUrl(bg_jobs_.baseUrl());
+    const std::string id = view->clip;
+    const std::int64_t frame = view->frame;
+    bg_segment_.postRaw(QString("/api/projects/%1/bg-segment").arg(qstr(project_id_)), body,
+                        [this, seq, id, frame, smart, a](const QByteArray& data, const QString&) {
+                            const auto now = bg_magic_view();
+                            // Llega tarde (ya hay una más nueva) o el usuario cambió de fotograma: se tira.
+                            if (!data.isEmpty() && seq >= bg_seq_shown_ && now && now->clip == id && now->frame == frame) {
+                                bg_seq_shown_ = seq;
+                                bg_magic_.setMask(id, frame, QImage::fromData(data, "PNG"), smart);
+                                if (const core::TimelineClip* item = clip(qstr(id))) {
+                                    bg_maybe_analyze(*item, a);
+                                }
+                            }
+                            if (seq == bg_seq_sent_) {
+                                bg_magic_busy_ = false;
+                            }
+                            emit bgMagicChanged();
+                        });
+}
+
+// maybeAnalyzeBg: en cuanto hay selección se analiza el resto del clip mientras se sigue marcando, para que
+// Aplicar solo tenga que seguirla. Una vez por clip, tramo y modelo; solo en material animado.
+void EditorModel::bg_maybe_analyze(const core::TimelineClip& c, const Json& auto_) {
+    std::string name = c.filename.substr(0, c.filename.find_first_of("?#"));
+    std::ranges::transform(name, name.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    if (c.kind != "video" && !name.ends_with(".gif")) {
+        return;
+    }
+    const std::string key = c.id + '|' + c.filename + '|' + std::to_string(c.in_point) + '|' + std::to_string(c.out_point) + '|' +
+                            auto_.value("provider", "") + '|' + auto_.value("mask_fps", Json()).dump() + '|' + auto_.value("mask_height", Json()).dump();
+    if (bg_analyzed_.contains(key)) {
+        return;
+    }
+    if (bg_job_.value("clipId").toString() == qstr(c.id) &&
+        (bg_job_.value("status") == "pending" || bg_job_.value("status") == "running")) {
+        return;
+    }
+    if (bg_analyze_jobs_.busy()) {
+        bg_analyze_jobs_.cancel();
+    }
+    bg_analyzed_.insert(key);
+    auto start = core::bg_auto_start(c);
+    if (!start) {
+        return;
+    }
+    Json body = std::move(start->body);
+    body["auto"] = auto_;
+    bg_analyze_clip_ = c.id;
+    bg_analyze_ = {{"status", "pending"}, {"progress", 0.0}, {"message", QString()}};
+    emit bgAnalyzeChanged();
+    bg_analyze_jobs_.setBaseUrl(bg_jobs_.baseUrl());
+    bg_analyze_jobs_.start(QString("/api/projects/%1/bg-analyze").arg(qstr(project_id_)), body, [this](const Json& job) {
+        const std::string status = job_text(job, "status");
+        if (status == "done" || status == "error") { // lo analizado queda en la caché del backend
+            bg_analyze_.clear();
+        } else {
+            const auto progress = job.find("progress");
+            bg_analyze_ = {{"status", qstr(status)},
+                           {"progress", progress != job.end() && progress->is_number() ? progress->get<double>() : 0.0},
+                           {"message", qstr(job_text(job, "message"))}};
+        }
+        emit bgAnalyzeChanged();
+    });
+}
+
+void EditorModel::stopBgAnalyze() {
+    if (bg_analyze_.isEmpty()) {
+        return;
+    }
+    if (bg_analyze_jobs_.busy()) {
+        bg_analyze_jobs_.cancel();
+        bg_analyze_jobs_.stop();
+    }
+    bg_analyze_.clear();
+    emit bgAnalyzeChanged();
 }
 
 void EditorModel::push_bg_preview() {

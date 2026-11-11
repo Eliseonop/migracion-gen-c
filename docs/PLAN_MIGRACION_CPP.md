@@ -1998,3 +1998,12 @@ Decisión de Edu (§6):
 - **Qué es:** la sección «Exportar recorte» de EdBgRemove.jsx: hornea un vídeo o un GIF con el fondo eliminado a un WebM transparente en el backend y lo añade al material (POST `/bg-cutout`, sondeado cada 800 ms; el aviso de «listo» se va a los 3,2 s, como en React). El cuerpo lleva el `bg_removal` tal como está en el clip, sin normalizar.
 - **Paridad:** `bg_cutout_body` contra `exportBgCutout` real, 4 clips más en el caso (con nombre, nombre vacío y el `enabled: false`, que apaga el matte pero no este croma: `bg.chroma?.enabled` no lo mira).
 - **Sin probar:** contra el backend real; el test usa uno falso.
+
+### 2026-11-11 — F5: los pinceles de «Eliminar fondo» (personalizada con SAM y retocar) · versión 0.5.0
+
+- **Qué es:** lo último de EdBgRemove.jsx. Un trazo es una entrada de `auto.edits`, en el espacio normalizado de la fuente, y un paso de deshacer al soltar.
+- **Del puntero a la fuente:** `bg_frame_to_source`, la inversa del blit de la capa (el que dibuja el render), en vez de portar canvasToSourceNorm rama por rama. Paridad contra las funciones reales (`canvasToSourceNorm` y `bgBrushRadiusPx`, extraídas de render/canvas.js) con overlay girado, volteado y relleno con encuadre.
+- **La selección:** `BgMagic` (bgMagic.js con QPainter: SAM ∪ pincel − borrador, relleno cian, borde, la línea de lo que SAM aún no contestó y el rastro del borrador) y `BgMagicOverlay`, que la dibuja por la transformación del blit. Mientras se edita, el clip llega a la vista previa sin `bg_removal` (`preview_timeline`), como `drawSourceFor` con `cutout: false`.
+- **SAM:** POST `/bg-segment` al soltar (`BackendJobs::postRaw`, que devuelve el PNG), con la regla de descartar lo que llega tarde o de otro fotograma; después, `/bg-analyze` una vez por clip, tramo y modelo.
+- **Lo que enseñó la captura:** el panel es más alto que el inspector y no había barra de desplazamiento.
+- **Sin probar:** contra un SAM de verdad (el test usa un backend falso que devuelve una máscara) ni con el ratón en la app abierta: el test llama a `bgPress`, `bgMove` y `bgRelease` directamente. La captura sí confirma la selección en cian sobre el clip.

@@ -45,6 +45,9 @@ public:
     // Una lectura suelta (GET `path`), aparte del job: `reply` recibe el JSON, o null si falla.
     using Reply = std::function<void(const Json& body)>;
     void get(const QString& path, Reply reply);
+    // Un POST suelto que devuelve datos crudos (una imagen): `reply` recibe los bytes, o vacío y el error.
+    using RawReply = std::function<void(const QByteArray& data, const QString& error)>;
+    void postRaw(const QString& path, const Json& body, RawReply reply);
     [[nodiscard]] bool busy() const { return update_ != nullptr; }
 
 private:

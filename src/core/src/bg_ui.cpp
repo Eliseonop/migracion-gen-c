@@ -1,9 +1,13 @@
 #include "gc/core/bg_ui.hpp"
 
+#include <algorithm>
 #include <array>
+#include <cmath>
+#include <map>
 #include <string>
 
 #include "gc/core/bg.hpp"
+#include "gc/core/timeline_ui.hpp"
 
 namespace gc::core {
 
@@ -153,6 +157,169 @@ std::optional<BgAutoStart> bg_auto_start(const TimelineClip& clip) {
     body["auto"] = bg.at("auto");
     return BgAutoStart{std::move(body),
                        bg_patch_auto(clip, {{"enabled", true}, {"status", "running"}, {"error", nullptr}})};
+}
+
+std::string preferred_sam_provider(const Json& current, const Json& catalog) {
+    if (is_interactive_bg_provider(current)) {
+        return current.get<std::string>();
+    }
+    for (const char* id : {"sam21_base_plus", "sam21_large", "sam21_tiny"}) {
+        if (catalog.is_array() && std::ranges::any_of(catalog, [&](const Json& p) {
+                return p.is_object() && p.value("id", Json()) == id && p.value("interactive", false) &&
+                       p.value("downloaded", false);
+            })) {
+            return id;
+        }
+    }
+    return "sam21_base_plus";
+}
+
+Json bg_toggle_custom(const TimelineClip& clip, bool on, const Json& catalog) {
+    if (!on) {
+        return bg_patch_auto(clip, {{"enabled", false}});
+    }
+    const Json bg = clip_bg_or_default(clip);
+    const Json current = bg.at("auto").value("provider", Json());
+    Json patch = {{"enabled", true}, {"provider", preferred_sam_provider(current, catalog)}};
+    if (!is_interactive_bg_provider(current)) {
+        patch["edits"] = Json::array();
+        patch["base_key"] = "";
+        patch["status"] = "idle";
+        patch["error"] = nullptr;
+        patch["mask_height"] = 512;
+    }
+    return bg_patch_auto(clip, patch);
+}
+
+namespace {
+
+double fixed(double v, int digits) { return std::stod(js_to_fixed(v, digits)); }
+
+std::int64_t fps_of(const Json& mask_fps) {
+    const double n = mask_fps.is_number() ? mask_fps.get<double>() : 0.0;
+    return std::max<std::int64_t>(1, n != 0.0 ? static_cast<std::int64_t>(std::floor(n + 0.5)) : 15);
+}
+
+std::optional<std::int64_t> mark_frame(const Json& edit, const Json& mask_fps) {
+    const Json t = edit.is_object() ? edit.value("t", Json()) : Json();
+    if (!t.is_number() || !std::isfinite(t.get<double>())) {
+        return std::nullopt;
+    }
+    return bg_matte_frame_index(t.get<double>(), mask_fps);
+}
+
+} // namespace
+
+Json bg_new_stroke(const TimelineClip& clip, std::string_view op, std::string_view tool, double size, double head,
+                   Point first) {
+    Json stroke = {{"op", op == "keep" ? "keep" : "erase"}, {"size", size != 0.0 ? size : 0.08}};
+    const Json bg = normalize_bg(clip.bg_removal.value_or(Json()));
+    if (bg.is_object() && is_interactive_bg_provider(bg["auto"].value("provider", Json()))) {
+        stroke["t"] = fixed(source_time(clip, head, clip.start), 3);
+        stroke["tool"] = tool == "manual" ? "manual" : "smart";
+    }
+    stroke["points"] = Json::array({{{"x", fixed(first.x, 4)}, {"y", fixed(first.y, 4)}, {"m", 1}}});
+    return stroke;
+}
+
+std::optional<Json> bg_stroke_point(Point last, Point next) {
+    if (std::hypot(next.x - last.x, next.y - last.y) < 0.003) {
+        return std::nullopt;
+    }
+    return Json{{"x", fixed(next.x, 4)}, {"y", fixed(next.y, 4)}};
+}
+
+Json bg_add_stroke(const TimelineClip& clip, const Json& stroke) {
+    Json bg = clip_bg_or_default(clip);
+    bg["auto"]["edits"].push_back(stroke);
+    return normalize_bg(bg);
+}
+
+std::optional<Json> bg_extend_stroke(const TimelineClip& clip, const Json& point) {
+    Json bg = normalize_bg(clip.bg_removal.value_or(Json()));
+    if (bg.is_null() || bg["auto"]["edits"].empty()) {
+        return std::nullopt;
+    }
+    bg["auto"]["edits"].back()["points"].push_back(point);
+    return normalize_bg(bg);
+}
+
+Json bg_undo_edit(const TimelineClip& clip) {
+    Json bg = clip_bg_or_default(clip);
+    if (!bg["auto"]["edits"].empty()) {
+        bg["auto"]["edits"].erase(bg["auto"]["edits"].size() - 1);
+    }
+    return normalize_bg(bg);
+}
+
+Json bg_clear_edits(const TimelineClip& clip) { return bg_patch_auto(clip, {{"edits", Json::array()}}); }
+
+std::int64_t bg_matte_frame_index(double src_t, const Json& mask_fps) {
+    const double t = std::isfinite(src_t) ? std::max(0.0, src_t) : 0.0;
+    return std::max<std::int64_t>(0, static_cast<std::int64_t>(std::floor((t * static_cast<double>(fps_of(mask_fps))) + 0.5)));
+}
+
+double bg_matte_frame_time(std::int64_t index, const Json& mask_fps) {
+    return static_cast<double>(std::max<std::int64_t>(0, index)) / static_cast<double>(fps_of(mask_fps));
+}
+
+Json bg_edits_at_frame(const Json& edits, std::int64_t index, const Json& mask_fps) {
+    Json out = Json::array();
+    if (edits.is_array()) {
+        for (const Json& e : edits) {
+            const auto k = mark_frame(e, mask_fps);
+            if (!k || *k == index) {
+                out.push_back(e);
+            }
+        }
+    }
+    return out;
+}
+
+Json bg_mark_frames(const Json& edits, const Json& mask_fps) {
+    std::map<std::int64_t, std::int64_t> by;
+    if (edits.is_array()) {
+        for (const Json& e : edits) {
+            if (const auto k = mark_frame(e, mask_fps)) {
+                ++by[*k];
+            }
+        }
+    }
+    Json out = Json::array();
+    for (const auto& [idx, count] : by) {
+        out.push_back({{"idx", idx}, {"t", bg_matte_frame_time(idx, mask_fps)}, {"count", count}});
+    }
+    return out;
+}
+
+bool bg_manual_mark(const Json& edit) { return edit.is_object() && edit.value("tool", Json()) == "manual"; }
+
+std::optional<Point> bg_frame_to_source(const FrameLayer& layer, double x, double y, double src_w, double src_h) {
+    if (!(src_w > 0) || !(src_h > 0)) {
+        return std::nullopt;
+    }
+    for (const Blit& b : layer.blits) {
+        const double det = (b.m.a * b.m.d) - (b.m.b * b.m.c);
+        if (det == 0.0) {
+            continue;
+        }
+        const double dx = x - b.m.e;
+        const double dy = y - b.m.f;
+        const double sx = ((b.m.d * dx) - (b.m.c * dy)) / det;
+        const double sy = ((b.m.a * dy) - (b.m.b * dx)) / det;
+        if (sx >= b.src.sx && sx <= b.src.sx + b.src.sw && sy >= b.src.sy && sy <= b.src.sy + b.src.sh) {
+            return Point{sx / src_w, sy / src_h};
+        }
+    }
+    return std::nullopt;
+}
+
+double bg_brush_radius(const FrameLayer& layer, double size, double src_h) {
+    if (layer.blits.empty()) {
+        return 0.0;
+    }
+    const Affine& m = layer.blits.front().m;
+    return size * src_h * std::hypot(m.c, m.d) / 2;
 }
 
 std::optional<Json> bg_cutout_body(const TimelineClip& clip) {

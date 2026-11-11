@@ -34,6 +34,8 @@ const projectFps = await load('lib/projectFps.js')
 const panning = await load('lib/panning.js')
 const scriptPrompt = await load('features/audio/scriptPrompt.js')
 const bgLib = await load('lib/clipBg.js')
+const clipFxLib = await load('lib/clipFx.js')
+const clipAnim = await load('lib/clipAnim.js')
 // confirmCrop de VideoEditor.jsx (con changeReframe, upsertKeyframe, changeTransform y srcTOf) sobre un clip.
 const confirmCrop = (clip, crop, rotation, t, fps) => {
   let made = clip
@@ -118,6 +120,7 @@ const noUid = (e) => { if (!e) return null; const { uid, ...rest } = e; return r
 
 // «Eliminar fondo» de VideoEditor.jsx (patchBg, patchBgAuto, bgClipDescriptor, startBgAutoFor, toggleBgAuto y
 // changeBgAuto) sobre un clip: el bg_removal con el que queda y el cuerpo del POST /bg-removal.
+let bgCatalog = []
 const bgOps = (clip) => {
   let made = clip
   let body = null
@@ -129,12 +132,14 @@ const bgOps = (clip) => {
     bgCapable: bgLib.bgCapable, resetCutout: () => {}, stopBgAnalyze: () => {}, setBgBrush: () => {},
     setBgNotice: () => {}, setBgJob: () => {}, setChromaPick: () => {}, project: { id: 'p' },
     createBgRemovalJob: (_pid, b) => { body = b; return new Promise(() => {}) },
-    autoActive: bgLib.autoActive, setCutoutJob: () => {},
+    autoActive: bgLib.autoActive, setCutoutJob: () => {}, useCallback: (f) => f, onBgBrush: () => {},
+    preferredSamProvider: bgLib.preferredSamProvider, DEFAULT_MASK_HEIGHT: bgLib.DEFAULT_MASK_HEIGHT, get bgInfo() { return { providers: bgCatalog } },
     createBgCutoutJob: (_pid, b) => { body = b; return new Promise(() => {}) } }
-  const fns = ['patchBg', 'patchBgAuto', 'patchBgChroma', 'patchBgOutline', 'bgClipDescriptor', 'startBgAutoFor', 'exportBgCutout'].map((n) => extractFunction(src, n))
-  const arrows = ['toggleBgAuto', 'changeBgAuto', 'toggleBgChroma', 'changeBgChroma', 'resetBgChroma'].map((n) => extractArrow(src, n))
+  const fns = ['patchBg', 'patchBgAuto', 'patchBgChroma', 'patchBgOutline', 'bgClipDescriptor', 'startBgAutoFor', 'exportBgCutout', 'undoBgEdit', 'clearBgEdits'].map((n) => extractFunction(src, n))
+  const arrows = ['toggleBgAuto', 'changeBgAuto', 'toggleBgChroma', 'changeBgChroma', 'resetBgChroma', 'toggleBgCustom'].map((n) => extractArrow(src, n))
+  const hooks = ['addBgStroke', 'extendBgStroke'].map((n) => extractCallback(src, n))
   const api = new Function(...Object.keys(deps), 'selectedClip',
-    [...fns, ...arrows, 'return { patchBgAuto, patchBgOutline, exportBgCutout, startBgAutoFor, toggleBgAuto, changeBgAuto, toggleBgChroma, changeBgChroma, resetBgChroma }'].join(String.fromCharCode(10)))(
+    [...fns, ...arrows, ...hooks, 'return { patchBgAuto, patchBgOutline, exportBgCutout, undoBgEdit, clearBgEdits, toggleBgCustom, addBgStroke, extendBgStroke, startBgAutoFor, toggleBgAuto, changeBgAuto, toggleBgChroma, changeBgChroma, resetBgChroma }'].join(String.fromCharCode(10)))(
     ...Object.values(deps), clip)
   return { api, get bg() { return made.bg_removal ?? null }, get body() { return body } }
 }
@@ -151,6 +156,44 @@ const bgFinished = (clip, job) => {
     return null
   }
   return ops.bg
+}
+// startBgBrush de interactions.js con el puntero de mentira: el trazo y los puntos que van añadiéndose.
+const bgDrag = (clip, brush, head, pts) => {
+  let stroke = null
+  const extended = []
+  let move = null
+  const deps = { canvasPointer: (e) => e, canvasToSourceNorm: (_c, x, y) => ({ x, y }), listenMove: (fn) => { move = fn },
+    clipBg: bgLib.clipBg, isInteractiveProvider: bgLib.isInteractiveProvider, clamp: panning.clamp, timelineToSource: m.timelineToSource }
+  const fn = new Function(...Object.keys(deps), `return ${extractFunction(`${root}/features/editor/interactions.js`, 'startBgBrush')}`)(...Object.values(deps))
+  const ctx = { addBgStroke: (_id, s) => { stroke = s }, extendBgStroke: (_id, p) => extended.push(p), playingRef: { current: false },
+    stopPlayback: () => {}, bgBrushRef: { current: brush }, playheadRef: { current: head }, onBgStroke: () => {} }
+  fn(pts[0], null, clip, ctx, {})
+  for (const p of pts.slice(1)) move(p)
+  return { stroke, extended }
+}
+// canvasToSourceNorm y bgBrushRadiusPx de render/canvas.js, sobre un material de mentira y el cuadro como lienzo.
+const bgGeo = (name, clip, args, vw, vh, oW, oH, head) => {
+  const src = `${root}/features/editor/render/canvas.js`
+  const deps = { mediaSize: layout.mediaSize, clamp: panning.clamp, timelineToSource: m.timelineToSource, clipFxAt: clipFxLib.clipFxAt, clipDur: m.clipDur,
+    clipFlip: clipAnim.clipFlip, isOverlay: layout.isOverlay, clipRenderPose: clipAnim.clipRenderPose, cropWindow: layout.cropWindow, slotAspectOf: layout.slotAspectOf,
+    sourceCropPx: layout.sourceCropPx, destRectOnFrame: layout.destRectOnFrame, posedRenderTransform: clipAnim.posedRenderTransform }
+  const body = ['overlayDest', name].map((n) => extractFunction(src, n)).join('\n')
+  const fn = new Function(...Object.keys(deps), `${body}\nreturn ${name}`)(...Object.values(deps))
+  const el = { videoWidth: vw, videoHeight: vh, currentTime: m.timelineToSource(clip, head) }
+  const env = { mediaEls: { current: new Map([[clip.id, el]]) }, outRef: { current: { w: oW, h: oH } } }
+  return fn(clip, ...args, { x: 0, y: 0, w: oW, h: oH }, env, head)
+}
+// Como extractArrow, para `const name = useCallback(…)`.
+function extractCallback(file, name) {
+  const src = readFileSync(file, 'utf8')
+  const start = src.indexOf(`const ${name} = useCallback(`)
+  if (start < 0) throw new Error(`no encuentro ${name}`)
+  let depth = 0
+  for (let i = src.indexOf('useCallback(', start) + 11; i < src.length; i++) {
+    if (src[i] === '(') depth++
+    else if (src[i] === ')' && --depth === 0) return src.slice(start, i + 1)
+  }
+  throw new Error(`no encuentro ${name}`)
 }
 // Como extractFunction, para `const name = (…) => {…}`.
 function extractArrow(file, name) {
@@ -427,6 +470,23 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       return o.body ? { body: o.body, bg: o.bg } : null
     },
     bgFinished: (id, job) => bgFinished(byId(id), job),
+    bgToggleCustom: (id, on, cat) => { bgCatalog = cat; const o = bgOps(byId(id)); o.api.toggleBgCustom(on); return o.bg },
+    bgUndoEdit: (id) => { const o = bgOps(byId(id)); o.api.undoBgEdit(); return o.bg },
+    bgClearEdits: (id) => { const o = bgOps(byId(id)); o.api.clearBgEdits(); return o.bg },
+    bgDrag: (id, brush, head, pts) => bgDrag(byId(id), brush, head, pts),
+    bgAddStroke: (id, s) => { const o = bgOps(byId(id)); o.api.addBgStroke(id, s); return o.bg },
+    bgExtendStroke: (id, p) => { const o = bgOps(byId(id)); o.api.extendBgStroke(id, p); return o.bg },
+    bgMarkFrames: (e, f) => bgLib.samMarkFrames(e, f ?? undefined),
+    bgEditsAtFrame: (e, i, f) => bgLib.editsAtFrame(e, i, f ?? undefined),
+    bgMatteTime: (i, f) => bgLib.matteFrameTime(i, f ?? undefined),
+    bgMatteIndex: (t, f) => bgLib.matteFrameIndex(t ?? undefined, f ?? undefined),
+    bgManualMark: (e) => bgLib.isManualMark(e),
+    bgPreferredSam: (c, cat) => bgLib.preferredSamProvider(c, cat),
+    bgToSource: (id, x, y, vw, vh, oW, oH, head) => {
+      const p = bgGeo('canvasToSourceNorm', byId(id), [x, y], vw, vh, oW, oH, head)
+      return p ? [+p.x.toFixed(6), +p.y.toFixed(6)] : null
+    },
+    bgBrushRadius: (id, size, vw, vh, oW, oH, head) => +bgGeo('bgBrushRadiusPx', byId(id), [size], vw, vh, oW, oH, head).toFixed(6),
     bgCutout: (id) => { const o = bgOps(byId(id)); o.api.exportBgCutout(); return o.body },
     bgToggleChroma: (id, on) => { const o = bgOps(byId(id)); o.api.toggleBgChroma(on); return o.bg },
     bgChangeChroma: (id, patch) => { const o = bgOps(byId(id)); o.api.changeBgChroma(patch); return o.bg },

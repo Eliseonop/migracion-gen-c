@@ -106,6 +106,21 @@ void BackendJobs::get(const QString& path, Reply reply) {
     });
 }
 
+void BackendJobs::postRaw(const QString& path, const Json& body, RawReply reply) {
+    QNetworkRequest request(url(path));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QNetworkReply* pending = net().post(request, QByteArray::fromStdString(body.dump()));
+    connect(pending, &QNetworkReply::finished, this, [pending, reply = std::move(reply)] {
+        pending->deleteLater();
+        const QByteArray data = pending->readAll();
+        if (pending->error() == QNetworkReply::NoError) {
+            reply(data, {});
+        } else {
+            reply({}, error_of(*pending, data));
+        }
+    });
+}
+
 void BackendJobs::deliver(const Json& job) {
     const std::string status = job.value("status", std::string());
     const bool over = status == "done" || status == "error";

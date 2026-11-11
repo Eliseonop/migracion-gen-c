@@ -730,6 +730,70 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "bgCutout") {
         return bg_cutout_body(clip(call.at(1))).value_or(Json());
     }
+    if (fn == "bgToggleCustom") {
+        return bg_toggle_custom(clip(call.at(1)), call.at(2).get<bool>(), call.at(3));
+    }
+    if (fn == "bgUndoEdit") {
+        return bg_undo_edit(clip(call.at(1)));
+    }
+    if (fn == "bgClearEdits") {
+        return bg_clear_edits(clip(call.at(1)));
+    }
+    if (fn == "bgDrag") {
+        const Json& brush = call.at(2);
+        const Json& pts = call.at(4);
+        const auto at = [&](std::size_t i) { return Point{pts[i].at("x").get<double>(), pts[i].at("y").get<double>()}; };
+        const Json stroke = bg_new_stroke(clip(call.at(1)), brush.value("op", ""), brush.value("tool", ""), brush.value("size", 0.0), num(3), at(0));
+        Json extended = Json::array();
+        Point last = at(0);
+        for (std::size_t i = 1; i < pts.size(); ++i) {
+            if (auto p = bg_stroke_point(last, at(i))) {
+                extended.push_back(std::move(*p));
+                last = at(i);
+            }
+        }
+        return {{"stroke", stroke}, {"extended", extended}};
+    }
+    if (fn == "bgAddStroke") {
+        return bg_add_stroke(clip(call.at(1)), call.at(2));
+    }
+    if (fn == "bgExtendStroke") {
+        return bg_extend_stroke(clip(call.at(1)), call.at(2)).value_or(to_json(clip(call.at(1))).value("bg_removal", Json()));
+    }
+    if (fn == "bgMarkFrames") {
+        return bg_mark_frames(call.at(1), call.at(2));
+    }
+    if (fn == "bgEditsAtFrame") {
+        return bg_edits_at_frame(call.at(1), call.at(2).get<std::int64_t>(), call.at(3));
+    }
+    if (fn == "bgMatteTime") {
+        return bg_matte_frame_time(call.at(1).get<std::int64_t>(), call.at(2));
+    }
+    if (fn == "bgMatteIndex") {
+        return bg_matte_frame_index(call.at(1).is_null() ? 0.0 : num(1), call.at(2));
+    }
+    if (fn == "bgManualMark") {
+        return bg_manual_mark(call.at(1));
+    }
+    if (fn == "bgPreferredSam") {
+        return preferred_sam_provider(call.at(1), call.at(2));
+    }
+    if (fn == "bgToSource" || fn == "bgBrushRadius") {
+        const bool to_source = fn == "bgToSource";
+        const std::size_t k = to_source ? 4 : 3; // srcW, srcH, outW, outH, head
+        const MediaSize media{num(k), num(k + 1)};
+        auto layers = evaluate(tl, num(k + 4), FrameSpec{num(k + 2), num(k + 3), kPreviewLayers},
+                               [&](const TimelineClip&) -> std::optional<MediaSize> { return media; });
+        REQUIRE(layers);
+        const auto layer = std::ranges::find_if(*layers, [&](const FrameLayer& l) { return l.clip->id == str(1); });
+        REQUIRE(layer != layers->end());
+        const auto round6 = [](double v) { return std::stod(js_to_fixed(v, 6)); };
+        if (!to_source) {
+            return round6(bg_brush_radius(*layer, num(2), media.h));
+        }
+        const auto p = bg_frame_to_source(*layer, num(2), num(3), media.w, media.h);
+        return p ? Json::array({round6(p->x), round6(p->y)}) : Json();
+    }
     if (fn == "bgStart") {
         const auto start = bg_auto_start(clip(call.at(1)));
         return start ? Json{{"body", start->body}, {"bg", start->bg_removal}} : Json();

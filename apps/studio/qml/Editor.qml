@@ -210,6 +210,48 @@ Item {
                     onReleased: editor.model.maskRelease()
                     onCanceled: editor.model.maskRelease()
                 }
+                // Eliminar fondo: la selección de la personalizada, el cursor del pincel y sus trazos.
+                BgMagicOverlay {
+                    id: bgMagic
+                    objectName: "bgMagicOverlay"
+                    readonly property rect out: preview.frameRect.width > 0 ? preview.frameRect
+                                                                            : Qt.rect(0, 0, preview.width, preview.height)
+                    anchors.fill: frame
+                    model: editor.model
+                    frame: Qt.rect(preview.x + out.x, preview.y + out.y, out.width, out.height)
+                    visible: editor.model.bgMagicOn
+                }
+                MouseArea {
+                    objectName: "bgBrushArea"
+                    anchors.fill: frame
+                    enabled: !!editor.model.bgBrush.on
+                    visible: enabled
+                    hoverEnabled: true
+                    clip: true
+                    cursorShape: Qt.BlankCursor
+                    onPressed: (m) => m.accepted = editor.model.bgPress(m.x, m.y, bgMagic.frame)
+                    onPositionChanged: (m) => {
+                        editor.model.bgHover(m.x, m.y, bgMagic.frame)
+                        if (pressed)
+                            editor.model.bgMove(m.x, m.y)
+                    }
+                    onReleased: editor.model.bgRelease()
+                    onCanceled: editor.model.bgRelease()
+                    onExited: editor.model.bgLeave()
+                    Rectangle { // drawBgBrushCursor: blanco en la personalizada; verde conservar, rojo eliminar
+                        readonly property var brush: editor.model.bgBrush
+                        readonly property real r: brush.r || 0
+                        visible: r > 0 && brush.px !== undefined
+                        x: (brush.px || 0) - r
+                        y: (brush.py || 0) - r
+                        width: r * 2
+                        height: r * 2
+                        radius: r
+                        color: editor.model.bgMagicOn ? Qt.rgba(1, 1, 1, 0.16) : "transparent"
+                        border.width: 1.5
+                        border.color: editor.model.bgMagicOn ? Qt.rgba(1, 1, 1, 0.95) : brush.op === "keep" ? "#22c55e" : "#ef4444"
+                    }
+                }
                 // El cuentagotas del croma (pickChromaAt): con él, un clic toma el color y no llega a nada más.
                 MouseArea {
                     objectName: "chromaPickArea"

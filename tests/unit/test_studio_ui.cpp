@@ -1,6 +1,7 @@
 // genclip-studio entero sin pantalla: el QML real con los ViewModels, manejado con el ratón y el
 // teclado de QTest. Comprueba que los gestos de la timeline llegan al modelo y a projects.json.
 
+#include <QBuffer>
 #include <QClipboard>
 #include <QColor>
 #include <QCoreApplication>
@@ -22,6 +23,7 @@
 #include <filesystem>
 #include <fstream>
 #include <functional>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
@@ -742,6 +744,7 @@ public:
     }
     [[nodiscard]] QUrl url() const { return QUrl(QString("http://127.0.0.1:%1").arg(server_.serverPort())); }
     std::vector<Request> requests;
+    std::map<QString, QByteArray> raw_replies; // ruta → cuerpo crudo (una imagen), en vez del JSON
 
 private:
     void serve(QTcpSocket& socket, QByteArray& buffer) {
@@ -765,7 +768,8 @@ private:
         const Json body = raw.isEmpty() ? Json() : Json::parse(raw.toStdString(), nullptr, false);
         requests.push_back({QString::fromLatin1(first.value(0)), QString::fromLatin1(first.value(1)), body});
         const auto [status, json] = reply_(requests.back().method, requests.back().path, body);
-        const QByteArray out = QByteArray::fromStdString(json.dump());
+        const auto bytes = raw_replies.find(requests.back().path);
+        const QByteArray out = bytes != raw_replies.end() ? bytes->second : QByteArray::fromStdString(json.dump());
         socket.write(QString("HTTP/1.1 %1 X\r\nContent-Type: application/json\r\nContent-Length: %2\r\nConnection: close\r\n\r\n")
                          .arg(status)
                          .arg(out.size())
@@ -1419,6 +1423,123 @@ bool has_color(const render::Image& image, const QColor& c) {
 }
 
 } // namespace
+
+TEST_CASE("studio sin pantalla: los pinceles de «Eliminar fondo» (retocar y personalizada con SAM)", "[studio][ui][backend][preview]") {
+    const Studio s;
+    REQUIRE(s.editor->previewSource().available());
+    // Una máscara de SAM: la mitad izquierda elegida.
+    QImage mask(160, 90, QImage::Format_ARGB32);
+    mask.fill(Qt::transparent);
+    for (int y = 0; y < 90; ++y) {
+        for (int x = 0; x < 80; ++x) {
+            mask.setPixelColor(x, y, QColor(255, 255, 255, 255));
+        }
+    }
+    QByteArray png;
+    {
+        QBuffer buffer(&png);
+        buffer.open(QIODevice::WriteOnly);
+        REQUIRE(mask.save(&buffer, "PNG"));
+    }
+    FakeBackend backend([&](const QString& method, const QString& path, const Json&) -> std::pair<int, Json> {
+        if (method == "POST" && path == "/api/projects/p1/bg-removal") {
+            return {200, {{"id", "j1"}, {"status", "pending"}, {"progress", 0.0}}};
+        }
+        if (method == "GET" && path == "/api/job/j1") {
+            return {200, {{"id", "j1"}, {"status", "done"}, {"progress", 1.0},
+                          {"bg_removal", {{"base_key", "sam-k"}, {"provider", "sam21_base_plus"}, {"mask_fps", 15}, {"mask_height", 512}}}}};
+        }
+        return {200, Json::object()};
+    });
+    backend.raw_replies["/api/projects/p1/bg-segment"] = png;
+    s.editor->bgBackend().setBaseUrl(backend.url());
+    s.editor->bgBackend().setPollInterval(20);
+
+    // La imagen «b» a 7 s: encender la personalizada propone el de calidad, el pincel inteligente y ve el clip sin recortar.
+    s.editor->setPlayhead(7.0);
+    s.editor->select("b");
+    QCoreApplication::processEvents();
+    s.click("insp:tab:bg");
+    const auto bg_auto = [&] { return s.editor->selectedClip()["bg"].toMap()["auto"].toMap(); };
+    s.editor->toggleBgCustom(true);
+    CHECK(bg_auto()["provider"] == "sam21_base_plus");
+    CHECK(s.editor->bgBrush()["on"] == true);
+    CHECK(s.editor->bgBrush()["tool"] == "smart");
+    CHECK(s.editor->bgMagicOn());
+    CHECK_FALSE(s.editor->maskMode());
+
+    // Un trazo sobre el clip: un paso de deshacer, en el espacio de la fuente, con su fotograma y su herramienta.
+    QQuickItem* preview = s.item("preview");
+    REQUIRE(preview);
+    REQUIRE(QTest::qWaitFor([&] { return preview->property("frameRect").toRectF().width() > 0; }, 60000));
+    const QRectF fit = preview->property("frameRect").toRectF();
+    const QRectF frame(preview->x() + fit.x(), preview->y() + fit.y(), fit.width(), fit.height());
+    // El centro de la imagen en el cuadro, por su transformación: se busca un punto que sea del clip.
+    QPointF hit;
+    bool found = false;
+    for (double fy = 0.05; fy < 1 && !found; fy += 0.05) {
+        for (double fx = 0.05; fx < 1 && !found; fx += 0.05) {
+            hit = QPointF(frame.x() + (frame.width() * fx), frame.y() + (frame.height() * fy));
+            if (s.editor->bgPress(hit.x(), hit.y(), frame)) {
+                found = true;
+            }
+        }
+    }
+    REQUIRE(found);
+    s.editor->bgMove(hit.x() + 5, hit.y() + 3);
+    s.editor->bgRelease();
+    REQUIRE(bg_auto()["edits"].toList().size() == 1);
+    const QVariantMap stroke = bg_auto()["edits"].toList().front().toMap();
+    CHECK(stroke["tool"] == "smart");
+    CHECK(stroke["op"] == "keep");
+    CHECK(stroke["points"].toList().size() == 2);
+    CHECK(stroke["t"].toDouble() >= 0);
+    REQUIRE(s.editor->selectedClip()["bgMarks"].toList().size() == 1);
+
+    // Al soltar se pide la selección de ese fotograma, y la vista la pinta en cian sobre el clip.
+    backend.requests.clear();
+    s.editor->bgBackend().setBaseUrl(backend.url());
+    s.editor->undoBgEdit();
+    CHECK(bg_auto()["edits"].toList().empty());
+    REQUIRE(s.editor->bgPress(hit.x(), hit.y(), frame));
+    s.editor->bgRelease();
+    REQUIRE(QTest::qWaitFor([&] { return !s.editor->bgMagicBusy() && !backend.requests.empty(); }, 20000));
+    const auto segment = std::ranges::find(backend.requests, QString("/api/projects/p1/bg-segment"), &FakeBackend::Request::path);
+    REQUIRE(segment != backend.requests.end());
+    CHECK(segment->body.at("auto").at("edits").size() == 1);
+    CHECK(segment->body.contains("src_time"));
+    QTest::qWait(100);
+    REQUIRE(s.item("bgMagicOverlay"));
+    const QImage shot = s.window->grabWindow();
+    QQuickItem* overlay = s.item("bgMagicOverlay");
+    const QRect on_screen = overlay->mapRectToScene(QRectF(0, 0, overlay->width(), overlay->height())).toAlignedRect();
+    CHECK(has_color(shot, on_screen, QColor(22 / 2 + 100, 196 / 2 + 15, 222 / 2 + 20))); // cian sobre el rojo de la imagen
+
+    // Aplicar: el job de siempre, con el pincel apagado; la clave de caché va al clip.
+    s.editor->applyBgCustom();
+    CHECK(s.editor->bgBrush()["on"] == false);
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->bgJob()["status"] == "done"; }, 10000));
+    CHECK(bg_auto()["base_key"] == "sam-k");
+    CHECK(s.editor->selectedClip()["bgReady"] == true);
+
+    // Volver a la automática descarta las marcas, y el retoque pinta correcciones sin t ni herramienta.
+    s.editor->toggleBgAuto(true);
+    CHECK(bg_auto()["edits"].toList().empty());
+    CHECK(bg_auto()["provider"] == "birefnet_lite");
+    s.editor->changeBgBrush({{"on", true}, {"op", "erase"}, {"tool", "manual"}});
+    CHECK_FALSE(s.editor->bgMagicOn());
+    REQUIRE(s.editor->bgPress(hit.x(), hit.y(), frame));
+    s.editor->bgRelease();
+    REQUIRE(bg_auto()["edits"].toList().size() == 1);
+    CHECK_FALSE(bg_auto()["edits"].toList().front().toMap().contains("tool"));
+    s.editor->clearBgEdits();
+    CHECK(bg_auto()["edits"].toList().empty());
+
+    // Fuera del clip no pinta, y salir de la pestaña apaga el pincel.
+    CHECK_FALSE(s.editor->bgPress(frame.x() - 500, frame.y() - 500, frame));
+    s.editor->bgPanel(false);
+    CHECK(s.editor->bgBrush()["on"] == false);
+}
 
 TEST_CASE("studio sin pantalla: croma, contorno, cuentagotas y fondo de vista previa", "[studio][ui][preview]") {
     const Studio s;

@@ -73,7 +73,22 @@ Rectangle {
     readonly property var mk: has && clip.mask ? clip.mask : ({})
     // Eliminar fondo (EdBgRemove.jsx): la Eliminación automática y el ajuste del recorte.
     readonly property var bgAuto: has && clip.bg && clip.bg.auto ? clip.bg.auto : ({})
-    readonly property bool bgAutoOn: !!bgAuto.enabled && !String(bgAuto.provider || "").startsWith("sam")
+    readonly property bool bgIsSam: String(bgAuto.provider || "").startsWith("sam")
+    readonly property bool bgAutoOn: !!bgAuto.enabled && !bgIsSam
+    readonly property bool bgCustomOn: !!bgAuto.enabled && bgIsSam
+    readonly property int bgStrokes: (bgAuto.edits || []).length
+    readonly property var bgBrushNow: model.bgBrush
+    readonly property var bgSamModels: model.bgProviders.filter((p) => p.interactive)
+    readonly property var bgSamInfo: bgSamModels.find((p) => p.id === bgAuto.provider) || ({})
+    // CUSTOM_TOOLS: [herramienta, op, nombre].
+    readonly property var bgCustomTools: [["smart", "keep", "Pincel inteligente"], ["smart", "erase", "Borrador inteligente"],
+        ["manual", "keep", "Pincel"], ["manual", "erase", "Borrador"]]
+    function bgToolOn(tool, op) { return !!bgBrushNow.on && bgBrushNow.tool === tool && bgBrushNow.op === op }
+    function fmtMark(t) {
+        const v = Math.max(0, Number(t) || 0)
+        const m = Math.floor(v / 60)
+        return m + ":" + (v - m * 60).toFixed(1).padStart(4, "0")
+    }
     readonly property bool bgReady: has && !!clip.bgReady
     readonly property var bgChroma: has && clip.bg && clip.bg.chroma ? clip.bg.chroma : ({})
     readonly property var bgOutline: has && clip.bg && clip.bg.outline ? clip.bg.outline : ({})
@@ -342,6 +357,7 @@ Rectangle {
         contentWidth: width
         contentHeight: body.implicitHeight
         clip: true
+        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
 
         ColumnLayout {
             id: body
@@ -1532,6 +1548,122 @@ Rectangle {
                         : "Fondo separado" + (panel.model.bgDevice ? " · " + panel.model.bgDevice : "") + ". Se reutiliza sin recalcular."
                 }
 
+                Section { text: "Eliminación personalizada" }
+                Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: "Marca el objeto en el reproductor. Con el Pincel inteligente basta con pintar una parte: al soltar, la IA lo detecta entero. Al Aplicar, la selección se sigue en todo el clip."
+                    color: Theme.muted
+                    font.pixelSize: 11
+                }
+                Toggle { objectName: "insp:bg:custom"; implicitWidth: implicitContentWidth + 16; text: "Activada"
+                         on: panel.bgCustomOn; onClicked: panel.model.toggleBgCustom(!on) }
+                ColumnLayout {
+                    visible: panel.bgCustomOn
+                    Layout.fillWidth: true
+                    spacing: 4
+                    Flow {
+                        Layout.fillWidth: true
+                        spacing: 4
+                        Repeater {
+                            model: panel.bgCustomTools
+                            Toggle {
+                                required property var modelData
+                                objectName: "insp:bg:tool:" + modelData[0] + ":" + modelData[1]
+                                implicitWidth: implicitContentWidth + 16
+                                text: modelData[2]
+                                on: panel.bgToolOn(modelData[0], modelData[1])
+                                onClicked: panel.model.changeBgBrush({ on: !on, tool: modelData[0], op: modelData[1] })
+                            }
+                        }
+                    }
+                    BgSlider { title: "Tamaño"; value: Math.round((panel.bgBrushNow.size ?? 0.08) * 100)
+                               onCommitted: (v) => panel.model.changeBgBrush({ size: Math.max(1, Math.min(50, v)) / 100 }) }
+                    Label { visible: panel.model.bgMagicBusy; objectName: "insp:bg:magicBusy"; text: "Detectando el objeto…"; color: Theme.textSecondary; font.pixelSize: 11 }
+                    RowLayout {
+                        visible: !!panel.model.bgAnalyze.status && !panel.bgRunning
+                        spacing: 4
+                        Label {
+                            objectName: "insp:bg:analyze"
+                            Layout.fillWidth: true
+                            elide: Text.ElideRight
+                            text: (panel.model.bgAnalyze.message || "Analizando el clip…") + " · " + Math.round((panel.model.bgAnalyze.progress || 0) * 100) + " %"
+                            color: Theme.textSecondary
+                            font.pixelSize: 11
+                        }
+                        Toggle { implicitWidth: 26; text: "■"; onClicked: panel.model.stopBgAnalyze() }
+                    }
+                    Label { text: "Marcado en"; color: Theme.textSecondary; font.pixelSize: 11 }
+                    Flow {
+                        Layout.fillWidth: true
+                        spacing: 4
+                        Repeater {
+                            model: panel.has && panel.clip.bgMarks ? panel.clip.bgMarks : []
+                            Toggle {
+                                required property var modelData
+                                objectName: "insp:bg:mark:" + modelData.idx
+                                implicitWidth: implicitContentWidth + 16
+                                text: panel.fmtMark(modelData.at)
+                                on: modelData.idx === panel.clip.bgCurFrame
+                                onClicked: panel.model.seekBgMark(modelData.t)
+                            }
+                        }
+                    }
+                    Label {
+                        visible: panel.has && (!panel.clip.bgMarks || panel.clip.bgMarks.length === 0)
+                        text: panel.bgStrokes ? "Marcas de una versión anterior" : "Elige una herramienta y pinta sobre el objeto"
+                        color: Theme.muted
+                        font.pixelSize: 11
+                    }
+                    RowLayout {
+                        spacing: 4
+                        Small { objectName: "insp:bg:undoEdit"; enabled: panel.bgStrokes > 0; text: "Último trazo"; onClicked: panel.model.undoBgEdit() }
+                        Small { objectName: "insp:bg:clearEdits"; enabled: panel.bgStrokes > 0; text: "Limpiar"; onClicked: panel.model.clearBgEdits() }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Label { Layout.preferredWidth: 70; text: "Calidad"; color: Theme.textSecondary }
+                        Choice {
+                            objectName: "insp:bg:samProvider"
+                            options: panel.bgSamModels.map((p) => [p.id, p.downloaded === false ? p.label + " (se descarga)" : p.label])
+                            current: panel.bgAuto.provider || ""
+                            onPicked: (v) => panel.model.changeBgAuto({ provider: v })
+                        }
+                    }
+                    Label {
+                        visible: !!panel.bgSamInfo.hint
+                        Layout.fillWidth: true
+                        wrapMode: Text.Wrap
+                        text: (panel.bgSamInfo.hint || "") + (panel.bgSamInfo.downloaded === false ? " Se descarga al aplicar por primera vez." : "")
+                              + (panel.model.bgDevice ? " Se ejecuta en " + panel.model.bgDevice + ". El primer análisis de cada fotograma es lento; después se reutiliza." : "")
+                        color: Theme.muted
+                        font.pixelSize: 11
+                    }
+                    BgSlider {
+                        visible: panel.has && panel.clip.kind === "video"
+                        title: "Estabilizar "
+                        value: Math.round((panel.bgAuto.stabilize ?? 0) * 100)
+                        onCommitted: (v) => panel.model.changeBgAuto({ stabilize: v / 100 })
+                    }
+                    Small { objectName: "insp:bg:applyCustom"; visible: !panel.bgRunning; highlighted: true; enabled: panel.bgStrokes > 0
+                            text: panel.bgReady ? "Recalcular" : (panel.bgAnimated ? "Aplicar a todo el clip" : "Aplicar")
+                            onClicked: panel.model.applyBgCustom() }
+                    Small { objectName: "insp:bg:cancelCustom"; visible: panel.bgRunning; text: "Cancelar"; onClicked: panel.model.cancelBgAuto() }
+                    ProgressBar { visible: panel.bgRunning; Layout.fillWidth: true; from: 0; to: 1; value: panel.bgJob.progress || 0 }
+                    Label {
+                        visible: panel.bgState !== ""
+                        Layout.fillWidth: true
+                        wrapMode: Text.Wrap
+                        font.pixelSize: 11
+                        color: panel.bgState === "err" ? Theme.danger : panel.bgState === "ok" ? Theme.success
+                             : panel.bgState === "warn" ? Theme.warning : Theme.textSecondary
+                        text: panel.bgState === "run" ? (panel.bgJob.message || "Siguiendo la selección…") + " · " + Math.round((panel.bgJob.progress || 0) * 100) + " %"
+                            : panel.bgState === "err" ? (panel.bgJob.error || panel.bgAuto.error || "No se pudo eliminar el fondo.")
+                            : panel.bgState === "warn" ? panel.bgJob.notice
+                            : "Fondo separado" + (panel.model.bgDevice ? " · " + panel.model.bgDevice : "") + ". Se reutiliza sin recalcular."
+                    }
+                }
+
                 ColumnLayout { // Ajustar recorte: al instante, sin volver a ejecutar el modelo
                     visible: panel.bgReady
                     Layout.fillWidth: true
@@ -1561,6 +1693,37 @@ Rectangle {
                                onCommitted: (v) => panel.model.changeBgAuto({ expansion: v / 100 }) }
                     BgSlider { title: "Opacidad"; value: Math.round((panel.bgAuto.opacity ?? 1) * 100)
                                onCommitted: (v) => panel.model.changeBgAuto({ opacity: v / 100 }) }
+                }
+
+                ColumnLayout { // Retocar máscara: pincel fijo sobre el matte automático
+                    visible: panel.bgReady && panel.bgAutoOn
+                    Layout.fillWidth: true
+                    spacing: 4
+                    Section { text: "Retocar máscara" }
+                    Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.Wrap
+                        text: "Corrige lo que la IA no acertó pintando sobre el reproductor. Conservar devuelve zonas visibles; Eliminar las vuelve transparentes, en todo el clip."
+                        color: Theme.muted
+                        font.pixelSize: 11
+                    }
+                    RowLayout {
+                        spacing: 4
+                        Toggle { objectName: "insp:bg:retouch:keep"; implicitWidth: implicitContentWidth + 16; text: "Conservar"
+                                 on: !!panel.bgBrushNow.on && panel.bgBrushNow.op === "keep"
+                                 onClicked: panel.model.changeBgBrush({ on: !on, op: "keep", tool: "manual" }) }
+                        Toggle { objectName: "insp:bg:retouch:erase"; implicitWidth: implicitContentWidth + 16; text: "Eliminar"
+                                 on: !!panel.bgBrushNow.on && panel.bgBrushNow.op === "erase"
+                                 onClicked: panel.model.changeBgBrush({ on: !on, op: "erase", tool: "manual" }) }
+                    }
+                    BgSlider { title: "Tamaño "; value: Math.round((panel.bgBrushNow.size ?? 0.08) * 100)
+                               onCommitted: (v) => panel.model.changeBgBrush({ size: Math.max(1, Math.min(50, v)) / 100 }) }
+                    RowLayout {
+                        spacing: 4
+                        Small { enabled: panel.bgStrokes > 0; text: "Último trazo"; onClicked: panel.model.undoBgEdit() }
+                        Small { enabled: panel.bgStrokes > 0; text: "Limpiar"; onClicked: panel.model.clearBgEdits() }
+                    }
+                    Label { visible: panel.bgStrokes > 0; objectName: "insp:bg:strokes"; text: panel.bgStrokes + " corrección(es)"; color: Theme.muted; font.pixelSize: 11 }
                 }
 
                 ColumnLayout { // Exportar recorte: en material animado, con algo que hornear

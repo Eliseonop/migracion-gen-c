@@ -888,7 +888,9 @@ def _bg_case() -> dict:
              clip("b11", "V1", start=33, inp=1, out=4, name="Mi recorte", bg_removal={"chroma": {"enabled": True, "color": "#00f"}}),
              clip("b12", "V1", start=38, inp=0, out=2, name="", bg_removal=ready),
              clip("b13", "V1", start=41, inp=0, out=2, bg_removal={"enabled": False, "chroma": {"enabled": True}}),
-             clip("b14", "V1", start=44, inp=0, out=2, bg_removal={"enabled": False, "auto": ready["auto"]})]
+             clip("b14", "V1", start=44, inp=0, out=2, bg_removal={"enabled": False, "auto": ready["auto"]}),
+             clip("b15", "V1", start=47, inp=0, out=2, bg_removal={"auto": {"enabled": True, "provider": "u2net", "base_key": "k", "status": "ready", "edits": [
+                 {"op": "keep", "size": 0.1, "points": [{"x": 0.1, "y": 0.1}]}, {"op": "erase", "size": 0.2, "points": [{"x": 0.9, "y": 0.9}]}]}})]
     patches = [{"provider": "birefnet_lite"}, {"provider": "sam21_large"}, {"provider": "u2net", "mask_height": 1080},
                {"provider": "nada"}, {"provider": None}, {"mask_height": 720}, {"stabilize": 0.3},
                {"threshold": 0.62}, {"softness": 0.1}, {"feather": 0.2}, {"expansion": -0.35}, {"opacity": 0.5},
@@ -897,6 +899,12 @@ def _bg_case() -> dict:
               {"blend": 0.3}, {"spill": 0.7}, {"edge": 0.4}, {"shrink": -0.6}, {"shrink": 2}, {"color": "#FF00FF", "enabled": True}]
     outline = [{"enabled": True}, {"enabled": False}, {"color": "#123"}, {"color": ""}, {"width": 0.8}, {"width": 3},
                {"soft": 0.5}, {"opacity": 0.25}, {"opacity": -1}]
+    catalogs = [[], [{"id": "sam21_large", "interactive": True, "downloaded": True}],
+                [{"id": "sam21_tiny", "interactive": True, "downloaded": True}, {"id": "sam21_large", "interactive": True, "downloaded": False}],
+                [{"id": "sam21_large", "downloaded": True}]]
+    brushes = [{"op": "keep", "tool": "smart", "size": 0.05}, {"op": "erase", "tool": "manual", "size": 0.12},
+               {"op": "nada"}, {"op": "keep", "tool": "otra", "size": 0}]
+    drag = [{"x": 0.123456, "y": 0.654321}, {"x": 0.1241, "y": 0.6549}, {"x": 0.2, "y": 0.6}, {"x": 0.2021, "y": 0.6021}, {"x": 0.9, "y": 0.1}]
     jobs = [{"status": "done", "bg_removal": {"base_key": "nuevo", "provider": "birefnet_lite", "model_version": "1.4",
                                               "mask_fps": 12, "mask_height": 1080, "warning": "Va lento"}},
             {"status": "done", "bg_removal": {"base_key": "solo-clave"}},
@@ -913,6 +921,16 @@ def _bg_case() -> dict:
         for p in patches:
             calls.append(["bgChangeAuto", c["id"], p])
         calls.append(["bgStart", c["id"]])
+        for on in (True, False):
+            for cat in catalogs:
+                calls.append(["bgToggleCustom", c["id"], on, cat])
+        calls.append(["bgUndoEdit", c["id"]])
+        calls.append(["bgClearEdits", c["id"]])
+        for brush in brushes:
+            for head in (c["start"] + 0.37, c["start"] - 5, c["start"] + 500):
+                calls.append(["bgDrag", c["id"], brush, head, drag])
+        calls.append(["bgAddStroke", c["id"], {"op": "keep", "size": 0.1, "points": [{"x": 0.2, "y": 0.3, "m": 1}]}])
+        calls.append(["bgExtendStroke", c["id"], {"x": 0.25, "y": 0.35}])
         calls.append(["bgCutout", c["id"]])
         for on in (True, False):
             calls.append(["bgToggleChroma", c["id"], on])
@@ -923,7 +941,36 @@ def _bg_case() -> dict:
             calls.append(["bgChangeOutline", c["id"], p])
         for j in jobs:
             calls.append(["bgFinished", c["id"], j])
-    return {"name": "eliminar fondo", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
+    marks = [{"op": "keep", "size": 0.1, "points": [{"x": 0, "y": 0}], "t": 1.0}, {"op": "erase", "size": 0.1, "points": [], "t": 1.03},
+             {"op": "keep", "size": 0.1, "points": [], "t": 0.5, "tool": "manual"}, {"op": "keep", "size": 0.1, "points": []}, {"t": "x"}, {"t": -2}]
+    for fps in (15, 24, None, 0, 29.6):
+        calls.append(["bgMarkFrames", marks, fps])
+        for idx in (0, 8, 15, 30):
+            calls.append(["bgEditsAtFrame", marks, idx, fps])
+            calls.append(["bgMatteTime", idx, fps])
+        for t in (0, 0.03, 0.034, 1.5, -1, None):
+            calls.append(["bgMatteIndex", t, fps])
+    for e in marks + [None, {"tool": "smart"}]:
+        calls.append(["bgManualMark", e])
+    for cur in ("u2net", "sam21_tiny", None):
+        for cat in catalogs:
+            calls.append(["bgPreferredSam", cur, cat])
+    # Del cuadro a la fuente (canvasToSourceNorm) y el radio del pincel, en vídeos e imágenes con pose, volteo y encuadre.
+    geo_clips = [clip("g1", "V1", start=0, inp=1, out=6),
+                 clip("g2", "V1", start=7, inp=0, out=5, layout="overlay", frame="free", transform={"x": 0.4, "y": 0.6, "scale": 0.7, "rotation": 30},
+                      reframe={"zoom": 1, "crop_w": 0.6, "crop_h": 0.8, "keyframes": []}),
+                 clip("g3", "V2", start=0, inp=0, out=5, layout="overlay", frame="free", flip_h=True, transform={"x": 0.5, "y": 0.5, "scale": 1.2, "rotation": 0},
+                      reframe={"zoom": 1, "crop_w": 1.0, "crop_h": 1.0, "keyframes": []}),
+                 clip("g4", "V2", start=6, inp=0, out=5, reframe={"zoom": 0.6, "pan_mode": "smooth", "keyframes": []}, transform={"x": 0.55, "y": 0.45, "scale": 1.3, "rotation": 12})]
+    gcalls: list = []
+    for c in geo_clips:
+        head = c["start"] + 1.7
+        for p in ((360, 640), (100, 200), (620, 1100), (0.5, 0.5), (719, 5), (250.5, 777.25)):
+            gcalls.append(["bgToSource", c["id"], p[0], p[1], 1920, 1080, 720, 1280, head])
+        for size in (0.05, 0.3):
+            gcalls.append(["bgBrushRadius", c["id"], size, 1920, 1080, 720, 1280, head])
+    return [{"name": "eliminar fondo", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls},
+            {"name": "eliminar fondo: geometría", "timeline": {"tracks": TRACKS, "clips": geo_clips}, "calls": gcalls}]
 
 
 def crop_handle_norms_py(c: dict) -> list:
@@ -959,5 +1006,5 @@ def cases() -> list[dict]:
     out.append(_captions_case(random.Random(20261108)))
     out.append(_face_follow_case(random.Random(20261109)))
     out.append(_script_prompt_case())
-    out.append(_bg_case())
+    out += _bg_case()
     return out

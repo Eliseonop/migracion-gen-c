@@ -11,6 +11,20 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.5.0] — 2026-11-11
+
+### Añadido
+
+- **Eliminación personalizada (SAM) en la pestaña «Fondo»:** pincel y borrador inteligentes y normales sobre la vista
+  previa, con el clip sin recortar y la selección en cian encima (POST `/bg-segment` al soltar el trazo), análisis
+  del clip en segundo plano (`/bg-analyze`), los fotogramas marcados para saltar a ellos, «Último trazo», «Limpiar»,
+  calidad del modelo y «Aplicar a todo el clip».
+- **Retocar máscara:** Conservar y Eliminar sobre el matte de la automática, que se ve en el recorte mientras se pinta.
+- Con esto, «Eliminar fondo» queda entero en el studio.
+- `gc/core/bg_ui.hpp`: toggleBgCustom, los trazos, las marcas y el paso del cuadro a la fuente (por la inversa del
+  blit), con paridad contra el JS real, también contra `canvasToSourceNorm` y `bgBrushRadiusPx`, y sus mutaciones.
+- Barra de desplazamiento en el inspector.
+
 ## [0.4.0] — 2026-11-11
 
 ### Añadido

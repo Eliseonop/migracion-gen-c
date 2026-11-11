@@ -8,10 +8,13 @@
 // hasta que llegue la IA local (F6); al acabar, bg_auto_finished escribe su clave de caché en el clip, y el
 // render lo lee de data/bgcache (bg_matte.hpp).
 
+#include <cstdint>
 #include <optional>
 #include <span>
+#include <string>
 #include <string_view>
 
+#include "gc/core/frame.hpp"
 #include "gc/core/json.hpp"
 #include "gc/core/model.hpp"
 
@@ -59,6 +62,38 @@ struct BgAutoStart {
     Json bg_removal;
 };
 [[nodiscard]] std::optional<BgAutoStart> bg_auto_start(const TimelineClip& clip);
+
+// preferredSamProvider: el modelo SAM al encender la personalizada: el actual si ya es SAM; si no, el primero
+// ya descargado del catálogo (`catalog`, el de /api/bg/providers) y, sin ninguno, el de calidad.
+[[nodiscard]] std::string preferred_sam_provider(const Json& current, const Json& catalog);
+// toggleBgCustom: enciende o apaga la Eliminación personalizada. Al venir de la automática tira las marcas y
+// el matte y vuelve al alto de siempre.
+[[nodiscard]] Json bg_toggle_custom(const TimelineClip& clip, bool on, const Json& catalog);
+
+// Los trazos del pincel (auto.edits), en el espacio normalizado de la FUENTE.
+// startBgBrush: el trazo que empieza en `first`, con el fotograma (t) y la herramienta si es SAM.
+[[nodiscard]] Json bg_new_stroke(const TimelineClip& clip, std::string_view op, std::string_view tool, double size,
+                                 double head, Point first);
+// El siguiente punto del arrastre, o nada si está a menos de 0,003 del anterior.
+[[nodiscard]] std::optional<Json> bg_stroke_point(Point last, Point next);
+[[nodiscard]] Json bg_add_stroke(const TimelineClip& clip, const Json& stroke);     // addBgStroke
+[[nodiscard]] std::optional<Json> bg_extend_stroke(const TimelineClip& clip, const Json& point); // nada sin trazos
+[[nodiscard]] Json bg_undo_edit(const TimelineClip& clip);                          // undoBgEdit
+[[nodiscard]] Json bg_clear_edits(const TimelineClip& clip);                        // clearBgEdits
+
+// Fotogramas del matte y marcas de SAM (lib/clipBg.js).
+[[nodiscard]] std::int64_t bg_matte_frame_index(double src_t, const Json& mask_fps);
+[[nodiscard]] double bg_matte_frame_time(std::int64_t index, const Json& mask_fps);
+[[nodiscard]] Json bg_edits_at_frame(const Json& edits, std::int64_t index, const Json& mask_fps);
+[[nodiscard]] Json bg_mark_frames(const Json& edits, const Json& mask_fps); // [{idx, t, count}], en orden
+[[nodiscard]] bool bg_manual_mark(const Json& edit);                         // isManualMark
+
+// canvasToSourceNorm: un punto del cuadro → la fuente normalizada, por la inversa del blit de la capa (la que
+// dibuja el render); nada si cae fuera del material.
+[[nodiscard]] std::optional<Point> bg_frame_to_source(const FrameLayer& layer, double x, double y, double src_w,
+                                                      double src_h);
+// bgBrushRadiusPx: el radio en px del cuadro de un pincel en fracción del alto de la fuente.
+[[nodiscard]] double bg_brush_radius(const FrameLayer& layer, double size, double src_h);
 
 // exportBgCutout: el cuerpo del POST /bg-cutout (el material, su tramo, la etiqueta y el bg_removal tal como
 // está), o nada si no hay qué hornear (ni matte listo ni croma encendido).

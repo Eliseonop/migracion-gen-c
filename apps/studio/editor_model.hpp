@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QRectF>
 #include <QTimer>
+#include <set>
 #include <QString>
 #include <QStringList>
 #include <QUrl> // moc pide el tipo completo de QList<QUrl> (Qt 6.11; la 6.4 lo dejaba pasar)
@@ -28,6 +29,8 @@
 #include "gc/core/timeline_ui.hpp"
 
 #include "backend_jobs.hpp"
+#include "bg_magic.hpp"
+#include "gc/core/frame.hpp"
 #include "narrator.hpp"
 #include "beat_detector.hpp"
 #include "clip_list_model.hpp"
@@ -37,6 +40,8 @@
 #include "player.hpp"
 #include "preview_source.hpp"
 #include "proxy_maker.hpp"
+
+class QPainter;
 
 namespace gc::studio {
 
@@ -70,6 +75,12 @@ class EditorModel : public QObject {
     // previa ({mode: normal, checker, solid o media; color; kind: image o video}).
     // «Exportar recorte»: cómo va el job ({status, progress, message, error}; vacío, ninguno).
     Q_PROPERTY(QVariantMap cutoutJob READ cutoutJob NOTIFY cutoutJobChanged)
+    // El pincel de «Eliminar fondo» ({on, op, tool, size, px, py, r}: px, py y r, el cursor en el item), si SAM
+    // está contestando y el análisis en segundo plano ({status, progress, message}).
+    Q_PROPERTY(QVariantMap bgBrush READ bgBrush NOTIFY bgBrushChanged)
+    Q_PROPERTY(bool bgMagicOn READ bgMagicOn NOTIFY bgMagicChanged)
+    Q_PROPERTY(bool bgMagicBusy READ bgMagicBusy NOTIFY bgMagicChanged)
+    Q_PROPERTY(QVariantMap bgAnalyze READ bgAnalyze NOTIFY bgAnalyzeChanged)
     Q_PROPERTY(bool bgPicking READ bgPicking WRITE setBgPicking NOTIFY bgPickingChanged)
     Q_PROPERTY(QVariantMap bgPreview READ bgPreview NOTIFY bgPreviewChanged)
     // «Cargar audio» del material (narrator.hpp): el narrador y el audio de un enlace, por el backend.
@@ -141,6 +152,13 @@ public:
     [[nodiscard]] BackendJobs& bgBackend() { return bg_jobs_; }
     [[nodiscard]] QVariantMap cutoutJob() const { return cutout_job_; }
     [[nodiscard]] BackendJobs& cutoutBackend() { return cutout_jobs_; }
+    [[nodiscard]] QVariantMap bgBrush() const { return bg_brush_; }
+    [[nodiscard]] bool bgMagicOn() const;
+    [[nodiscard]] bool bgMagicBusy() const { return bg_magic_busy_; }
+    [[nodiscard]] QVariantMap bgAnalyze() const { return bg_analyze_; }
+    [[nodiscard]] BackendJobs& bgAnalyzeBackend() { return bg_analyze_jobs_; }
+    // Pinta la selección de la personalizada en `frame` (BgMagicOverlay).
+    void paintBgMagic(QPainter& painter, const QRectF& frame) const;
     [[nodiscard]] bool bgPicking() const { return bg_picking_; }
     void setBgPicking(bool on);
     [[nodiscard]] QVariantMap bgPreview() const { return bg_preview_; }
@@ -354,6 +372,22 @@ public:
     // Hornea el clip con el fondo eliminado a un WebM transparente, que el backend añade al material.
     Q_INVOKABLE void exportBgCutout();
     Q_INVOKABLE void cancelBgCutout();
+    // La Eliminación personalizada (SAM) y el retoque de la automática: encenderla, las herramientas del pincel,
+    // aplicar (sigue la selección por todo el clip), deshacer y limpiar marcas, saltar a un fotograma marcado y
+    // detener el análisis en segundo plano.
+    Q_INVOKABLE void toggleBgCustom(bool on);
+    Q_INVOKABLE void changeBgBrush(const QVariantMap& patch);
+    Q_INVOKABLE void applyBgCustom();
+    Q_INVOKABLE void undoBgEdit();
+    Q_INVOKABLE void clearBgEdits();
+    Q_INVOKABLE void seekBgMark(double src_t);
+    Q_INVOKABLE void stopBgAnalyze();
+    // El pincel sobre la vista previa, en coordenadas del item con el recuadro `frame`.
+    Q_INVOKABLE bool bgPress(double x, double y, const QRectF& frame);
+    Q_INVOKABLE void bgMove(double x, double y);
+    Q_INVOKABLE void bgRelease();
+    Q_INVOKABLE void bgHover(double x, double y, const QRectF& frame);
+    Q_INVOKABLE void bgLeave();
     Q_INVOKABLE void toggleBgChroma(bool on);
     Q_INVOKABLE void changeBgChroma(const QVariantMap& patch);
     Q_INVOKABLE void resetBgChroma();
@@ -462,6 +496,9 @@ signals:
     void bgJobChanged();
     void bgProvidersChanged();
     void bgPickingChanged();
+    void bgBrushChanged();
+    void bgMagicChanged();
+    void bgAnalyzeChanged();
     void cutoutJobChanged();
     void bgPreviewChanged();
 
@@ -576,6 +613,44 @@ private:
     Json bg_catalog_ = Json::array();
     QString bg_device_;
     bool bg_picking_ = false;
+    // El pincel, la capa del clip en el cabezal, el trazo en curso y lo que se pide a SAM.
+    struct BgStroke {
+        std::string clip;
+        Json stroke;
+        core::Point last;
+        core::FrameLayer layer;
+        double src_w = 0;
+        double src_h = 0;
+        QRectF frame;
+    };
+    struct BgMagicView {
+        std::string clip;
+        std::int64_t frame = -1;
+        Json marks;
+        Json auto_;
+    };
+    [[nodiscard]] std::optional<core::FrameLayer> bg_layer(const core::TimelineClip& c) const;
+    [[nodiscard]] std::optional<core::Point> bg_to_source(const core::FrameLayer& layer, double x, double y, const QRectF& frame,
+                                                          double src_w, double src_h) const;
+    [[nodiscard]] std::optional<BgMagicView> bg_magic_view() const;
+    [[nodiscard]] core::TimelineSnapshot preview_timeline();
+    void bg_sync_preview();
+    void bg_magic_sync();
+    void bg_set_brush_off();
+    void bg_maybe_analyze(const core::TimelineClip& c, const Json& auto_);
+    QVariantMap bg_brush_{{"on", false}, {"op", "erase"}, {"tool", "manual"}, {"size", 0.08}};
+    std::optional<BgStroke> bg_stroke_;
+    BgMagic bg_magic_;
+    bool bg_magic_busy_ = false;
+    int bg_seq_sent_ = 0;
+    int bg_seq_shown_ = 0;
+    std::string bg_magic_sig_;
+    std::string bg_magic_clip_; // el clip que la vista previa enseña sin recortar
+    std::set<std::string> bg_analyzed_;
+    BackendJobs bg_analyze_jobs_;
+    BackendJobs bg_segment_;
+    QVariantMap bg_analyze_;
+    std::string bg_analyze_clip_;
     void cutout_update(const Json& job);
     BackendJobs cutout_jobs_;
     QVariantMap cutout_job_;
