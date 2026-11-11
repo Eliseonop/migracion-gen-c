@@ -2015,3 +2015,11 @@ Decisión de Edu (§6):
 - **Lo que no:** `startFaceTrack`, el botón de la barra de la timeline, solo existe en el Clip Editor de React (`clipMode`), que el studio aún no tiene.
 - **Sin probar:** contra el backend real.
 - **Fuentes de Windows:** una actualización del 2026-11-10 cambió Arial y Times New Roman (arial, arialbd, times y timesbd): la fixture de la medida del texto (`--solo anchos`) se regeneró con ellas, y el C++ sigue midiendo exacto como Pillow (10 850 medidas).
+
+### 2026-11-11 — F5: la pestaña YouTube del material · versión 0.7.0
+
+- **Qué es:** «Cargar clips» de EdMaterial.jsx en una pestaña «YouTube» del material: el enlace (Intro o «Cargar»), POST /api/analyze con YT_ANALYZE_OPTS (los mensajes de espera a los 8 y 25 s), el historial de `settings.yt_history` (el backend apunta cada enlace; quitar uno lo guarda en los ajustes) y «Vídeo completo» en la mejor calidad o la del menú (POST /api/youtube-video, sondeado cada segundo, cancelable). Al acabar, el material se relee y sale ««título» (4K) está en el material.».
+- **El núcleo:** `gc/core/yt_ui.hpp` (videoQualities, qualityShort, qualityTag, fmtBytes y qualityMeta de ytQuality.js; normalizeHistory y removeHistory de EdMaterial.jsx, esta extraída con su `async`). Paridad: 62 llamadas. `BackendJobs::postRaw` sirve también para el POST suelto del análisis.
+- **Lo que enseñó la captura:** el buscador y «Este proyecto no tiene material» salían también en esta pestaña, y los botones eran los blancos de Qt y desbordaban el panel (ahora `SmallButton` en un `Flow`).
+- **Lo que no:** editar un tramo o un rango propio abre el Clip Editor de React (aún no está en el studio), la vista previa embebida de YouTube de cada tramo y «Subir calidad» (la oferta de cambiar la versión de la timeline al acabar la descarga; el núcleo ya tiene `media_upgrade.hpp`).
+- **Sin probar:** contra el backend real (y yt-dlp de verdad).

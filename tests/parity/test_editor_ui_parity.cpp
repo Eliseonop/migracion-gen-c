@@ -30,6 +30,7 @@
 #include "gc/core/timeline_ui.hpp"
 #include "gc/core/timeline_view.hpp"
 #include "gc/core/vfx_stack.hpp"
+#include "gc/core/yt_ui.hpp"
 
 using gc::Json;
 using namespace gc::core;
@@ -729,6 +730,27 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     }
     if (fn == "bgCutout") {
         return bg_cutout_body(clip(call.at(1))).value_or(Json());
+    }
+    if (fn == "ytQualities") {
+        return yt_video_qualities(call.at(1));
+    }
+    if (fn == "ytQualityShort") {
+        return yt_quality_short(call.at(1));
+    }
+    if (fn == "ytQualityTag") {
+        return yt_quality_tag(call.at(1));
+    }
+    if (fn == "ytFmtBytes") {
+        return yt_fmt_bytes(call.at(1));
+    }
+    if (fn == "ytQualityMeta") {
+        return yt_quality_meta(call.at(1));
+    }
+    if (fn == "ytNormalizeHistory") {
+        return yt_normalize_history(call.at(1));
+    }
+    if (fn == "ytRemoveHistory") {
+        return yt_history_without(call.at(1), call.at(2));
     }
     if (fn == "faceTrackClip") {
         SequentialIdSource ids;

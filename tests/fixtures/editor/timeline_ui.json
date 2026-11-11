@@ -974230,6 +974230,944 @@
    ]
   },
   {
+   "name": "youtube",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "A1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [],
+    "markers": []
+   },
+   "calls": [
+    [
+     "ytQualities",
+     {
+      "video": {
+       "qualities": [
+        {
+         "quality": 720,
+         "fps": 30,
+         "size": 52428800
+        },
+        {
+         "quality": 2160,
+         "fps": 60,
+         "size": 1503238553
+        },
+        {
+         "quality": "1080",
+         "fps": 60
+        },
+        {
+         "quality": 0
+        },
+        {
+         "quality": -1
+        },
+        null,
+        {
+         "quality": 4320,
+         "size": 0
+        },
+        {
+         "quality": 1440,
+         "size": 1
+        },
+        {
+         "quality": 480,
+         "fps": 25.5,
+         "size": 1073741824
+        },
+        {
+         "quality": 2160,
+         "note": "segunda"
+        }
+       ]
+      }
+     }
+    ],
+    [
+     "ytQualities",
+     {
+      "video": {}
+     }
+    ],
+    [
+     "ytQualities",
+     null
+    ],
+    [
+     "ytQualities",
+     {
+      "video": {
+       "qualities": "x"
+      }
+     }
+    ],
+    [
+     "ytQualityShort",
+     4320
+    ],
+    [
+     "ytQualityTag",
+     4320
+    ],
+    [
+     "ytQualityShort",
+     5000
+    ],
+    [
+     "ytQualityTag",
+     5000
+    ],
+    [
+     "ytQualityShort",
+     2160
+    ],
+    [
+     "ytQualityTag",
+     2160
+    ],
+    [
+     "ytQualityShort",
+     1440
+    ],
+    [
+     "ytQualityTag",
+     1440
+    ],
+    [
+     "ytQualityShort",
+     1080
+    ],
+    [
+     "ytQualityTag",
+     1080
+    ],
+    [
+     "ytQualityShort",
+     720
+    ],
+    [
+     "ytQualityTag",
+     720
+    ],
+    [
+     "ytQualityShort",
+     480
+    ],
+    [
+     "ytQualityTag",
+     480
+    ],
+    [
+     "ytQualityShort",
+     1080.5
+    ],
+    [
+     "ytQualityTag",
+     1080.5
+    ],
+    [
+     "ytQualityShort",
+     "1080"
+    ],
+    [
+     "ytQualityTag",
+     "1080"
+    ],
+    [
+     "ytQualityShort",
+     "720"
+    ],
+    [
+     "ytQualityTag",
+     "720"
+    ],
+    [
+     "ytQualityShort",
+     0
+    ],
+    [
+     "ytQualityTag",
+     0
+    ],
+    [
+     "ytFmtBytes",
+     0
+    ],
+    [
+     "ytFmtBytes",
+     -5
+    ],
+    [
+     "ytFmtBytes",
+     1
+    ],
+    [
+     "ytFmtBytes",
+     524288
+    ],
+    [
+     "ytFmtBytes",
+     1048576
+    ],
+    [
+     "ytFmtBytes",
+     1572864
+    ],
+    [
+     "ytFmtBytes",
+     5368709120
+    ],
+    [
+     "ytFmtBytes",
+     1073741823
+    ],
+    [
+     "ytFmtBytes",
+     1073741824
+    ],
+    [
+     "ytFmtBytes",
+     "2048000"
+    ],
+    [
+     "ytFmtBytes",
+     null
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "quality": 720,
+      "fps": 30,
+      "size": 52428800
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "quality": 2160,
+      "fps": 60,
+      "size": 1503238553
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "quality": "1080",
+      "fps": 60
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "quality": 0
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "quality": -1
+     }
+    ],
+    [
+     "ytQualityMeta",
+     null
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "quality": 4320,
+      "size": 0
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "quality": 1440,
+      "size": 1
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "quality": 480,
+      "fps": 25.5,
+      "size": 1073741824
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "quality": 2160,
+      "note": "segunda"
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "fps": 30
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "fps": 31
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {
+      "fps": true
+     }
+    ],
+    [
+     "ytQualityMeta",
+     {}
+    ],
+    [
+     "ytNormalizeHistory",
+     [
+      {
+       "url": "https://youtu.be/a",
+       "video_id": "a",
+       "title": "A"
+      },
+      {
+       "url": "  "
+      },
+      {
+       "url": null
+      },
+      "x",
+      null,
+      {
+       "url": "https://youtu.be/b"
+      },
+      {
+       "url": " https://youtu.be/c ",
+       "video_id": "c"
+      },
+      {
+       "url": "https://youtu.be/d",
+       "video_id": ""
+      },
+      {
+       "url": "https://youtu.be/a2",
+       "video_id": "a"
+      }
+     ]
+    ],
+    [
+     "ytNormalizeHistory",
+     null
+    ],
+    [
+     "ytNormalizeHistory",
+     {
+      "url": "x"
+     }
+    ],
+    [
+     "ytRemoveHistory",
+     [
+      {
+       "url": "https://youtu.be/a",
+       "video_id": "a",
+       "title": "A"
+      },
+      {
+       "url": "https://youtu.be/b"
+      },
+      {
+       "url": " https://youtu.be/c ",
+       "video_id": "c"
+      },
+      {
+       "url": "https://youtu.be/d",
+       "video_id": ""
+      },
+      {
+       "url": "https://youtu.be/a2",
+       "video_id": "a"
+      }
+     ],
+     {
+      "url": "https://youtu.be/a",
+      "video_id": "a",
+      "title": "A"
+     }
+    ],
+    [
+     "ytRemoveHistory",
+     [
+      {
+       "url": "https://youtu.be/a",
+       "video_id": "a",
+       "title": "A"
+      },
+      {
+       "url": "https://youtu.be/b"
+      },
+      {
+       "url": " https://youtu.be/c ",
+       "video_id": "c"
+      },
+      {
+       "url": "https://youtu.be/d",
+       "video_id": ""
+      },
+      {
+       "url": "https://youtu.be/a2",
+       "video_id": "a"
+      }
+     ],
+     {
+      "url": "https://youtu.be/b"
+     }
+    ],
+    [
+     "ytRemoveHistory",
+     [
+      {
+       "url": "https://youtu.be/a",
+       "video_id": "a",
+       "title": "A"
+      },
+      {
+       "url": "https://youtu.be/b"
+      },
+      {
+       "url": " https://youtu.be/c ",
+       "video_id": "c"
+      },
+      {
+       "url": "https://youtu.be/d",
+       "video_id": ""
+      },
+      {
+       "url": "https://youtu.be/a2",
+       "video_id": "a"
+      }
+     ],
+     {
+      "url": " https://youtu.be/c ",
+      "video_id": "c"
+     }
+    ],
+    [
+     "ytRemoveHistory",
+     [
+      {
+       "url": "https://youtu.be/a",
+       "video_id": "a",
+       "title": "A"
+      },
+      {
+       "url": "https://youtu.be/b"
+      },
+      {
+       "url": " https://youtu.be/c ",
+       "video_id": "c"
+      },
+      {
+       "url": "https://youtu.be/d",
+       "video_id": ""
+      },
+      {
+       "url": "https://youtu.be/a2",
+       "video_id": "a"
+      }
+     ],
+     {
+      "url": "https://youtu.be/d",
+      "video_id": ""
+     }
+    ],
+    [
+     "ytRemoveHistory",
+     [
+      {
+       "url": "https://youtu.be/a",
+       "video_id": "a",
+       "title": "A"
+      },
+      {
+       "url": "https://youtu.be/b"
+      },
+      {
+       "url": " https://youtu.be/c ",
+       "video_id": "c"
+      },
+      {
+       "url": "https://youtu.be/d",
+       "video_id": ""
+      },
+      {
+       "url": "https://youtu.be/a2",
+       "video_id": "a"
+      }
+     ],
+     {
+      "url": "https://youtu.be/a2",
+      "video_id": "a"
+     }
+    ],
+    [
+     "ytRemoveHistory",
+     [
+      {
+       "url": "https://youtu.be/a",
+       "video_id": "a",
+       "title": "A"
+      },
+      {
+       "url": "https://youtu.be/b"
+      },
+      {
+       "url": " https://youtu.be/c ",
+       "video_id": "c"
+      },
+      {
+       "url": "https://youtu.be/d",
+       "video_id": ""
+      },
+      {
+       "url": "https://youtu.be/a2",
+       "video_id": "a"
+      }
+     ],
+     {
+      "url": "https://youtu.be/zzz"
+     }
+    ],
+    [
+     "ytRemoveHistory",
+     [
+      {
+       "url": "https://youtu.be/a",
+       "video_id": "a",
+       "title": "A"
+      },
+      {
+       "url": "https://youtu.be/b"
+      },
+      {
+       "url": " https://youtu.be/c ",
+       "video_id": "c"
+      },
+      {
+       "url": "https://youtu.be/d",
+       "video_id": ""
+      },
+      {
+       "url": "https://youtu.be/a2",
+       "video_id": "a"
+      }
+     ],
+     {
+      "video_id": "c"
+     }
+    ],
+    [
+     "ytRemoveHistory",
+     [
+      {
+       "url": "https://youtu.be/a",
+       "video_id": "a",
+       "title": "A"
+      },
+      {
+       "url": "https://youtu.be/b"
+      },
+      {
+       "url": " https://youtu.be/c ",
+       "video_id": "c"
+      },
+      {
+       "url": "https://youtu.be/d",
+       "video_id": ""
+      },
+      {
+       "url": "https://youtu.be/a2",
+       "video_id": "a"
+      }
+     ],
+     {}
+    ],
+    [
+     "ytRemoveHistory",
+     [
+      {
+       "url": "https://youtu.be/a",
+       "video_id": "a",
+       "title": "A"
+      },
+      {
+       "url": "https://youtu.be/b"
+      },
+      {
+       "url": " https://youtu.be/c ",
+       "video_id": "c"
+      },
+      {
+       "url": "https://youtu.be/d",
+       "video_id": ""
+      },
+      {
+       "url": "https://youtu.be/a2",
+       "video_id": "a"
+      }
+     ],
+     {
+      "url": "https://youtu.be/a",
+      "video_id": "otro"
+     }
+    ]
+   ],
+   "geo": [
+    {
+     "id": "T1",
+     "top": 22,
+     "bottom": 51
+    },
+    {
+     "id": "V2",
+     "top": 51,
+     "bottom": 103
+    },
+    {
+     "id": "V1",
+     "top": 103,
+     "bottom": 155
+    },
+    {
+     "id": "A1",
+     "top": 155,
+     "bottom": 207
+    }
+   ],
+   "results": [
+    [
+     {
+      "quality": 4320,
+      "size": 0
+     },
+     {
+      "quality": 2160,
+      "fps": 60,
+      "size": 1503238553
+     },
+     {
+      "quality": 2160,
+      "note": "segunda"
+     },
+     {
+      "quality": 1440,
+      "size": 1
+     },
+     {
+      "quality": "1080",
+      "fps": 60
+     },
+     {
+      "quality": 720,
+      "fps": 30,
+      "size": 52428800
+     },
+     {
+      "quality": 480,
+      "fps": 25.5,
+      "size": 1073741824
+     }
+    ],
+    [],
+    [],
+    [],
+    "8K",
+    "8K",
+    "8K",
+    "",
+    "4K",
+    "4K",
+    "1440p",
+    "2K",
+    "1080p",
+    "Full HD",
+    "720p",
+    "HD",
+    "480p",
+    "",
+    "1080.5p",
+    "",
+    "1080p",
+    "Full HD",
+    "720p",
+    "HD",
+    "0p",
+    "",
+    "",
+    "",
+    "1 MB",
+    "1 MB",
+    "1 MB",
+    "2 MB",
+    "5.0 GB",
+    "1024 MB",
+    "1.0 GB",
+    "2 MB",
+    "",
+    "≈ 50 MB",
+    "60 fps · ≈ 1.4 GB",
+    "60 fps",
+    "",
+    "",
+    "",
+    "",
+    "≈ 1 MB",
+    "≈ 1.0 GB",
+    "",
+    "",
+    "31 fps",
+    "",
+    "",
+    [
+     {
+      "url": "https://youtu.be/a",
+      "video_id": "a",
+      "title": "A"
+     },
+     {
+      "url": "https://youtu.be/b"
+     },
+     {
+      "url": " https://youtu.be/c ",
+      "video_id": "c"
+     },
+     {
+      "url": "https://youtu.be/d",
+      "video_id": ""
+     },
+     {
+      "url": "https://youtu.be/a2",
+      "video_id": "a"
+     }
+    ],
+    [],
+    [],
+    [
+     {
+      "url": "https://youtu.be/b"
+     },
+     {
+      "url": " https://youtu.be/c ",
+      "video_id": "c"
+     },
+     {
+      "url": "https://youtu.be/d",
+      "video_id": ""
+     }
+    ],
+    [
+     {
+      "url": "https://youtu.be/a",
+      "video_id": "a",
+      "title": "A"
+     },
+     {
+      "url": " https://youtu.be/c ",
+      "video_id": "c"
+     },
+     {
+      "url": "https://youtu.be/d",
+      "video_id": ""
+     },
+     {
+      "url": "https://youtu.be/a2",
+      "video_id": "a"
+     }
+    ],
+    [
+     {
+      "url": "https://youtu.be/a",
+      "video_id": "a",
+      "title": "A"
+     },
+     {
+      "url": "https://youtu.be/b"
+     },
+     {
+      "url": "https://youtu.be/d",
+      "video_id": ""
+     },
+     {
+      "url": "https://youtu.be/a2",
+      "video_id": "a"
+     }
+    ],
+    [
+     {
+      "url": "https://youtu.be/a",
+      "video_id": "a",
+      "title": "A"
+     },
+     {
+      "url": "https://youtu.be/b"
+     },
+     {
+      "url": " https://youtu.be/c ",
+      "video_id": "c"
+     },
+     {
+      "url": "https://youtu.be/a2",
+      "video_id": "a"
+     }
+    ],
+    [
+     {
+      "url": "https://youtu.be/b"
+     },
+     {
+      "url": " https://youtu.be/c ",
+      "video_id": "c"
+     },
+     {
+      "url": "https://youtu.be/d",
+      "video_id": ""
+     }
+    ],
+    [
+     {
+      "url": "https://youtu.be/a",
+      "video_id": "a",
+      "title": "A"
+     },
+     {
+      "url": "https://youtu.be/b"
+     },
+     {
+      "url": " https://youtu.be/c ",
+      "video_id": "c"
+     },
+     {
+      "url": "https://youtu.be/d",
+      "video_id": ""
+     },
+     {
+      "url": "https://youtu.be/a2",
+      "video_id": "a"
+     }
+    ],
+    [
+     {
+      "url": "https://youtu.be/a",
+      "video_id": "a",
+      "title": "A"
+     },
+     {
+      "url": "https://youtu.be/b"
+     },
+     {
+      "url": "https://youtu.be/d",
+      "video_id": ""
+     },
+     {
+      "url": "https://youtu.be/a2",
+      "video_id": "a"
+     }
+    ],
+    [
+     {
+      "url": "https://youtu.be/a",
+      "video_id": "a",
+      "title": "A"
+     },
+     {
+      "url": "https://youtu.be/b"
+     },
+     {
+      "url": " https://youtu.be/c ",
+      "video_id": "c"
+     },
+     {
+      "url": "https://youtu.be/d",
+      "video_id": ""
+     },
+     {
+      "url": "https://youtu.be/a2",
+      "video_id": "a"
+     }
+    ],
+    [
+     {
+      "url": "https://youtu.be/b"
+     },
+     {
+      "url": " https://youtu.be/c ",
+      "video_id": "c"
+     },
+     {
+      "url": "https://youtu.be/d",
+      "video_id": ""
+     },
+     {
+      "url": "https://youtu.be/a2",
+      "video_id": "a"
+     }
+    ]
+   ]
+  },
+  {
    "name": "eliminar fondo",
    "timeline": {
     "version": 1,

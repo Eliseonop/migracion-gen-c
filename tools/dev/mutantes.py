@@ -1160,6 +1160,24 @@ BG_UI = [
     ("bg: el error vacío se queda", BGU, '!error->get_ref<const std::string&>().empty()', "true"),
 ]
 
+YTU = "src/core/src/yt_ui.cpp"
+YT_UI = [
+    ("yt: calidades sin filtrar", YTU, "if (x.is_object() && js_number(x.value(\"quality\", Json())) > 0) {", "if (x.is_object()) {"),
+    ("yt: calidades de peor a mejor", YTU, "return js_number(a.value(\"quality\", Json())) > js_number(b.value(\"quality\", Json()));", "return js_number(a.value(\"quality\", Json())) < js_number(b.value(\"quality\", Json()));"),
+    ("yt: sin 8K", YTU, "if (q >= 4320) {", "if (q > 4320) {"),
+    ("yt: 4K desde 2K", YTU, "if (q >= 2160) {", "if (q >= 1440) {"),
+    ("yt: sin la p", YTU, ") + \"p\";", ");"),
+    ("yt: sin Full HD", YTU, "if (key == \"1080\") {", "if (key == \"1081\") {"),
+    ("yt: GB desde 1000 MB", YTU, "if (b >= kGb) {", "if (b >= kGb / 1.024) {"),
+    ("yt: MB sin redondear", YTU, "std::floor((b / (1024.0 * 1024.0)) + 0.5)", "std::floor(b / (1024.0 * 1024.0))"),
+    ("yt: MB puede ser 0", YTU, "std::max(1.0, std::floor((b / (1024.0 * 1024.0)) + 0.5))", "std::floor((b / (1024.0 * 1024.0)) + 0.5)"),
+    ("yt: 30 fps también", YTU, "fps.get<double>() > 30", "fps.get<double>() >= 30"),
+    ("yt: sin el símbolo de aproximado", YTU, "parts.push_back(\"≈ \" + size);", "parts.push_back(size);"),
+    ("yt: historial sin recortar", YTU, "!trimmed(field_or_empty(x, \"url\")).empty()", "!field_or_empty(x, \"url\").get<std::string>().empty()"),
+    ("yt: quitar solo por enlace", YTU, "key_of(x) != needle && ", ""),
+    ("yt: quitar solo por id", YTU, " && trimmed(field_or_empty(x, \"url\")) != url", ""),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
@@ -1167,6 +1185,7 @@ GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FR
           "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"), "seguir_cara": (FACE_FOLLOW, "[editor]"), "mcp_tools": (MCP_TOOLS, "[mcp]"), "mcp_edit": (MCP_EDIT, "[mcp]"), "mcp_server": (MCP_SERVER, "[mcp]"),
           "prompt": (SCRIPT_PROMPT, "[editor]"),
           "bg_ui": (BG_UI, "[editor]"),
+          "yt_ui": (YT_UI, "[editor]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

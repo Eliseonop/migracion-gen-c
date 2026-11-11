@@ -29,6 +29,7 @@
 #include "gc/core/timeline_ui.hpp"
 
 #include "backend_jobs.hpp"
+#include "youtube_loader.hpp"
 #include "bg_magic.hpp"
 #include "gc/core/frame.hpp"
 #include "narrator.hpp"
@@ -87,6 +88,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantMap bgPreview READ bgPreview NOTIFY bgPreviewChanged)
     // «Cargar audio» del material (narrator.hpp): el narrador y el audio de un enlace, por el backend.
     Q_PROPERTY(QObject* narrator READ narrator CONSTANT)
+    // La pestaña YouTube del material (youtube_loader.hpp).
+    Q_PROPERTY(QObject* youtube READ youtube CONSTANT)
     // El fotograma de la timeline en el cabezal (preview_source.hpp), para FramePreview.
     Q_PROPERTY(QObject* preview READ preview CONSTANT)
     // Reproducir y parar, con el reloj del audio (player.hpp).
@@ -170,6 +173,8 @@ public:
     void loadBgProviders() { load_bg_providers(); }
     [[nodiscard]] QObject* narrator() { return &narrator_; }
     [[nodiscard]] Narrator& narratorModel() { return narrator_; }
+    [[nodiscard]] QObject* youtube() { return &youtube_; }
+    [[nodiscard]] YoutubeLoader& youtubeLoader() { return youtube_; }
     [[nodiscard]] QObject* preview() { return &preview_; }
     [[nodiscard]] PreviewSource& previewSource() { return preview_; }
     [[nodiscard]] QObject* player() { return &player_; }
@@ -669,6 +674,7 @@ private:
     QVariantMap bg_preview_{{"mode", "normal"}, {"color", "#3B82F6"}, {"kind", ""}};
     QString bg_preview_file_;
     Narrator narrator_;
+    YoutubeLoader youtube_;
     // Vuelve a leer el material del proyecto de projects.json y lo pone delante.
     void reload_project_materials();
     void reload_collections();

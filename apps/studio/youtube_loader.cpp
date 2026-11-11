@@ -184,8 +184,9 @@ void YoutubeLoader::update(const Json& job) {
         const Json result = job.value("result", Json::object());
         const Json q = result.is_object() ? result.value("quality", Json()) : Json();
         download_.clear();
+        const bool has_q = (q.is_number() && q.get<double>() != 0) || (q.is_string() && !q.get_ref<const std::string&>().empty());
         message_ = QString("«%1»%2 está en el material.")
-                       .arg(title, !q.is_null() && js_truthy(q) ? QString(" (%1)").arg(QString::fromStdString(core::yt_quality_short(q))) : QString());
+                       .arg(title, has_q ? QString(" (%1)").arg(QString::fromStdString(core::yt_quality_short(q))) : QString());
         if (!analyzing_) {
             tick_.stop();
         }

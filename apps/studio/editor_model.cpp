@@ -268,6 +268,8 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
         emit cutoutJobChanged();
     });
     narrator_.setSettings(settings_);
+    youtube_.setSettings(settings_);
+    connect(&youtube_, &YoutubeLoader::videoAdded, this, [this] { reload_project_materials(); });
     connect(&narrator_, &Narrator::notice, this, &EditorModel::set_notice);
     connect(&narrator_, &Narrator::audioAdded, this, [this](const QString& message) { // el onChange de AudioTab y su Toast
         reload_project_materials();
@@ -528,6 +530,7 @@ bool EditorModel::openProject(const QString& pid) {
     project_id_ = (*project)->id;
     project_name_ = qstr((*project)->name);
     narrator_.setProject(qstr(project_id_));
+    youtube_.setProject(qstr(project_id_));
     load_bg_providers();
     materials_.clear();
     payloads_.clear();
@@ -862,6 +865,7 @@ void EditorModel::closeProject() {
     preview_.close();
     proxy_maker_.close();
     narrator_.setProject({});
+    youtube_.setProject({});
     bg_jobs_.stop(); // el editor se cierra: nadie espera su resultado (el backend lo termina)
     stopBgAnalyze();
     bg_analyzed_.clear();

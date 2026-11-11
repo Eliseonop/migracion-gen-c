@@ -8,7 +8,7 @@ find_package(Qt6 REQUIRED COMPONENTS Network)
 
 add_library(gc_studio STATIC app.cpp backend_jobs.cpp beat_detector.cpp clip_list_model.cpp crop_editor.cpp editor_model.cpp
                              export_job.cpp frame_grabber.cpp frame_image.cpp frame_preview.cpp
-                             home_model.cpp bg_magic.cpp mask_overlay.cpp narrator.cpp platform_chrome.cpp player.cpp preview_source.cpp proxy_maker.cpp
+                             home_model.cpp bg_magic.cpp mask_overlay.cpp narrator.cpp platform_chrome.cpp player.cpp preview_source.cpp proxy_maker.cpp youtube_loader.cpp
                              rounded_image.cpp
                              settings_model.cpp thumbnails.cpp)
 target_include_directories(gc_studio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -26,7 +26,7 @@ qt_add_resources(gc_studio "gc_resources" PREFIX "/" BASE "${PROJECT_SOURCE_DIR}
 
 set(qml_files Main Theme Home SideItem ProjectCard FolderCard InlineEdit IconButton Editor Timeline Inspector
               MaterialPanel Settings CropModal CurveEditor CollectionsManager SmallButton SfxModal ShapeCard MaterialTile ClipMenu
-              Toast NarratorPanel)
+              Toast NarratorPanel YoutubePanel)
 list(TRANSFORM qml_files REPLACE "(.+)" "qml/\\1.qml")
 foreach(file IN LISTS qml_files)
     cmake_path(GET file FILENAME name)

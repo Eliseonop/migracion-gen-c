@@ -37,6 +37,7 @@
 #include "gc/core/timeline_view.hpp"
 
 #include "editor_model.hpp"
+#include "youtube_loader.hpp"
 #include "frame_preview.hpp"
 #include "home_model.hpp"
 #include "qt_json.hpp"
@@ -1128,6 +1129,94 @@ TEST_CASE("studio sin pantalla: «Seguimiento de caras» del material lo aplica 
     s.editor->faceTrackMaterial("clips:a", true);
     REQUIRE(QTest::qWaitFor([&] { return s.editor->faceTrackBusy().isEmpty(); }, 10000));
     CHECK(forced);
+}
+
+TEST_CASE("studio sin pantalla: la pestaña YouTube analiza un enlace y agrega el vídeo completo", "[studio][ui][backend]") {
+    Studio s;
+    REQUIRE(s.settings_file->save({{"yt_history", Json::array({{{"url", "https://youtu.be/viejo"}, {"video_id", "viejo"}, {"title", "Viejo"}}})}}));
+    studio::YoutubeLoader& yt = s.editor->youtubeLoader();
+    yt.setSettings(s.settings_file.get());
+    yt.reloadHistory();
+    REQUIRE(yt.history().size() == 1);
+    int polls = 0;
+    bool cancelled = false;
+    Json asked;
+    FakeBackend backend([&](const QString& method, const QString& path, const Json& body) -> std::pair<int, Json> {
+        if (method == "POST" && path == "/api/analyze") {
+            asked = body;
+            if (body.value("url", "") == "https://youtu.be/malo") {
+                return {400, {{"detail", "No es un vídeo de YouTube."}}};
+            }
+            const Json quals = Json::array({{{"quality", 720}, {"size", 52428800}}, {{"quality", 2160}, {"fps", 60}, {"size", 1503238553}}});
+            return {200, {{"video", {{"id", "abc"}, {"title", "Charla"}, {"duration", 754.0}, {"qualities", quals}}},
+                          {"has_heatmap", true},
+                          {"segments", Json::array({{{"index", 1}, {"start", 10.0}, {"end", 40.5}, {"score", 0.8}}})}}};
+        }
+        if (method == "POST" && path == "/api/youtube-video") {
+            asked = body;
+            polls = 0;
+            return {200, {{"id", "y1"}, {"status", "pending"}}};
+        }
+        if (method == "DELETE" && path == "/api/job/y1") {
+            cancelled = true;
+            return {200, {{"ok", true}}};
+        }
+        if (method == "GET" && path == "/api/job/y1") {
+            if (cancelled) {
+                return {200, {{"id", "y1"}, {"status", "error"}, {"error", "Cancelado"}}};
+            }
+            if (++polls == 1 || asked.value("quality", Json()) == 720) {
+                return {200, {{"id", "y1"}, {"status", "running"}, {"progress", 0.3}, {"message", "Descargando…"}}};
+            }
+            return {200, {{"id", "y1"}, {"status", "done"}, {"result", {{"quality", 2160}}}}};
+        }
+        return {404, {{"detail", "No existe."}}};
+    });
+    yt.backend().setBaseUrl(backend.url());
+    yt.backend().setPollInterval(20);
+    s.click("material:source:youtube");
+    REQUIRE(s.item("yt:url"));
+
+    yt.load(); // sin enlace
+    CHECK(yt.error() == "Pega el link de un vídeo de YouTube.");
+    yt.load("https://youtu.be/malo");
+    REQUIRE(QTest::qWaitFor([&] { return !yt.analyzing(); }, 10000));
+    CHECK(yt.error() == "No es un vídeo de YouTube.");
+    CHECK_FALSE(yt.canAddFull());
+
+    yt.load("  https://youtu.be/abc ");
+    CHECK(yt.url() == "https://youtu.be/abc");
+    REQUIRE(QTest::qWaitFor([&] { return !yt.analyzing(); }, 10000));
+    CHECK(asked.value("url", "") == "https://youtu.be/abc");
+    CHECK(asked.value("max_clips", 0) == 10);
+    CHECK(yt.result()["title"] == "Charla");
+    const QVariantList quals = yt.result()["qualities"].toList();
+    REQUIRE(quals.size() == 2);
+    CHECK(quals.front().toMap()["short"] == "4K");
+    CHECK(quals.front().toMap()["meta"] == "60 fps · ≈ 1.4 GB");
+    CHECK(yt.result()["segments"].toList().size() == 1);
+    QCoreApplication::processEvents();
+    CHECK(s.item("yt:meta")->property("text").toString() == "12:34 · 1 recomendados");
+
+    // La mejor calidad; al acabar, el aviso y el material.
+    yt.addFull(2160);
+    CHECK_FALSE(yt.canAddFull());
+    REQUIRE(QTest::qWaitFor([&] { return yt.download().isEmpty(); }, 10000));
+    CHECK(asked.value("quality", Json()) == 2160);
+    CHECK(asked.value("project_id", "") == "p1");
+    CHECK(yt.message() == "«Charla» (4K) está en el material.");
+
+    // Cancelar una descarga.
+    yt.addFull(720);
+    REQUIRE(QTest::qWaitFor([&] { return yt.download()["message"] == "Descargando…"; }, 10000));
+    yt.cancelDownload();
+    REQUIRE(QTest::qWaitFor([&] { return yt.download().isEmpty(); }, 10000));
+    CHECK(yt.error() == "Cancelado");
+
+    // Quitar del historial lo guarda en los ajustes.
+    yt.removeHistory(yt.history().front().toMap());
+    CHECK(yt.history().isEmpty());
+    CHECK(s.settings_file->load().value("yt_history", Json::array()).empty());
 }
 
 TEST_CASE("studio sin pantalla: «Cargar audio» genera la voz y extrae un enlace por el backend", "[studio][ui][backend]") {

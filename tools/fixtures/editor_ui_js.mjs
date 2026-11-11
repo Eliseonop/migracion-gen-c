@@ -34,6 +34,7 @@ const projectFps = await load('lib/projectFps.js')
 const panning = await load('lib/panning.js')
 const scriptPrompt = await load('features/audio/scriptPrompt.js')
 const bgLib = await load('lib/clipBg.js')
+const ytQuality = await load('features/editor/ytQuality.js')
 const clipFxLib = await load('lib/clipFx.js')
 const clipAnim = await load('lib/clipAnim.js')
 // confirmCrop de VideoEditor.jsx (con changeReframe, upsertKeyframe, changeTransform y srcTOf) sobre un clip.
@@ -195,6 +196,14 @@ const faceTrackClip = (clip, kfs, mode) => {
   const strip = (arr) => (arr || []).map(({ id: _, ...k }) => k)
   const rf = made.reframe ? { ...made.reframe, keyframes: strip(made.reframe.keyframes), keyframes2: strip(made.reframe.keyframes2) } : null
   return { layout: made.layout ?? null, frame: made.frame ?? null, reframe: rf, transform: made.transform ?? null }
+}
+// normalizeHistory y removeHistory de EdMaterial.jsx (la segunda, con la lista que se guarda en vez de guardarla).
+const normalizeHistory = new Function(`return ${extractFunction(`${root}/features/editor/EdMaterial.jsx`, 'normalizeHistory')}`)()
+const removeHistory = (list, item) => {
+  let next = null
+  const deps = { ytHistory: list, setYtHistory: (v) => { next = v }, putSettings: () => Promise.resolve() }
+  new Function(...Object.keys(deps), `return async ${extractFunction(`${root}/features/editor/EdMaterial.jsx`, 'removeHistory')}`)(...Object.values(deps))(item)
+  return next
 }
 // Como extractArrow, para `const name = useCallback(…)`.
 function extractCallback(file, name) {
@@ -511,6 +520,13 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       const strip = (arr) => (arr || []).map(({ id: _, ...k }) => k)
       return { ...out, keyframes: strip(out.keyframes), keyframes2: strip(out.keyframes2) }
     },
+    ytQualities: (r) => ytQuality.videoQualities(r),
+    ytQualityShort: (q) => ytQuality.qualityShort(q),
+    ytQualityTag: (q) => ytQuality.qualityTag(q),
+    ytFmtBytes: (b) => ytQuality.fmtBytes(b ?? undefined),
+    ytQualityMeta: (i) => ytQuality.qualityMeta(i),
+    ytNormalizeHistory: (raw) => normalizeHistory(raw),
+    ytRemoveHistory: (list, item) => removeHistory(list, item),
     buildScriptPrompt: (topic, clips) => scriptPrompt.buildScriptPrompt(topic, clips),
     canCaptionClip: (id) => m.canCaptionClip(byId(id)),
     sourceRefOf: (id) => m.sourceRefOf(byId(id)),

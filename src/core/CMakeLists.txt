@@ -83,6 +83,7 @@ add_library(gc_core
     src/vfx_stack.cpp
     src/timeline_view.cpp
     src/yt_history.cpp
+    src/yt_ui.cpp
     src/heatmap.cpp
     src/py_url.cpp
     src/youtube_url.cpp

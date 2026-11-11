@@ -850,6 +850,32 @@ def _face_track_case() -> dict:
     return {"name": "seguimiento de caras", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}
 
 
+def _youtube_case() -> dict:
+    """La pestaña YouTube del material: ytQuality.js (calidades y sus textos) y el historial de EdMaterial.jsx."""
+    quals = [{"quality": 720, "fps": 30, "size": 52428800}, {"quality": 2160, "fps": 60, "size": 1503238553},
+             {"quality": "1080", "fps": 60}, {"quality": 0}, {"quality": -1}, None, {"quality": 4320, "size": 0},
+             {"quality": 1440, "size": 1}, {"quality": 480, "fps": 25.5, "size": 1073741824}, {"quality": 2160, "note": "segunda"}]
+    calls: list = [["ytQualities", {"video": {"qualities": quals}}], ["ytQualities", {"video": {}}], ["ytQualities", None],
+                   ["ytQualities", {"video": {"qualities": "x"}}]]
+    for q in (4320, 5000, 2160, 1440, 1080, 720, 480, 1080.5, "1080", "720", 0):
+        calls.append(["ytQualityShort", q])
+        calls.append(["ytQualityTag", q])
+    for b in (0, -5, 1, 524288, 1048576, 1572864, 5 * 1024 ** 3, 1024 ** 3 - 1, 1024 ** 3, "2048000", None):
+        calls.append(["ytFmtBytes", b])
+    for item in quals + [{"fps": 30}, {"fps": 31}, {"fps": True}, {}]:
+        calls.append(["ytQualityMeta", item])
+    hist = [{"url": "https://youtu.be/a", "video_id": "a", "title": "A"}, {"url": "  "}, {"url": None}, "x", None,
+            {"url": "https://youtu.be/b"}, {"url": " https://youtu.be/c ", "video_id": "c"}, {"url": "https://youtu.be/d", "video_id": ""},
+            {"url": "https://youtu.be/a2", "video_id": "a"}]
+    calls.append(["ytNormalizeHistory", hist])
+    calls.append(["ytNormalizeHistory", None])
+    calls.append(["ytNormalizeHistory", {"url": "x"}])
+    clean = [h for h in hist if isinstance(h, dict) and str(h.get("url") or "").strip()]
+    for item in clean + [{"url": "https://youtu.be/zzz"}, {"video_id": "c"}, {}, {"url": "https://youtu.be/a", "video_id": "otro"}]:
+        calls.append(["ytRemoveHistory", clean, item])
+    return {"name": "youtube", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
+
+
 def _script_prompt_case() -> dict:
     """«Prompt para el guion» (buildScriptPrompt de features/audio/scriptPrompt.js)."""
     both = {"index": 3, "filename": "c.mp4", "start": 1.0, "end": 3.25}
@@ -1030,5 +1056,6 @@ def cases() -> list[dict]:
     out.append(_face_follow_case(random.Random(20261109)))
     out.append(_script_prompt_case())
     out.append(_face_track_case())
+    out.append(_youtube_case())
     out += _bg_case()
     return out

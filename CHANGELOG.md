@@ -11,6 +11,23 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.7.0] — 2026-11-11
+
+### Añadido
+
+- **Pestaña «YouTube» del material** («Cargar clips»): pegar un enlace y analizarlo por el backend (título,
+  duración, tramos recomendados por el heatmap y calidades), el historial de enlaces (abrir uno o quitarlo) y
+  **agregar el vídeo completo** al material en la mejor calidad o en la que se elija, con su progreso y cancelable.
+- `gc/core/yt_ui.hpp`: las calidades y sus textos (ytQuality.js) y el historial (normalizeHistory y removeHistory),
+  con paridad contra el JS real y sus mutaciones.
+- Con esto, todo lo del puente con el backend que usa el editor (subtítulos, «Seguir cara», narrador, audio de un
+  enlace, «Eliminar fondo», seguimiento de caras y YouTube) ya está en el studio.
+
+### Sin hacer todavía
+
+- Editar un tramo recomendado o un rango propio (abre el Clip Editor, que el studio aún no tiene), su vista previa
+  embebida y «Subir calidad» cuando la timeline usa una versión peor del vídeo descargado.
+
 ## [0.6.0] — 2026-11-11
 
 ### Añadido

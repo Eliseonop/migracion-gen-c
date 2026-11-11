@@ -25,7 +25,7 @@ Flickable {
 
     ColumnLayout {
         id: body
-        width: yt.width - 10
+        width: yt.width - 12
         spacing: 6
 
         TextField {
@@ -41,15 +41,16 @@ Flickable {
             onTextEdited: yt.loader.url = text
             onAccepted: if (!yt.loader.analyzing) yt.loader.load()
         }
-        RowLayout {
+        Flow {
+            Layout.fillWidth: true
             spacing: 4
-            Button {
+            SmallButton {
                 objectName: "yt:load"
                 text: yt.loader.analyzing ? "Cargando…" : "Cargar"
                 enabled: !yt.loader.analyzing
                 onClicked: yt.loader.load()
             }
-            Button {
+            SmallButton {
                 objectName: "yt:history"
                 text: "Historial"
                 enabled: !yt.loader.analyzing
@@ -80,7 +81,7 @@ Flickable {
                     }
                 }
             }
-            Button {
+            SmallButton {
                 objectName: "yt:full"
                 enabled: yt.loader.canAddFull
                 text: "Vídeo completo" + (yt.quals.length ? " · " + yt.quals[0].short : "")
@@ -90,7 +91,7 @@ Flickable {
                             : (yt.loader.download.title ? "Ya se está descargando un vídeo" : "Carga un vídeo para agregarlo completo al proyecto")
                 onClicked: yt.loader.addFull(yt.quals.length ? yt.quals[0].quality : 0)
             }
-            Button {
+            SmallButton {
                 objectName: "yt:quality"
                 text: "▾"
                 enabled: yt.loader.canAddFull && yt.quals.length > 0
@@ -126,7 +127,7 @@ Flickable {
                 }
                 ProgressBar { Layout.fillWidth: true; from: 0; to: 1; value: yt.loader.download.progress || 0 }
             }
-            Button { objectName: "yt:cancel"; text: "✕"; onClicked: yt.loader.cancelDownload() }
+            SmallButton { objectName: "yt:cancel"; text: "✕"; onClicked: yt.loader.cancelDownload() }
         }
         ColumnLayout { // analizando
             visible: yt.loader.analyzing
