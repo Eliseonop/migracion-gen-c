@@ -73,6 +73,24 @@ Json bg_patch_auto(const TimelineClip& clip, const Json& patch) {
     return normalize_bg(bg);
 }
 
+Json bg_patch_chroma(const TimelineClip& clip, const Json& patch) {
+    Json bg = clip_bg_or_default(clip);
+    bg["chroma"] = spread(bg["chroma"], patch);
+    return normalize_bg(bg);
+}
+
+Json bg_patch_outline(const TimelineClip& clip, const Json& patch) {
+    Json bg = clip_bg_or_default(clip);
+    bg["outline"] = spread(bg["outline"], patch);
+    return normalize_bg(bg);
+}
+
+Json bg_reset_chroma(const TimelineClip& clip) {
+    Json bg = clip_bg_or_default(clip);
+    bg["chroma"] = Json{{"enabled", bg["chroma"].value("enabled", false)}};
+    return normalize_bg(bg);
+}
+
 Json bg_toggle_auto(const TimelineClip& clip, bool on) {
     const Json bg = clip_bg_or_default(clip);
     const Json& a = bg.at("auto");
@@ -99,11 +117,13 @@ Json bg_change_auto(const TimelineClip& clip, const Json& patch) {
         return bg_patch_auto(clip, Json::object());
     }
     Json next = patch;
-    const auto provider = patch.find("provider");
-    if (provider != patch.end() && !patch.contains("mask_height") && !is_interactive_bg_provider(*provider)) {
-        next["mask_height"] = mask_height_of(*provider);
+    // Con `value` y `contains`: un iterador de nlohmann da un falso -Wnull-dereference en GCC 15.
+    const bool new_provider = patch.contains("provider");
+    const Json provider = patch.value("provider", Json());
+    if (new_provider && !patch.contains("mask_height") && !is_interactive_bg_provider(provider)) {
+        next["mask_height"] = mask_height_of(provider);
     }
-    if (provider != patch.end() || patch.contains("stabilize") || patch.contains("mask_height")) {
+    if (new_provider || patch.contains("stabilize") || patch.contains("mask_height")) {
         next["base_key"] = "";
         next["status"] = "idle";
         next["error"] = nullptr;

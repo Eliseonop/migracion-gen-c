@@ -1365,6 +1365,79 @@ bool has_color(const render::Image& image, const QColor& c) {
 
 } // namespace
 
+TEST_CASE("studio sin pantalla: croma, contorno, cuentagotas y fondo de vista previa", "[studio][ui][preview]") {
+    const Studio s;
+    studio::PreviewSource& p = s.editor->previewSource();
+    REQUIRE(p.available());
+    s.editor->select("b");
+    QCoreApplication::processEvents();
+    s.click("insp:tab:bg");
+    const auto bg = [&](const char* part) { return s.editor->selectedClip()["bg"].toMap()[part].toMap(); };
+
+    // El croma: encender, un cambio y restablecer; los pasos se deshacen.
+    s.editor->toggleBgChroma(true);
+    CHECK(bg("chroma")["enabled"] == true);
+    s.editor->changeBgChroma({{"color", "#0000ff"}, {"similarity", 0.5}});
+    CHECK(bg("chroma")["color"] == "#0000FF");
+    s.editor->resetBgChroma();
+    CHECK(bg("chroma")["enabled"] == true);
+    CHECK(bg("chroma")["color"] == "#00FF00");
+    s.editor->undo();
+    CHECK(bg("chroma")["color"] == "#0000FF");
+    s.editor->changeBgOutline({{"enabled", true}, {"width", 0.6}, {"color", "#123"}});
+    CHECK(bg("outline")["color"] == "#112233");
+    CHECK(s.editor->selectedClip()["bgHasCut"] == true);
+
+    // En 5 s no se ve ningún clip: la vista previa es el fondo. Por defecto, el negro del export.
+    int since = p.revision();
+    s.editor->setPlayhead(5.0);
+    REQUIRE(wait_tick(p, 150, since));
+    const auto center = [&] { return p.image().pixelColor(p.image().width() / 2, p.image().height() / 2); };
+    CHECK(center() == QColor(0, 0, 0));
+    s.editor->setBgPreview({{"mode", "solid"}, {"color", "#3B82F6"}});
+    REQUIRE(QTest::qWaitFor([&] { return center() == QColor(0x3B, 0x82, 0xF6); }, 60000));
+
+    // El cuentagotas toma ese píxel compuesto y se apaga.
+    const QRectF rect(0, 0, 100, 200);
+    CHECK_FALSE(s.editor->pickChromaAt(50, 100, rect)); // apagado: no consume el clic
+    s.editor->setBgPicking(true);
+    CHECK_FALSE(s.editor->pickChromaAt(150, 100, rect)); // fuera del recuadro
+    CHECK(s.editor->pickChromaAt(50, 100, rect));
+    CHECK(bg("chroma")["color"] == "#3B82F6");
+    CHECK_FALSE(s.editor->bgPicking());
+    s.editor->setBgPicking(true);
+    s.editor->bgPanel(false); // al salir de la pestaña se apaga
+    CHECK_FALSE(s.editor->bgPicking());
+
+    // Cuadros: dos grises (se espera a ese fotograma: el cambio del croma también recompone).
+    s.editor->setBgPreview({{"mode", "checker"}});
+    const auto has_checker = [&] {
+        bool light = false;
+        bool dark = false;
+        const QImage row = p.image();
+        for (int x = 0; x < row.width(); ++x) {
+            const QColor c = row.pixelColor(x, row.height() / 2);
+            light = light || (c.red() >= 0xb8 && c.blue() >= 0xb8); // a ½ o ¼ el escalado toca los bordes de las casillas
+            dark = dark || (c.red() <= 0x9c && c.red() >= 0x70);
+        }
+        return light && dark;
+    };
+    CHECK(QTest::qWaitFor(has_checker, 60000));
+
+    // Una imagen de prueba cubre el cuadro.
+    const auto file = s.dir / "fondo.png";
+    QImage solid(64, 64, QImage::Format_RGB32);
+    solid.fill(QColor(10, 200, 30));
+    REQUIRE(solid.save(QString::fromStdString(file.string())));
+    s.editor->setBgPreviewFile(QUrl::fromLocalFile(QString::fromStdString(file.string())));
+    CHECK(s.editor->bgPreview()["kind"] == "image");
+    // Como has_color: el material pasa por el YUV del export.
+    CHECK(QTest::qWaitFor([&] { return std::abs(center().green() - 200) <= 24 && center().red() < 60; }, 60000));
+
+    s.editor->setBgPreview({{"mode", "normal"}});
+    CHECK(QTest::qWaitFor([&] { return center() == QColor(0, 0, 0); }, 60000));
+}
+
 TEST_CASE("studio sin pantalla: la vista previa pinta el fotograma del export en el cabezal", "[studio][ui][preview]") {
     const Studio s;
     studio::PreviewSource& p = s.editor->previewSource();

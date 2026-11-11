@@ -94,6 +94,6 @@ struct PillowText {
                                                      const std::vector<core::FrameLayer>& layers, std::int64_t k,
                                                      const SourceFn& source, const TextFonts& fonts,
                                                      bool omit = false, std::vector<std::string>* warnings = nullptr,
-                                                     LayerCache* cache = nullptr);
+                                                     LayerCache* cache = nullptr, const Backdrop& backdrop = {});
 
 } // namespace gc::render

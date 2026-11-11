@@ -46,6 +46,12 @@ struct BgProviderInfo {
 // recalcular (base_key vacío, status idle); un motor automático nuevo trae su alto de matte recomendado.
 [[nodiscard]] Json bg_change_auto(const TimelineClip& clip, const Json& patch);
 
+// patchBgChroma y patchBgOutline: `patch` sobre el croma o el contorno, y todo normalizado.
+[[nodiscard]] Json bg_patch_chroma(const TimelineClip& clip, const Json& patch);
+[[nodiscard]] Json bg_patch_outline(const TimelineClip& clip, const Json& patch);
+// resetBgChroma: el croma a sus valores por defecto, encendido o apagado como estaba.
+[[nodiscard]] Json bg_reset_chroma(const TimelineClip& clip);
+
 // startBgAutoFor: el cuerpo del POST /bg-removal (bgClipDescriptor, el material y su tramo, más el `auto` de
 // antes de lanzarlo) y el bg_removal mientras se calcula (status running). Nada si no es vídeo ni imagen.
 struct BgAutoStart {

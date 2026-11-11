@@ -306,7 +306,8 @@ std::size_t restore_prefix(LayerCache::Impl& lc, Canvas& canvas, const std::vect
 } // namespace
 
 Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers, const SourceFn& source,
-                          const TextFonts* fonts, const BetweenFn& between, LayerCache* cache) {
+                          const TextFonts* fonts, const BetweenFn& between, LayerCache* cache,
+                          const Backdrop& backdrop) {
     const int width = canvas.width();
     const int height = canvas.height();
     // Con la caché (y sin textos entre capas), las capas quietas de abajo salen de lo guardado.
@@ -314,7 +315,16 @@ Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& l
     std::size_t build = 0;
     const std::size_t first = lc != nullptr ? restore_prefix(*lc, canvas, layers, source, build) : 0;
     if (first == 0) {
-        canvas.clear({0, 0, 0, 255});
+        canvas.clear(backdrop.color);
+        if (backdrop.image != nullptr && backdrop.image->width > 0 && backdrop.image->height > 0) {
+            const double mw = backdrop.image->width;
+            const double mh = backdrop.image->height;
+            const double s = std::max(width / mw, height / mh); // cubre el cuadro
+            const core::Affine cover{s, 0.0, 0.0, s, (width - (mw * s)) / 2, (height - (mh * s)) / 2};
+            if (auto ok = canvas.draw_image(*backdrop.image, core::SourceCrop{0.0, 0.0, mw, mh}, cover); !ok) {
+                return ok;
+            }
+        }
     }
     for (std::size_t li = first; li < layers.size(); ++li) {
         const core::FrameLayer& layer = layers[li];

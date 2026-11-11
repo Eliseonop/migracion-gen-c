@@ -873,7 +873,7 @@ def _bg_case() -> dict:
     ready = {"enabled": True, "mode": "auto",
              "auto": {"enabled": True, "provider": "rvm_mobilenetv3", "base_key": "abc123", "status": "ready",
                       "mask_height": 720, "threshold": 0.4, "feather": 0.05, "model_version": "v2"},
-             "chroma": {"enabled": True, "color": "#0f0"}, "outline": {"enabled": True, "width": 0.5}}
+             "chroma": {"enabled": True, "color": "#123456", "similarity": 0.6, "spill": 0.3}, "outline": {"enabled": True, "width": 0.5}}
     clips = [clip("b1", "V1", start=0, inp=1, out=6),  # nunca tuvo bg_removal
              clip("b2", "V1", start=7, inp=0, out=3, kind="image", filename="foto.png", source_duration=0.0),
              clip("b3", "V1", start=11, inp=0, out=4, kind="image", filename="anim.GIF?v=2"),
@@ -889,6 +889,10 @@ def _bg_case() -> dict:
                {"provider": "nada"}, {"provider": None}, {"mask_height": 720}, {"stabilize": 0.3},
                {"threshold": 0.62}, {"softness": 0.1}, {"feather": 0.2}, {"expansion": -0.35}, {"opacity": 0.5},
                {"invert": True}, {"invert": False, "threshold": 1.5}, {}, {"base_key": "manual"}]
+    chroma = [{"color": "#0000ff"}, {"color": "0xABC"}, {"color": "verde"}, {"similarity": 0.55}, {"similarity": 0},
+              {"blend": 0.3}, {"spill": 0.7}, {"edge": 0.4}, {"shrink": -0.6}, {"shrink": 2}, {"color": "#FF00FF", "enabled": True}]
+    outline = [{"enabled": True}, {"enabled": False}, {"color": "#123"}, {"color": ""}, {"width": 0.8}, {"width": 3},
+               {"soft": 0.5}, {"opacity": 0.25}, {"opacity": -1}]
     jobs = [{"status": "done", "bg_removal": {"base_key": "nuevo", "provider": "birefnet_lite", "model_version": "1.4",
                                               "mask_fps": 12, "mask_height": 1080, "warning": "Va lento"}},
             {"status": "done", "bg_removal": {"base_key": "solo-clave"}},
@@ -905,6 +909,13 @@ def _bg_case() -> dict:
         for p in patches:
             calls.append(["bgChangeAuto", c["id"], p])
         calls.append(["bgStart", c["id"]])
+        for on in (True, False):
+            calls.append(["bgToggleChroma", c["id"], on])
+        for p in chroma:
+            calls.append(["bgChangeChroma", c["id"], p])
+        calls.append(["bgResetChroma", c["id"]])
+        for p in outline:
+            calls.append(["bgChangeOutline", c["id"], p])
         for j in jobs:
             calls.append(["bgFinished", c["id"], j])
     return {"name": "eliminar fondo", "timeline": {"tracks": TRACKS, "clips": clips}, "calls": calls}

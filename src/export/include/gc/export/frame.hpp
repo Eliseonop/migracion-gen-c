@@ -19,6 +19,15 @@
 
 namespace gc::exporter {
 
+// «Fondo de vista previa» (EdBgRemove): lo que se ve detrás de lo recortado, solo en el editor.
+struct FrameBackdrop {
+    enum class Kind { Black, Checker, Solid, Media };
+    Kind kind = Kind::Black;
+    render::Rgba8 color{0, 0, 0, 255}; // Solid
+    std::filesystem::path file;        // Media: una imagen o un vídeo, que se repite
+    bool video = false;                // Media: ¿es un vídeo?
+};
+
 struct FrameOptions {
     // Lo que el render aún no sabe dibujar se salta con un aviso en vez de ser un error.
     bool omit_unsupported = false;
@@ -37,6 +46,8 @@ struct FrameOptions {
     // proxy, sin horneado de efectos ni matte (esos van con el original). La geometría es la del
     // original: el clip se coloca igual y solo cambia de cuántos píxeles sale.
     ProxyMap proxies;
+    // Lo que va debajo de las capas (por defecto, el negro del export).
+    FrameBackdrop backdrop;
 };
 
 struct Frame {

@@ -13,9 +13,11 @@
 #include "gc/core/export_input.hpp"
 #include "gc/core/font_metrics.hpp"
 #include "gc/core/frame.hpp"
+#include "gc/core/io.hpp"
 #include "gc/core/lru_bytes.hpp"
 #include "gc/core/timeline_rules.hpp"
 #include "gc/media/decode.hpp"
+#include "gc/media/probe.hpp"
 #include "gc/render/compose.hpp"
 #include "gc/render/text.hpp"
 #include "prepare.hpp"
@@ -38,6 +40,10 @@ struct FrameRenderer::Impl {
     std::map<std::string, const ProxyFile*> proxied;   // clip → el proxy del que se lee (en `proxies`)
     std::set<std::string> warned;
     std::function<void(const std::string&)> on_warning;
+    render::Rgba8 backdrop_color{0, 0, 0, 255};
+    std::optional<render::Image> backdrop_image;     // cuadros, una imagen o el fotograma del vídeo
+    std::optional<media::ClipFrames> backdrop_video; // el vídeo de fondo
+    std::int64_t backdrop_frames = 0;                // sus fotogramas: se repite
     bool skip = false;
     bool hwaccel = false;
     int width = 0;
@@ -52,6 +58,27 @@ struct FrameRenderer::Impl {
         }
     }
 };
+
+namespace {
+
+// Los cuadros de drawBackdrop, en un lienzo del cuadro (cada casilla, 1/64 del lado mayor).
+render::Image checker_image(int w, int h) {
+    render::Image out{w, h, std::vector<std::uint8_t>(static_cast<std::size_t>(w) * static_cast<std::size_t>(h) * 4)};
+    const int s = std::max(1, std::max(w, h) / 64);
+    std::size_t i = 0;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x, i += 4) {
+            const bool dark = (((x / s) + (y / s)) & 1) != 0;
+            out.pixels[i] = dark ? 0x8b : 0xc9;
+            out.pixels[i + 1] = dark ? 0x90 : 0xcc;
+            out.pixels[i + 2] = dark ? 0x9b : 0xd3;
+            out.pixels[i + 3] = 255;
+        }
+    }
+    return out;
+}
+
+} // namespace
 
 FrameRenderer::FrameRenderer(std::unique_ptr<Impl> impl) : impl_(std::move(impl)) {}
 FrameRenderer::FrameRenderer(FrameRenderer&&) noexcept = default;
@@ -109,6 +136,36 @@ Result<FrameRenderer> FrameRenderer::open(const LoadedProject& project, const Fr
             continue;
         }
         impl->proxied.emplace(id, &proxy->second);
+    }
+    using BackdropKind = FrameBackdrop::Kind;
+    if (options.backdrop.kind == BackdropKind::Solid) {
+        impl->backdrop_color = options.backdrop.color;
+    } else if (options.backdrop.kind == BackdropKind::Checker) {
+        impl->backdrop_image = checker_image(w, h);
+    } else if (options.backdrop.kind == BackdropKind::Media) {
+        // Un vídeo se lee como un clip entero y se repite; una imagen, una vez. Si no se lee: negro y un aviso.
+        const std::filesystem::path& file = options.backdrop.file;
+        const double seconds = options.backdrop.video ? media::probe_duration(file) : 1.0;
+        TimelineClip whole;
+        whole.id = "backdrop";
+        whole.kind = options.backdrop.video ? "video" : "image"; // una imagen, como un clip de imagen: sus colores
+        whole.filename = path_to_utf8(file);
+        whole.out_point = seconds;
+        whole.source_duration = options.backdrop.video ? seconds : 0.0;
+        bool read = false;
+        if (auto opened = media::ClipFrames::open(whole, file, fps); opened && seconds > 0) {
+            if (options.backdrop.video) {
+                impl->backdrop_video.emplace(std::move(*opened));
+                impl->backdrop_frames = std::max<std::int64_t>(1, static_cast<std::int64_t>(std::floor(seconds * fps)));
+                read = true;
+            } else if (auto still = opened->at(0); still && *still != nullptr) {
+                impl->backdrop_image = render::Image{(*still)->width, (*still)->height, (*still)->pixels};
+                read = true;
+            }
+        }
+        if (!read) {
+            warn(std::format("no se pudo leer el fondo de vista previa {}", path_to_utf8(file)));
+        }
     }
     impl->skip = options.omit_unsupported;
     impl->hwaccel = options.hwaccel;
@@ -229,6 +286,13 @@ Result<Frame> FrameRenderer::tick(std::int64_t k) {
             return reason.has_value();
         });
     }
+    // El fotograma del vídeo de fondo, en bucle; si no da ninguno, el anterior.
+    if (m.backdrop_video) {
+        if (auto got = m.backdrop_video->at(k % m.backdrop_frames); got && *got != nullptr) {
+            m.backdrop_image = render::Image{(*got)->width, (*got)->height, (*got)->pixels};
+        }
+    }
+    const render::Backdrop backdrop{m.backdrop_color, m.backdrop_image ? &*m.backdrop_image : nullptr};
     // Las capas, con los textos de las pistas con vídeo encima en su sitio, y el resto encima.
     std::vector<std::string> warnings;
     if (auto ok = render::compose_with_buried_texts(
@@ -241,7 +305,7 @@ Result<Frame> FrameRenderer::tick(std::int64_t k) {
                 }
                 return img;
             },
-            m.fonts, m.skip, &warnings);
+            m.fonts, m.skip, &warnings, nullptr, backdrop);
         !ok) {
         return std::unexpected(ok.error());
     }

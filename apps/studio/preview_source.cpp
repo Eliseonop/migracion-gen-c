@@ -12,6 +12,7 @@
 #include <optional>
 #include <thread>
 
+#include "gc/core/io.hpp"
 #include "gc/export/frame.hpp"
 #include "gc/export/project.hpp"
 #include "gc/media/decode.hpp"
@@ -68,11 +69,12 @@ struct PreviewSource::Worker {
     std::optional<double> at;
     std::optional<double> scale;
     std::optional<PreviewProxies> proxies;
+    std::optional<PreviewBackdrop> backdrop;
     std::thread thread; // el último: arranca con todo lo demás ya hecho
 
     [[nodiscard]] bool pending() const {
         return stop || closing || reload || timeline_dirty || at.has_value() || scale.has_value() ||
-               proxies.has_value();
+               proxies.has_value() || backdrop.has_value();
     }
 
     // En el hilo de la interfaz, cuando llegue (si el PreviewSource sigue vivo).
@@ -97,6 +99,7 @@ struct PreviewSource::Worker {
         std::int64_t shown = -1;    // el tick publicado con este `renderer`
         double current_scale = 1.0;
         exporter::ProxyMap current_proxies;
+        exporter::FrameBackdrop current_backdrop;
         for (;;) {
             bool close_now = false;
             bool reload_now = false;
@@ -107,6 +110,7 @@ struct PreviewSource::Worker {
             std::optional<double> new_at;
             std::optional<double> new_scale;
             std::optional<PreviewProxies> new_proxies;
+            std::optional<PreviewBackdrop> new_backdrop;
             {
                 std::unique_lock lock(mutex);
                 wake.wait(lock, [&] { return pending(); });
@@ -122,6 +126,7 @@ struct PreviewSource::Worker {
                 new_at = std::exchange(at, std::nullopt);
                 new_scale = std::exchange(scale, std::nullopt);
                 new_proxies = std::exchange(proxies, std::nullopt);
+                new_backdrop = std::exchange(backdrop, std::nullopt);
             }
             const bool rescaled = new_scale && *new_scale != current_scale;
             if (rescaled) {
@@ -133,7 +138,24 @@ struct PreviewSource::Worker {
                     current_proxies.emplace(source, exporter::ProxyFile{proxy.file, proxy.source_width, proxy.source_height});
                 }
             }
-            const bool changed = close_now || reload_now || timeline_now || rescaled || new_proxies.has_value();
+            if (new_backdrop) {
+                using Kind = exporter::FrameBackdrop::Kind;
+                const PreviewBackdrop& b = *new_backdrop;
+                current_backdrop = {};
+                if (b.mode == "checker") {
+                    current_backdrop.kind = Kind::Checker;
+                } else if (b.mode == "solid") {
+                    current_backdrop.kind = Kind::Solid;
+                    current_backdrop.color = {static_cast<std::uint8_t>(b.color.red()), static_cast<std::uint8_t>(b.color.green()),
+                                              static_cast<std::uint8_t>(b.color.blue()), 255};
+                } else if (b.mode == "media") {
+                    current_backdrop.kind = Kind::Media;
+                    current_backdrop.file = core::path_from_utf8(b.file.toStdString());
+                    current_backdrop.video = b.video;
+                }
+            }
+            const bool changed = close_now || reload_now || timeline_now || rescaled || new_proxies.has_value() ||
+                                 new_backdrop.has_value();
             if (changed) {
                 renderer.reset();
                 warnings.clear();
@@ -174,6 +196,7 @@ struct PreviewSource::Worker {
                 options.cache_bytes = kCacheBytes;
                 options.scale = current_scale;
                 options.proxies = current_proxies;
+                options.backdrop = current_backdrop;
                 options.on_warning = [&warnings](const std::string& message) {
                     warnings << QString::fromStdString(message);
                 };
@@ -260,6 +283,14 @@ void PreviewSource::setProxies(PreviewProxies proxies) {
     worker_->wake.notify_one();
 }
 
+void PreviewSource::setBackdrop(const PreviewBackdrop& backdrop) {
+    {
+        const std::scoped_lock lock(worker_->mutex);
+        worker_->backdrop = backdrop;
+    }
+    worker_->wake.notify_one();
+}
+
 void PreviewSource::update_scale() {
     if (!sent_) {
         return;
@@ -305,6 +336,7 @@ void PreviewSource::setDisplaySize(int width, int height) {
 }
 void PreviewSource::update_scale() {}
 void PreviewSource::setProxies(PreviewProxies /*proxies*/) {}
+void PreviewSource::setBackdrop(const PreviewBackdrop& /*backdrop*/) {}
 
 #endif
 

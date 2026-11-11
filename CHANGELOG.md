@@ -11,6 +11,19 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.3.0] — 2026-11-10
+
+### Añadido
+
+- **Chroma key en la pestaña «Fondo»:** activar, color (muestra con el selector, #RRGGBB o los cuatro preestablecidos),
+  **cuentagotas** (toma el píxel compuesto bajo el clic en la vista previa), tolerancia, suavizado, derrame, limpiar
+  borde, expandir y restablecer.
+- **Contorno del recorte:** activar, color, grosor, difuminado (halo) y opacidad.
+- **Fondo de vista previa:** normal, cuadros, color, o una imagen o un vídeo de prueba (que se repite). Solo en la
+  vista previa: `FrameOptions::backdrop` y `render::Backdrop`, que el export no usa.
+- `bg_patch_chroma`, `bg_patch_outline` y `bg_reset_chroma` en `gc/core/bg_ui.hpp`, con paridad contra el
+  VideoEditor.jsx real (500 llamadas en total en el caso de «Eliminar fondo») y sus mutaciones.
+
 ## [0.2.0] — 2026-11-10
 
 ### Añadido

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
+import QtQuick.Dialogs
 
 // Inspector (EdInspector.jsx): mezcla (opacidad y fusión), volumen, aparición y salida, y la nota
 // del clip seleccionado. Las barras aplican al soltar (un paso de deshacer por gesto).
@@ -23,7 +24,10 @@ Rectangle {
         .concat(has && clip.kind !== "adjustment" ? [["anim", "Animar"]] : [])
     readonly property string tabNow: tabList.some((t) => t[0] === tab) ? tab : "clip"
     // La máscara se maneja en la vista previa solo con su pestaña abierta (onMaskPanel de EdInspector).
-    onTabNowChanged: model.maskPanel(tabNow === "mask")
+    onTabNowChanged: {
+        model.maskPanel(tabNow === "mask")
+        model.bgPanel(tabNow === "bg")
+    }
     readonly property var tf: has ? clip.transform : ({})
     readonly property var speeds: [0.3, 0.5, 1, 1.5, 2, 3, 5, 10]
     readonly property var trk: model.selectedTrack
@@ -71,6 +75,15 @@ Rectangle {
     readonly property var bgAuto: has && clip.bg && clip.bg.auto ? clip.bg.auto : ({})
     readonly property bool bgAutoOn: !!bgAuto.enabled && !String(bgAuto.provider || "").startsWith("sam")
     readonly property bool bgReady: has && !!clip.bgReady
+    readonly property var bgChroma: has && clip.bg && clip.bg.chroma ? clip.bg.chroma : ({})
+    readonly property var bgOutline: has && clip.bg && clip.bg.outline ? clip.bg.outline : ({})
+    readonly property var chromaPresets: [["Verde", "#00FF00"], ["Azul", "#0000FF"], ["Cian", "#00FFFF"], ["Magenta", "#FF00FF"]]
+    property var bgColorTarget: null // a quién da el color el diálogo: (c) => …
+    function pickBgColor(current, target) {
+        bgColorDialog.selectedColor = current
+        bgColorTarget = target
+        bgColorDialog.open()
+    }
     readonly property var bgJob: has && model.bgJob.clipId === clip.id ? model.bgJob : ({})
     readonly property bool bgRunning: bgJob.status === "pending" || bgJob.status === "running"
     readonly property bool bgAnimated: has && (clip.kind === "video" || /\.gif(\?|#|$)/i.test(clip.filename || ""))
@@ -267,6 +280,33 @@ Rectangle {
         }
         Label { Layout.preferredWidth: 40; text: Math.round(bsSlider.value) + " %"; color: Theme.text; horizontalAlignment: Text.AlignRight }
     }
+    // Un color de «Eliminar fondo»: la muestra abre el diálogo y el texto admite #RRGGBB.
+    component BgColor: RowLayout {
+        id: bc
+        required property string title
+        required property string value
+        signal picked(string color)
+        Layout.fillWidth: true
+        Label { Layout.preferredWidth: 70; text: bc.title; color: Theme.textSecondary }
+        Rectangle {
+            objectName: "insp:bg:swatch:" + bc.title
+            width: 26
+            height: 20
+            radius: 4
+            color: bc.value
+            border.color: Theme.lineBright
+            TapHandler { onTapped: panel.pickBgColor(bc.value, (c) => bc.picked(c)) }
+        }
+        TextField {
+            objectName: "insp:bg:hex:" + bc.title
+            Layout.fillWidth: true
+            text: bc.value
+            color: Theme.text
+            selectByMouse: true
+            background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
+            onEditingFinished: if (text !== bc.value) bc.picked(text)
+        }
+    }
     component Percent: RowLayout {
         id: row
         required property string title
@@ -283,6 +323,17 @@ Rectangle {
             onPressedChanged: if (!pressed) row.committed(value)
         }
         Label { Layout.preferredWidth: 40; text: Math.round(slider.value * 100) + " %"; color: Theme.text; horizontalAlignment: Text.AlignRight }
+    }
+
+    ColorDialog {
+        id: bgColorDialog
+        onAccepted: if (panel.bgColorTarget) panel.bgColorTarget(selectedColor.toString().toUpperCase())
+    }
+    FileDialog {
+        id: bgPreviewDialog
+        title: "Fondo de prueba"
+        nameFilters: ["Imágenes y vídeos (*.png *.jpg *.jpeg *.webp *.gif *.mp4 *.mov *.webm *.mkv)"]
+        onAccepted: panel.model.setBgPreviewFile(selectedFile)
     }
 
     Flickable {
@@ -1511,6 +1562,116 @@ Rectangle {
                     BgSlider { title: "Opacidad"; value: Math.round((panel.bgAuto.opacity ?? 1) * 100)
                                onCommitted: (v) => panel.model.changeBgAuto({ opacity: v / 100 }) }
                 }
+
+                Section { text: "Chroma key" }
+                Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: "Para pantallas verdes o azules y fondos de color uniforme. Se ve al instante y no genera archivos: es una propiedad del clip."
+                    color: Theme.muted
+                    font.pixelSize: 11
+                }
+                RowLayout {
+                    spacing: 4
+                    Toggle { objectName: "insp:bg:chroma"; implicitWidth: implicitContentWidth + 16; text: "Activado"
+                             on: !!panel.bgChroma.enabled; onClicked: panel.model.toggleBgChroma(!on) }
+                    Toggle { objectName: "insp:bg:pick"; visible: !!panel.bgChroma.enabled; implicitWidth: implicitContentWidth + 16; text: "Cuentagotas"
+                             on: panel.model.bgPicking; onClicked: panel.model.bgPicking = !on }
+                    Toggle { objectName: "insp:bg:chromaReset"; visible: !!panel.bgChroma.enabled; implicitWidth: 26; text: "↺"
+                             onClicked: panel.model.resetBgChroma() }
+                }
+                ColumnLayout {
+                    visible: !!panel.bgChroma.enabled
+                    Layout.fillWidth: true
+                    spacing: 4
+                    BgColor { title: "Color"; value: panel.bgChroma.color || "#00FF00"; onPicked: (c) => panel.model.changeBgChroma({ color: c }) }
+                    Row {
+                        spacing: 4
+                        Repeater {
+                            model: panel.chromaPresets
+                            Rectangle {
+                                required property var modelData
+                                objectName: "insp:bg:preset:" + modelData[0]
+                                width: 22
+                                height: 22
+                                radius: 11
+                                color: modelData[1]
+                                border.width: panel.bgChroma.color === modelData[1] ? 2 : 1
+                                border.color: border.width > 1 ? Theme.accent : Theme.lineBright
+                                TapHandler { onTapped: panel.model.changeBgChroma({ color: parent.modelData[1] }) }
+                            }
+                        }
+                    }
+                    BgSlider { title: "Tolerancia"; value: Math.round((panel.bgChroma.similarity ?? 0.2) * 100)
+                               onCommitted: (v) => panel.model.changeBgChroma({ similarity: Math.max(1, v) / 100 }) }
+                    BgSlider { title: "Suavizado "; value: Math.round((panel.bgChroma.blend ?? 0.1) * 100)
+                               onCommitted: (v) => panel.model.changeBgChroma({ blend: v / 100 }) }
+                    BgSlider { title: "Derrame"; value: Math.round((panel.bgChroma.spill ?? 0) * 100)
+                               onCommitted: (v) => panel.model.changeBgChroma({ spill: v / 100 }) }
+                    BgSlider { title: "Limpiar"; value: Math.round((panel.bgChroma.edge ?? 0) * 100)
+                               onCommitted: (v) => panel.model.changeBgChroma({ edge: v / 100 }) }
+                    BgSlider { title: "Expandir "; from: -100; value: Math.round((panel.bgChroma.shrink ?? 0) * 100)
+                               onCommitted: (v) => panel.model.changeBgChroma({ shrink: v / 100 }) }
+                }
+
+                Section { text: "Contorno" }
+                Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: "Borde de color alrededor del sujeto recortado; sigue la silueta del recorte. Con Difuminado se convierte en un halo."
+                    color: Theme.muted
+                    font.pixelSize: 11
+                }
+                Toggle { objectName: "insp:bg:outline"; implicitWidth: implicitContentWidth + 16; text: "Activado"
+                         on: !!panel.bgOutline.enabled; onClicked: panel.model.changeBgOutline({ enabled: !on }) }
+                ColumnLayout {
+                    visible: !!panel.bgOutline.enabled
+                    Layout.fillWidth: true
+                    spacing: 4
+                    BgColor { title: "Color "; value: panel.bgOutline.color || "#FFFFFF"; onPicked: (c) => panel.model.changeBgOutline({ color: c }) }
+                    BgSlider { title: "Grosor"; value: Math.round((panel.bgOutline.width ?? 0.3) * 100)
+                               onCommitted: (v) => panel.model.changeBgOutline({ width: v / 100 }) }
+                    BgSlider { title: "Difuminado"; value: Math.round((panel.bgOutline.soft ?? 0) * 100)
+                               onCommitted: (v) => panel.model.changeBgOutline({ soft: v / 100 }) }
+                    BgSlider { title: "Opacidad "; value: Math.round((panel.bgOutline.opacity ?? 1) * 100)
+                               onCommitted: (v) => panel.model.changeBgOutline({ opacity: v / 100 }) }
+                }
+                Label {
+                    visible: !!panel.bgOutline.enabled && panel.has && !panel.clip.bgHasCut
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: "Primero elimina el fondo (automático o chroma key)."
+                    color: Theme.muted
+                    font.pixelSize: 11
+                }
+
+                Section { text: "Fondo de vista previa" }
+                Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: "Coloca un fondo temporal detrás del sujeto para comprobar el recorte. Cuadros revela dónde hay transparencia. No cambia el vídeo ni la exportación."
+                    color: Theme.muted
+                    font.pixelSize: 11
+                }
+                Flow {
+                    Layout.fillWidth: true
+                    spacing: 4
+                    Repeater {
+                        model: [["normal", "Normal"], ["checker", "Cuadros"], ["solid", "Color"]]
+                        Toggle {
+                            required property var modelData
+                            objectName: "insp:bg:backdrop:" + modelData[0]
+                            implicitWidth: implicitContentWidth + 16
+                            text: modelData[1]
+                            on: panel.model.bgPreview.mode === modelData[0]
+                            onClicked: panel.model.setBgPreview({ mode: modelData[0] })
+                        }
+                    }
+                    Toggle { objectName: "insp:bg:backdrop:file"; implicitWidth: implicitContentWidth + 16; text: "Imagen o vídeo…"
+                             on: panel.model.bgPreview.mode === "media"; onClicked: bgPreviewDialog.open() }
+                }
+                BgColor { visible: panel.model.bgPreview.mode === "solid"; title: "Color  "; value: panel.model.bgPreview.color || "#3B82F6"
+                          onPicked: (c) => panel.model.setBgPreview({ color: c }) }
             }
 
             ColumnLayout {

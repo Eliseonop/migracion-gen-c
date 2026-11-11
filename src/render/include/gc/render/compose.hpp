@@ -67,11 +67,19 @@ private:
     std::unique_ptr<Impl> impl_;
 };
 
-// Lo mismo, pero sobre un lienzo que ya existe (se borra a negro opaco): para poner encima los
-// textos y reutilizar el lienzo de un fotograma al siguiente. El resultado es opaco. Con
+// Lo que hay debajo de las capas: el negro del export o, en la vista previa, un color y una imagen que
+// cubre el cuadro sin deformarse (drawBackdrop de render/canvas.js). Nunca llega al export.
+struct Backdrop {
+    Rgba8 color{0, 0, 0, 255};
+    const Image* image = nullptr;
+};
+
+// Lo mismo, pero sobre un lienzo que ya existe (se borra a negro opaco, o al `backdrop`): para poner
+// encima los textos y reutilizar el lienzo de un fotograma al siguiente. El resultado es opaco. Con
 // `cache`, las capas quietas de abajo no se redibujan (LayerCache).
 [[nodiscard]] Result<void> compose_into(Canvas& canvas, const std::vector<core::FrameLayer>& layers,
                                         const SourceFn& source, const TextFonts* fonts = nullptr,
-                                        const BetweenFn& between = {}, LayerCache* cache = nullptr);
+                                        const BetweenFn& between = {}, LayerCache* cache = nullptr,
+                                        const Backdrop& backdrop = {});
 
 } // namespace gc::render

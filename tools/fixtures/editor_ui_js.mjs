@@ -127,12 +127,12 @@ const bgOps = (clip) => {
     isInteractiveProvider: bgLib.isInteractiveProvider, DEFAULT_PROVIDER: bgLib.DEFAULT_PROVIDER,
     recommendedProvider: bgLib.recommendedProvider, providerMaskHeight: bgLib.providerMaskHeight,
     bgCapable: bgLib.bgCapable, resetCutout: () => {}, stopBgAnalyze: () => {}, setBgBrush: () => {},
-    setBgNotice: () => {}, setBgJob: () => {}, project: { id: 'p' },
+    setBgNotice: () => {}, setBgJob: () => {}, setChromaPick: () => {}, project: { id: 'p' },
     createBgRemovalJob: (_pid, b) => { body = b; return new Promise(() => {}) } }
-  const fns = ['patchBg', 'patchBgAuto', 'bgClipDescriptor', 'startBgAutoFor'].map((n) => extractFunction(src, n))
-  const arrows = ['toggleBgAuto', 'changeBgAuto'].map((n) => extractArrow(src, n))
+  const fns = ['patchBg', 'patchBgAuto', 'patchBgChroma', 'patchBgOutline', 'bgClipDescriptor', 'startBgAutoFor'].map((n) => extractFunction(src, n))
+  const arrows = ['toggleBgAuto', 'changeBgAuto', 'toggleBgChroma', 'changeBgChroma', 'resetBgChroma'].map((n) => extractArrow(src, n))
   const api = new Function(...Object.keys(deps), 'selectedClip',
-    [...fns, ...arrows, 'return { patchBgAuto, startBgAutoFor, toggleBgAuto, changeBgAuto }'].join(String.fromCharCode(10)))(
+    [...fns, ...arrows, 'return { patchBgAuto, patchBgOutline, startBgAutoFor, toggleBgAuto, changeBgAuto, toggleBgChroma, changeBgChroma, resetBgChroma }'].join(String.fromCharCode(10)))(
     ...Object.values(deps), clip)
   return { api, get bg() { return made.bg_removal ?? null }, get body() { return body } }
 }
@@ -425,6 +425,10 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       return o.body ? { body: o.body, bg: o.bg } : null
     },
     bgFinished: (id, job) => bgFinished(byId(id), job),
+    bgToggleChroma: (id, on) => { const o = bgOps(byId(id)); o.api.toggleBgChroma(on); return o.bg },
+    bgChangeChroma: (id, patch) => { const o = bgOps(byId(id)); o.api.changeBgChroma(patch); return o.bg },
+    bgResetChroma: (id) => { const o = bgOps(byId(id)); o.api.resetBgChroma(); return o.bg },
+    bgChangeOutline: (id, patch) => { const o = bgOps(byId(id)); o.api.patchBgOutline(id, patch); return o.bg },
     buildScriptPrompt: (topic, clips) => scriptPrompt.buildScriptPrompt(topic, clips),
     canCaptionClip: (id) => m.canCaptionClip(byId(id)),
     sourceRefOf: (id) => m.sourceRefOf(byId(id)),

@@ -8,7 +8,9 @@
 #include <QPointF>
 #include <QRegularExpression>
 #include <QUrl>
+#include <QColor>
 #include <QCoreApplication>
+#include <QMimeDatabase>
 #include <QGuiApplication>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -834,6 +836,10 @@ void EditorModel::closeProject() {
     proxy_maker_.close();
     narrator_.setProject({});
     bg_jobs_.stop(); // el editor se cierra: nadie espera su resultado (el backend lo termina)
+    setBgPicking(false);
+    bg_preview_ = {{"mode", "normal"}, {"color", "#3B82F6"}, {"kind", ""}};
+    bg_preview_file_.clear();
+    push_bg_preview();
     if (!bg_job_.isEmpty()) {
         bg_job_.clear();
         emit bgJobChanged();
@@ -1013,6 +1019,8 @@ QVariantMap EditorModel::selectedClip() const {
         {"bgCapable", core::bg_capable(*c)},
         {"bg", core::bg_capable(*c) ? to_variant(core::clip_bg_or_default(*c)) : QVariantMap()},
         {"bgReady", core::bg_capable(*c) && core::bg_auto_active(core::clip_bg_or_default(*c))},
+        {"bgHasCut", core::bg_capable(*c) && (core::bg_auto_active(core::clip_bg_or_default(*c)) ||
+                                              core::clip_bg_or_default(*c).at("chroma").at("enabled").get<bool>())},
         {"beats", beats_variant(*c)}, // {count, bpm, every} o nada
         {"vfx", [&] { // la pila con lo que pinta el inspector: nombre y parámetros del catálogo
              QVariantList out;
@@ -3007,6 +3015,93 @@ void EditorModel::cancelBgAuto() {
     bg_jobs_.cancel();
     bg_job_["message"] = "Cancelando…";
     emit bgJobChanged();
+}
+
+void EditorModel::setBgPicking(bool on) {
+    if (bg_picking_ != on) {
+        bg_picking_ = on;
+        emit bgPickingChanged();
+    }
+}
+
+void EditorModel::toggleBgChroma(bool on) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c || !core::bg_capable(*c)) {
+        return;
+    }
+    set_bg(c->id, core::bg_patch_chroma(*c, {{"enabled", on}}), "bg-chroma");
+    if (!on) {
+        setBgPicking(false);
+    }
+}
+
+void EditorModel::changeBgChroma(const QVariantMap& patch) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (c && core::bg_capable(*c)) {
+        set_bg(c->id, core::bg_patch_chroma(*c, to_json(patch)), "bg-chroma");
+    }
+}
+
+void EditorModel::resetBgChroma() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (c && core::bg_capable(*c)) {
+        set_bg(c->id, core::bg_reset_chroma(*c), "bg-chroma");
+    }
+}
+
+void EditorModel::changeBgOutline(const QVariantMap& patch) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (c && core::bg_capable(*c)) {
+        set_bg(c->id, core::bg_patch_outline(*c, to_json(patch)), "bg-outline");
+    }
+}
+
+bool EditorModel::pickChromaAt(double x, double y, const QRectF& frame) {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const QImage image = preview_.image();
+    if (!bg_picking_ || !c || image.isNull() || frame.isEmpty() || !frame.contains(x, y)) {
+        return false;
+    }
+    const int px = std::clamp(static_cast<int>((x - frame.x()) / frame.width() * image.width()), 0, image.width() - 1);
+    const int py = std::clamp(static_cast<int>((y - frame.y()) / frame.height() * image.height()), 0, image.height() - 1);
+    const QString hex = image.pixelColor(px, py).name(QColor::HexRgb).toUpper();
+    set_bg(c->id, core::bg_patch_chroma(*c, {{"color", hex.toStdString()}, {"enabled", true}}), "bg-chroma");
+    setBgPicking(false);
+    return true;
+}
+
+void EditorModel::bgPanel(bool open) {
+    if (!open) {
+        setBgPicking(false);
+    }
+}
+
+void EditorModel::push_bg_preview() {
+    preview_.setBackdrop({bg_preview_.value("mode").toString(), QColor(bg_preview_.value("color").toString()), bg_preview_file_,
+                          bg_preview_.value("kind").toString() == "video"});
+    emit bgPreviewChanged();
+}
+
+void EditorModel::setBgPreview(const QVariantMap& patch) {
+    for (auto it = patch.begin(); it != patch.end(); ++it) {
+        bg_preview_[it.key()] = it.value();
+    }
+    if (patch.contains("mode") && patch.value("mode").toString() != "media") { // suelta el archivo de prueba
+        bg_preview_file_.clear();
+        bg_preview_["kind"] = "";
+    }
+    push_bg_preview();
+}
+
+void EditorModel::setBgPreviewFile(const QUrl& file) {
+    const QString path = file.isLocalFile() ? file.toLocalFile() : file.toString();
+    if (path.isEmpty()) {
+        return;
+    }
+    bg_preview_file_ = path;
+    bg_preview_["mode"] = "media";
+    bg_preview_["kind"] = QMimeDatabase().mimeTypeForFile(path).name().startsWith("video/") ? "video" : "image";
+    push_bg_preview();
 }
 
 void EditorModel::bg_update(const std::string& clip_id, const Json& job) {

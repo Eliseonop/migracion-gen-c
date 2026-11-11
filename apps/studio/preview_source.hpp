@@ -8,6 +8,7 @@
 // el recuadro en pantalla (setDisplaySize). Sin gc_export (Linux sin vcpkg), `available` es false y
 // no hace nada.
 
+#include <QColor>
 #include <QImage>
 #include <QObject>
 #include <QString>
@@ -29,6 +30,15 @@ struct PreviewProxy {
     int source_height = 0;
 };
 using PreviewProxies = std::map<std::filesystem::path, PreviewProxy>;
+
+// «Fondo de vista previa»: "normal" (el negro del export), "checker", "solid" con su color o "media" con su
+// archivo (imagen o vídeo).
+struct PreviewBackdrop {
+    QString mode = "normal";
+    QColor color;
+    QString file;
+    bool video = false;
+};
 
 class PreviewSource : public QObject {
     Q_OBJECT
@@ -66,6 +76,8 @@ public:
     void setDisplaySize(int width, int height);
     // Los proxies que hay (ProxyMaker): los vídeos que estén aquí se leen de su proxy.
     void setProxies(PreviewProxies proxies);
+    // Lo que se ve detrás de lo recortado (solo en la vista previa, nunca en el export).
+    void setBackdrop(const PreviewBackdrop& backdrop);
     // La escala para un cuadro de frame_w × frame_h visto en display_w × display_h: la más pequeña
     // de 1, ½ y ¼ que no se queda corta.
     [[nodiscard]] static double scale_for(double frame_w, double frame_h, int display_w, int display_h);

@@ -65,6 +65,10 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantMap bgJob READ bgJob NOTIFY bgJobChanged)
     Q_PROPERTY(QVariantList bgProviders READ bgProviders NOTIFY bgProvidersChanged)
     Q_PROPERTY(QString bgDevice READ bgDevice NOTIFY bgProvidersChanged)
+    // El cuentagotas del croma (el siguiente clic en la vista previa toma el color) y el fondo de vista
+    // previa ({mode: normal, checker, solid o media; color; kind: image o video}).
+    Q_PROPERTY(bool bgPicking READ bgPicking WRITE setBgPicking NOTIFY bgPickingChanged)
+    Q_PROPERTY(QVariantMap bgPreview READ bgPreview NOTIFY bgPreviewChanged)
     // «Cargar audio» del material (narrator.hpp): el narrador y el audio de un enlace, por el backend.
     Q_PROPERTY(QObject* narrator READ narrator CONSTANT)
     // El fotograma de la timeline en el cabezal (preview_source.hpp), para FramePreview.
@@ -132,6 +136,9 @@ public:
     [[nodiscard]] QVariantList bgProviders() const;
     [[nodiscard]] QString bgDevice() const { return bg_device_; }
     [[nodiscard]] BackendJobs& bgBackend() { return bg_jobs_; }
+    [[nodiscard]] bool bgPicking() const { return bg_picking_; }
+    void setBgPicking(bool on);
+    [[nodiscard]] QVariantMap bgPreview() const { return bg_preview_; }
     // Vuelve a pedir los motores de «Eliminar fondo» (al abrir un proyecto ya se piden).
     void loadBgProviders() { load_bg_providers(); }
     [[nodiscard]] QObject* narrator() { return &narrator_; }
@@ -338,6 +345,18 @@ public:
     Q_INVOKABLE void changeBgAuto(const QVariantMap& patch);
     Q_INVOKABLE void applyBgAuto();
     Q_INVOKABLE void cancelBgAuto();
+    // El croma y el contorno (propiedades puras del clip, sin job).
+    Q_INVOKABLE void toggleBgChroma(bool on);
+    Q_INVOKABLE void changeBgChroma(const QVariantMap& patch);
+    Q_INVOKABLE void resetBgChroma();
+    Q_INVOKABLE void changeBgOutline(const QVariantMap& patch);
+    // pickChromaAt: el píxel compuesto bajo (x, y) (en el item, con el recuadro `frame`) es el color del croma.
+    Q_INVOKABLE bool pickChromaAt(double x, double y, const QRectF& frame);
+    // onBgPanel: al cerrar la pestaña se apaga lo que vive sobre la vista previa.
+    Q_INVOKABLE void bgPanel(bool open);
+    // onBgPreview: modo y color, o un archivo de prueba (imagen o vídeo).
+    Q_INVOKABLE void setBgPreview(const QVariantMap& patch);
+    Q_INVOKABLE void setBgPreviewFile(const QUrl& file);
     // copyPrompt de AudioTab: el prompt para pedirle el guion a una IA, con el material del proyecto, al portapapeles.
     Q_INVOKABLE void copyScriptPrompt(const QString& topic);
     // Pila de efectos animados (addVfx y EdVfxStack): añadir, parámetros, activar, rango, orden y quitar.
@@ -434,6 +453,8 @@ signals:
     void maskFollowChanged();
     void bgJobChanged();
     void bgProvidersChanged();
+    void bgPickingChanged();
+    void bgPreviewChanged();
 
 private:
     // Una tarjeta del material con su dragPayload; y las del proyecto (sus vídeos, imágenes y audios).
@@ -545,6 +566,10 @@ private:
     QVariantMap bg_job_;
     Json bg_catalog_ = Json::array();
     QString bg_device_;
+    bool bg_picking_ = false;
+    void push_bg_preview();
+    QVariantMap bg_preview_{{"mode", "normal"}, {"color", "#3B82F6"}, {"kind", ""}};
+    QString bg_preview_file_;
     Narrator narrator_;
     // Vuelve a leer el material del proyecto de projects.json y lo pone delante.
     void reload_project_materials();

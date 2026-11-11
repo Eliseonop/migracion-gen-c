@@ -1983,3 +1983,12 @@ Decisión de Edu (§6):
 - **Versión y CHANGELOG:** empieza `CHANGELOG.md` con su regla (menor por tanda con algo usable, parche por arreglos, 1.0.0 al retirar la app Python) y la versión pasa a 0.2.0 (`CMakeLists.txt` y `vcpkg.json`). Cambiar `vcpkg.json` obliga a reconfigurar: hacerlo siempre con `verificar_msvc.bat` (sin el entorno de `vcvars64` la caché se queda sin Qt ni `/EHsc`; se arregla borrando `CMakeCache.txt`).
 - **Sin hacer:** la Eliminación personalizada (SAM, sus pinceles y el análisis en segundo plano), retocar la máscara, «Exportar recorte», y el croma y el contorno del inspector.
 - **Sin probar:** contra el backend real (el test usa uno falso con las respuestas de `bg/` y `jobs.py`), ni mirar el recorte en la vista previa con un matte de verdad.
+
+### 2026-11-10 — F5: croma, contorno y fondo de vista previa en «Eliminar fondo» · versión 0.3.0
+
+- **Qué es:** el resto de lo que no pide IA de EdBgRemove.jsx: Chroma key, Contorno y Fondo de vista previa, en la pestaña «Fondo». El render ya sabía dibujar el croma y el contorno (F4): faltaba la pantalla.
+- **Cuentagotas:** `pickChromaAt` lee el píxel de `PreviewSource::image()` (a la escala de la vista previa; React lo lee del lienzo). Se apaga al tomar el color y al salir de la pestaña.
+- **Fondo de vista previa:** `render::Backdrop` (color e imagen que cubre el cuadro) en `compose_into`, y `FrameOptions::backdrop` en `FrameRenderer`. Un vídeo se lee con `ClipFrames` y se repite por tick (React lo deja correr aparte, sin atarlo al cabezal). Cada casilla de los cuadros mide 1/64 del lado mayor del cuadro (en React, 12 px del lienzo, que dependen de la ventana). El export no pasa `backdrop`.
+- **Una imagen de fondo como clip de imagen:** con `kind: image` en el clip sintético; como vídeo, se toma por BT.709 y cambia el color.
+- **Paridad:** 500 llamadas sobre 10 clips, contra `patchBgChroma`, `patchBgOutline`, `toggleBgChroma`, `changeBgChroma` y `resetBgChroma` reales.
+- **Sin probar:** el croma y el contorno con un clip de verdad en la app abierta (el dibujo ya tiene paridad con el export desde F4), y un vídeo de fondo: el test sin pantalla cubre color, cuadros e imagen.

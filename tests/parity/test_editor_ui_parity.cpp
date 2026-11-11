@@ -715,6 +715,18 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "bgChangeAuto") {
         return bg_change_auto(clip(call.at(1)), call.at(2));
     }
+    if (fn == "bgToggleChroma") {
+        return bg_patch_chroma(clip(call.at(1)), {{"enabled", call.at(2)}});
+    }
+    if (fn == "bgChangeChroma") {
+        return bg_patch_chroma(clip(call.at(1)), call.at(2));
+    }
+    if (fn == "bgResetChroma") {
+        return bg_reset_chroma(clip(call.at(1)));
+    }
+    if (fn == "bgChangeOutline") {
+        return bg_patch_outline(clip(call.at(1)), call.at(2));
+    }
     if (fn == "bgStart") {
         const auto start = bg_auto_start(clip(call.at(1)));
         return start ? Json{{"body", start->body}, {"bg", start->bg_removal}} : Json();

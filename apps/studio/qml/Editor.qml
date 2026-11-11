@@ -210,6 +210,17 @@ Item {
                     onReleased: editor.model.maskRelease()
                     onCanceled: editor.model.maskRelease()
                 }
+                // El cuentagotas del croma (pickChromaAt): con él, un clic toma el color y no llega a nada más.
+                MouseArea {
+                    objectName: "chromaPickArea"
+                    anchors.fill: frame
+                    enabled: editor.model.bgPicking
+                    visible: enabled
+                    cursorShape: Qt.CrossCursor
+                    readonly property rect out: preview.frameRect.width > 0 ? preview.frameRect
+                                                                            : Qt.rect(0, 0, preview.width, preview.height)
+                    onPressed: (m) => m.accepted = editor.model.pickChromaAt(m.x, m.y, Qt.rect(preview.x + out.x, preview.y + out.y, out.width, out.height))
+                }
                 // El selector del marco de EdViewerTools (solo vista previa).
                 ComboBox {
                     id: overlayPicker
