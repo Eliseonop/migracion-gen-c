@@ -7,6 +7,7 @@
 #include <QImage>
 #include <QObject>
 #include <QRectF>
+#include <QTimer>
 #include <QString>
 #include <QStringList>
 #include <QUrl> // moc pide el tipo completo de QList<QUrl> (Qt 6.11; la 6.4 lo dejaba pasar)
@@ -67,6 +68,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(QString bgDevice READ bgDevice NOTIFY bgProvidersChanged)
     // El cuentagotas del croma (el siguiente clic en la vista previa toma el color) y el fondo de vista
     // previa ({mode: normal, checker, solid o media; color; kind: image o video}).
+    // «Exportar recorte»: cómo va el job ({status, progress, message, error}; vacío, ninguno).
+    Q_PROPERTY(QVariantMap cutoutJob READ cutoutJob NOTIFY cutoutJobChanged)
     Q_PROPERTY(bool bgPicking READ bgPicking WRITE setBgPicking NOTIFY bgPickingChanged)
     Q_PROPERTY(QVariantMap bgPreview READ bgPreview NOTIFY bgPreviewChanged)
     // «Cargar audio» del material (narrator.hpp): el narrador y el audio de un enlace, por el backend.
@@ -136,6 +139,8 @@ public:
     [[nodiscard]] QVariantList bgProviders() const;
     [[nodiscard]] QString bgDevice() const { return bg_device_; }
     [[nodiscard]] BackendJobs& bgBackend() { return bg_jobs_; }
+    [[nodiscard]] QVariantMap cutoutJob() const { return cutout_job_; }
+    [[nodiscard]] BackendJobs& cutoutBackend() { return cutout_jobs_; }
     [[nodiscard]] bool bgPicking() const { return bg_picking_; }
     void setBgPicking(bool on);
     [[nodiscard]] QVariantMap bgPreview() const { return bg_preview_; }
@@ -346,6 +351,9 @@ public:
     Q_INVOKABLE void applyBgAuto();
     Q_INVOKABLE void cancelBgAuto();
     // El croma y el contorno (propiedades puras del clip, sin job).
+    // Hornea el clip con el fondo eliminado a un WebM transparente, que el backend añade al material.
+    Q_INVOKABLE void exportBgCutout();
+    Q_INVOKABLE void cancelBgCutout();
     Q_INVOKABLE void toggleBgChroma(bool on);
     Q_INVOKABLE void changeBgChroma(const QVariantMap& patch);
     Q_INVOKABLE void resetBgChroma();
@@ -454,6 +462,7 @@ signals:
     void bgJobChanged();
     void bgProvidersChanged();
     void bgPickingChanged();
+    void cutoutJobChanged();
     void bgPreviewChanged();
 
 private:
@@ -567,6 +576,10 @@ private:
     Json bg_catalog_ = Json::array();
     QString bg_device_;
     bool bg_picking_ = false;
+    void cutout_update(const Json& job);
+    BackendJobs cutout_jobs_;
+    QVariantMap cutout_job_;
+    QTimer cutout_clear_; // el aviso de «listo» se va a los 3,2 s
     void push_bg_preview();
     QVariantMap bg_preview_{{"mode", "normal"}, {"color", "#3B82F6"}, {"kind", ""}};
     QString bg_preview_file_;

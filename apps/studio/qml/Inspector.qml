@@ -1563,6 +1563,39 @@ Rectangle {
                                onCommitted: (v) => panel.model.changeBgAuto({ opacity: v / 100 }) }
                 }
 
+                ColumnLayout { // Exportar recorte: en material animado, con algo que hornear
+                    readonly property var job: panel.model.cutoutJob
+                    readonly property bool running: job.status === "pending" || job.status === "running"
+                    visible: panel.bgAnimated && (panel.bgReady || !!panel.bgChroma.enabled)
+                    Layout.fillWidth: true
+                    spacing: 4
+                    id: cutoutBox
+                    Section { text: "Exportar recorte" }
+                    Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.Wrap
+                        text: "Guarda este " + (panel.has && panel.clip.kind === "video" ? "vídeo" : "GIF") + " con el fondo eliminado como un vídeo transparente (WebM) en el material, con toda su animación."
+                        color: Theme.muted
+                        font.pixelSize: 11
+                    }
+                    Small { objectName: "insp:bg:cutout"; visible: !cutoutBox.running; highlighted: true; text: "Exportar recorte"
+                            onClicked: panel.model.exportBgCutout() }
+                    Small { objectName: "insp:bg:cutoutCancel"; visible: cutoutBox.running; text: "Cancelar"
+                            onClicked: panel.model.cancelBgCutout() }
+                    ProgressBar { visible: cutoutBox.running; Layout.fillWidth: true; from: 0; to: 1; value: cutoutBox.job.progress || 0 }
+                    Label {
+                        objectName: "insp:bg:cutoutStatus"
+                        visible: !!cutoutBox.job.status
+                        Layout.fillWidth: true
+                        wrapMode: Text.Wrap
+                        font.pixelSize: 11
+                        color: cutoutBox.job.status === "error" ? Theme.danger : cutoutBox.job.status === "done" ? Theme.success : Theme.textSecondary
+                        text: cutoutBox.job.status === "error" ? (cutoutBox.job.error || "No se pudo exportar el recorte.")
+                            : cutoutBox.job.status === "done" ? (cutoutBox.job.message || "Recorte añadido a Vídeos.")
+                            : (cutoutBox.job.message || "") + " · " + Math.round((cutoutBox.job.progress || 0) * 100) + " %"
+                    }
+                }
+
                 Section { text: "Chroma key" }
                 Label {
                     Layout.fillWidth: true

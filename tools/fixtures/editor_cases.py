@@ -884,7 +884,11 @@ def _bg_case() -> dict:
              clip("b7", "V1", start=20, inp=0, out=3, bg_removal={"enabled": False, "auto": {"enabled": True}}),
              clip("b8", "A1", start=0, inp=0, out=3, kind="audio"),
              clip("b9", "V1", start=25, inp=0, out=3, bg_removal={"auto": {"provider": "u2net", "base_key": "x"}}),
-             clip("b10", "V1", start=30, inp=0, out=2, asset_scope="")]  # sin ámbito: el del proyecto
+             clip("b10", "V1", start=30, inp=0, out=2, asset_scope=""),  # sin ámbito: el del proyecto
+             clip("b11", "V1", start=33, inp=1, out=4, name="Mi recorte", bg_removal={"chroma": {"enabled": True, "color": "#00f"}}),
+             clip("b12", "V1", start=38, inp=0, out=2, name="", bg_removal=ready),
+             clip("b13", "V1", start=41, inp=0, out=2, bg_removal={"enabled": False, "chroma": {"enabled": True}}),
+             clip("b14", "V1", start=44, inp=0, out=2, bg_removal={"enabled": False, "auto": ready["auto"]})]
     patches = [{"provider": "birefnet_lite"}, {"provider": "sam21_large"}, {"provider": "u2net", "mask_height": 1080},
                {"provider": "nada"}, {"provider": None}, {"mask_height": 720}, {"stabilize": 0.3},
                {"threshold": 0.62}, {"softness": 0.1}, {"feather": 0.2}, {"expansion": -0.35}, {"opacity": 0.5},
@@ -909,6 +913,7 @@ def _bg_case() -> dict:
         for p in patches:
             calls.append(["bgChangeAuto", c["id"], p])
         calls.append(["bgStart", c["id"]])
+        calls.append(["bgCutout", c["id"]])
         for on in (True, False):
             calls.append(["bgToggleChroma", c["id"], on])
         for p in chroma:

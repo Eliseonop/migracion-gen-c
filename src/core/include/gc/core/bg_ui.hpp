@@ -60,6 +60,10 @@ struct BgAutoStart {
 };
 [[nodiscard]] std::optional<BgAutoStart> bg_auto_start(const TimelineClip& clip);
 
+// exportBgCutout: el cuerpo del POST /bg-cutout (el material, su tramo, la etiqueta y el bg_removal tal como
+// está), o nada si no hay qué hornear (ni matte listo ni croma encendido).
+[[nodiscard]] std::optional<Json> bg_cutout_body(const TimelineClip& clip);
+
 // El final del job (el efecto de bgJob.status): `done` con `bg_removal` escribe la clave de caché, el motor,
 // su versión, mask_fps y mask_height del resultado (status ready); `error`, su error («Error» si viene vacío).
 // Nada mientras sigue (o si acaba sin resultado).

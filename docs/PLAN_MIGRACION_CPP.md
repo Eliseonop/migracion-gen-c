@@ -1992,3 +1992,9 @@ Decisión de Edu (§6):
 - **Una imagen de fondo como clip de imagen:** con `kind: image` en el clip sintético; como vídeo, se toma por BT.709 y cambia el color.
 - **Paridad:** 500 llamadas sobre 10 clips, contra `patchBgChroma`, `patchBgOutline`, `toggleBgChroma`, `changeBgChroma` y `resetBgChroma` reales.
 - **Sin probar:** el croma y el contorno con un clip de verdad en la app abierta (el dibujo ya tiene paridad con el export desde F4), y un vídeo de fondo: el test sin pantalla cubre color, cuadros e imagen.
+
+### 2026-11-11 — F5: «Exportar recorte» · versión 0.4.0
+
+- **Qué es:** la sección «Exportar recorte» de EdBgRemove.jsx: hornea un vídeo o un GIF con el fondo eliminado a un WebM transparente en el backend y lo añade al material (POST `/bg-cutout`, sondeado cada 800 ms; el aviso de «listo» se va a los 3,2 s, como en React). El cuerpo lleva el `bg_removal` tal como está en el clip, sin normalizar.
+- **Paridad:** `bg_cutout_body` contra `exportBgCutout` real, 4 clips más en el caso (con nombre, nombre vacío y el `enabled: false`, que apaga el matte pero no este croma: `bg.chroma?.enabled` no lo mira).
+- **Sin probar:** contra el backend real; el test usa uno falso.

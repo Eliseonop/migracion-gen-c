@@ -11,6 +11,14 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.4.0] — 2026-11-11
+
+### Añadido
+
+- **«Exportar recorte»** en la pestaña «Fondo», para vídeos y GIF con matte listo o croma: hornea el clip a un WebM
+  transparente en el backend (POST `/api/projects/{id}/bg-cutout`, cancelable) y aparece en el material.
+  `bg_cutout_body` en `gc/core/bg_ui.hpp`, con paridad contra `exportBgCutout` real y sus mutaciones.
+
 ## [0.3.0] — 2026-11-10
 
 ### Añadido

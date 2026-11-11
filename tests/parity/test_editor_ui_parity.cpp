@@ -727,6 +727,9 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "bgChangeOutline") {
         return bg_patch_outline(clip(call.at(1)), call.at(2));
     }
+    if (fn == "bgCutout") {
+        return bg_cutout_body(clip(call.at(1))).value_or(Json());
+    }
     if (fn == "bgStart") {
         const auto start = bg_auto_start(clip(call.at(1)));
         return start ? Json{{"body", start->body}, {"bg", start->bg_removal}} : Json();

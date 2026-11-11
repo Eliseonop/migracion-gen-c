@@ -50,6 +50,19 @@ std::int64_t mask_height_of(const Json& provider) {
     return bg_provider_mask_height(provider.is_string() ? provider.get_ref<const std::string&>() : std::string_view());
 }
 
+// bgClipDescriptor: el material y su tramo, no el id (el clip puede no estar guardado aún).
+Json descriptor(const TimelineClip& clip) {
+    return {{"clip_id", clip.id},
+            {"kind", clip.kind},
+            {"asset_kind", clip.asset_kind},
+            {"asset_id", clip.asset_id},
+            {"filename", clip.filename},
+            {"asset_scope", clip.asset_scope.empty() ? std::string("project") : clip.asset_scope},
+            {"in_point", clip.in_point},
+            {"out_point", clip.out_point},
+            {"source_duration", clip.source_duration}};
+}
+
 } // namespace
 
 std::span<const BgProviderInfo> bg_provider_catalog() { return kCatalog; }
@@ -136,19 +149,26 @@ std::optional<BgAutoStart> bg_auto_start(const TimelineClip& clip) {
         return std::nullopt;
     }
     const Json bg = clip_bg_or_default(clip);
-    // bgClipDescriptor: el material y su tramo, no el id (el clip puede no estar guardado aún).
-    Json body = {{"clip_id", clip.id},
-                 {"kind", clip.kind},
-                 {"asset_kind", clip.asset_kind},
-                 {"asset_id", clip.asset_id},
-                 {"filename", clip.filename},
-                 {"asset_scope", clip.asset_scope.empty() ? std::string("project") : clip.asset_scope},
-                 {"in_point", clip.in_point},
-                 {"out_point", clip.out_point},
-                 {"source_duration", clip.source_duration},
-                 {"auto", bg.at("auto")}};
+    Json body = descriptor(clip);
+    body["auto"] = bg.at("auto");
     return BgAutoStart{std::move(body),
                        bg_patch_auto(clip, {{"enabled", true}, {"status", "running"}, {"error", nullptr}})};
+}
+
+std::optional<Json> bg_cutout_body(const TimelineClip& clip) {
+    if (!bg_capable(clip)) {
+        return std::nullopt;
+    }
+    const Json bg = normalize_bg(clip.bg_removal.value_or(Json()));
+    if (bg.is_null() || !(bg_auto_active(bg) || bg["chroma"].value("enabled", false))) {
+        return std::nullopt;
+    }
+    Json body = descriptor(clip);
+    if (clip.name && !clip.name->empty()) { // label: clip.name || undefined
+        body["label"] = *clip.name;
+    }
+    body["bg_removal"] = *clip.bg_removal;
+    return body;
 }
 
 std::optional<Json> bg_auto_finished(const TimelineClip& clip, const Json& job) {

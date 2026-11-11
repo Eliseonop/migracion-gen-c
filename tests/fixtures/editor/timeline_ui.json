@@ -972856,6 +972856,275 @@
       "note_source": null,
       "dup_of": null,
       "composition_id": null
+     },
+     {
+      "id": "b11",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "b11",
+      "filename": "b11.mp4",
+      "name": "Mi recorte",
+      "start": 33.0,
+      "in_point": 1.0,
+      "out_point": 4.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": {
+       "chroma": {
+        "enabled": true,
+        "color": "#00f"
+       }
+      },
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "b12",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "b12",
+      "filename": "b12.mp4",
+      "name": "",
+      "start": 38.0,
+      "in_point": 0.0,
+      "out_point": 2.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": {
+       "enabled": true,
+       "mode": "auto",
+       "auto": {
+        "enabled": true,
+        "provider": "rvm_mobilenetv3",
+        "base_key": "abc123",
+        "status": "ready",
+        "mask_height": 720,
+        "threshold": 0.4,
+        "feather": 0.05,
+        "model_version": "v2"
+       },
+       "chroma": {
+        "enabled": true,
+        "color": "#123456",
+        "similarity": 0.6,
+        "spill": 0.3
+       },
+       "outline": {
+        "enabled": true,
+        "width": 0.5
+       }
+      },
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "b13",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "b13",
+      "filename": "b13.mp4",
+      "name": null,
+      "start": 41.0,
+      "in_point": 0.0,
+      "out_point": 2.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": {
+       "enabled": false,
+       "chroma": {
+        "enabled": true
+       }
+      },
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
+     },
+     {
+      "id": "b14",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "b14",
+      "filename": "b14.mp4",
+      "name": null,
+      "start": 44.0,
+      "in_point": 0.0,
+      "out_point": 2.0,
+      "source_duration": 30.0,
+      "ref_segment": null,
+      "volume": 1.0,
+      "media_version": null,
+      "reframe": null,
+      "text": null,
+      "style": null,
+      "layout": "fill",
+      "transform": null,
+      "frame": "full",
+      "appear": "none",
+      "exit": "none",
+      "look": "none",
+      "effects": null,
+      "filters": null,
+      "audio_fx": null,
+      "muted": false,
+      "speed": 1.0,
+      "keep_pitch": true,
+      "reverse": false,
+      "speed_curve": null,
+      "opacity": null,
+      "flip_h": false,
+      "flip_v": false,
+      "blend_mode": null,
+      "disabled": false,
+      "beats": null,
+      "loop": null,
+      "words": [],
+      "origin": null,
+      "text_role": null,
+      "shape": null,
+      "masks": [],
+      "bg_removal": {
+       "enabled": false,
+       "auto": {
+        "enabled": true,
+        "provider": "rvm_mobilenetv3",
+        "base_key": "abc123",
+        "status": "ready",
+        "mask_height": 720,
+        "threshold": 0.4,
+        "feather": 0.05,
+        "model_version": "v2"
+       }
+      },
+      "anim": null,
+      "vfx": null,
+      "animations": null,
+      "keyframes": null,
+      "asset_scope": "project",
+      "description": null,
+      "note": null,
+      "note_source": null,
+      "dup_of": null,
+      "composition_id": null
      }
     ],
     "markers": []
@@ -972988,6 +973257,10 @@
      "b1"
     ],
     [
+     "bgCutout",
+     "b1"
+    ],
+    [
      "bgToggleChroma",
      "b1",
      true
@@ -973340,6 +973613,10 @@
      "b2"
     ],
     [
+     "bgCutout",
+     "b2"
+    ],
+    [
      "bgToggleChroma",
      "b2",
      true
@@ -973692,6 +973969,10 @@
      "b3"
     ],
     [
+     "bgCutout",
+     "b3"
+    ],
+    [
      "bgToggleChroma",
      "b3",
      true
@@ -974044,6 +974325,10 @@
      "b4"
     ],
     [
+     "bgCutout",
+     "b4"
+    ],
+    [
      "bgToggleChroma",
      "b4",
      true
@@ -974396,6 +974681,10 @@
      "b5"
     ],
     [
+     "bgCutout",
+     "b5"
+    ],
+    [
      "bgToggleChroma",
      "b5",
      true
@@ -974748,6 +975037,10 @@
      "b6"
     ],
     [
+     "bgCutout",
+     "b6"
+    ],
+    [
      "bgToggleChroma",
      "b6",
      true
@@ -975100,6 +975393,10 @@
      "b7"
     ],
     [
+     "bgCutout",
+     "b7"
+    ],
+    [
      "bgToggleChroma",
      "b7",
      true
@@ -975452,6 +975749,10 @@
      "b8"
     ],
     [
+     "bgCutout",
+     "b8"
+    ],
+    [
      "bgToggleChroma",
      "b8",
      true
@@ -975804,6 +976105,10 @@
      "b9"
     ],
     [
+     "bgCutout",
+     "b9"
+    ],
+    [
      "bgToggleChroma",
      "b9",
      true
@@ -976156,6 +976461,10 @@
      "b10"
     ],
     [
+     "bgCutout",
+     "b10"
+    ],
+    [
      "bgToggleChroma",
      "b10",
      true
@@ -976376,6 +976685,1430 @@
     [
      "bgFinished",
      "b10",
+     {
+      "status": "running",
+      "progress": 0.4
+     }
+    ],
+    [
+     "bgToggleAuto",
+     "b11",
+     true
+    ],
+    [
+     "bgToggleAuto",
+     "b11",
+     false
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "provider": "birefnet_lite"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "provider": "sam21_large"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "provider": "u2net",
+      "mask_height": 1080
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "provider": "nada"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "provider": null
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "mask_height": 720
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "stabilize": 0.3
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "threshold": 0.62
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "softness": 0.1
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "feather": 0.2
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "expansion": -0.35
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "opacity": 0.5
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "invert": true
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "invert": false,
+      "threshold": 1.5
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {}
+    ],
+    [
+     "bgChangeAuto",
+     "b11",
+     {
+      "base_key": "manual"
+     }
+    ],
+    [
+     "bgStart",
+     "b11"
+    ],
+    [
+     "bgCutout",
+     "b11"
+    ],
+    [
+     "bgToggleChroma",
+     "b11",
+     true
+    ],
+    [
+     "bgToggleChroma",
+     "b11",
+     false
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "color": "#0000ff"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "color": "0xABC"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "color": "verde"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "similarity": 0.55
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "similarity": 0
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "blend": 0.3
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "spill": 0.7
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "edge": 0.4
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "shrink": -0.6
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "shrink": 2
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b11",
+     {
+      "color": "#FF00FF",
+      "enabled": true
+     }
+    ],
+    [
+     "bgResetChroma",
+     "b11"
+    ],
+    [
+     "bgChangeOutline",
+     "b11",
+     {
+      "enabled": true
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b11",
+     {
+      "enabled": false
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b11",
+     {
+      "color": "#123"
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b11",
+     {
+      "color": ""
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b11",
+     {
+      "width": 0.8
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b11",
+     {
+      "width": 3
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b11",
+     {
+      "soft": 0.5
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b11",
+     {
+      "opacity": 0.25
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b11",
+     {
+      "opacity": -1
+     }
+    ],
+    [
+     "bgFinished",
+     "b11",
+     {
+      "status": "done",
+      "bg_removal": {
+       "base_key": "nuevo",
+       "provider": "birefnet_lite",
+       "model_version": "1.4",
+       "mask_fps": 12,
+       "mask_height": 1080,
+       "warning": "Va lento"
+      }
+     }
+    ],
+    [
+     "bgFinished",
+     "b11",
+     {
+      "status": "done",
+      "bg_removal": {
+       "base_key": "solo-clave"
+      }
+     }
+    ],
+    [
+     "bgFinished",
+     "b11",
+     {
+      "status": "done",
+      "bg_removal": {}
+     }
+    ],
+    [
+     "bgFinished",
+     "b11",
+     {
+      "status": "done"
+     }
+    ],
+    [
+     "bgFinished",
+     "b11",
+     {
+      "status": "error",
+      "error": "Cancelado"
+     }
+    ],
+    [
+     "bgFinished",
+     "b11",
+     {
+      "status": "error",
+      "error": ""
+     }
+    ],
+    [
+     "bgFinished",
+     "b11",
+     {
+      "status": "error"
+     }
+    ],
+    [
+     "bgFinished",
+     "b11",
+     {
+      "status": "running",
+      "progress": 0.4
+     }
+    ],
+    [
+     "bgToggleAuto",
+     "b12",
+     true
+    ],
+    [
+     "bgToggleAuto",
+     "b12",
+     false
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "provider": "birefnet_lite"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "provider": "sam21_large"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "provider": "u2net",
+      "mask_height": 1080
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "provider": "nada"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "provider": null
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "mask_height": 720
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "stabilize": 0.3
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "threshold": 0.62
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "softness": 0.1
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "feather": 0.2
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "expansion": -0.35
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "opacity": 0.5
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "invert": true
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "invert": false,
+      "threshold": 1.5
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {}
+    ],
+    [
+     "bgChangeAuto",
+     "b12",
+     {
+      "base_key": "manual"
+     }
+    ],
+    [
+     "bgStart",
+     "b12"
+    ],
+    [
+     "bgCutout",
+     "b12"
+    ],
+    [
+     "bgToggleChroma",
+     "b12",
+     true
+    ],
+    [
+     "bgToggleChroma",
+     "b12",
+     false
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "color": "#0000ff"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "color": "0xABC"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "color": "verde"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "similarity": 0.55
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "similarity": 0
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "blend": 0.3
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "spill": 0.7
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "edge": 0.4
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "shrink": -0.6
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "shrink": 2
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b12",
+     {
+      "color": "#FF00FF",
+      "enabled": true
+     }
+    ],
+    [
+     "bgResetChroma",
+     "b12"
+    ],
+    [
+     "bgChangeOutline",
+     "b12",
+     {
+      "enabled": true
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b12",
+     {
+      "enabled": false
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b12",
+     {
+      "color": "#123"
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b12",
+     {
+      "color": ""
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b12",
+     {
+      "width": 0.8
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b12",
+     {
+      "width": 3
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b12",
+     {
+      "soft": 0.5
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b12",
+     {
+      "opacity": 0.25
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b12",
+     {
+      "opacity": -1
+     }
+    ],
+    [
+     "bgFinished",
+     "b12",
+     {
+      "status": "done",
+      "bg_removal": {
+       "base_key": "nuevo",
+       "provider": "birefnet_lite",
+       "model_version": "1.4",
+       "mask_fps": 12,
+       "mask_height": 1080,
+       "warning": "Va lento"
+      }
+     }
+    ],
+    [
+     "bgFinished",
+     "b12",
+     {
+      "status": "done",
+      "bg_removal": {
+       "base_key": "solo-clave"
+      }
+     }
+    ],
+    [
+     "bgFinished",
+     "b12",
+     {
+      "status": "done",
+      "bg_removal": {}
+     }
+    ],
+    [
+     "bgFinished",
+     "b12",
+     {
+      "status": "done"
+     }
+    ],
+    [
+     "bgFinished",
+     "b12",
+     {
+      "status": "error",
+      "error": "Cancelado"
+     }
+    ],
+    [
+     "bgFinished",
+     "b12",
+     {
+      "status": "error",
+      "error": ""
+     }
+    ],
+    [
+     "bgFinished",
+     "b12",
+     {
+      "status": "error"
+     }
+    ],
+    [
+     "bgFinished",
+     "b12",
+     {
+      "status": "running",
+      "progress": 0.4
+     }
+    ],
+    [
+     "bgToggleAuto",
+     "b13",
+     true
+    ],
+    [
+     "bgToggleAuto",
+     "b13",
+     false
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "provider": "birefnet_lite"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "provider": "sam21_large"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "provider": "u2net",
+      "mask_height": 1080
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "provider": "nada"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "provider": null
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "mask_height": 720
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "stabilize": 0.3
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "threshold": 0.62
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "softness": 0.1
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "feather": 0.2
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "expansion": -0.35
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "opacity": 0.5
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "invert": true
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "invert": false,
+      "threshold": 1.5
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {}
+    ],
+    [
+     "bgChangeAuto",
+     "b13",
+     {
+      "base_key": "manual"
+     }
+    ],
+    [
+     "bgStart",
+     "b13"
+    ],
+    [
+     "bgCutout",
+     "b13"
+    ],
+    [
+     "bgToggleChroma",
+     "b13",
+     true
+    ],
+    [
+     "bgToggleChroma",
+     "b13",
+     false
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "color": "#0000ff"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "color": "0xABC"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "color": "verde"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "similarity": 0.55
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "similarity": 0
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "blend": 0.3
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "spill": 0.7
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "edge": 0.4
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "shrink": -0.6
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "shrink": 2
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b13",
+     {
+      "color": "#FF00FF",
+      "enabled": true
+     }
+    ],
+    [
+     "bgResetChroma",
+     "b13"
+    ],
+    [
+     "bgChangeOutline",
+     "b13",
+     {
+      "enabled": true
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b13",
+     {
+      "enabled": false
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b13",
+     {
+      "color": "#123"
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b13",
+     {
+      "color": ""
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b13",
+     {
+      "width": 0.8
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b13",
+     {
+      "width": 3
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b13",
+     {
+      "soft": 0.5
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b13",
+     {
+      "opacity": 0.25
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b13",
+     {
+      "opacity": -1
+     }
+    ],
+    [
+     "bgFinished",
+     "b13",
+     {
+      "status": "done",
+      "bg_removal": {
+       "base_key": "nuevo",
+       "provider": "birefnet_lite",
+       "model_version": "1.4",
+       "mask_fps": 12,
+       "mask_height": 1080,
+       "warning": "Va lento"
+      }
+     }
+    ],
+    [
+     "bgFinished",
+     "b13",
+     {
+      "status": "done",
+      "bg_removal": {
+       "base_key": "solo-clave"
+      }
+     }
+    ],
+    [
+     "bgFinished",
+     "b13",
+     {
+      "status": "done",
+      "bg_removal": {}
+     }
+    ],
+    [
+     "bgFinished",
+     "b13",
+     {
+      "status": "done"
+     }
+    ],
+    [
+     "bgFinished",
+     "b13",
+     {
+      "status": "error",
+      "error": "Cancelado"
+     }
+    ],
+    [
+     "bgFinished",
+     "b13",
+     {
+      "status": "error",
+      "error": ""
+     }
+    ],
+    [
+     "bgFinished",
+     "b13",
+     {
+      "status": "error"
+     }
+    ],
+    [
+     "bgFinished",
+     "b13",
+     {
+      "status": "running",
+      "progress": 0.4
+     }
+    ],
+    [
+     "bgToggleAuto",
+     "b14",
+     true
+    ],
+    [
+     "bgToggleAuto",
+     "b14",
+     false
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "provider": "birefnet_lite"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "provider": "sam21_large"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "provider": "u2net",
+      "mask_height": 1080
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "provider": "nada"
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "provider": null
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "mask_height": 720
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "stabilize": 0.3
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "threshold": 0.62
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "softness": 0.1
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "feather": 0.2
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "expansion": -0.35
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "opacity": 0.5
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "invert": true
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "invert": false,
+      "threshold": 1.5
+     }
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {}
+    ],
+    [
+     "bgChangeAuto",
+     "b14",
+     {
+      "base_key": "manual"
+     }
+    ],
+    [
+     "bgStart",
+     "b14"
+    ],
+    [
+     "bgCutout",
+     "b14"
+    ],
+    [
+     "bgToggleChroma",
+     "b14",
+     true
+    ],
+    [
+     "bgToggleChroma",
+     "b14",
+     false
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "color": "#0000ff"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "color": "0xABC"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "color": "verde"
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "similarity": 0.55
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "similarity": 0
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "blend": 0.3
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "spill": 0.7
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "edge": 0.4
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "shrink": -0.6
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "shrink": 2
+     }
+    ],
+    [
+     "bgChangeChroma",
+     "b14",
+     {
+      "color": "#FF00FF",
+      "enabled": true
+     }
+    ],
+    [
+     "bgResetChroma",
+     "b14"
+    ],
+    [
+     "bgChangeOutline",
+     "b14",
+     {
+      "enabled": true
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b14",
+     {
+      "enabled": false
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b14",
+     {
+      "color": "#123"
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b14",
+     {
+      "color": ""
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b14",
+     {
+      "width": 0.8
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b14",
+     {
+      "width": 3
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b14",
+     {
+      "soft": 0.5
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b14",
+     {
+      "opacity": 0.25
+     }
+    ],
+    [
+     "bgChangeOutline",
+     "b14",
+     {
+      "opacity": -1
+     }
+    ],
+    [
+     "bgFinished",
+     "b14",
+     {
+      "status": "done",
+      "bg_removal": {
+       "base_key": "nuevo",
+       "provider": "birefnet_lite",
+       "model_version": "1.4",
+       "mask_fps": 12,
+       "mask_height": 1080,
+       "warning": "Va lento"
+      }
+     }
+    ],
+    [
+     "bgFinished",
+     "b14",
+     {
+      "status": "done",
+      "bg_removal": {
+       "base_key": "solo-clave"
+      }
+     }
+    ],
+    [
+     "bgFinished",
+     "b14",
+     {
+      "status": "done",
+      "bg_removal": {}
+     }
+    ],
+    [
+     "bgFinished",
+     "b14",
+     {
+      "status": "done"
+     }
+    ],
+    [
+     "bgFinished",
+     "b14",
+     {
+      "status": "error",
+      "error": "Cancelado"
+     }
+    ],
+    [
+     "bgFinished",
+     "b14",
+     {
+      "status": "error",
+      "error": ""
+     }
+    ],
+    [
+     "bgFinished",
+     "b14",
+     {
+      "status": "error"
+     }
+    ],
+    [
+     "bgFinished",
+     "b14",
      {
       "status": "running",
       "progress": 0.4
@@ -977158,6 +978891,7 @@
       }
      }
     },
+    null,
     {
      "enabled": true,
      "mode": "auto",
@@ -979015,6 +980749,7 @@
       }
      }
     },
+    null,
     {
      "enabled": true,
      "mode": "auto",
@@ -980872,6 +982607,7 @@
       }
      }
     },
+    null,
     {
      "enabled": true,
      "mode": "auto",
@@ -982973,6 +984709,40 @@
        "width": 0.3,
        "soft": 0,
        "opacity": 1
+      }
+     }
+    },
+    {
+     "clip_id": "b4",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "b4",
+     "filename": "b4.mp4",
+     "asset_scope": "project",
+     "in_point": 0,
+     "out_point": 5,
+     "source_duration": 30,
+     "bg_removal": {
+      "enabled": true,
+      "auto": {
+       "enabled": true,
+       "provider": "sam21_tiny",
+       "base_key": "k-sam",
+       "status": "ready",
+       "edits": [
+        {
+         "op": "keep",
+         "size": 0.05,
+         "points": [
+          {
+           "x": 0.5,
+           "y": 0.5
+          }
+         ],
+         "t": 1.2,
+         "tool": "smart"
+        }
+       ]
       }
      }
     },
@@ -985211,6 +986981,41 @@
      }
     },
     {
+     "clip_id": "b5",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "lib-7",
+     "filename": "b5.mp4",
+     "asset_scope": "library",
+     "in_point": 2,
+     "out_point": 8,
+     "source_duration": 30,
+     "bg_removal": {
+      "enabled": true,
+      "mode": "auto",
+      "auto": {
+       "enabled": true,
+       "provider": "rvm_mobilenetv3",
+       "base_key": "abc123",
+       "status": "ready",
+       "mask_height": 720,
+       "threshold": 0.4,
+       "feather": 0.05,
+       "model_version": "v2"
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#123456",
+       "similarity": 0.6,
+       "spill": 0.3
+      },
+      "outline": {
+       "enabled": true,
+       "width": 0.5
+      }
+     }
+    },
+    {
      "enabled": true,
      "mode": "auto",
      "auto": {
@@ -987067,6 +988872,7 @@
       }
      }
     },
+    null,
     {
      "enabled": true,
      "mode": "auto",
@@ -988924,6 +990730,7 @@
       }
      }
     },
+    null,
     {
      "enabled": false,
      "mode": "auto",
@@ -990712,6 +992519,7 @@
       "opacity": 1
      }
     },
+    null,
     null,
     {
      "enabled": true,
@@ -992570,6 +994378,7 @@
       }
      }
     },
+    null,
     {
      "enabled": true,
      "mode": "auto",
@@ -994427,6 +996236,7 @@
       }
      }
     },
+    null,
     {
      "enabled": true,
      "mode": "auto",
@@ -995508,6 +997318,7505 @@
       "threshold": 0.5,
       "softness": 0.25,
       "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    null,
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "birefnet_lite",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "sam21_large",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0.3,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.62,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.1,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0.15,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": -0.35,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 0.5,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": true,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 1,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "manual",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "body": {
+      "clip_id": "b11",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "b11",
+      "filename": "b11.mp4",
+      "asset_scope": "project",
+      "in_point": 1,
+      "out_point": 4,
+      "source_duration": 30,
+      "auto": {
+       "enabled": false,
+       "provider": "u2net",
+       "model_version": "",
+       "base_key": "",
+       "status": "idle",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 512,
+       "stabilize": 0,
+       "threshold": 0.5,
+       "softness": 0.25,
+       "feather": 0,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      }
+     },
+     "bg": {
+      "enabled": true,
+      "mode": "auto",
+      "auto": {
+       "enabled": true,
+       "provider": "u2net",
+       "model_version": "",
+       "base_key": "",
+       "status": "running",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 512,
+       "stabilize": 0,
+       "threshold": 0.5,
+       "softness": 0.25,
+       "feather": 0,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#0000FF",
+       "similarity": 0.2,
+       "blend": 0.1,
+       "spill": 0,
+       "edge": 0,
+       "shrink": 0
+      },
+      "outline": {
+       "enabled": false,
+       "color": "#FFFFFF",
+       "width": 0.3,
+       "soft": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "clip_id": "b11",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "b11",
+     "filename": "b11.mp4",
+     "asset_scope": "project",
+     "in_point": 1,
+     "out_point": 4,
+     "source_duration": 30,
+     "label": "Mi recorte",
+     "bg_removal": {
+      "chroma": {
+       "enabled": true,
+       "color": "#00f"
+      }
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#AABBCC",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.55,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 1e-05,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.3,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0.7,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0.4,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": -0.6
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 1
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#FF00FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#112233",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.8,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 1,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0.5,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 0.25
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 0
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "birefnet_lite",
+      "model_version": "1.4",
+      "base_key": "nuevo",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 12,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "solo-clave",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    null,
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "error",
+      "error": "Cancelado",
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "error",
+      "error": "Error",
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "error",
+      "error": "Error",
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    null,
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "birefnet_lite",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "sam21_large",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0.3,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.62,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.1,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.15,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": -0.35,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 0.5,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": true,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 1,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "manual",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "body": {
+      "clip_id": "b12",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "b12",
+      "filename": "b12.mp4",
+      "asset_scope": "project",
+      "in_point": 0,
+      "out_point": 2,
+      "source_duration": 30,
+      "auto": {
+       "enabled": true,
+       "provider": "rvm_mobilenetv3",
+       "model_version": "v2",
+       "base_key": "abc123",
+       "status": "ready",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 720,
+       "stabilize": 0,
+       "threshold": 0.4,
+       "softness": 0.25,
+       "feather": 0.05,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      }
+     },
+     "bg": {
+      "enabled": true,
+      "mode": "auto",
+      "auto": {
+       "enabled": true,
+       "provider": "rvm_mobilenetv3",
+       "model_version": "v2",
+       "base_key": "abc123",
+       "status": "running",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 720,
+       "stabilize": 0,
+       "threshold": 0.4,
+       "softness": 0.25,
+       "feather": 0.05,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#123456",
+       "similarity": 0.6,
+       "blend": 0.1,
+       "spill": 0.3,
+       "edge": 0,
+       "shrink": 0
+      },
+      "outline": {
+       "enabled": true,
+       "color": "#FFFFFF",
+       "width": 0.5,
+       "soft": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "clip_id": "b12",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "b12",
+     "filename": "b12.mp4",
+     "asset_scope": "project",
+     "in_point": 0,
+     "out_point": 2,
+     "source_duration": 30,
+     "bg_removal": {
+      "enabled": true,
+      "mode": "auto",
+      "auto": {
+       "enabled": true,
+       "provider": "rvm_mobilenetv3",
+       "base_key": "abc123",
+       "status": "ready",
+       "mask_height": 720,
+       "threshold": 0.4,
+       "feather": 0.05,
+       "model_version": "v2"
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#123456",
+       "similarity": 0.6,
+       "spill": 0.3
+      },
+      "outline": {
+       "enabled": true,
+       "width": 0.5
+      }
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#AABBCC",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.55,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 1e-05,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.3,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.7,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0.4,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": -0.6
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 1
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#FF00FF",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#112233",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.8,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 1,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0.5,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 0.25
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 0
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "birefnet_lite",
+      "model_version": "1.4",
+      "base_key": "nuevo",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 12,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "solo-clave",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    null,
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "error",
+      "error": "Cancelado",
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "error",
+      "error": "Error",
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": true,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "error",
+      "error": "Error",
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#123456",
+      "similarity": 0.6,
+      "blend": 0.1,
+      "spill": 0.3,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.5,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    null,
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "birefnet_lite",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "sam21_large",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0.3,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.62,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.1,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0.15,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": -0.35,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 0.5,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": true,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 1,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "manual",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "body": {
+      "clip_id": "b13",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "b13",
+      "filename": "b13.mp4",
+      "asset_scope": "project",
+      "in_point": 0,
+      "out_point": 2,
+      "source_duration": 30,
+      "auto": {
+       "enabled": false,
+       "provider": "u2net",
+       "model_version": "",
+       "base_key": "",
+       "status": "idle",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 512,
+       "stabilize": 0,
+       "threshold": 0.5,
+       "softness": 0.25,
+       "feather": 0,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      }
+     },
+     "bg": {
+      "enabled": false,
+      "mode": "auto",
+      "auto": {
+       "enabled": true,
+       "provider": "u2net",
+       "model_version": "",
+       "base_key": "",
+       "status": "running",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 512,
+       "stabilize": 0,
+       "threshold": 0.5,
+       "softness": 0.25,
+       "feather": 0,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#00FF00",
+       "similarity": 0.2,
+       "blend": 0.1,
+       "spill": 0,
+       "edge": 0,
+       "shrink": 0
+      },
+      "outline": {
+       "enabled": false,
+       "color": "#FFFFFF",
+       "width": 0.3,
+       "soft": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "clip_id": "b13",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "b13",
+     "filename": "b13.mp4",
+     "asset_scope": "project",
+     "in_point": 0,
+     "out_point": 2,
+     "source_duration": 30,
+     "bg_removal": {
+      "enabled": false,
+      "chroma": {
+       "enabled": true
+      }
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#AABBCC",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.55,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 1e-05,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.3,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0.7,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0.4,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": -0.6
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 1
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#FF00FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#112233",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.8,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 1,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0.5,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 0.25
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 0
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "birefnet_lite",
+      "model_version": "1.4",
+      "base_key": "nuevo",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 12,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "solo-clave",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    null,
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "error",
+      "error": "Cancelado",
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "error",
+      "error": "Error",
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "error",
+      "error": "Error",
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.5,
+      "softness": 0.25,
+      "feather": 0,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    null,
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": false,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "birefnet_lite",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "sam21_large",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "",
+      "status": "idle",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0.3,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.62,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.1,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.15,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": -0.35,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 0.5,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": true,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 1,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "manual",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "body": {
+      "clip_id": "b14",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "b14",
+      "filename": "b14.mp4",
+      "asset_scope": "project",
+      "in_point": 0,
+      "out_point": 2,
+      "source_duration": 30,
+      "auto": {
+       "enabled": true,
+       "provider": "rvm_mobilenetv3",
+       "model_version": "v2",
+       "base_key": "abc123",
+       "status": "ready",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 720,
+       "stabilize": 0,
+       "threshold": 0.4,
+       "softness": 0.25,
+       "feather": 0.05,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      }
+     },
+     "bg": {
+      "enabled": false,
+      "mode": "auto",
+      "auto": {
+       "enabled": true,
+       "provider": "rvm_mobilenetv3",
+       "model_version": "v2",
+       "base_key": "abc123",
+       "status": "running",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 720,
+       "stabilize": 0,
+       "threshold": 0.4,
+       "softness": 0.25,
+       "feather": 0.05,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      },
+      "chroma": {
+       "enabled": false,
+       "color": "#00FF00",
+       "similarity": 0.2,
+       "blend": 0.1,
+       "spill": 0,
+       "edge": 0,
+       "shrink": 0
+      },
+      "outline": {
+       "enabled": false,
+       "color": "#FFFFFF",
+       "width": 0.3,
+       "soft": 0,
+       "opacity": 1
+      }
+     }
+    },
+    null,
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#0000FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#AABBCC",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.55,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 1e-05,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.3,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0.7,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0.4,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": -0.6
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 1
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": true,
+      "color": "#FF00FF",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": true,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#112233",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.8,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 1,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0.5,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 0.25
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 0
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "birefnet_lite",
+      "model_version": "1.4",
+      "base_key": "nuevo",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 12,
+      "mask_height": 1080,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "solo-clave",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "u2net",
+      "model_version": "",
+      "base_key": "",
+      "status": "ready",
+      "error": null,
+      "mask_fps": 15,
+      "mask_height": 512,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    null,
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "error",
+      "error": "Cancelado",
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "error",
+      "error": "Error",
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
+      "expansion": 0,
+      "opacity": 1,
+      "invert": false,
+      "edits": []
+     },
+     "chroma": {
+      "enabled": false,
+      "color": "#00FF00",
+      "similarity": 0.2,
+      "blend": 0.1,
+      "spill": 0,
+      "edge": 0,
+      "shrink": 0
+     },
+     "outline": {
+      "enabled": false,
+      "color": "#FFFFFF",
+      "width": 0.3,
+      "soft": 0,
+      "opacity": 1
+     }
+    },
+    {
+     "enabled": false,
+     "mode": "auto",
+     "auto": {
+      "enabled": true,
+      "provider": "rvm_mobilenetv3",
+      "model_version": "v2",
+      "base_key": "abc123",
+      "status": "error",
+      "error": "Error",
+      "mask_fps": 15,
+      "mask_height": 720,
+      "stabilize": 0,
+      "threshold": 0.4,
+      "softness": 0.25,
+      "feather": 0.05,
       "expansion": 0,
       "opacity": 1,
       "invert": false,

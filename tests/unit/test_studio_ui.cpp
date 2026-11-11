@@ -1015,6 +1015,61 @@ TEST_CASE("studio sin pantalla: «Eliminar fondo» calcula el matte con el backe
     CHECK(bg_auto()["mask_height"] == 1080);
 }
 
+TEST_CASE("studio sin pantalla: «Exportar recorte» hornea por el backend y añade al material", "[studio][ui][backend]") {
+    const Studio s;
+    int polls = 0;
+    bool hold = false;
+    bool cancelled = false;
+    FakeBackend backend([&](const QString& method, const QString& path, const Json&) -> std::pair<int, Json> {
+        if (method == "POST" && path == "/api/projects/p1/bg-cutout") {
+            polls = 0;
+            return {200, {{"id", "c1"}, {"status", "pending"}, {"progress", 0.0}}};
+        }
+        if (method == "DELETE" && path == "/api/job/c1") {
+            cancelled = true;
+            return {200, {{"ok", true}}};
+        }
+        if (method == "GET" && path == "/api/job/c1") {
+            if (cancelled) {
+                return {200, {{"id", "c1"}, {"status", "error"}, {"error", "Cancelado"}}};
+            }
+            if (++polls == 1 || hold) {
+                return {200, {{"id", "c1"}, {"status", "running"}, {"progress", 0.5}, {"message", "Horneando…"}}};
+            }
+            return {200, {{"id", "c1"}, {"status", "done"}, {"progress", 1.0}, {"message", "Recorte añadido a Vídeos."}}};
+        }
+        return {404, {{"detail", "No existe."}}};
+    });
+    s.editor->cutoutBackend().setBaseUrl(backend.url());
+    s.editor->cutoutBackend().setPollInterval(20);
+
+    s.editor->select("a");
+    QCoreApplication::processEvents();
+    s.click("insp:tab:bg");
+    s.editor->exportBgCutout(); // sin matte ni croma: nada que hornear
+    CHECK(s.editor->cutoutJob().isEmpty());
+    CHECK(backend.requests.empty());
+    CHECK_FALSE(s.item("insp:bg:cutout"));
+
+    s.editor->toggleBgChroma(true);
+    QTest::qWait(50);
+    REQUIRE(s.item("insp:bg:cutout"));
+    QMetaObject::invokeMethod(s.item("insp:bg:cutout"), "clicked");
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->cutoutJob()["status"] == "done"; }, 10000));
+    REQUIRE_FALSE(backend.requests.empty());
+    CHECK(backend.requests.front().body.at("clip_id") == "a");
+    CHECK(backend.requests.front().body.at("label") == "a");
+    CHECK(backend.requests.front().body.at("bg_removal").at("chroma").at("enabled") == true);
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->cutoutJob().isEmpty(); }, 10000)); // el aviso se va solo
+
+    hold = true;
+    s.editor->exportBgCutout();
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->cutoutJob()["status"] == "running" && s.editor->cutoutJob()["message"] == "Horneando…"; }, 10000));
+    s.editor->cancelBgCutout();
+    REQUIRE(QTest::qWaitFor([&] { return s.editor->cutoutJob()["status"] == "error"; }, 10000));
+    CHECK(s.editor->cutoutJob()["error"] == "Cancelado");
+}
+
 TEST_CASE("studio sin pantalla: «Cargar audio» genera la voz y extrae un enlace por el backend", "[studio][ui][backend]") {
     const Studio s;
     studio::Narrator& narrator = s.editor->narratorModel();

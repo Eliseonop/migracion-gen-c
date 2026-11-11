@@ -244,6 +244,13 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     connect(&crop_frames_, &FrameGrabber::frameChanged, this, &EditorModel::cropFrameChanged);
     face_jobs_.setPollInterval(500); // followMaskFace sondea cada medio segundo
     bg_jobs_.setPollInterval(700);   // el job del matte, cada 700 ms (VideoEditor.jsx)
+    cutout_jobs_.setPollInterval(800);
+    cutout_clear_.setSingleShot(true);
+    cutout_clear_.setInterval(3200);
+    connect(&cutout_clear_, &QTimer::timeout, this, [this] {
+        cutout_job_.clear();
+        emit cutoutJobChanged();
+    });
     narrator_.setSettings(settings_);
     connect(&narrator_, &Narrator::notice, this, &EditorModel::set_notice);
     connect(&narrator_, &Narrator::audioAdded, this, [this](const QString& message) { // el onChange de AudioTab y su Toast
@@ -836,6 +843,12 @@ void EditorModel::closeProject() {
     proxy_maker_.close();
     narrator_.setProject({});
     bg_jobs_.stop(); // el editor se cierra: nadie espera su resultado (el backend lo termina)
+    cutout_jobs_.stop();
+    cutout_clear_.stop();
+    if (!cutout_job_.isEmpty()) {
+        cutout_job_.clear();
+        emit cutoutJobChanged();
+    }
     setBgPicking(false);
     bg_preview_ = {{"mode", "normal"}, {"color", "#3B82F6"}, {"kind", ""}};
     bg_preview_file_.clear();
@@ -3015,6 +3028,41 @@ void EditorModel::cancelBgAuto() {
     bg_jobs_.cancel();
     bg_job_["message"] = "Cancelando…";
     emit bgJobChanged();
+}
+
+void EditorModel::exportBgCutout() {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const auto body = c ? core::bg_cutout_body(*c) : std::nullopt;
+    if (!session_ || !body) {
+        return;
+    }
+    cutout_clear_.stop();
+    cutout_job_ = {{"status", "running"}, {"progress", 0.0}, {"message", "Preparando el recorte…"}, {"error", QString()}};
+    emit cutoutJobChanged();
+    cutout_jobs_.start(QString("/api/projects/%1/bg-cutout").arg(qstr(project_id_)), *body,
+                       [this](const Json& job) { cutout_update(job); });
+}
+
+void EditorModel::cancelBgCutout() {
+    if (!cutout_job_.isEmpty() && cutout_jobs_.busy()) {
+        cutout_jobs_.cancel();
+        cutout_job_["message"] = "Cancelando…";
+        emit cutoutJobChanged();
+    }
+}
+
+void EditorModel::cutout_update(const Json& job) {
+    const std::string status = job_text(job, "status");
+    const auto progress = job.find("progress");
+    cutout_job_ = {{"status", qstr(status)},
+                   {"progress", progress != job.end() && progress->is_number() ? progress->get<double>() : 0.0},
+                   {"message", qstr(job_text(job, "message"))},
+                   {"error", qstr(job_text(job, "error"))}};
+    if (status == "done") { // aparece el vídeo transparente en el material
+        reload_project_materials();
+        cutout_clear_.start();
+    }
+    emit cutoutJobChanged();
 }
 
 void EditorModel::setBgPicking(bool on) {
