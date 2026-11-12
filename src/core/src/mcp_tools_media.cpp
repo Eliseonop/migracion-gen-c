@@ -128,8 +128,9 @@ Result<Json> delete_media(const EditToolsEnv& env, const Json& args) {
 
 // search_sfx: sfx.search con max(1, min(int(limit), 300)) y lo que el agente necesita de cada sonido.
 Result<Json> search_sfx(const EditToolsEnv& env, const Json& args) {
-    const Json& raw_limit = arg(args, "limit");
-    const auto limit = raw_limit.is_null() ? std::optional<std::int64_t>(kSfxDefaultLimit) : py_int(raw_limit);
+    // Sin limit, el 50 por defecto; un null explícito es int(None) de Python (TypeError).
+    const bool given = args.is_object() && args.contains("limit");
+    const auto limit = given ? py_int(args["limit"]) : std::optional<std::int64_t>(kSfxDefaultLimit);
     if (!limit) {
         return fail(ErrorCode::Internal, "int() de limit"); // TypeError o ValueError de Python: un crash
     }

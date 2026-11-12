@@ -870,6 +870,11 @@ TEST_CASE("paridad MCP: las tools de material sin IA (tools_media, tools_audio y
         CHECK(Json(found) == c["files"]);
     }
     CHECK(errors == 18);
+    // Un limit null explícito es int(None) de Python: un crash, no el 50 por defecto (el servidor ya lo
+    // rechaza antes, al validar los argumentos).
+    const auto null_limit = mcp::call_media_tool(env, "search_sfx", Json{{"limit", nullptr}});
+    REQUIRE_FALSE(null_limit);
+    CHECK(null_limit.error().code == gc::ErrorCode::Internal);
     const auto unknown = mcp::call_media_tool(env, "fetch_image", Json::object());
     REQUIRE_FALSE(unknown);
     CHECK(unknown.error().code == gc::ErrorCode::NotFound);
