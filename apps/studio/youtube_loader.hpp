@@ -71,6 +71,8 @@ signals:
     void downloadChanged();
     // La descarga acabó: hay un vídeo nuevo en projects.json.
     void videoAdded(const QString& message);
+    // La timeline ya usaba ese vídeo en menos calidad: {index, quality, versions} de «Subir calidad», en JSON.
+    void upgradeOffered(const QString& ask);
 
 private:
     void set_result(const Json& res);

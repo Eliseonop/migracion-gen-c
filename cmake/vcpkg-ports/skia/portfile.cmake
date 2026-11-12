@@ -304,14 +304,19 @@ else()
         cxx=\"${VCPKG_DETECTED_CMAKE_CXX_COMPILER}\"")
 endif()
 
-string_to_gn_list(SKIA_C_FLAGS_DBG "${VCPKG_COMBINED_C_FLAGS_DEBUG}")
-string_to_gn_list(SKIA_CXX_FLAGS_DBG "${VCPKG_COMBINED_CXX_FLAGS_DEBUG}")
+# GenClipPro: la STL de MSVC 14.52 pide Clang 22 o más y vcpkg trae el clang-cl 21 (STL1000); su escape.
+set(skia_extra_defs "")
+if(VCPKG_TARGET_IS_WINDOWS)
+    set(skia_extra_defs "-D_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH ")
+endif()
+string_to_gn_list(SKIA_C_FLAGS_DBG "${skia_extra_defs}${VCPKG_COMBINED_C_FLAGS_DEBUG}")
+string_to_gn_list(SKIA_CXX_FLAGS_DBG "${skia_extra_defs}${VCPKG_COMBINED_CXX_FLAGS_DEBUG}")
 string(APPEND OPTIONS_DBG " \
     extra_cflags_c=${SKIA_C_FLAGS_DBG} \
     extra_cflags_cc=${SKIA_CXX_FLAGS_DBG}")
 
-string_to_gn_list(SKIA_C_FLAGS_REL "${VCPKG_COMBINED_C_FLAGS_RELEASE}")
-string_to_gn_list(SKIA_CXX_FLAGS_REL "${VCPKG_COMBINED_CXX_FLAGS_RELEASE}")
+string_to_gn_list(SKIA_C_FLAGS_REL "${skia_extra_defs}${VCPKG_COMBINED_C_FLAGS_RELEASE}")
+string_to_gn_list(SKIA_CXX_FLAGS_REL "${skia_extra_defs}${VCPKG_COMBINED_CXX_FLAGS_RELEASE}")
 string(APPEND OPTIONS_REL " \
     extra_cflags_c=${SKIA_C_FLAGS_REL} \
     extra_cflags_cc=${SKIA_CXX_FLAGS_REL}")

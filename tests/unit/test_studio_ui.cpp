@@ -34,6 +34,7 @@
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/mask_ui.hpp"
+#include "gc/core/serialize.hpp"
 #include "gc/core/timeline_view.hpp"
 
 #include "editor_model.hpp"
@@ -1217,6 +1218,119 @@ TEST_CASE("studio sin pantalla: la pestaña YouTube analiza un enlace y agrega e
     yt.removeHistory(yt.history().front().toMap());
     CHECK(yt.history().isEmpty());
     CHECK(s.settings_file->load().value("yt_history", Json::array()).empty());
+}
+
+TEST_CASE("studio sin pantalla: «Subir calidad» cambia la versión ligera de un vídeo de YouTube por la completa", "[studio][ui]") {
+    const Studio s;
+    // El clip «a» de la timeline usa a.mp4, la versión de 720p (material 3) del vídeo «abc» de YouTube; el material 5 es
+    // el vídeo completo en 4K, el 7 un vídeo subido y el 100001 un tramo por referencia de a.mp4.
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    const auto video = core::project_base(s.store->clips_dir(), **project) / "video";
+    std::filesystem::create_directories(video);
+    for (const char* name : {"a.mp4", "full.mp4", "otro.mp4"}) {
+        std::ofstream(video / name) << "x";
+    }
+    const auto info = [](const Json& j) {
+        auto c = core::clip_info_from_json(j);
+        REQUIRE(c);
+        return *c;
+    };
+    const Json yt{{"provider", "youtube"}, {"external_id", "abc"}};
+    Json light{{"index", 3}, {"filename", "a.mp4"}, {"url", "/a"}, {"start", 0.0}, {"end", 20.0}, {"label", "Ligera"}};
+    Json full{{"index", 5}, {"filename", "full.mp4"}, {"url", "/f"}, {"start", 0.0}, {"end", 30.0}, {"label", "Completa"}};
+    Json segment{{"index", 100001}, {"filename", "a.mp4"}, {"url", "/a"}, {"start", 2.0}, {"end", 6.0},
+                 {"in_point", 2.0}, {"out_point", 6.0}, {"parent_id", "3"}};
+    light.update(yt);
+    full.update(yt);
+    segment.update(yt);
+    core::SequentialIdSource ids;
+    REQUIRE(s.store->add_clips("p1", {info(light), info(full), info({{"index", 7}, {"filename", "otro.mp4"}, {"url", "/o"}, {"start", 0.0}, {"end", 5.0}}), info(segment)}, ids));
+    int probes = 0;
+    s.editor->setVideoDimsProbe([&probes](const std::filesystem::path& p) -> std::optional<std::pair<std::int64_t, std::int64_t>> {
+        ++probes;
+        return p.filename() == "full.mp4" ? std::pair<std::int64_t, std::int64_t>(3840, 2160)
+                                          : std::pair<std::int64_t, std::int64_t>(1280, 720);
+    });
+    REQUIRE(s.editor->openProject("p1"));
+    const auto row = [&](const QString& key) {
+        for (const QVariant& m : s.editor->materials()) {
+            if (m.toMap()["key"] == key) {
+                return m.toMap();
+            }
+        }
+        return QVariantMap();
+    };
+    CHECK(row("clips:5")["canUpgrade"].toBool()); // canUpgradeFrom: de YouTube y no un tramo
+    CHECK(row("clips:3")["canUpgrade"].toBool());
+    CHECK_FALSE(row("clips:7")["canUpgrade"].toBool());
+    CHECK_FALSE(row("clips:100001")["canUpgrade"].toBool());
+
+    // Sin versiones de menos calidad en la timeline: solo el aviso.
+    s.editor->checkUpgrade("clips:7");
+    CHECK(s.editor->upgradeAsk().isEmpty());
+    CHECK(s.editor->notice()["message"] == "La timeline no usa versiones de menos calidad de este vídeo.");
+    s.editor->checkUpgrade("clips:3"); // la de 4K no la usa la timeline (y no es de menos calidad)
+    CHECK(s.editor->upgradeAsk().isEmpty());
+    CHECK(s.editor->notice()["type"] == "info");
+
+    // La completa: la pregunta, en el modal.
+    s.editor->checkUpgrade("clips:5");
+    QCoreApplication::processEvents();
+    REQUIRE_FALSE(s.editor->upgradeAsk().isEmpty());
+    const QString question = "La timeline usa «Ligera» en 720p en 1 clip. ¿Cambiarlos por la versión 4K? Se conservan los "
+                             "cortes, el encuadre y las animaciones (se puede deshacer).";
+    CHECK(s.editor->upgradeAsk()["message"] == question);
+    REQUIRE(s.item("upgrade:message"));
+    CHECK(s.item("upgrade:message")->property("text").toString() == question);
+    s.click("upgrade:cancel"); // «Ahora no»
+    CHECK(s.editor->upgradeAsk().isEmpty());
+    CHECK_FALSE(s.item("upgrade:message"));
+
+    s.editor->checkUpgrade("clips:5");
+    QCoreApplication::processEvents();
+    s.click("upgrade:confirm");
+    CHECK(s.editor->upgradeAsk().isEmpty());
+    CHECK(s.editor->notice()["type"] == "success");
+    CHECK(s.editor->notice()["message"] == "1 clip pasado a 4K.");
+    const auto saved_clip = [&]() -> core::TimelineClip {
+        const auto p = s.store->get_project("p1");
+        REQUIRE(p);
+        REQUIRE(*p);
+        for (const auto& c : (**p).timeline->clips) {
+            if (c->id == "a") {
+                return *c;
+            }
+        }
+        FAIL("sin el clip");
+        return {};
+    };
+    const core::TimelineClip a = saved_clip();
+    CHECK(a.filename == "full.mp4");
+    CHECK(a.asset_id == "5");
+    CHECK(a.in_point == 0.0);
+    CHECK(a.out_point == 4.0);
+    CHECK(a.source_duration == 30.0);
+    // El tramo por referencia pasa al archivo nuevo y el panel lo ve.
+    const auto p = s.store->get_project("p1");
+    REQUIRE(p);
+    const auto seg = std::ranges::find(p->value().clips, std::int64_t{100001}, &core::ClipInfo::index);
+    REQUIRE(seg != p->value().clips.end());
+    CHECK(seg->filename == "full.mp4");
+    const auto owner = std::ranges::find(p->value().clips, std::int64_t{5}, &core::ClipInfo::index);
+    REQUIRE(owner != p->value().clips.end());
+    REQUIRE(owner->id.has_value());
+    CHECK(seg->parent_id == owner->id); // el id del material nuevo (o su índice si no tiene), como media_upgrade
+
+    // Un paso de deshacer (los segmentos se quedan en el archivo nuevo, como en video-yt).
+    s.editor->undo();
+    CHECK(saved_clip().filename == "a.mp4");
+    // Las medidas de cada archivo, una vez por proyecto abierto.
+    const int before = probes;
+    s.editor->checkUpgrade("clips:5");
+    CHECK(probes == before);
+    s.editor->cancelUpgrade();
 }
 
 TEST_CASE("studio sin pantalla: «Cargar audio» genera la voz y extrae un enlace por el backend", "[studio][ui][backend]") {

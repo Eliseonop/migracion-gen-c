@@ -14,6 +14,7 @@
 #include <QUrl> // moc pide el tipo completo de QList<QUrl> (Qt 6.11; la 6.4 lo dejaba pasar)
 #include <QVariantList>
 #include <QVariantMap>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <optional>
@@ -22,6 +23,7 @@
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/history_store.hpp"
 #include "gc/core/mask_ui.hpp"
+#include "gc/core/media_upgrade.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/session.hpp"
 #include "gc/core/settings.hpp"
@@ -69,6 +71,9 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantMap maskFollow READ maskFollow NOTIFY maskFollowChanged)
     // El material cuyo seguimiento de caras se calcula («» si ninguno).
     Q_PROPERTY(QString faceTrackBusy READ faceTrackBusy NOTIFY faceTrackBusyChanged)
+    // «Subir calidad en la timeline» (el ConfirmModal de EdMaterial): {index, quality, versions, message, busy};
+    // vacío si no se pregunta nada.
+    Q_PROPERTY(QVariantMap upgradeAsk READ upgradeAsk NOTIFY upgradeAskChanged)
     // «Eliminar fondo»: el job del matte ({clipId, status, progress, message, error, notice}), los motores
     // (BG_PROVIDERS con lo que dice el backend de cada uno) y dónde se ejecutan (cpu, cuda…).
     Q_PROPERTY(QVariantMap bgJob READ bgJob NOTIFY bgJobChanged)
@@ -153,6 +158,9 @@ public:
     [[nodiscard]] BackendJobs& faceBackend() { return face_jobs_; }
     [[nodiscard]] QString faceTrackBusy() const { return mat_face_busy_; }
     [[nodiscard]] BackendJobs& materialFaceBackend() { return mat_face_jobs_; }
+    [[nodiscard]] QVariantMap upgradeAsk() const;
+    // Para los tests: las medidas de un vídeo (detect.dims) sin decodificarlo.
+    void setVideoDimsProbe(core::VideoDimsProbe probe) { dims_probe_ = std::move(probe); }
     [[nodiscard]] QVariantMap bgJob() const { return bg_job_; }
     [[nodiscard]] QVariantList bgProviders() const;
     [[nodiscard]] QString bgDevice() const { return bg_device_; }
@@ -373,6 +381,14 @@ public:
     // «Seguimiento de caras» de un vídeo del material (faceTrackFromMaterial): el backend lo analiza (o reutiliza el
     // guardado; con `force`, lo vuelve a analizar) y se aplica a sus clips de la timeline en un paso de deshacer.
     Q_INVOKABLE void faceTrackMaterial(const QString& key, bool force = false);
+    // «Usar esta calidad en la timeline» del menú de un vídeo del proyecto que viene de YouTube (checkUpgrade):
+    // busca sus otras versiones (find_versions, aquí mismo y no por el puente) y, si la timeline usa alguna de
+    // menos calidad que se puede cambiar, lo pregunta (upgradeAsk); si no, dice por qué. runUpgrade cambia
+    // esas versiones por esta (replace_with: la op replace_media en un paso de deshacer y los segmentos por
+    // referencia al archivo nuevo) y cancelUpgrade cierra la pregunta.
+    Q_INVOKABLE void checkUpgrade(const QString& key);
+    Q_INVOKABLE void runUpgrade();
+    Q_INVOKABLE void cancelUpgrade();
     // Eliminación automática del fondo del clip elegido (EdBgRemove y VideoEditor.jsx), en clip.bg_removal y
     // con un paso de deshacer cada una: encenderla o apagarla, un cambio del panel (motor, detalle, umbral…),
     // calcular el matte con el backend (POST /bg-removal; al acabar, su clave de caché va al clip) y cancelarlo.
@@ -506,6 +522,7 @@ signals:
     void subtitleJobChanged();
     void maskFollowChanged();
     void faceTrackBusyChanged();
+    void upgradeAskChanged();
     void bgJobChanged();
     void bgProvidersChanged();
     void bgPickingChanged();
@@ -618,6 +635,14 @@ private:
     QVariantMap mask_follow_;
     BackendJobs mat_face_jobs_;
     QString mat_face_busy_;
+    // «Subir calidad»: lo que se pregunta (ask de checkUpgrade o del job de la descarga) y las medidas de cada
+    // vídeo (detect.dims: su primer fotograma, con el autogiro), una vez por archivo y proyecto abierto.
+    void offer_upgrade(Json ask);
+    [[nodiscard]] std::optional<std::pair<std::int64_t, std::int64_t>> video_dims(const std::filesystem::path& p);
+    Json upgrade_ask_;
+    bool upgrading_ = false;
+    core::VideoDimsProbe dims_probe_;
+    std::map<std::string, std::optional<std::pair<std::int64_t, std::int64_t>>> dims_;
     // «Eliminar fondo»: el bg_removal nuevo de un clip en un paso de deshacer, el final del job y el catálogo
     // de motores (GET /api/bg/providers, una vez por proyecto abierto).
     void set_bg(const std::string& clip_id, Json bg_removal, const char* cause);

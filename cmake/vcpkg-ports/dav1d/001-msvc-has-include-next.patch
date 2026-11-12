@@ -1,0 +1,18 @@
+diff --git a/include/compat/msvc/stdatomic.h b/include/compat/msvc/stdatomic.h
+index 618f0ee..295747c 100644
+--- a/include/compat/msvc/stdatomic.h
++++ b/include/compat/msvc/stdatomic.h
+@@ -32,7 +32,12 @@
+ #pragma warning(push)
+ #pragma warning(disable:4067)    /* newline for __has_include_next */
+ 
+-#if defined(__clang__) && __has_include_next(<stdatomic.h>)
++#if defined(__clang__)
++#  if __has_include_next(<stdatomic.h>)
++#    define DAV1D_CLANG_STDATOMIC_H 1
++#  endif
++#endif
++#ifdef DAV1D_CLANG_STDATOMIC_H
+    /* use the clang stdatomic.h with clang-cl*/
+ #  include_next <stdatomic.h>
+ #else /* ! stdatomic.h */

@@ -436,6 +436,14 @@ Rectangle {
                             text: "Volver a analizar caras"
                             onTriggered: panel.model.faceTrackMaterial(slot.modelData.key, true)
                         }
+                        // canUpgradeFrom: un vídeo del proyecto (no un segmento) que viene de YouTube.
+                        MenuItem {
+                            objectName: "material:upgrade:" + slot.modelData.key
+                            visible: !!slot.modelData.canUpgrade
+                            height: visible ? implicitHeight : 0
+                            text: "Usar esta calidad en la timeline"
+                            onTriggered: panel.model.checkUpgrade(slot.modelData.key)
+                        }
                     }
                     DragHandler {
                         id: drag

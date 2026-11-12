@@ -193,6 +193,11 @@ void YoutubeLoader::update(const Json& job) {
         emit downloadChanged();
         emit stateChanged();
         emit videoAdded(message_);
+        const Json upgradable = result.is_object() ? result.value("upgradable", Json()) : Json();
+        const Json index = result.is_object() ? result.value("clip_index", Json()) : Json();
+        if (!core::yt_used_upgrades(upgradable).empty() && !index.is_null()) {
+            emit upgradeOffered(QString::fromStdString(Json{{"index", index}, {"quality", q}, {"versions", upgradable}}.dump()));
+        }
         return;
     }
     if (status == "error") {

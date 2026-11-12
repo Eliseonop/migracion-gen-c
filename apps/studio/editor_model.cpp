@@ -58,6 +58,7 @@
 #include "gc/core/timeline_rules.hpp"
 #include "gc/core/timeline_view.hpp"
 #include "gc/core/vfx_stack.hpp"
+#include "gc/core/yt_ui.hpp"
 #include "qt_json.hpp"
 
 #ifdef GC_STUDIO_PREVIEW
@@ -270,6 +271,10 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     narrator_.setSettings(settings_);
     youtube_.setSettings(settings_);
     connect(&youtube_, &YoutubeLoader::videoAdded, this, [this] { reload_project_materials(); });
+    // La timeline ya usaba este vídeo en menos calidad: se ofrece el cambio.
+    connect(&youtube_, &YoutubeLoader::upgradeOffered, this, [this](const QString& ask) {
+        offer_upgrade(Json::parse(ask.toStdString()));
+    });
     connect(&narrator_, &Narrator::notice, this, &EditorModel::set_notice);
     connect(&narrator_, &Narrator::audioAdded, this, [this](const QString& message) { // el onChange de AudioTab y su Toast
         reload_project_materials();
@@ -382,6 +387,7 @@ void EditorModel::project_materials(const core::Project& project, QVariantList& 
         // hasFaceTrack: con seguimiento guardado y keyframes en su encuadre
         QVariantMap row = into.back().toMap();
         row["faceTrack"] = c.face_track.has_value() && c.reframe && !c.reframe->keyframes.empty();
+        row["canUpgrade"] = core::yt_can_upgrade_from(core::to_json(c)); // canUpgradeFrom
         into.back() = row;
     }
     for (const auto& i : project.images) {
@@ -580,6 +586,9 @@ bool EditorModel::openProject(const QString& pid) {
     autosave_.reset();
     const auto history_file = core::history_path(store_.file().parent_path(), project_id_);
     sizes_.clear();
+    dims_.clear();
+    upgrade_ask_ = Json();
+    emit upgradeAskChanged();
     // Lo antiguo («fill», un overlay pegado a un hueco) entra ya como objeto libre, sin paso de deshacer:
     // en video-yt lo convierte el efecto en cuanto carga el medio, dentro del debounce del historial, y
     // el autoguardado lo guarda a los 800 ms. Aquí se guarda al abrir.
@@ -2986,6 +2995,119 @@ void EditorModel::faceTrackMaterial(const QString& key, bool force) {
                                       (changed.empty() ? QString(" · se aplicará al agregarlo")
                                                        : QString(" · aplicado a %1 clip%2").arg(n, changed.size() > 1 ? "s" : "")));
         });
+}
+
+// --- «Subir calidad» (checkUpgrade y runUpgrade de EdMaterial.jsx, con media_upgrade en el núcleo) ---
+
+QVariantMap EditorModel::upgradeAsk() const {
+    if (upgrade_ask_.is_null()) {
+        return {};
+    }
+    QVariantMap out = to_variant(upgrade_ask_);
+    out["message"] = qstr(core::yt_upgrade_message(upgrade_ask_.value("versions", Json()),
+                                                   upgrade_ask_.value("quality", Json())));
+    out["busy"] = upgrading_;
+    return out;
+}
+
+void EditorModel::offer_upgrade(Json ask) {
+    upgrade_ask_ = std::move(ask);
+    emit upgradeAskChanged();
+}
+
+std::optional<std::pair<std::int64_t, std::int64_t>> EditorModel::video_dims(const std::filesystem::path& p) {
+    const std::string key = core::path_to_utf8(p);
+    if (const auto it = dims_.find(key); it != dims_.end()) {
+        return it->second;
+    }
+    std::optional<std::pair<std::int64_t, std::int64_t>> dims;
+    if (dims_probe_) {
+        dims = dims_probe_(p);
+    }
+#ifdef GC_STUDIO_PREVIEW
+    else
+    // cv2.VideoCapture con CAP_PROP_FRAME_WIDTH/HEIGHT: el tamaño de los fotogramas (con el autogiro).
+    if (const auto first = media::frame_at(p, 0.0); first && first->has_value()) {
+        dims = std::pair<std::int64_t, std::int64_t>((*first)->width, (*first)->height);
+    }
+#endif
+    dims_[key] = dims;
+    return dims;
+}
+
+void EditorModel::checkUpgrade(const QString& key) {
+    if (!session_ || !key.startsWith("clips:")) {
+        return;
+    }
+    const auto project = store_.get_project(project_id_);
+    const core::ClipInfo* item = nullptr;
+    if (project && *project) {
+        for (const auto& c : (*project)->clips) {
+            if (QString("clips:%1").arg(c.index) == key) {
+                item = &c;
+            }
+        }
+    }
+    if (item == nullptr) {
+        return;
+    }
+    const Json item_json = core::to_json(*item);
+    const auto info = core::find_media_versions(store_, project_id_, core::yt_material_ident(item_json),
+                                                [this](const std::filesystem::path& p) { return video_dims(p); });
+    if (!info) {
+        set_notice("error", info.error().message.empty() ? QString("No se pudieron buscar versiones.")
+                                                         : qstr(info.error().message));
+        return;
+    }
+    const Json res = core::yt_check_upgrade(item_json, *info);
+    if (!res["ask"].is_null()) {
+        offer_upgrade(res["ask"]);
+        return;
+    }
+    set_notice(qstr(res["toast"].value("type", "info")), qstr(res["toast"].value("message", "")));
+}
+
+void EditorModel::runUpgrade() {
+    if (!session_ || upgrade_ask_.is_null() || upgrading_) {
+        return;
+    }
+    upgrading_ = true;
+    emit upgradeAskChanged();
+    std::vector<std::string> olds;
+    for (const Json& o : core::yt_upgrade_olds(upgrade_ask_)) {
+        olds.push_back(o.get<std::string>());
+    }
+    const Json& index = upgrade_ask_["index"];
+    const std::string ident = index.is_string() ? index.get<std::string>() : index.dump(); // String(ask.index)
+    // La timeline ya está en projects.json (el autoguardado escribe en cada cambio: el onFlushTimeline de React).
+    const core::TimelineOpApplier apply = [this](std::string_view, std::string_view op, const Json& params) -> Result<Json> {
+        const auto change = session_->apply(op, params);
+        if (!change) {
+            return std::unexpected(change.error());
+        }
+        return Json{{"changed", change->changed}, {"warnings", change->warnings}, {"can_undo", session_->can_undo()}};
+    };
+    const auto res = core::replace_media_with(store_, project_id_, ident, olds,
+                                              [this](const std::filesystem::path& p) { return video_dims(p); }, apply);
+    upgrading_ = false;
+    if (!res) {
+        emit upgradeAskChanged();
+        set_notice("error", res.error().message.empty() ? QString("No se pudo cambiar la versión.")
+                                                        : qstr(res.error().message));
+        return;
+    }
+    const Json toast = core::yt_upgrade_done_toast(upgrade_ask_, *res);
+    upgrade_ask_ = Json();
+    emit upgradeAskChanged();
+    reload_project_materials(); // los segmentos por referencia apuntan ya al archivo nuevo
+    set_notice(qstr(toast.value("type", "success")), qstr(toast.value("message", "")));
+}
+
+void EditorModel::cancelUpgrade() {
+    if (!upgrading_ && !upgrade_ask_.is_null()) {
+        upgrade_ask_ = Json();
+        emit upgradeAskChanged();
+    }
 }
 
 void EditorModel::follow_update(const Json& job) {

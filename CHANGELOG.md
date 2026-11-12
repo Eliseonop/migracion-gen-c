@@ -11,6 +11,18 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.8.0] — 2026-11-12
+
+### Añadido
+
+- **«Subir calidad»**: «Usar esta calidad en la timeline» en el menú del clic derecho de un vídeo del proyecto que
+  viene de YouTube y, al acabar de agregar el vídeo completo, la misma oferta si la timeline usaba una versión peor.
+  El modal dice qué versiones y cuántos clips cambian; al confirmar, los clips pasan al archivo nuevo conservando
+  cortes, encuadre y animaciones (en un paso de deshacer) y los tramos por referencia también. Va en C++, sin el
+  backend: la búsqueda de versiones y el cambio son los de `media_upgrade.hpp`.
+- En `gc/core/yt_ui.hpp`: cuándo se ofrece (isYtUrl y canUpgradeFrom), el texto de la pregunta y los avisos, con
+  paridad contra el JS real y sus mutaciones.
+
 ## [0.7.0] — 2026-11-11
 
 ### Añadido

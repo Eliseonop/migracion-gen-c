@@ -438,6 +438,55 @@ Item {
     SfxModal { id: sfxModal; model: editor.model }
     ClipMenu { id: clipMenu; model: editor.model; onPasteAttributes: pasteAttrs.openFor(editor.model.pasteableGroups()) }
 
+    // «Subir calidad en la timeline» (el ConfirmModal de EdMaterial.jsx).
+    Connections {
+        target: editor.model
+        function onUpgradeAskChanged() {
+            if (editor.model.upgradeAsk.message)
+                upgradeModal.open()
+            else
+                upgradeModal.close()
+        }
+    }
+    Popup {
+        id: upgradeModal
+        objectName: "upgradeModal"
+        readonly property var ask: editor.model.upgradeAsk
+        anchors.centerIn: parent
+        width: 420
+        modal: true
+        padding: 20
+        closePolicy: ask.busy ? Popup.NoAutoClose : (Popup.CloseOnEscape | Popup.CloseOnPressOutside)
+        onClosed: editor.model.cancelUpgrade()
+        background: Rectangle { radius: Theme.radiusLg; color: Theme.card; border.color: Theme.lineBright }
+        contentItem: ColumnLayout {
+            spacing: 12
+            Label { text: "Subir calidad en la timeline"; color: Theme.text; font.pixelSize: 16; font.bold: true }
+            Label {
+                objectName: "upgrade:message"
+                Layout.fillWidth: true
+                text: upgradeModal.ask.message || ""
+                color: Theme.muted
+                wrapMode: Text.WordWrap
+            }
+            RowLayout {
+                Layout.alignment: Qt.AlignRight
+                Button {
+                    objectName: "upgrade:cancel"
+                    text: "Ahora no"
+                    enabled: !upgradeModal.ask.busy
+                    onClicked: editor.model.cancelUpgrade()
+                }
+                Button {
+                    objectName: "upgrade:confirm"
+                    text: upgradeModal.ask.busy ? "Cambiando…" : "Cambiar"
+                    enabled: !upgradeModal.ask.busy
+                    onClicked: editor.model.runUpgrade()
+                }
+            }
+        }
+    }
+
     Popup {
         id: pasteAttrs
         objectName: "pasteAttrs"
