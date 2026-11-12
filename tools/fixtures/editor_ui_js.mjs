@@ -205,6 +205,33 @@ const removeHistory = (list, item) => {
   new Function(...Object.keys(deps), `return async ${extractFunction(`${root}/features/editor/EdMaterial.jsx`, 'removeHistory')}`)(...Object.values(deps))(item)
   return next
 }
+// «Subir calidad» de EdMaterial.jsx: isYtUrl y canUpgradeFrom, y checkUpgrade y runUpgrade con la respuesta del
+// backend de mentira ({throw: texto} lanza un Error con ese texto). Dan lo que piden y el aviso que sale.
+const edMaterial = `${root}/features/editor/EdMaterial.jsx`
+const materialMenu = await load('features/editor/materialMenu.js')
+const isYtUrl = new Function(`return ${extractFunction(edMaterial, 'isYtUrl')}`)()
+const canUpgradeFrom = new Function('isYtUrl', `return ${extractFunction(edMaterial, 'canUpgradeFrom')}`)(isYtUrl)
+const checkUpgrade = async (item, info) => {
+  let ask = null
+  let toast = null
+  let asked = null
+  const deps = { materialIdent: materialMenu.materialIdent, usedUpgrades: ytQuality.usedUpgrades, project: { id: 'p' },
+    getClipVersions: async (pid, ident) => { asked = ident; if (info && info.throw !== undefined) throw new Error(info.throw); return info },
+    setUpgradeAsk: (v) => { ask = v }, setMatToast: (t) => { toast = t } }
+  await new Function(...Object.keys(deps), `return async ${extractFunction(edMaterial, 'checkUpgrade')}`)(...Object.values(deps))(item)
+  return { asked, ask, toast }
+}
+const runUpgrade = async (ask, res) => {
+  let sent = null
+  let toast = null
+  let closed = false
+  const deps = { upgradeAsk: ask, upgrading: false, setUpgrading: () => {}, usedUpgrades: ytQuality.usedUpgrades,
+    onFlushTimeline: async () => {}, onReloadTimeline: async () => {}, onRefresh: () => {}, project: { id: 'p' },
+    replaceClipVersions: async (pid, ident, olds) => { sent = { ident, olds }; if (res && res.throw !== undefined) throw new Error(res.throw); return res },
+    setUpgradeAsk: (v) => { closed = v === null }, qualityShort: ytQuality.qualityShort, setMatToast: (t) => { toast = t } }
+  await new Function(...Object.keys(deps), `return async ${extractFunction(edMaterial, 'runUpgrade')}`)(...Object.values(deps))()
+  return { sent, closed, toast }
+}
 // Como extractArrow, para `const name = useCallback(…)`.
 function extractCallback(file, name) {
   const src = readFileSync(file, 'utf8')
@@ -356,7 +383,7 @@ const poseView = (c) => {
 
 const inf = (x) => (x === Infinity ? 'inf' : x)
 const cases = JSON.parse(readFileSync(0, 'utf8'))
-const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
+const out = await Promise.all(cases.map(async ({ tracks, clips, markers, geo, calls }) => {
   const byId = (id) => clips.find((c) => c.id === id)
   const others = (exclude, beatsToo) => [...align.alignOthers(clips, exclude), ...beats.snapTargets(markers, clips, beatsToo)]
   const zone = (z) => z && { trackId: z.trackId ?? null, slot: z.slot ?? null, lineY: z.lineY ?? 0 }
@@ -527,6 +554,12 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
     ytQualityMeta: (i) => ytQuality.qualityMeta(i),
     ytNormalizeHistory: (raw) => normalizeHistory(raw),
     ytRemoveHistory: (list, item) => removeHistory(list, item),
+    ytIsUrl: (u) => isYtUrl(u),
+    ytCanUpgradeFrom: (item) => canUpgradeFrom({ kind: 'clips', item }),
+    ytUsedUpgrades: (list) => ytQuality.usedUpgrades(list),
+    ytUpgradeMessage: (versions, q) => ytQuality.upgradeMessage(versions, q),
+    ytCheckUpgrade: (item, info) => checkUpgrade(item, info),
+    ytRunUpgrade: (ask, res) => runUpgrade(ask, res),
     buildScriptPrompt: (topic, clips) => scriptPrompt.buildScriptPrompt(topic, clips),
     canCaptionClip: (id) => m.canCaptionClip(byId(id)),
     sourceRefOf: (id) => m.sourceRefOf(byId(id)),
@@ -614,6 +647,6 @@ const out = cases.map(({ tracks, clips, markers, geo, calls }) => {
       return moved.map((c) => c.start)
     },
   }
-  return calls.map(([fn, ...args]) => run[fn](...args))
-})
+  return Promise.all(calls.map(([fn, ...args]) => run[fn](...args))) // checkUpgrade y runUpgrade son async
+}))
 process.stdout.write(JSON.stringify(out))

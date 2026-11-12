@@ -876,6 +876,86 @@ def _youtube_case() -> dict:
     return {"name": "youtube", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
 
 
+def _upgrade_case() -> dict:
+    """«Subir calidad» (EdMaterial.jsx y ytQuality.js): isYtUrl, canUpgradeFrom, usedUpgrades, upgradeMessage,
+    checkUpgrade y runUpgrade con las respuestas del backend."""
+    urls = ["https://www.youtube.com/watch?v=abc", "youtube.com/watch?v=x", "youtu.be/abc", "https://youtu.be/abc",
+            "HTTPS://WWW.YOUTUBE.COM/x", "https://m.youtube.com/watch?v=1", "https://music.youtube.com/x",
+            "https://www.youtube.com.evil.com/x", "https://notyoutube.com/x", "https://youtube.co/x", "", "   ",
+            "  https://youtu.be/x  ", "ftp://youtube.com/x", "file://youtube.com/x", "ws://youtu.be", "foo://youtube.com/x",
+            "foo://YouTube.COM/x", "foo://youtu.be:80x/x", "https://user:pw@youtube.com/x", "https://youtube.com@evil.com/",
+            "https://evil.com@youtube.com/", "https://youtube.com:443/x", "https://youtube.com:99999/x",
+            "https://youtube.com:abc/x", "youtube.com:abc", "youtube.com evil", "https://you tube.com", "https://you%74ube.com/",
+            "https://youtube.com%2F/x", "https://youtube%2ecom/", "https://[youtube.com]/", "https://[::1]/youtube.com",
+            "https://[::1/", "https://1.2.3.4/youtube.com", "https://youtube.com.5/", "https://youtube.com.0x10/",
+            "https://youtube.com.0x/", "https://1.2.3.4.5/youtube.com", "https://999.1.1.1/youtube.com", "https://4294967296/youtube.com",
+            "https://0x7f.1/youtube.com", "https:\\\\youtube.com\\x", "https:////youtube.com", "https:youtube.com",
+            "https://www.youtu.be/", "https://WWW.youtu.be/", "https://www.www.youtube.com/", "https://youtube.com./",
+            "https://.youtube.com/", "https://a.youtube.com/", "https://youtube.com#x", "https://youtube.com?x=1",
+            "http://you\ttube.com/", "https://you\ntu.be/", "youtube", "watch?v=youtube.com", "https://YOUTU.BE",
+            "https://youtube.com<x>/", "https://youtube.com^/", "https://x|youtube.com/", "foo://you tube.com/youtube.com",
+            "https://", "https:///youtube.com", "https://[::ffff:1.2.3.4]/", "https://[1:2:3:4:5:6:7:8]/",
+            "https://[1:2:3:4:5:6:7:8:9]/youtube.com", "https://[1::2::3]/youtube.com", "https://[g::1]/youtube.com",
+            "https://[::1]x/youtube.com", "https://[::1]:8080/",
+            "https://evil.com:99999/youtube.com", "https://evil.com:abc/youtube.com", "https://evil.com:/youtube.com",
+            "https://1.2.3.4.0/youtube.com", "https://?youtube.com", "https://#youtube.com", "https://[::]/",
+            "https://[1:2:3:4:5:6:7::8]/youtube.com", "https://[::1:2:3:4:5:6:7]/", "https://[1:2:3:4:5:6::1.2.3.4]/youtube.com",
+            "https://[::1.2.3.04]/youtube.com", "https://[12345::1]/youtube.com", "https://[1:]/youtube.com", "　https://youtu.be/x﻿", "1.2.3.4"]
+    calls: list = [["ytIsUrl", u] for u in urls]
+    calls.append(["ytIsUrl", None])
+    yt = {"index": 3, "provider": "youtube", "filename": "a.mp4"}
+    items = [yt, {**yt, "scope": "library"}, {**yt, "scope": "project"}, {**yt, "in_point": 0}, {**yt, "in_point": None},
+             {**yt, "in_point": 1.5}, {"index": 4, "provider": "upload", "source_url": "https://youtu.be/x"},
+             {"index": 5, "provider": "upload", "source_url": "https://vimeo.com/x"}, {"index": 6, "provider": "upload"},
+             {"index": 7, "source_url": ""}, {"index": 8, "source_url": None}, {"index": 9, "provider": "YouTube"},
+             {"index": 10, "provider": "youtube", "scope": "LIBRARY"}, {}, None]
+    calls += [["ytCanUpgradeFrom", it] for it in items]
+    v = lambda i, uses, comp=True, **kw: {"index": i, "label": f"v{i}", "quality": 480, "timeline_uses": uses,
+                                           "compatible": comp, "reason": "otra proporción" if not comp else None, **kw}
+    lists = [[], None, "x", [v(1, 2)], [v(1, 0)], [v(1, 2, False)], [v(1, 2, None)], [v(1, 2, 0)], [v(1, "3")],
+             [v(1, "x")], [v(1, None)], [{"index": 2, "label": "s", "timeline_uses": 1}], [v(1, 1), v(2, 2), v(3, 0)],
+             [v(1, 1), 5, None, "x", [1]], [v(1, 1.5)], [v(1, True)]]
+    calls += [["ytUsedUpgrades", li] for li in lists]
+    for li in lists[:13]:
+        for q in (2160, 1080, 4320, 0, None, "1440", 1080.5):
+            calls.append(["ytUpgradeMessage", li, q])
+    calls.append(["ytUpgradeMessage", [{**v(1, 1), "quality": None}], 1080])
+    calls.append(["ytUpgradeMessage", [{**v(1, 1), "quality": 0}], 1080])
+    calls.append(["ytUpgradeMessage", [{**v(1, 1), "quality": "720"}], 1080])
+    calls.append(["ytUpgradeMessage", [{"index": 1, "timeline_uses": 1}], 1080])
+    calls.append(["ytUpgradeMessage", [{**v(1, 1), "label": None}], 1080])
+    calls.append(["ytUpgradeMessage", [{**v(1, 1), "label": 7}], 1080])
+    infos = [{"material": {"quality": 2160}, "versions": [v(1, 2)], "upgradable": [v(1, 2)]},
+             {"material": {"quality": None}, "versions": [v(1, 2)], "upgradable": [v(1, 2)]},
+             {"material": {}, "versions": [], "upgradable": [v(1, 2)]},
+             {"material": None, "versions": [], "upgradable": [v(1, 2), v(2, 0)]},
+             {"versions": [v(1, 2)], "upgradable": [v(1, 2)]},
+             {"material": {"quality": 1080}, "versions": [v(1, 2, False)], "upgradable": []},
+             {"material": {"quality": 1080}, "versions": [v(1, 0, False), v(2, 3, False)], "upgradable": []},
+             {"material": {"quality": 1080}, "versions": [v(1, 2)], "upgradable": [v(1, 0)]},
+             {"material": {"quality": 1080}, "versions": [], "upgradable": []},
+             {"material": {"quality": 1080}, "upgradable": []},
+             {"material": {"quality": 1080}, "versions": None, "upgradable": None},
+             {"versions": [{"index": 1, "timeline_uses": 1, "compatible": False}], "upgradable": []},
+             {"versions": [{"index": 1, "timeline_uses": "2", "compatible": 0, "label": "x", "reason": "y"}]},
+             {"versions": [{"index": 1, "timeline_uses": None, "compatible": False}]},
+             {"throw": "Vídeo no encontrado en el proyecto."}, {"throw": ""}]
+    for it in ({"index": 3}, {"index": None, "id": "abc"}, {"id": "abc"}, {"index": 0}, {"index": 2.5}):
+        for info in infos:
+            calls.append(["ytCheckUpgrade", it, info])
+    asks = [{"index": "3", "quality": 2160, "versions": [v(1, 2), v(2, 0), v(4, 1)]},
+            {"index": 7, "quality": None, "versions": [v(1, 1)]}, {"index": "3", "versions": [v(1, 1, False)]},
+            {"index": "3", "quality": 1080, "versions": []}, {"index": "3", "quality": "720", "versions": [{"timeline_uses": 1}]}]
+    ress = [{"replaced": 1, "warnings": []}, {"replaced": 3, "warnings": ["clip a: algo", "clip b: Quitar fondo: vuelve a generarlo"]},
+            {"replaced": 0}, {"replaced": 2, "warnings": None}, {"warnings": []},
+            {"replaced": 1, "warnings": ["no", "Quitar fondo"]},  # (con un aviso que no es texto, JS lanza)
+            {"throw": "No se puede reemplazar un material por sí mismo."}, {"throw": ""}]
+    for ask in asks:
+        for res in ress:
+            calls.append(["ytRunUpgrade", ask, res])
+    return {"name": "subir calidad", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
+
+
 def _script_prompt_case() -> dict:
     """«Prompt para el guion» (buildScriptPrompt de features/audio/scriptPrompt.js)."""
     both = {"index": 3, "filename": "c.mp4", "start": 1.0, "end": 3.25}
@@ -1057,5 +1137,6 @@ def cases() -> list[dict]:
     out.append(_script_prompt_case())
     out.append(_face_track_case())
     out.append(_youtube_case())
+    out.append(_upgrade_case())
     out += _bg_case()
     return out

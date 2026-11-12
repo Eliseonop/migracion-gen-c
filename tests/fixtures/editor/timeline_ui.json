@@ -975168,6 +975168,6219 @@
    ]
   },
   {
+   "name": "subir calidad",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "A1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [],
+    "markers": []
+   },
+   "calls": [
+    [
+     "ytIsUrl",
+     "https://www.youtube.com/watch?v=abc"
+    ],
+    [
+     "ytIsUrl",
+     "youtube.com/watch?v=x"
+    ],
+    [
+     "ytIsUrl",
+     "youtu.be/abc"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtu.be/abc"
+    ],
+    [
+     "ytIsUrl",
+     "HTTPS://WWW.YOUTUBE.COM/x"
+    ],
+    [
+     "ytIsUrl",
+     "https://m.youtube.com/watch?v=1"
+    ],
+    [
+     "ytIsUrl",
+     "https://music.youtube.com/x"
+    ],
+    [
+     "ytIsUrl",
+     "https://www.youtube.com.evil.com/x"
+    ],
+    [
+     "ytIsUrl",
+     "https://notyoutube.com/x"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.co/x"
+    ],
+    [
+     "ytIsUrl",
+     ""
+    ],
+    [
+     "ytIsUrl",
+     "   "
+    ],
+    [
+     "ytIsUrl",
+     "  https://youtu.be/x  "
+    ],
+    [
+     "ytIsUrl",
+     "ftp://youtube.com/x"
+    ],
+    [
+     "ytIsUrl",
+     "file://youtube.com/x"
+    ],
+    [
+     "ytIsUrl",
+     "ws://youtu.be"
+    ],
+    [
+     "ytIsUrl",
+     "foo://youtube.com/x"
+    ],
+    [
+     "ytIsUrl",
+     "foo://YouTube.COM/x"
+    ],
+    [
+     "ytIsUrl",
+     "foo://youtu.be:80x/x"
+    ],
+    [
+     "ytIsUrl",
+     "https://user:pw@youtube.com/x"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com@evil.com/"
+    ],
+    [
+     "ytIsUrl",
+     "https://evil.com@youtube.com/"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com:443/x"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com:99999/x"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com:abc/x"
+    ],
+    [
+     "ytIsUrl",
+     "youtube.com:abc"
+    ],
+    [
+     "ytIsUrl",
+     "youtube.com evil"
+    ],
+    [
+     "ytIsUrl",
+     "https://you tube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://you%74ube.com/"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com%2F/x"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube%2ecom/"
+    ],
+    [
+     "ytIsUrl",
+     "https://[youtube.com]/"
+    ],
+    [
+     "ytIsUrl",
+     "https://[::1]/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[::1/"
+    ],
+    [
+     "ytIsUrl",
+     "https://1.2.3.4/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com.5/"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com.0x10/"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com.0x/"
+    ],
+    [
+     "ytIsUrl",
+     "https://1.2.3.4.5/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://999.1.1.1/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://4294967296/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://0x7f.1/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https:\\\\youtube.com\\x"
+    ],
+    [
+     "ytIsUrl",
+     "https:////youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https:youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://www.youtu.be/"
+    ],
+    [
+     "ytIsUrl",
+     "https://WWW.youtu.be/"
+    ],
+    [
+     "ytIsUrl",
+     "https://www.www.youtube.com/"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com./"
+    ],
+    [
+     "ytIsUrl",
+     "https://.youtube.com/"
+    ],
+    [
+     "ytIsUrl",
+     "https://a.youtube.com/"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com#x"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com?x=1"
+    ],
+    [
+     "ytIsUrl",
+     "http://you\ttube.com/"
+    ],
+    [
+     "ytIsUrl",
+     "https://you\ntu.be/"
+    ],
+    [
+     "ytIsUrl",
+     "youtube"
+    ],
+    [
+     "ytIsUrl",
+     "watch?v=youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://YOUTU.BE"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com<x>/"
+    ],
+    [
+     "ytIsUrl",
+     "https://youtube.com^/"
+    ],
+    [
+     "ytIsUrl",
+     "https://x|youtube.com/"
+    ],
+    [
+     "ytIsUrl",
+     "foo://you tube.com/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://"
+    ],
+    [
+     "ytIsUrl",
+     "https:///youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[::ffff:1.2.3.4]/"
+    ],
+    [
+     "ytIsUrl",
+     "https://[1:2:3:4:5:6:7:8]/"
+    ],
+    [
+     "ytIsUrl",
+     "https://[1:2:3:4:5:6:7:8:9]/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[1::2::3]/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[g::1]/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[::1]x/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[::1]:8080/"
+    ],
+    [
+     "ytIsUrl",
+     "https://evil.com:99999/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://evil.com:abc/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://evil.com:/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://1.2.3.4.0/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://?youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://#youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[::]/"
+    ],
+    [
+     "ytIsUrl",
+     "https://[1:2:3:4:5:6:7::8]/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[::1:2:3:4:5:6:7]/"
+    ],
+    [
+     "ytIsUrl",
+     "https://[1:2:3:4:5:6::1.2.3.4]/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[::1.2.3.04]/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[12345::1]/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "https://[1:]/youtube.com"
+    ],
+    [
+     "ytIsUrl",
+     "　https://youtu.be/x﻿"
+    ],
+    [
+     "ytIsUrl",
+     "1.2.3.4"
+    ],
+    [
+     "ytIsUrl",
+     null
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 3,
+      "provider": "youtube",
+      "filename": "a.mp4"
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 3,
+      "provider": "youtube",
+      "filename": "a.mp4",
+      "scope": "library"
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 3,
+      "provider": "youtube",
+      "filename": "a.mp4",
+      "scope": "project"
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 3,
+      "provider": "youtube",
+      "filename": "a.mp4",
+      "in_point": 0
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 3,
+      "provider": "youtube",
+      "filename": "a.mp4",
+      "in_point": null
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 3,
+      "provider": "youtube",
+      "filename": "a.mp4",
+      "in_point": 1.5
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 4,
+      "provider": "upload",
+      "source_url": "https://youtu.be/x"
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 5,
+      "provider": "upload",
+      "source_url": "https://vimeo.com/x"
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 6,
+      "provider": "upload"
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 7,
+      "source_url": ""
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 8,
+      "source_url": null
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 9,
+      "provider": "YouTube"
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {
+      "index": 10,
+      "provider": "youtube",
+      "scope": "LIBRARY"
+     }
+    ],
+    [
+     "ytCanUpgradeFrom",
+     {}
+    ],
+    [
+     "ytCanUpgradeFrom",
+     null
+    ],
+    [
+     "ytUsedUpgrades",
+     []
+    ],
+    [
+     "ytUsedUpgrades",
+     null
+    ],
+    [
+     "ytUsedUpgrades",
+     "x"
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": false,
+       "reason": "otra proporción"
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": null,
+       "reason": "otra proporción"
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": 0,
+       "reason": "otra proporción"
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "3",
+       "compatible": true,
+       "reason": null
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "x",
+       "compatible": true,
+       "reason": null
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": null,
+       "compatible": true,
+       "reason": null
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 2,
+       "label": "s",
+       "timeline_uses": 1
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 2,
+       "label": "v2",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 3,
+       "label": "v3",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      },
+      5,
+      null,
+      "x",
+      [
+       1
+      ]
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 1.5,
+       "compatible": true,
+       "reason": null
+      }
+     ]
+    ],
+    [
+     "ytUsedUpgrades",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": true,
+       "compatible": true,
+       "reason": null
+      }
+     ]
+    ],
+    [
+     "ytUpgradeMessage",
+     [],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     null,
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     null,
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     null,
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     null,
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     null,
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     null,
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     null,
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     "x",
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     "x",
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     "x",
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     "x",
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     "x",
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     "x",
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     "x",
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": false,
+       "reason": "otra proporción"
+      }
+     ],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": false,
+       "reason": "otra proporción"
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": false,
+       "reason": "otra proporción"
+      }
+     ],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": false,
+       "reason": "otra proporción"
+      }
+     ],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": false,
+       "reason": "otra proporción"
+      }
+     ],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": false,
+       "reason": "otra proporción"
+      }
+     ],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": false,
+       "reason": "otra proporción"
+      }
+     ],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": null,
+       "reason": "otra proporción"
+      }
+     ],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": null,
+       "reason": "otra proporción"
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": null,
+       "reason": "otra proporción"
+      }
+     ],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": null,
+       "reason": "otra proporción"
+      }
+     ],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": null,
+       "reason": "otra proporción"
+      }
+     ],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": null,
+       "reason": "otra proporción"
+      }
+     ],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": null,
+       "reason": "otra proporción"
+      }
+     ],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": 0,
+       "reason": "otra proporción"
+      }
+     ],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": 0,
+       "reason": "otra proporción"
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": 0,
+       "reason": "otra proporción"
+      }
+     ],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": 0,
+       "reason": "otra proporción"
+      }
+     ],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": 0,
+       "reason": "otra proporción"
+      }
+     ],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": 0,
+       "reason": "otra proporción"
+      }
+     ],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": 0,
+       "reason": "otra proporción"
+      }
+     ],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "3",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "3",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "3",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "3",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "3",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "3",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "3",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "x",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "x",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "x",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "x",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "x",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "x",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": "x",
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": null,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": null,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": null,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": null,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": null,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": null,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": null,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 2,
+       "label": "s",
+       "timeline_uses": 1
+      }
+     ],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 2,
+       "label": "s",
+       "timeline_uses": 1
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 2,
+       "label": "s",
+       "timeline_uses": 1
+      }
+     ],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 2,
+       "label": "s",
+       "timeline_uses": 1
+      }
+     ],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 2,
+       "label": "s",
+       "timeline_uses": 1
+      }
+     ],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 2,
+       "label": "s",
+       "timeline_uses": 1
+      }
+     ],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 2,
+       "label": "s",
+       "timeline_uses": 1
+      }
+     ],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 2,
+       "label": "v2",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 3,
+       "label": "v3",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     2160
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 2,
+       "label": "v2",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 3,
+       "label": "v3",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 2,
+       "label": "v2",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 3,
+       "label": "v3",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     4320
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 2,
+       "label": "v2",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 3,
+       "label": "v3",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     0
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 2,
+       "label": "v2",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 3,
+       "label": "v3",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     null
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 2,
+       "label": "v2",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 3,
+       "label": "v3",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     "1440"
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 2,
+       "label": "v2",
+       "quality": 480,
+       "timeline_uses": 2,
+       "compatible": true,
+       "reason": null
+      },
+      {
+       "index": 3,
+       "label": "v3",
+       "quality": 480,
+       "timeline_uses": 0,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080.5
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": null,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": 0,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": "v1",
+       "quality": "720",
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "timeline_uses": 1
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": null,
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytUpgradeMessage",
+     [
+      {
+       "index": 1,
+       "label": 7,
+       "quality": 480,
+       "timeline_uses": 1,
+       "compatible": true,
+       "reason": null
+      }
+     ],
+     1080
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "material": {
+       "quality": 2160
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "material": {
+       "quality": null
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "material": {},
+      "versions": [],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "material": null,
+      "versions": [],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": false,
+        "reason": "otra proporción"
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 3,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": null,
+      "upgradable": null
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": 1,
+        "compatible": false
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": "2",
+        "compatible": 0,
+        "label": "x",
+        "reason": "y"
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": null,
+        "compatible": false
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "throw": "Vídeo no encontrado en el proyecto."
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 3
+     },
+     {
+      "throw": ""
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 2160
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": null
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "material": {},
+      "versions": [],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "material": null,
+      "versions": [],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": false,
+        "reason": "otra proporción"
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 3,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": null,
+      "upgradable": null
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": 1,
+        "compatible": false
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": "2",
+        "compatible": 0,
+        "label": "x",
+        "reason": "y"
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": null,
+        "compatible": false
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "throw": "Vídeo no encontrado en el proyecto."
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": null,
+      "id": "abc"
+     },
+     {
+      "throw": ""
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 2160
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": null
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "material": {},
+      "versions": [],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "material": null,
+      "versions": [],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": false,
+        "reason": "otra proporción"
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 3,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": null,
+      "upgradable": null
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": 1,
+        "compatible": false
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": "2",
+        "compatible": 0,
+        "label": "x",
+        "reason": "y"
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": null,
+        "compatible": false
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "throw": "Vídeo no encontrado en el proyecto."
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "id": "abc"
+     },
+     {
+      "throw": ""
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "material": {
+       "quality": 2160
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "material": {
+       "quality": null
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "material": {},
+      "versions": [],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "material": null,
+      "versions": [],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": false,
+        "reason": "otra proporción"
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 3,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": null,
+      "upgradable": null
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": 1,
+        "compatible": false
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": "2",
+        "compatible": 0,
+        "label": "x",
+        "reason": "y"
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": null,
+        "compatible": false
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "throw": "Vídeo no encontrado en el proyecto."
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 0
+     },
+     {
+      "throw": ""
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "material": {
+       "quality": 2160
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "material": {
+       "quality": null
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "material": {},
+      "versions": [],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "material": null,
+      "versions": [],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": false,
+        "reason": "otra proporción"
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 3,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ],
+      "upgradable": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": [],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "material": {
+       "quality": 1080
+      },
+      "versions": null,
+      "upgradable": null
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": 1,
+        "compatible": false
+       }
+      ],
+      "upgradable": []
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": "2",
+        "compatible": 0,
+        "label": "x",
+        "reason": "y"
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "versions": [
+       {
+        "index": 1,
+        "timeline_uses": null,
+        "compatible": false
+       }
+      ]
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "throw": "Vídeo no encontrado en el proyecto."
+     }
+    ],
+    [
+     "ytCheckUpgrade",
+     {
+      "index": 2.5
+     },
+     {
+      "throw": ""
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 4,
+        "label": "v4",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "replaced": 1,
+      "warnings": []
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 4,
+        "label": "v4",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "replaced": 3,
+      "warnings": [
+       "clip a: algo",
+       "clip b: Quitar fondo: vuelve a generarlo"
+      ]
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 4,
+        "label": "v4",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "replaced": 0
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 4,
+        "label": "v4",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "replaced": 2,
+      "warnings": null
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 4,
+        "label": "v4",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "warnings": []
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 4,
+        "label": "v4",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "replaced": 1,
+      "warnings": [
+       "no",
+       "Quitar fondo"
+      ]
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 4,
+        "label": "v4",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "throw": "No se puede reemplazar un material por sí mismo."
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 4,
+        "label": "v4",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "throw": ""
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": 7,
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "replaced": 1,
+      "warnings": []
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": 7,
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "replaced": 3,
+      "warnings": [
+       "clip a: algo",
+       "clip b: Quitar fondo: vuelve a generarlo"
+      ]
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": 7,
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "replaced": 0
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": 7,
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "replaced": 2,
+      "warnings": null
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": 7,
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "warnings": []
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": 7,
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "replaced": 1,
+      "warnings": [
+       "no",
+       "Quitar fondo"
+      ]
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": 7,
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "throw": "No se puede reemplazar un material por sí mismo."
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": 7,
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     {
+      "throw": ""
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ]
+     },
+     {
+      "replaced": 1,
+      "warnings": []
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ]
+     },
+     {
+      "replaced": 3,
+      "warnings": [
+       "clip a: algo",
+       "clip b: Quitar fondo: vuelve a generarlo"
+      ]
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ]
+     },
+     {
+      "replaced": 0
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ]
+     },
+     {
+      "replaced": 2,
+      "warnings": null
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ]
+     },
+     {
+      "warnings": []
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ]
+     },
+     {
+      "replaced": 1,
+      "warnings": [
+       "no",
+       "Quitar fondo"
+      ]
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ]
+     },
+     {
+      "throw": "No se puede reemplazar un material por sí mismo."
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 1,
+        "compatible": false,
+        "reason": "otra proporción"
+       }
+      ]
+     },
+     {
+      "throw": ""
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 1080,
+      "versions": []
+     },
+     {
+      "replaced": 1,
+      "warnings": []
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 1080,
+      "versions": []
+     },
+     {
+      "replaced": 3,
+      "warnings": [
+       "clip a: algo",
+       "clip b: Quitar fondo: vuelve a generarlo"
+      ]
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 1080,
+      "versions": []
+     },
+     {
+      "replaced": 0
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 1080,
+      "versions": []
+     },
+     {
+      "replaced": 2,
+      "warnings": null
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 1080,
+      "versions": []
+     },
+     {
+      "warnings": []
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 1080,
+      "versions": []
+     },
+     {
+      "replaced": 1,
+      "warnings": [
+       "no",
+       "Quitar fondo"
+      ]
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 1080,
+      "versions": []
+     },
+     {
+      "throw": "No se puede reemplazar un material por sí mismo."
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": 1080,
+      "versions": []
+     },
+     {
+      "throw": ""
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": "720",
+      "versions": [
+       {
+        "timeline_uses": 1
+       }
+      ]
+     },
+     {
+      "replaced": 1,
+      "warnings": []
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": "720",
+      "versions": [
+       {
+        "timeline_uses": 1
+       }
+      ]
+     },
+     {
+      "replaced": 3,
+      "warnings": [
+       "clip a: algo",
+       "clip b: Quitar fondo: vuelve a generarlo"
+      ]
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": "720",
+      "versions": [
+       {
+        "timeline_uses": 1
+       }
+      ]
+     },
+     {
+      "replaced": 0
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": "720",
+      "versions": [
+       {
+        "timeline_uses": 1
+       }
+      ]
+     },
+     {
+      "replaced": 2,
+      "warnings": null
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": "720",
+      "versions": [
+       {
+        "timeline_uses": 1
+       }
+      ]
+     },
+     {
+      "warnings": []
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": "720",
+      "versions": [
+       {
+        "timeline_uses": 1
+       }
+      ]
+     },
+     {
+      "replaced": 1,
+      "warnings": [
+       "no",
+       "Quitar fondo"
+      ]
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": "720",
+      "versions": [
+       {
+        "timeline_uses": 1
+       }
+      ]
+     },
+     {
+      "throw": "No se puede reemplazar un material por sí mismo."
+     }
+    ],
+    [
+     "ytRunUpgrade",
+     {
+      "index": "3",
+      "quality": "720",
+      "versions": [
+       {
+        "timeline_uses": 1
+       }
+      ]
+     },
+     {
+      "throw": ""
+     }
+    ]
+   ],
+   "geo": [
+    {
+     "id": "T1",
+     "top": 22,
+     "bottom": 51
+    },
+    {
+     "id": "V2",
+     "top": 51,
+     "bottom": 103
+    },
+    {
+     "id": "V1",
+     "top": 103,
+     "bottom": 155
+    },
+    {
+     "id": "A1",
+     "top": 155,
+     "bottom": 207
+    }
+   ],
+   "results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    false,
+    false,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    [],
+    [],
+    [],
+    [
+     {
+      "index": 1,
+      "label": "v1",
+      "quality": 480,
+      "timeline_uses": 2,
+      "compatible": true,
+      "reason": null
+     }
+    ],
+    [],
+    [],
+    [
+     {
+      "index": 1,
+      "label": "v1",
+      "quality": 480,
+      "timeline_uses": 2,
+      "compatible": null,
+      "reason": "otra proporción"
+     }
+    ],
+    [
+     {
+      "index": 1,
+      "label": "v1",
+      "quality": 480,
+      "timeline_uses": 2,
+      "compatible": 0,
+      "reason": "otra proporción"
+     }
+    ],
+    [
+     {
+      "index": 1,
+      "label": "v1",
+      "quality": 480,
+      "timeline_uses": "3",
+      "compatible": true,
+      "reason": null
+     }
+    ],
+    [],
+    [],
+    [
+     {
+      "index": 2,
+      "label": "s",
+      "timeline_uses": 1
+     }
+    ],
+    [
+     {
+      "index": 1,
+      "label": "v1",
+      "quality": 480,
+      "timeline_uses": 1,
+      "compatible": true,
+      "reason": null
+     },
+     {
+      "index": 2,
+      "label": "v2",
+      "quality": 480,
+      "timeline_uses": 2,
+      "compatible": true,
+      "reason": null
+     }
+    ],
+    [
+     {
+      "index": 1,
+      "label": "v1",
+      "quality": 480,
+      "timeline_uses": 1,
+      "compatible": true,
+      "reason": null
+     }
+    ],
+    [
+     {
+      "index": 1,
+      "label": "v1",
+      "quality": 480,
+      "timeline_uses": 1.5,
+      "compatible": true,
+      "reason": null
+     }
+    ],
+    [
+     {
+      "index": 1,
+      "label": "v1",
+      "quality": 480,
+      "timeline_uses": true,
+      "compatible": true,
+      "reason": null
+     }
+    ],
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 2 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 3 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 3 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 3 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 3 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 3 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 3 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 480p en 3 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 0 versiones de menos calidad de este vídeo en 0 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «s» en 1 clip. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «s» en 1 clip. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «s» en 1 clip. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «s» en 1 clip. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «s» en 1 clip. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «s» en 1 clip. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «s» en 1 clip. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 2 versiones de menos calidad de este vídeo en 3 clips. ¿Cambiarlos por la versión 4K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 2 versiones de menos calidad de este vídeo en 3 clips. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 2 versiones de menos calidad de este vídeo en 3 clips. ¿Cambiarlos por la versión 8K? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 2 versiones de menos calidad de este vídeo en 3 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 2 versiones de menos calidad de este vídeo en 3 clips. ¿Cambiarlos por esta versión? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 2 versiones de menos calidad de este vídeo en 3 clips. ¿Cambiarlos por la versión 1440p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa 2 versiones de menos calidad de este vídeo en 3 clips. ¿Cambiarlos por la versión 1080.5p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 1 clip. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 1 clip. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «v1» en 720p en 1 clip. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «undefined» en 1 clip. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «null» en 480p en 1 clip. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    "La timeline usa «7» en 480p en 1 clip. ¿Cambiarlos por la versión 1080p? Se conservan los cortes, el encuadre y las animaciones (se puede deshacer).",
+    {
+     "asked": "3",
+     "ask": {
+      "index": "3",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "3",
+     "ask": {
+      "index": "3",
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "3",
+     "ask": {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "3",
+     "ask": {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "3",
+     "ask": {
+      "index": "3",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«v1» no se puede cambiar: otra proporción."
+     }
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«v2» no se puede cambiar: otra proporción."
+     }
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«undefined» no se puede cambiar: undefined."
+     }
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«x» no se puede cambiar: y."
+     }
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "error",
+      "message": "Vídeo no encontrado en el proyecto."
+     }
+    },
+    {
+     "asked": "3",
+     "ask": null,
+     "toast": {
+      "type": "error",
+      "message": "No se pudieron buscar versiones."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": {
+      "index": "abc",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "abc",
+     "ask": {
+      "index": "abc",
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "abc",
+     "ask": {
+      "index": "abc",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "abc",
+     "ask": {
+      "index": "abc",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "abc",
+     "ask": {
+      "index": "abc",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«v1» no se puede cambiar: otra proporción."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«v2» no se puede cambiar: otra proporción."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«undefined» no se puede cambiar: undefined."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«x» no se puede cambiar: y."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "error",
+      "message": "Vídeo no encontrado en el proyecto."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "error",
+      "message": "No se pudieron buscar versiones."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": {
+      "index": "abc",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "abc",
+     "ask": {
+      "index": "abc",
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "abc",
+     "ask": {
+      "index": "abc",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "abc",
+     "ask": {
+      "index": "abc",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "abc",
+     "ask": {
+      "index": "abc",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«v1» no se puede cambiar: otra proporción."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«v2» no se puede cambiar: otra proporción."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«undefined» no se puede cambiar: undefined."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«x» no se puede cambiar: y."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "error",
+      "message": "Vídeo no encontrado en el proyecto."
+     }
+    },
+    {
+     "asked": "abc",
+     "ask": null,
+     "toast": {
+      "type": "error",
+      "message": "No se pudieron buscar versiones."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": {
+      "index": "0",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "0",
+     "ask": {
+      "index": "0",
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "0",
+     "ask": {
+      "index": "0",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "0",
+     "ask": {
+      "index": "0",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "0",
+     "ask": {
+      "index": "0",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«v1» no se puede cambiar: otra proporción."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«v2» no se puede cambiar: otra proporción."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«undefined» no se puede cambiar: undefined."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«x» no se puede cambiar: y."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "error",
+      "message": "Vídeo no encontrado en el proyecto."
+     }
+    },
+    {
+     "asked": "0",
+     "ask": null,
+     "toast": {
+      "type": "error",
+      "message": "No se pudieron buscar versiones."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": {
+      "index": "2.5",
+      "quality": 2160,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "2.5",
+     "ask": {
+      "index": "2.5",
+      "quality": null,
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "2.5",
+     "ask": {
+      "index": "2.5",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "2.5",
+     "ask": {
+      "index": "2.5",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       },
+       {
+        "index": 2,
+        "label": "v2",
+        "quality": 480,
+        "timeline_uses": 0,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "2.5",
+     "ask": {
+      "index": "2.5",
+      "versions": [
+       {
+        "index": 1,
+        "label": "v1",
+        "quality": 480,
+        "timeline_uses": 2,
+        "compatible": true,
+        "reason": null
+       }
+      ]
+     },
+     "toast": null
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«v1» no se puede cambiar: otra proporción."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«v2» no se puede cambiar: otra proporción."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«undefined» no se puede cambiar: undefined."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "«x» no se puede cambiar: y."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "info",
+      "message": "La timeline no usa versiones de menos calidad de este vídeo."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "error",
+      "message": "Vídeo no encontrado en el proyecto."
+     }
+    },
+    {
+     "asked": "2.5",
+     "ask": null,
+     "toast": {
+      "type": "error",
+      "message": "No se pudieron buscar versiones."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "1",
+       "4"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "1 clip pasado a 4K."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "1",
+       "4"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "3 clips pasados a 4K. Vuelve a generar «Quitar fondo» en los que lo usaban."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "1",
+       "4"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "0 clips pasados a 4K."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "1",
+       "4"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "2 clips pasados a 4K."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "1",
+       "4"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "undefined clips pasados a 4K."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "1",
+       "4"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "1 clip pasado a 4K. Vuelve a generar «Quitar fondo» en los que lo usaban."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "1",
+       "4"
+      ]
+     },
+     "closed": false,
+     "toast": {
+      "type": "error",
+      "message": "No se puede reemplazar un material por sí mismo."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "1",
+       "4"
+      ]
+     },
+     "closed": false,
+     "toast": {
+      "type": "error",
+      "message": "No se pudo cambiar la versión."
+     }
+    },
+    {
+     "sent": {
+      "ident": "7",
+      "olds": [
+       "1"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "1 clip pasado."
+     }
+    },
+    {
+     "sent": {
+      "ident": "7",
+      "olds": [
+       "1"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "3 clips pasados. Vuelve a generar «Quitar fondo» en los que lo usaban."
+     }
+    },
+    {
+     "sent": {
+      "ident": "7",
+      "olds": [
+       "1"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "0 clips pasados."
+     }
+    },
+    {
+     "sent": {
+      "ident": "7",
+      "olds": [
+       "1"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "2 clips pasados."
+     }
+    },
+    {
+     "sent": {
+      "ident": "7",
+      "olds": [
+       "1"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "undefined clips pasados."
+     }
+    },
+    {
+     "sent": {
+      "ident": "7",
+      "olds": [
+       "1"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "1 clip pasado. Vuelve a generar «Quitar fondo» en los que lo usaban."
+     }
+    },
+    {
+     "sent": {
+      "ident": "7",
+      "olds": [
+       "1"
+      ]
+     },
+     "closed": false,
+     "toast": {
+      "type": "error",
+      "message": "No se puede reemplazar un material por sí mismo."
+     }
+    },
+    {
+     "sent": {
+      "ident": "7",
+      "olds": [
+       "1"
+      ]
+     },
+     "closed": false,
+     "toast": {
+      "type": "error",
+      "message": "No se pudo cambiar la versión."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "1 clip pasado."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "3 clips pasados. Vuelve a generar «Quitar fondo» en los que lo usaban."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "0 clips pasados."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "2 clips pasados."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "undefined clips pasados."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "1 clip pasado. Vuelve a generar «Quitar fondo» en los que lo usaban."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": false,
+     "toast": {
+      "type": "error",
+      "message": "No se puede reemplazar un material por sí mismo."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": false,
+     "toast": {
+      "type": "error",
+      "message": "No se pudo cambiar la versión."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "1 clip pasado a 1080p."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "3 clips pasados a 1080p. Vuelve a generar «Quitar fondo» en los que lo usaban."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "0 clips pasados a 1080p."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "2 clips pasados a 1080p."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "undefined clips pasados a 1080p."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "1 clip pasado a 1080p. Vuelve a generar «Quitar fondo» en los que lo usaban."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": false,
+     "toast": {
+      "type": "error",
+      "message": "No se puede reemplazar un material por sí mismo."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": []
+     },
+     "closed": false,
+     "toast": {
+      "type": "error",
+      "message": "No se pudo cambiar la versión."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "undefined"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "1 clip pasado a 720p."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "undefined"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "3 clips pasados a 720p. Vuelve a generar «Quitar fondo» en los que lo usaban."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "undefined"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "0 clips pasados a 720p."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "undefined"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "2 clips pasados a 720p."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "undefined"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "undefined clips pasados a 720p."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "undefined"
+      ]
+     },
+     "closed": true,
+     "toast": {
+      "type": "success",
+      "message": "1 clip pasado a 720p. Vuelve a generar «Quitar fondo» en los que lo usaban."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "undefined"
+      ]
+     },
+     "closed": false,
+     "toast": {
+      "type": "error",
+      "message": "No se puede reemplazar un material por sí mismo."
+     }
+    },
+    {
+     "sent": {
+      "ident": "3",
+      "olds": [
+       "undefined"
+      ]
+     },
+     "closed": false,
+     "toast": {
+      "type": "error",
+      "message": "No se pudo cambiar la versión."
+     }
+    }
+   ]
+  },
+  {
    "name": "eliminar fondo",
    "timeline": {
     "version": 1,

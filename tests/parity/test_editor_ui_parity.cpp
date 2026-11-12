@@ -752,6 +752,44 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "ytRemoveHistory") {
         return yt_history_without(call.at(1), call.at(2));
     }
+    if (fn == "ytIsUrl") {
+        return yt_is_url(call.at(1).is_string() ? call.at(1).get<std::string>() : std::string());
+    }
+    if (fn == "ytCanUpgradeFrom") {
+        return yt_can_upgrade_from(call.at(1));
+    }
+    if (fn == "ytUsedUpgrades") {
+        return yt_used_upgrades(call.at(1));
+    }
+    if (fn == "ytUpgradeMessage") {
+        return yt_upgrade_message(call.at(1), call.at(2));
+    }
+    if (fn == "ytCheckUpgrade") { // {throw: texto}: el GET falla con ese texto
+        const Json& info = call.at(2);
+        const std::string ident = yt_material_ident(call.at(1));
+        if (info.contains("throw")) {
+            const std::string e = info["throw"].get<std::string>();
+            return Json{{"asked", ident},
+                        {"ask", nullptr},
+                        {"toast", {{"type", "error"}, {"message", e.empty() ? "No se pudieron buscar versiones." : e}}}};
+        }
+        Json out = yt_check_upgrade(call.at(1), info);
+        out["asked"] = ident;
+        return out;
+    }
+    if (fn == "ytRunUpgrade") {
+        const Json& ask = call.at(1);
+        const Json& res = call.at(2);
+        const Json sent{{"ident", ask["index"].is_string() ? ask["index"].get<std::string>() : ask["index"].dump()},
+                        {"olds", yt_upgrade_olds(ask)}};
+        if (res.contains("throw")) {
+            const std::string e = res["throw"].get<std::string>();
+            return Json{{"sent", sent},
+                        {"closed", false},
+                        {"toast", {{"type", "error"}, {"message", e.empty() ? "No se pudo cambiar la versión." : e}}}};
+        }
+        return Json{{"sent", sent}, {"closed", true}, {"toast", yt_upgrade_done_toast(ask, res)}};
+    }
     if (fn == "faceTrackClip") {
         SequentialIdSource ids;
         TimelineClip c = clip(call.at(1));
