@@ -1,6 +1,7 @@
 #include "mcp_cmd.hpp"
 
 #include <charconv>
+#include <cstdint>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
@@ -20,6 +21,10 @@
 #include "gc/core/mcp_capabilities.hpp"
 #include "gc/core/mcp_server.hpp"
 #include "gc/core/projects_store.hpp"
+#ifdef GC_WITH_RENDER
+#include "gc/media/decode.hpp"
+#include "gc/media/probe.hpp"
+#endif
 #include "gc/core/settings.hpp"
 
 namespace genclip {
@@ -114,6 +119,22 @@ int cmd_mcp(std::span<const std::string> args) {
     runtime.transcribe_model = gc::core::normalize_transcribe_settings(settings.value("transcribe", gc::Json()))["model"].get<std::string>();
 
     mcp::EditToolsEnv edit{.store = store, .data_dir = *data, .ids = ids, .sfx_base = sfx};
+#ifdef GC_WITH_RENDER
+    // Lo que en video-yt pregunta a ffprobe y a OpenCV: la duración de un SFX (add_sfx) y las medidas de un
+    // vídeo (replace_media_version), las de su primer fotograma con el autogiro.
+    gc::media::silence_ffmpeg_log();
+    edit.probe_duration = [](const std::filesystem::path& p) { // round(…, 3) or 3.0
+        const double d = gc::media::probe_duration(p);
+        return d != 0.0 ? d : 3.0;
+    };
+    edit.video_dims = [](const std::filesystem::path& p) -> std::optional<std::pair<std::int64_t, std::int64_t>> {
+        const auto first = gc::media::frame_at(p, 0.0);
+        if (!first || !first->has_value()) {
+            return std::nullopt;
+        }
+        return std::pair<std::int64_t, std::int64_t>((*first)->width, (*first)->height);
+    };
+#endif
     mcp::McpServer server(edit, runtime, &audit);
     gc::agent::McpHttpServer http(server);
     const auto bound = http.bind("127.0.0.1", port);

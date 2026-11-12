@@ -11,6 +11,18 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.9.0] — 2026-11-12
+
+### Añadido
+
+- **Cuatro tools más en el servidor MCP** (48 de 100): `replace_media_version` (las otras versiones de un vídeo
+  de YouTube o cambiarlas en la timeline, en un paso de deshacer), `delete_media` (el material y su archivo),
+  `search_sfx` (la biblioteca de SFX) y `set_clip_ai_description` (la descripción de la IA, aparte de la del
+  usuario), con paridad contra las tools de video-yt. Los errores con pista (`hint`) llegan al agente como en
+  video-yt.
+- `genclip mcp` mide los SFX y los vídeos con gc_media (antes, un SFX duraba 3 s y no se comprobaba la
+  proporción de un vídeo).
+
 ## [0.8.0] — 2026-11-12
 
 ### Añadido

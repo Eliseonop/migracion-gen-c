@@ -28,6 +28,7 @@
 #include "gc/core/error.hpp"
 #include "gc/core/ids.hpp"
 #include "gc/core/json.hpp"
+#include "gc/core/media_upgrade.hpp"
 #include "gc/core/model.hpp"
 #include "gc/core/projects_store.hpp"
 
@@ -46,6 +47,9 @@ struct EditToolsEnv {
     std::optional<std::filesystem::path> sfx_base = std::nullopt; // sfx.get_base()
     ProbeDuration probe_duration = nullptr;                       // _probe_duration
     AudioEnvelope audio_envelope = nullptr;
+    // detect.dims de media_upgrade (replace_media_version): sin él, ningún vídeo tiene medidas y no se
+    // comprueba la proporción.
+    VideoDimsProbe video_dims = nullptr;
 };
 
 inline constexpr std::array<std::string_view, 4> kPendingEditTools{"freeze_frame", "detect_beats", "track_object",
@@ -63,5 +67,10 @@ struct EditToolInfo {
 // (NotFound o InvalidArgument; `path` es el `param` de un MCPError) y un crash, como
 // ErrorCode::Internal. Una tool que no existe, NotFound.
 [[nodiscard]] Result<Json> call_edit_tool(const EditToolsEnv& env, std::string_view tool, const Json& args);
+
+// timeline_store.apply_op para las tools de otros módulos: la op con sus reglas, el historial y la
+// timeline guardados. {changed, warnings, can_undo}.
+[[nodiscard]] Result<Json> timeline_store_apply_op(const EditToolsEnv& env, std::string_view pid, std::string_view op,
+                                                   const Json& params);
 
 } // namespace gc::core::mcp

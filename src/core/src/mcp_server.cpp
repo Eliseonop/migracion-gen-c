@@ -12,6 +12,7 @@
 #include "gc/core/history_store.hpp"
 #include "gc/core/io.hpp"
 #include "gc/core/mcp_registry.hpp"
+#include "gc/core/mcp_tools_media.hpp"
 #include "gc/core/mcp_resources.hpp"
 #include "gc/core/mcp_tools_read.hpp"
 
@@ -408,7 +409,8 @@ const std::vector<std::string>& tool_names() {
         std::vector<std::string> out;
         for (const Json& t : all_tools()) {
             const auto name = t["name"].get<std::string>();
-            const bool edit = std::ranges::any_of(edit_tools(), [&](const EditToolInfo& e) { return e.name == name; });
+            const auto named = [&](const EditToolInfo& e) { return e.name == name; };
+            const bool edit = std::ranges::any_of(edit_tools(), named) || std::ranges::any_of(media_tools(), named);
             if (edit || std::ranges::find(kReadTools, name) != kReadTools.end()) {
                 out.push_back(name);
             }
@@ -480,6 +482,9 @@ Result<Json> McpServer::run_tool(std::string_view name, const Json& args) {
     if (name == "search_transcript") {
         return search_transcript(edit_.store, text("project_id"), args["query"], args["limit"]);
     }
+    if (std::ranges::any_of(media_tools(), [&](const EditToolInfo& e) { return e.name == name; })) {
+        return call_media_tool(edit_, name, args);
+    }
     return call_edit_tool(edit_, name, args);
 }
 
@@ -539,7 +544,7 @@ Json McpServer::call_tool(const Json& params, const Json& id) {
         return tool_text(id, prefix, true);
     }
     std::string payload;
-    const bool structured = !error.path.empty() || error.code == ErrorCode::Unsupported;
+    const bool structured = !error.path.empty() || !error.hint.empty() || error.code == ErrorCode::Unsupported;
     if (structured) {
         McpError mcp_error;
         mcp_error.message = error.message;
@@ -549,7 +554,12 @@ Json McpServer::call_tool(const Json& params, const Json& id) {
             const auto [code, retryable] = classify_value_error(error.message);
             mcp_error.code = std::string(code);
             mcp_error.retryable = retryable;
-            mcp_error.param = error.path;
+            if (!error.path.empty()) {
+                mcp_error.param = error.path;
+            }
+        }
+        if (!error.hint.empty()) {
+            mcp_error.hint = error.hint;
         }
         payload = tool_error_text(mcp_error);
     } else {

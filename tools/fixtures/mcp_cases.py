@@ -892,6 +892,11 @@ WIRE_STEPS = [
     ["prompts/list", {"rpc": _rpc("prompts/list")}], ["prompts/get", {"rpc": _rpc("prompts/get", {"name": "x"})}],
     ["subscribe", {"rpc": _rpc("resources/subscribe", {"uri": "x://y"})}], ["logging", {"rpc": _rpc("logging/setLevel", {"level": "info"})}],
     ["completion", {"rpc": _rpc("completion/complete", {"ref": {"type": "ref/prompt", "name": "x"}, "argument": {"name": "a", "value": "b"}})}],
+    # Las tools de material: un MCPError con su pista y con su param, y un ValueError suelto.
+    ["material: versiones sin el vídeo", {"rpc": _call("replace_media_version", project_id="w1", clip_index="zzz", dry_run=True)}],
+    ["material: kind raro", {"rpc": _call("delete_media", project_id="w1", kind="x", ident="0")}],
+    ["material: sin el clip", {"rpc": _call("set_clip_ai_description", project_id="w1", clip_index="0", description=" x ")}],
+    ["material: proyecto raro", {"rpc": _call("replace_media_version", project_id="nada", clip_index="0")}],
     # Otros métodos HTTP.
     ["GET Accept raro", {"method": "GET", "headers": {"Accept": "text/plain"}}],
     ["PUT", {"method": "PUT"}], ["DELETE sin sesión", {"method": "DELETE", "session": "none"}],
@@ -916,4 +921,79 @@ ARG_MATRIX = [
     ["crop_clip", "clip_ids", [[], ["a"], ["a", "b"], [1], ["a", 2, None], [True], {}, 3, True, None, "x", "[\"a\"]", "[1]", "null"]],
     ["apply_effect", "clip_ids", [[], ["a"], [1], {}, 3, None, "x", "[\"a\"]", "[1]"]],
     ["paste_clip_attributes", "groups", [[], ["a"], [1], {}, 3, None, "x", "[\"a\"]", "[1]", "null"]],
+]
+
+
+# --- Tools de material sin IA: replace_media_version y delete_media (tools_media), search_sfx
+# (tools_audio) y set_clip_ai_description (tools_vision), sobre un data/ temporal -----------------
+#   MEDIA_PROJECTS   proyectos crudos: «u1» es el de media_upgrade (projects_cases: versiones de YouTube
+#                    con medidas, segmentos y una timeline que usa las ligeras); «m2», un audio y una imagen
+#   MEDIA_FILES      archivos que existen bajo la carpeta temporal (los de u1 y el audio de m2)
+#   MEDIA_DIMS       detect.dims por nombre de archivo (sin él, falla y cuenta como sin medidas)
+#   MEDIA_SFX_FILES  la biblioteca de SFX (sfx.get_base) para search_sfx
+#   MEDIA_STEPS      [tool, argumentos] en orden: cada paso da su resultado o su error y el proyecto y los
+#                    archivos tras él
+from projects_cases import _UPG_CLIPS, _UPG_DIMS, _UPG_FILES, _UPG_TL  # noqa: E402
+from projects_cases import project as _project  # noqa: E402
+
+MEDIA_PROJECTS = [
+    _project("u1", name="Mejorar", clips=_UPG_CLIPS, timeline=_UPG_TL),
+    _project("m2", name="Borrar", audios=[{"id": "a1", "filename": "voz.mp3", "url": "/a1", "duration": 3.0, "label": "Voz"},
+                                          {"id": "a2", "filename": "musica.mp3", "url": "/a2", "duration": 9.0}],
+             images=[{"id": "i1", "filename": "logo.png", "url": "/i1", "label": "Logo"},
+                     {"id": "i2", "filename": "foto.png", "url": "/i2"}]),
+]
+MEDIA_FILES = [*_UPG_FILES, "clips/m2/audio/voz.mp3", "clips/m2/audio/musica.mp3", "clips/m2/image/foto.png"]
+MEDIA_DIMS = _UPG_DIMS
+MEDIA_SFX_FILES = ["Impactos/golpe_seco.wav", "Impactos/golpe metálico.mp3", "Whoosh/aire_rapido.mp3",
+                   "Whoosh/aire_lento.ogg", "Ambiente/lluvia.wav", "suelto.wav"]
+MEDIA_STEPS = [
+    # search_sfx: sin proyecto; el tope de limit entre 1 y 300.
+    ["search_sfx", {}],
+    ["search_sfx", {"query": "golpe"}],
+    ["search_sfx", {"query": "aire", "limit": 1}],
+    ["search_sfx", {"category": "Whoosh"}],
+    ["search_sfx", {"category": "nada"}],
+    ["search_sfx", {"limit": 0}],
+    ["search_sfx", {"limit": -5}],
+    ["search_sfx", {"limit": 1000}],
+    ["search_sfx", {"query": "GOLPE metálico"}],
+    # set_clip_ai_description: un campo aparte; strip() y el índice como número si son dígitos.
+    ["set_clip_ai_description", {"project_id": "nada", "clip_index": "0", "description": "x"}],
+    ["set_clip_ai_description", {"project_id": "u1", "clip_index": "999", "description": "x"}],
+    ["set_clip_ai_description", {"project_id": "u1", "clip_index": "0", "description": "  Una charla\n"}],
+    ["set_clip_ai_description", {"project_id": "u1", "clip_index": "local", "description": "Mi vídeo"}],
+    ["set_clip_ai_description", {"project_id": "u1", "clip_index": "0", "description": ""}],
+    ["set_clip_ai_description", {"project_id": "u1", "clip_index": "05", "description": "cero cinco"}],
+    ["set_clip_ai_description", {"project_id": "u1", "clip_index": "4", "description": "　ancho　"}],
+    # replace_media_version: dry_run solo busca; los LookupError son resource_not_found con su pista.
+    ["replace_media_version", {"project_id": "nada", "clip_index": "0"}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "zzz", "dry_run": True}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "14", "dry_run": True}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "zzz"}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "0", "dry_run": True}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "10", "dry_run": True}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "local", "dry_run": True}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "0", "old_indexes": ["999"]}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "0", "old_indexes": ["0"]}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "0", "old_indexes": ["4"]}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "0", "old_indexes": ["5"]}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "0", "old_indexes": []}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "0"}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "0", "dry_run": True}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "10", "old_indexes": [0, "local"]}],
+    ["replace_media_version", {"project_id": "u1", "clip_index": "10", "old_indexes": [9]}],
+    # delete_media: el material y su archivo (si está); kind se comprueba antes que el proyecto.
+    ["delete_media", {"project_id": "nada", "kind": "audio", "ident": "a1"}],
+    ["delete_media", {"project_id": "nada", "kind": "audios", "ident": "a1"}],
+    ["delete_media", {"project_id": "m2", "kind": "audios", "ident": "zz"}],
+    ["delete_media", {"project_id": "m2", "kind": "audios", "ident": "a1"}],
+    ["delete_media", {"project_id": "m2", "kind": "audios", "ident": "a1"}],
+    ["delete_media", {"project_id": "m2", "kind": "images", "ident": "i1"}],
+    ["delete_media", {"project_id": "m2", "kind": "images", "ident": "i2"}],
+    ["delete_media", {"project_id": "m2", "kind": "clips", "ident": "0"}],
+    ["delete_media", {"project_id": "u1", "kind": "clips", "ident": "5"}],
+    ["delete_media", {"project_id": "u1", "kind": "clips", "ident": "local"}],
+    ["delete_media", {"project_id": "u1", "kind": "clips", "ident": "11"}],
+    ["delete_media", {"project_id": "u1", "kind": "clips", "ident": "14"}],
 ]

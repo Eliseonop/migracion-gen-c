@@ -1215,6 +1215,30 @@ YT_UI = [
     ("yt: ident sin el id", YTU, "index != nullptr && !index->is_null() ? index : member(&item, \"id\")", "index"),
 ]
 
+MTM = "src/core/src/mcp_tools_media.cpp"
+MSV = "src/core/src/mcp_server.cpp"
+MCP_MEDIA = [
+    ("media: sin la pista", MTM, "e.hint = \"list_media para ver los index.\";", "e.hint = \"\";"),
+    ("media: pista también en un ValueError", MTM, "if (!res && res.error().code == ErrorCode::NotFound) {", "if (!res) {"),
+    ("media: dry_run ignorado", MTM, "if (py_truthy(arg(args, \"dry_run\"))) {", "if (false) {"),
+    ("media: old_indexes ignorados", MTM, "olds.push_back(py_str(o)); // _find_material: str(ident)", ""),
+    ("media: sin medidas", MTM, "const VideoDimsProbe dims = env.video_dims ? env.video_dims :", "const VideoDimsProbe dims = false ? env.video_dims :"),
+    ("media: kind sin su param", MTM, "\" (usa clips|audios|images)\", \"kind\");", "\" (usa clips|audios|images)\");"),
+    ("media: imágenes como vídeo", MTM, "kind == \"images\" ? \"image\" : nullptr;", "kind == \"images\" ? \"video\" : nullptr;"),
+    ("media: el archivo siempre borrado", MTM, "file_deleted = std::filesystem::remove(*path, ec) && !ec;", "file_deleted = true;"),
+    ("media: sin borrar el archivo", MTM, "file_deleted = std::filesystem::remove(*path, ec) && !ec;", "file_deleted = false;"),
+    ("media: limit 0 vale", MTM, "std::max<std::int64_t>(1, std::min(*limit, kSfxMaxLimit))", "std::min(*limit, kSfxMaxLimit)"),
+    ("media: limit por defecto 1", MTM, "constexpr std::int64_t kSfxDefaultLimit = 50;", "constexpr std::int64_t kSfxDefaultLimit = 1;"),
+    ("media: categorías por nombre", MTM, "categories.push_back(get(c, \"id\"));", "categories.push_back(get(c, \"name\"));"),
+    ("media: sin el uso", MTM, "{\"uso\", get(it, \"uso\")},", ""),
+    ("media: sin strip", MTM, "py_strip(py_str(raw))", "py_str(raw)"),
+    ("media: índice como texto", MTM, "            index = *n;", ""),
+    ("media: descripción sin guardar", MTM, "Json{{\"description_ai\", description}}", "Json{{\"description_ai\", Json()}}"),
+    ("servidor: sin la pista", MSV, "            mcp_error.hint = error.hint;", ""),
+    ("servidor: la pista sin estructurar", MSV, " || !error.hint.empty() || error.code == ErrorCode::Unsupported;", " || error.code == ErrorCode::Unsupported;"),
+    ("servidor: sin las tools de material", MSV, " || std::ranges::any_of(media_tools(), named);", ";"),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
@@ -1223,6 +1247,7 @@ GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FR
           "prompt": (SCRIPT_PROMPT, "[editor]"),
           "bg_ui": (BG_UI, "[editor]"),
           "yt_ui": (YT_UI, "[editor]"),
+          "mcp_media": (MCP_MEDIA, "[mcp]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

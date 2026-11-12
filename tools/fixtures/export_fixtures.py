@@ -4316,6 +4316,75 @@ def _mcp_tools_edit_fixtures(mc) -> dict:
             "registered": registered, "steps": steps, "catalog": mc.EDIT_CATALOG, "catalog_calls": catalog_calls}
 
 
+def _mcp_tools_media_fixtures(mc) -> dict:
+    """Las tools de material sin IA REALES (replace_media_version y delete_media de tools_media,
+    search_sfx de tools_audio y set_clip_ai_description de tools_vision) paso a paso sobre un data/
+    temporal, con detect.dims por nombre de archivo y uuid4 en secuencia. Cada paso da su resultado o su
+    error (con el código, la pista y si se reintenta de un MCPError) y, si lleva proyecto, el proyecto
+    crudo de projects.json y los archivos que quedan."""
+    import tempfile
+
+    from app import config, detect, projects, settings, sfx, timeline_store
+    from app.mcp_server import registry, tools_audio, tools_media, tools_vision
+
+    wanted = ("replace_media_version", "delete_media", "search_sfx", "set_clip_ai_description")
+    registered: list[list[str]] = []
+
+    def fake_tool(_mcp, access="read", **_kw):
+        return lambda fn: (registered.append([fn.__name__, access]) if fn.__name__ in wanted else None) or fn
+
+    def dims(path):
+        name = Path(path).name
+        if name not in mc.MEDIA_DIMS:
+            raise RuntimeError("sin medidas")
+        return tuple(mc.MEDIA_DIMS[name])
+
+    with tempfile.TemporaryDirectory() as td, _Patches() as p:
+        root = Path(td)
+        data = root / "data"
+        (data / "history").mkdir(parents=True)
+        for rel in mc.MEDIA_FILES:
+            (root / rel).parent.mkdir(parents=True, exist_ok=True)
+            (root / rel).write_bytes(b"x")
+        base = root / "sfx"
+        for rel in mc.MEDIA_SFX_FILES:
+            (base / rel).parent.mkdir(parents=True, exist_ok=True)
+            (base / rel).write_bytes(b"x")
+        p.set(projects, "_FILE", data / "projects.json")
+        p.set(config, "OUTPUT_DIR", root / "clips")
+        p.set(timeline_store, "HISTORY_DIR", data / "history")
+        p.set(settings, "_FILE", data / "settings.json")
+        p.set(sfx, "get_base", lambda: base)
+        p.set(sfx, "search", _REAL_SFX.get("search", sfx.search))  # otras fixtures lo sustituyen
+        p.set(detect, "dims", dims)
+        p.set(uuid, "uuid4", _SequentialUuid())
+        for mod in (tools_media, tools_audio, tools_vision):
+            p.set(mod, "tool", fake_tool)
+            mod.register(None)
+        settings._FILE.write_text("{}", encoding="utf-8")
+        projects._FILE.write_text(json.dumps({"projects": mc.MEDIA_PROJECTS}, ensure_ascii=False), encoding="utf-8")
+        fns = {"replace_media_version": tools_media.replace_media_version, "delete_media": tools_media.delete_media,
+               "search_sfx": tools_audio.search_sfx, "set_clip_ai_description": tools_vision.set_clip_ai_description}
+
+        steps = []
+        for tool, args in mc.MEDIA_STEPS:
+            case: dict = {"tool": tool, "args": args}
+            try:
+                case["result"] = _pure(fns[tool](**args))
+            except Exception as e:  # noqa: BLE001 — el C++ debe fallar igual
+                case["error"] = str(e)
+                case["error_type"] = type(e).__name__
+                case["value_error"] = isinstance(e, ValueError)
+                if isinstance(e, registry.MCPError):
+                    case["mcp"] = {"code": e.code, "hint": e.hint, "retryable": e.retryable, "param": e.param}
+            if "project_id" in args:
+                raw = json.loads(projects._FILE.read_text(encoding="utf-8"))["projects"]
+                case["project"] = next((x for x in raw if x["id"] == args["project_id"]), None)
+                case["files"] = sorted(f.relative_to(root).as_posix() for f in (root / "clips").rglob("*") if f.is_file())
+            steps.append(case)
+    return {"projects": mc.MEDIA_PROJECTS, "files": mc.MEDIA_FILES, "dims": mc.MEDIA_DIMS,
+            "sfx_files": mc.MEDIA_SFX_FILES, "registered": registered, "steps": steps}
+
 def _mcp_wire_fixtures(mc) -> dict:
     """El servidor MCP REAL por HTTP (sin red, con TestClient) sobre un data/ temporal: tools/list, la
     validación de los argumentos y lo que responde a cada petición de WIRE_STEPS. La auditoría también
@@ -4447,7 +4516,8 @@ def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
     return {"dto": _mcp_dto_fixtures(ctx, mc), "capabilities": _mcp_capabilities_fixtures(ctx, mc),
             "help": _mcp_help_fixtures(mc), "registry": _mcp_registry_fixtures(mc),
             "resources": _mcp_resources_fixtures(ctx, mc), "audit": _mcp_audit_fixtures(mc),
-            "tools_read": _mcp_tools_read_fixtures(mc), "tools_edit": _mcp_tools_edit_fixtures(mc), "wire": _mcp_wire_fixtures(mc)}
+            "tools_read": _mcp_tools_read_fixtures(mc), "tools_edit": _mcp_tools_edit_fixtures(mc),
+            "tools_media": _mcp_tools_media_fixtures(mc), "wire": _mcp_wire_fixtures(mc)}
 
 
 # --- Salida -----------------------------------------------------------------------------------
@@ -4629,6 +4699,7 @@ def main() -> None:
             "audit": lambda d: len(d["extract_meta"]) + len(d["steps"]),
             "tools_read": lambda d: len(d["calls"]),
             "tools_edit": lambda d: len(d["steps"]),
+            "tools_media": lambda d: len(d["steps"]),
             "wire": lambda d: len(d["steps"]) + len(d["matrix"]),
         }
         errors = {
@@ -4640,6 +4711,7 @@ def main() -> None:
             "audit": lambda d: sum("error" in s for s in d["steps"]),
             "tools_read": lambda d: sum("error" in c for c in d["calls"]),
             "tools_edit": lambda d: sum("error" in c for c in d["steps"]),
+            "tools_media": lambda d: sum("error" in c for c in d["steps"]),
             "wire": lambda d: sum("error" in c for c in d["matrix"]),
         }
         for name, payload in mcp.items():

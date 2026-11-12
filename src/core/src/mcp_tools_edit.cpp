@@ -694,6 +694,15 @@ const std::vector<EditToolInfo>& edit_tools() {
     return tools;
 }
 
+Result<Json> timeline_store_apply_op(const EditToolsEnv& env, std::string_view pid, std::string_view op,
+                                     const Json& params) {
+    auto res = apply_op(env, pid, op, params);
+    if (!res) {
+        return std::unexpected(res.error());
+    }
+    return Json{{"changed", res->changed}, {"warnings", res->warnings}, {"can_undo", res->history.can_undo()}};
+}
+
 Result<Json> call_edit_tool(const EditToolsEnv& env, std::string_view tool, const Json& args) {
     if (tool == "list_effects") {
         return list_effects(args);

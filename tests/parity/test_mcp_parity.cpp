@@ -11,6 +11,8 @@
 //   tests/fixtures/mcp/resources.json     resources.py: el catálogo y el texto de cada resource
 //   tests/fixtures/mcp/tools_read.json  tools_capabilities, tools_context y tools_read: las tools de lectura
 //                                         sobre un data/ temporal, con el resultado o el error de cada llamada
+//   tests/fixtures/mcp/tools_media.json replace_media_version, delete_media, search_sfx y
+//                                        set_clip_ai_description paso a paso, con el proyecto y los archivos
 //   tests/fixtures/mcp/tools_edit.json  tools_edit y timeline_store: las tools de edición paso a paso,
 //                                         con el resultado o el error y el archivo tras cada una
 //   tests/fixtures/mcp/audit.json         audit.py: extract_meta y los pasos sobre un data/ temporal, con
@@ -24,6 +26,8 @@
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
+#include <functional>
+#include <thread>
 #include <map>
 #include <memory>
 #include <optional>
@@ -44,6 +48,7 @@
 #include "gc/core/mcp_registry.hpp"
 #include "gc/core/mcp_resources.hpp"
 #include "gc/core/mcp_tools_edit.hpp"
+#include "gc/core/mcp_tools_media.hpp"
 #include "gc/core/mcp_tools_read.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/serialize.hpp"
@@ -766,6 +771,106 @@ TEST_CASE("paridad MCP: las tools de edición (tools_edit y timeline_store)", "[
     gc::core::set_fx_catalog(std::make_shared<const gc::core::FxCatalog>(std::move(*real)));
 
     const auto unknown = mcp::call_edit_tool(env, "freeze_frame", Json{{"project_id", "e-main"}});
+    REQUIRE_FALSE(unknown);
+    CHECK(unknown.error().code == gc::ErrorCode::NotFound);
+    std::error_code ec;
+    std::filesystem::remove_all(tmp, ec);
+}
+
+TEST_CASE("paridad MCP: las tools de material sin IA (tools_media, tools_audio y tools_vision)", "[parity][mcp]") {
+    const Json f = load("tools_media");
+    const auto tmp = std::filesystem::temp_directory_path() /
+                     ("gc_mcp_tools_media_parity_" + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())));
+    std::filesystem::remove_all(tmp);
+    const auto data = tmp / "data";
+    std::filesystem::create_directories(data / "history");
+    {
+        auto text = gc::core::py_json_dumps(Json{{"projects", f["projects"]}});
+        REQUIRE(text);
+        std::ofstream(data / "projects.json", std::ios::binary) << *text;
+        std::ofstream(data / "settings.json", std::ios::binary) << "{}";
+    }
+    for (const char* list : {"files", "sfx_files"}) {
+        for (const Json& rel : f[list]) {
+            const auto file = (std::string(list) == "files" ? tmp : tmp / "sfx") / gc::core::path_from_utf8(rel.get<std::string>());
+            std::filesystem::create_directories(file.parent_path());
+            std::ofstream(file, std::ios::binary) << "x";
+        }
+    }
+    gc::core::ProjectsStore store(data / "projects.json", tmp / "clips");
+    gc::core::SequentialIdSource ids;
+    mcp::EditToolsEnv env{.store = store, .data_dir = data, .ids = ids, .sfx_base = tmp / "sfx"};
+    const Json dims = f["dims"];
+    env.video_dims = [&dims](const std::filesystem::path& p) -> std::optional<std::pair<std::int64_t, std::int64_t>> {
+        const std::string name = gc::core::path_to_utf8(p.filename());
+        if (!dims.contains(name)) {
+            return std::nullopt; // detect.dims falla: sin medidas
+        }
+        return std::pair<std::int64_t, std::int64_t>(dims[name][0].get<std::int64_t>(), dims[name][1].get<std::int64_t>());
+    };
+
+    REQUIRE(f["registered"].size() == mcp::media_tools().size());
+    for (std::size_t i = 0; i < mcp::media_tools().size(); ++i) {
+        CHECK(f["registered"][i][0].get<std::string>() == mcp::media_tools()[i].name);
+        CHECK(f["registered"][i][1].get<std::string>() == mcp::media_tools()[i].access);
+    }
+    std::size_t errors = 0;
+    for (const Json& c : f["steps"]) {
+        const std::string tool = c["tool"].get<std::string>();
+        const Json& a = c["args"];
+        const auto r = mcp::call_media_tool(env, tool, a);
+        const std::string what = tool + a.dump();
+        INFO(what);
+        if (c.contains("error")) {
+            ++errors;
+            REQUIRE_FALSE(r);
+            INFO(r.error().message);
+            REQUIRE(c["value_error"].get<bool>()); // ningún paso es un crash
+            CHECK(r.error().code != gc::ErrorCode::Internal);
+            CHECK(r.error().message == c["error"].get<std::string>());
+            const Json mcp_error = c.value("mcp", Json());
+            const auto [code, retryable] = mcp::classify_value_error(r.error().message);
+            if (mcp_error.is_object()) { // lo que el servidor saca de un MCPError: código, pista, param
+                CHECK(code == mcp_error["code"].get<std::string>());
+                CHECK(retryable == mcp_error["retryable"].get<bool>());
+                CHECK(r.error().hint == (mcp_error["hint"].is_string() ? mcp_error["hint"].get<std::string>() : std::string()));
+                CHECK(r.error().path == (mcp_error["param"].is_string() ? mcp_error["param"].get<std::string>() : std::string()));
+            } else {
+                CHECK(r.error().hint.empty());
+                CHECK(r.error().path.empty());
+            }
+        } else {
+            if (!r) {
+                INFO(r.error().message);
+                REQUIRE(r);
+            }
+            same(c["result"], *r, what);
+        }
+        if (!c.contains("project")) {
+            continue;
+        }
+        const Json saved = store.load();
+        Json project;
+        for (const Json& p : saved["projects"]) {
+            if (p["id"] == a["project_id"]) {
+                project = p;
+            }
+        }
+        same(c["project"], project, what + " (projects.json)");
+        Json files = Json::array();
+        std::vector<std::string> found;
+        for (const auto& e : std::filesystem::recursive_directory_iterator(tmp / "clips")) {
+            if (e.is_regular_file()) {
+                std::string rel = gc::core::path_to_utf8(std::filesystem::relative(e.path(), tmp));
+                std::ranges::replace(rel, '\\', '/');
+                found.push_back(std::move(rel));
+            }
+        }
+        std::ranges::sort(found);
+        CHECK(Json(found) == c["files"]);
+    }
+    CHECK(errors == 18);
+    const auto unknown = mcp::call_media_tool(env, "fetch_image", Json::object());
     REQUIRE_FALSE(unknown);
     CHECK(unknown.error().code == gc::ErrorCode::NotFound);
     std::error_code ec;

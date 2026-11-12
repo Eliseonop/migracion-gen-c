@@ -25,6 +25,8 @@ struct Error {
     // Campo donde está el problema, con la sintaxis de Python/JS:
     // "timeline.clips[3].reframe.zoom". Vacío si no aplica.
     std::string path;
+    // La pista para quien llama (el `hint` de un MCPError de video-yt). Vacía si no hay.
+    std::string hint;
 
     [[nodiscard]] std::string to_string() const;
 };
@@ -34,7 +36,7 @@ template <class T>
 using Result = std::expected<T, Error>;
 
 [[nodiscard]] inline std::unexpected<Error> fail(ErrorCode code, std::string message, std::string path = {}) {
-    return std::unexpected(Error{code, std::move(message), std::move(path)});
+    return std::unexpected(Error{code, std::move(message), std::move(path), {}});
 }
 
 } // namespace gc
