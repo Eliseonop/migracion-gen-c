@@ -11,6 +11,9 @@
 //   tests/fixtures/mcp/resources.json     resources.py: el catálogo y el texto de cada resource
 //   tests/fixtures/mcp/tools_read.json  tools_capabilities, tools_context y tools_read: las tools de lectura
 //                                         sobre un data/ temporal, con el resultado o el error de cada llamada
+//   tests/fixtures/mcp/tools_scene.json scene_get_blueprint, scene_set_blueprint, scene_direction_status,
+//                                      scene_direction_auto_split, scene_direction_update_segment y
+//                                      scene_direction_set (tools_scene.py), paso a paso.
 //   tests/fixtures/mcp/tools_media.json replace_media_version, delete_media, search_sfx y
 //                                        set_clip_ai_description paso a paso, con el proyecto y los archivos
 //   tests/fixtures/mcp/tools_edit.json  tools_edit y timeline_store: las tools de edición paso a paso,
@@ -49,6 +52,7 @@
 #include "gc/core/mcp_resources.hpp"
 #include "gc/core/mcp_tools_edit.hpp"
 #include "gc/core/mcp_tools_media.hpp"
+#include "gc/core/mcp_tools_scene.hpp"
 #include "gc/core/mcp_tools_read.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/serialize.hpp"
@@ -876,6 +880,76 @@ TEST_CASE("paridad MCP: las tools de material sin IA (tools_media, tools_audio y
     REQUIRE_FALSE(null_limit);
     CHECK(null_limit.error().code == gc::ErrorCode::Internal);
     const auto unknown = mcp::call_media_tool(env, "fetch_image", Json::object());
+    REQUIRE_FALSE(unknown);
+    CHECK(unknown.error().code == gc::ErrorCode::NotFound);
+    std::error_code ec;
+    std::filesystem::remove_all(tmp, ec);
+}
+
+TEST_CASE("paridad MCP: las tools de dirección de escena sin IA (tools_scene)", "[parity][mcp]") {
+    const Json f = load("tools_scene");
+    const auto tmp = std::filesystem::temp_directory_path() /
+                     ("gc_mcp_tools_scene_parity_" + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())));
+    std::filesystem::remove_all(tmp);
+    std::filesystem::create_directories(tmp / "data");
+    {
+        auto text = gc::core::py_json_dumps(Json{{"projects", f["projects"]}});
+        REQUIRE(text);
+        std::ofstream(tmp / "data" / "projects.json", std::ios::binary) << *text;
+    }
+    gc::core::ProjectsStore store(tmp / "data" / "projects.json", tmp / "clips");
+    gc::core::SequentialIdSource ids;
+    std::int64_t ticks = 0; // el time.time() de scene_direction en Python: 1700000000 + n/4
+    mcp::EditToolsEnv env{.store = store, .data_dir = tmp / "data", .ids = ids};
+    env.unix_now = [&ticks] { return 1700000000.0 + 0.25 * static_cast<double>(++ticks); };
+
+    REQUIRE(f["registered"].size() == mcp::scene_tools().size());
+    for (std::size_t i = 0; i < mcp::scene_tools().size(); ++i) {
+        CHECK(f["registered"][i][0].get<std::string>() == mcp::scene_tools()[i].name);
+        CHECK(f["registered"][i][1].get<std::string>() == mcp::scene_tools()[i].access);
+    }
+    std::size_t errors = 0;
+    std::size_t crashes = 0;
+    for (const Json& c : f["steps"]) {
+        const std::string tool = c["tool"].get<std::string>();
+        const Json& a = c["args"];
+        const auto r = mcp::call_scene_tool(env, tool, a);
+        const std::string what = tool + a.dump();
+        INFO(what);
+        if (c.contains("error")) {
+            ++errors;
+            REQUIRE_FALSE(r);
+            INFO(r.error().message);
+            if (!c["value_error"].get<bool>()) { // un TypeError de Python: un crash
+                ++crashes;
+                CHECK(r.error().code == gc::ErrorCode::Internal);
+            } else {
+                REQUIRE(c.contains("mcp")); // todos los errores de estas tools son MCPError
+                const Json& m = c["mcp"];
+                CHECK(r.error().message == c["error"].get<std::string>());
+                CHECK(r.error().mcp_code == m["code"].get<std::string>());
+                CHECK(r.error().retryable == m["retryable"].get<bool>());
+                CHECK(r.error().path == (m["param"].is_string() ? m["param"].get<std::string>() : std::string()));
+                CHECK(r.error().hint.empty());
+            }
+        } else {
+            if (!r) {
+                INFO(r.error().message);
+                REQUIRE(r);
+            }
+            same(c["result"], *r, what);
+        }
+        Json project;
+        for (const Json& p : store.load()["projects"]) {
+            if (p["id"] == a["project_id"]) {
+                project = p;
+            }
+        }
+        same(c["project"], project, what + " (projects.json)");
+    }
+    CHECK(errors == 18);
+    CHECK(crashes == 2);
+    const auto unknown = mcp::call_scene_tool(env, "scene_direction_pack", Json::object());
     REQUIRE_FALSE(unknown);
     CHECK(unknown.error().code == gc::ErrorCode::NotFound);
     std::error_code ec;

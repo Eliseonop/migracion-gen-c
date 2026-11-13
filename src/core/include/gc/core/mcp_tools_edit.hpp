@@ -50,6 +50,8 @@ struct EditToolsEnv {
     // detect.dims de media_upgrade (replace_media_version): sin él, ningún vídeo tiene medidas y no se
     // comprueba la proporción.
     VideoDimsProbe video_dims = nullptr;
+    // time.time() de las tools de dirección de escena (updated_at): sin él, la hora del sistema.
+    std::function<double()> unix_now = nullptr;
 };
 
 inline constexpr std::array<std::string_view, 4> kPendingEditTools{"freeze_frame", "detect_beats", "track_object",

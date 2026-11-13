@@ -11,6 +11,18 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.10.0] — 2026-11-13
+
+### Añadido
+
+- **La dirección de escena en el núcleo** (`scene_direction.hpp`): la escaleta de tramos del guion, la dirección
+  visual global del vídeo, el guion en frases con tiempos (de los subtítulos, de la transcripción del material o
+  estimado desde el texto del audio), la escaleta propuesta y el estado del montaje, con paridad contra
+  `scene_direction.py` de video-yt.
+- **Seis tools más en el servidor MCP** (54 de 100): `scene_get_blueprint`, `scene_set_blueprint`,
+  `scene_direction_status`, `scene_direction_auto_split`, `scene_direction_update_segment` y `scene_direction_set`.
+  Sus errores llegan al agente con el código, el parámetro y si se puede reintentar, como en video-yt.
+
 ## [0.9.0] — 2026-11-12
 
 ### Añadido

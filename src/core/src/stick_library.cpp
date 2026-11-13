@@ -66,7 +66,7 @@ struct PyFailure : std::exception {
     Error error;
 };
 
-[[noreturn]] void py_raise(ErrorCode code, std::string message) { throw PyFailure(Error{code, std::move(message), {}, {}}); }
+[[noreturn]] void py_raise(ErrorCode code, std::string message) { throw PyFailure(Error{code, std::move(message), {}, {}, {}, false}); }
 
 template <class F>
 Result<Json> guarded(F&& f) {

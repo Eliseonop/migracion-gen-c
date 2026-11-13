@@ -4385,6 +4385,49 @@ def _mcp_tools_media_fixtures(mc) -> dict:
     return {"projects": mc.MEDIA_PROJECTS, "files": mc.MEDIA_FILES, "dims": mc.MEDIA_DIMS,
             "sfx_files": mc.MEDIA_SFX_FILES, "registered": registered, "steps": steps}
 
+def _mcp_tools_scene_fixtures(mc) -> dict:
+    """Las tools de dirección de escena sin IA REALES de tools_scene (scene_get_blueprint, scene_set_blueprint,
+    scene_direction_status, scene_direction_auto_split, scene_direction_update_segment y scene_direction_set)
+    paso a paso sobre un projects.json temporal, con el reloj de scene_direction y uuid4 en secuencia. Cada
+    paso da su resultado o su error (con el código, la pista, el param y si se reintenta de un MCPError) y el
+    proyecto crudo de projects.json."""
+    import tempfile
+
+    from app import projects, scene_direction
+    from app.mcp_server import registry, tools_scene
+
+    wanted = ("scene_get_blueprint", "scene_set_blueprint", "scene_direction_status", "scene_direction_auto_split",
+              "scene_direction_update_segment", "scene_direction_set")
+    registered: list[list[str]] = []
+
+    def fake_tool(_mcp, access="read", **_kw):
+        return lambda fn: (registered.append([fn.__name__, access]) if fn.__name__ in wanted else None) or fn
+
+    with tempfile.TemporaryDirectory() as td, _Patches() as p:
+        data = Path(td)
+        p.set(projects, "_FILE", data / "projects.json")
+        p.set(uuid, "uuid4", _SequentialUuid())
+        p.set(scene_direction, "time", types.SimpleNamespace(time=_SceneClock()))
+        p.set(tools_scene, "tool", fake_tool)
+        tools_scene.register(None)
+        projects._FILE.write_text(json.dumps({"projects": mc.SCENE_PROJECTS}, ensure_ascii=False), encoding="utf-8")
+        steps = []
+        for tool, args in mc.SCENE_STEPS:
+            case: dict = {"tool": tool, "args": args}
+            try:
+                case["result"] = _pure(getattr(tools_scene, tool)(**args))
+            except Exception as e:  # noqa: BLE001 — el C++ debe fallar igual
+                case["error"] = str(e)
+                case["error_type"] = type(e).__name__
+                case["value_error"] = isinstance(e, ValueError)
+                if isinstance(e, registry.MCPError):
+                    case["mcp"] = {"code": e.code, "hint": e.hint, "retryable": e.retryable, "param": e.param}
+            raw = json.loads(projects._FILE.read_text(encoding="utf-8"))["projects"]
+            case["project"] = next((x for x in raw if x["id"] == args["project_id"]), None)
+            steps.append(case)
+    return {"projects": mc.SCENE_PROJECTS, "registered": registered, "steps": steps}
+
+
 def _mcp_wire_fixtures(mc) -> dict:
     """El servidor MCP REAL por HTTP (sin red, con TestClient) sobre un data/ temporal: tools/list, la
     validación de los argumentos y lo que responde a cada petición de WIRE_STEPS. La auditoría también
@@ -4517,10 +4560,108 @@ def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
             "help": _mcp_help_fixtures(mc), "registry": _mcp_registry_fixtures(mc),
             "resources": _mcp_resources_fixtures(ctx, mc), "audit": _mcp_audit_fixtures(mc),
             "tools_read": _mcp_tools_read_fixtures(mc), "tools_edit": _mcp_tools_edit_fixtures(mc),
-            "tools_media": _mcp_tools_media_fixtures(mc), "wire": _mcp_wire_fixtures(mc)}
+            "tools_media": _mcp_tools_media_fixtures(mc), "tools_scene": _mcp_tools_scene_fixtures(mc),
+            "wire": _mcp_wire_fixtures(mc)}
 
 
 # --- Salida -----------------------------------------------------------------------------------
+
+# --- Dirección de escena (scene_direction.py) --------------------------------------------------------
+
+class _SceneClock:
+    """time.time() de scene_direction: 1700000000 + n/4 en la n-ésima llamada (como el test de C++)."""
+
+    def __init__(self):
+        self.n = 0
+
+    def __call__(self):
+        self.n += 1
+        return 1700000000.0 + 0.25 * self.n
+
+
+def synthetic_scene_fixtures(ctx: Ctx) -> dict:
+    """La parte de scene_direction.py REAL que no necesita la biblioteca ni la IA (scene_cases.py): las
+    normalizaciones (con el reloj y los uuid desde el principio en cada caso), el guion, el estado y la
+    escaleta propuesta de cada proyecto, y los pasos de guardar sobre un projects.json temporal (con el
+    reloj y los uuid seguidos y el proyecto crudo tras cada paso)."""
+    sys.path.insert(0, str(HERE))
+    import scene_cases as sc
+    from app import projects, scene_direction as sd
+    from app.motion import directions
+
+    def run(fn):
+        try:
+            return {"result": _pure(fn())}
+        except Exception as e:  # noqa: BLE001 — el C++ debe fallar igual
+            return {"error": str(e), "error_type": type(e).__name__, "lookup": isinstance(e, LookupError)}
+
+    with tempfile.TemporaryDirectory() as td, _Patches() as p:
+        data = Path(td)
+        p.set(projects, "_FILE", data / "projects.json")
+        state = {}
+
+        def reset():
+            state["uuid"] = _SequentialUuid()
+            state["clock"] = _SceneClock()
+            p.set(uuid, "uuid4", state["uuid"])
+            p.set(sd, "time", types.SimpleNamespace(time=state["clock"]))
+
+        def each(fn, values):
+            out = []
+            for v in values:
+                reset()
+                out.append({"raw": v, **run(lambda: fn(v))})
+            return out
+
+        catalog = {
+            "directions": [{"key": d["key"], "label": d["label"], "summary": d["summary"]}
+                           for d in directions.list_directions()],
+            "default_direction": directions.DEFAULT_DIRECTION,
+            "modes": [{"key": k, **v} for k, v in sd.MODES.items()],
+            "statuses": list(sd.STATUSES), "material_roles": list(sd.MATERIAL_ROLES),
+            "vocabulary": list(sd.VOCABULARY),
+        }
+        segments = each(sd.normalize_segment, sc.SEGMENTS)
+        components = each(sd.normalize_component, sc.COMPONENTS)
+        docs = each(sd.normalize_doc, sc.DOCS)
+        blueprints = each(sd.normalize_blueprint, sc.BLUEPRINTS)
+
+        projects._FILE.write_text(json.dumps({"projects": sc.PROJECTS}, ensure_ascii=False), encoding="utf-8")
+        cases = []
+        for raw in sc.PROJECTS:
+            proj = projects.get_project(raw["id"])
+            units, source = sd.script_units(proj)
+            reset()
+            case = {"id": raw["id"], "duration": sd.timeline_duration(proj), "units": _pure(units), "source": source,
+                    "ranges": [[a, b, sd.text_in_range(units, a, b)] for a, b in sc.RANGES],
+                    "status": run(lambda: sd.status_summary(proj)), "auto": []}
+            for keep in sc.KEEPS:
+                reset()
+                kept = sd.load(proj)["segments"] if keep == "load" else sd.normalize_doc({"segments": keep})["segments"]
+                reset()
+                case["auto"].append({"keep": _pure(kept), **run(lambda: sd.auto_segments(proj, keep=kept))})
+            cases.append(case)
+
+        projects._FILE.write_text(json.dumps({"projects": sc.STORE_PROJECTS}, ensure_ascii=False), encoding="utf-8")
+        reset()
+        calls = {
+            "load": lambda pid: sd.load(projects.get_project(pid)),
+            "load_blueprint": lambda pid: sd.load_blueprint(projects.get_project(pid)),
+            "get_segment": lambda pid, sid: sd.get_segment(projects.get_project(pid), sid),
+            "update_segment": sd.update_segment, "apply_plan_all": sd.apply_plan_all,
+            "save": sd.save, "save_blueprint": sd.save_blueprint,
+            "status_summary": lambda pid: sd.status_summary(projects.get_project(pid)),
+        }
+        steps = []
+        for name, *args in sc.STORE:
+            step = {"call": name, "args": args, **run(lambda: calls[name](*args))}
+            raw = json.loads(projects._FILE.read_text(encoding="utf-8"))["projects"]
+            step["project"] = next((x for x in raw if x["id"] == args[0]), None)
+            steps.append(step)
+    return {"catalog": catalog, "segments": segments, "components": components, "docs": docs,
+            "blueprints": blueprints, "projects": sc.PROJECTS, "cases": cases,
+            "store_projects": sc.STORE_PROJECTS, "steps": steps}
+
 
 # --- «Importar imagen»: to_working_png con OpenCV (images.py) ------------------------------------
 
@@ -4626,7 +4767,7 @@ def main() -> None:
     ap.add_argument("--real", action="store_true", help="exportar también tus proyectos reales (local)")
     ap.add_argument("--solo", choices=["export", "render", "shapes", "texto", "texto3d", "mascaras", "editor",
                                        "sfx_escritura", "beats", "keywords", "mono", "contorno", "proyectos", "ajustes", "heatmap", "url", "vfx", "youtube_video", "fx_bake",
-                                       "anchos", "matte", "lru", "plataforma", "imagenes", "decode", "modelos", "mcp"],
+                                       "anchos", "matte", "lru", "plataforma", "imagenes", "decode", "modelos", "mcp", "escena"],
                     help="solo ese grupo de fixtures (export: tests/fixtures/export; render: render/synthetic.json; "
                          "decode: media/decode.json y media/seek.json)")
     ap.add_argument("--conservar", action="store_true",
@@ -4700,6 +4841,7 @@ def main() -> None:
             "tools_read": lambda d: len(d["calls"]),
             "tools_edit": lambda d: len(d["steps"]),
             "tools_media": lambda d: len(d["steps"]),
+            "tools_scene": lambda d: len(d["steps"]),
             "wire": lambda d: len(d["steps"]) + len(d["matrix"]),
         }
         errors = {
@@ -4712,6 +4854,7 @@ def main() -> None:
             "tools_read": lambda d: sum("error" in c for c in d["calls"]),
             "tools_edit": lambda d: sum("error" in c for c in d["steps"]),
             "tools_media": lambda d: sum("error" in c for c in d["steps"]),
+            "tools_scene": lambda d: sum("error" in c for c in d["steps"]),
             "wire": lambda d: sum("error" in c for c in d["matrix"]),
         }
         for name, payload in mcp.items():
@@ -4720,6 +4863,17 @@ def main() -> None:
 
     if args.solo == "mcp":
         mcp_group()
+        return
+
+    def scene_group() -> None:
+        scn = synthetic_scene_fixtures(ctx)
+        items = scn["segments"] + scn["components"] + scn["docs"] + scn["blueprints"] + scn["steps"]
+        write(REPO / "tests" / "fixtures" / "scene" / "direction.json", scn,
+              len(items) + sum(1 + len(c["ranges"]) + len(c["auto"]) for c in scn["cases"]),
+              sum("error" in c for c in items) + sum("error" in a for c in scn["cases"] for a in c["auto"]))
+
+    if args.solo == "escena":
+        scene_group()
         return
 
     def platform_group() -> None:
@@ -4957,6 +5111,7 @@ def main() -> None:
     platform_group()
     models_group()
     mcp_group()
+    scene_group()
     write(REPO / "tests" / "fixtures" / "media" / "decode.json", dec, len(dec), 0)
     write(REPO / "tests" / "fixtures" / "media" / "synthetic.json", med,
           len(med["gifs"]) + len(med["magic"]) + len(med["probe"]), 0)

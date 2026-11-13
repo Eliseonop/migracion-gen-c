@@ -897,6 +897,15 @@ WIRE_STEPS = [
     ["material: kind raro", {"rpc": _call("delete_media", project_id="w1", kind="x", ident="0")}],
     ["material: sin el clip", {"rpc": _call("set_clip_ai_description", project_id="w1", clip_index="0", description=" x ")}],
     ["material: proyecto raro", {"rpc": _call("replace_media_version", project_id="nada", clip_index="0")}],
+    # Los MCPError de tools_scene llevan su código: «Pasa 'patch'…» no dice nada y «Ningún campo…» parecería
+    # un resource_not_found si se dedujera del texto.
+    ["escena: estado", {"rpc": _call("scene_direction_status", project_id="w1")}],
+    ["escena: patch vacío", {"rpc": _call("scene_direction_update_segment", project_id="w1", segment_id="x", patch={})}],
+    ["escena: patch sin campos", {"rpc": _call("scene_direction_update_segment", project_id="w1", segment_id="x",
+                                               patch={"foo": 1})}],
+    ["escena: sin el tramo", {"rpc": _call("scene_direction_update_segment", project_id="w1", segment_id="x",
+                                           patch={"mode": "explain"})}],
+    ["escena: sin proyecto", {"rpc": _call("scene_get_blueprint", project_id="nada")}],
     # Otros métodos HTTP.
     ["GET Accept raro", {"method": "GET", "headers": {"Accept": "text/plain"}}],
     ["PUT", {"method": "PUT"}], ["DELETE sin sesión", {"method": "DELETE", "session": "none"}],
@@ -996,4 +1005,67 @@ MEDIA_STEPS = [
     ["delete_media", {"project_id": "u1", "kind": "clips", "ident": "local"}],
     ["delete_media", {"project_id": "u1", "kind": "clips", "ident": "11"}],
     ["delete_media", {"project_id": "u1", "kind": "clips", "ident": "14"}],
+]
+
+# --- Las tools de dirección de escena sin IA (tools_scene.py) -----------------------------------------
+#   SCENE_PROJECTS   «p-cap» (subtítulos con tiempos, escaleta y blueprint, de scene_cases) y «s-main»
+#                    (una escaleta sin timeline)
+#   SCENE_STEPS      [tool, argumentos] en orden, con el reloj de scene_direction y los uuid seguidos: cada
+#                    paso da su resultado o su error y el proyecto crudo tras él
+import copy as _copy  # noqa: E402
+
+import scene_cases as _scene  # noqa: E402
+
+SCENE_PROJECTS = [_copy.deepcopy(_scene._CAPTIONS), _copy.deepcopy(_scene.STORE_PROJECTS[0])]
+SCENE_STEPS = [
+    ["scene_get_blueprint", {"project_id": "p-cap"}],
+    ["scene_get_blueprint", {"project_id": "nada"}],
+    ["scene_get_blueprint", {"project_id": "s-main"}],
+    ["scene_direction_status", {"project_id": "p-cap"}],
+    ["scene_direction_status", {"project_id": "s-main"}],
+    ["scene_direction_status", {"project_id": "nada"}],
+    # auto_split: propone sin guardar; sin segments (o con algo que no es una lista), conserva la guardada.
+    ["scene_direction_auto_split", {"project_id": "p-cap"}],
+    ["scene_direction_auto_split", {"project_id": "p-cap", "segments": None}],
+    ["scene_direction_auto_split", {"project_id": "p-cap", "segments": []}],
+    ["scene_direction_auto_split", {"project_id": "p-cap", "segments": [{"start": 3, "end": 8, "mode": "represent"},
+                                                                         {"start": 9, "end": 12}]}],
+    ["scene_direction_auto_split", {"project_id": "p-cap", "segments": "x"}],
+    ["scene_direction_auto_split", {"project_id": "s-main"}],
+    ["scene_direction_auto_split", {"project_id": "nada"}],
+    # update_segment: solo los campos de _PATCH_KEYS; la escaleta entera, guardada.
+    ["scene_direction_update_segment", {"project_id": "p-cap", "segment_id": "sd_dir1",
+                                        "patch": {"mode": "material", "foo": 1, "materials": [{"kind": "clips", "id": 2}],
+                                                  "updated_at": 3, "id": "otro"}}],
+    ["scene_direction_update_segment", {"project_id": "p-cap", "segment_id": "sd_dir1", "patch": {}}],
+    ["scene_direction_update_segment", {"project_id": "p-cap", "segment_id": "sd_dir1", "patch": "x"}],
+    ["scene_direction_update_segment", {"project_id": "p-cap", "segment_id": "sd_dir1", "patch": {"foo": 1, "id": "y"}}],
+    ["scene_direction_update_segment", {"project_id": "p-cap", "segment_id": "nope", "patch": {"mode": "explain"}}],
+    ["scene_direction_update_segment", {"project_id": "nada", "segment_id": "sd_dir1", "patch": {"mode": "explain"}}],
+    ["scene_direction_update_segment", {"project_id": "p-cap", "segment_id": "sd_nv",
+                                        "patch": {"status": "placed", "complexity": "2", "components": [{"source": "keep"}],
+                                                  "composition_intent": "Mantener", "no_visual": False, "strict": 1}}],
+    ["scene_direction_update_segment", {"project_id": "p-cap", "segment_id": "sd_pl", "patch": {"end": 40.1}}],
+    ["scene_direction_update_segment", {"project_id": "p-cap", "segment_id": "sd_dir2", "patch": {"mode": ["x"]}}],
+    ["scene_direction_status", {"project_id": "p-cap"}],
+    # set: reemplaza la escaleta entera.
+    ["scene_direction_set", {"project_id": "s-main", "segments": [
+        {"id": "sd_n2", "start": 5, "end": 9, "reference_id": "sd_n1"}, {"id": "sd_n1", "start": 0, "end": 5, "mode": "explain"},
+        {"start": 9, "end": 9.1}, "x"]}],
+    ["scene_direction_set", {"project_id": "s-main", "segments": "x"}],
+    ["scene_direction_set", {"project_id": "s-main", "segments": {"a": 1}}],
+    ["scene_direction_set", {"project_id": "nada", "segments": []}],
+    ["scene_direction_set", {"project_id": "s-main", "segments": [{"start": 0, "end": 2, "materials": 5}]}],
+    ["scene_direction_set", {"project_id": "s-main", "segments": []}],
+    # set_blueprint: direction se comprueba contra el catálogo; {} la borra.
+    ["scene_set_blueprint", {"project_id": "s-main", "blueprint": {"direction": " swiss ", "rules": "Una idea por plano"}}],
+    ["scene_get_blueprint", {"project_id": "s-main"}],
+    ["scene_set_blueprint", {"project_id": "s-main", "blueprint": {"direction": "nope"}}],
+    ["scene_set_blueprint", {"project_id": "s-main", "blueprint": {"direction": 5}}],
+    ["scene_set_blueprint", {"project_id": "s-main", "blueprint": {"direction": "  ", "identity": "Solo identidad"}}],
+    ["scene_set_blueprint", {"project_id": "s-main", "blueprint": "x"}],
+    ["scene_set_blueprint", {"project_id": "s-main", "blueprint": ["swiss"]}],
+    ["scene_set_blueprint", {"project_id": "nada", "blueprint": {"direction": "swiss"}}],
+    ["scene_set_blueprint", {"project_id": "p-cap", "blueprint": {}}],
+    ["scene_get_blueprint", {"project_id": "p-cap"}],
 ]

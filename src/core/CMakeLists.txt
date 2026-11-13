@@ -77,6 +77,7 @@ add_library(gc_core
     src/bg_ui.cpp
     src/captions_ui.cpp
     src/face_follow.cpp
+    src/scene_direction.cpp
     src/script_prompt.cpp
     src/mask_edit.cpp
     src/mask_ui.cpp
@@ -102,6 +103,7 @@ add_library(gc_core
     src/mcp_tools_read.cpp
     src/mcp_tools_edit.cpp
     src/mcp_tools_media.cpp
+    src/mcp_tools_scene.cpp
     src/mcp_server.cpp
 )
 add_library(gc::core ALIAS gc_core)

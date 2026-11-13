@@ -27,6 +27,10 @@ struct Error {
     std::string path;
     // La pista para quien llama (el `hint` de un MCPError de video-yt). Vacía si no hay.
     std::string hint;
+    // El código de un MCPError explícito de video-yt («invalid_parameter», «resource_not_found»…) y si se
+    // puede reintentar. Vacío: el servidor MCP lo deduce del texto, como el de un ValueError suelto.
+    std::string mcp_code;
+    bool retryable = false;
 
     [[nodiscard]] std::string to_string() const;
 };
@@ -36,7 +40,7 @@ template <class T>
 using Result = std::expected<T, Error>;
 
 [[nodiscard]] inline std::unexpected<Error> fail(ErrorCode code, std::string message, std::string path = {}) {
-    return std::unexpected(Error{code, std::move(message), std::move(path), {}});
+    return std::unexpected(Error{code, std::move(message), std::move(path), {}, {}, false});
 }
 
 } // namespace gc

@@ -13,6 +13,7 @@
 #include "gc/core/io.hpp"
 #include "gc/core/mcp_registry.hpp"
 #include "gc/core/mcp_tools_media.hpp"
+#include "gc/core/mcp_tools_scene.hpp"
 #include "gc/core/mcp_resources.hpp"
 #include "gc/core/mcp_tools_read.hpp"
 
@@ -410,7 +411,8 @@ const std::vector<std::string>& tool_names() {
         for (const Json& t : all_tools()) {
             const auto name = t["name"].get<std::string>();
             const auto named = [&](const EditToolInfo& e) { return e.name == name; };
-            const bool edit = std::ranges::any_of(edit_tools(), named) || std::ranges::any_of(media_tools(), named);
+            const bool edit = std::ranges::any_of(edit_tools(), named) || std::ranges::any_of(media_tools(), named) ||
+                              std::ranges::any_of(scene_tools(), named);
             if (edit || std::ranges::find(kReadTools, name) != kReadTools.end()) {
                 out.push_back(name);
             }
@@ -485,6 +487,9 @@ Result<Json> McpServer::run_tool(std::string_view name, const Json& args) {
     if (std::ranges::any_of(media_tools(), [&](const EditToolInfo& e) { return e.name == name; })) {
         return call_media_tool(edit_, name, args);
     }
+    if (std::ranges::any_of(scene_tools(), [&](const EditToolInfo& e) { return e.name == name; })) {
+        return call_scene_tool(edit_, name, args);
+    }
     return call_edit_tool(edit_, name, args);
 }
 
@@ -544,11 +549,18 @@ Json McpServer::call_tool(const Json& params, const Json& id) {
         return tool_text(id, prefix, true);
     }
     std::string payload;
-    const bool structured = !error.path.empty() || !error.hint.empty() || error.code == ErrorCode::Unsupported;
+    const bool structured = !error.path.empty() || !error.hint.empty() || !error.mcp_code.empty() ||
+                            error.code == ErrorCode::Unsupported;
     if (structured) {
         McpError mcp_error;
         mcp_error.message = error.message;
-        if (error.code == ErrorCode::Unsupported) {
+        if (!error.mcp_code.empty()) { // un MCPError con su código
+            mcp_error.code = error.mcp_code;
+            mcp_error.retryable = error.retryable;
+            if (!error.path.empty()) {
+                mcp_error.param = error.path;
+            }
+        } else if (error.code == ErrorCode::Unsupported) {
             mcp_error.code = "dependency_error";
         } else {
             const auto [code, retryable] = classify_value_error(error.message);
