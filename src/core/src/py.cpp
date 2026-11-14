@@ -863,30 +863,131 @@ std::string py_nfkd_fold(std::string_view utf8) {
     return out;
 }
 
-bool py_word_char(char32_t c) {
+namespace {
+
+constexpr CpRange kAlnum[] = {
+#define GC_PY_ALNUM
+#include "py_text.inc"
+#undef GC_PY_ALNUM
+};
+constexpr CpRange kIsUpper[] = {
+#define GC_PY_ISUPPER
+#include "py_text.inc"
+#undef GC_PY_ISUPPER
+};
+constexpr CpRange kDigit[] = {
+#define GC_PY_DIGIT
+#include "py_text.inc"
+#undef GC_PY_DIGIT
+};
+constexpr LowerEntry kNfd[] = {
+#define GC_PY_NFD_MAP
+#include "py_text.inc"
+#undef GC_PY_NFD_MAP
+};
+struct CccRange {
+    char32_t lo;
+    char32_t hi;
+    int ccc;
+};
+constexpr CccRange kCcc[] = {
+#define GC_PY_CCC
+#include "py_text.inc"
+#undef GC_PY_CCC
+};
+constexpr CpRange kMn[] = {
+#define GC_PY_MN
+#include "py_text.inc"
+#undef GC_PY_MN
+};
+
+int combining_class(char32_t c) {
+    const auto it = std::ranges::upper_bound(kCcc, c, {}, &CccRange::lo);
+    return it != std::begin(kCcc) && c <= std::prev(it)->hi ? std::prev(it)->ccc : 0;
+}
+
+// La descomposición canónica completa de un carácter, añadida a `out` (los hangul, con la
+// fórmula de Unicode: L V [T]).
+void decompose(char32_t c, std::vector<char32_t>& out) {
+    constexpr char32_t kSBase = 0xAC00;
+    constexpr char32_t kLBase = 0x1100;
+    constexpr char32_t kVBase = 0x1161;
+    constexpr char32_t kTBase = 0x11A7;
+    constexpr char32_t kTCount = 28;
+    constexpr char32_t kNCount = 21 * kTCount;
+    if (c >= kSBase && c <= 0xD7A3) {
+        const char32_t s = c - kSBase;
+        out.push_back(kLBase + (s / kNCount));
+        out.push_back(kVBase + ((s % kNCount) / kTCount));
+        if (s % kTCount != 0) {
+            out.push_back(kTBase + (s % kTCount));
+        }
+        return;
+    }
+    if (const char* d = lookup(kNfd, c)) {
+        const std::string_view text(d);
+        for (std::size_t i = 0; i < text.size();) {
+            out.push_back(utf8_next(text, i));
+        }
+        return;
+    }
+    out.push_back(c);
+}
+
+void append_utf8(std::string& out, char32_t c) {
     if (c < 0x80) {
-        return (c >= U'0' && c <= U'9') || (c >= U'a' && c <= U'z') || (c >= U'A' && c <= U'Z') || c == U'_';
+        out += static_cast<char>(c);
+    } else if (c < 0x800) {
+        out += static_cast<char>(0xC0 | (c >> 6));
+        out += static_cast<char>(0x80 | (c & 0x3F));
+    } else if (c < 0x10000) {
+        out += static_cast<char>(0xE0 | (c >> 12));
+        out += static_cast<char>(0x80 | ((c >> 6) & 0x3F));
+        out += static_cast<char>(0x80 | (c & 0x3F));
+    } else {
+        out += static_cast<char>(0xF0 | (c >> 18));
+        out += static_cast<char>(0x80 | ((c >> 12) & 0x3F));
+        out += static_cast<char>(0x80 | ((c >> 6) & 0x3F));
+        out += static_cast<char>(0x80 | (c & 0x3F));
     }
-    if (c <= 0xFF) { // Latin-1: letras, ª º µ, ² ³ ¹ y ¼ ½ ¾
-        return c == 0xAA || c == 0xB2 || c == 0xB3 || c == 0xB5 || c == 0xB9 || c == 0xBA ||
-               (c >= 0xBC && c <= 0xBE) || (c >= 0xC0 && c != 0xD7 && c != 0xF7);
+}
+
+} // namespace
+
+bool py_word_char(char32_t c) { return c == U'_' || in_ranges(kAlnum, c); }
+bool py_isalnum(char32_t c) { return in_ranges(kAlnum, c); }
+bool py_isupper(char32_t c) { return in_ranges(kIsUpper, c); }
+bool py_isdigit(char32_t c) { return in_ranges(kDigit, c); }
+
+std::string py_strip_accents(std::string_view utf8) {
+    std::vector<char32_t> cps;
+    cps.reserve(utf8.size());
+    for (std::size_t i = 0; i < utf8.size();) {
+        decompose(utf8_next(utf8, i), cps);
     }
-    struct Range {
-        char32_t lo;
-        char32_t hi;
-    };
-    // Bloques sin letras ni números: modificadores-símbolo, marcas combinantes, signos
-    // griegos y cirílicos, puntuación general, monedas, flechas, matemáticas, formas,
-    // dingbats, puntuación CJK, uso privado, especiales y emoji.
-    static constexpr Range kNonWord[] = {
-        {0x2C2, 0x2C5},     {0x2D2, 0x2DF},   {0x2E5, 0x2EB},   {0x2ED, 0x2ED},   {0x2EF, 0x36F},
-        {0x375, 0x375},     {0x37E, 0x37E},   {0x384, 0x385},   {0x387, 0x387},   {0x3F6, 0x3F6},
-        {0x482, 0x489},     {0x2000, 0x206F}, {0x207A, 0x207E}, {0x208A, 0x208E}, {0x20A0, 0x214F},
-        {0x2190, 0x245F},   {0x249C, 0x24E9}, {0x2500, 0x2775}, {0x2794, 0x2BFF}, {0x2E00, 0x2E7F},
-        {0x3000, 0x3004},   {0x3008, 0x3020}, {0x3030, 0x3030}, {0xD800, 0xF8FF}, {0xFE00, 0xFE6F},
-        {0xFF01, 0xFF0F},   {0xFF1A, 0xFF20}, {0xFF3B, 0xFF40}, {0xFF5B, 0xFF65}, {0xFFF0, 0xFFFF},
-        {0x1F000, 0x1FAFF}, {0xE0000, 0x10FFFF}};
-    return std::ranges::none_of(kNonWord, [c](const Range& r) { return c >= r.lo && c <= r.hi; });
+    // El orden canónico de NFD: cada racha de caracteres con clase de combinación ≠ 0 se
+    // ordena por clase, estable.
+    for (std::size_t i = 0; i < cps.size();) {
+        if (combining_class(cps[i]) == 0) {
+            ++i;
+            continue;
+        }
+        std::size_t j = i;
+        while (j < cps.size() && combining_class(cps[j]) != 0) {
+            ++j;
+        }
+        std::stable_sort(cps.begin() + static_cast<std::ptrdiff_t>(i), cps.begin() + static_cast<std::ptrdiff_t>(j),
+                         [](char32_t a, char32_t b) { return combining_class(a) < combining_class(b); });
+        i = j;
+    }
+    std::string out;
+    out.reserve(utf8.size());
+    for (const char32_t c : cps) {
+        if (!in_ranges(kMn, c)) {
+            append_utf8(out, c);
+        }
+    }
+    return out;
 }
 
 } // namespace gc::core::detail

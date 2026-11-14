@@ -886,6 +886,28 @@ TEST_CASE("paridad MCP: las tools de material sin IA (tools_media, tools_audio y
     std::filesystem::remove_all(tmp, ec);
 }
 
+namespace {
+
+// Las tools de `registered` (las de una tanda, en el orden de tools_scene.register) son las de
+// scene_tools() con ese nombre, en el mismo orden y con el mismo acceso.
+void check_scene_registered(const Json& registered) {
+    std::vector<const mcp::EditToolInfo*> mine;
+    for (const auto& t : mcp::scene_tools()) {
+        for (const Json& r : registered) {
+            if (r[0].get<std::string>() == t.name) {
+                mine.push_back(&t);
+            }
+        }
+    }
+    REQUIRE(mine.size() == registered.size());
+    for (std::size_t i = 0; i < mine.size(); ++i) {
+        CHECK(registered[i][0].get<std::string>() == mine[i]->name);
+        CHECK(registered[i][1].get<std::string>() == mine[i]->access);
+    }
+}
+
+} // namespace
+
 TEST_CASE("paridad MCP: las tools de dirección de escena sin IA (tools_scene)", "[parity][mcp]") {
     const Json f = load("tools_scene");
     const auto tmp = std::filesystem::temp_directory_path() /
@@ -903,11 +925,7 @@ TEST_CASE("paridad MCP: las tools de dirección de escena sin IA (tools_scene)",
     mcp::EditToolsEnv env{.store = store, .data_dir = tmp / "data", .ids = ids};
     env.unix_now = [&ticks] { return 1700000000.0 + 0.25 * static_cast<double>(++ticks); };
 
-    REQUIRE(f["registered"].size() == mcp::scene_tools().size());
-    for (std::size_t i = 0; i < mcp::scene_tools().size(); ++i) {
-        CHECK(f["registered"][i][0].get<std::string>() == mcp::scene_tools()[i].name);
-        CHECK(f["registered"][i][1].get<std::string>() == mcp::scene_tools()[i].access);
-    }
+    check_scene_registered(f["registered"]);
     std::size_t errors = 0;
     std::size_t crashes = 0;
     for (const Json& c : f["steps"]) {
@@ -952,6 +970,75 @@ TEST_CASE("paridad MCP: las tools de dirección de escena sin IA (tools_scene)",
     const auto unknown = mcp::call_scene_tool(env, "scene_direction_pack", Json::object());
     REQUIRE_FALSE(unknown);
     CHECK(unknown.error().code == gc::ErrorCode::NotFound);
+    std::error_code ec;
+    std::filesystem::remove_all(tmp, ec);
+}
+
+TEST_CASE("paridad MCP: las tools del material de la dirección de escena (tools_scene_material)", "[parity][mcp]") {
+    const Json f = load("tools_scene_material");
+    const auto tmp = std::filesystem::temp_directory_path() /
+                     ("gc_mcp_tools_scene_material_parity_" +
+                      std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())));
+    std::filesystem::remove_all(tmp);
+    std::filesystem::create_directories(tmp / "data" / "library");
+    const auto write = [](const std::filesystem::path& file, const Json& value) {
+        auto text = gc::core::py_json_dumps(value);
+        REQUIRE(text);
+        std::ofstream(file, std::ios::binary) << *text;
+    };
+    write(tmp / "data" / "projects.json", Json{{"projects", f["projects"]}});
+    write(tmp / "data" / "library" / "library.json", f["library"]);
+    gc::core::ProjectsStore store(tmp / "data" / "projects.json", tmp / "clips");
+    gc::core::SequentialIdSource ids;
+    std::int64_t ticks = 0; // el time.time() de scene_direction en Python: 1700000000 + n/4
+    mcp::EditToolsEnv env{.store = store, .data_dir = tmp / "data", .ids = ids};
+    env.unix_now = [&ticks] { return 1700000000.0 + 0.25 * static_cast<double>(++ticks); };
+
+    REQUIRE(mcp::scene_tools().size() == 9);
+    check_scene_registered(f["registered"]);
+    std::size_t errors = 0;
+    std::size_t crashes = 0;
+    for (const Json& c : f["steps"]) {
+        const std::string tool = c["tool"].get<std::string>();
+        const Json& a = c["args"];
+        const auto r = mcp::call_scene_tool(env, tool, a);
+        const std::string what = tool + a.dump();
+        INFO(what);
+        if (c.contains("error")) {
+            ++errors;
+            REQUIRE_FALSE(r);
+            INFO(r.error().message);
+            if (!c.contains("mcp")) { // OverflowError o AttributeError de Python: un crash
+                ++crashes;
+                CHECK(r.error().code == gc::ErrorCode::Internal);
+            } else {
+                const Json& m = c["mcp"];
+                CHECK(r.error().message == c["error"].get<std::string>());
+                CHECK(r.error().mcp_code == m["code"].get<std::string>());
+                CHECK(r.error().retryable == m["retryable"].get<bool>());
+                CHECK(r.error().path == (m["param"].is_string() ? m["param"].get<std::string>() : std::string()));
+                CHECK(r.error().hint.empty());
+            }
+        } else {
+            if (!r) {
+                INFO(r.error().message);
+                REQUIRE(r);
+            }
+            same(c["result"], *r, what);
+        }
+        Json project;
+        for (const Json& p : store.load()["projects"]) {
+            if (p["id"] == a["project_id"]) {
+                project = p;
+            }
+        }
+        same(c["project"], project, what + " (projects.json)");
+        auto lib = gc::core::read_json_file(tmp / "data" / "library" / "library.json");
+        REQUIRE(lib);
+        same(c["library"], *lib, what + " (library.json)");
+    }
+    CHECK(errors == 20);
+    CHECK(crashes == 3);
     std::error_code ec;
     std::filesystem::remove_all(tmp, ec);
 }

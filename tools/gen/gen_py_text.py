@@ -13,6 +13,11 @@
   «a» ⇔ x tiene caja.
 - `str.upper()`: lo que da cada carácter que cambia (`x.upper()`, sin contexto; puede ser más
   de un carácter: «ß» → «SS»), para May./min. del texto (`apply_text_case`).
+- `str.isalnum()` (con «_», el `\\w` de las regex de texto de Python), `str.isupper()` y
+  `str.isdigit()` de un carácter, para `key_terms` de motion/segment_context.py.
+- La NFD de `_strip_accents` (segment_context): la descomposición canónica completa de cada
+  carácter que cambia (sin los hangul, que salen de la fórmula), la clase de combinación de
+  cada carácter (para el orden canónico) y las marcas sin espacio (Mn), que se quitan.
 
 Ejecutar con el Python de video-yt cuando cambie su versión de Unicode:
 
@@ -51,6 +56,7 @@ def fold(x: str) -> str:
 
 def main() -> None:
     folds, decimal, title, cased, upper = [], [], [], [], []
+    alnum, isup, digit, nfd, ccc, mn = [], [], [], [], [], []
     for cp in range(sys.maxunicode + 1):
         if 0xD800 <= cp <= 0xDFFF:
             continue
@@ -67,6 +73,21 @@ def main() -> None:
             cased.append(cp)
         if x.upper() != x:
             upper.append(f"    {{0x{cp:05X}, {c_string(x.upper())}}},")
+        if x.isalnum():
+            alnum.append(cp)
+        if x.isupper():
+            isup.append(cp)
+        if x.isdigit():
+            digit.append(cp)
+        if not 0xAC00 <= cp <= 0xD7A3 and unicodedata.normalize("NFD", x) != x:
+            nfd.append(f"    {{0x{cp:05X}, {c_string(unicodedata.normalize('NFD', x))}}},")
+        if k := unicodedata.combining(x):
+            if ccc and ccc[-1][1] == cp - 1 and ccc[-1][2] == k:
+                ccc[-1] = (ccc[-1][0], cp, k)
+            else:
+                ccc.append((cp, cp, k))
+        if unicodedata.category(x) == "Mn":
+            mn.append(cp)
     fmt = lambda rs: "\n".join(f"    {{0x{a:05X}, 0x{b:05X}}}," for a, b in rs)  # noqa: E731
     dr, cr = ranges(decimal), ranges(cased)
     text = (f"// Generado por tools/gen/gen_py_text.py (Unicode {unicodedata.unidata_version}). No editar.\n"
@@ -79,10 +100,24 @@ def main() -> None:
             f"// Caracteres con caja para str.title() (rangos cerrados, ordenados).\n"
             f"#ifdef GC_PY_TITLE_CASED\n" + fmt(cr) + "\n#endif\n"
             f"// str.upper(): {{carácter, resultado en UTF-8}} de los que cambian, ordenado.\n"
-            f"#ifdef GC_PY_UPPER_MAP\n" + "\n".join(upper) + "\n#endif\n")
+            f"#ifdef GC_PY_UPPER_MAP\n" + "\n".join(upper) + "\n#endif\n"
+            f"// str.isalnum() de un carácter (rangos cerrados, ordenados).\n"
+            f"#ifdef GC_PY_ALNUM\n" + fmt(ranges(alnum)) + "\n#endif\n"
+            f"// str.isupper() de un carácter (rangos cerrados, ordenados).\n"
+            f"#ifdef GC_PY_ISUPPER\n" + fmt(ranges(isup)) + "\n#endif\n"
+            f"// str.isdigit() de un carácter (rangos cerrados, ordenados).\n"
+            f"#ifdef GC_PY_DIGIT\n" + fmt(ranges(digit)) + "\n#endif\n"
+            f"// NFD: {{carácter, descomposición canónica completa en UTF-8}} (sin los hangul), ordenado.\n"
+            f"#ifdef GC_PY_NFD_MAP\n" + "\n".join(nfd) + "\n#endif\n"
+            f"// Clase de combinación canónica: {{desde, hasta, clase}} (las de clase 0 no están).\n"
+            f"#ifdef GC_PY_CCC\n" + "\n".join(f"    {{0x{a:05X}, 0x{b:05X}, {k}}}," for a, b, k in ccc)
+            + "\n#endif\n"
+            f"// Marcas sin espacio (categoría Mn; rangos cerrados, ordenados).\n"
+            f"#ifdef GC_PY_MN\n" + fmt(ranges(mn)) + "\n#endif\n")
     OUT.write_text(text, encoding="utf-8", newline="\n")
     print(f"{OUT.name}: {len(folds)} plegados, {len(dr)} rangos de dígitos, {len(title)} títulos, "
-          f"{len(cr)} rangos con caja, {len(upper)} mayúsculas (Unicode {unicodedata.unidata_version})")
+          f"{len(cr)} rangos con caja, {len(upper)} mayúsculas, {len(ranges(alnum))} rangos alfanuméricos, "
+          f"{len(nfd)} NFD (Unicode {unicodedata.unidata_version})")
 
 
 if __name__ == "__main__":

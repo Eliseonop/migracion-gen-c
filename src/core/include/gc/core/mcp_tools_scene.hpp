@@ -1,13 +1,18 @@
 #pragma once
 
-// Las tools de dirección de escena del servidor MCP que no piden IA ni la biblioteca (espejo de
+// Las tools de dirección de escena del servidor MCP que no piden IA (espejo de
 // backend/app/mcp_server/tools_scene.py de video-yt), envolturas de scene_direction.hpp:
 //   - scene_get_blueprint: la dirección visual global, el catálogo de direcciones y el vocabulario.
 //   - scene_set_blueprint: guarda la dirección global (una `direction` fuera del catálogo es un error).
+//   - scene_direction_get: la escaleta, el guion en frases, los modos y el catálogo de materiales
+//     (del proyecto y de la biblioteca, data_dir/library/library.json).
 //   - scene_direction_status: el mapa del montaje (status_summary).
+//   - scene_rank_materials: los materiales ordenados por los términos clave de un texto.
 //   - scene_direction_auto_split: la escaleta propuesta, sin guardar.
 //   - scene_direction_update_segment: los campos de un tramo (solo los de _PATCH_KEYS).
 //   - scene_direction_set: guarda la escaleta entera.
+//   - scene_set_material_meta: la metadata semántica de un clip o una imagen, del proyecto o de la
+//     biblioteca.
 // Los MCPError de Python llevan su código en Error::mcp_code (con retryable y param), porque no
 // siempre coincide con el que se deduce del texto («Pasa 'patch'…» es invalid_parameter). La hora de
 // `updated_at` es EditToolsEnv::unix_now (sin él, la del sistema).

@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+#include "gc/core/segment_context.hpp"
 #include "gc/core/timeline_rules.hpp"
 #include "json_reader.hpp"
 #include "py.hpp"
@@ -24,12 +25,14 @@ using detail::py_float;
 using detail::py_int;
 using detail::py_iter;
 using detail::py_len;
+using detail::py_lower;
 using detail::py_round;
 using detail::py_rstrip;
 using detail::py_slice;
 using detail::py_split;
 using detail::py_str;
 using detail::py_strip;
+using detail::py_strip_accents;
 using detail::py_truthy;
 using detail::utf8_next;
 
@@ -1041,6 +1044,214 @@ Result<Json> status_summary(SceneEnv& env, const Project& project) {
                 {"counts", std::move(counts)},
                 {"pending", std::move(pending)},
                 {"segments", std::move(rows)}};
+}
+
+// --- El material -------------------------------------------------------------------------------
+
+namespace {
+
+constexpr std::array<std::string_view, 2> kSemanticListKeys{"subjects", "actions"};
+constexpr std::array<std::string_view, 5> kSemanticStrKeys{"visual_content", "environment", "mood", "composition",
+                                                           "suggested_usage"};
+constexpr std::array<std::string_view, 3> kVisualPriorities{"protagonista", "apoyo", "fondo"}; // VISUAL_PRIORITIES
+
+// re.split(r"[,;]", v): los trozos, también los vacíos.
+std::vector<Json> split_list(const std::string& v) {
+    std::vector<Json> out;
+    std::size_t from = 0;
+    for (std::size_t i = 0; i <= v.size(); ++i) {
+        if (i == v.size() || v[i] == ',' || v[i] == ';') {
+            out.emplace_back(v.substr(from, i - from));
+            from = i + 1;
+        }
+    }
+    return out;
+}
+
+// `a or b` de Python: a si es verdadero; si no, b.
+const Json& either(const Json& a, const Json& b) { return py_truthy(a) ? a : b; }
+
+} // namespace
+
+Json normalize_semantic(const Json& raw) {
+    Json out = Json::object();
+    if (!raw.is_object()) {
+        return out;
+    }
+    for (const std::string_view k : kSemanticListKeys) {
+        const Json& v = get(raw, k);
+        std::vector<Json> src;
+        if (v.is_string()) {
+            src = split_list(v.get_ref<const std::string&>());
+        } else if (v.is_array()) {
+            src.assign(v.begin(), v.end());
+        } else {
+            continue;
+        }
+        Json items = Json::array();
+        for (const Json& x : src) {
+            if (py_truthy(x) && !py_strip(py_str(x)).empty() && items.size() < 8) {
+                items.push_back(clean(x, 60));
+            }
+        }
+        if (!items.empty()) {
+            out[std::string(k)] = std::move(items);
+        }
+    }
+    for (const std::string_view k : kSemanticStrKeys) {
+        if (std::string v = clean(get(raw, k), 200); !v.empty()) {
+            out[std::string(k)] = std::move(v);
+        }
+    }
+    const Json& vp = get(raw, "visual_priority");
+    if (vp.is_string() &&
+        std::ranges::find(kVisualPriorities, vp.get_ref<const std::string&>()) != kVisualPriorities.end()) {
+        out["visual_priority"] = vp;
+    }
+    return out;
+}
+
+Result<std::string> semantic_blob(const Json& semantic) {
+    if (!semantic.is_object() || semantic.empty()) {
+        return std::string();
+    }
+    std::vector<Json> parts;
+    for (const std::string_view k : kSemanticListKeys) {
+        // parts += sem.get(k) or []: un texto suma sus caracteres y un dict sus claves.
+        auto items = iter_or_empty(get(semantic, k), "la metadata semántica");
+        if (!items) {
+            return std::unexpected(items.error());
+        }
+        parts.insert(parts.end(), items->begin(), items->end());
+    }
+    for (const std::string_view k : kSemanticStrKeys) {
+        if (const Json& v = get(semantic, k); py_truthy(v)) {
+            parts.push_back(v);
+        }
+    }
+    std::string out;
+    for (std::size_t i = 0; i < parts.size(); ++i) {
+        if (!parts[i].is_string()) {
+            return crash("join() de un valor que no es texto en la metadata semántica");
+        }
+        if (i > 0) {
+            out += ' ';
+        }
+        out += parts[i].get_ref<const std::string&>();
+    }
+    return out;
+}
+
+Result<Json> set_material_meta(ProjectsStore& store, LibraryFile& library, std::string_view pid, const Json& kind,
+                               std::string_view ident, const Json& meta, std::string_view scope) {
+    if (!(kind == "clips" || kind == "images")) {
+        return fail(ErrorCode::InvalidArgument, "kind debe ser 'clips' o 'images'.");
+    }
+    Json semantic = normalize_semantic(meta);
+    if (scope == "library") {
+        if (auto r = library.set_semantic(ident, semantic); !r) {
+            return std::unexpected(r.error()); // LookupError «Recurso no encontrado.»
+        }
+        return Json{{"kind", kind}, {"id", ident}, {"scope", "library"}, {"semantic", std::move(semantic)}};
+    }
+    auto item = store.update_material(pid, kind.get_ref<const std::string&>(), ident, Json{{"semantic", semantic}});
+    if (!item) {
+        return std::unexpected(item.error());
+    }
+    if (!*item) {
+        return fail(ErrorCode::NotFound, "Material no encontrado.");
+    }
+    return Json{{"kind", kind}, {"id", ident}, {"scope", "project"}, {"semantic", get(**item, "semantic")}};
+}
+
+Result<Json> material_catalog(const Project& project, const LibraryFile& library) {
+    Json out = Json::array();
+    const auto sem = [](const std::optional<Json>& s) { return s && py_truthy(*s) ? *s : Json(); };
+    const auto text_or = [](const std::optional<std::string>& a, const std::string& b) {
+        return a && !a->empty() ? *a : b;
+    };
+    const std::string none;
+    for (const ClipInfo& c : project.clips) {
+        const double dur = c.in_point && c.out_point ? *c.out_point - *c.in_point : c.end - c.start;
+        out.push_back(Json{{"kind", "clips"},
+                           {"id", std::to_string(c.index)},
+                           {"scope", "project"},
+                           {"title", text_or(c.label, c.filename)},
+                           {"description", text_or(c.description, text_or(c.description_ai, none))},
+                           {"duration", r3(dur)},
+                           {"url", c.url},
+                           {"semantic", sem(c.semantic)}});
+    }
+    for (const ImageInfo& im : project.images) {
+        out.push_back(Json{{"kind", "images"},
+                           {"id", im.id},
+                           {"scope", "project"},
+                           {"title", text_or(im.label, im.filename)},
+                           {"description", text_or(im.description, text_or(im.description_ai, none))},
+                           {"duration", nullptr},
+                           {"url", im.url},
+                           {"semantic", sem(im.semantic)}});
+    }
+    auto listed = library.list(); // except Exception: lib = {}
+    const Json lib = listed ? std::move(*listed) : Json::object();
+    static const Json empty_text = "";
+    for (const std::string_view kind : {std::string_view("clips"), std::string_view("images")}) {
+        auto items = iter_or_empty(get(lib, kind), "la biblioteca");
+        if (!items) {
+            return std::unexpected(items.error());
+        }
+        for (const Json& c : *items) {
+            if (!c.is_object() || !c.contains("id")) {
+                return crash("material de la biblioteca sin id");
+            }
+            const Json& semantic = get(c, "semantic");
+            out.push_back(Json{{"kind", kind},
+                               {"id", py_str(c["id"])},
+                               {"scope", "library"},
+                               {"title", either(get(c, "label"), get(c, "filename"))},
+                               {"description", either(get(c, "description"), empty_text)},
+                               {"duration", kind == "clips" ? get(c, "duration") : Json()},
+                               {"url", get(c, "url")},
+                               {"semantic", py_truthy(semantic) ? semantic : Json()}});
+        }
+    }
+    return out;
+}
+
+Result<Json> rank_materials(const Json& catalog, std::string_view text, std::size_t limit) {
+    std::vector<std::string> terms;
+    for (const std::string& t : key_terms(text, 10)) {
+        terms.push_back(py_strip_accents(py_lower(t)));
+    }
+    struct Row {
+        std::int64_t score;
+        int bare; // 0 con descripción o metadata, 1 sin
+        const Json* m;
+    };
+    std::vector<Row> rows;
+    for (const Json& m : catalog) {
+        auto blob_sem = semantic_blob(get(m, "semantic"));
+        if (!blob_sem) {
+            return std::unexpected(blob_sem.error());
+        }
+        const std::string blob = py_strip_accents(
+            py_lower(py_str(get(m, "title")) + " " + py_str(get(m, "description")) + " " + *blob_sem));
+        std::int64_t score = 0;
+        for (const std::string& t : terms) {
+            score += !t.empty() && blob.find(t) != std::string::npos ? 1 : 0;
+        }
+        rows.push_back({score, py_truthy(get(m, "description")) || py_truthy(get(m, "semantic")) ? 0 : 1, &m});
+    }
+    // rows.sort() de (-score, bare, i, …): i desempata, así que es un orden estable.
+    std::ranges::stable_sort(
+        rows, [](const Row& a, const Row& b) { return a.score != b.score ? a.score > b.score : a.bare < b.bare; });
+    Json out = Json::array();
+    for (std::size_t i = 0; i < rows.size() && i < limit; ++i) {
+        Json m = *rows[i].m;
+        m["match"] = rows[i].score;
+        out.push_back(std::move(m));
+    }
+    return out;
 }
 
 } // namespace gc::core::scene

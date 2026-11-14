@@ -78,6 +78,7 @@ add_library(gc_core
     src/captions_ui.cpp
     src/face_follow.cpp
     src/scene_direction.cpp
+    src/segment_context.cpp
     src/script_prompt.cpp
     src/mask_edit.cpp
     src/mask_ui.cpp

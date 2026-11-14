@@ -11,6 +11,20 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.11.0] — 2026-11-14
+
+### Añadido
+
+- **El material en la dirección de escena** (`scene_direction.hpp`): el catálogo de vídeos e imágenes del proyecto
+  y de la biblioteca, su metadata semántica (qué sale, qué pasa, el ambiente, el uso sugerido…) y el ranking de
+  materiales por los términos clave de un texto, con paridad contra `scene_direction.py` de video-yt.
+- **Tres tools más en el servidor MCP** (57 de 100): `scene_direction_get`, `scene_rank_materials` y
+  `scene_set_material_meta`.
+
+### Cambiado
+
+- El `\w` de las regex de Python (`py_word_char`) es exacto en todo Unicode (antes, aproximado fuera de Latin-1).
+
 ## [0.10.0] — 2026-11-13
 
 ### Añadido

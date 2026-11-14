@@ -4428,6 +4428,54 @@ def _mcp_tools_scene_fixtures(mc) -> dict:
     return {"projects": mc.SCENE_PROJECTS, "registered": registered, "steps": steps}
 
 
+def _mcp_tools_scene_material_fixtures(mc) -> dict:
+    """Las tools del material de la dirección de escena REALES de tools_scene (scene_direction_get,
+    scene_rank_materials y scene_set_material_meta) paso a paso sobre un data/ temporal con projects.json y
+    library.json. Cada paso da su resultado o su error (con el código, la pista, el param y si se
+    reintenta de un MCPError), el proyecto crudo de projects.json (si hay project_id) y library.json."""
+    import tempfile
+
+    from app import config, projects, scene_direction
+    from app.mcp_server import registry, tools_scene
+
+    wanted = ("scene_direction_get", "scene_rank_materials", "scene_set_material_meta")
+    registered: list[list[str]] = []
+
+    def fake_tool(_mcp, access="read", **_kw):
+        return lambda fn: (registered.append([fn.__name__, access]) if fn.__name__ in wanted else None) or fn
+
+    with tempfile.TemporaryDirectory() as td, _Patches() as p:
+        data = Path(td)
+        p.set(config, "DATA_DIR", data)
+        p.set(projects, "_FILE", data / "projects.json")
+        p.set(uuid, "uuid4", _SequentialUuid())
+        p.set(scene_direction, "time", types.SimpleNamespace(time=_SceneClock()))
+        p.set(tools_scene, "tool", fake_tool)
+        tools_scene.register(None)
+        projects._FILE.write_text(json.dumps({"projects": mc.SCENE_MATERIAL_PROJECTS}, ensure_ascii=False),
+                                  encoding="utf-8")
+        lib_file = data / "library" / "library.json"
+        lib_file.parent.mkdir(parents=True, exist_ok=True)
+        lib_file.write_text(json.dumps(mc.SCENE_LIBRARY, ensure_ascii=False), encoding="utf-8")
+        steps = []
+        for tool, args in mc.SCENE_MATERIAL_STEPS:
+            case: dict = {"tool": tool, "args": args}
+            try:
+                case["result"] = _pure(getattr(tools_scene, tool)(**args))
+            except Exception as e:  # noqa: BLE001 — el C++ debe fallar igual
+                case["error"] = str(e)
+                case["error_type"] = type(e).__name__
+                case["value_error"] = isinstance(e, ValueError)
+                if isinstance(e, registry.MCPError):
+                    case["mcp"] = {"code": e.code, "hint": e.hint, "retryable": e.retryable, "param": e.param}
+            raw = json.loads(projects._FILE.read_text(encoding="utf-8"))["projects"]
+            case["project"] = next((x for x in raw if x["id"] == args["project_id"]), None)
+            case["library"] = json.loads(lib_file.read_text(encoding="utf-8"))
+            steps.append(case)
+    return {"projects": mc.SCENE_MATERIAL_PROJECTS, "library": mc.SCENE_LIBRARY, "registered": registered,
+            "steps": steps}
+
+
 def _mcp_wire_fixtures(mc) -> dict:
     """El servidor MCP REAL por HTTP (sin red, con TestClient) sobre un data/ temporal: tools/list, la
     validación de los argumentos y lo que responde a cada petición de WIRE_STEPS. La auditoría también
@@ -4561,6 +4609,7 @@ def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
             "resources": _mcp_resources_fixtures(ctx, mc), "audit": _mcp_audit_fixtures(mc),
             "tools_read": _mcp_tools_read_fixtures(mc), "tools_edit": _mcp_tools_edit_fixtures(mc),
             "tools_media": _mcp_tools_media_fixtures(mc), "tools_scene": _mcp_tools_scene_fixtures(mc),
+            "tools_scene_material": _mcp_tools_scene_material_fixtures(mc),
             "wire": _mcp_wire_fixtures(mc)}
 
 
@@ -4661,6 +4710,65 @@ def synthetic_scene_fixtures(ctx: Ctx) -> dict:
     return {"catalog": catalog, "segments": segments, "components": components, "docs": docs,
             "blueprints": blueprints, "projects": sc.PROJECTS, "cases": cases,
             "store_projects": sc.STORE_PROJECTS, "steps": steps}
+
+
+def synthetic_scene_material_fixtures(ctx: Ctx) -> dict:
+    """La parte del material de scene_direction.py REAL (scene_cases.py, 2.ª tanda): key_terms y
+    _strip_accents de motion/segment_context.py, normalize_semantic, semantic_blob, material_catalog con la
+    biblioteca (library.list_library sobre un data/ temporal), rank_materials y set_material_meta paso a
+    paso, con projects.json y library.json crudos y el catálogo tras cada paso."""
+    sys.path.insert(0, str(HERE))
+    import scene_cases as sc
+    from app import config, projects, scene_direction as sd
+    from app.motion import segment_context as segctx
+
+    def run(fn):
+        try:
+            return {"result": _pure(fn())}
+        except Exception as e:  # noqa: BLE001 — el C++ debe fallar igual
+            return {"error": str(e), "error_type": type(e).__name__, "lookup": isinstance(e, LookupError),
+                    "value_error": isinstance(e, ValueError)}
+
+    key_terms = [{"text": t, "limit": n, **run(lambda: segctx.key_terms(t, limit=n))} for t, n in sc.KEY_TEXTS]
+    strip = [{"text": t, "result": segctx._strip_accents(t)} for t in sc.STRIP_TEXTS]
+    semantics = [{"raw": v, **run(lambda: sd.normalize_semantic(v))} for v in sc.SEMANTICS]
+    blobs = [{"raw": v, **run(lambda: sd.semantic_blob(v))} for v in sc.BLOBS]
+    with tempfile.TemporaryDirectory() as td, _Patches() as p:
+        data = Path(td)
+        p.set(config, "DATA_DIR", data)
+        p.set(projects, "_FILE", data / "projects.json")
+        projects._FILE.write_text(json.dumps({"projects": sc.MATERIAL_PROJECTS}, ensure_ascii=False),
+                                  encoding="utf-8")
+        lib_file = data / "library" / "library.json"
+        lib_file.parent.mkdir(parents=True, exist_ok=True)
+
+        def catalogs():
+            return {raw["id"]: run(lambda: sd.material_catalog(projects.get_project(raw["id"])))
+                    for raw in sc.MATERIAL_PROJECTS}
+
+        without_library = catalogs()
+        lib_file.write_text(json.dumps(sc.LIBRARY, ensure_ascii=False), encoding="utf-8")
+        with_library = catalogs()
+        catalog = sd.material_catalog(projects.get_project("m-main"))
+        ranks = [{"text": t, "limit": n, **run(lambda: sd.rank_materials(catalog, t, limit=n))}
+                 for t, n in sc.RANK_TEXTS]
+        ranks += [{"text": t, "limit": n, "catalog": cat, **run(lambda: sd.rank_materials(cat, t, limit=n))}
+                  for (t, n), cat in sc.RANK_CATALOGS]
+        lib_file.write_text("{roto", encoding="utf-8")
+        broken_library = catalogs()
+        lib_file.write_text(json.dumps(sc.LIBRARY, ensure_ascii=False), encoding="utf-8")
+        steps = []
+        for pid, kind, ident, meta, scope in sc.META_STEPS:
+            step = {"args": [pid, kind, ident, meta, scope],
+                    **run(lambda: sd.set_material_meta(pid, kind, ident, meta, scope=scope))}
+            raw = json.loads(projects._FILE.read_text(encoding="utf-8"))["projects"]
+            step["project"] = next((x for x in raw if x["id"] == "m-main"), None)
+            step["library"] = json.loads(lib_file.read_text(encoding="utf-8"))
+            step["catalog"] = run(lambda: sd.material_catalog(projects.get_project("m-main")))
+            steps.append(step)
+    return {"key_terms": key_terms, "strip_accents": strip, "semantics": semantics, "blobs": blobs,
+            "projects": sc.MATERIAL_PROJECTS, "library": sc.LIBRARY, "catalog_without_library": without_library,
+            "catalog": with_library, "catalog_broken_library": broken_library, "ranks": ranks, "steps": steps}
 
 
 # --- «Importar imagen»: to_working_png con OpenCV (images.py) ------------------------------------
@@ -4842,6 +4950,7 @@ def main() -> None:
             "tools_edit": lambda d: len(d["steps"]),
             "tools_media": lambda d: len(d["steps"]),
             "tools_scene": lambda d: len(d["steps"]),
+            "tools_scene_material": lambda d: len(d["steps"]),
             "wire": lambda d: len(d["steps"]) + len(d["matrix"]),
         }
         errors = {
@@ -4855,6 +4964,7 @@ def main() -> None:
             "tools_edit": lambda d: sum("error" in c for c in d["steps"]),
             "tools_media": lambda d: sum("error" in c for c in d["steps"]),
             "tools_scene": lambda d: sum("error" in c for c in d["steps"]),
+            "tools_scene_material": lambda d: sum("error" in c for c in d["steps"]),
             "wire": lambda d: sum("error" in c for c in d["matrix"]),
         }
         for name, payload in mcp.items():
@@ -4871,6 +4981,11 @@ def main() -> None:
         write(REPO / "tests" / "fixtures" / "scene" / "direction.json", scn,
               len(items) + sum(1 + len(c["ranges"]) + len(c["auto"]) for c in scn["cases"]),
               sum("error" in c for c in items) + sum("error" in a for c in scn["cases"] for a in c["auto"]))
+        mat = synthetic_scene_material_fixtures(ctx)
+        mat_items = mat["key_terms"] + mat["semantics"] + mat["blobs"] + mat["ranks"] + mat["steps"]
+        write(REPO / "tests" / "fixtures" / "scene" / "material.json", mat,
+              len(mat_items) + len(mat["strip_accents"]) + 3 * len(mat["projects"]),
+              sum("error" in c for c in mat_items))
 
     if args.solo == "escena":
         scene_group()

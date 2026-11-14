@@ -9,6 +9,11 @@
                escaleta de KEEPS.
   STORE        pasos sobre un projects.json temporal: load, save, update_segment, apply_plan_all,
                get_segment, load_blueprint y save_blueprint, con el reloj y los uuid seguidos.
+  KEY_TEXTS    key_terms de motion/segment_context.py ([texto, limit]); STRIP_TEXTS, su _strip_accents.
+  SEMANTICS    normalize_semantic de cada valor; BLOBS, semantic_blob.
+  MATERIAL_PROJECTS y LIBRARY   material_catalog (sin biblioteca, con ella y con un library.json roto) y
+               rank_materials con RANK_TEXTS y con los catálogos a mano de RANK_CATALOGS.
+  META_STEPS   set_material_meta paso a paso sobre projects.json y library.json.
 """
 from __future__ import annotations
 
@@ -441,4 +446,168 @@ STORE = [
     ["save_blueprint", "s-vacio", "x"],
     ["status_summary", "s-main"],
     ["status_summary", "s-vacio"],
+]
+
+
+# --- El material (2.ª tanda): key_terms y _strip_accents de motion/segment_context.py, la metadata
+# semántica, material_catalog, rank_materials y set_material_meta ------------------------------------
+
+# key_terms(texto, limit): nombres propios a mitad de frase, palabras largas, cifras, muletillas con y sin
+# tilde, guiones, y Unicode que no es Latin-1 (isupper, isdigit, \w, la sigma final y la NFD).
+KEY_TEXTS = [
+    ["", 6], [None, 6],
+    ["La ecuación de Navier-Stokes describe fluidos turbulentos", 6],
+    ["OpenAI lanzó GPT-4 en 2023; luego OpenAI volvió", 6],
+    ["Pero también después, había mucho cuando sobre entre", 6],
+    ["TAMBIÉN Después SÓLO quedó Quedo", 6],
+    ["uno dos tres cuatro cinco seis siete ocho nueve diez once doce", 6],
+    ["palabras larguísimas repetidas larguisimas LARGUÍSIMAS otra-vez", 6],
+    ["--guion -medio- final-- a-b-c ---", 6],
+    ["x2 3D Ab1 ²³ ①② ٣ ๓ Ⅷ", 10],
+    ["Él dijo Ñandú y Ángela, Über Ölmühle", 6],
+    ["texto ΟΔΟΣ Οδυσσέας ΣΟΦΙΑ Ἄλφα", 6],
+    ["İstanbul İİİİ ǅungla ǈubica Ǳx", 6],
+    ["ﬁnancial ﬂuffiness straße STRASSE", 6],
+    ["한국어 텍스트 서울특별시 대한민국", 6],
+    ["Ａｂｃｄｅｆ ＡＢＣＤ fullwidth ｗｉｄｅｓｔ", 6],
+    ["éléctrique caféine naïvement", 6],
+    ["_privado_ __dunder__ snake_case_name", 6],
+    ["emoji 🚀cohete 🎬película misión🌍", 6],
+    ["tabs\tand\nnewlines nbsp em", 6],
+    ["Primera Segunda Tercera Cuarta Quinta Sexta Séptima Octava", 3],
+    ["Primera Segunda Tercera Cuarta Quinta Sexta Séptima Octava", 10],
+    ["Primera Segunda Tercera", 1],
+    ["corta Larguísima", 0],
+    ["Larguísima corta", 0],
+    ["ὈΔΥΣΣΕΎΣ Ᾰᾱ ᾼ ᾈ", 6],
+    ["ڪراچي पाकिस्तान தமிழ்நாடு ကမ္ဘာ", 6],
+    ["dígitos१२३ ٤٥٦ ⁴⁵⁶ ₇₈₉", 6],
+    ["Ⓐbcd ⒶⒷⒸⒹ Ⅻabc ℌilbert", 6],
+    # Muletillas que solo lo son sin tilde, y nombres propios de 3 letras (no cuentan).
+    ["el siémpre porqué duránte», «cuándo", 6],
+    ["hola Ana Bob Eva", 6],
+]
+
+# _strip_accents directo: NFD sin Mn, con el orden canónico (marcas Mc con clase de combinación), el CGJ
+# (Mn de clase 0) entre medias y los hangul.
+STRIP_TEXTS = [
+    "", "abc", "áéíóúüñÁÉÍÓÚÜÑ", "ệṩǖ", "é", "한국어", "가각힣", "ﬁ", "Å", "Ω",
+    "a\U0001D16D\U0001D165", "a\U0001D16D͏\U0001D165", "\U0001D15F\U0001D16E", "ཱཱིུ",
+    "à֮̕", "ḍ̇", "̈́", "가", "क़", "ǅ",
+]
+
+SEMANTICS = [
+    None, "x", [], {}, 5,
+    {"subjects": "perro, gato;  ;ratón,", "actions": ["corre", "  ", None, 0, "", "salta  alto", 7, ["x"]]},
+    {"subjects": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"], "actions": "uno"},
+    {"subjects": ["x" * 70, "  espacios   en   medio  "], "actions": [True, False, 1.5, {"k": 1}]},
+    {"subjects": 5, "actions": {"a": 1}, "visual_content": "  plano  general ", "environment": "x" * 250,
+     "mood": None, "composition": 7, "suggested_usage": ["lista"], "visual_priority": "apoyo"},
+    {"visual_priority": "Apoyo"}, {"visual_priority": ["fondo"]}, {"visual_priority": "fondo", "otro": 1},
+    {"subjects": ("tupla",), "mood": "", "composition": "   "},
+    {"subjects": "", "actions": ",;,"},
+    {"subjects": ["ñandú", "Ελλάδα"], "mood": "triste y oscuro"},
+]
+
+BLOBS = [
+    None, {}, "x", {"subjects": ["a", "b"], "actions": ["c"], "mood": "m", "visual_priority": "apoyo"},
+    {"subjects": "abc", "environment": "e"}, {"subjects": {"k1": 1, "k2": 2}}, {"actions": 5},
+    {"actions": True}, {"subjects": [1, 2]}, {"mood": 5}, {"mood": 0, "composition": ""},
+    {"subjects": [], "actions": None, "visual_content": "v", "environment": "e", "mood": "m", "composition": "c",
+     "suggested_usage": "u"},
+]
+
+
+def _mat_clip(index: int, **kw) -> dict:
+    out = {"index": index, "filename": f"c{index}.mp4", "url": f"/clips/c{index}.mp4", "start": 0.0, "end": 10.0}
+    out.update(kw)
+    return out
+
+
+def _mat_image(iid: str, **kw) -> dict:
+    out = {"id": iid, "filename": f"{iid}.png", "url": f"/images/{iid}.png"}
+    out.update(kw)
+    return out
+
+
+MATERIAL_PROJECTS = [
+    {"id": "m-main", "name": "Material", "created_at": "2026-05-01T10:00:00",
+     "clips": [
+         _mat_clip(1, label="Perro corriendo", description="Un perro corre por la playa", start=2.0, end=7.5),
+         _mat_clip(2, label="", description_ai="Vista aérea de una ciudad de noche", in_point=1.25, out_point=4.0),
+         _mat_clip(3, description="", semantic={"subjects": ["volcán"], "actions": ["erupción"]},
+                   start=0.0, end=3.3333),
+         _mat_clip(4, label="Sin nada", semantic={}),
+         _mat_clip(5, label="Medio segmento", in_point=2.0, start=1.0, end=6.0),
+     ],
+     "images": [
+         _mat_image("im1", label="Mapa de Europa", description="Mapa político", description_ai="no se usa"),
+         _mat_image("im2", semantic={"subjects": ["Ecuación", "Navier-Stokes"], "mood": "técnico"}),
+         _mat_image("im3", label="", description=""),
+     ]},
+    {"id": "m-vacio", "name": "Vacío", "created_at": "2026-05-02T10:00:00"},
+]
+
+# data/library/library.json de los pasos (material_dto los ordena por saved_at, del más reciente).
+LIBRARY = {"version": 1, "items": [
+    {"id": "lib_a", "resource_type": "clip", "filename": "playa.mp4", "label": "Playa tropical",
+     "description": "Olas en la orilla", "duration": 12.5, "saved_at": "2026-01-02T00:00:00+00:00"},
+    {"id": "lib_b", "resource_type": "clip", "filename": "volcan.mp4", "label": "",
+     "semantic": {"subjects": ["volcán", "lava"]}, "saved_at": "2026-01-03T00:00:00+00:00"},
+    {"id": "lib_c", "resource_type": "image", "filename": "cohete.png", "label": "Cohete",
+     "description": "", "semantic": {}, "duration": 3.5, "saved_at": "2026-01-01T00:00:00+00:00"},
+    {"id": "lib_d", "resource_type": "audio", "filename": "voz.mp3", "label": "Voz"},
+    {"id": 7, "resource_type": "image", "filename": "num.png", "label": 5, "description": 3},
+]}
+
+# rank_materials sobre el catálogo de m-main (con la biblioteca): [texto, limit].
+RANK_TEXTS = [
+    ["Un perro corre por la playa tropical", 5],
+    ["La erupción del volcán y la lava", 20],
+    ["Vista aérea de la ciudad de noche con el mapa político de Europa", 3],
+    ["La ecuación de Navier-Stokes en un mapa técnico", 5],
+    ["nada coincide aquí", 5],
+    ["", 5],
+    ["Perro perro PERRO", 1],
+    ["Cohete espacial despegando", 20],
+    # El volcán es el 7.º término clave: con los 6 de key_terms por defecto no contaría.
+    ["alfabeto basilisco caramelo diamante elefante farmacia volcán", 5],
+]
+
+# Catálogos a mano para rank_materials (lo que no sale de material_catalog): semántica que revienta el
+# join, títulos que no son texto y descripciones verdaderas que no son texto.
+RANK_CATALOGS = [
+    [["volcán erupción", 5], [
+        {"kind": "clips", "id": "1", "scope": "project", "title": None, "description": "", "semantic": None},
+        {"kind": "clips", "id": "2", "scope": "project", "title": 5, "description": 0, "semantic": {}},
+        {"kind": "clips", "id": "3", "scope": "project", "title": "volcán", "description": ["erupción"]},
+        {"kind": "clips", "id": "4", "scope": "project", "title": "x", "description": "",
+         "semantic": {"subjects": "volcán"}},
+    ]],
+    [["volcán", 5], [{"kind": "clips", "id": "1", "scope": "project", "title": "t", "description": "",
+                      "semantic": {"actions": 5}}]],
+    [["volcán", 5], [{"kind": "clips", "id": "1", "scope": "project", "title": "t", "description": "",
+                      "semantic": {"mood": 3}}]],
+    [["volcán", 5], [{"kind": "clips", "id": "1", "scope": "project", "title": "t", "description": "",
+                      "match": 9, "semantic": {"subjects": ["volcán"]}}]],
+]
+
+# set_material_meta paso a paso sobre projects.json (MATERIAL_PROJECTS) y library.json (LIBRARY):
+# [project_id, kind, ident, meta, scope]; después de cada paso, el catálogo de m-main.
+META_STEPS = [
+    ["m-main", "clips", "1", {"subjects": "perro, playa", "mood": "alegre"}, "project"],
+    ["m-main", "images", "im3", {"visual_priority": "fondo"}, "project"],
+    ["m-main", "clips", "2", {}, "project"],
+    ["m-main", "clips", "3", "x", "project"],
+    ["m-main", "clips", "99", {"mood": "x"}, "project"],
+    ["m-main", "images", "nope", {"mood": "x"}, "project"],
+    ["m-main", "audios", "1", {"mood": "x"}, "project"],
+    ["m-main", ["clips"], "1", {"mood": "x"}, "project"],
+    ["nada", "clips", "1", {"mood": "x"}, "project"],
+    ["m-main", "clips", "lib_a", {"subjects": ["olas"], "environment": "playa"}, "library"],
+    ["m-main", "images", "lib_c", None, "library"],
+    ["m-main", "clips", "lib_zz", {"mood": "x"}, "library"],
+    ["m-main", "clips", "7", {"actions": ["volar"]}, "library"],
+    ["", "clips", "lib_b", {"mood": "oscuro"}, "otro"],
+    ["m-main", "clips", "1", {"actions": ["corre"], "visual_priority": "protagonista"}, "project"],
 ]

@@ -3,9 +3,13 @@
 #include <algorithm>
 #include <array>
 #include <chrono>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <string>
 #include <utility>
 
+#include "gc/core/library.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/scene_direction.hpp"
 #include "json_reader.hpp"
@@ -15,6 +19,7 @@ namespace gc::core::mcp {
 
 namespace {
 
+using detail::py_int;
 using detail::py_str;
 using detail::py_strip;
 using detail::py_truthy;
@@ -189,15 +194,129 @@ Result<Json> scene_direction_set(Ctx& c, const Json& args) {
     return lookup_as_mcp(scene::save(c.scene, c.env.store, c.pid, Json{{"segments", segments}}));
 }
 
+Result<Json> scene_direction_get(Ctx& c) {
+    auto proj = project_or_raise(c.env, c.pid);
+    if (!proj) {
+        return std::unexpected(proj.error());
+    }
+    auto [units, source] = scene::script_units(*proj);
+    auto doc = scene::load(c.scene, *proj);
+    if (!doc) {
+        return doc;
+    }
+    Json modes = Json::array();
+    for (const scene::ModeInfo& m : scene::modes()) {
+        modes.push_back(Json{{"key", m.key}, {"label", m.label}, {"ai", m.ai}});
+    }
+    const LibraryFile library(c.env.data_dir);
+    auto catalog = scene::material_catalog(*proj, library);
+    if (!catalog) {
+        return catalog;
+    }
+    Json out = std::move(*doc);
+    out["script_source"] = std::move(source);
+    out["units"] = std::move(units);
+    out["modes"] = std::move(modes);
+    out["materials"] = std::move(*catalog);
+    out["duration"] = scene::timeline_duration(*proj);
+    return out;
+}
+
+// max(1, min(int(limit or 5), 20)), y 5 si int() da un TypeError o un ValueError. int() de infinito es
+// un OverflowError, que no se captura. Divergencia: un texto con un entero que no cabe en 64 bits da 5
+// (en Python, 20).
+Result<std::size_t> rank_limit(const Json& v) {
+    constexpr std::size_t kDefault = 5;
+    if (!py_truthy(v)) {
+        return kDefault;
+    }
+    double n = 0.0;
+    if (v.is_number_float()) {
+        n = v.get<double>();
+        if (std::isinf(n)) {
+            return fail(ErrorCode::Internal, "int() de infinito en limit");
+        }
+        if (std::isnan(n)) {
+            return kDefault;
+        }
+        n = std::trunc(n);
+    } else if (v.is_number_unsigned()) {
+        n = static_cast<double>(v.get<std::uint64_t>());
+    } else if (const auto i = py_int(v)) {
+        n = static_cast<double>(*i);
+    } else {
+        return kDefault;
+    }
+    return static_cast<std::size_t>(std::clamp(n, 1.0, 20.0));
+}
+
+Result<Json> scene_rank_materials(Ctx& c, const Json& args) {
+    auto proj = project_or_raise(c.env, c.pid);
+    if (!proj) {
+        return std::unexpected(proj.error());
+    }
+    // (text or "").strip(): un texto falso es «»; uno verdadero que no es str no tiene strip().
+    const Json& text = arg(args, "text");
+    if (py_truthy(text) && !text.is_string()) {
+        return fail(ErrorCode::Internal, "'text' no tiene strip()");
+    }
+    if (!py_truthy(text) || py_strip(text.get_ref<const std::string&>()).empty()) {
+        return mcp_error("invalid_parameter", "Pasa 'text' (la narración o la idea del tramo).", true, "text");
+    }
+    const LibraryFile library(c.env.data_dir);
+    auto catalog = scene::material_catalog(*proj, library);
+    if (!catalog) {
+        return catalog;
+    }
+    auto n = rank_limit(arg(args, "limit"));
+    if (!n) {
+        return std::unexpected(n.error());
+    }
+    auto ranked = scene::rank_materials(*catalog, text.get_ref<const std::string&>(), *n);
+    if (!ranked) {
+        return ranked;
+    }
+    return Json{{"materials", std::move(*ranked)}, {"catalog_size", catalog->size()}};
+}
+
+Result<Json> scene_set_material_meta(Ctx& c, const Json& args) {
+    // scope = "project" si no viene; si viene (también null), tiene que ser «project» o «library».
+    std::string scope = "project";
+    if (args.is_object() && args.contains("scope")) {
+        const Json& s = args["scope"];
+        if (!(s == "project" || s == "library")) {
+            return mcp_error("invalid_parameter", "scope debe ser 'project' o 'library'.", true, "scope");
+        }
+        scope = s.get<std::string>();
+    }
+    if (scope == "project") {
+        if (auto p = project_or_raise(c.env, c.pid); !p) {
+            return std::unexpected(p.error());
+        }
+    }
+    LibraryFile library(c.env.data_dir);
+    const Json& meta = arg(args, "meta");
+    auto r = scene::set_material_meta(c.env.store, library, c.pid, arg(args, "kind"), py_str(arg(args, "material_id")),
+                                      py_truthy(meta) ? meta : Json::object(), scope);
+    if (!r && r.error().code == ErrorCode::InvalidArgument) { // ValueError
+        return mcp_error("invalid_parameter", r.error().message, true);
+    }
+    return lookup_as_mcp(std::move(r));
+}
+
 } // namespace
 
 const std::vector<EditToolInfo>& scene_tools() {
+    // En el orden de tools_scene.register.
     static const std::vector<EditToolInfo> tools{{"scene_get_blueprint", "read"},
                                                  {"scene_set_blueprint", "write"},
+                                                 {"scene_direction_get", "read"},
                                                  {"scene_direction_status", "read"},
+                                                 {"scene_rank_materials", "read"},
                                                  {"scene_direction_auto_split", "read"},
                                                  {"scene_direction_update_segment", "write"},
-                                                 {"scene_direction_set", "write"}};
+                                                 {"scene_direction_set", "write"},
+                                                 {"scene_set_material_meta", "write"}};
     return tools;
 }
 
@@ -220,6 +339,15 @@ Result<Json> call_scene_tool(const EditToolsEnv& env, std::string_view tool, con
     }
     if (tool == "scene_direction_set") {
         return scene_direction_set(c, args);
+    }
+    if (tool == "scene_direction_get") {
+        return scene_direction_get(c);
+    }
+    if (tool == "scene_rank_materials") {
+        return scene_rank_materials(c, args);
+    }
+    if (tool == "scene_set_material_meta") {
+        return scene_set_material_meta(c, args);
     }
     return fail(ErrorCode::NotFound, "Tool desconocida: " + std::string(tool));
 }

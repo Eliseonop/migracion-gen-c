@@ -19,6 +19,7 @@
 // NotFound con su texto; lo que en Python es un crash (recorrer un número, un `mode` que es una
 // lista, int() de infinito en `complexity`) es ErrorCode::Internal.
 
+#include <cstddef>
 #include <functional>
 #include <optional>
 #include <string>
@@ -29,6 +30,7 @@
 #include "gc/core/error.hpp"
 #include "gc/core/ids.hpp"
 #include "gc/core/json.hpp"
+#include "gc/core/library.hpp"
 #include "gc/core/model.hpp"
 #include "gc/core/projects_store.hpp"
 
@@ -111,5 +113,31 @@ struct ModeInfo {
 [[nodiscard]] Result<Json> auto_segments(SceneEnv& env, const Project& project, const Json& keep);
 // status_summary: el mapa del montaje (scene_direction_status).
 [[nodiscard]] Result<Json> status_summary(SceneEnv& env, const Project& project);
+
+// --- El material -------------------------------------------------------------------------------
+
+inline constexpr std::size_t kMaxCandidates = 5; // MAX_CANDIDATES
+
+// normalize_semantic: la metadata semántica de un material (subjects y actions, listas de hasta 8;
+// visual_content, environment, mood, composition y suggested_usage; visual_priority). {} si no queda
+// nada.
+[[nodiscard]] Json normalize_semantic(const Json& raw);
+// semantic_blob: la metadata en texto plano, para el ranking. Un valor que no es texto (o una lista
+// de textos) es un crash, como el TypeError de Python.
+[[nodiscard]] Result<std::string> semantic_blob(const Json& semantic);
+// set_material_meta: guarda la metadata normalizada de un clip o una imagen del proyecto
+// (`scope` «project») o de la biblioteca («library»). `kind` que no sea «clips» ni «images» es un
+// InvalidArgument; el material que falta, NotFound («Material no encontrado.» o «Recurso no
+// encontrado.»).
+[[nodiscard]] Result<Json> set_material_meta(ProjectsStore& store, LibraryFile& library, std::string_view pid,
+                                             const Json& kind, std::string_view ident, const Json& meta,
+                                             std::string_view scope = "project");
+// material_catalog: los vídeos y las imágenes del proyecto y de la biblioteca, con título,
+// descripción, duración, URL y metadata semántica. Si la biblioteca no se puede leer, sin ella.
+[[nodiscard]] Result<Json> material_catalog(const Project& project, const LibraryFile& library);
+// rank_materials: los `limit` del catálogo con más términos clave del texto (`match`); a igualdad,
+// primero los que tienen descripción o metadata, y luego en el orden del catálogo.
+[[nodiscard]] Result<Json> rank_materials(const Json& catalog, std::string_view text,
+                                          std::size_t limit = kMaxCandidates);
 
 } // namespace gc::core::scene

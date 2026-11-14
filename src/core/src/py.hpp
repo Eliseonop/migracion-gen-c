@@ -77,8 +77,15 @@ namespace gc::core::detail {
 [[nodiscard]] std::string py_path_stem(std::string_view text);
 
 // ¿`c` es un carácter de palabra (\w) para las regex de Python (str.isalnum() o «_»)?
-// Exacto en ASCII y Latin-1; fuera, aproximado por bloques de Unicode.
+// Tablas de tools/gen/gen_py_text.py, como las de abajo.
 [[nodiscard]] bool py_word_char(char32_t c);
+// str.isalnum(), str.isupper() y str.isdigit() de Python para un carácter.
+[[nodiscard]] bool py_isalnum(char32_t c);
+[[nodiscard]] bool py_isupper(char32_t c);
+[[nodiscard]] bool py_isdigit(char32_t c);
+// `_strip_accents` de motion/segment_context.py: unicodedata.normalize("NFD", s) sin los
+// caracteres de categoría Mn (las tildes y demás marcas sin espacio).
+[[nodiscard]] std::string py_strip_accents(std::string_view utf8);
 
 // Siguiente carácter de un texto UTF-8 a partir del byte `i` (que avanza).
 [[nodiscard]] char32_t utf8_next(std::string_view utf8, std::size_t& i);

@@ -1,0 +1,6729 @@
+{
+ "key_terms": [
+  {
+   "text": "",
+   "limit": 6,
+   "result": []
+  },
+  {
+   "text": null,
+   "limit": 6,
+   "result": []
+  },
+  {
+   "text": "La ecuación de Navier-Stokes describe fluidos turbulentos",
+   "limit": 6,
+   "result": [
+    "ecuación",
+    "Navier-Stokes",
+    "describe",
+    "fluidos",
+    "turbulentos"
+   ]
+  },
+  {
+   "text": "OpenAI lanzó GPT-4 en 2023; luego OpenAI volvió",
+   "limit": 6,
+   "result": [
+    "OpenAI",
+    "GPT-4",
+    "2023",
+    "volvió"
+   ]
+  },
+  {
+   "text": "Pero también después, había mucho cuando sobre entre",
+   "limit": 6,
+   "result": []
+  },
+  {
+   "text": "TAMBIÉN Después SÓLO quedó Quedo",
+   "limit": 6,
+   "result": []
+  },
+  {
+   "text": "uno dos tres cuatro cinco seis siete ocho nueve diez once doce",
+   "limit": 6,
+   "result": [
+    "cuatro"
+   ]
+  },
+  {
+   "text": "palabras larguísimas repetidas larguisimas LARGUÍSIMAS otra-vez",
+   "limit": 6,
+   "result": [
+    "palabras",
+    "larguísimas",
+    "repetidas",
+    "otra-vez"
+   ]
+  },
+  {
+   "text": "--guion -medio- final-- a-b-c ---",
+   "limit": 6,
+   "result": []
+  },
+  {
+   "text": "x2 3D Ab1 ²³ ①② ٣ ๓ Ⅷ",
+   "limit": 10,
+   "result": [
+    "x2",
+    "3D",
+    "Ab1",
+    "²³",
+    "①②",
+    "٣",
+    "๓"
+   ]
+  },
+  {
+   "text": "Él dijo Ñandú y Ángela, Über Ölmühle",
+   "limit": 6,
+   "result": [
+    "Ñandú",
+    "Ángela",
+    "Über",
+    "Ölmühle"
+   ]
+  },
+  {
+   "text": "texto ΟΔΟΣ Οδυσσέας ΣΟΦΙΑ Ἄλφα",
+   "limit": 6,
+   "result": [
+    "ΟΔΟΣ",
+    "Οδυσσέας",
+    "ΣΟΦΙΑ",
+    "Ἄλφα"
+   ]
+  },
+  {
+   "text": "İstanbul İİİİ ǅungla ǈubica Ǳx",
+   "limit": 6,
+   "result": [
+    "İstanbul",
+    "İİİİ",
+    "ǅungla",
+    "ǈubica"
+   ]
+  },
+  {
+   "text": "ﬁnancial ﬂuffiness straße STRASSE",
+   "limit": 6,
+   "result": [
+    "ﬁnancial",
+    "ﬂuffiness",
+    "straße",
+    "STRASSE"
+   ]
+  },
+  {
+   "text": "한국어 텍스트 서울특별시 대한민국",
+   "limit": 6,
+   "result": []
+  },
+  {
+   "text": "Ａｂｃｄｅｆ ＡＢＣＤ fullwidth ｗｉｄｅｓｔ",
+   "limit": 6,
+   "result": [
+    "Ａｂｃｄｅｆ",
+    "ＡＢＣＤ",
+    "fullwidth",
+    "ｗｉｄｅｓｔ"
+   ]
+  },
+  {
+   "text": "éléctrique caféine naïvement",
+   "limit": 6,
+   "result": [
+    "ctrique",
+    "vement"
+   ]
+  },
+  {
+   "text": "_privado_ __dunder__ snake_case_name",
+   "limit": 6,
+   "result": [
+    "_privado_",
+    "__dunder__",
+    "snake_case_name"
+   ]
+  },
+  {
+   "text": "emoji 🚀cohete 🎬película misión🌍",
+   "limit": 6,
+   "result": [
+    "cohete",
+    "película",
+    "misión"
+   ]
+  },
+  {
+   "text": "tabs\tand\nnewlines nbsp em",
+   "limit": 6,
+   "result": [
+    "newlines"
+   ]
+  },
+  {
+   "text": "Primera Segunda Tercera Cuarta Quinta Sexta Séptima Octava",
+   "limit": 3,
+   "result": [
+    "Primera",
+    "Segunda",
+    "Tercera"
+   ]
+  },
+  {
+   "text": "Primera Segunda Tercera Cuarta Quinta Sexta Séptima Octava",
+   "limit": 10,
+   "result": [
+    "Primera",
+    "Segunda",
+    "Tercera",
+    "Cuarta",
+    "Quinta",
+    "Sexta",
+    "Séptima",
+    "Octava"
+   ]
+  },
+  {
+   "text": "Primera Segunda Tercera",
+   "limit": 1,
+   "result": [
+    "Primera"
+   ]
+  },
+  {
+   "text": "corta Larguísima",
+   "limit": 0,
+   "result": []
+  },
+  {
+   "text": "Larguísima corta",
+   "limit": 0,
+   "result": [
+    "Larguísima"
+   ]
+  },
+  {
+   "text": "ὈΔΥΣΣΕΎΣ Ᾰᾱ ᾼ ᾈ",
+   "limit": 6,
+   "result": [
+    "ὈΔΥΣΣΕΎΣ"
+   ]
+  },
+  {
+   "text": "ڪراچي पाकिस्तान தமிழ்நாடு ကမ္ဘာ",
+   "limit": 6,
+   "result": []
+  },
+  {
+   "text": "dígitos१२३ ٤٥٦ ⁴⁵⁶ ₇₈₉",
+   "limit": 6,
+   "result": [
+    "dígitos१२३",
+    "٤٥٦",
+    "⁴⁵⁶",
+    "₇₈₉"
+   ]
+  },
+  {
+   "text": "Ⓐbcd ⒶⒷⒸⒹ Ⅻabc ℌilbert",
+   "limit": 6,
+   "result": [
+    "Ⅻabc",
+    "ℌilbert"
+   ]
+  },
+  {
+   "text": "el siémpre porqué duránte», «cuándo",
+   "limit": 6,
+   "result": []
+  },
+  {
+   "text": "hola Ana Bob Eva",
+   "limit": 6,
+   "result": []
+  }
+ ],
+ "strip_accents": [
+  {
+   "text": "",
+   "result": ""
+  },
+  {
+   "text": "abc",
+   "result": "abc"
+  },
+  {
+   "text": "áéíóúüñÁÉÍÓÚÜÑ",
+   "result": "aeiouunAEIOUUN"
+  },
+  {
+   "text": "ệṩǖ",
+   "result": "esu"
+  },
+  {
+   "text": "é",
+   "result": "e"
+  },
+  {
+   "text": "한국어",
+   "result": "한국어"
+  },
+  {
+   "text": "가각힣",
+   "result": "가각힣"
+  },
+  {
+   "text": "ﬁ",
+   "result": "ﬁ"
+  },
+  {
+   "text": "Å",
+   "result": "A"
+  },
+  {
+   "text": "Ω",
+   "result": "Ω"
+  },
+  {
+   "text": "a𝅥𝅭",
+   "result": "a𝅥𝅭"
+  },
+  {
+   "text": "a𝅭͏𝅥",
+   "result": "a𝅥𝅭"
+  },
+  {
+   "text": "𝅘𝅥𝅮",
+   "result": "𝅘𝅥𝅮"
+  },
+  {
+   "text": "ཱཱིུ",
+   "result": ""
+  },
+  {
+   "text": "à֮̕",
+   "result": "a"
+  },
+  {
+   "text": "ḍ̇",
+   "result": "d"
+  },
+  {
+   "text": "̈́",
+   "result": ""
+  },
+  {
+   "text": "가",
+   "result": "가"
+  },
+  {
+   "text": "क़",
+   "result": "क"
+  },
+  {
+   "text": "ǅ",
+   "result": "ǅ"
+  }
+ ],
+ "semantics": [
+  {
+   "raw": null,
+   "result": {}
+  },
+  {
+   "raw": "x",
+   "result": {}
+  },
+  {
+   "raw": [],
+   "result": {}
+  },
+  {
+   "raw": {},
+   "result": {}
+  },
+  {
+   "raw": 5,
+   "result": {}
+  },
+  {
+   "raw": {
+    "subjects": "perro, gato;  ;ratón,",
+    "actions": [
+     "corre",
+     "  ",
+     null,
+     0,
+     "",
+     "salta  alto",
+     7,
+     [
+      "x"
+     ]
+    ]
+   },
+   "result": {
+    "subjects": [
+     "perro",
+     "gato",
+     "ratón"
+    ],
+    "actions": [
+     "corre",
+     "salta alto",
+     "7",
+     "['x']"
+    ]
+   }
+  },
+  {
+   "raw": {
+    "subjects": [
+     "a",
+     "b",
+     "c",
+     "d",
+     "e",
+     "f",
+     "g",
+     "h",
+     "i",
+     "j"
+    ],
+    "actions": "uno"
+   },
+   "result": {
+    "subjects": [
+     "a",
+     "b",
+     "c",
+     "d",
+     "e",
+     "f",
+     "g",
+     "h"
+    ],
+    "actions": [
+     "uno"
+    ]
+   }
+  },
+  {
+   "raw": {
+    "subjects": [
+     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "  espacios   en   medio  "
+    ],
+    "actions": [
+     true,
+     false,
+     1.5,
+     {
+      "k": 1
+     }
+    ]
+   },
+   "result": {
+    "subjects": [
+     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx…",
+     "espacios en medio"
+    ],
+    "actions": [
+     "True",
+     "1.5",
+     "{'k': 1}"
+    ]
+   }
+  },
+  {
+   "raw": {
+    "subjects": 5,
+    "actions": {
+     "a": 1
+    },
+    "visual_content": "  plano  general ",
+    "environment": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "mood": null,
+    "composition": 7,
+    "suggested_usage": [
+     "lista"
+    ],
+    "visual_priority": "apoyo"
+   },
+   "result": {
+    "visual_content": "plano general",
+    "environment": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx…",
+    "composition": "7",
+    "suggested_usage": "['lista']",
+    "visual_priority": "apoyo"
+   }
+  },
+  {
+   "raw": {
+    "visual_priority": "Apoyo"
+   },
+   "result": {}
+  },
+  {
+   "raw": {
+    "visual_priority": [
+     "fondo"
+    ]
+   },
+   "result": {}
+  },
+  {
+   "raw": {
+    "visual_priority": "fondo",
+    "otro": 1
+   },
+   "result": {
+    "visual_priority": "fondo"
+   }
+  },
+  {
+   "raw": {
+    "subjects": [
+     "tupla"
+    ],
+    "mood": "",
+    "composition": "   "
+   },
+   "result": {
+    "subjects": [
+     "tupla"
+    ]
+   }
+  },
+  {
+   "raw": {
+    "subjects": "",
+    "actions": ",;,"
+   },
+   "result": {}
+  },
+  {
+   "raw": {
+    "subjects": [
+     "ñandú",
+     "Ελλάδα"
+    ],
+    "mood": "triste y oscuro"
+   },
+   "result": {
+    "subjects": [
+     "ñandú",
+     "Ελλάδα"
+    ],
+    "mood": "triste y oscuro"
+   }
+  }
+ ],
+ "blobs": [
+  {
+   "raw": null,
+   "result": ""
+  },
+  {
+   "raw": {},
+   "result": ""
+  },
+  {
+   "raw": "x",
+   "result": ""
+  },
+  {
+   "raw": {
+    "subjects": [
+     "a",
+     "b"
+    ],
+    "actions": [
+     "c"
+    ],
+    "mood": "m",
+    "visual_priority": "apoyo"
+   },
+   "result": "a b c m"
+  },
+  {
+   "raw": {
+    "subjects": "abc",
+    "environment": "e"
+   },
+   "result": "a b c e"
+  },
+  {
+   "raw": {
+    "subjects": {
+     "k1": 1,
+     "k2": 2
+    }
+   },
+   "result": "k1 k2"
+  },
+  {
+   "raw": {
+    "actions": 5
+   },
+   "error": "'int' object is not iterable",
+   "error_type": "TypeError",
+   "lookup": false,
+   "value_error": false
+  },
+  {
+   "raw": {
+    "actions": true
+   },
+   "error": "'bool' object is not iterable",
+   "error_type": "TypeError",
+   "lookup": false,
+   "value_error": false
+  },
+  {
+   "raw": {
+    "subjects": [
+     1,
+     2
+    ]
+   },
+   "error": "sequence item 0: expected str instance, int found",
+   "error_type": "TypeError",
+   "lookup": false,
+   "value_error": false
+  },
+  {
+   "raw": {
+    "mood": 5
+   },
+   "error": "sequence item 0: expected str instance, int found",
+   "error_type": "TypeError",
+   "lookup": false,
+   "value_error": false
+  },
+  {
+   "raw": {
+    "mood": 0,
+    "composition": ""
+   },
+   "result": ""
+  },
+  {
+   "raw": {
+    "subjects": [],
+    "actions": null,
+    "visual_content": "v",
+    "environment": "e",
+    "mood": "m",
+    "composition": "c",
+    "suggested_usage": "u"
+   },
+   "result": "v e m c u"
+  }
+ ],
+ "projects": [
+  {
+   "id": "m-main",
+   "name": "Material",
+   "created_at": "2026-05-01T10:00:00",
+   "clips": [
+    {
+     "index": 1,
+     "filename": "c1.mp4",
+     "url": "/clips/c1.mp4",
+     "start": 2.0,
+     "end": 7.5,
+     "label": "Perro corriendo",
+     "description": "Un perro corre por la playa"
+    },
+    {
+     "index": 2,
+     "filename": "c2.mp4",
+     "url": "/clips/c2.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "",
+     "description_ai": "Vista aérea de una ciudad de noche",
+     "in_point": 1.25,
+     "out_point": 4.0
+    },
+    {
+     "index": 3,
+     "filename": "c3.mp4",
+     "url": "/clips/c3.mp4",
+     "start": 0.0,
+     "end": 3.3333,
+     "description": "",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     }
+    },
+    {
+     "index": 4,
+     "filename": "c4.mp4",
+     "url": "/clips/c4.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Sin nada",
+     "semantic": {}
+    },
+    {
+     "index": 5,
+     "filename": "c5.mp4",
+     "url": "/clips/c5.mp4",
+     "start": 1.0,
+     "end": 6.0,
+     "label": "Medio segmento",
+     "in_point": 2.0
+    }
+   ],
+   "images": [
+    {
+     "id": "im1",
+     "filename": "im1.png",
+     "url": "/images/im1.png",
+     "label": "Mapa de Europa",
+     "description": "Mapa político",
+     "description_ai": "no se usa"
+    },
+    {
+     "id": "im2",
+     "filename": "im2.png",
+     "url": "/images/im2.png",
+     "semantic": {
+      "subjects": [
+       "Ecuación",
+       "Navier-Stokes"
+      ],
+      "mood": "técnico"
+     }
+    },
+    {
+     "id": "im3",
+     "filename": "im3.png",
+     "url": "/images/im3.png",
+     "label": "",
+     "description": ""
+    }
+   ]
+  },
+  {
+   "id": "m-vacio",
+   "name": "Vacío",
+   "created_at": "2026-05-02T10:00:00"
+  }
+ ],
+ "library": {
+  "version": 1,
+  "items": [
+   {
+    "id": "lib_a",
+    "resource_type": "clip",
+    "filename": "playa.mp4",
+    "label": "Playa tropical",
+    "description": "Olas en la orilla",
+    "duration": 12.5,
+    "saved_at": "2026-01-02T00:00:00+00:00"
+   },
+   {
+    "id": "lib_b",
+    "resource_type": "clip",
+    "filename": "volcan.mp4",
+    "label": "",
+    "semantic": {
+     "subjects": [
+      "volcán",
+      "lava"
+     ]
+    },
+    "saved_at": "2026-01-03T00:00:00+00:00"
+   },
+   {
+    "id": "lib_c",
+    "resource_type": "image",
+    "filename": "cohete.png",
+    "label": "Cohete",
+    "description": "",
+    "semantic": {},
+    "duration": 3.5,
+    "saved_at": "2026-01-01T00:00:00+00:00"
+   },
+   {
+    "id": "lib_d",
+    "resource_type": "audio",
+    "filename": "voz.mp3",
+    "label": "Voz"
+   },
+   {
+    "id": 7,
+    "resource_type": "image",
+    "filename": "num.png",
+    "label": 5,
+    "description": 3
+   }
+  ]
+ },
+ "catalog_without_library": {
+  "m-main": {
+   "result": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "c3.mp4",
+     "description": "",
+     "duration": 3.333,
+     "url": "/clips/c3.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     }
+    },
+    {
+     "kind": "clips",
+     "id": "4",
+     "scope": "project",
+     "title": "Sin nada",
+     "description": "",
+     "duration": 10.0,
+     "url": "/clips/c4.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "5",
+     "scope": "project",
+     "title": "Medio segmento",
+     "description": "",
+     "duration": 5.0,
+     "url": "/clips/c5.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null
+    },
+    {
+     "kind": "images",
+     "id": "im2",
+     "scope": "project",
+     "title": "im2.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im2.png",
+     "semantic": {
+      "subjects": [
+       "Ecuación",
+       "Navier-Stokes"
+      ],
+      "mood": "técnico"
+     }
+    },
+    {
+     "kind": "images",
+     "id": "im3",
+     "scope": "project",
+     "title": "im3.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im3.png",
+     "semantic": null
+    }
+   ]
+  },
+  "m-vacio": {
+   "result": []
+  }
+ },
+ "catalog": {
+  "m-main": {
+   "result": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "c3.mp4",
+     "description": "",
+     "duration": 3.333,
+     "url": "/clips/c3.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     }
+    },
+    {
+     "kind": "clips",
+     "id": "4",
+     "scope": "project",
+     "title": "Sin nada",
+     "description": "",
+     "duration": 10.0,
+     "url": "/clips/c4.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "5",
+     "scope": "project",
+     "title": "Medio segmento",
+     "description": "",
+     "duration": 5.0,
+     "url": "/clips/c5.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null
+    },
+    {
+     "kind": "images",
+     "id": "im2",
+     "scope": "project",
+     "title": "im2.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im2.png",
+     "semantic": {
+      "subjects": [
+       "Ecuación",
+       "Navier-Stokes"
+      ],
+      "mood": "técnico"
+     }
+    },
+    {
+     "kind": "images",
+     "id": "im3",
+     "scope": "project",
+     "title": "im3.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im3.png",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "lib_b",
+     "scope": "library",
+     "title": "volcan.mp4",
+     "description": "",
+     "duration": null,
+     "url": "/api/library/media/video/volcan.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán",
+       "lava"
+      ]
+     }
+    },
+    {
+     "kind": "clips",
+     "id": "lib_a",
+     "scope": "library",
+     "title": "Playa tropical",
+     "description": "Olas en la orilla",
+     "duration": 12.5,
+     "url": "/api/library/media/video/playa.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "images",
+     "id": "lib_c",
+     "scope": "library",
+     "title": "Cohete",
+     "description": "",
+     "duration": null,
+     "url": "/api/library/media/image/cohete.png",
+     "semantic": null
+    },
+    {
+     "kind": "images",
+     "id": "7",
+     "scope": "library",
+     "title": 5,
+     "description": 3,
+     "duration": null,
+     "url": "/api/library/media/image/num.png",
+     "semantic": null
+    }
+   ]
+  },
+  "m-vacio": {
+   "result": [
+    {
+     "kind": "clips",
+     "id": "lib_b",
+     "scope": "library",
+     "title": "volcan.mp4",
+     "description": "",
+     "duration": null,
+     "url": "/api/library/media/video/volcan.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán",
+       "lava"
+      ]
+     }
+    },
+    {
+     "kind": "clips",
+     "id": "lib_a",
+     "scope": "library",
+     "title": "Playa tropical",
+     "description": "Olas en la orilla",
+     "duration": 12.5,
+     "url": "/api/library/media/video/playa.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "images",
+     "id": "lib_c",
+     "scope": "library",
+     "title": "Cohete",
+     "description": "",
+     "duration": null,
+     "url": "/api/library/media/image/cohete.png",
+     "semantic": null
+    },
+    {
+     "kind": "images",
+     "id": "7",
+     "scope": "library",
+     "title": 5,
+     "description": 3,
+     "duration": null,
+     "url": "/api/library/media/image/num.png",
+     "semantic": null
+    }
+   ]
+  }
+ },
+ "catalog_broken_library": {
+  "m-main": {
+   "result": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "c3.mp4",
+     "description": "",
+     "duration": 3.333,
+     "url": "/clips/c3.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     }
+    },
+    {
+     "kind": "clips",
+     "id": "4",
+     "scope": "project",
+     "title": "Sin nada",
+     "description": "",
+     "duration": 10.0,
+     "url": "/clips/c4.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "5",
+     "scope": "project",
+     "title": "Medio segmento",
+     "description": "",
+     "duration": 5.0,
+     "url": "/clips/c5.mp4",
+     "semantic": null
+    },
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null
+    },
+    {
+     "kind": "images",
+     "id": "im2",
+     "scope": "project",
+     "title": "im2.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im2.png",
+     "semantic": {
+      "subjects": [
+       "Ecuación",
+       "Navier-Stokes"
+      ],
+      "mood": "técnico"
+     }
+    },
+    {
+     "kind": "images",
+     "id": "im3",
+     "scope": "project",
+     "title": "im3.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im3.png",
+     "semantic": null
+    }
+   ]
+  },
+  "m-vacio": {
+   "result": []
+  }
+ },
+ "ranks": [
+  {
+   "text": "Un perro corre por la playa tropical",
+   "limit": 5,
+   "result": [
+    {
+     "kind": "clips",
+     "id": "lib_a",
+     "scope": "library",
+     "title": "Playa tropical",
+     "description": "Olas en la orilla",
+     "duration": 12.5,
+     "url": "/api/library/media/video/playa.mp4",
+     "semantic": null,
+     "match": 1
+    },
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "c3.mp4",
+     "description": "",
+     "duration": 3.333,
+     "url": "/clips/c3.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     },
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null,
+     "match": 0
+    }
+   ]
+  },
+  {
+   "text": "La erupción del volcán y la lava",
+   "limit": 20,
+   "result": [
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "c3.mp4",
+     "description": "",
+     "duration": 3.333,
+     "url": "/clips/c3.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     },
+     "match": 2
+    },
+    {
+     "kind": "clips",
+     "id": "lib_b",
+     "scope": "library",
+     "title": "volcan.mp4",
+     "description": "",
+     "duration": null,
+     "url": "/api/library/media/video/volcan.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán",
+       "lava"
+      ]
+     },
+     "match": 1
+    },
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im2",
+     "scope": "project",
+     "title": "im2.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im2.png",
+     "semantic": {
+      "subjects": [
+       "Ecuación",
+       "Navier-Stokes"
+      ],
+      "mood": "técnico"
+     },
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "lib_a",
+     "scope": "library",
+     "title": "Playa tropical",
+     "description": "Olas en la orilla",
+     "duration": 12.5,
+     "url": "/api/library/media/video/playa.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "7",
+     "scope": "library",
+     "title": 5,
+     "description": 3,
+     "duration": null,
+     "url": "/api/library/media/image/num.png",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "4",
+     "scope": "project",
+     "title": "Sin nada",
+     "description": "",
+     "duration": 10.0,
+     "url": "/clips/c4.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "5",
+     "scope": "project",
+     "title": "Medio segmento",
+     "description": "",
+     "duration": 5.0,
+     "url": "/clips/c5.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im3",
+     "scope": "project",
+     "title": "im3.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im3.png",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "lib_c",
+     "scope": "library",
+     "title": "Cohete",
+     "description": "",
+     "duration": null,
+     "url": "/api/library/media/image/cohete.png",
+     "semantic": null,
+     "match": 0
+    }
+   ]
+  },
+  {
+   "text": "Vista aérea de la ciudad de noche con el mapa político de Europa",
+   "limit": 3,
+   "result": [
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null,
+     "match": 2
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null,
+     "match": 1
+    },
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null,
+     "match": 0
+    }
+   ]
+  },
+  {
+   "text": "La ecuación de Navier-Stokes en un mapa técnico",
+   "limit": 5,
+   "result": [
+    {
+     "kind": "images",
+     "id": "im2",
+     "scope": "project",
+     "title": "im2.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im2.png",
+     "semantic": {
+      "subjects": [
+       "Ecuación",
+       "Navier-Stokes"
+      ],
+      "mood": "técnico"
+     },
+     "match": 3
+    },
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "c3.mp4",
+     "description": "",
+     "duration": 3.333,
+     "url": "/clips/c3.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     },
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null,
+     "match": 0
+    }
+   ]
+  },
+  {
+   "text": "nada coincide aquí",
+   "limit": 5,
+   "result": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "c3.mp4",
+     "description": "",
+     "duration": 3.333,
+     "url": "/clips/c3.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     },
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im2",
+     "scope": "project",
+     "title": "im2.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im2.png",
+     "semantic": {
+      "subjects": [
+       "Ecuación",
+       "Navier-Stokes"
+      ],
+      "mood": "técnico"
+     },
+     "match": 0
+    }
+   ]
+  },
+  {
+   "text": "",
+   "limit": 5,
+   "result": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "c3.mp4",
+     "description": "",
+     "duration": 3.333,
+     "url": "/clips/c3.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     },
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im2",
+     "scope": "project",
+     "title": "im2.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im2.png",
+     "semantic": {
+      "subjects": [
+       "Ecuación",
+       "Navier-Stokes"
+      ],
+      "mood": "técnico"
+     },
+     "match": 0
+    }
+   ]
+  },
+  {
+   "text": "Perro perro PERRO",
+   "limit": 1,
+   "result": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null,
+     "match": 1
+    }
+   ]
+  },
+  {
+   "text": "Cohete espacial despegando",
+   "limit": 20,
+   "result": [
+    {
+     "kind": "images",
+     "id": "lib_c",
+     "scope": "library",
+     "title": "Cohete",
+     "description": "",
+     "duration": null,
+     "url": "/api/library/media/image/cohete.png",
+     "semantic": null,
+     "match": 1
+    },
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "c3.mp4",
+     "description": "",
+     "duration": 3.333,
+     "url": "/clips/c3.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     },
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im2",
+     "scope": "project",
+     "title": "im2.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im2.png",
+     "semantic": {
+      "subjects": [
+       "Ecuación",
+       "Navier-Stokes"
+      ],
+      "mood": "técnico"
+     },
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "lib_b",
+     "scope": "library",
+     "title": "volcan.mp4",
+     "description": "",
+     "duration": null,
+     "url": "/api/library/media/video/volcan.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán",
+       "lava"
+      ]
+     },
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "lib_a",
+     "scope": "library",
+     "title": "Playa tropical",
+     "description": "Olas en la orilla",
+     "duration": 12.5,
+     "url": "/api/library/media/video/playa.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "7",
+     "scope": "library",
+     "title": 5,
+     "description": 3,
+     "duration": null,
+     "url": "/api/library/media/image/num.png",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "4",
+     "scope": "project",
+     "title": "Sin nada",
+     "description": "",
+     "duration": 10.0,
+     "url": "/clips/c4.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "5",
+     "scope": "project",
+     "title": "Medio segmento",
+     "description": "",
+     "duration": 5.0,
+     "url": "/clips/c5.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im3",
+     "scope": "project",
+     "title": "im3.png",
+     "description": "",
+     "duration": null,
+     "url": "/images/im3.png",
+     "semantic": null,
+     "match": 0
+    }
+   ]
+  },
+  {
+   "text": "alfabeto basilisco caramelo diamante elefante farmacia volcán",
+   "limit": 5,
+   "result": [
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "c3.mp4",
+     "description": "",
+     "duration": 3.333,
+     "url": "/clips/c3.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "actions": [
+       "erupción"
+      ]
+     },
+     "match": 1
+    },
+    {
+     "kind": "clips",
+     "id": "lib_b",
+     "scope": "library",
+     "title": "volcan.mp4",
+     "description": "",
+     "duration": null,
+     "url": "/api/library/media/video/volcan.mp4",
+     "semantic": {
+      "subjects": [
+       "volcán",
+       "lava"
+      ]
+     },
+     "match": 1
+    },
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "duration": 5.5,
+     "url": "/clips/c1.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": "c2.mp4",
+     "description": "Vista aérea de una ciudad de noche",
+     "duration": 2.75,
+     "url": "/clips/c2.mp4",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "images",
+     "id": "im1",
+     "scope": "project",
+     "title": "Mapa de Europa",
+     "description": "Mapa político",
+     "duration": null,
+     "url": "/images/im1.png",
+     "semantic": null,
+     "match": 0
+    }
+   ]
+  },
+  {
+   "text": "volcán erupción",
+   "limit": 5,
+   "catalog": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": null,
+     "description": "",
+     "semantic": null
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": 5,
+     "description": 0,
+     "semantic": {}
+    },
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "volcán",
+     "description": [
+      "erupción"
+     ]
+    },
+    {
+     "kind": "clips",
+     "id": "4",
+     "scope": "project",
+     "title": "x",
+     "description": "",
+     "semantic": {
+      "subjects": "volcán"
+     }
+    }
+   ],
+   "result": [
+    {
+     "kind": "clips",
+     "id": "3",
+     "scope": "project",
+     "title": "volcán",
+     "description": [
+      "erupción"
+     ],
+     "match": 2
+    },
+    {
+     "kind": "clips",
+     "id": "4",
+     "scope": "project",
+     "title": "x",
+     "description": "",
+     "semantic": {
+      "subjects": "volcán"
+     },
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": null,
+     "description": "",
+     "semantic": null,
+     "match": 0
+    },
+    {
+     "kind": "clips",
+     "id": "2",
+     "scope": "project",
+     "title": 5,
+     "description": 0,
+     "semantic": {},
+     "match": 0
+    }
+   ]
+  },
+  {
+   "text": "volcán",
+   "limit": 5,
+   "catalog": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "t",
+     "description": "",
+     "semantic": {
+      "actions": 5
+     }
+    }
+   ],
+   "error": "'int' object is not iterable",
+   "error_type": "TypeError",
+   "lookup": false,
+   "value_error": false
+  },
+  {
+   "text": "volcán",
+   "limit": 5,
+   "catalog": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "t",
+     "description": "",
+     "semantic": {
+      "mood": 3
+     }
+    }
+   ],
+   "error": "sequence item 0: expected str instance, int found",
+   "error_type": "TypeError",
+   "lookup": false,
+   "value_error": false
+  },
+  {
+   "text": "volcán",
+   "limit": 5,
+   "catalog": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "t",
+     "description": "",
+     "match": 9,
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ]
+     }
+    }
+   ],
+   "result": [
+    {
+     "kind": "clips",
+     "id": "1",
+     "scope": "project",
+     "title": "t",
+     "description": "",
+     "match": 1,
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "args": [
+    "m-main",
+    "clips",
+    "1",
+    {
+     "subjects": "perro, playa",
+     "mood": "alegre"
+    },
+    "project"
+   ],
+   "result": {
+    "kind": "clips",
+    "id": "1",
+    "scope": "project",
+    "semantic": {
+     "subjects": [
+      "perro",
+      "playa"
+     ],
+     "mood": "alegre"
+    }
+   },
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {
+       "subjects": [
+        "volcán"
+       ],
+       "actions": [
+        "erupción"
+       ]
+      }
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": ""
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00"
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán"
+       ],
+       "actions": [
+        "erupción"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "images",
+    "im3",
+    {
+     "visual_priority": "fondo"
+    },
+    "project"
+   ],
+   "result": {
+    "kind": "images",
+    "id": "im3",
+    "scope": "project",
+    "semantic": {
+     "visual_priority": "fondo"
+    }
+   },
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {
+       "subjects": [
+        "volcán"
+       ],
+       "actions": [
+        "erupción"
+       ]
+      }
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00"
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán"
+       ],
+       "actions": [
+        "erupción"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "clips",
+    "2",
+    {},
+    "project"
+   ],
+   "result": {
+    "kind": "clips",
+    "id": "2",
+    "scope": "project",
+    "semantic": {}
+   },
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {
+       "subjects": [
+        "volcán"
+       ],
+       "actions": [
+        "erupción"
+       ]
+      }
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00"
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán"
+       ],
+       "actions": [
+        "erupción"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "clips",
+    "3",
+    "x",
+    "project"
+   ],
+   "result": {
+    "kind": "clips",
+    "id": "3",
+    "scope": "project",
+    "semantic": {}
+   },
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00"
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "clips",
+    "99",
+    {
+     "mood": "x"
+    },
+    "project"
+   ],
+   "error": "Material no encontrado.",
+   "error_type": "LookupError",
+   "lookup": true,
+   "value_error": false,
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00"
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "images",
+    "nope",
+    {
+     "mood": "x"
+    },
+    "project"
+   ],
+   "error": "Material no encontrado.",
+   "error_type": "LookupError",
+   "lookup": true,
+   "value_error": false,
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00"
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "audios",
+    "1",
+    {
+     "mood": "x"
+    },
+    "project"
+   ],
+   "error": "kind debe ser 'clips' o 'images'.",
+   "error_type": "ValueError",
+   "lookup": false,
+   "value_error": true,
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00"
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    [
+     "clips"
+    ],
+    "1",
+    {
+     "mood": "x"
+    },
+    "project"
+   ],
+   "error": "kind debe ser 'clips' o 'images'.",
+   "error_type": "ValueError",
+   "lookup": false,
+   "value_error": true,
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00"
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "nada",
+    "clips",
+    "1",
+    {
+     "mood": "x"
+    },
+    "project"
+   ],
+   "error": "Material no encontrado.",
+   "error_type": "LookupError",
+   "lookup": true,
+   "value_error": false,
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00"
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "clips",
+    "lib_a",
+    {
+     "subjects": [
+      "olas"
+     ],
+     "environment": "playa"
+    },
+    "library"
+   ],
+   "result": {
+    "kind": "clips",
+    "id": "lib_a",
+    "scope": "library",
+    "semantic": {
+     "subjects": [
+      "olas"
+     ],
+     "environment": "playa"
+    }
+   },
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "images",
+    "lib_c",
+    null,
+    "library"
+   ],
+   "result": {
+    "kind": "images",
+    "id": "lib_c",
+    "scope": "library",
+    "semantic": {}
+   },
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "clips",
+    "lib_zz",
+    {
+     "mood": "x"
+    },
+    "library"
+   ],
+   "error": "Recurso no encontrado.",
+   "error_type": "LookupError",
+   "lookup": true,
+   "value_error": false,
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "clips",
+    "7",
+    {
+     "actions": [
+      "volar"
+     ]
+    },
+    "library"
+   ],
+   "error": "Recurso no encontrado.",
+   "error_type": "LookupError",
+   "lookup": true,
+   "value_error": false,
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "",
+    "clips",
+    "lib_b",
+    {
+     "mood": "oscuro"
+    },
+    "otro"
+   ],
+   "error": "Material no encontrado.",
+   "error_type": "LookupError",
+   "lookup": true,
+   "value_error": false,
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "subjects": [
+        "perro",
+        "playa"
+       ],
+       "mood": "alegre"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  },
+  {
+   "args": [
+    "m-main",
+    "clips",
+    "1",
+    {
+     "actions": [
+      "corre"
+     ],
+     "visual_priority": "protagonista"
+    },
+    "project"
+   ],
+   "result": {
+    "kind": "clips",
+    "id": "1",
+    "scope": "project",
+    "semantic": {
+     "actions": [
+      "corre"
+     ],
+     "visual_priority": "protagonista"
+    }
+   },
+   "project": {
+    "id": "m-main",
+    "name": "Material",
+    "created_at": "2026-05-01T10:00:00",
+    "clips": [
+     {
+      "index": 1,
+      "filename": "c1.mp4",
+      "url": "/clips/c1.mp4",
+      "start": 2.0,
+      "end": 7.5,
+      "label": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "semantic": {
+       "actions": [
+        "corre"
+       ],
+       "visual_priority": "protagonista"
+      }
+     },
+     {
+      "index": 2,
+      "filename": "c2.mp4",
+      "url": "/clips/c2.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "",
+      "description_ai": "Vista aérea de una ciudad de noche",
+      "in_point": 1.25,
+      "out_point": 4.0,
+      "semantic": {}
+     },
+     {
+      "index": 3,
+      "filename": "c3.mp4",
+      "url": "/clips/c3.mp4",
+      "start": 0.0,
+      "end": 3.3333,
+      "description": "",
+      "semantic": {}
+     },
+     {
+      "index": 4,
+      "filename": "c4.mp4",
+      "url": "/clips/c4.mp4",
+      "start": 0.0,
+      "end": 10.0,
+      "label": "Sin nada",
+      "semantic": {}
+     },
+     {
+      "index": 5,
+      "filename": "c5.mp4",
+      "url": "/clips/c5.mp4",
+      "start": 1.0,
+      "end": 6.0,
+      "label": "Medio segmento",
+      "in_point": 2.0
+     }
+    ],
+    "images": [
+     {
+      "id": "im1",
+      "filename": "im1.png",
+      "url": "/images/im1.png",
+      "label": "Mapa de Europa",
+      "description": "Mapa político",
+      "description_ai": "no se usa"
+     },
+     {
+      "id": "im2",
+      "filename": "im2.png",
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "id": "im3",
+      "filename": "im3.png",
+      "url": "/images/im3.png",
+      "label": "",
+      "description": "",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     }
+    ]
+   },
+   "library": {
+    "version": 1,
+    "items": [
+     {
+      "id": "lib_a",
+      "resource_type": "clip",
+      "filename": "playa.mp4",
+      "label": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "saved_at": "2026-01-02T00:00:00+00:00",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "id": "lib_b",
+      "resource_type": "clip",
+      "filename": "volcan.mp4",
+      "label": "",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      },
+      "saved_at": "2026-01-03T00:00:00+00:00"
+     },
+     {
+      "id": "lib_c",
+      "resource_type": "image",
+      "filename": "cohete.png",
+      "label": "Cohete",
+      "description": "",
+      "semantic": {},
+      "duration": 3.5,
+      "saved_at": "2026-01-01T00:00:00+00:00"
+     },
+     {
+      "id": "lib_d",
+      "resource_type": "audio",
+      "filename": "voz.mp3",
+      "label": "Voz"
+     },
+     {
+      "id": 7,
+      "resource_type": "image",
+      "filename": "num.png",
+      "label": 5,
+      "description": 3
+     }
+    ]
+   },
+   "catalog": {
+    "result": [
+     {
+      "kind": "clips",
+      "id": "1",
+      "scope": "project",
+      "title": "Perro corriendo",
+      "description": "Un perro corre por la playa",
+      "duration": 5.5,
+      "url": "/clips/c1.mp4",
+      "semantic": {
+       "actions": [
+        "corre"
+       ],
+       "visual_priority": "protagonista"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "2",
+      "scope": "project",
+      "title": "c2.mp4",
+      "description": "Vista aérea de una ciudad de noche",
+      "duration": 2.75,
+      "url": "/clips/c2.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "3",
+      "scope": "project",
+      "title": "c3.mp4",
+      "description": "",
+      "duration": 3.333,
+      "url": "/clips/c3.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "4",
+      "scope": "project",
+      "title": "Sin nada",
+      "description": "",
+      "duration": 10.0,
+      "url": "/clips/c4.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "clips",
+      "id": "5",
+      "scope": "project",
+      "title": "Medio segmento",
+      "description": "",
+      "duration": 5.0,
+      "url": "/clips/c5.mp4",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im1",
+      "scope": "project",
+      "title": "Mapa de Europa",
+      "description": "Mapa político",
+      "duration": null,
+      "url": "/images/im1.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "im2",
+      "scope": "project",
+      "title": "im2.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im2.png",
+      "semantic": {
+       "subjects": [
+        "Ecuación",
+        "Navier-Stokes"
+       ],
+       "mood": "técnico"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "im3",
+      "scope": "project",
+      "title": "im3.png",
+      "description": "",
+      "duration": null,
+      "url": "/images/im3.png",
+      "semantic": {
+       "visual_priority": "fondo"
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_b",
+      "scope": "library",
+      "title": "volcan.mp4",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/video/volcan.mp4",
+      "semantic": {
+       "subjects": [
+        "volcán",
+        "lava"
+       ]
+      }
+     },
+     {
+      "kind": "clips",
+      "id": "lib_a",
+      "scope": "library",
+      "title": "Playa tropical",
+      "description": "Olas en la orilla",
+      "duration": 12.5,
+      "url": "/api/library/media/video/playa.mp4",
+      "semantic": {
+       "subjects": [
+        "olas"
+       ],
+       "environment": "playa"
+      }
+     },
+     {
+      "kind": "images",
+      "id": "lib_c",
+      "scope": "library",
+      "title": "Cohete",
+      "description": "",
+      "duration": null,
+      "url": "/api/library/media/image/cohete.png",
+      "semantic": null
+     },
+     {
+      "kind": "images",
+      "id": "7",
+      "scope": "library",
+      "title": 5,
+      "description": 3,
+      "duration": null,
+      "url": "/api/library/media/image/num.png",
+      "semantic": null
+     }
+    ]
+   }
+  }
+ ]
+}
