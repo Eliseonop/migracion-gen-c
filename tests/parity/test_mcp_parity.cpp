@@ -994,7 +994,7 @@ TEST_CASE("paridad MCP: las tools del material de la dirección de escena (tools
     mcp::EditToolsEnv env{.store = store, .data_dir = tmp / "data", .ids = ids};
     env.unix_now = [&ticks] { return 1700000000.0 + 0.25 * static_cast<double>(++ticks); };
 
-    REQUIRE(mcp::scene_tools().size() == 9);
+    REQUIRE(mcp::scene_tools().size() == 10);
     check_scene_registered(f["registered"]);
     std::size_t errors = 0;
     std::size_t crashes = 0;
@@ -1039,6 +1039,78 @@ TEST_CASE("paridad MCP: las tools del material de la dirección de escena (tools
     }
     CHECK(errors == 20);
     CHECK(crashes == 3);
+    std::error_code ec;
+    std::filesystem::remove_all(tmp, ec);
+}
+
+TEST_CASE("paridad MCP: el pack de un tramo de la dirección de escena (tools_scene_pack)", "[parity][mcp]") {
+    const Json f = load("tools_scene_pack");
+    const auto tmp = std::filesystem::temp_directory_path() /
+                     ("gc_mcp_tools_scene_pack_parity_" +
+                      std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())));
+    std::filesystem::remove_all(tmp);
+    std::filesystem::create_directories(tmp / "data" / "library");
+    const auto write = [](const std::filesystem::path& file, const Json& value) {
+        auto text = gc::core::py_json_dumps(value);
+        REQUIRE(text);
+        std::ofstream(file, std::ios::binary) << *text;
+    };
+    write(tmp / "data" / "projects.json", Json{{"projects", f["projects"]}});
+    write(tmp / "data" / "library" / "library.json", f["library"]);
+    gc::core::ProjectsStore store(tmp / "data" / "projects.json", tmp / "clips");
+    const Json saved = store.load();
+    gc::core::SequentialIdSource ids;
+    std::int64_t ticks = 0; // el time.time() de scene_direction en Python: 1700000000 + n/4, seguido
+    mcp::EditToolsEnv env{.store = store, .data_dir = tmp / "data", .ids = ids};
+    env.unix_now = [&ticks] { return 1700000000.0 + 0.25 * static_cast<double>(++ticks); };
+
+    check_scene_registered(f["registered"]);
+    std::size_t errors = 0;
+    std::size_t crashes = 0;
+    std::size_t value_errors = 0;
+    for (const Json& c : f["steps"]) {
+        const std::string tool = c["tool"].get<std::string>();
+        const Json& a = c["args"];
+        const auto r = mcp::call_scene_tool(env, tool, a);
+        const std::string what = tool + a.dump();
+        INFO(what);
+        if (c.contains("error")) {
+            ++errors;
+            REQUIRE_FALSE(r);
+            INFO(r.error().message);
+            if (c.contains("mcp")) {
+                const Json& m = c["mcp"];
+                CHECK(r.error().message == c["error"].get<std::string>());
+                CHECK(r.error().mcp_code == m["code"].get<std::string>());
+                CHECK(r.error().retryable == m["retryable"].get<bool>());
+                CHECK(r.error().path == (m["param"].is_string() ? m["param"].get<std::string>() : std::string()));
+                CHECK(r.error().hint.empty());
+            } else if (c["value_error"].get<bool>()) { // un ValueError suelto: llega al agente con su texto
+                ++value_errors;
+                CHECK(r.error().code == gc::ErrorCode::InvalidArgument);
+                CHECK(r.error().mcp_code.empty());
+                CHECK(r.error().message == c["error"].get<std::string>());
+            } else { // TypeError, AttributeError u OverflowError de Python: un crash
+                ++crashes;
+                CHECK(r.error().code == gc::ErrorCode::Internal);
+            }
+        } else {
+            if (!r) {
+                INFO(r.error().message);
+                REQUIRE(r);
+            }
+            same(c["result"], *r, what);
+        }
+    }
+    // La tool solo lee.
+    same(saved, store.load(), "projects.json");
+    auto lib = gc::core::read_json_file(tmp / "data" / "library" / "library.json");
+    REQUIRE(lib);
+    same(f["library"], *lib, "library.json");
+    CHECK(f["steps"].size() == 33);
+    CHECK(errors == 14);
+    CHECK(crashes == 6);
+    CHECK(value_errors == 1);
     std::error_code ec;
     std::filesystem::remove_all(tmp, ec);
 }

@@ -7,6 +7,8 @@
 //   - scene_direction_get: la escaleta, el guion en frases, los modos y el catálogo de materiales
 //     (del proyecto y de la biblioteca, data_dir/library/library.json).
 //   - scene_direction_status: el mapa del montaje (status_summary).
+//   - scene_direction_pack: el pack de contexto de un tramo (build_pack), su texto para la IA, los
+//     tokens estimados, los beats con el ritmo `pace` (PACES de motion/scene.py) y el brief inicial.
 //   - scene_rank_materials: los materiales ordenados por los términos clave de un texto.
 //   - scene_direction_auto_split: la escaleta propuesta, sin guardar.
 //   - scene_direction_update_segment: los campos de un tramo (solo los de _PATCH_KEYS).

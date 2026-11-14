@@ -11,6 +11,25 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.12.0] — 2026-11-14
+
+### Añadido
+
+- **El pack de un tramo en la dirección de escena** (`scene_direction.hpp`): todo lo que ve la IA para decidir qué se
+  muestra en un tramo (el guion con la frase de antes y la de después, los subtítulos y las palabras con tiempos, la
+  dirección, el material elegido o los candidatos, la referencia y los vecinos, lo que ya ocupa la timeline, el
+  material usado hace poco, la composición planificada, el estilo y la dirección global), su texto exacto, los tokens
+  estimados, los beats según el ritmo y el arranque del brief de Generar Escena, con paridad contra
+  `scene_direction.py` de video-yt.
+- **Qué ocupa ya la timeline en un tramo y el estilo de sus subtítulos** (`segment_context.hpp`): `timeline_context` y
+  `style_context` de `motion/segment_context.py`.
+- **Una tool más en el servidor MCP** (58 de 100): `scene_direction_pack`.
+
+### Corregido
+
+- `scene_rank_materials` con un `limit` que es un texto con un entero de más de 64 bits da 20 (o 1 si es negativo),
+  como Python; antes daba 5.
+
 ## [0.11.0] — 2026-11-14
 
 ### Añadido

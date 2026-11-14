@@ -4476,6 +4476,53 @@ def _mcp_tools_scene_material_fixtures(mc) -> dict:
             "steps": steps}
 
 
+def _mcp_tools_scene_pack_fixtures(mc) -> dict:
+    """scene_direction_pack REAL de tools_scene paso a paso sobre un data/ temporal con projects.json y
+    library.json, con el reloj de scene_direction y uuid4 seguidos de un paso a otro. Cada paso da su
+    resultado o su error (con el código, la pista, el param y si se reintenta de un MCPError). La tool no
+    escribe nada: projects.json y library.json no cambian."""
+    import tempfile
+
+    from app import config, projects, scene_direction
+    from app.mcp_server import registry, tools_scene
+
+    wanted = ("scene_direction_pack",)
+    registered: list[list[str]] = []
+
+    def fake_tool(_mcp, access="read", **_kw):
+        return lambda fn: (registered.append([fn.__name__, access]) if fn.__name__ in wanted else None) or fn
+
+    with tempfile.TemporaryDirectory() as td, _Patches() as p:
+        data = Path(td)
+        p.set(config, "DATA_DIR", data)
+        p.set(projects, "_FILE", data / "projects.json")
+        p.set(uuid, "uuid4", _SequentialUuid())
+        p.set(scene_direction, "time", types.SimpleNamespace(time=_SceneClock()))
+        p.set(tools_scene, "tool", fake_tool)
+        tools_scene.register(None)
+        projects._FILE.write_text(json.dumps({"projects": mc.SCENE_PACK_PROJECTS}, ensure_ascii=False),
+                                  encoding="utf-8")
+        lib_file = data / "library" / "library.json"
+        lib_file.parent.mkdir(parents=True, exist_ok=True)
+        lib_file.write_text(json.dumps(mc.SCENE_PACK_LIBRARY, ensure_ascii=False), encoding="utf-8")
+        before = (projects._FILE.read_text(encoding="utf-8"), lib_file.read_text(encoding="utf-8"))
+        steps = []
+        for tool, args in mc.SCENE_PACK_STEPS:
+            case: dict = {"tool": tool, "args": args}
+            try:
+                case["result"] = _pure(getattr(tools_scene, tool)(**args))
+            except Exception as e:  # noqa: BLE001 — el C++ debe fallar igual
+                case["error"] = str(e)
+                case["error_type"] = type(e).__name__
+                case["value_error"] = isinstance(e, ValueError)
+                if isinstance(e, registry.MCPError):
+                    case["mcp"] = {"code": e.code, "hint": e.hint, "retryable": e.retryable, "param": e.param}
+            steps.append(case)
+        assert (projects._FILE.read_text(encoding="utf-8"), lib_file.read_text(encoding="utf-8")) == before
+    return {"projects": mc.SCENE_PACK_PROJECTS, "library": mc.SCENE_PACK_LIBRARY, "registered": registered,
+            "steps": steps}
+
+
 def _mcp_wire_fixtures(mc) -> dict:
     """El servidor MCP REAL por HTTP (sin red, con TestClient) sobre un data/ temporal: tools/list, la
     validación de los argumentos y lo que responde a cada petición de WIRE_STEPS. La auditoría también
@@ -4610,6 +4657,7 @@ def synthetic_mcp_fixtures(ctx: Ctx) -> dict[str, dict]:
             "tools_read": _mcp_tools_read_fixtures(mc), "tools_edit": _mcp_tools_edit_fixtures(mc),
             "tools_media": _mcp_tools_media_fixtures(mc), "tools_scene": _mcp_tools_scene_fixtures(mc),
             "tools_scene_material": _mcp_tools_scene_material_fixtures(mc),
+            "tools_scene_pack": _mcp_tools_scene_pack_fixtures(mc),
             "wire": _mcp_wire_fixtures(mc)}
 
 
@@ -4769,6 +4817,155 @@ def synthetic_scene_material_fixtures(ctx: Ctx) -> dict:
     return {"key_terms": key_terms, "strip_accents": strip, "semantics": semantics, "blobs": blobs,
             "projects": sc.MATERIAL_PROJECTS, "library": sc.LIBRARY, "catalog_without_library": without_library,
             "catalog": with_library, "catalog_broken_library": broken_library, "ranks": ranks, "steps": steps}
+
+
+def synthetic_scene_pack_fixtures(ctx: Ctx) -> dict:
+    """El pack de contexto de scene_direction.py REAL (scene_cases.py, 3.ª tanda) sobre un data/ temporal con
+    projects.json y library.json:
+      - de cada proyecto en cada rango de PACK_RANGES, caption_lines, range_words y timeline_context y
+        style_context de motion/segment_context.py, y su material_usage;
+      - timeline_context de k-main con el cursor y con un clip, y recent_materials en cada inicio;
+      - de cada llamada de PACK_CALLS (con el reloj y los uuid desde cero), el tramo y la escaleta normalizados
+        como en scene_direction_pack, build_pack, pack_text, estimate_tokens, skeleton_beats con cada ritmo y
+        brief_defaults."""
+    sys.path.insert(0, str(HERE))
+    import scene_cases as sc
+    from app import config, projects, scene_direction as sd
+    from app.motion import segment_context as segctx
+
+    def failure(e: Exception) -> dict:
+        return {"error": str(e), "error_type": type(e).__name__, "lookup": isinstance(e, LookupError),
+                "value_error": isinstance(e, ValueError)}
+
+    def run(fn):
+        try:
+            return {"result": _pure(fn())}
+        except Exception as e:  # noqa: BLE001 — el C++ debe fallar igual
+            return failure(e)
+
+    with tempfile.TemporaryDirectory() as td, _Patches() as p:
+        data = Path(td)
+        p.set(config, "DATA_DIR", data)
+        p.set(projects, "_FILE", data / "projects.json")
+        projects._FILE.write_text(json.dumps({"projects": sc.PACK_PROJECTS}, ensure_ascii=False), encoding="utf-8")
+        lib_file = data / "library" / "library.json"
+        lib_file.parent.mkdir(parents=True, exist_ok=True)
+        lib_file.write_text(json.dumps(sc.PACK_LIBRARY, ensure_ascii=False), encoding="utf-8")
+
+        def reset():
+            p.set(uuid, "uuid4", _SequentialUuid())
+            p.set(sd, "time", types.SimpleNamespace(time=_SceneClock()))
+
+        context = []
+        for raw in sc.PACK_PROJECTS:
+            proj = projects.get_project(raw["id"])
+            ranges = [{"range": [a, b], "captions": _pure(sd.caption_lines(proj, a, b)),
+                       "words": _pure(sd.range_words(proj, a, b)),
+                       "timeline": _pure(segctx.timeline_context(proj, a, b, None, None)),
+                       "style": _pure(segctx.style_context(proj, a, b))} for a, b in sc.PACK_RANGES]
+            context.append({"id": raw["id"], "usage": _pure(sd.material_usage(proj)), "ranges": ranges})
+        main = projects.get_project("k-main")
+        timeline_calls = [{"args": args, "result": _pure(segctx.timeline_context(main, *args))}
+                          for args in sc.PACK_TIMELINE_CALLS]
+        catalog = sd.material_catalog(main)
+        usage = sd.material_usage(main)
+        recent = [{"start": s, "result": _pure(sd.recent_materials(catalog, usage, s))}
+                  for s in sc.PACK_RECENT_STARTS]
+
+        packs = []
+        for pid, seg_raw, segs_raw in sc.PACK_CALLS:
+            reset()
+            proj = projects.get_project(pid)
+            seg = sd.normalize_segment(seg_raw)
+            doc = sd.normalize_doc({"segments": segs_raw}) if isinstance(segs_raw, list) else sd.load(proj)
+            case = {"project_id": pid, "segment_raw": seg_raw, "segments_raw": segs_raw, "segment": _pure(seg),
+                    "doc": _pure(doc)}
+            packs.append(case)
+            try:
+                pack = sd.build_pack(proj, seg, doc)
+            except Exception as e:  # noqa: BLE001
+                case["pack"] = failure(e)
+                continue
+            case["pack"] = {"result": _pure(pack)}
+            case["text"] = run(lambda: sd.pack_text(pack))
+            if "result" in case["text"]:
+                case["tokens"] = sd.estimate_tokens(case["text"]["result"])
+            case["skeleton"] = [{"pace": pace, **run(lambda: sd.skeleton_beats(pack, pace=pace))}
+                                for pace in sc.PACK_PACES]
+            case["brief"] = run(lambda: sd.brief_defaults(pack))
+    return {"projects": sc.PACK_PROJECTS, "library": sc.PACK_LIBRARY, "context": context,
+            "timeline_calls": timeline_calls, "recent": recent, "packs": packs}
+
+
+def real_scene_fixtures(ctx: Ctx, max_segments: int = 15) -> dict:
+    """El pack REAL (scene_direction.py) de los tramos de TUS proyectos con timeline: los de la escaleta guardada
+    o, si no hay, los que propone auto_segments (los `max_segments` primeros), con tu library.json. De cada tramo
+    (con el reloj y los uuid desde cero): build_pack, pack_text, estimate_tokens, skeleton_beats con el ritmo
+    medio y brief_defaults. Tus archivos solo se leen: se copian a un data/ temporal."""
+    from app import config, projects, scene_direction as sd
+
+    src = ctx.root / "backend" / "data" / "projects.json"
+    if not src.exists():
+        return {"projects": {"projects": []}, "library": None, "cases": []}
+    data = json.loads(src.read_text(encoding="utf-8"))
+    lib_src = ctx.root / "backend" / "data" / "library" / "library.json"
+    library = json.loads(lib_src.read_text(encoding="utf-8")) if lib_src.exists() else None
+
+    def failure(e: Exception) -> dict:
+        return {"error": str(e), "error_type": type(e).__name__, "lookup": isinstance(e, LookupError),
+                "value_error": isinstance(e, ValueError)}
+
+    def run(fn):
+        try:
+            return {"result": _pure(fn())}
+        except Exception as e:  # noqa: BLE001 — el C++ debe fallar igual
+            return failure(e)
+
+    cases = []
+    with tempfile.TemporaryDirectory() as td, _Patches() as p:
+        tmp = Path(td)
+        p.set(config, "DATA_DIR", tmp)
+        p.set(projects, "_FILE", tmp / "projects.json")
+        projects._FILE.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        if library is not None:
+            (tmp / "library").mkdir()
+            (tmp / "library" / "library.json").write_text(json.dumps(library, ensure_ascii=False), encoding="utf-8")
+
+        def reset():
+            p.set(uuid, "uuid4", _SequentialUuid())
+            p.set(sd, "time", types.SimpleNamespace(time=_SceneClock()))
+
+        def escaleta(proj, source):
+            if source == "load":
+                return sd.load(proj)
+            return {"version": 1, "segments": sd.auto_segments(proj)}
+
+        for raw in data.get("projects", []):
+            proj = projects.get_project(raw["id"])
+            if proj is None or proj.timeline is None:
+                continue
+            reset()
+            source = "load" if sd.load(proj)["segments"] else "auto"
+            reset()
+            count = min(max_segments, len(escaleta(proj, source)["segments"]))
+            for i in range(count):
+                reset()
+                doc = escaleta(proj, source)
+                seg = doc["segments"][i]
+                case = {"project_id": raw["id"], "source": source, "index": i, "segment": _pure(seg)}
+                cases.append(case)
+                try:
+                    pack = sd.build_pack(proj, seg, doc)
+                except Exception as e:  # noqa: BLE001
+                    case["pack"] = failure(e)
+                    continue
+                case["pack"] = {"result": _pure(pack)}
+                case["text"] = run(lambda: sd.pack_text(pack))
+                if "result" in case["text"]:
+                    case["tokens"] = sd.estimate_tokens(case["text"]["result"])
+                case["skeleton"] = run(lambda: sd.skeleton_beats(pack, pace=2.5))
+                case["brief"] = run(lambda: sd.brief_defaults(pack))
+    return {"projects": data, "library": library, "cases": cases}
 
 
 # --- «Importar imagen»: to_working_png con OpenCV (images.py) ------------------------------------
@@ -4951,6 +5148,7 @@ def main() -> None:
             "tools_media": lambda d: len(d["steps"]),
             "tools_scene": lambda d: len(d["steps"]),
             "tools_scene_material": lambda d: len(d["steps"]),
+            "tools_scene_pack": lambda d: len(d["steps"]),
             "wire": lambda d: len(d["steps"]) + len(d["matrix"]),
         }
         errors = {
@@ -4965,6 +5163,7 @@ def main() -> None:
             "tools_media": lambda d: sum("error" in c for c in d["steps"]),
             "tools_scene": lambda d: sum("error" in c for c in d["steps"]),
             "tools_scene_material": lambda d: sum("error" in c for c in d["steps"]),
+            "tools_scene_pack": lambda d: sum("error" in c for c in d["steps"]),
             "wire": lambda d: sum("error" in c for c in d["matrix"]),
         }
         for name, payload in mcp.items():
@@ -4986,6 +5185,17 @@ def main() -> None:
         write(REPO / "tests" / "fixtures" / "scene" / "material.json", mat,
               len(mat_items) + len(mat["strip_accents"]) + 3 * len(mat["projects"]),
               sum("error" in c for c in mat_items))
+        pck = synthetic_scene_pack_fixtures(ctx)
+        stages = [c["pack"] for c in pck["packs"]] + [c[k] for c in pck["packs"] for k in ("text", "brief") if k in c]
+        stages += [s for c in pck["packs"] for s in c.get("skeleton", [])]
+        write(REPO / "tests" / "fixtures" / "scene" / "pack.json", pck,
+              len(stages) + sum(1 + len(c["ranges"]) for c in pck["context"]) + len(pck["timeline_calls"])
+              + len(pck["recent"]),
+              sum("error" in s for s in stages))
+        if args.real:
+            real = real_scene_fixtures(ctx)
+            write(REPO / "tests" / "fixtures" / "local" / "scene" / "real.json", real, len(real["cases"]),
+                  sum("error" in c[k] for c in real["cases"] for k in ("pack", "text", "skeleton", "brief") if k in c))
 
     if args.solo == "escena":
         scene_group()

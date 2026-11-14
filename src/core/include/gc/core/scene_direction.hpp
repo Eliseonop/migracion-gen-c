@@ -1,7 +1,8 @@
 #pragma once
 
 // Dirección de escena (espejo de backend/app/scene_direction.py de video-yt), la parte que no
-// necesita la biblioteca ni la IA: la escaleta de TRAMOS del guion y la dirección visual GLOBAL.
+// necesita la IA: la escaleta de TRAMOS del guion, la dirección visual GLOBAL, el material y el pack
+// de contexto de un tramo.
 //
 //   - El documento: normalize_component(s), normalize_segment, normalize_doc, load y save
 //     (projects.save_scene_directions), update_segment, apply_plan_all y get_segment.
@@ -10,6 +11,9 @@
 //   - El guion en frases con tiempos: script_units (subtítulos → transcripción del material →
 //     texto del audio estimado → nada), text_in_range y auto_segments (la escaleta propuesta).
 //   - timeline_duration y status_summary (el «estás aquí» de scene_direction_status).
+//   - El material: su metadata semántica, el catálogo del proyecto y de la biblioteca y el ranking.
+//   - El pack (scene_direction_pack): build_pack, pack_text, estimate_tokens, brief_defaults y
+//     skeleton_beats, con caption_lines, range_words, material_usage y recent_materials.
 //
 // Lo que en Python depende del reloj y de uuid4 llega en SceneEnv: `now` es time.time() y los ids
 // de un tramo nuevo («sd_» + 8 hex) salen de `ids`. Se llaman en el mismo orden que en Python, así
@@ -20,6 +24,7 @@
 // lista, int() de infinito en `complexity`) es ErrorCode::Internal.
 
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <optional>
 #include <string>
@@ -139,5 +144,42 @@ inline constexpr std::size_t kMaxCandidates = 5; // MAX_CANDIDATES
 // primero los que tienen descripción o metadata, y luego en el orden del catálogo.
 [[nodiscard]] Result<Json> rank_materials(const Json& catalog, std::string_view text,
                                           std::size_t limit = kMaxCandidates);
+
+// --- El paquete de contexto de un tramo (lo único que ve la IA) --------------------------------
+
+inline constexpr double kRecentWindow = 20.0; // RECENT_WINDOW: s antes del tramo que cuentan como recientes
+
+// caption_lines: las líneas de subtítulo del tramo, por orden de inicio y con tiempos relativos a él.
+// Con palabras con tiempo, solo las que tienen el centro dentro (una línea que cruza el borde no
+// arrastra texto ajeno).
+[[nodiscard]] Json caption_lines(const Project& project, double start, double end);
+// range_words: las palabras con tiempo de los subtítulos con el centro en el tramo (o, si no hay
+// ninguna, las de la transcripción del material), relativas a él.
+[[nodiscard]] Json range_words(const Project& project, double start, double end);
+// material_usage: dónde aparece ya cada vídeo («clips:<id>») o imagen («images:<id>») en la timeline,
+// por orden de inicio. No mira de dónde es el material (proyecto o biblioteca).
+[[nodiscard]] Json material_usage(const Project& project);
+// recent_materials: los materiales que terminan como mucho 20 s antes de `start`, del más reciente al
+// más antiguo y 5 como mucho, con el título del catálogo.
+[[nodiscard]] Json recent_materials(const Json& catalog, const Json& usage, double start);
+// build_pack: el pack de un tramo normalizado (`segment`) dentro de su escaleta normalizada (`doc`):
+// el guion del tramo con la frase de antes y la de después, los subtítulos y las palabras, la
+// dirección, el material elegido (o 5 candidatos), la referencia y los vecinos, lo que ya ocupa la
+// timeline, el material usado hace poco, la composición planificada, el estilo y la dirección global.
+[[nodiscard]] Result<Json> build_pack(SceneEnv& env, const Project& project, const LibraryFile& library,
+                                      const Json& segment, const Json& doc);
+// pack_text: el texto exacto que recibe la IA. Lo que Python no puede escribir (sumar un texto y una
+// lista de la metadata semántica, unir lo que no es texto) es un crash.
+[[nodiscard]] Result<std::string> pack_text(const Json& pack);
+// estimate_tokens: max(1, round(len(text) / 3.6)).
+[[nodiscard]] std::int64_t estimate_tokens(std::string_view text);
+// brief_defaults: el arranque del brief de Generar Escena del tramo (idea, guion, intención, imágenes
+// que deben salir, estructura y notas). Un título que no es texto puede ser un crash, como en Python.
+[[nodiscard]] Result<Json> brief_defaults(const Json& pack);
+// skeleton_beats: los beats del tramo (tiempos relativos a él) con `pace` segundos de media: las
+// palabras (o las líneas) se cortan en fin de frase, en coma o si el grupo se alarga, y un beat de
+// menos de 0,8 s se une al anterior. Sin palabras ni líneas, partes iguales; con una duración NaN es
+// el ValueError de round() (InvalidArgument, con su texto) e infinita, un crash.
+[[nodiscard]] Result<Json> skeleton_beats(const Json& pack, double pace);
 
 } // namespace gc::core::scene

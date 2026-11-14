@@ -92,16 +92,16 @@
  },
  "audit": [
   {
-   "ts": "2026-11-14T08:40:41.160+00:00",
+   "ts": "2026-11-14T16:58:32.991+00:00",
    "tool": "list_projects",
    "access": "read",
    "project_id": null,
    "param_keys": [],
    "status": "ok",
-   "ms": 1.0
+   "ms": 5.4
   },
   {
-   "ts": "2026-11-14T08:40:41.163+00:00",
+   "ts": "2026-11-14T16:58:32.994+00:00",
    "tool": "get_timeline",
    "access": "read",
    "project_id": "w1",
@@ -112,7 +112,7 @@
    "ms": 0.2
   },
   {
-   "ts": "2026-11-14T08:40:41.165+00:00",
+   "ts": "2026-11-14T16:58:32.995+00:00",
    "tool": "get_timeline",
    "access": "read",
    "project_id": "nada",
@@ -124,7 +124,7 @@
    "error": "ValueError: Proyecto no encontrado: nada"
   },
   {
-   "ts": "2026-11-14T08:40:41.166+00:00",
+   "ts": "2026-11-14T16:58:32.997+00:00",
    "tool": "add_to_timeline",
    "access": "write",
    "project_id": "w1",
@@ -147,7 +147,7 @@
    }
   },
   {
-   "ts": "2026-11-14T08:40:41.169+00:00",
+   "ts": "2026-11-14T16:58:33.000+00:00",
    "tool": "get_project_context",
    "access": "read",
    "project_id": "w-crash",
@@ -155,11 +155,11 @@
     "project_id"
    ],
    "status": "error",
-   "ms": 0.7,
+   "ms": 0.8,
    "error": "AttributeError: 'list' object has no attribute 'get'"
   },
   {
-   "ts": "2026-11-14T08:40:41.173+00:00",
+   "ts": "2026-11-14T16:58:33.004+00:00",
    "tool": "get_timeline",
    "access": "read",
    "project_id": "w1",
@@ -170,25 +170,25 @@
    "ms": 0.2
   },
   {
-   "ts": "2026-11-14T08:40:41.179+00:00",
+   "ts": "2026-11-14T16:58:33.009+00:00",
    "tool": "list_projects",
    "access": "read",
    "project_id": null,
    "param_keys": [],
    "status": "ok",
-   "ms": 0.2
+   "ms": 0.3
   },
   {
-   "ts": "2026-11-14T08:40:41.183+00:00",
+   "ts": "2026-11-14T16:58:33.014+00:00",
    "tool": "list_projects",
    "access": "read",
    "project_id": null,
    "param_keys": [],
    "status": "ok",
-   "ms": 0.2
+   "ms": 0.3
   },
   {
-   "ts": "2026-11-14T08:40:41.186+00:00",
+   "ts": "2026-11-14T16:58:33.017+00:00",
    "tool": "add_track",
    "access": "write",
    "project_id": "w1",
@@ -198,14 +198,14 @@
     "project_id"
    ],
    "status": "ok",
-   "ms": 1.7,
+   "ms": 1.6,
    "meta": {
     "kind": "audio",
     "name": "Ñ"
    }
   },
   {
-   "ts": "2026-11-14T08:40:41.199+00:00",
+   "ts": "2026-11-14T16:58:33.025+00:00",
    "tool": "move_clip",
    "access": "write",
    "project_id": "w1",
@@ -216,14 +216,14 @@
     "track_id"
    ],
    "status": "ok",
-   "ms": 11.5,
+   "ms": 6.5,
    "meta": {
     "clip_id": "c1",
     "start": 1.5
    }
   },
   {
-   "ts": "2026-11-14T08:40:41.212+00:00",
+   "ts": "2026-11-14T16:58:33.039+00:00",
    "tool": "move_clip",
    "access": "write",
    "project_id": "w1",
@@ -234,14 +234,14 @@
     "track_id"
    ],
    "status": "ok",
-   "ms": 10.8,
+   "ms": 11.2,
    "meta": {
     "clip_id": "c1",
     "start": 2.0
    }
   },
   {
-   "ts": "2026-11-14T08:40:41.224+00:00",
+   "ts": "2026-11-14T16:58:33.057+00:00",
    "tool": "update_clip",
    "access": "write",
    "project_id": "w1",
@@ -251,13 +251,13 @@
     "project_id"
    ],
    "status": "ok",
-   "ms": 10.6,
+   "ms": 16.0,
    "meta": {
     "clip_id": "c1"
    }
   },
   {
-   "ts": "2026-11-14T08:40:41.241+00:00",
+   "ts": "2026-11-14T16:58:33.074+00:00",
    "tool": "set_timeline_markers",
    "access": "write",
    "project_id": "w1",
@@ -266,10 +266,10 @@
     "project_id"
    ],
    "status": "ok",
-   "ms": 14.8
+   "ms": 14.7
   },
   {
-   "ts": "2026-11-14T08:40:41.254+00:00",
+   "ts": "2026-11-14T16:58:33.093+00:00",
    "tool": "undo",
    "access": "write",
    "project_id": "w1",
@@ -277,10 +277,10 @@
     "project_id"
    ],
    "status": "ok",
-   "ms": 10.8
+   "ms": 16.9
   },
   {
-   "ts": "2026-11-14T08:40:41.264+00:00",
+   "ts": "2026-11-14T16:58:33.104+00:00",
    "tool": "redo",
    "access": "write",
    "project_id": "w1",
@@ -288,10 +288,10 @@
     "project_id"
    ],
    "status": "ok",
-   "ms": 7.0
+   "ms": 8.8
   },
   {
-   "ts": "2026-11-14T08:40:41.293+00:00",
+   "ts": "2026-11-14T16:58:33.138+00:00",
    "tool": "replace_media_version",
    "access": "write",
    "project_id": "w1",
@@ -309,7 +309,7 @@
    }
   },
   {
-   "ts": "2026-11-14T08:40:41.295+00:00",
+   "ts": "2026-11-14T16:58:33.140+00:00",
    "tool": "delete_media",
    "access": "destructive",
    "project_id": "w1",
@@ -326,7 +326,7 @@
    }
   },
   {
-   "ts": "2026-11-14T08:40:41.297+00:00",
+   "ts": "2026-11-14T16:58:33.143+00:00",
    "tool": "set_clip_ai_description",
    "access": "write",
    "project_id": "w1",
@@ -336,14 +336,14 @@
     "project_id"
    ],
    "status": "error",
-   "ms": 0.3,
+   "ms": 0.4,
    "error": "ValueError: Clip no encontrado: 0",
    "meta": {
     "clip_index": "0"
    }
   },
   {
-   "ts": "2026-11-14T08:40:41.298+00:00",
+   "ts": "2026-11-14T16:58:33.145+00:00",
    "tool": "replace_media_version",
    "access": "write",
    "project_id": "nada",
@@ -354,14 +354,14 @@
     "project_id"
    ],
    "status": "error",
-   "ms": 0.1,
+   "ms": 0.2,
    "error": "ValueError: Proyecto no encontrado: nada",
    "meta": {
     "clip_index": "0"
    }
   },
   {
-   "ts": "2026-11-14T08:40:41.300+00:00",
+   "ts": "2026-11-14T16:58:33.147+00:00",
    "tool": "scene_direction_status",
    "access": "read",
    "project_id": "w1",
@@ -372,7 +372,7 @@
    "ms": 0.2
   },
   {
-   "ts": "2026-11-14T08:40:41.302+00:00",
+   "ts": "2026-11-14T16:58:33.149+00:00",
    "tool": "scene_direction_update_segment",
    "access": "write",
    "project_id": "w1",
@@ -386,7 +386,7 @@
    "error": "MCPError: Pasa 'patch' con los campos a cambiar."
   },
   {
-   "ts": "2026-11-14T08:40:41.303+00:00",
+   "ts": "2026-11-14T16:58:33.151+00:00",
    "tool": "scene_direction_update_segment",
    "access": "write",
    "project_id": "w1",
@@ -396,11 +396,11 @@
     "segment_id"
    ],
    "status": "error",
-   "ms": 0.2,
+   "ms": 0.4,
    "error": "MCPError: Ningún campo válido en 'patch'. Permitidos: ['complexity', 'components', 'composition_id', 'composition_intent', 'end', 'instruction', 'materials', 'mode', 'no_visual', 'placed_clip_id', 'reference_id', 'start', 'status', 'strict', 'text']."
   },
   {
-   "ts": "2026-11-14T08:40:41.305+00:00",
+   "ts": "2026-11-14T16:58:33.153+00:00",
    "tool": "scene_direction_update_segment",
    "access": "write",
    "project_id": "w1",
@@ -414,7 +414,7 @@
    "error": "MCPError: Tramo no encontrado."
   },
   {
-   "ts": "2026-11-14T08:40:41.307+00:00",
+   "ts": "2026-11-14T16:58:33.154+00:00",
    "tool": "scene_get_blueprint",
    "access": "read",
    "project_id": "nada",
@@ -422,11 +422,11 @@
     "project_id"
    ],
    "status": "error",
-   "ms": 0.2,
+   "ms": 0.1,
    "error": "MCPError: Proyecto no encontrado: nada"
   },
   {
-   "ts": "2026-11-14T08:40:41.309+00:00",
+   "ts": "2026-11-14T16:58:33.157+00:00",
    "tool": "scene_rank_materials",
    "access": "read",
    "project_id": "w1",
@@ -440,7 +440,7 @@
    "error": "MCPError: Pasa 'text' (la narración o la idea del tramo)."
   },
   {
-   "ts": "2026-11-14T08:40:41.310+00:00",
+   "ts": "2026-11-14T16:58:33.158+00:00",
    "tool": "scene_set_material_meta",
    "access": "write",
    "project_id": "w1",
@@ -459,7 +459,7 @@
    }
   },
   {
-   "ts": "2026-11-14T08:40:41.312+00:00",
+   "ts": "2026-11-14T16:58:33.160+00:00",
    "tool": "scene_set_material_meta",
    "access": "write",
    "project_id": "w1",
@@ -476,6 +476,50 @@
    "meta": {
     "kind": "clips"
    }
+  },
+  {
+   "ts": "2026-11-14T16:58:33.162+00:00",
+   "tool": "scene_direction_pack",
+   "access": "read",
+   "project_id": "w1",
+   "param_keys": [
+    "pace",
+    "project_id",
+    "segment",
+    "segments"
+   ],
+   "status": "ok",
+   "ms": 0.6
+  },
+  {
+   "ts": "2026-11-14T16:58:33.164+00:00",
+   "tool": "scene_direction_pack",
+   "access": "read",
+   "project_id": "w1",
+   "param_keys": [
+    "pace",
+    "project_id",
+    "segment",
+    "segments"
+   ],
+   "status": "error",
+   "ms": 0.2,
+   "error": "MCPError: Tramo inválido: pasa 'segment' con al menos {start, end} (segundos)."
+  },
+  {
+   "ts": "2026-11-14T16:58:33.167+00:00",
+   "tool": "scene_direction_pack",
+   "access": "read",
+   "project_id": "w1",
+   "param_keys": [
+    "pace",
+    "project_id",
+    "segment",
+    "segments"
+   ],
+   "status": "error",
+   "ms": 0.5,
+   "error": "ValueError: cannot convert float NaN to integer"
   }
  ],
  "tools": [
@@ -19658,7 +19702,7 @@
      "result": {
       "content": [
        {
-        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"K52c3b418\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K52c3b418\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 0.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [],\n    \"duration\": 4.0\n  }\n}",
+        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"K6395c1da\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K6395c1da\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 0.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [],\n    \"duration\": 4.0\n  }\n}",
         "type": "text"
        }
       ],
@@ -19685,7 +19729,7 @@
      "result": {
       "content": [
        {
-        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"c1\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K52c3b418\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 1.5,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [],\n    \"duration\": 5.5\n  }\n}",
+        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"c1\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K6395c1da\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 1.5,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [],\n    \"duration\": 5.5\n  }\n}",
         "type": "text"
        }
       ],
@@ -19712,7 +19756,7 @@
      "result": {
       "content": [
        {
-        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"c1\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K52c3b418\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 2.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [],\n    \"duration\": 6.0\n  }\n}",
+        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"c1\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K6395c1da\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 2.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [],\n    \"duration\": 6.0\n  }\n}",
         "type": "text"
        }
       ],
@@ -19739,7 +19783,7 @@
      "result": {
       "content": [
        {
-        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"c1\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K52c3b418\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 2.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [],\n    \"duration\": 6.0\n  }\n}",
+        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"c1\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K6395c1da\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 2.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [],\n    \"duration\": 6.0\n  }\n}",
         "type": "text"
        }
       ],
@@ -19766,7 +19810,7 @@
      "result": {
       "content": [
        {
-        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"m7585066f\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K52c3b418\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 2.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [\n      {\n        \"id\": \"m7585066f\",\n        \"t\": 1.0\n      }\n    ],\n    \"duration\": 6.0\n  }\n}",
+        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"mcce3b5c4\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K6395c1da\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 2.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [\n      {\n        \"id\": \"mcce3b5c4\",\n        \"t\": 1.0\n      }\n    ],\n    \"duration\": 6.0\n  }\n}",
         "type": "text"
        }
       ],
@@ -19793,7 +19837,7 @@
      "result": {
       "content": [
        {
-        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"undo\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": true,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K52c3b418\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 2.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [],\n    \"duration\": 6.0\n  }\n}",
+        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"undo\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": true,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K6395c1da\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 2.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [],\n    \"duration\": 6.0\n  }\n}",
         "type": "text"
        }
       ],
@@ -19820,7 +19864,7 @@
      "result": {
       "content": [
        {
-        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"redo\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K52c3b418\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 2.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [\n      {\n        \"id\": \"m7585066f\",\n        \"t\": 1.0\n      }\n    ],\n    \"duration\": 6.0\n  }\n}",
+        "text": "{\n  \"ok\": true,\n  \"changed\": [\n    \"redo\"\n  ],\n  \"warnings\": [],\n  \"can_undo\": true,\n  \"can_redo\": false,\n  \"checkpoints\": [],\n  \"timeline\": {\n    \"present\": true,\n    \"format\": {\n      \"aspect\": \"9:16\",\n      \"width\": 720,\n      \"height\": 1280,\n      \"fps\": 30\n    },\n    \"tracks\": [\n      {\n        \"id\": \"tv\",\n        \"kind\": \"video\",\n        \"name\": \"V1\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      },\n      {\n        \"id\": \"K6395c1da\",\n        \"kind\": \"audio\",\n        \"name\": \"Ñ\",\n        \"hidden\": false,\n        \"muted\": false,\n        \"locked\": false,\n        \"linked_track_id\": null\n      }\n    ],\n    \"clips\": [\n      {\n        \"id\": \"c1\",\n        \"track_id\": \"tv\",\n        \"track_kind\": \"video\",\n        \"kind\": \"video\",\n        \"name\": null,\n        \"start\": 2.0,\n        \"duration\": 4.0,\n        \"in_point\": 0.0,\n        \"out_point\": 4.0,\n        \"frame\": \"full\",\n        \"layout\": \"fill\",\n        \"look\": \"none\",\n        \"speed\": 1.0,\n        \"muted\": false,\n        \"has_reframe\": false,\n        \"face_track_mode\": null,\n        \"asset_id\": \"0\",\n        \"asset_kind\": \"clips\",\n        \"asset_scope\": \"project\",\n        \"dup_of\": null,\n        \"dup_count\": 0,\n        \"description\": null,\n        \"trim\": {\n          \"in_point\": 0.0,\n          \"out_point\": 4.0,\n          \"source_duration\": 4.0\n        },\n        \"volume\": 1.0,\n        \"has_audio_fx\": false\n      }\n    ],\n    \"markers\": [\n      {\n        \"id\": \"mcce3b5c4\",\n        \"t\": 1.0\n      }\n    ],\n    \"duration\": 6.0\n  }\n}",
         "type": "text"
        }
       ],
@@ -20040,7 +20084,7 @@
       "contents": [
        {
         "mimeType": "application/json",
-        "text": "{\"project\": {\"id\": \"w1\", \"name\": \"Uno ñ\", \"created_at\": \"2026-01-01T00:00:00+00:00\", \"folder\": null}, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [{\"id\": \"tv\", \"kind\": \"video\", \"name\": \"V1\", \"linked_track_id\": null}, {\"id\": \"K52c3b418\", \"kind\": \"audio\", \"name\": \"Ñ\", \"linked_track_id\": null}], \"clip_count\": 1, \"duration\": 6.0, \"kinds\": {\"video\": 1, \"audio\": 0, \"text\": 0}}, \"history\": {\"can_undo\": true, \"can_redo\": false, \"checkpoints\": []}}",
+        "text": "{\"project\": {\"id\": \"w1\", \"name\": \"Uno ñ\", \"created_at\": \"2026-01-01T00:00:00+00:00\", \"folder\": null}, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"media\": {\"clips\": 0, \"audios\": 0, \"images\": 0, \"transcripts\": 0, \"clip_list\": [], \"audio_list\": [], \"image_list\": []}, \"timeline\": {\"present\": true, \"tracks\": [{\"id\": \"tv\", \"kind\": \"video\", \"name\": \"V1\", \"linked_track_id\": null}, {\"id\": \"K6395c1da\", \"kind\": \"audio\", \"name\": \"Ñ\", \"linked_track_id\": null}], \"clip_count\": 1, \"duration\": 6.0, \"kinds\": {\"video\": 1, \"audio\": 0, \"text\": 0}}, \"history\": {\"can_undo\": true, \"can_redo\": false, \"checkpoints\": []}}",
         "uri": "project://w1"
        }
       ]
@@ -20067,7 +20111,7 @@
       "contents": [
        {
         "mimeType": "application/json",
-        "text": "{\"present\": true, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"tracks\": [{\"id\": \"tv\", \"kind\": \"video\", \"name\": \"V1\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}, {\"id\": \"K52c3b418\", \"kind\": \"audio\", \"name\": \"Ñ\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}], \"clips\": [{\"id\": \"c1\", \"track_id\": \"tv\", \"track_kind\": \"video\", \"kind\": \"video\", \"name\": null, \"start\": 2.0, \"duration\": 4.0, \"in_point\": 0.0, \"out_point\": 4.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 4.0, \"source_duration\": 4.0}, \"volume\": 1.0, \"has_audio_fx\": false}], \"markers\": [{\"id\": \"m7585066f\", \"t\": 1.0}], \"duration\": 6.0}",
+        "text": "{\"present\": true, \"format\": {\"aspect\": \"9:16\", \"width\": 720, \"height\": 1280, \"fps\": 30}, \"tracks\": [{\"id\": \"tv\", \"kind\": \"video\", \"name\": \"V1\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}, {\"id\": \"K6395c1da\", \"kind\": \"audio\", \"name\": \"Ñ\", \"hidden\": false, \"muted\": false, \"locked\": false, \"linked_track_id\": null}], \"clips\": [{\"id\": \"c1\", \"track_id\": \"tv\", \"track_kind\": \"video\", \"kind\": \"video\", \"name\": null, \"start\": 2.0, \"duration\": 4.0, \"in_point\": 0.0, \"out_point\": 4.0, \"frame\": \"full\", \"layout\": \"fill\", \"look\": \"none\", \"speed\": 1.0, \"muted\": false, \"has_reframe\": false, \"face_track_mode\": null, \"asset_id\": \"0\", \"asset_kind\": \"clips\", \"asset_scope\": \"project\", \"dup_of\": null, \"dup_count\": 0, \"description\": null, \"trim\": {\"in_point\": 0.0, \"out_point\": 4.0, \"source_duration\": 4.0}, \"volume\": 1.0, \"has_audio_fx\": false}], \"markers\": [{\"id\": \"mcce3b5c4\", \"t\": 1.0}], \"duration\": 6.0}",
         "uri": "project://w1/timeline"
        }
       ]
@@ -20728,6 +20772,114 @@
       "content": [
        {
         "text": "Error executing tool scene_set_material_meta: {\"error\": {\"code\": \"resource_not_found\", \"message\": \"Material no encontrado.\", \"retryable\": false}}",
+        "type": "text"
+       }
+      ],
+      "isError": true
+     }
+    }
+   ],
+   "session_header": "$SID"
+  },
+  {
+   "name": "escena: pack de un tramo",
+   "method": "POST",
+   "session": "cur",
+   "literal": null,
+   "headers": {},
+   "body": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"scene_direction_pack\", \"arguments\": {\"project_id\": \"w1\", \"segment\": {\"id\": \"sd_w1\", \"start\": 0, \"end\": 3}, \"pace\": \"calmo\"}}}",
+   "status": 200,
+   "content_type": "text/event-stream",
+   "kind": "sse",
+   "response": [
+    {
+     "jsonrpc": "2.0",
+     "id": 1,
+     "result": {
+      "content": [
+       {
+        "text": "{\n  \"pack\": {\n    \"segment_id\": \"sd_w1\",\n    \"blueprint\": {},\n    \"range\": {\n      \"start\": 0.0,\n      \"end\": 3.0,\n      \"duration\": 3.0\n    },\n    \"script\": {\n      \"source\": \"none\",\n      \"has_captions\": false,\n      \"current\": \"\",\n      \"before\": \"\",\n      \"after\": \"\"\n    },\n    \"captions\": [],\n    \"words\": [],\n    \"direction\": {\n      \"mode\": \"propose\",\n      \"instruction\": \"\",\n      \"strict\": false,\n      \"composition_intent\": \"\",\n      \"complexity\": null,\n      \"no_visual\": false\n    },\n    \"materials\": [],\n    \"candidates\": [],\n    \"reference\": null,\n    \"previous\": null,\n    \"next\": null,\n    \"timeline\": {\n      \"existing\": [\n        {\n          \"id\": \"c1\",\n          \"kind\": \"video\",\n          \"track\": \"V1\",\n          \"name\": \"c0.mp4\",\n          \"start\": 2.0,\n          \"end\": 6.0\n        }\n      ],\n      \"motion_in_range\": []\n    },\n    \"recent_materials\": [],\n    \"components\": [],\n    \"style\": {\n      \"format\": {\n        \"width\": 720,\n        \"height\": 1280,\n        \"fps\": 30\n      }\n    }\n  },\n  \"text\": \"TRAMO: 0.00s – 3.00s (dura 3.00s)\\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\\nLO QUE DICE LA VOZ: (nadie habla en este tramo; guíate por la dirección)\\nSUBTÍTULOS DEL TRAMO: ninguno\\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\\n  · video «c0.mp4» 2.0–6.0s\\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\",\n  \"tokens\": 119,\n  \"skeleton\": [\n    {\n      \"text\": \"\",\n      \"start\": 0.0,\n      \"end\": 3.0\n    }\n  ],\n  \"brief_defaults\": {\n    \"idea\": \"\",\n    \"script\": \"\",\n    \"intent\": \"explicativa\",\n    \"must_include\": [],\n    \"resources\": {},\n    \"structure\": \"free\",\n    \"notes\": \"\"\n  }\n}",
+        "type": "text"
+       }
+      ],
+      "isError": false
+     }
+    }
+   ],
+   "session_header": "$SID"
+  },
+  {
+   "name": "escena: pack con un tramo inválido",
+   "method": "POST",
+   "session": "cur",
+   "literal": null,
+   "headers": {},
+   "body": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"scene_direction_pack\", \"arguments\": {\"project_id\": \"w1\", \"segment\": {\"start\": 1}}}}",
+   "status": 200,
+   "content_type": "text/event-stream",
+   "kind": "sse",
+   "response": [
+    {
+     "jsonrpc": "2.0",
+     "id": 1,
+     "result": {
+      "content": [
+       {
+        "text": "Error executing tool scene_direction_pack: {\"error\": {\"code\": \"invalid_parameter\", \"message\": \"Tramo inválido: pasa 'segment' con al menos {start, end} (segundos).\", \"retryable\": true, \"param\": \"segment\"}}",
+        "type": "text"
+       }
+      ],
+      "isError": true
+     }
+    }
+   ],
+   "session_header": "$SID"
+  },
+  {
+   "name": "escena: pack con un tramo que no es objeto",
+   "method": "POST",
+   "session": "cur",
+   "literal": null,
+   "headers": {},
+   "body": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"scene_direction_pack\", \"arguments\": {\"project_id\": \"w1\", \"segment\": \"x\"}}}",
+   "status": 200,
+   "content_type": "text/event-stream",
+   "kind": "sse",
+   "response": [
+    {
+     "jsonrpc": "2.0",
+     "id": 1,
+     "result": {
+      "content": [
+       {
+        "text": "Error executing tool scene_direction_pack: 1 validation error for scene_direction_packArguments\nsegment\n  Input should be a valid dictionary [type=dict_type, input_value='x', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/dict_type",
+        "type": "text"
+       }
+      ],
+      "isError": true
+     }
+    }
+   ],
+   "session_header": "$SID"
+  },
+  {
+   "name": "escena: pack de duración NaN",
+   "method": "POST",
+   "session": "cur",
+   "literal": null,
+   "headers": {},
+   "body": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"scene_direction_pack\", \"arguments\": {\"project_id\": \"w1\", \"segment\": {\"start\": 50, \"end\": \"nan\"}}}}",
+   "status": 200,
+   "content_type": "text/event-stream",
+   "kind": "sse",
+   "response": [
+    {
+     "jsonrpc": "2.0",
+     "id": 1,
+     "result": {
+      "content": [
+       {
+        "text": "Error executing tool scene_direction_pack: {\"error\": {\"code\": \"processing_error\", \"message\": \"cannot convert float NaN to integer\", \"retryable\": false}}",
         "type": "text"
        }
       ],

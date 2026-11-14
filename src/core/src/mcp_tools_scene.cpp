@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "gc/core/library.hpp"
+#include "gc/core/motion_scene.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/scene_direction.hpp"
 #include "json_reader.hpp"
@@ -279,6 +280,56 @@ Result<Json> scene_rank_materials(Ctx& c, const Json& args) {
     return Json{{"materials", std::move(*ranked)}, {"catalog_size", catalog->size()}};
 }
 
+Result<Json> scene_direction_pack(Ctx& c, const Json& args) {
+    auto proj = project_or_raise(c.env, c.pid);
+    if (!proj) {
+        return std::unexpected(proj.error());
+    }
+    auto seg = scene::normalize_segment(c.scene, arg(args, "segment"));
+    if (!seg) {
+        return std::unexpected(seg.error());
+    }
+    if (!*seg) {
+        return mcp_error("invalid_parameter", "Tramo inválido: pasa 'segment' con al menos {start, end} (segundos).",
+                         true, "segment");
+    }
+    // `segments` (una lista) da los vecinos; si no, la escaleta guardada.
+    const Json& segments = arg(args, "segments");
+    auto doc = segments.is_array() ? scene::normalize_doc(c.scene, Json{{"segments", segments}})
+                                   : scene::load(c.scene, *proj);
+    if (!doc) {
+        return doc;
+    }
+    const LibraryFile library(c.env.data_dir);
+    auto pack = scene::build_pack(c.scene, *proj, library, **seg, *doc);
+    if (!pack) {
+        return pack;
+    }
+    auto text = scene::pack_text(*pack);
+    if (!text) {
+        return std::unexpected(text.error());
+    }
+    // PACES.get(str(pace or "medio"), PACES["medio"])
+    constexpr double kDefaultPace = *motion::pace_seconds(motion::kDefaultPace);
+    const Json& pace = arg(args, "pace");
+    const double pace_s =
+        motion::pace_seconds(py_truthy(pace) ? py_str(pace) : std::string(motion::kDefaultPace)).value_or(kDefaultPace);
+    const std::int64_t tokens = scene::estimate_tokens(*text);
+    auto skeleton = scene::skeleton_beats(*pack, pace_s);
+    if (!skeleton) {
+        return skeleton; // un ValueError (round() de NaN) llega al agente con su texto
+    }
+    auto brief = scene::brief_defaults(*pack);
+    if (!brief) {
+        return brief;
+    }
+    return Json{{"pack", std::move(*pack)},
+                {"text", std::move(*text)},
+                {"tokens", tokens},
+                {"skeleton", std::move(*skeleton)},
+                {"brief_defaults", std::move(*brief)}};
+}
+
 Result<Json> scene_set_material_meta(Ctx& c, const Json& args) {
     // scope = "project" si no viene; si viene (también null), tiene que ser «project» o «library».
     std::string scope = "project";
@@ -312,6 +363,7 @@ const std::vector<EditToolInfo>& scene_tools() {
                                                  {"scene_set_blueprint", "write"},
                                                  {"scene_direction_get", "read"},
                                                  {"scene_direction_status", "read"},
+                                                 {"scene_direction_pack", "read"},
                                                  {"scene_rank_materials", "read"},
                                                  {"scene_direction_auto_split", "read"},
                                                  {"scene_direction_update_segment", "write"},
@@ -345,6 +397,9 @@ Result<Json> call_scene_tool(const EditToolsEnv& env, std::string_view tool, con
     }
     if (tool == "scene_rank_materials") {
         return scene_rank_materials(c, args);
+    }
+    if (tool == "scene_direction_pack") {
+        return scene_direction_pack(c, args);
     }
     if (tool == "scene_set_material_meta") {
         return scene_set_material_meta(c, args);

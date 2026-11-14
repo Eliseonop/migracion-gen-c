@@ -47,6 +47,7 @@ add_executable(gc_tests
     parity/test_projects_parity.cpp
     parity/test_scene_parity.cpp
     parity/test_scene_material_parity.cpp
+    parity/test_scene_pack_parity.cpp
     parity/test_settings_parity.cpp
     parity/test_shape_parity.cpp
     parity/test_sfx_disk_parity.cpp

@@ -911,6 +911,15 @@ WIRE_STEPS = [
                                                       material_id="0", meta={}, scope="otro")}],
     ["escena: metadata sin el material", {"rpc": _call("scene_set_material_meta", project_id="w1", kind="clips",
                                                        material_id="zzz", meta={"mood": "x"})}],
+    # Con id: sin él, el tramo tendría uno de uuid4 (que aquí no va en secuencia).
+    ["escena: pack de un tramo", {"rpc": _call("scene_direction_pack", project_id="w1",
+                                               segment={"id": "sd_w1", "start": 0, "end": 3}, pace="calmo")}],
+    ["escena: pack con un tramo inválido", {"rpc": _call("scene_direction_pack", project_id="w1",
+                                                         segment={"start": 1})}],
+    ["escena: pack con un tramo que no es objeto", {"rpc": _call("scene_direction_pack", project_id="w1",
+                                                                 segment="x")}],
+    ["escena: pack de duración NaN", {"rpc": _call("scene_direction_pack", project_id="w1",
+                                                   segment={"start": 50, "end": "nan"})}],
     # Otros métodos HTTP.
     ["GET Accept raro", {"method": "GET", "headers": {"Accept": "text/plain"}}],
     ["PUT", {"method": "PUT"}], ["DELETE sin sesión", {"method": "DELETE", "session": "none"}],
@@ -1143,4 +1152,58 @@ SCENE_MATERIAL_STEPS = [
                                  "meta": {}, "scope": "library"}],
     ["scene_direction_get", {"project_id": "m-main"}],
     ["scene_rank_materials", {"project_id": "m-main", "text": "Un perro alegre en la playa con olas", "limit": 20}],
+]
+
+# El pack de un tramo (3.ª tanda): scene_direction_pack sobre los proyectos y la biblioteca de
+# scene_cases.PACK_*, con el reloj de scene_direction y uuid4 seguidos de un paso al siguiente.
+SCENE_PACK_PROJECTS = _copy.deepcopy(_scene.PACK_PROJECTS)
+SCENE_PACK_LIBRARY = _copy.deepcopy(_scene.PACK_LIBRARY)
+
+
+def _pack(project_id, segment, **kw):
+    return ["scene_direction_pack", {"project_id": project_id, "segment": segment, **kw}]
+
+
+SCENE_PACK_STEPS = [
+    _pack("k-main", {"id": "sd_a", "start": 0, "end": 5}),
+    _pack("k-main", {"start": 5, "end": 9, "mode": "reinforce", "reference_id": "sd_a"}, pace="calmo"),
+    # pace: str(pace or "medio") en PACES; si no está, el de «medio».
+    _pack("k-main", {"start": 20, "end": 30}, pace="dinamico"),
+    _pack("k-main", {"start": 20, "end": 30}, pace="rápido"),
+    _pack("k-main", {"start": 20, "end": 30}, pace=None),
+    _pack("k-main", {"start": 20, "end": 30}, pace=""),
+    _pack("k-main", {"start": 20, "end": 30}, pace=5),
+    _pack("k-main", {"start": 20, "end": 30}, pace="Calmo"),
+    _pack("k-main", {"start": 30, "end": 40}, pace=True),
+    # segments: una lista da los vecinos (normalizada); lo demás, la escaleta guardada.
+    _pack("k-main", {"id": "sd_mid", "start": 9, "end": 14},
+          segments=[{"id": "sd_prev", "start": 0, "end": 9, "mode": "explain"}, {"id": "sd_mid", "start": 9, "end": 14},
+                    {"start": 14, "end": 20, "instruction": "Después"}]),
+    _pack("k-main", {"start": 9, "end": 14}, segments="no es una lista"),
+    _pack("k-main", {"start": 9, "end": 14}, segments=None),
+    _pack("k-main", {"start": 9, "end": 14}, segments=[]),
+    _pack("k-main", {"start": 9, "end": 14}, segments=[{"start": 0, "end": 3, "components": 5}]),
+    # Un tramo inválido es un invalid_parameter; uno que no se puede normalizar, un crash.
+    _pack("k-main", {"start": 1}),
+    _pack("k-main", {"start": 1, "end": 1.1}),
+    _pack("k-main", "tramo"),
+    _pack("k-main", None),
+    _pack("k-main", {}),
+    _pack("k-main", {"start": 0, "end": 5, "components": 3}),
+    _pack("nada", {"start": 0, "end": 5}),
+    _pack("nada", "tramo"),
+    # round() de una duración NaN es un ValueError (llega al agente); de una infinita, un OverflowError.
+    _pack("k-main", {"start": 50, "end": "nan"}),
+    _pack("k-main", {"start": 40, "end": "inf"}),
+    _pack("k-main", {"start": 0, "end": "inf"}),
+    # El título 5 de la biblioteca con descripción no tiene lower() (brief_defaults); la metadata de k-raro
+    # no se puede escribir (pack_text) o no deja ordenar los candidatos (build_pack).
+    _pack("k-main", {"start": 14, "end": 20, "materials": [{"kind": "images", "id": 7, "scope": "library"}]}),
+    _pack("k-raro", {"start": 0, "end": 5, "materials": [{"kind": "clips", "id": "1"}]}),
+    _pack("k-raro", {"start": 0, "end": 5}),
+    _pack("k-raro", {"start": 0, "end": 5, "materials": [{"kind": "images", "id": "w2"}, {"kind": "clips", "id": "12"}]}),
+    _pack("k-sin", {"start": 0, "end": 5, "text": "Hola"}),
+    _pack("k-sty", {"start": 0, "end": 4}, pace="calmo"),
+    _pack("k-tr", {"start": 2, "end": 8}),
+    _pack("k-aud", {"start": 1, "end": 7}),
 ]

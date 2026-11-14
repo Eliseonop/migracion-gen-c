@@ -1,0 +1,7804 @@
+{
+ "projects": [
+  {
+   "id": "k-main",
+   "name": "Pack",
+   "created_at": "2026-06-01T10:00:00",
+   "clips": [
+    {
+     "index": 1,
+     "filename": "c1.mp4",
+     "url": "/clips/c1.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Perro corriendo",
+     "description": "Un perro corre por la playa",
+     "semantic": {
+      "subjects": [
+       "perro",
+       "playa"
+      ],
+      "actions": [
+       "corre"
+      ],
+      "suggested_usage": "b-roll de apoyo",
+      "visual_priority": "apoyo"
+     }
+    },
+    {
+     "index": 2,
+     "filename": "c2.mp4",
+     "url": "/clips/c2.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "",
+     "description_ai": "Vista aérea de una ciudad",
+     "in_point": 1.0,
+     "out_point": 4.0
+    },
+    {
+     "index": 3,
+     "filename": "c3.mp4",
+     "url": "/clips/c3.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Volcán activo",
+     "description": "",
+     "semantic": {
+      "subjects": [
+       "volcán"
+      ],
+      "mood": "tenso"
+     }
+    },
+    {
+     "index": 4,
+     "filename": "c4.mp4",
+     "url": "/clips/c4.mp4",
+     "start": 0.0,
+     "end": 10.0
+    },
+    {
+     "index": 5,
+     "filename": "c5.mp4",
+     "url": "/clips/c5.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "id": "clip-5",
+     "label": "Con id",
+     "description": "Encontrado por su id"
+    }
+   ],
+   "images": [
+    {
+     "id": "im1",
+     "filename": "im1.png",
+     "url": "/images/im1.png",
+     "label": "Mapa",
+     "description": "Mapa político de Europa"
+    },
+    {
+     "id": "im2",
+     "filename": "im2.png",
+     "url": "/images/im2.png",
+     "label": "Gráfico de barras",
+     "description": "",
+     "semantic": {
+      "subjects": "datos",
+      "actions": "subir"
+     }
+    },
+    {
+     "id": "im3",
+     "filename": "im3.png",
+     "url": "/images/im3.png",
+     "label": "Foto",
+     "description": "Foto antigua",
+     "semantic": {
+      "visual_priority": "fondo"
+     }
+    }
+   ],
+   "timeline": {
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "Principal"
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "Encima"
+     },
+     {
+      "id": "V3",
+      "kind": "video",
+      "name": "Oculta",
+      "hidden": true
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "Subtítulos",
+      "style": {
+       "font": "Anton",
+       "color": "#fff",
+       "y": 0.8
+      }
+     },
+     {
+      "id": "T2",
+      "kind": "text",
+      "name": "Arriba",
+      "style": {
+       "y": 0.1,
+       "highlight_color": "#f00"
+      }
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "Voz"
+     }
+    ],
+    "clips": [
+     {
+      "id": "v1",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "1",
+      "filename": "v1.mp4",
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 6.0,
+      "name": "Plano perro",
+      "note": "  El perro   entra  "
+     },
+     {
+      "id": "v2",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "2",
+      "filename": "v2.mp4",
+      "start": 4.0,
+      "in_point": 1.0,
+      "out_point": 4.0
+     },
+     {
+      "id": "v3",
+      "track_id": "V3",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "3",
+      "filename": "v3.mp4",
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 30.0
+     },
+     {
+      "id": "sh1",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "sh1.mp4",
+      "start": 2.0,
+      "out_point": 1.5,
+      "description": "Flecha roja"
+     },
+     {
+      "id": "img1",
+      "track_id": "V2",
+      "kind": "image",
+      "asset_kind": "images",
+      "asset_id": "im1",
+      "filename": "img1.mp4",
+      "start": 8.0,
+      "out_point": 2.5
+     },
+     {
+      "id": "mo1",
+      "track_id": "V2",
+      "kind": "motion",
+      "asset_kind": "clips",
+      "asset_id": "m",
+      "filename": "mo1.mp4",
+      "start": 9.5,
+      "out_point": 4.0,
+      "name": "Gráfico animado",
+      "composition_id": "comp1"
+     },
+     {
+      "id": "mo2",
+      "track_id": "V2",
+      "kind": "motion",
+      "asset_kind": "clips",
+      "asset_id": "m",
+      "filename": "mo2.mp4",
+      "start": 12.0,
+      "out_point": 0.5
+     },
+     {
+      "id": "vlib",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "lib_a",
+      "filename": "vlib.mp4",
+      "asset_scope": "library",
+      "start": 14.0,
+      "out_point": 3.0
+     },
+     {
+      "id": "im2u",
+      "track_id": "V2",
+      "kind": "image",
+      "asset_kind": "images",
+      "asset_id": "im2",
+      "filename": "im2u.mp4",
+      "start": 16.0,
+      "out_point": 1.0
+     },
+     {
+      "id": "v1b",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "1",
+      "filename": "v1b.mp4",
+      "start": 18.0,
+      "in_point": 0.0,
+      "out_point": 2.0
+     },
+     {
+      "id": "v5",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "clip-5",
+      "filename": "v5.mp4",
+      "start": 19.0,
+      "out_point": 0.8
+     },
+     {
+      "id": "v4",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "4",
+      "filename": "v4.mp4",
+      "start": 21.0,
+      "out_point": 1.0,
+      "description": "Del clip"
+     },
+     {
+      "id": "vx",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "99",
+      "filename": "vx.mp4",
+      "start": 25.0,
+      "out_point": 2.0,
+      "description": "Material perdido"
+     },
+     {
+      "id": "imgT",
+      "track_id": "T2",
+      "kind": "image",
+      "asset_kind": "images",
+      "asset_id": "im3",
+      "filename": "imgT.mp4",
+      "start": 26.0,
+      "out_point": 2.0
+     },
+     {
+      "id": "a1",
+      "track_id": "A1",
+      "kind": "audio",
+      "asset_kind": "audios",
+      "asset_id": "a1",
+      "filename": "a1.mp4",
+      "start": 0.0,
+      "out_point": 30.0
+     },
+     {
+      "id": "tf1",
+      "track_id": "T2",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "tf1.mp4",
+      "start": 3.0,
+      "out_point": 2.0,
+      "text": "Título  libre",
+      "text_role": "free"
+     },
+     {
+      "id": "c1",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "c1.mp4",
+      "start": 0.0,
+      "out_point": 2.55,
+      "text": "Hoy hablamos del perro, el mejor amigo.",
+      "words": [
+       {
+        "text": "Hoy",
+        "start": 0.0,
+        "end": 0.3
+       },
+       {
+        "text": "hablamos",
+        "start": 0.35,
+        "end": 0.65
+       },
+       {
+        "text": "del",
+        "start": 0.7,
+        "end": 1.0
+       },
+       {
+        "text": "perro,",
+        "start": 1.05,
+        "end": 1.35
+       },
+       {
+        "text": "el",
+        "start": 1.4,
+        "end": 1.7
+       },
+       {
+        "text": "mejor",
+        "start": 1.75,
+        "end": 2.05
+       },
+       {
+        "text": "amigo.",
+        "start": 2.1,
+        "end": 2.4
+       }
+      ],
+      "text_role": "caption"
+     },
+     {
+      "id": "c2",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "c2.mp4",
+      "start": 2.8,
+      "out_point": 2.2,
+      "text": "Corre por la playa cada mañana.",
+      "words": [
+       {
+        "text": "Corre",
+        "start": 0.0,
+        "end": 0.3
+       },
+       {
+        "text": "por",
+        "start": 0.35,
+        "end": 0.65
+       },
+       {
+        "text": "la",
+        "start": 0.7,
+        "end": 1.0
+       },
+       {
+        "text": "playa",
+        "start": 1.05,
+        "end": 1.35
+       },
+       {
+        "text": "cada",
+        "start": 1.4,
+        "end": 1.7
+       },
+       {
+        "text": "mañana.",
+        "start": 1.75,
+        "end": 2.05
+       }
+      ],
+      "text_role": "caption"
+     },
+     {
+      "id": "c8",
+      "track_id": "T2",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "c8.mp4",
+      "start": 6.0,
+      "out_point": 0.45,
+      "text": "Arriba",
+      "words": [
+       {
+        "text": "Arriba",
+        "start": 0.0,
+        "end": 0.3
+       }
+      ],
+      "text_role": "caption",
+      "style": {
+       "y": 0.15
+      }
+     },
+     {
+      "id": "c3",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "c3.mp4",
+      "start": 5.2,
+      "out_point": 3.25,
+      "text": "Después, mira el volcán: humo, lava, ceniza y miedo.",
+      "words": [
+       {
+        "text": "Después,",
+        "start": 0.0,
+        "end": 0.3
+       },
+       {
+        "text": "mira",
+        "start": 0.35,
+        "end": 0.65
+       },
+       {
+        "text": "el",
+        "start": 0.7,
+        "end": 1.0
+       },
+       {
+        "text": "volcán:",
+        "start": 1.05,
+        "end": 1.35
+       },
+       {
+        "text": "humo,",
+        "start": 1.4,
+        "end": 1.7
+       },
+       {
+        "text": "lava,",
+        "start": 1.75,
+        "end": 2.05
+       },
+       {
+        "text": "ceniza",
+        "start": 2.1,
+        "end": 2.4
+       },
+       {
+        "text": "y",
+        "start": 2.45,
+        "end": 2.75
+       },
+       {
+        "text": "miedo.",
+        "start": 2.8,
+        "end": 3.1
+       }
+      ],
+      "text_role": "caption"
+     },
+     {
+      "id": "c4",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "c4.mp4",
+      "start": 9.0,
+      "out_point": 1.85,
+      "text": "El mapa de Europa cambia.",
+      "words": [
+       {
+        "text": "El",
+        "start": 0.0,
+        "end": 0.3
+       },
+       {
+        "text": "mapa",
+        "start": 0.35,
+        "end": 0.65
+       },
+       {
+        "text": "de",
+        "start": 0.7,
+        "end": 1.0
+       },
+       {
+        "text": "Europa",
+        "start": 1.05,
+        "end": 1.35
+       },
+       {
+        "text": "cambia.",
+        "start": 1.4,
+        "end": 1.7
+       }
+      ],
+      "text_role": "caption"
+     },
+     {
+      "id": "c5",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "c5.mp4",
+      "start": 11.0,
+      "out_point": 2.0,
+      "text": "  Una línea   sin palabras  ",
+      "text_role": "caption"
+     },
+     {
+      "id": "c6",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "c6.mp4",
+      "start": 13.5,
+      "out_point": 0.45,
+      "text": "Fin.",
+      "words": [
+       {
+        "text": "Fin.",
+        "start": 0.0,
+        "end": 0.3
+       }
+      ],
+      "text_role": "caption"
+     },
+     {
+      "id": "c7",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "c7.mp4",
+      "start": 20.0,
+      "out_point": 4.65,
+      "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+      "words": [
+       {
+        "text": "Otra",
+        "start": 0.0,
+        "end": 0.3
+       },
+       {
+        "text": "vez",
+        "start": 0.35,
+        "end": 0.65
+       },
+       {
+        "text": "el",
+        "start": 0.7,
+        "end": 1.0
+       },
+       {
+        "text": "perro",
+        "start": 1.05,
+        "end": 1.35
+       },
+       {
+        "text": "corre",
+        "start": 1.4,
+        "end": 1.7
+       },
+       {
+        "text": "rápido",
+        "start": 1.75,
+        "end": 2.05
+       },
+       {
+        "text": "sin",
+        "start": 2.1,
+        "end": 2.4
+       },
+       {
+        "text": "parar",
+        "start": 2.45,
+        "end": 2.75
+       },
+       {
+        "text": "nunca",
+        "start": 2.8,
+        "end": 3.1
+       },
+       {
+        "text": "jamás",
+        "start": 3.15,
+        "end": 3.45
+       },
+       {
+        "text": "hoy",
+        "start": 3.5,
+        "end": 3.8
+       },
+       {
+        "text": "mismo",
+        "start": 3.85,
+        "end": 4.15
+       },
+       {
+        "text": "aquí",
+        "start": 4.2,
+        "end": 4.5
+       }
+      ],
+      "text_role": "caption"
+     }
+    ]
+   },
+   "scene_directions": {
+    "version": 1,
+    "segments": [
+     {
+      "id": "sd_a",
+      "start": 0.0,
+      "end": 5.0,
+      "mode": "explain",
+      "instruction": "Mostrar al perro",
+      "materials": [
+       {
+        "kind": "clips",
+        "id": "1"
+       }
+      ],
+      "updated_at": 1690000000.0,
+      "components": [
+       {
+        "source": "material",
+        "material": {
+         "kind": "clips",
+         "id": "1"
+        },
+        "role": "full",
+        "source_range": {
+         "in": 0.5,
+         "out": 4
+        }
+       },
+       {
+        "source": "motion",
+        "role": "overlay",
+        "note": "Flecha"
+       }
+      ]
+     },
+     {
+      "id": "sd_b",
+      "start": 5.0,
+      "end": 9.0,
+      "mode": "reinforce",
+      "reference_id": "sd_a",
+      "strict": true,
+      "complexity": 3,
+      "updated_at": 1690000001.0
+     },
+     {
+      "id": "sd_c",
+      "start": 9.0,
+      "end": 14.0,
+      "instruction": "El mapa cambia",
+      "composition_intent": "Mapa entero",
+      "materials": [
+       {
+        "kind": "images",
+        "id": "im1"
+       },
+       {
+        "kind": "images",
+        "id": "im3"
+       },
+       {
+        "kind": "clips",
+        "id": "lib_a",
+        "scope": "library"
+       }
+      ],
+      "updated_at": 1690000002.0
+     },
+     {
+      "id": "sd_d",
+      "start": 14.0,
+      "end": 20.0,
+      "mode": "material",
+      "materials": [
+       {
+        "kind": "images",
+        "id": 7,
+        "scope": "library"
+       }
+      ],
+      "updated_at": 1690000003.0
+     },
+     {
+      "id": "sd_e",
+      "start": 20.0,
+      "end": 30.0,
+      "no_visual": true,
+      "updated_at": 1690000004.0
+     },
+     {
+      "id": "x",
+      "start": 30.0,
+      "end": 40.0
+     }
+    ]
+   },
+   "visual_blueprint": {
+    "direction": "documentary",
+    "identity": "Documental sobrio",
+    "vocabulary": [
+     "movie_footage",
+     "chart"
+    ],
+    "rules": [
+     "Una idea por plano",
+     "Sin neón"
+    ],
+    "intensity_curve": "Sube al final",
+    "direction_overrides": {
+     "accent": "#ff0000"
+    }
+   }
+  },
+  {
+   "id": "k-tr",
+   "name": "Pack transcripción",
+   "created_at": "2026-06-02T10:00:00",
+   "clips": [
+    {
+     "index": 0,
+     "filename": "c0.mp4",
+     "url": "/c/0",
+     "start": 0,
+     "end": 20,
+     "label": "Entrevista",
+     "transcript": {
+      "id": "t0",
+      "model": "base",
+      "segments": [
+       {
+        "start": 0.0,
+        "end": 3.0,
+        "text": "uno dos tres",
+        "words": [
+         {
+          "text": "Primero,",
+          "start": 0.0,
+          "end": 0.5
+         },
+         {
+          "text": "la",
+          "start": 0.6,
+          "end": 1.0
+         },
+         {
+          "text": "idea.",
+          "start": 1.1,
+          "end": 1.6
+         },
+         {
+          "text": "Luego",
+          "start": 1.7,
+          "end": 2.0
+         },
+         {
+          "text": "viene",
+          "start": 2.1,
+          "end": 2.4
+         },
+         {
+          "text": "lo",
+          "start": 2.5,
+          "end": 2.6
+         },
+         {
+          "text": "demás,",
+          "start": 2.7,
+          "end": 3.0
+         }
+        ]
+       },
+       {
+        "start": 3.0,
+        "end": 6.0,
+        "text": "Una frase entera sin palabras."
+       }
+      ]
+     }
+    }
+   ],
+   "timeline": {
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1"
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2"
+     }
+    ],
+    "clips": [
+     {
+      "id": "tv0",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "tv0.mp4",
+      "start": 2.0,
+      "in_point": 0.0,
+      "out_point": 6.0
+     },
+     {
+      "id": "tv1",
+      "track_id": "V2",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "0",
+      "filename": "tv1.mp4",
+      "start": 1.0,
+      "in_point": 0.0,
+      "out_point": 1.0,
+      "speed": 2.0
+     }
+    ]
+   }
+  },
+  {
+   "id": "k-aud",
+   "name": "Pack audio",
+   "created_at": "2026-06-03T10:00:00",
+   "audios": [
+    {
+     "id": "b2",
+     "filename": "b2.wav",
+     "url": "/a/2",
+     "text": "Rápido uno. Rápido dos. Rápido tres.",
+     "duration": 9.0
+    }
+   ],
+   "timeline": {
+    "tracks": [
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "A1"
+     }
+    ],
+    "clips": [
+     {
+      "id": "bb2",
+      "track_id": "A1",
+      "kind": "audio",
+      "asset_kind": "audios",
+      "asset_id": "b2",
+      "filename": "bb2.mp4",
+      "start": 0.0,
+      "in_point": 0.0,
+      "out_point": 9.0,
+      "source_duration": 9.0
+     }
+    ]
+   }
+  },
+  {
+   "id": "k-sty",
+   "name": "Pack estilos",
+   "created_at": "2026-06-04T10:00:00",
+   "timeline": {
+    "fps": 60,
+    "width": 1080,
+    "height": 1920,
+    "tracks": [
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "style": {
+       "font": "Inter",
+       "color": "#111",
+       "y": true
+      }
+     },
+     {
+      "id": "T2",
+      "kind": "text",
+      "name": "T2",
+      "style": {
+       "y": "0.5",
+       "font": ""
+      }
+     },
+     {
+      "id": "T3",
+      "kind": "text",
+      "name": "T3"
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1 repetida",
+      "style": {
+       "font": "Repetida"
+      }
+     }
+    ],
+    "clips": [
+     {
+      "id": "s1",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "s1.mp4",
+      "start": 0.0,
+      "out_point": 1.15,
+      "text": "Uno dos tres.",
+      "words": [
+       {
+        "text": "Uno",
+        "start": 0.0,
+        "end": 0.3
+       },
+       {
+        "text": "dos",
+        "start": 0.35,
+        "end": 0.65
+       },
+       {
+        "text": "tres.",
+        "start": 0.7,
+        "end": 1.0
+       }
+      ],
+      "text_role": "caption",
+      "style": {
+       "color": "#abc",
+       "y": 0.95
+      }
+     },
+     {
+      "id": "s2",
+      "track_id": "T2",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "s2.mp4",
+      "start": 10.0,
+      "out_point": 0.8,
+      "text": "Cuatro cinco.",
+      "words": [
+       {
+        "text": "Cuatro",
+        "start": 0.0,
+        "end": 0.3
+       },
+       {
+        "text": "cinco.",
+        "start": 0.35,
+        "end": 0.65
+       }
+      ],
+      "text_role": "caption"
+     },
+     {
+      "id": "s3",
+      "track_id": "T3",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "s3.mp4",
+      "start": 20.0,
+      "out_point": 0.8,
+      "text": "Seis siete.",
+      "words": [
+       {
+        "text": "Seis",
+        "start": 0.0,
+        "end": 0.3
+       },
+       {
+        "text": "siete.",
+        "start": 0.35,
+        "end": 0.65
+       }
+      ],
+      "text_role": "caption",
+      "style": {
+       "y": 0.03,
+       "highlight_color": "#ff0"
+      }
+     },
+     {
+      "id": "s4",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "s4.mp4",
+      "start": 30.0,
+      "out_point": 0.45,
+      "text": "Ocho.",
+      "words": [
+       {
+        "text": "Ocho.",
+        "start": 0.0,
+        "end": 0.3
+       }
+      ],
+      "text_role": "caption",
+      "style": {
+       "y": 1
+      }
+     },
+     {
+      "id": "s5",
+      "track_id": "T9",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "s5.mp4",
+      "start": 40.0,
+      "out_point": 0.45,
+      "text": "Nueve.",
+      "words": [
+       {
+        "text": "Nueve.",
+        "start": 0.0,
+        "end": 0.3
+       }
+      ],
+      "text_role": "caption",
+      "style": {
+       "y": -0.5,
+       "font": "Sola"
+      }
+     },
+     {
+      "id": "s6",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "s6.mp4",
+      "start": 50.0,
+      "out_point": 0.45,
+      "text": "Diez.",
+      "words": [
+       {
+        "text": "Diez.",
+        "start": 0.0,
+        "end": 0.3
+       }
+      ],
+      "text_role": "caption",
+      "style": {
+       "color": "#0f0"
+      }
+     },
+     {
+      "id": "s7",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "s7.mp4",
+      "start": 60.0,
+      "out_point": 2.9,
+      "text": "uno dos tres cuatro cinco seis, siete ocho.",
+      "words": [
+       {
+        "text": "uno",
+        "start": 0.0,
+        "end": 0.3
+       },
+       {
+        "text": "dos",
+        "start": 0.35,
+        "end": 0.65
+       },
+       {
+        "text": "tres",
+        "start": 0.7,
+        "end": 1.0
+       },
+       {
+        "text": "cuatro",
+        "start": 1.05,
+        "end": 1.35
+       },
+       {
+        "text": "cinco",
+        "start": 1.4,
+        "end": 1.7
+       },
+       {
+        "text": "seis,",
+        "start": 1.75,
+        "end": 2.05
+       },
+       {
+        "text": "siete",
+        "start": 2.1,
+        "end": 2.4
+       },
+       {
+        "text": "ocho.",
+        "start": 2.45,
+        "end": 2.75
+       }
+      ],
+      "text_role": "caption"
+     },
+     {
+      "id": "libre",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "libre.mp4",
+      "start": 0.0,
+      "out_point": 2.0,
+      "text": "Libre",
+      "text_role": "free"
+     }
+    ]
+   }
+  },
+  {
+   "id": "k-sin",
+   "name": "Pack sin timeline",
+   "created_at": "2026-06-05T10:00:00"
+  },
+  {
+   "id": "k-raro",
+   "name": "Pack raro",
+   "created_at": "2026-06-06T10:00:00",
+   "clips": [
+    {
+     "index": 1,
+     "filename": "c1.mp4",
+     "url": "/clips/c1.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Texto más lista",
+     "semantic": {
+      "subjects": "abc",
+      "actions": [
+       "x"
+      ]
+     }
+    },
+    {
+     "index": 2,
+     "filename": "c2.mp4",
+     "url": "/clips/c2.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Suma cero",
+     "semantic": {
+      "subjects": 5,
+      "actions": -5
+     }
+    },
+    {
+     "index": 3,
+     "filename": "c3.mp4",
+     "url": "/clips/c3.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Suma ocho",
+     "semantic": {
+      "subjects": 5,
+      "actions": 3
+     }
+    },
+    {
+     "index": 4,
+     "filename": "c4.mp4",
+     "url": "/clips/c4.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Prioridad número",
+     "semantic": {
+      "visual_priority": 7
+     }
+    },
+    {
+     "index": 5,
+     "filename": "c5.mp4",
+     "url": "/clips/c5.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Lista con número",
+     "semantic": {
+      "subjects": [
+       1,
+       "a"
+      ]
+     }
+    },
+    {
+     "index": 6,
+     "filename": "c6.mp4",
+     "url": "/clips/c6.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Cinco etiquetas",
+     "semantic": {
+      "subjects": [
+       "a",
+       "b",
+       "c",
+       "d",
+       5
+      ]
+     }
+    },
+    {
+     "index": 7,
+     "filename": "c7.mp4",
+     "url": "/clips/c7.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Dos textos",
+     "semantic": {
+      "subjects": "ab",
+      "actions": "cdef"
+     }
+    },
+    {
+     "index": 8,
+     "filename": "c8.mp4",
+     "url": "/clips/c8.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Uso en lista",
+     "semantic": {
+      "suggested_usage": [
+       "lista"
+      ],
+      "visual_priority": "fondo"
+     }
+    },
+    {
+     "index": 9,
+     "filename": "c9.mp4",
+     "url": "/clips/c9.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Dict",
+     "semantic": {
+      "subjects": {
+       "k": 1
+      }
+     }
+    },
+    {
+     "index": 10,
+     "filename": "c10.mp4",
+     "url": "/clips/c10.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Reales cero",
+     "semantic": {
+      "subjects": 1.5,
+      "actions": -1.5
+     }
+    },
+    {
+     "index": 11,
+     "filename": "c11.mp4",
+     "url": "/clips/c11.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Bool cero",
+     "semantic": {
+      "subjects": true,
+      "actions": -1
+     }
+    },
+    {
+     "index": 12,
+     "filename": "c12.mp4",
+     "url": "/clips/c12.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Perro grande",
+     "description": "perro"
+    },
+    {
+     "index": 13,
+     "filename": "c13.mp4",
+     "url": "/clips/c13.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Real y entero",
+     "semantic": {
+      "subjects": 1.5,
+      "actions": -1
+     }
+    }
+   ],
+   "images": [
+    {
+     "id": "w1",
+     "filename": "w1.png",
+     "url": "/images/w1.png",
+     "label": "",
+     "description": ""
+    },
+    {
+     "id": "w2",
+     "filename": "w2.png",
+     "url": "/images/w2.png",
+     "label": "Gato",
+     "description": "gato negro"
+    },
+    {
+     "id": "w3",
+     "filename": "w3.png",
+     "url": "/images/w3.png",
+     "label": "Gato negro en la noche",
+     "description": "NEGRO"
+    },
+    {
+     "id": "w4",
+     "filename": "w4.png",
+     "url": "/images/w4.png",
+     "label": "İstanbul",
+     "description": "i̇stanbul"
+    },
+    {
+     "id": "w5",
+     "filename": "w5.png",
+     "url": "/images/w5.png",
+     "label": "Ciudad",
+     "description": "  Una ciudad   muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy muy grande"
+    }
+   ],
+   "timeline": {
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1"
+     }
+    ],
+    "clips": []
+   }
+  },
+  {
+   "id": "k-full",
+   "name": "Pack lleno",
+   "created_at": "2026-06-07T10:00:00",
+   "clips": [
+    {
+     "index": 1,
+     "filename": "c1.mp4",
+     "url": "/clips/c1.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Uno",
+     "description": "Clip muy usado"
+    },
+    {
+     "index": 2,
+     "filename": "c2.mp4",
+     "url": "/clips/c2.mp4",
+     "start": 0.0,
+     "end": 10.0,
+     "label": "Dos",
+     "description": "Otro"
+    }
+   ],
+   "timeline": {
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1"
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2"
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1"
+     }
+    ],
+    "clips": [
+     {
+      "id": "cero",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "cero.mp4",
+      "start": -0.0,
+      "out_point": 0.3
+     },
+     {
+      "id": "vcero",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "2",
+      "filename": "vcero.mp4",
+      "start": -0.0,
+      "out_point": 0.5
+     },
+     {
+      "id": "f0",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f0.mp4",
+      "start": 0.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f1",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f1.mp4",
+      "start": 0.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "f2",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f2.mp4",
+      "start": 1.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f3",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f3.mp4",
+      "start": 1.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "f4",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f4.mp4",
+      "start": 2.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f5",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f5.mp4",
+      "start": 2.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "f6",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f6.mp4",
+      "start": 3.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f7",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f7.mp4",
+      "start": 3.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "f8",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f8.mp4",
+      "start": 4.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f9",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f9.mp4",
+      "start": 4.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "f10",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f10.mp4",
+      "start": 5.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f11",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f11.mp4",
+      "start": 5.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "f12",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f12.mp4",
+      "start": 6.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f13",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f13.mp4",
+      "start": 6.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "f14",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f14.mp4",
+      "start": 7.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f15",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f15.mp4",
+      "start": 7.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "f16",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f16.mp4",
+      "start": 8.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f17",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f17.mp4",
+      "start": 8.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "f18",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f18.mp4",
+      "start": 9.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f19",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f19.mp4",
+      "start": 9.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "f20",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f20.mp4",
+      "start": 10.0,
+      "out_point": 0.4
+     },
+     {
+      "id": "f21",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "f21.mp4",
+      "start": 10.5,
+      "out_point": 0.4
+     },
+     {
+      "id": "noname",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "1",
+      "filename": "noname.mp4",
+      "start": 1.0,
+      "out_point": 1.0,
+      "name": ""
+     },
+     {
+      "id": "vcomp",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "1",
+      "filename": "vcomp.mp4",
+      "start": 2.0,
+      "out_point": 1.0,
+      "composition_id": "c-v"
+     },
+     {
+      "id": "igual",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "igual.mp4",
+      "start": 3.0,
+      "out_point": 1.0,
+      "name": "Igual",
+      "description": "Igual"
+     },
+     {
+      "id": "nota",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "1",
+      "filename": "nota.mp4",
+      "start": 4.0,
+      "out_point": 1.0,
+      "note": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"
+     },
+     {
+      "id": "vnone",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "None",
+      "filename": "vnone.mp4",
+      "start": 5.0,
+      "out_point": 1.0,
+      "description": "Desc del clip"
+     },
+     {
+      "id": "vcol",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "collection",
+      "asset_id": "2",
+      "filename": "vcol.mp4",
+      "start": 6.0,
+      "out_point": 1.0
+     },
+     {
+      "id": "dlarga",
+      "track_id": "V2",
+      "kind": "shape",
+      "asset_kind": "shape",
+      "asset_id": "s",
+      "filename": "dlarga.mp4",
+      "start": 7.0,
+      "out_point": 1.0,
+      "description": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+     },
+     {
+      "id": "v1x",
+      "track_id": "V1",
+      "kind": "video",
+      "asset_kind": "clips",
+      "asset_id": "1",
+      "filename": "v1x.mp4",
+      "start": 8.0,
+      "out_point": 1.0
+     },
+     {
+      "id": "mini",
+      "track_id": "T1",
+      "kind": "text",
+      "asset_kind": "text",
+      "asset_id": "0",
+      "filename": "mini.mp4",
+      "start": 0.0,
+      "out_point": 0.05,
+      "text": "Mini",
+      "text_role": "caption"
+     }
+    ]
+   }
+  }
+ ],
+ "library": {
+  "version": 1,
+  "items": [
+   {
+    "id": "lib_a",
+    "resource_type": "clip",
+    "filename": "playa.mp4",
+    "label": "Playa tropical",
+    "description": "Olas en la orilla",
+    "duration": 12.5,
+    "semantic": {
+     "subjects": [
+      "olas"
+     ]
+    },
+    "saved_at": "2026-01-02T00:00:00+00:00"
+   },
+   {
+    "id": "lib_b",
+    "resource_type": "clip",
+    "filename": "volcan.mp4",
+    "label": "",
+    "semantic": {
+     "subjects": [
+      "volcán",
+      "lava"
+     ],
+     "suggested_usage": "clímax"
+    },
+    "saved_at": "2026-01-03T00:00:00+00:00"
+   },
+   {
+    "id": "lib_c",
+    "resource_type": "image",
+    "filename": "cohete.png",
+    "label": "Cohete",
+    "description": "Cohete despegando",
+    "saved_at": "2026-01-01T00:00:00+00:00"
+   },
+   {
+    "id": 7,
+    "resource_type": "image",
+    "filename": "num.png",
+    "label": 5,
+    "description": 3
+   },
+   {
+    "id": "lib_n",
+    "resource_type": "image"
+   },
+   {
+    "id": "lib_m",
+    "resource_type": "image",
+    "description": "algo sin título"
+   },
+   {
+    "id": "lib_z",
+    "resource_type": "image",
+    "label": 0,
+    "filename": "",
+    "description": "cero"
+   },
+   {
+    "id": "1",
+    "resource_type": "clip",
+    "filename": "uno.mp4",
+    "label": "Uno de la biblioteca"
+   }
+  ]
+ },
+ "registered": [
+  [
+   "scene_direction_pack",
+   "read"
+  ]
+ ],
+ "steps": [
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "id": "sd_a",
+     "start": 0,
+     "end": 5
+    }
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_a",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000000.75
+     },
+     "range": {
+      "start": 0.0,
+      "end": 5.0,
+      "duration": 5.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "Hoy hablamos del perro, el mejor amigo. Corre por la playa cada mañana.",
+      "before": "",
+      "after": "Después, mira el Arriba volcán:"
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 2.4,
+       "text": "Hoy hablamos del perro, el mejor amigo."
+      },
+      {
+       "start": 2.8,
+       "end": 4.85,
+       "text": "Corre por la playa cada mañana."
+      }
+     ],
+     "words": [
+      {
+       "text": "Hoy",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "hablamos",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "del",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "perro,",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "el",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "mejor",
+       "start": 1.75,
+       "end": 2.05
+      },
+      {
+       "text": "amigo.",
+       "start": 2.1,
+       "end": 2.4
+      },
+      {
+       "text": "Corre",
+       "start": 2.8,
+       "end": 3.1
+      },
+      {
+       "text": "por",
+       "start": 3.15,
+       "end": 3.45
+      },
+      {
+       "text": "la",
+       "start": 3.5,
+       "end": 3.8
+      },
+      {
+       "text": "playa",
+       "start": 3.85,
+       "end": 4.15
+      },
+      {
+       "text": "cada",
+       "start": 4.2,
+       "end": 4.5
+      },
+      {
+       "text": "mañana.",
+       "start": 4.55,
+       "end": 4.85
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 1,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": {
+      "start": 5.0,
+      "end": 9.0,
+      "mode": "reinforce",
+      "text": "",
+      "instruction": "",
+      "composition_id": null
+     },
+     "timeline": {
+      "existing": [
+       {
+        "id": "v1",
+        "kind": "video",
+        "track": "Principal",
+        "name": "Plano perro",
+        "start": 0.0,
+        "end": 6.0,
+        "description": "Un perro corre por la playa",
+        "note": "El perro entra"
+       },
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "sh1",
+        "kind": "shape",
+        "track": "Encima",
+        "name": "sh1.mp4",
+        "start": 2.0,
+        "end": 3.5,
+        "description": "Flecha roja"
+       },
+       {
+        "id": "tf1",
+        "kind": "text",
+        "track": "Arriba",
+        "name": "Título libre",
+        "start": 3.0,
+        "end": 5.0
+       },
+       {
+        "id": "v2",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v2.mp4",
+        "start": 4.0,
+        "end": 7.0,
+        "description": "Vista aérea de una ciudad"
+       }
+      ],
+      "motion_in_range": []
+     },
+     "recent_materials": [],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 0.00s – 5.00s (dura 5.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«Hoy hablamos del perro, el mejor amigo. Corre por la playa cada mañana.»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–2.4  Hoy hablamos del perro, el mejor amigo.\n  2.8–4.8  Corre por la playa cada mañana.\nFrase siguiente: «Después, mira el Arriba volcán:»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «Plano perro» 0.0–6.0s · Un perro corre por la playa\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · shape «sh1.mp4» 2.0–3.5s · Flecha roja\n  · text «Título libre» 3.0–5.0s\n  · video «v2.mp4» 4.0–7.0s · Vista aérea de una ciudad\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\nTramo siguiente: Repetir / reforzar",
+    "tokens": 511,
+    "skeleton": [
+     {
+      "text": "Hoy hablamos del perro, el mejor amigo.",
+      "start": 0.0,
+      "end": 2.8
+     },
+     {
+      "text": "Corre por la playa cada mañana.",
+      "start": 2.8,
+      "end": 5.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Hoy hablamos del perro, el mejor amigo. Corre por la playa cada mañana.",
+     "script": "Hoy hablamos del perro, el mejor amigo. Corre por la playa cada mañana.",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 5,
+     "end": 9,
+     "mode": "reinforce",
+     "reference_id": "sd_a"
+    },
+    "pace": "calmo"
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000002ab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000001.5
+     },
+     "range": {
+      "start": 5.0,
+      "end": 9.0,
+      "duration": 4.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "Después, mira el Arriba volcán: humo, lava, ceniza y miedo.",
+      "before": "Corre por la playa cada mañana.",
+      "after": "El mapa de Europa cambia."
+     },
+     "captions": [
+      {
+       "start": 0.2,
+       "end": 3.3,
+       "text": "Después, mira el volcán: humo, lava, ceniza y miedo."
+      },
+      {
+       "start": 1.0,
+       "end": 1.3,
+       "text": "Arriba"
+      }
+     ],
+     "words": [
+      {
+       "text": "Después,",
+       "start": 0.2,
+       "end": 0.5
+      },
+      {
+       "text": "mira",
+       "start": 0.55,
+       "end": 0.85
+      },
+      {
+       "text": "el",
+       "start": 0.9,
+       "end": 1.2
+      },
+      {
+       "text": "Arriba",
+       "start": 1.0,
+       "end": 1.3
+      },
+      {
+       "text": "volcán:",
+       "start": 1.25,
+       "end": 1.55
+      },
+      {
+       "text": "humo,",
+       "start": 1.6,
+       "end": 1.9
+      },
+      {
+       "text": "lava,",
+       "start": 1.95,
+       "end": 2.25
+      },
+      {
+       "text": "ceniza",
+       "start": 2.3,
+       "end": 2.6
+      },
+      {
+       "text": "y",
+       "start": 2.65,
+       "end": 2.95
+      },
+      {
+       "text": "miedo.",
+       "start": 3.0,
+       "end": 3.3
+      }
+     ],
+     "direction": {
+      "mode": "reinforce",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 1,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "lib_b",
+       "scope": "library",
+       "title": "volcan.mp4",
+       "description": "",
+       "duration": null,
+       "url": "/api/library/media/video/volcan.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán",
+         "lava"
+        ],
+        "suggested_usage": "clímax"
+       },
+       "match": 1
+      },
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      }
+     ],
+     "reference": {
+      "start": 0.0,
+      "end": 5.0,
+      "mode": "explain",
+      "text": "",
+      "instruction": "Mostrar al perro",
+      "composition_id": null
+     },
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v1",
+        "kind": "video",
+        "track": "Principal",
+        "name": "Plano perro",
+        "start": 0.0,
+        "end": 6.0,
+        "description": "Un perro corre por la playa",
+        "note": "El perro entra"
+       },
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "v2",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v2.mp4",
+        "start": 4.0,
+        "end": 7.0,
+        "description": "Vista aérea de una ciudad"
+       },
+       {
+        "id": "img1",
+        "kind": "image",
+        "track": "Encima",
+        "name": "img1.mp4",
+        "start": 8.0,
+        "end": 10.5,
+        "description": "Mapa político de Europa"
+       }
+      ],
+      "motion_in_range": []
+     },
+     "recent_materials": [],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 5.00s – 9.00s (dura 4.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«Después, mira el Arriba volcán: humo, lava, ceniza y miedo.»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.2–3.3  Después, mira el volcán: humo, lava, ceniza y miedo.\n  1.0–1.3  Arriba\nFrase anterior: «Corre por la playa cada mañana.»\nFrase siguiente: «El mapa de Europa cambia.»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «Plano perro» 0.0–6.0s · Un perro corre por la playa\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · video «v2.mp4» 4.0–7.0s · Vista aérea de una ciudad\n  · image «img1.mp4» 8.0–10.5s · Mapa político de Europa\nDIRECCIÓN: Repetir / reforzar → Vuelve a la escena del tramo de referencia (mismo lenguaje, personajes y elementos) para reforzar la idea; varía lo mínimo.\nTRAMO DE REFERENCIA (0.0–5.0s): «» · dirección: Mostrar al perro\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo lib_b] volcan.mp4: (sin descripción)  (uso: clímax · volcán, lava)\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 5] Con id: Encontrado por su id",
+    "tokens": 534,
+    "skeleton": [
+     {
+      "text": "Después, mira el Arriba volcán:",
+      "start": 0.0,
+      "end": 1.6
+     },
+     {
+      "text": "humo, lava, ceniza y miedo.",
+      "start": 1.6,
+      "end": 4.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Después, mira el Arriba volcán: humo, lava, ceniza y miedo.",
+     "script": "Después, mira el Arriba volcán: humo, lava, ceniza y miedo.",
+     "intent": "narrativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 20,
+     "end": 30
+    },
+    "pace": "dinamico"
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000004ab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000002.25
+     },
+     "range": {
+      "start": 20.0,
+      "end": 30.0,
+      "duration": 10.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+      "before": "Una línea sin palabras Fin.",
+      "after": ""
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 4.5,
+       "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+      }
+     ],
+     "words": [
+      {
+       "text": "Otra",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "vez",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "el",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "perro",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "corre",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "rápido",
+       "start": 1.75,
+       "end": 2.05
+      },
+      {
+       "text": "sin",
+       "start": 2.1,
+       "end": 2.4
+      },
+      {
+       "text": "parar",
+       "start": 2.45,
+       "end": 2.75
+      },
+      {
+       "text": "nunca",
+       "start": 2.8,
+       "end": 3.1
+      },
+      {
+       "text": "jamás",
+       "start": 3.15,
+       "end": 3.45
+      },
+      {
+       "text": "hoy",
+       "start": 3.5,
+       "end": 3.8
+      },
+      {
+       "text": "mismo",
+       "start": 3.85,
+       "end": 4.15
+      },
+      {
+       "text": "aquí",
+       "start": 4.2,
+       "end": 4.5
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "v4",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v4.mp4",
+        "start": 21.0,
+        "end": 22.0
+       },
+       {
+        "id": "vx",
+        "kind": "video",
+        "track": "Encima",
+        "name": "vx.mp4",
+        "start": 25.0,
+        "end": 27.0,
+        "description": "Material perdido"
+       },
+       {
+        "id": "imgT",
+        "kind": "image",
+        "track": "Arriba",
+        "name": "imgT.mp4",
+        "start": 26.0,
+        "end": 28.0,
+        "description": "Foto antigua"
+       }
+      ],
+      "motion_in_range": []
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 0.0,
+       "title": "Uno de la biblioteca"
+      },
+      {
+       "kind": "clips",
+       "id": "clip-5",
+       "ago": 0.2,
+       "title": "clip-5"
+      },
+      {
+       "kind": "clips",
+       "id": "lib_a",
+       "ago": 3.0,
+       "title": "Playa tropical"
+      },
+      {
+       "kind": "images",
+       "id": "im2",
+       "ago": 3.0,
+       "title": "Gráfico de barras"
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "ago": 9.5,
+       "title": "Mapa"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 20.00s – 30.00s (dura 10.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–4.5  Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí\nFrase anterior: «Una línea sin palabras Fin.»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · video «v4.mp4» 21.0–22.0s\n  · video «vx.mp4» 25.0–27.0s · Material perdido\n  · image «imgT.mp4» 26.0–28.0s · Foto antigua\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): Uno de la biblioteca (hace 0.0s); clip-5 (hace 0.2s); Playa tropical (hace 3.0s); Gráfico de barras (hace 3.0s)",
+    "tokens": 533,
+    "skeleton": [
+     {
+      "text": "Otra vez el perro corre rápido sin",
+      "start": 0.0,
+      "end": 2.45
+     },
+     {
+      "text": "parar nunca jamás hoy mismo aquí",
+      "start": 2.45,
+      "end": 10.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "script": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 20,
+     "end": 30
+    },
+    "pace": "rápido"
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000006ab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000003.0
+     },
+     "range": {
+      "start": 20.0,
+      "end": 30.0,
+      "duration": 10.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+      "before": "Una línea sin palabras Fin.",
+      "after": ""
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 4.5,
+       "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+      }
+     ],
+     "words": [
+      {
+       "text": "Otra",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "vez",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "el",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "perro",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "corre",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "rápido",
+       "start": 1.75,
+       "end": 2.05
+      },
+      {
+       "text": "sin",
+       "start": 2.1,
+       "end": 2.4
+      },
+      {
+       "text": "parar",
+       "start": 2.45,
+       "end": 2.75
+      },
+      {
+       "text": "nunca",
+       "start": 2.8,
+       "end": 3.1
+      },
+      {
+       "text": "jamás",
+       "start": 3.15,
+       "end": 3.45
+      },
+      {
+       "text": "hoy",
+       "start": 3.5,
+       "end": 3.8
+      },
+      {
+       "text": "mismo",
+       "start": 3.85,
+       "end": 4.15
+      },
+      {
+       "text": "aquí",
+       "start": 4.2,
+       "end": 4.5
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "v4",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v4.mp4",
+        "start": 21.0,
+        "end": 22.0
+       },
+       {
+        "id": "vx",
+        "kind": "video",
+        "track": "Encima",
+        "name": "vx.mp4",
+        "start": 25.0,
+        "end": 27.0,
+        "description": "Material perdido"
+       },
+       {
+        "id": "imgT",
+        "kind": "image",
+        "track": "Arriba",
+        "name": "imgT.mp4",
+        "start": 26.0,
+        "end": 28.0,
+        "description": "Foto antigua"
+       }
+      ],
+      "motion_in_range": []
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 0.0,
+       "title": "Uno de la biblioteca"
+      },
+      {
+       "kind": "clips",
+       "id": "clip-5",
+       "ago": 0.2,
+       "title": "clip-5"
+      },
+      {
+       "kind": "clips",
+       "id": "lib_a",
+       "ago": 3.0,
+       "title": "Playa tropical"
+      },
+      {
+       "kind": "images",
+       "id": "im2",
+       "ago": 3.0,
+       "title": "Gráfico de barras"
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "ago": 9.5,
+       "title": "Mapa"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 20.00s – 30.00s (dura 10.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–4.5  Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí\nFrase anterior: «Una línea sin palabras Fin.»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · video «v4.mp4» 21.0–22.0s\n  · video «vx.mp4» 25.0–27.0s · Material perdido\n  · image «imgT.mp4» 26.0–28.0s · Foto antigua\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): Uno de la biblioteca (hace 0.0s); clip-5 (hace 0.2s); Playa tropical (hace 3.0s); Gráfico de barras (hace 3.0s)",
+    "tokens": 533,
+    "skeleton": [
+     {
+      "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy",
+      "start": 0.0,
+      "end": 3.85
+     },
+     {
+      "text": "mismo aquí",
+      "start": 3.85,
+      "end": 10.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "script": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 20,
+     "end": 30
+    },
+    "pace": null
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000008ab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000003.75
+     },
+     "range": {
+      "start": 20.0,
+      "end": 30.0,
+      "duration": 10.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+      "before": "Una línea sin palabras Fin.",
+      "after": ""
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 4.5,
+       "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+      }
+     ],
+     "words": [
+      {
+       "text": "Otra",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "vez",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "el",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "perro",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "corre",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "rápido",
+       "start": 1.75,
+       "end": 2.05
+      },
+      {
+       "text": "sin",
+       "start": 2.1,
+       "end": 2.4
+      },
+      {
+       "text": "parar",
+       "start": 2.45,
+       "end": 2.75
+      },
+      {
+       "text": "nunca",
+       "start": 2.8,
+       "end": 3.1
+      },
+      {
+       "text": "jamás",
+       "start": 3.15,
+       "end": 3.45
+      },
+      {
+       "text": "hoy",
+       "start": 3.5,
+       "end": 3.8
+      },
+      {
+       "text": "mismo",
+       "start": 3.85,
+       "end": 4.15
+      },
+      {
+       "text": "aquí",
+       "start": 4.2,
+       "end": 4.5
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "v4",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v4.mp4",
+        "start": 21.0,
+        "end": 22.0
+       },
+       {
+        "id": "vx",
+        "kind": "video",
+        "track": "Encima",
+        "name": "vx.mp4",
+        "start": 25.0,
+        "end": 27.0,
+        "description": "Material perdido"
+       },
+       {
+        "id": "imgT",
+        "kind": "image",
+        "track": "Arriba",
+        "name": "imgT.mp4",
+        "start": 26.0,
+        "end": 28.0,
+        "description": "Foto antigua"
+       }
+      ],
+      "motion_in_range": []
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 0.0,
+       "title": "Uno de la biblioteca"
+      },
+      {
+       "kind": "clips",
+       "id": "clip-5",
+       "ago": 0.2,
+       "title": "clip-5"
+      },
+      {
+       "kind": "clips",
+       "id": "lib_a",
+       "ago": 3.0,
+       "title": "Playa tropical"
+      },
+      {
+       "kind": "images",
+       "id": "im2",
+       "ago": 3.0,
+       "title": "Gráfico de barras"
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "ago": 9.5,
+       "title": "Mapa"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 20.00s – 30.00s (dura 10.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–4.5  Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí\nFrase anterior: «Una línea sin palabras Fin.»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · video «v4.mp4» 21.0–22.0s\n  · video «vx.mp4» 25.0–27.0s · Material perdido\n  · image «imgT.mp4» 26.0–28.0s · Foto antigua\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): Uno de la biblioteca (hace 0.0s); clip-5 (hace 0.2s); Playa tropical (hace 3.0s); Gráfico de barras (hace 3.0s)",
+    "tokens": 533,
+    "skeleton": [
+     {
+      "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy",
+      "start": 0.0,
+      "end": 3.85
+     },
+     {
+      "text": "mismo aquí",
+      "start": 3.85,
+      "end": 10.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "script": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 20,
+     "end": 30
+    },
+    "pace": ""
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_00000aab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000004.5
+     },
+     "range": {
+      "start": 20.0,
+      "end": 30.0,
+      "duration": 10.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+      "before": "Una línea sin palabras Fin.",
+      "after": ""
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 4.5,
+       "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+      }
+     ],
+     "words": [
+      {
+       "text": "Otra",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "vez",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "el",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "perro",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "corre",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "rápido",
+       "start": 1.75,
+       "end": 2.05
+      },
+      {
+       "text": "sin",
+       "start": 2.1,
+       "end": 2.4
+      },
+      {
+       "text": "parar",
+       "start": 2.45,
+       "end": 2.75
+      },
+      {
+       "text": "nunca",
+       "start": 2.8,
+       "end": 3.1
+      },
+      {
+       "text": "jamás",
+       "start": 3.15,
+       "end": 3.45
+      },
+      {
+       "text": "hoy",
+       "start": 3.5,
+       "end": 3.8
+      },
+      {
+       "text": "mismo",
+       "start": 3.85,
+       "end": 4.15
+      },
+      {
+       "text": "aquí",
+       "start": 4.2,
+       "end": 4.5
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "v4",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v4.mp4",
+        "start": 21.0,
+        "end": 22.0
+       },
+       {
+        "id": "vx",
+        "kind": "video",
+        "track": "Encima",
+        "name": "vx.mp4",
+        "start": 25.0,
+        "end": 27.0,
+        "description": "Material perdido"
+       },
+       {
+        "id": "imgT",
+        "kind": "image",
+        "track": "Arriba",
+        "name": "imgT.mp4",
+        "start": 26.0,
+        "end": 28.0,
+        "description": "Foto antigua"
+       }
+      ],
+      "motion_in_range": []
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 0.0,
+       "title": "Uno de la biblioteca"
+      },
+      {
+       "kind": "clips",
+       "id": "clip-5",
+       "ago": 0.2,
+       "title": "clip-5"
+      },
+      {
+       "kind": "clips",
+       "id": "lib_a",
+       "ago": 3.0,
+       "title": "Playa tropical"
+      },
+      {
+       "kind": "images",
+       "id": "im2",
+       "ago": 3.0,
+       "title": "Gráfico de barras"
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "ago": 9.5,
+       "title": "Mapa"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 20.00s – 30.00s (dura 10.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–4.5  Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí\nFrase anterior: «Una línea sin palabras Fin.»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · video «v4.mp4» 21.0–22.0s\n  · video «vx.mp4» 25.0–27.0s · Material perdido\n  · image «imgT.mp4» 26.0–28.0s · Foto antigua\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): Uno de la biblioteca (hace 0.0s); clip-5 (hace 0.2s); Playa tropical (hace 3.0s); Gráfico de barras (hace 3.0s)",
+    "tokens": 533,
+    "skeleton": [
+     {
+      "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy",
+      "start": 0.0,
+      "end": 3.85
+     },
+     {
+      "text": "mismo aquí",
+      "start": 3.85,
+      "end": 10.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "script": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 20,
+     "end": 30
+    },
+    "pace": 5
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_00000cab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000005.25
+     },
+     "range": {
+      "start": 20.0,
+      "end": 30.0,
+      "duration": 10.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+      "before": "Una línea sin palabras Fin.",
+      "after": ""
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 4.5,
+       "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+      }
+     ],
+     "words": [
+      {
+       "text": "Otra",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "vez",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "el",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "perro",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "corre",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "rápido",
+       "start": 1.75,
+       "end": 2.05
+      },
+      {
+       "text": "sin",
+       "start": 2.1,
+       "end": 2.4
+      },
+      {
+       "text": "parar",
+       "start": 2.45,
+       "end": 2.75
+      },
+      {
+       "text": "nunca",
+       "start": 2.8,
+       "end": 3.1
+      },
+      {
+       "text": "jamás",
+       "start": 3.15,
+       "end": 3.45
+      },
+      {
+       "text": "hoy",
+       "start": 3.5,
+       "end": 3.8
+      },
+      {
+       "text": "mismo",
+       "start": 3.85,
+       "end": 4.15
+      },
+      {
+       "text": "aquí",
+       "start": 4.2,
+       "end": 4.5
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "v4",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v4.mp4",
+        "start": 21.0,
+        "end": 22.0
+       },
+       {
+        "id": "vx",
+        "kind": "video",
+        "track": "Encima",
+        "name": "vx.mp4",
+        "start": 25.0,
+        "end": 27.0,
+        "description": "Material perdido"
+       },
+       {
+        "id": "imgT",
+        "kind": "image",
+        "track": "Arriba",
+        "name": "imgT.mp4",
+        "start": 26.0,
+        "end": 28.0,
+        "description": "Foto antigua"
+       }
+      ],
+      "motion_in_range": []
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 0.0,
+       "title": "Uno de la biblioteca"
+      },
+      {
+       "kind": "clips",
+       "id": "clip-5",
+       "ago": 0.2,
+       "title": "clip-5"
+      },
+      {
+       "kind": "clips",
+       "id": "lib_a",
+       "ago": 3.0,
+       "title": "Playa tropical"
+      },
+      {
+       "kind": "images",
+       "id": "im2",
+       "ago": 3.0,
+       "title": "Gráfico de barras"
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "ago": 9.5,
+       "title": "Mapa"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 20.00s – 30.00s (dura 10.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–4.5  Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí\nFrase anterior: «Una línea sin palabras Fin.»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · video «v4.mp4» 21.0–22.0s\n  · video «vx.mp4» 25.0–27.0s · Material perdido\n  · image «imgT.mp4» 26.0–28.0s · Foto antigua\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): Uno de la biblioteca (hace 0.0s); clip-5 (hace 0.2s); Playa tropical (hace 3.0s); Gráfico de barras (hace 3.0s)",
+    "tokens": 533,
+    "skeleton": [
+     {
+      "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy",
+      "start": 0.0,
+      "end": 3.85
+     },
+     {
+      "text": "mismo aquí",
+      "start": 3.85,
+      "end": 10.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "script": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 20,
+     "end": 30
+    },
+    "pace": "Calmo"
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_00000eab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000006.0
+     },
+     "range": {
+      "start": 20.0,
+      "end": 30.0,
+      "duration": 10.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+      "before": "Una línea sin palabras Fin.",
+      "after": ""
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 4.5,
+       "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+      }
+     ],
+     "words": [
+      {
+       "text": "Otra",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "vez",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "el",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "perro",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "corre",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "rápido",
+       "start": 1.75,
+       "end": 2.05
+      },
+      {
+       "text": "sin",
+       "start": 2.1,
+       "end": 2.4
+      },
+      {
+       "text": "parar",
+       "start": 2.45,
+       "end": 2.75
+      },
+      {
+       "text": "nunca",
+       "start": 2.8,
+       "end": 3.1
+      },
+      {
+       "text": "jamás",
+       "start": 3.15,
+       "end": 3.45
+      },
+      {
+       "text": "hoy",
+       "start": 3.5,
+       "end": 3.8
+      },
+      {
+       "text": "mismo",
+       "start": 3.85,
+       "end": 4.15
+      },
+      {
+       "text": "aquí",
+       "start": 4.2,
+       "end": 4.5
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "v4",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v4.mp4",
+        "start": 21.0,
+        "end": 22.0
+       },
+       {
+        "id": "vx",
+        "kind": "video",
+        "track": "Encima",
+        "name": "vx.mp4",
+        "start": 25.0,
+        "end": 27.0,
+        "description": "Material perdido"
+       },
+       {
+        "id": "imgT",
+        "kind": "image",
+        "track": "Arriba",
+        "name": "imgT.mp4",
+        "start": 26.0,
+        "end": 28.0,
+        "description": "Foto antigua"
+       }
+      ],
+      "motion_in_range": []
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 0.0,
+       "title": "Uno de la biblioteca"
+      },
+      {
+       "kind": "clips",
+       "id": "clip-5",
+       "ago": 0.2,
+       "title": "clip-5"
+      },
+      {
+       "kind": "clips",
+       "id": "lib_a",
+       "ago": 3.0,
+       "title": "Playa tropical"
+      },
+      {
+       "kind": "images",
+       "id": "im2",
+       "ago": 3.0,
+       "title": "Gráfico de barras"
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "ago": 9.5,
+       "title": "Mapa"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 20.00s – 30.00s (dura 10.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–4.5  Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí\nFrase anterior: «Una línea sin palabras Fin.»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · video «v4.mp4» 21.0–22.0s\n  · video «vx.mp4» 25.0–27.0s · Material perdido\n  · image «imgT.mp4» 26.0–28.0s · Foto antigua\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): Uno de la biblioteca (hace 0.0s); clip-5 (hace 0.2s); Playa tropical (hace 3.0s); Gráfico de barras (hace 3.0s)",
+    "tokens": 533,
+    "skeleton": [
+     {
+      "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy",
+      "start": 0.0,
+      "end": 3.85
+     },
+     {
+      "text": "mismo aquí",
+      "start": 3.85,
+      "end": 10.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "script": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 30,
+     "end": 40
+    },
+    "pace": true
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000010ab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000006.75
+     },
+     "range": {
+      "start": 30.0,
+      "end": 40.0,
+      "duration": 10.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": false,
+      "current": "",
+      "before": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+      "after": ""
+     },
+     "captions": [],
+     "words": [],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [],
+      "motion_in_range": []
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "3",
+       "ago": 0.0,
+       "title": "Volcán activo"
+      },
+      {
+       "kind": "images",
+       "id": "im3",
+       "ago": 2.0,
+       "title": "Foto"
+      },
+      {
+       "kind": "clips",
+       "id": "99",
+       "ago": 3.0,
+       "title": "99"
+      },
+      {
+       "kind": "clips",
+       "id": "4",
+       "ago": 8.0,
+       "title": "c4.mp4"
+      },
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 10.0,
+       "title": "Uno de la biblioteca"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 30.00s – 40.00s (dura 10.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ: (nadie habla en este tramo; guíate por la dirección)\nSUBTÍTULOS DEL TRAMO: ninguno\nFrase anterior: «Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nYA EN LA TIMELINE EN ESTE TRAMO: nada (lienzo libre)\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): Volcán activo (hace 0.0s); Foto (hace 2.0s); 99 (hace 3.0s); c4.mp4 (hace 8.0s)",
+    "tokens": 442,
+    "skeleton": [
+     {
+      "text": "",
+      "start": 0.0,
+      "end": 2.5
+     },
+     {
+      "text": "",
+      "start": 2.5,
+      "end": 5.0
+     },
+     {
+      "text": "",
+      "start": 5.0,
+      "end": 7.5
+     },
+     {
+      "text": "",
+      "start": 7.5,
+      "end": 10.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "",
+     "script": "",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "free",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "id": "sd_mid",
+     "start": 9,
+     "end": 14
+    },
+    "segments": [
+     {
+      "id": "sd_prev",
+      "start": 0,
+      "end": 9,
+      "mode": "explain"
+     },
+     {
+      "id": "sd_mid",
+      "start": 9,
+      "end": 14
+     },
+     {
+      "start": 14,
+      "end": 20,
+      "instruction": "Después"
+     }
+    ]
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_mid",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000008.0
+     },
+     "range": {
+      "start": 9.0,
+      "end": 14.0,
+      "duration": 5.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+      "before": "humo, lava, ceniza y miedo.",
+      "after": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 1.7,
+       "text": "El mapa de Europa cambia."
+      },
+      {
+       "start": 2.0,
+       "end": 4.0,
+       "text": "Una línea sin palabras"
+      },
+      {
+       "start": 4.5,
+       "end": 4.8,
+       "text": "Fin."
+      }
+     ],
+     "words": [
+      {
+       "text": "El",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "mapa",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "de",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "Europa",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "cambia.",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "Una línea   sin palabras",
+       "start": 2.0,
+       "end": 4.0
+      },
+      {
+       "text": "Fin.",
+       "start": 4.5,
+       "end": 4.8
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 1,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      }
+     ],
+     "reference": null,
+     "previous": {
+      "start": 0.0,
+      "end": 9.0,
+      "mode": "explain",
+      "text": "",
+      "instruction": "",
+      "composition_id": null
+     },
+     "next": {
+      "start": 14.0,
+      "end": 20.0,
+      "mode": null,
+      "text": "",
+      "instruction": "Después",
+      "composition_id": null
+     },
+     "timeline": {
+      "existing": [
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "img1",
+        "kind": "image",
+        "track": "Encima",
+        "name": "img1.mp4",
+        "start": 8.0,
+        "end": 10.5,
+        "description": "Mapa político de Europa"
+       },
+       {
+        "id": "mo1",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "Gráfico animado",
+        "start": 9.5,
+        "end": 13.5,
+        "composition_id": "comp1"
+       },
+       {
+        "id": "mo2",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "mo2.mp4",
+        "start": 12.0,
+        "end": 12.5
+       }
+      ],
+      "motion_in_range": [
+       {
+        "id": "mo1",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "Gráfico animado",
+        "start": 9.5,
+        "end": 13.5,
+        "composition_id": "comp1",
+        "overlap": 1.0
+       },
+       {
+        "id": "mo2",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "mo2.mp4",
+        "start": 12.0,
+        "end": 12.5,
+        "overlap": 1.0
+       }
+      ]
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "2",
+       "ago": 2.0,
+       "title": "c2.mp4"
+      },
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 3.0,
+       "title": "Uno de la biblioteca"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 9.00s – 14.00s (dura 5.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«El mapa de Europa cambia. Una línea sin palabras Fin.»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–1.7  El mapa de Europa cambia.\n  2.0–4.0  Una línea sin palabras\n  4.5–4.8  Fin.\nFrase anterior: «humo, lava, ceniza y miedo.»\nFrase siguiente: «Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · image «img1.mp4» 8.0–10.5s · Mapa político de Europa\n  · motion «Gráfico animado» 9.5–13.5s\n  · motion «mo2.mp4» 12.0–12.5s\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): c2.mp4 (hace 2.0s); Uno de la biblioteca (hace 3.0s)\nTramo anterior: Explicar lo narrado\nTramo siguiente: Necesita propuesta — Después",
+    "tokens": 562,
+    "skeleton": [
+     {
+      "text": "El mapa de Europa cambia.",
+      "start": 0.0,
+      "end": 2.0
+     },
+     {
+      "text": "Una línea   sin palabras Fin.",
+      "start": 2.0,
+      "end": 5.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+     "script": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 9,
+     "end": 14
+    },
+    "segments": "no es una lista"
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000013ab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000008.75
+     },
+     "range": {
+      "start": 9.0,
+      "end": 14.0,
+      "duration": 5.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+      "before": "humo, lava, ceniza y miedo.",
+      "after": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 1.7,
+       "text": "El mapa de Europa cambia."
+      },
+      {
+       "start": 2.0,
+       "end": 4.0,
+       "text": "Una línea sin palabras"
+      },
+      {
+       "start": 4.5,
+       "end": 4.8,
+       "text": "Fin."
+      }
+     ],
+     "words": [
+      {
+       "text": "El",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "mapa",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "de",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "Europa",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "cambia.",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "Una línea   sin palabras",
+       "start": 2.0,
+       "end": 4.0
+      },
+      {
+       "text": "Fin.",
+       "start": 4.5,
+       "end": 4.8
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 1,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "img1",
+        "kind": "image",
+        "track": "Encima",
+        "name": "img1.mp4",
+        "start": 8.0,
+        "end": 10.5,
+        "description": "Mapa político de Europa"
+       },
+       {
+        "id": "mo1",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "Gráfico animado",
+        "start": 9.5,
+        "end": 13.5,
+        "composition_id": "comp1"
+       },
+       {
+        "id": "mo2",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "mo2.mp4",
+        "start": 12.0,
+        "end": 12.5
+       }
+      ],
+      "motion_in_range": [
+       {
+        "id": "mo1",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "Gráfico animado",
+        "start": 9.5,
+        "end": 13.5,
+        "composition_id": "comp1",
+        "overlap": 1.0
+       },
+       {
+        "id": "mo2",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "mo2.mp4",
+        "start": 12.0,
+        "end": 12.5,
+        "overlap": 1.0
+       }
+      ]
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "2",
+       "ago": 2.0,
+       "title": "c2.mp4"
+      },
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 3.0,
+       "title": "Uno de la biblioteca"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 9.00s – 14.00s (dura 5.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«El mapa de Europa cambia. Una línea sin palabras Fin.»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–1.7  El mapa de Europa cambia.\n  2.0–4.0  Una línea sin palabras\n  4.5–4.8  Fin.\nFrase anterior: «humo, lava, ceniza y miedo.»\nFrase siguiente: «Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · image «img1.mp4» 8.0–10.5s · Mapa político de Europa\n  · motion «Gráfico animado» 9.5–13.5s\n  · motion «mo2.mp4» 12.0–12.5s\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): c2.mp4 (hace 2.0s); Uno de la biblioteca (hace 3.0s)",
+    "tokens": 539,
+    "skeleton": [
+     {
+      "text": "El mapa de Europa cambia.",
+      "start": 0.0,
+      "end": 2.0
+     },
+     {
+      "text": "Una línea   sin palabras Fin.",
+      "start": 2.0,
+      "end": 5.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+     "script": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 9,
+     "end": 14
+    },
+    "segments": null
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000015ab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000009.5
+     },
+     "range": {
+      "start": 9.0,
+      "end": 14.0,
+      "duration": 5.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+      "before": "humo, lava, ceniza y miedo.",
+      "after": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 1.7,
+       "text": "El mapa de Europa cambia."
+      },
+      {
+       "start": 2.0,
+       "end": 4.0,
+       "text": "Una línea sin palabras"
+      },
+      {
+       "start": 4.5,
+       "end": 4.8,
+       "text": "Fin."
+      }
+     ],
+     "words": [
+      {
+       "text": "El",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "mapa",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "de",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "Europa",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "cambia.",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "Una línea   sin palabras",
+       "start": 2.0,
+       "end": 4.0
+      },
+      {
+       "text": "Fin.",
+       "start": 4.5,
+       "end": 4.8
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 1,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "img1",
+        "kind": "image",
+        "track": "Encima",
+        "name": "img1.mp4",
+        "start": 8.0,
+        "end": 10.5,
+        "description": "Mapa político de Europa"
+       },
+       {
+        "id": "mo1",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "Gráfico animado",
+        "start": 9.5,
+        "end": 13.5,
+        "composition_id": "comp1"
+       },
+       {
+        "id": "mo2",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "mo2.mp4",
+        "start": 12.0,
+        "end": 12.5
+       }
+      ],
+      "motion_in_range": [
+       {
+        "id": "mo1",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "Gráfico animado",
+        "start": 9.5,
+        "end": 13.5,
+        "composition_id": "comp1",
+        "overlap": 1.0
+       },
+       {
+        "id": "mo2",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "mo2.mp4",
+        "start": 12.0,
+        "end": 12.5,
+        "overlap": 1.0
+       }
+      ]
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "2",
+       "ago": 2.0,
+       "title": "c2.mp4"
+      },
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 3.0,
+       "title": "Uno de la biblioteca"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 9.00s – 14.00s (dura 5.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«El mapa de Europa cambia. Una línea sin palabras Fin.»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–1.7  El mapa de Europa cambia.\n  2.0–4.0  Una línea sin palabras\n  4.5–4.8  Fin.\nFrase anterior: «humo, lava, ceniza y miedo.»\nFrase siguiente: «Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · image «img1.mp4» 8.0–10.5s · Mapa político de Europa\n  · motion «Gráfico animado» 9.5–13.5s\n  · motion «mo2.mp4» 12.0–12.5s\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): c2.mp4 (hace 2.0s); Uno de la biblioteca (hace 3.0s)",
+    "tokens": 539,
+    "skeleton": [
+     {
+      "text": "El mapa de Europa cambia.",
+      "start": 0.0,
+      "end": 2.0
+     },
+     {
+      "text": "Una línea   sin palabras Fin.",
+      "start": 2.0,
+      "end": 5.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+     "script": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 9,
+     "end": 14
+    },
+    "segments": []
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000017ab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000010.0
+     },
+     "range": {
+      "start": 9.0,
+      "end": 14.0,
+      "duration": 5.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+      "before": "humo, lava, ceniza y miedo.",
+      "after": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 1.7,
+       "text": "El mapa de Europa cambia."
+      },
+      {
+       "start": 2.0,
+       "end": 4.0,
+       "text": "Una línea sin palabras"
+      },
+      {
+       "start": 4.5,
+       "end": 4.8,
+       "text": "Fin."
+      }
+     ],
+     "words": [
+      {
+       "text": "El",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "mapa",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "de",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "Europa",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "cambia.",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "Una línea   sin palabras",
+       "start": 2.0,
+       "end": 4.0
+      },
+      {
+       "text": "Fin.",
+       "start": 4.5,
+       "end": 4.8
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 1,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 0,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "5",
+       "scope": "project",
+       "title": "Con id",
+       "description": "Encontrado por su id",
+       "duration": 10.0,
+       "url": "/clips/c5.mp4",
+       "semantic": null,
+       "match": 0
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "img1",
+        "kind": "image",
+        "track": "Encima",
+        "name": "img1.mp4",
+        "start": 8.0,
+        "end": 10.5,
+        "description": "Mapa político de Europa"
+       },
+       {
+        "id": "mo1",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "Gráfico animado",
+        "start": 9.5,
+        "end": 13.5,
+        "composition_id": "comp1"
+       },
+       {
+        "id": "mo2",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "mo2.mp4",
+        "start": 12.0,
+        "end": 12.5
+       }
+      ],
+      "motion_in_range": [
+       {
+        "id": "mo1",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "Gráfico animado",
+        "start": 9.5,
+        "end": 13.5,
+        "composition_id": "comp1",
+        "overlap": 1.0
+       },
+       {
+        "id": "mo2",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "mo2.mp4",
+        "start": 12.0,
+        "end": 12.5,
+        "overlap": 1.0
+       }
+      ]
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "2",
+       "ago": 2.0,
+       "title": "c2.mp4"
+      },
+      {
+       "kind": "clips",
+       "id": "1",
+       "ago": 3.0,
+       "title": "Uno de la biblioteca"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 9.00s – 14.00s (dura 5.00s)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«El mapa de Europa cambia. Una línea sin palabras Fin.»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–1.7  El mapa de Europa cambia.\n  2.0–4.0  Una línea sin palabras\n  4.5–4.8  Fin.\nFrase anterior: «humo, lava, ceniza y miedo.»\nFrase siguiente: «Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · image «img1.mp4» 8.0–10.5s · Mapa político de Europa\n  · motion «Gráfico animado» 9.5–13.5s\n  · motion «mo2.mp4» 12.0–12.5s\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [vídeo 5] Con id: Encontrado por su id\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): c2.mp4 (hace 2.0s); Uno de la biblioteca (hace 3.0s)",
+    "tokens": 539,
+    "skeleton": [
+     {
+      "text": "El mapa de Europa cambia.",
+      "start": 0.0,
+      "end": 2.0
+     },
+     {
+      "text": "Una línea   sin palabras Fin.",
+      "start": 2.0,
+      "end": 5.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+     "script": "El mapa de Europa cambia. Una línea sin palabras Fin.",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 9,
+     "end": 14
+    },
+    "segments": [
+     {
+      "start": 0,
+      "end": 3,
+      "components": 5
+     }
+    ]
+   },
+   "error": "'int' object is not iterable",
+   "error_type": "TypeError",
+   "value_error": false
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 1
+    }
+   },
+   "error": "Tramo inválido: pasa 'segment' con al menos {start, end} (segundos).",
+   "error_type": "MCPError",
+   "value_error": true,
+   "mcp": {
+    "code": "invalid_parameter",
+    "hint": null,
+    "retryable": true,
+    "param": "segment"
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 1,
+     "end": 1.1
+    }
+   },
+   "error": "Tramo inválido: pasa 'segment' con al menos {start, end} (segundos).",
+   "error_type": "MCPError",
+   "value_error": true,
+   "mcp": {
+    "code": "invalid_parameter",
+    "hint": null,
+    "retryable": true,
+    "param": "segment"
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": "tramo"
+   },
+   "error": "Tramo inválido: pasa 'segment' con al menos {start, end} (segundos).",
+   "error_type": "MCPError",
+   "value_error": true,
+   "mcp": {
+    "code": "invalid_parameter",
+    "hint": null,
+    "retryable": true,
+    "param": "segment"
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": null
+   },
+   "error": "Tramo inválido: pasa 'segment' con al menos {start, end} (segundos).",
+   "error_type": "MCPError",
+   "value_error": true,
+   "mcp": {
+    "code": "invalid_parameter",
+    "hint": null,
+    "retryable": true,
+    "param": "segment"
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {}
+   },
+   "error": "Tramo inválido: pasa 'segment' con al menos {start, end} (segundos).",
+   "error_type": "MCPError",
+   "value_error": true,
+   "mcp": {
+    "code": "invalid_parameter",
+    "hint": null,
+    "retryable": true,
+    "param": "segment"
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 0,
+     "end": 5,
+     "components": 3
+    }
+   },
+   "error": "'int' object is not iterable",
+   "error_type": "TypeError",
+   "value_error": false
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "nada",
+    "segment": {
+     "start": 0,
+     "end": 5
+    }
+   },
+   "error": "Proyecto no encontrado: nada",
+   "error_type": "MCPError",
+   "value_error": true,
+   "mcp": {
+    "code": "resource_not_found",
+    "hint": null,
+    "retryable": false,
+    "param": null
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "nada",
+    "segment": "tramo"
+   },
+   "error": "Proyecto no encontrado: nada",
+   "error_type": "MCPError",
+   "value_error": true,
+   "mcp": {
+    "code": "resource_not_found",
+    "hint": null,
+    "retryable": false,
+    "param": null
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 50,
+     "end": "nan"
+    }
+   },
+   "error": "cannot convert float NaN to integer",
+   "error_type": "ValueError",
+   "value_error": true
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 40,
+     "end": "inf"
+    }
+   },
+   "error": "cannot convert float infinity to integer",
+   "error_type": "OverflowError",
+   "value_error": false
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 0,
+     "end": "inf"
+    }
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_00001fab",
+     "blueprint": {
+      "direction": "documentary",
+      "direction_overrides": {
+       "accent": "#ff0000"
+      },
+      "identity": "Documental sobrio",
+      "vocabulary": [
+       "movie_footage",
+       "chart"
+      ],
+      "rules": [
+       "Una idea por plano",
+       "Sin neón"
+      ],
+      "intensity_curve": "Sube al final",
+      "version": 1,
+      "source": "manual",
+      "updated_at": 1700000012.5
+     },
+     "range": {
+      "start": 0.0,
+      "end": Infinity,
+      "duration": Infinity
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "Hoy hablamos del perro, el mejor amigo. Corre por la playa cada mañana. Después, mira el Arriba volcán: humo, lava, ceniza y miedo. El mapa de Europa cambia. Una línea sin palabras Fin. Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+      "before": "",
+      "after": ""
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 2.4,
+       "text": "Hoy hablamos del perro, el mejor amigo."
+      },
+      {
+       "start": 2.8,
+       "end": 4.85,
+       "text": "Corre por la playa cada mañana."
+      },
+      {
+       "start": 5.2,
+       "end": 8.3,
+       "text": "Después, mira el volcán: humo, lava, ceniza y miedo."
+      },
+      {
+       "start": 6.0,
+       "end": 6.3,
+       "text": "Arriba"
+      },
+      {
+       "start": 9.0,
+       "end": 10.7,
+       "text": "El mapa de Europa cambia."
+      },
+      {
+       "start": 11.0,
+       "end": 13.0,
+       "text": "Una línea sin palabras"
+      },
+      {
+       "start": 13.5,
+       "end": 13.8,
+       "text": "Fin."
+      },
+      {
+       "start": 20.0,
+       "end": 24.5,
+       "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí"
+      }
+     ],
+     "words": [
+      {
+       "text": "Hoy",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "hablamos",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "del",
+       "start": 0.7,
+       "end": 1.0
+      },
+      {
+       "text": "perro,",
+       "start": 1.05,
+       "end": 1.35
+      },
+      {
+       "text": "el",
+       "start": 1.4,
+       "end": 1.7
+      },
+      {
+       "text": "mejor",
+       "start": 1.75,
+       "end": 2.05
+      },
+      {
+       "text": "amigo.",
+       "start": 2.1,
+       "end": 2.4
+      },
+      {
+       "text": "Corre",
+       "start": 2.8,
+       "end": 3.1
+      },
+      {
+       "text": "por",
+       "start": 3.15,
+       "end": 3.45
+      },
+      {
+       "text": "la",
+       "start": 3.5,
+       "end": 3.8
+      },
+      {
+       "text": "playa",
+       "start": 3.85,
+       "end": 4.15
+      },
+      {
+       "text": "cada",
+       "start": 4.2,
+       "end": 4.5
+      },
+      {
+       "text": "mañana.",
+       "start": 4.55,
+       "end": 4.85
+      },
+      {
+       "text": "Después,",
+       "start": 5.2,
+       "end": 5.5
+      },
+      {
+       "text": "mira",
+       "start": 5.55,
+       "end": 5.85
+      },
+      {
+       "text": "el",
+       "start": 5.9,
+       "end": 6.2
+      },
+      {
+       "text": "Arriba",
+       "start": 6.0,
+       "end": 6.3
+      },
+      {
+       "text": "volcán:",
+       "start": 6.25,
+       "end": 6.55
+      },
+      {
+       "text": "humo,",
+       "start": 6.6,
+       "end": 6.9
+      },
+      {
+       "text": "lava,",
+       "start": 6.95,
+       "end": 7.25
+      },
+      {
+       "text": "ceniza",
+       "start": 7.3,
+       "end": 7.6
+      },
+      {
+       "text": "y",
+       "start": 7.65,
+       "end": 7.95
+      },
+      {
+       "text": "miedo.",
+       "start": 8.0,
+       "end": 8.3
+      },
+      {
+       "text": "El",
+       "start": 9.0,
+       "end": 9.3
+      },
+      {
+       "text": "mapa",
+       "start": 9.35,
+       "end": 9.65
+      },
+      {
+       "text": "de",
+       "start": 9.7,
+       "end": 10.0
+      },
+      {
+       "text": "Europa",
+       "start": 10.05,
+       "end": 10.35
+      },
+      {
+       "text": "cambia.",
+       "start": 10.4,
+       "end": 10.7
+      },
+      {
+       "text": "Una línea   sin palabras",
+       "start": 11.0,
+       "end": 13.0
+      },
+      {
+       "text": "Fin.",
+       "start": 13.5,
+       "end": 13.8
+      },
+      {
+       "text": "Otra",
+       "start": 20.0,
+       "end": 20.3
+      },
+      {
+       "text": "vez",
+       "start": 20.35,
+       "end": 20.65
+      },
+      {
+       "text": "el",
+       "start": 20.7,
+       "end": 21.0
+      },
+      {
+       "text": "perro",
+       "start": 21.05,
+       "end": 21.35
+      },
+      {
+       "text": "corre",
+       "start": 21.4,
+       "end": 21.7
+      },
+      {
+       "text": "rápido",
+       "start": 21.75,
+       "end": 22.05
+      },
+      {
+       "text": "sin",
+       "start": 22.1,
+       "end": 22.4
+      },
+      {
+       "text": "parar",
+       "start": 22.45,
+       "end": 22.75
+      },
+      {
+       "text": "nunca",
+       "start": 22.8,
+       "end": 23.1
+      },
+      {
+       "text": "jamás",
+       "start": 23.15,
+       "end": 23.45
+      },
+      {
+       "text": "hoy",
+       "start": 23.5,
+       "end": 23.8
+      },
+      {
+       "text": "mismo",
+       "start": 23.85,
+       "end": 24.15
+      },
+      {
+       "text": "aquí",
+       "start": 24.2,
+       "end": 24.5
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "1",
+       "scope": "project",
+       "title": "Perro corriendo",
+       "description": "Un perro corre por la playa",
+       "duration": 10.0,
+       "url": "/clips/c1.mp4",
+       "semantic": {
+        "subjects": [
+         "perro",
+         "playa"
+        ],
+        "actions": [
+         "corre"
+        ],
+        "suggested_usage": "b-roll de apoyo",
+        "visual_priority": "apoyo"
+       },
+       "match": 1,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 6.0
+        },
+        {
+         "start": 18.0,
+         "end": 20.0
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "3",
+       "scope": "project",
+       "title": "Volcán activo",
+       "description": "",
+       "duration": 10.0,
+       "url": "/clips/c3.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán"
+        ],
+        "mood": "tenso"
+       },
+       "match": 1,
+       "used": [
+        {
+         "start": 0.0,
+         "end": 30.0
+        }
+       ]
+      },
+      {
+       "kind": "images",
+       "id": "im1",
+       "scope": "project",
+       "title": "Mapa",
+       "description": "Mapa político de Europa",
+       "duration": null,
+       "url": "/images/im1.png",
+       "semantic": null,
+       "match": 1,
+       "used": [
+        {
+         "start": 8.0,
+         "end": 10.5
+        }
+       ]
+      },
+      {
+       "kind": "clips",
+       "id": "lib_b",
+       "scope": "library",
+       "title": "volcan.mp4",
+       "description": "",
+       "duration": null,
+       "url": "/api/library/media/video/volcan.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán",
+         "lava"
+        ],
+        "suggested_usage": "clímax"
+       },
+       "match": 1
+      },
+      {
+       "kind": "clips",
+       "id": "2",
+       "scope": "project",
+       "title": "c2.mp4",
+       "description": "Vista aérea de una ciudad",
+       "duration": 3.0,
+       "url": "/clips/c2.mp4",
+       "semantic": null,
+       "match": 0,
+       "used": [
+        {
+         "start": 4.0,
+         "end": 7.0
+        }
+       ]
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "v1",
+        "kind": "video",
+        "track": "Principal",
+        "name": "Plano perro",
+        "start": 0.0,
+        "end": 6.0,
+        "description": "Un perro corre por la playa",
+        "note": "El perro entra"
+       },
+       {
+        "id": "v3",
+        "kind": "video",
+        "track": "Oculta",
+        "name": "v3.mp4",
+        "start": 0.0,
+        "end": 30.0,
+        "description": "Volcán activo"
+       },
+       {
+        "id": "sh1",
+        "kind": "shape",
+        "track": "Encima",
+        "name": "sh1.mp4",
+        "start": 2.0,
+        "end": 3.5,
+        "description": "Flecha roja"
+       },
+       {
+        "id": "tf1",
+        "kind": "text",
+        "track": "Arriba",
+        "name": "Título libre",
+        "start": 3.0,
+        "end": 5.0
+       },
+       {
+        "id": "v2",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v2.mp4",
+        "start": 4.0,
+        "end": 7.0,
+        "description": "Vista aérea de una ciudad"
+       },
+       {
+        "id": "img1",
+        "kind": "image",
+        "track": "Encima",
+        "name": "img1.mp4",
+        "start": 8.0,
+        "end": 10.5,
+        "description": "Mapa político de Europa"
+       },
+       {
+        "id": "mo1",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "Gráfico animado",
+        "start": 9.5,
+        "end": 13.5,
+        "composition_id": "comp1"
+       },
+       {
+        "id": "mo2",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "mo2.mp4",
+        "start": 12.0,
+        "end": 12.5
+       },
+       {
+        "id": "vlib",
+        "kind": "video",
+        "track": "Principal",
+        "name": "vlib.mp4",
+        "start": 14.0,
+        "end": 17.0
+       },
+       {
+        "id": "im2u",
+        "kind": "image",
+        "track": "Encima",
+        "name": "im2u.mp4",
+        "start": 16.0,
+        "end": 17.0,
+        "description": "Gráfico de barras"
+       },
+       {
+        "id": "v1b",
+        "kind": "video",
+        "track": "Principal",
+        "name": "v1b.mp4",
+        "start": 18.0,
+        "end": 20.0,
+        "description": "Un perro corre por la playa"
+       },
+       {
+        "id": "v5",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v5.mp4",
+        "start": 19.0,
+        "end": 19.8,
+        "description": "Encontrado por su id"
+       },
+       {
+        "id": "v4",
+        "kind": "video",
+        "track": "Encima",
+        "name": "v4.mp4",
+        "start": 21.0,
+        "end": 22.0
+       },
+       {
+        "id": "vx",
+        "kind": "video",
+        "track": "Encima",
+        "name": "vx.mp4",
+        "start": 25.0,
+        "end": 27.0,
+        "description": "Material perdido"
+       },
+       {
+        "id": "imgT",
+        "kind": "image",
+        "track": "Arriba",
+        "name": "imgT.mp4",
+        "start": 26.0,
+        "end": 28.0,
+        "description": "Foto antigua"
+       }
+      ],
+      "motion_in_range": [
+       {
+        "id": "mo1",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "Gráfico animado",
+        "start": 9.5,
+        "end": 13.5,
+        "composition_id": "comp1",
+        "overlap": 1.0
+       },
+       {
+        "id": "mo2",
+        "kind": "motion",
+        "track": "Encima",
+        "name": "mo2.mp4",
+        "start": 12.0,
+        "end": 12.5,
+        "overlap": 1.0
+       }
+      ]
+     },
+     "recent_materials": [],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      },
+      "captionFont": "Anton",
+      "captionColor": "#fff",
+      "captionZoneY": 0.8,
+      "avoidY": [
+       0.73,
+       0.87
+      ]
+     }
+    },
+    "text": "TRAMO: 0.00s – infs (dura infs)\nDIRECCIÓN GLOBAL (vale para todo el vídeo; manténla coherente en este tramo):\n  dirección creativa: Modern Documentary\n  identidad: Documental sobrio\n  vocabulario permitido: movie_footage · chart\n  reglas: Una idea por plano · Sin neón\n  curva de intensidad del vídeo: Sube al final\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.73–0.87. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«Hoy hablamos del perro, el mejor amigo. Corre por la playa cada mañana. Después, mira el Arriba volcán: humo, lava, ceniza y miedo. El mapa de Europa cambia. Una línea sin palabras Fin. Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–2.4  Hoy hablamos del perro, el mejor amigo.\n  2.8–4.8  Corre por la playa cada mañana.\n  5.2–8.3  Después, mira el volcán: humo, lava, ceniza y miedo.\n  6.0–6.3  Arriba\n  9.0–10.7  El mapa de Europa cambia.\n  11.0–13.0  Una línea sin palabras\n  13.5–13.8  Fin.\n  20.0–24.5  Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «Plano perro» 0.0–6.0s · Un perro corre por la playa\n  · video «v3.mp4» 0.0–30.0s · Volcán activo\n  · shape «sh1.mp4» 2.0–3.5s · Flecha roja\n  · text «Título libre» 3.0–5.0s\n  · video «v2.mp4» 4.0–7.0s · Vista aérea de una ciudad\n  · image «img1.mp4» 8.0–10.5s · Mapa político de Europa\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo 1] Perro corriendo: Un perro corre por la playa  (uso: b-roll de apoyo · apoyo · perro, playa, corre)  [YA USADO en 0.0–6.0s, 18.0–20.0s]\n  · [vídeo 3] Volcán activo: (sin descripción)  (volcán)  [YA USADO en 0.0–30.0s]\n  · [imagen im1] Mapa: Mapa político de Europa  [YA USADO en 8.0–10.5s]\n  · [vídeo lib_b] volcan.mp4: (sin descripción)  (uso: clímax · volcán, lava)\n  · [vídeo 2] c2.mp4: Vista aérea de una ciudad  [YA USADO en 4.0–7.0s]",
+    "tokens": 633,
+    "skeleton": [
+     {
+      "text": "Hoy hablamos del perro, el mejor amigo.",
+      "start": 0.0,
+      "end": 2.8
+     },
+     {
+      "text": "Corre por la playa cada mañana.",
+      "start": 2.8,
+      "end": 5.2
+     },
+     {
+      "text": "Después, mira el Arriba volcán:",
+      "start": 5.2,
+      "end": 6.6
+     },
+     {
+      "text": "humo, lava, ceniza y miedo.",
+      "start": 6.6,
+      "end": 9.0
+     },
+     {
+      "text": "El mapa de Europa cambia.",
+      "start": 9.0,
+      "end": 11.0
+     },
+     {
+      "text": "Una línea   sin palabras Fin.",
+      "start": 11.0,
+      "end": 20.0
+     },
+     {
+      "text": "Otra vez el perro corre rápido sin parar nunca jamás hoy",
+      "start": 20.0,
+      "end": 23.85
+     },
+     {
+      "text": "mismo aquí",
+      "start": 23.85,
+      "end": Infinity
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Hoy hablamos del perro, el mejor amigo. Corre por la playa cada mañana. Después, mira el Arriba volcán: humo, lava, ceniza y miedo. El mapa de Europa cambia. Una línea sin palabras Fin. Otra vez el pe",
+     "script": "Hoy hablamos del perro, el mejor amigo. Corre por la playa cada mañana. Después, mira el Arriba volcán: humo, lava, ceniza y miedo. El mapa de Europa cambia. Una línea sin palabras Fin. Otra vez el perro corre rápido sin parar nunca jamás hoy mismo aquí",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-main",
+    "segment": {
+     "start": 14,
+     "end": 20,
+     "materials": [
+      {
+       "kind": "images",
+       "id": 7,
+       "scope": "library"
+      }
+     ]
+    }
+   },
+   "error": "'int' object has no attribute 'lower'",
+   "error_type": "AttributeError",
+   "value_error": false
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-raro",
+    "segment": {
+     "start": 0,
+     "end": 5,
+     "materials": [
+      {
+       "kind": "clips",
+       "id": "1"
+      }
+     ]
+    }
+   },
+   "error": "can only concatenate str (not \"list\") to str",
+   "error_type": "TypeError",
+   "value_error": false
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-raro",
+    "segment": {
+     "start": 0,
+     "end": 5
+    }
+   },
+   "error": "'int' object is not iterable",
+   "error_type": "TypeError",
+   "value_error": false
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-raro",
+    "segment": {
+     "start": 0,
+     "end": 5,
+     "materials": [
+      {
+       "kind": "images",
+       "id": "w2"
+      },
+      {
+       "kind": "clips",
+       "id": "12"
+      }
+     ]
+    }
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000025ab",
+     "blueprint": {},
+     "range": {
+      "start": 0.0,
+      "end": 5.0,
+      "duration": 5.0
+     },
+     "script": {
+      "source": "none",
+      "has_captions": false,
+      "current": "",
+      "before": "",
+      "after": ""
+     },
+     "captions": [],
+     "words": [],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [
+      {
+       "kind": "images",
+       "id": "w2",
+       "scope": "project",
+       "title": "Gato",
+       "description": "gato negro",
+       "duration": null,
+       "url": "/images/w2.png",
+       "semantic": null
+      },
+      {
+       "kind": "clips",
+       "id": "12",
+       "scope": "project",
+       "title": "Perro grande",
+       "description": "perro",
+       "duration": 10.0,
+       "url": "/clips/c12.mp4",
+       "semantic": null
+      }
+     ],
+     "candidates": [],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [],
+      "motion_in_range": []
+     },
+     "recent_materials": [],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      }
+     }
+    },
+    "text": "TRAMO: 0.00s – 5.00s (dura 5.00s)\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nLO QUE DICE LA VOZ: (nadie habla en este tramo; guíate por la dirección)\nSUBTÍTULOS DEL TRAMO: ninguno\nYA EN LA TIMELINE EN ESTE TRAMO: nada (lienzo libre)\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIAL ELEGIDO (los vídeos van como clip real en la timeline; las imágenes pueden ser beats):\n  · [imagen w2] Gato: gato negro\n  · [vídeo 12] Perro grande: perro",
+    "tokens": 150,
+    "skeleton": [
+     {
+      "text": "",
+      "start": 0.0,
+      "end": 2.5
+     },
+     {
+      "text": "",
+      "start": 2.5,
+      "end": 5.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "",
+     "script": "",
+     "intent": "explicativa",
+     "must_include": [
+      "Gato — gato negro"
+     ],
+     "resources": {
+      "image": "required"
+     },
+     "structure": "free",
+     "notes": "Vídeo elegido para este tramo (irá como clip real en la timeline; la escena lo acompaña): Perro grande."
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-sin",
+    "segment": {
+     "start": 0,
+     "end": 5,
+     "text": "Hola"
+    }
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000026ab",
+     "blueprint": {},
+     "range": {
+      "start": 0.0,
+      "end": 5.0,
+      "duration": 5.0
+     },
+     "script": {
+      "source": "none",
+      "has_captions": false,
+      "current": "Hola",
+      "before": "",
+      "after": ""
+     },
+     "captions": [],
+     "words": [],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "lib_b",
+       "scope": "library",
+       "title": "volcan.mp4",
+       "description": "",
+       "duration": null,
+       "url": "/api/library/media/video/volcan.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán",
+         "lava"
+        ],
+        "suggested_usage": "clímax"
+       },
+       "match": 0
+      },
+      {
+       "kind": "clips",
+       "id": "lib_a",
+       "scope": "library",
+       "title": "Playa tropical",
+       "description": "Olas en la orilla",
+       "duration": 12.5,
+       "url": "/api/library/media/video/playa.mp4",
+       "semantic": {
+        "subjects": [
+         "olas"
+        ]
+       },
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "lib_c",
+       "scope": "library",
+       "title": "Cohete",
+       "description": "Cohete despegando",
+       "duration": null,
+       "url": "/api/library/media/image/cohete.png",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "7",
+       "scope": "library",
+       "title": 5,
+       "description": 3,
+       "duration": null,
+       "url": "/api/library/media/image/num.png",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "lib_m",
+       "scope": "library",
+       "title": null,
+       "description": "algo sin título",
+       "duration": null,
+       "url": "/api/library/media/image/",
+       "semantic": null,
+       "match": 0
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [],
+      "motion_in_range": []
+     },
+     "recent_materials": [],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      }
+     }
+    },
+    "text": "TRAMO: 0.00s – 5.00s (dura 5.00s)\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nLO QUE DICE LA VOZ (sin guion):\n«Hola»\nSUBTÍTULOS DEL TRAMO: ninguno\nYA EN LA TIMELINE EN ESTE TRAMO: nada (lienzo libre)\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo lib_b] volcan.mp4: (sin descripción)  (uso: clímax · volcán, lava)\n  · [vídeo lib_a] Playa tropical: Olas en la orilla  (olas)\n  · [imagen lib_c] Cohete: Cohete despegando\n  · [imagen 7] 5: 3\n  · [imagen lib_m] None: algo sin título",
+    "tokens": 174,
+    "skeleton": [
+     {
+      "text": "",
+      "start": 0.0,
+      "end": 2.5
+     },
+     {
+      "text": "",
+      "start": 2.5,
+      "end": 5.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Hola",
+     "script": "Hola",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "free",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-sty",
+    "segment": {
+     "start": 0,
+     "end": 4
+    },
+    "pace": "calmo"
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000027ab",
+     "blueprint": {},
+     "range": {
+      "start": 0.0,
+      "end": 4.0,
+      "duration": 4.0
+     },
+     "script": {
+      "source": "captions",
+      "has_captions": true,
+      "current": "Uno dos tres.",
+      "before": "",
+      "after": "Cuatro cinco."
+     },
+     "captions": [
+      {
+       "start": 0.0,
+       "end": 1.0,
+       "text": "Uno dos tres."
+      }
+     ],
+     "words": [
+      {
+       "text": "Uno",
+       "start": 0.0,
+       "end": 0.3
+      },
+      {
+       "text": "dos",
+       "start": 0.35,
+       "end": 0.65
+      },
+      {
+       "text": "tres.",
+       "start": 0.7,
+       "end": 1.0
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "lib_b",
+       "scope": "library",
+       "title": "volcan.mp4",
+       "description": "",
+       "duration": null,
+       "url": "/api/library/media/video/volcan.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán",
+         "lava"
+        ],
+        "suggested_usage": "clímax"
+       },
+       "match": 0
+      },
+      {
+       "kind": "clips",
+       "id": "lib_a",
+       "scope": "library",
+       "title": "Playa tropical",
+       "description": "Olas en la orilla",
+       "duration": 12.5,
+       "url": "/api/library/media/video/playa.mp4",
+       "semantic": {
+        "subjects": [
+         "olas"
+        ]
+       },
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "lib_c",
+       "scope": "library",
+       "title": "Cohete",
+       "description": "Cohete despegando",
+       "duration": null,
+       "url": "/api/library/media/image/cohete.png",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "7",
+       "scope": "library",
+       "title": 5,
+       "description": 3,
+       "duration": null,
+       "url": "/api/library/media/image/num.png",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "lib_m",
+       "scope": "library",
+       "title": null,
+       "description": "algo sin título",
+       "duration": null,
+       "url": "/api/library/media/image/",
+       "semantic": null,
+       "match": 0
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "libre",
+        "kind": "text",
+        "track": "T1 repetida",
+        "name": "Libre",
+        "start": 0.0,
+        "end": 2.0
+       }
+      ],
+      "motion_in_range": []
+     },
+     "recent_materials": [],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 1080,
+       "height": 1920,
+       "fps": 60
+      },
+      "captionFont": "Inter",
+      "captionColor": "#abc",
+      "captionZoneY": 0.95,
+      "avoidY": [
+       0.88,
+       1.0
+      ]
+     }
+    },
+    "text": "TRAMO: 0.00s – 4.00s (dura 4.00s)\nLIENZO: 1080x1920 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nZONA DE SUBTÍTULOS (déjala libre de texto/gráficos/caras/sujeto principal/stickman): y 0.88–1.00. Compón el contenido esencial FUERA de esa banda; si algo importante cae dentro, reubícalo, redúcelo o recórtalo.\nLO QUE DICE LA VOZ (subtítulos):\n«Uno dos tres.»\nSUBTÍTULOS DEL TRAMO (segundos desde el inicio del tramo):\n  0.0–1.0  Uno dos tres.\nFrase siguiente: «Cuatro cinco.»\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · text «Libre» 0.0–2.0s\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo lib_b] volcan.mp4: (sin descripción)  (uso: clímax · volcán, lava)\n  · [vídeo lib_a] Playa tropical: Olas en la orilla  (olas)\n  · [imagen lib_c] Cohete: Cohete despegando\n  · [imagen 7] 5: 3\n  · [imagen lib_m] None: algo sin título",
+    "tokens": 274,
+    "skeleton": [
+     {
+      "text": "Uno dos tres.",
+      "start": 0.0,
+      "end": 4.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Uno dos tres.",
+     "script": "Uno dos tres.",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "script",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-tr",
+    "segment": {
+     "start": 2,
+     "end": 8
+    }
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000028ab",
+     "blueprint": {},
+     "range": {
+      "start": 2.0,
+      "end": 8.0,
+      "duration": 6.0
+     },
+     "script": {
+      "source": "transcript",
+      "has_captions": false,
+      "current": "Primero, la Primero, la idea. Luego viene lo demás, Una frase entera sin palabras.",
+      "before": "",
+      "after": ""
+     },
+     "captions": [],
+     "words": [
+      {
+       "text": "Primero,",
+       "start": 0.0,
+       "end": 0.5
+      },
+      {
+       "text": "la",
+       "start": 0.6,
+       "end": 1.0
+      },
+      {
+       "text": "idea.",
+       "start": 1.1,
+       "end": 1.6
+      },
+      {
+       "text": "Luego",
+       "start": 1.7,
+       "end": 2.0
+      },
+      {
+       "text": "viene",
+       "start": 2.1,
+       "end": 2.4
+      },
+      {
+       "text": "lo",
+       "start": 2.5,
+       "end": 2.6
+      },
+      {
+       "text": "demás,",
+       "start": 2.7,
+       "end": 3.0
+      },
+      {
+       "text": "Una frase entera sin palabras.",
+       "start": 3.0,
+       "end": 6.0
+      }
+     ],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "lib_b",
+       "scope": "library",
+       "title": "volcan.mp4",
+       "description": "",
+       "duration": null,
+       "url": "/api/library/media/video/volcan.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán",
+         "lava"
+        ],
+        "suggested_usage": "clímax"
+       },
+       "match": 0
+      },
+      {
+       "kind": "clips",
+       "id": "lib_a",
+       "scope": "library",
+       "title": "Playa tropical",
+       "description": "Olas en la orilla",
+       "duration": 12.5,
+       "url": "/api/library/media/video/playa.mp4",
+       "semantic": {
+        "subjects": [
+         "olas"
+        ]
+       },
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "lib_c",
+       "scope": "library",
+       "title": "Cohete",
+       "description": "Cohete despegando",
+       "duration": null,
+       "url": "/api/library/media/image/cohete.png",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "7",
+       "scope": "library",
+       "title": 5,
+       "description": 3,
+       "duration": null,
+       "url": "/api/library/media/image/num.png",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "lib_m",
+       "scope": "library",
+       "title": null,
+       "description": "algo sin título",
+       "duration": null,
+       "url": "/api/library/media/image/",
+       "semantic": null,
+       "match": 0
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [
+       {
+        "id": "tv0",
+        "kind": "video",
+        "track": "V1",
+        "name": "tv0.mp4",
+        "start": 2.0,
+        "end": 8.0,
+        "description": "Entrevista"
+       }
+      ],
+      "motion_in_range": []
+     },
+     "recent_materials": [
+      {
+       "kind": "clips",
+       "id": "0",
+       "ago": 0.5,
+       "title": "Entrevista"
+      }
+     ],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      }
+     }
+    },
+    "text": "TRAMO: 2.00s – 8.00s (dura 6.00s)\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nLO QUE DICE LA VOZ (transcripción del material):\n«Primero, la Primero, la idea. Luego viene lo demás, Una frase entera sin palabras.»\nSUBTÍTULOS DEL TRAMO: ninguno\nYA EN LA TIMELINE EN ESTE TRAMO (compón encima o deja hueco; no lo dupliques):\n  · video «tv0.mp4» 2.0–8.0s · Entrevista\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo lib_b] volcan.mp4: (sin descripción)  (uso: clímax · volcán, lava)\n  · [vídeo lib_a] Playa tropical: Olas en la orilla  (olas)\n  · [imagen lib_c] Cohete: Cohete despegando\n  · [imagen 7] 5: 3\n  · [imagen lib_m] None: algo sin título\nUSADO HACE POCO (evita repetir el mismo plano seguido; varía crop/zoom/duración o usa otro): Entrevista (hace 0.5s)",
+    "tokens": 252,
+    "skeleton": [
+     {
+      "text": "Primero, la idea.",
+      "start": 0.0,
+      "end": 1.7
+     },
+     {
+      "text": "Luego viene lo demás, Una frase entera sin palabras.",
+      "start": 1.7,
+      "end": 6.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Primero, la Primero, la idea. Luego viene lo demás, Una frase entera sin palabras.",
+     "script": "Primero, la Primero, la idea. Luego viene lo demás, Una frase entera sin palabras.",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "free",
+     "notes": ""
+    }
+   }
+  },
+  {
+   "tool": "scene_direction_pack",
+   "args": {
+    "project_id": "k-aud",
+    "segment": {
+     "start": 1,
+     "end": 7
+    }
+   },
+   "result": {
+    "pack": {
+     "segment_id": "sd_000029ab",
+     "blueprint": {},
+     "range": {
+      "start": 1.0,
+      "end": 7.0,
+      "duration": 6.0
+     },
+     "script": {
+      "source": "audio_text_estimate",
+      "has_captions": false,
+      "current": "Rápido uno. Rápido dos.",
+      "before": "",
+      "after": "Rápido tres."
+     },
+     "captions": [],
+     "words": [],
+     "direction": {
+      "mode": "propose",
+      "instruction": "",
+      "strict": false,
+      "composition_intent": "",
+      "complexity": null,
+      "no_visual": false
+     },
+     "materials": [],
+     "candidates": [
+      {
+       "kind": "clips",
+       "id": "lib_b",
+       "scope": "library",
+       "title": "volcan.mp4",
+       "description": "",
+       "duration": null,
+       "url": "/api/library/media/video/volcan.mp4",
+       "semantic": {
+        "subjects": [
+         "volcán",
+         "lava"
+        ],
+        "suggested_usage": "clímax"
+       },
+       "match": 0
+      },
+      {
+       "kind": "clips",
+       "id": "lib_a",
+       "scope": "library",
+       "title": "Playa tropical",
+       "description": "Olas en la orilla",
+       "duration": 12.5,
+       "url": "/api/library/media/video/playa.mp4",
+       "semantic": {
+        "subjects": [
+         "olas"
+        ]
+       },
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "lib_c",
+       "scope": "library",
+       "title": "Cohete",
+       "description": "Cohete despegando",
+       "duration": null,
+       "url": "/api/library/media/image/cohete.png",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "7",
+       "scope": "library",
+       "title": 5,
+       "description": 3,
+       "duration": null,
+       "url": "/api/library/media/image/num.png",
+       "semantic": null,
+       "match": 0
+      },
+      {
+       "kind": "images",
+       "id": "lib_m",
+       "scope": "library",
+       "title": null,
+       "description": "algo sin título",
+       "duration": null,
+       "url": "/api/library/media/image/",
+       "semantic": null,
+       "match": 0
+      }
+     ],
+     "reference": null,
+     "previous": null,
+     "next": null,
+     "timeline": {
+      "existing": [],
+      "motion_in_range": []
+     },
+     "recent_materials": [],
+     "components": [],
+     "style": {
+      "format": {
+       "width": 720,
+       "height": 1280,
+       "fps": 30
+      }
+     }
+    },
+    "text": "TRAMO: 1.00s – 7.00s (dura 6.00s)\nLIENZO: 720x1280 (vertical 9:16; coordenadas en fracción 0–1, 0=arriba/izq)\nLO QUE DICE LA VOZ (texto del audio (tiempos estimados)):\n«Rápido uno. Rápido dos.»\nSUBTÍTULOS DEL TRAMO: ninguno\nFrase siguiente: «Rápido tres.»\nYA EN LA TIMELINE EN ESTE TRAMO: nada (lienzo libre)\nDIRECCIÓN: Necesita propuesta → Propón la mejor representación visual para este tramo; decides tú el enfoque.\nMATERIALES QUE PODRÍAN SERVIR (opcional):\n  · [vídeo lib_b] volcan.mp4: (sin descripción)  (uso: clímax · volcán, lava)\n  · [vídeo lib_a] Playa tropical: Olas en la orilla  (olas)\n  · [imagen lib_c] Cohete: Cohete despegando\n  · [imagen 7] 5: 3\n  · [imagen lib_m] None: algo sin título",
+    "tokens": 196,
+    "skeleton": [
+     {
+      "text": "",
+      "start": 0.0,
+      "end": 3.0
+     },
+     {
+      "text": "",
+      "start": 3.0,
+      "end": 6.0
+     }
+    ],
+    "brief_defaults": {
+     "idea": "Rápido uno. Rápido dos.",
+     "script": "Rápido uno. Rápido dos.",
+     "intent": "explicativa",
+     "must_include": [],
+     "resources": {},
+     "structure": "free",
+     "notes": ""
+    }
+   }
+  }
+ ]
+}
