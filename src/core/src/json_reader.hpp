@@ -48,6 +48,10 @@ struct ValidationFailure : std::exception {
 // Pydantic) acepta también textos de real sin decimales ("7.0"); int() de Python no.
 [[nodiscard]] std::optional<std::int64_t> parse_py_int(std::string_view text, bool accept_real_text);
 
+// int(texto) de Python sin el desbordamiento de 64 bits: un entero que no cabe da INT64_MIN o INT64_MAX
+// según el signo (para los que luego se acotan, como el limit de scene_rank_materials).
+[[nodiscard]] std::optional<std::int64_t> parse_py_int_saturating(std::string_view text);
+
 [[nodiscard]] double to_float(const Json& j, const PathNode& path);
 [[nodiscard]] std::int64_t to_int(const Json& j, const PathNode& path);
 [[nodiscard]] bool to_bool(const Json& j, const PathNode& path);

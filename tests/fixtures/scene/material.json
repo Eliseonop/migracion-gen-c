@@ -521,6 +521,28 @@
     ],
     "mood": "triste y oscuro"
    }
+  },
+  {
+   "raw": {
+    "subjects": "\u001cuno,  dos　; ",
+    "actions": [
+     " tres\u001f",
+     "​"
+    ],
+    "mood": "\u000b\fmuy  tenso\u001d\u001e",
+    "composition": ""
+   },
+   "result": {
+    "subjects": [
+     "uno",
+     "dos"
+    ],
+    "actions": [
+     "tres",
+     "​"
+    ],
+    "mood": "muy tenso"
+   }
   }
  ],
  "blobs": [

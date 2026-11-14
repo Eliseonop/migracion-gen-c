@@ -99,7 +99,13 @@ std::optional<double> parse_py_float(std::string_view text) {
     return value;
 }
 
-std::optional<std::int64_t> parse_py_int(std::string_view text, bool accept_real_text) {
+namespace {
+
+// El entero de un texto de int(): nullopt si no es un entero; si lo es pero no cabe en 64 bits,
+// nullopt o (con saturate) INT64_MIN/INT64_MAX según el signo. «decided» es falso solo si el texto
+// no está vacío, tiene bien los «_» y no es un entero (puede ser el texto de un real).
+std::optional<std::int64_t> parse_int_text(std::string_view text, bool saturate, bool& decided) {
+    decided = true;
     const std::string_view s = trim(text);
     if (s.empty()) {
         return std::nullopt;
@@ -114,28 +120,52 @@ std::optional<std::int64_t> parse_py_int(std::string_view text, bool accept_real
         negative = digits.front() == '-';
         digits.remove_prefix(1);
     }
-    if (!digits.empty() && std::ranges::all_of(digits, is_digit)) {
-        // Acumular en negativo para admitir INT64_MIN sin desbordar.
-        std::int64_t acc = 0;
-        for (const char c : digits) {
-            const int d = c - '0';
-            if (acc < (std::numeric_limits<std::int64_t>::min() + d) / 10) {
-                return std::nullopt;
-            }
-            acc = acc * 10 - d;
+    if (digits.empty() || !std::ranges::all_of(digits, is_digit)) {
+        decided = false;
+        return std::nullopt;
+    }
+    constexpr auto kMin = std::numeric_limits<std::int64_t>::min();
+    constexpr auto kMax = std::numeric_limits<std::int64_t>::max();
+    const auto overflow = [&]() -> std::optional<std::int64_t> {
+        if (!saturate) {
+            return std::nullopt;
         }
-        if (!negative) {
-            if (acc == std::numeric_limits<std::int64_t>::min()) {
-                return std::nullopt;
-            }
-            acc = -acc;
+        return negative ? kMin : kMax;
+    };
+    // Acumular en negativo para admitir INT64_MIN sin desbordar.
+    std::int64_t acc = 0;
+    for (const char c : digits) {
+        const int d = c - '0';
+        if (acc < (kMin + d) / 10) {
+            return overflow();
         }
-        return acc;
+        acc = acc * 10 - d;
+    }
+    if (!negative) {
+        if (acc == kMin) {
+            return overflow();
+        }
+        acc = -acc;
+    }
+    return acc;
+}
+
+} // namespace
+
+std::optional<std::int64_t> parse_py_int_saturating(std::string_view text) {
+    bool decided = true;
+    return parse_int_text(text, true, decided);
+}
+
+std::optional<std::int64_t> parse_py_int(std::string_view text, bool accept_real_text) {
+    bool decided = true;
+    if (auto v = parse_int_text(text, false, decided); decided) {
+        return v;
     }
     if (!accept_real_text) {
         return std::nullopt;
     }
-    const auto real = parse_py_float(s);
+    const auto real = parse_py_float(trim(text));
     if (real && std::isfinite(*real) && std::trunc(*real) == *real &&
         *real >= -9.2233720368547758e18 && *real < 9.2233720368547758e18) {
         return static_cast<std::int64_t>(*real);

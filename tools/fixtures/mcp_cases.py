@@ -1100,6 +1100,8 @@ SCENE_MATERIAL_STEPS = [
     ["scene_rank_materials", {"project_id": "m-main", "text": "volcán", "limit": 1e300}],
     ["scene_rank_materials", {"project_id": "m-main", "text": "volcán", "limit": "x"}],
     ["scene_rank_materials", {"project_id": "m-main", "text": "volcán", "limit": "1e3"}],
+    ["scene_rank_materials", {"project_id": "m-main", "text": "volcán", "limit": "99999999999999999999"}],
+    ["scene_rank_materials", {"project_id": "m-main", "text": "volcán", "limit": " -99_999_999_999_999_999_999 "}],
     ["scene_rank_materials", {"project_id": "m-main", "text": "volcán", "limit": [1]}],
     ["scene_rank_materials", {"project_id": "m-main", "text": "volcán", "limit": True}],
     ["scene_rank_materials", {"project_id": "m-main", "text": "volcán", "limit": float("nan")}],

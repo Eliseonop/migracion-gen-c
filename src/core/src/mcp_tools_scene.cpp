@@ -19,6 +19,7 @@ namespace gc::core::mcp {
 
 namespace {
 
+using detail::parse_py_int_saturating;
 using detail::py_int;
 using detail::py_str;
 using detail::py_strip;
@@ -223,8 +224,7 @@ Result<Json> scene_direction_get(Ctx& c) {
 }
 
 // max(1, min(int(limit or 5), 20)), y 5 si int() da un TypeError o un ValueError. int() de infinito es
-// un OverflowError, que no se captura. Divergencia: un texto con un entero que no cabe en 64 bits da 5
-// (en Python, 20).
+// un OverflowError, que no se captura. Un texto con un entero que no cabe en 64 bits se acota por su signo.
 Result<std::size_t> rank_limit(const Json& v) {
     constexpr std::size_t kDefault = 5;
     if (!py_truthy(v)) {
@@ -242,8 +242,8 @@ Result<std::size_t> rank_limit(const Json& v) {
         n = std::trunc(n);
     } else if (v.is_number_unsigned()) {
         n = static_cast<double>(v.get<std::uint64_t>());
-    } else if (const auto i = py_int(v)) {
-        n = static_cast<double>(*i);
+    } else if (const auto t = v.is_string() ? parse_py_int_saturating(v.get_ref<const std::string&>()) : py_int(v)) {
+        n = static_cast<double>(*t);
     } else {
         return kDefault;
     }

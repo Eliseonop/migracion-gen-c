@@ -105,7 +105,7 @@ TEST_CASE("paridad de la dirección de escena: términos clave y quitar tildes",
 
 TEST_CASE("paridad de la dirección de escena: metadata semántica", "[parity][scene]") {
     const Json f = load_fixture();
-    REQUIRE(f["semantics"].size() == 15);
+    REQUIRE(f["semantics"].size() == 16);
     for (const Json& c : f["semantics"]) {
         check(c, scene::normalize_semantic(c["raw"]), "normalize_semantic " + c["raw"].dump());
     }

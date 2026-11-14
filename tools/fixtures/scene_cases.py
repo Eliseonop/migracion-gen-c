@@ -507,6 +507,8 @@ SEMANTICS = [
     {"subjects": ("tupla",), "mood": "", "composition": "   "},
     {"subjects": "", "actions": ",;,"},
     {"subjects": ["ñandú", "Ελλάδα"], "mood": "triste y oscuro"},
+    {"subjects": "\x1cuno\x85, \u2003dos\u3000;\xa0", "actions": ["\u2028tres\x1f", "\u200b"],
+     "mood": "\x0b\x0cmuy\u2009\u2009tenso\x1d\x1e", "composition": "\x85"},
 ]
 
 BLOBS = [
