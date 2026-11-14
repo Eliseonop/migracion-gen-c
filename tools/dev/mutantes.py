@@ -1296,7 +1296,7 @@ SCENE = [
     ('timeline_duration: gana el último', 'src/core/src/scene_direction.cpp',
      'if (!best || v > *best) {', 'if (true) {'),
     ('normalize_doc sin desempate por end', 'src/core/src/scene_direction.cpp',
-     'return a["end"].get<double>() < b["end"].get<double>();', 'return false;'),
+     'return less_nan_last(a["end"].get<double>(), b["end"].get<double>());', 'return false;'),
     ('refs: la propia se queda', 'src/core/src/scene_direction.cpp',
      ' || ref == x["id"]) {', ') {'),
     ('status: no_visual queda pendiente', 'src/core/src/scene_direction.cpp',

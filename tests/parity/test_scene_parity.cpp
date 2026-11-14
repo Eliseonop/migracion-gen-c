@@ -238,3 +238,20 @@ TEST_CASE("paridad de la dirección de escena: guardar en projects.json", "[pari
     std::error_code ec;
     std::filesystem::remove_all(tmp, ec);
 }
+
+TEST_CASE("dirección de escena: un NaN al ordenar no rompe el orden", "[scene]") {
+    // Con un NaN, `<` no es un orden débil estricto (indefinido en std::stable_sort). Los NaN van al
+    // final y, entre ellos, en el orden de entrada. Python no falla, pero su orden depende de timsort.
+    Fakes fk;
+    const Json raw{{"segments", Json::array({Json{{"id", "sd_a"}, {"start", 0}, {"end", "nan"}},
+                                             Json{{"id", "sd_b"}, {"start", 0}, {"end", 3}},
+                                             Json{{"id", "sd_c"}, {"start", 0}, {"end", "nan"}},
+                                             Json{{"id", "sd_d"}, {"start", 0}, {"end", 1}}})}};
+    const auto doc = scene::normalize_doc(fk.env, raw);
+    REQUIRE(doc);
+    std::string order;
+    for (const Json& s : (*doc)["segments"]) {
+        order += s["id"].get<std::string>() + " ";
+    }
+    CHECK(order == "sd_d sd_b sd_a sd_c ");
+}

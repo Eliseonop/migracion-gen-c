@@ -155,6 +155,16 @@ Result<std::vector<Json>> iter_or_empty(const Json& v, const char* what) {
 
 // --- El guion ----------------------------------------------------------------------------------
 
+// a < b para ordenar con std::stable_sort: con un NaN, `<` deja de ser un orden débil estricto (y en C++
+// eso es indefinido). Los NaN van al final, como iguales entre sí. Divergencia: el sort de Python con un
+// NaN no falla, pero el orden que da depende de las comparaciones que haga timsort.
+bool less_nan_last(double a, double b) {
+    if (std::isnan(a)) {
+        return false;
+    }
+    return std::isnan(b) || a < b;
+}
+
 struct WordT {
     std::string text;
     double start = 0.0;
@@ -188,7 +198,7 @@ std::vector<WordT> caption_words(const Timeline& tl) {
             out.push_back({t, c0, c0 + gc::core::clip_timeline_duration(c)});
         }
     }
-    std::ranges::stable_sort(out, {}, &WordT::start);
+    std::ranges::stable_sort(out, less_nan_last, &WordT::start);
     return out;
 }
 
@@ -229,7 +239,7 @@ std::vector<WordT> material_words(const Project& proj, const Timeline& tl) {
             }
         }
     }
-    std::ranges::stable_sort(out, {}, &WordT::start);
+    std::ranges::stable_sort(out, less_nan_last, &WordT::start);
     return out;
 }
 
@@ -590,10 +600,10 @@ Result<Json> normalize_doc(SceneEnv& env, const Json& raw) {
     std::ranges::stable_sort(segs, [](const Json& a, const Json& b) {
         const double as = a["start"].get<double>();
         const double bs = b["start"].get<double>();
-        if (as != bs) {
-            return as < bs;
+        if (less_nan_last(as, bs) || less_nan_last(bs, as)) {
+            return less_nan_last(as, bs);
         }
-        return a["end"].get<double>() < b["end"].get<double>();
+        return less_nan_last(a["end"].get<double>(), b["end"].get<double>());
     });
     std::unordered_set<std::string> ids;
     for (const Json& x : segs) {
@@ -951,7 +961,9 @@ Result<Json> auto_segments(SceneEnv& env, const Project& project, const Json& ke
     flush();
 
     // Los tramos demasiado cortos se unen al anterior si es contiguo y sin dirección.
-    std::ranges::stable_sort(out, [](const Json& a, const Json& b) { return a["start"].get<double>() < b["start"].get<double>(); });
+    std::ranges::stable_sort(out, [](const Json& a, const Json& b) {
+        return less_nan_last(a["start"].get<double>(), b["start"].get<double>());
+    });
     const auto directed = [](const Json& s) { return py_truthy(get(s, "mode")) || py_truthy(get(s, "instruction")); };
     std::vector<Json> merged;
     for (Json& s : out) {
