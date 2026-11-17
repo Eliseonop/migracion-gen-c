@@ -668,6 +668,24 @@ Rectangle {
                             color: Theme.muted
                             font.pixelSize: 11
                         }
+                        // .ed-add-btn: el + que lo pone en el cabezal (addAsset).
+                        AbstractButton {
+                            id: addButton
+                            objectName: "material:add:" + slot.modelData.key
+                            implicitWidth: 26
+                            implicitHeight: 24
+                            hoverEnabled: true
+                            ToolTip.visible: hovered
+                            ToolTip.delay: 500
+                            ToolTip.text: "Añadir en el cursor"
+                            onClicked: panel.model.addMaterial(slot.modelData.key)
+                            contentItem: MIcon { name: "add"; size: 16; color: addButton.hovered ? "white" : Theme.text }
+                            background: Rectangle {
+                                radius: 6
+                                color: addButton.hovered ? Theme.accent : Theme.card3
+                                border.color: addButton.hovered ? Theme.accent : Theme.lineBright
+                            }
+                        }
                         ToolButton {
                             objectName: "sfx:edit:" + slot.modelData.key
                             visible: slot.modelData.source === "sfx" && !!panel.sfxModal

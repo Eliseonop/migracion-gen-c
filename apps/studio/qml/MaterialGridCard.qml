@@ -117,6 +117,32 @@ Item {
                     color: Qt.rgba(0, 0, 0, 0.55)
                     MIcon { anchors.centerIn: parent; name: "play_arrow"; size: 20; color: "white" }
                 }
+                // .ed-add-corner: el + que lo pone en el cabezal (addAsset).
+                AbstractButton {
+                    id: addCorner
+                    objectName: "material:add:" + slot.modelData.key
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.margins: 4
+                    width: 22
+                    height: 22
+                    hoverEnabled: true
+                    scale: hovered ? 1.08 : 1
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 500
+                    ToolTip.text: "Añadir en el cursor"
+                    onClicked: slot.host.model.addMaterial(slot.modelData.key)
+                    contentItem: MIcon { name: "add"; size: 16; color: "white" }
+                    background: Rectangle {
+                        radius: 6
+                        border.color: Qt.rgba(1, 1, 1, 0.35)
+                        gradient: Gradient {
+                            orientation: Gradient.Horizontal
+                            GradientStop { position: 0; color: Theme.accent }
+                            GradientStop { position: 1; color: Theme.accent2 }
+                        }
+                    }
+                }
                 // .ed-card-badges: seguimiento de caras guardado.
                 Rectangle {
                     visible: !!slot.modelData.faceTrack

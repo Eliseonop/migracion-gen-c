@@ -2400,6 +2400,32 @@ void EditorModel::add_generated(core::Timeline next, const Json& clip, const cha
     emit selectionChanged();
 }
 
+void EditorModel::addMaterial(const QString& key) {
+    const auto it = payloads_.find(key);
+    if (!session_ || it == payloads_.end()) {
+        return;
+    }
+    const Json& payload = it->second;
+    const auto lane = core::track_kind_for_clip(payload.value("kind", std::string()));
+    if (!lane) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    const core::TimelineClip* sel = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    const core::TimelineTrack* own = !selected_track_.empty() ? track(qstr(selected_track_))
+                                     : sel                     ? track(qstr(sel->track_id))
+                                                               : nullptr;
+    const auto usable = [&](const core::TimelineTrack& t) { return t.kind == *lane && !t.locked; };
+    const auto first = std::ranges::find_if(next.tracks, usable);
+    const std::string tid = own && usable(*own) ? own->id : first != next.tracks.end() ? first->id : "";
+    if (tid.empty()) {
+        return;
+    }
+    const double dur = core::js_number(payload.value("duration", Json(0)));
+    const double at = core::free_start_on_track(next.clips, tid, std::max(0.0, playhead_), dur);
+    add_generated(std::move(next), core::place_asset_clip(payload, tid, at, std::nullopt, ids_), "add-material");
+}
+
 // targetTrackFor('video'): la pista del clip seleccionado si es de vídeo y no está bloqueada; si no,
 // la primera así. Si ahí hay un clip, settle sube la figura a la pista de encima.
 void EditorModel::addShape(const QString& type, const QString& label) {

@@ -2568,3 +2568,33 @@ TEST_CASE("studio sin pantalla: la tarjeta del inicio enseña la miniatura de su
     CHECK(s.home->thumbs().contains("p1"));
 }
 #endif
+
+TEST_CASE("studio sin pantalla: el + del material lo pone en el cursor y encadena", "[studio][ui]") {
+    const Studio s;
+    s.editor->setPlayhead(1);
+    s.click("material:nav:audio");
+    const auto ids = [&] {
+        QStringList out;
+        for (const QVariant& v : s.editor->clips()) {
+            out << v.toMap()["clipId"].toString();
+        }
+        return out;
+    };
+    const QStringList before = ids();
+    s.click("material:add:audios:a1");
+    s.click("material:add:audios:a1");
+    QList<QVariantMap> added;
+    for (const QString& id : ids()) {
+        if (!before.contains(id)) {
+            added << s.view(id);
+        }
+    }
+    REQUIRE(added.size() == 2);
+    std::sort(added.begin(), added.end(), [](const QVariantMap& a, const QVariantMap& b) {
+        return a["start"].toDouble() < b["start"].toDouble();
+    });
+    CHECK(added[0]["kind"] == "audio");
+    CHECK(added[0]["start"].toDouble() >= 1.0);
+    CHECK(std::abs(added[1]["start"].toDouble() - (added[0]["start"].toDouble() + 5.0)) < 1e-9);
+    CHECK(s.editor->selection() == QStringList{added[1]["clipId"].toString()});
+}

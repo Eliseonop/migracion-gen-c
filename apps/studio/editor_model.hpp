@@ -308,6 +308,10 @@ public:
     Q_INVOKABLE QVariantMap previewMaterialDrop(const QString& key, double x, double y, bool alt) const;
     // Lo suelta (dropAsset de VideoEditor.jsx) y selecciona el clip nuevo.
     Q_INVOKABLE void dropMaterial(const QString& key, double x, double y, bool alt);
+    // El + de una tarjeta de material (addAsset): en el cabezal, en la pista de su tipo (la seleccionada
+    // si vale, si no la primera libre de bloqueo) y, si ahí hay algo, justo detrás (freeStartOnTrack):
+    // pulsarlo varias veces encadena los clips.
+    Q_INVOKABLE void addMaterial(const QString& key);
     Q_INVOKABLE void moveClip(const QString& id, double start, const QString& trackId);
     // {start, duration, times} del clip con el borde movido `delta` s. No cambia nada.
     Q_INVOKABLE QVariantMap previewTrim(const QString& id, bool left, double delta) const;
