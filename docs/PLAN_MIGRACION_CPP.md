@@ -2095,3 +2095,11 @@ Decisión de Edu (§6):
 - **Verificación:** 94 tests del studio y la interfaz con MSVC (dos nuevos: el + y el panel). El del autodesplazamiento mide ahora el borde de la timeline, que deja de ser el de la ventana.
 - **Falta:** añadir pistas, imán, igualar duración y congelar en la barra de la timeline, el JSON del proyecto y lo que no es aspecto (Clip Editor, IA, chat).
 
+### 2026-11-17 — F5: la barra de la timeline completa (4.ª parte)
+
+- **«Igualar duración» (`match_clips_to_first_duration`):** matchClipsToFirstDuration con durationPatchToMatch y sendClipsBehind de editorModel.js, con 12 timelines aleatorias («igualar», su propio rng) en `timeline_ui.json` contra el JS real, también con el primero repetido en la selección (JS lo pierde de la lista, y C++ igual).
+- **En `EditorModel`:** `addTrack` (vídeo o audio: build_track e insert_track en su sitio por defecto), `addTextTrack` (con subtitleStyle y la pista queda elegida), `toggleMagnet` (mainTrackOf: la primera de vídeo; una sola magnética; al activarla, pack_magnetic; el aviso de React) y `matchDuration` sobre la selección (la selección múltiple solo junta clips del mismo tipo, como en React). `magnetOn` para el botón.
+- **En la barra:** igualar (straighten), el imán (el MagnetIcon de EdTimeline dibujado: no está en Material Icons) y añadir pista de vídeo, audio y texto, en el orden de React.
+- **Verificación:** paridad del editor (55 754 comprobaciones) y 95 tests del studio y la interfaz con MSVC (uno nuevo). Smart App Control bloqueó dos veces `gc_tests.exe` recién enlazado: se borra y se vuelve a enlazar hasta que arranca.
+- **Falta:** congelar fotograma (pide sacar el fotograma a una imagen del proyecto, como freeze_frame del backend), separar los solapes de proyectos antiguos, el volumen de la vista previa y el JSON del proyecto.
+

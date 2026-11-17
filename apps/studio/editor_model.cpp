@@ -2473,6 +2473,68 @@ void EditorModel::addAdjustment() {
     add_generated(std::move(next), core::make_adjustment_clip_json(tid, playhead_, kDur, ids_), "add-adjustment");
 }
 
+void EditorModel::addTrack(const QString& kind) {
+    if (!session_ || (kind != "video" && kind != "audio" && kind != "text")) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    core::TimelineTrack t = core::build_track(kind.toStdString(), next.tracks, ids_.hex32().substr(0, 8));
+    if (kind == "text") {
+        t.style = core::subtitle_style();
+    }
+    const std::string id = t.id;
+    core::insert_track(next.tracks, std::move(t));
+    commit(std::move(next), "add-track", {});
+    if (kind == "text") {
+        selectTrack(qstr(id));
+    }
+}
+
+void EditorModel::addTextTrack() {
+    addTrack("text");
+}
+
+bool EditorModel::magnetOn() const {
+    if (!session_) {
+        return false;
+    }
+    const auto& tracks = session_->timeline()->tracks;
+    const auto main = std::ranges::find(tracks, std::string("video"), &core::TimelineTrack::kind); // mainTrackOf
+    return main != tracks.end() && main->magnetic;
+}
+
+void EditorModel::toggleMagnet() {
+    if (!session_) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    const auto main = std::ranges::find(next.tracks, std::string("video"), &core::TimelineTrack::kind);
+    if (main == next.tracks.end()) {
+        return;
+    }
+    const bool on = !main->magnetic;
+    const std::string id = main->id;
+    const QString name = qstr(main->name);
+    for (auto& t : next.tracks) { // una sola pista magnética
+        t.magnetic = t.id == id ? on : false;
+    }
+    if (on) {
+        core::pack_magnetic(next, id, {});
+    }
+    commit(std::move(next), "magnet", {});
+    set_notice("info", on ? "Pista " + name + " magnética: sin huecos, soltar inserta y empuja"
+                          : "Pista " + name + " ya no es magnética");
+}
+
+void EditorModel::matchDuration() {
+    if (!session_ || selection_.ids.size() < 2) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    next.clips = core::match_clips_to_first_duration(next.clips, selection_.ids);
+    commit(std::move(next), "match-duration", selection_.ids);
+}
+
 QVariantList EditorModel::curvePoints(const QString& kind, const QVariantList& bezier, int steps) {
     if (kind == "hold") {
         return {QPointF(0, 0), QPointF(0.999, 0), QPointF(1, 1)};

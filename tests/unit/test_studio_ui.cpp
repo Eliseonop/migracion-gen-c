@@ -2619,3 +2619,47 @@ TEST_CASE("studio sin pantalla: el panel de Keyframes anima, lista y quita", "[s
     CHECK_FALSE(s.item("kfPanel:row:0"));
     REQUIRE(s.item("kfPanel:animate"));
 }
+
+TEST_CASE("studio sin pantalla: la barra de la timeline añade pistas, imanta e iguala", "[studio][ui]") {
+    const Studio s;
+    const auto count = [&](const char* kind) {
+        int n = 0;
+        for (const QVariant& t : s.editor->tracks()) {
+            n += t.toMap()["kind"] == kind ? 1 : 0;
+        }
+        return n;
+    };
+    const int videos = count("video");
+    const int audios = count("audio");
+    const int texts = count("text");
+    s.click("tl:addVideo");
+    s.click("tl:addAudio");
+    s.click("tl:addText");
+    CHECK(count("video") == videos + 1);
+    CHECK(count("audio") == audios + 1);
+    CHECK(count("text") == texts + 1);
+    CHECK(s.editor->selectedTrack()["kind"] == "text"); // la de texto queda elegida
+
+    CHECK_FALSE(s.editor->magnetOn());
+    s.click("tl:magnet");
+    CHECK(s.editor->magnetOn());
+    CHECK(s.editor->notice()["type"] == "info");
+    s.click("tl:magnet");
+    CHECK_FALSE(s.editor->magnetOn());
+
+    // Igualar: una imagen nueva (5 s, en el cursor) toma el inicio y la duración de «b» (3 s); en la
+    // pista de «b» chocaría, así que el reparto la deja sin solaparse.
+    s.editor->setPlayhead(12);
+    s.click("material:nav:image");
+    s.click("material:add:images:i1");
+    const QString added = s.editor->selection().front();
+    REQUIRE(s.view(added)["duration"].toDouble() == 5.0);
+    s.editor->select("b", false, false);
+    s.editor->select(added, true, false);
+    REQUIRE(s.editor->selection() == QStringList{"b", added});
+    s.click("tl:match");
+    CHECK(s.view(added)["duration"].toDouble() == s.view("b")["duration"].toDouble());
+    const bool same_start = s.view(added)["start"].toDouble() == s.view("b")["start"].toDouble();
+    CHECK((same_start ? s.view(added)["trackId"] != s.view("b")["trackId"]
+                      : s.view(added)["start"].toDouble() >= s.view("b")["start"].toDouble() + s.view("b")["duration"].toDouble()));
+}

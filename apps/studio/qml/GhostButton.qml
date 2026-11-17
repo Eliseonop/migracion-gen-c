@@ -25,7 +25,8 @@ AbstractButton {
     ToolTip.text: tip
     contentItem: RowLayout {
         spacing: 6
-        MIcon { visible: !!btn.iconName; name: btn.iconName; size: btn.iconSize; color: btn.ink }
+        MIcon { visible: !!btn.iconName && btn.iconName !== "@magnet"; name: btn.iconName; size: btn.iconSize; color: btn.ink }
+        MagnetIcon { visible: btn.iconName === "@magnet"; size: btn.iconSize; color: btn.ink } // el imán no está en Material Icons
         Label { visible: !!btn.text; text: btn.text; font: btn.font; color: btn.ink }
     }
     background: Rectangle {

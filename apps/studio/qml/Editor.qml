@@ -612,6 +612,28 @@ Item {
                     GhostButton { objectName: "tl:marker"; iconName: "bookmark_add"; iconSize: 14; tip: "Marcador en el cursor (M) · , y . saltan entre marcadores y beats"; onClicked: editor.model.toggleMarker() }
                     GhostButton { objectName: "tl:delete"; iconName: "delete"; iconSize: 14; danger: true; tip: "Eliminar clip (Supr)"; enabled: parent.hasSel; onClicked: editor.model.deleteSelection() }
                     Item { Layout.fillWidth: true }
+                    GhostButton {
+                        objectName: "tl:match"
+                        iconName: "straighten"
+                        iconSize: 14
+                        enabled: editor.model.selection.length >= 2
+                        tip: "Copiar el rango de tiempo del primer clip (mismo inicio y mismo fin). Cada uno se queda en su pista (si chocara con otro, sube a la de encima). Un vídeo o audio no se alarga más que su fuente."
+                        onClicked: editor.model.matchDuration()
+                    }
+                    GhostButton {
+                        objectName: "tl:magnet"
+                        iconName: "@magnet"
+                        iconSize: 14
+                        on: editor.model.magnetOn
+                        tip: editor.model.magnetOn
+                             ? "Pista principal magnética ACTIVADA: sin huecos; al soltar se inserta en el corte más cercano y empuja lo de detrás. Clic para desactivar."
+                             : "Pista principal magnética (como CapCut): la pista de vídeo de abajo pasa a no tener huecos y soltar en ella inserta y empuja."
+                        onClicked: editor.model.toggleMagnet()
+                    }
+                    Rectangle { implicitWidth: 1; implicitHeight: 18; color: Theme.line; Layout.leftMargin: 3; Layout.rightMargin: 3 }
+                    GhostButton { objectName: "tl:addVideo"; iconName: "video_call"; iconSize: 15; tip: "Añadir pista de vídeo"; onClicked: editor.model.addTrack("video") }
+                    GhostButton { objectName: "tl:addAudio"; iconName: "library_music"; iconSize: 14; tip: "Añadir pista de audio"; onClicked: editor.model.addTrack("audio") }
+                    GhostButton { objectName: "tl:addText"; iconName: "text_fields"; iconSize: 14; tip: "Añadir pista de texto"; onClicked: editor.model.addTextTrack() }
                     IconBtn { objectName: "tl:zoomOut"; iconName: "zoom_out"; iconSize: 15; tip: "Alejar"; onClicked: editor.model.zoomBy(1 / 1.4, timelineView.width - timelineView.headWidth) }
                     IconBtn { objectName: "tl:zoomIn"; iconName: "zoom_in"; iconSize: 15; tip: "Acercar (o Ctrl + rueda)"; onClicked: editor.model.zoomBy(1.4, timelineView.width - timelineView.headWidth) }
                 }

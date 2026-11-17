@@ -125,6 +125,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(bool hasKeyframeBoard READ hasKeyframeBoard NOTIFY keyframeBoardChanged)
     // El clip del panel de Keyframes: {clipId, kind, kfs: [{id, f, t}]} del primero seleccionado, o vacío.
     Q_PROPERTY(QVariantMap keyframePanel READ keyframePanel NOTIFY keyframePanelChanged)
+    // La pista principal (la primera de vídeo) es magnética.
+    Q_PROPERTY(bool magnetOn READ magnetOn NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
     Q_PROPERTY(QVariantList textLooks READ textLooks CONSTANT)
     Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
@@ -382,6 +384,15 @@ public:
     // Figura del catálogo en el cabezal (addAsset('shape')) y capa de ajuste (addAdjustmentLayer).
     Q_INVOKABLE void addShape(const QString& type, const QString& label);
     Q_INVOKABLE void addAdjustment();
+    // La barra de EdTimeline: pista nueva de vídeo o audio (addTrack: en su sitio por defecto, numerada
+    // tras las que hay), pista de texto (addTextTrack: con el estilo de subtítulo, y queda elegida), el
+    // imán de la pista principal (toggleMagnet: la primera de vídeo; al activarlo se empaqueta sin huecos)
+    // e «Igualar duración» (matchClipsToFirstDuration sobre la selección).
+    Q_INVOKABLE void addTrack(const QString& kind);
+    Q_INVOKABLE void addTextTrack();
+    Q_INVOKABLE void toggleMagnet();
+    Q_INVOKABLE void matchDuration();
+    [[nodiscard]] bool magnetOn() const;
     // Filtros de color (EdFilters.jsx): clic añade o quita; intensidad y orden en la pila.
     Q_INVOKABLE void toggleFilter(const QString& id);
     // patchEffects: un valor de `effects` (Brillo, Contraste, Exposición…) sobre los del clip principal.
