@@ -2543,6 +2543,43 @@ void EditorModel::matchDuration() {
     commit(std::move(next), "match-duration", selection_.ids);
 }
 
+QString EditorModel::projectJson() const {
+    const auto project = store_.get_project(project_id_);
+    if (!project || !*project) {
+        return {};
+    }
+    const auto text = core::py_json_dumps(core::project_manifest(**project), 2);
+    return text ? qstr(*text) : QString();
+}
+
+QVariantMap EditorModel::saveProjectJson(const QString& text) {
+    const Json parsed = Json::parse(text.toStdString(), nullptr, false);
+    if (parsed.is_discarded()) {
+        return {{"error", "El JSON no es válido. Revisa comas y llaves."}};
+    }
+    if (!parsed.is_object()) {
+        return {{"error", "El JSON del proyecto tiene que ser un objeto: { \"project\": …, \"materials\": … }."}};
+    }
+    const auto applied = store_.apply_manifest(project_id_, parsed);
+    if (!applied) {
+        return {{"error", qstr(applied.error().message)}};
+    }
+    if (!*applied) {
+        return {{"error", "Proyecto no encontrado."}};
+    }
+    const core::Project& project = **applied;
+    const Json data = core::project_manifest(project);
+    const auto base = core::project_base(store_.clips_dir(), project);
+    QString info = "Guardado.";
+    if (core::ensure_project_dirs(base) && core::write_json_file(base / "manifest.json", data, 2)) {
+        info = "Guardado en: " + qstr(core::path_to_utf8(base / "manifest.json"));
+    }
+    project_name_ = qstr(project.name);
+    reload_project_materials(); // también avisa del nombre (projectChanged)
+    const auto shown = core::py_json_dumps(data, 2);
+    return {{"text", shown ? qstr(*shown) : text}, {"info", info}};
+}
+
 int EditorModel::overlapCount() const {
     return session_ ? static_cast<int>(core::overlap_pairs(session_->timeline()->clips).size()) : 0;
 }

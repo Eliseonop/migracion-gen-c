@@ -35,6 +35,9 @@ namespace gc::core {
                                                          std::string_view project_id);
 // storage.project_base: la carpeta propia del proyecto o la de por defecto.
 [[nodiscard]] std::filesystem::path project_base(const std::filesystem::path& clips_dir, const Project& project);
+// GET /api/projects/{id}/manifest (main.manifest): el proyecto ({id, name}) y la descripción de su
+// material, para verlo o editarlo a mano (el botón JSON del editor) o para pasarlo a una IA.
+[[nodiscard]] Json project_manifest(const Project& project);
 // storage.ensure_dirs: la carpeta y sus subcarpetas video/, audio/ e image/.
 [[nodiscard]] Result<void> ensure_project_dirs(const std::filesystem::path& base);
 // storage.resolve_media: <carpeta del proyecto>/<kind>/<filename> si `kind` es video, audio o

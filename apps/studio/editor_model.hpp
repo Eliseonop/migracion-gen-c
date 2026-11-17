@@ -404,6 +404,11 @@ public:
     [[nodiscard]] int overlapCount() const;
     // separateClipOverlaps de VideoEditor.jsx.
     Q_INVOKABLE void separateOverlaps();
+    // El botón JSON (JsonEditor.jsx): el manifest del proyecto (project_manifest) como texto, y
+    // guardarlo editado a mano (apply_manifest y manifest.json en la carpeta del proyecto, como
+    // PUT /manifest). Guardar da {error} o {text, info}.
+    Q_INVOKABLE QString projectJson() const;
+    Q_INVOKABLE QVariantMap saveProjectJson(const QString& text);
     [[nodiscard]] bool magnetOn() const;
     // Filtros de color (EdFilters.jsx): clic añade o quita; intensidad y orden en la pila.
     Q_INVOKABLE void toggleFilter(const QString& id);

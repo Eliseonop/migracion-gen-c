@@ -192,6 +192,47 @@ fs::path project_default_base(const fs::path& clips_dir, std::string_view projec
     return clips_dir / path_from_utf8(project_id);
 }
 
+namespace {
+
+template <class T>
+Json opt_json(const std::optional<T>& v) {
+    return v ? Json(*v) : Json(nullptr);
+}
+
+} // namespace
+
+Json project_manifest(const Project& project) {
+    Json materials = Json::array();
+    for (const auto& c : project.clips) {
+        materials.push_back({{"kind", "clip"},
+                             {"file", c.filename},
+                             {"label", opt_json(c.label)},
+                             {"description", opt_json(c.description)},
+                             {"start", c.start},
+                             {"end", c.end},
+                             {"source_url", opt_json(c.source_url)}});
+    }
+    for (const auto& a : project.audios) {
+        // `a.description or a.text`: una descripción vacía cuenta como ninguna.
+        const auto& desc = a.description && !a.description->empty() ? a.description : a.text;
+        materials.push_back({{"kind", "audio"},
+                             {"file", a.filename},
+                             {"label", opt_json(a.label)},
+                             {"description", opt_json(desc)},
+                             {"voice", opt_json(a.voice)},
+                             {"duration", opt_json(a.duration)}});
+    }
+    for (const auto& im : project.images) {
+        materials.push_back({{"kind", "image"},
+                             {"file", im.filename},
+                             {"label", opt_json(im.label)},
+                             {"description", opt_json(im.description)},
+                             {"width", opt_json(im.width)},
+                             {"height", opt_json(im.height)}});
+    }
+    return {{"project", {{"id", project.id}, {"name", project.name}}}, {"materials", std::move(materials)}};
+}
+
 fs::path project_base(const fs::path& clips_dir, const Project& project) {
     if (project.folder && !project.folder->empty()) {
         return path_from_utf8(*project.folder);

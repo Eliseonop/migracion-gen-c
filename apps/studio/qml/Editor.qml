@@ -122,6 +122,7 @@ Item {
                     iconName: "help_outline"
                     tip: "Atajos: Espacio reproduce, S divide, Supr elimina, Ctrl+Z deshace, M marca, ← → mueven el cursor"
                 }
+                GhostButton { objectName: "editor:json"; iconName: "data_object"; text: "JSON"; tip: "Ver / editar el JSON del proyecto"; onClicked: jsonModal.openNow() }
                 Label {
                     objectName: "editor:exportPct"
                     visible: editor.model.exporter.running
@@ -873,6 +874,7 @@ Item {
     // «Pegar atributos» (EdPasteAttrs.jsx): qué grupos del clip copiado van a los seleccionados.
     CropModal { id: cropModal; model: editor.model }
     SfxModal { id: sfxModal; model: editor.model }
+    JsonModal { id: jsonModal; model: editor.model }
     ClipMenu { id: clipMenu; model: editor.model; onPasteAttributes: pasteAttrs.openFor(editor.model.pasteableGroups()) }
 
     // «Subir calidad en la timeline» (el ConfirmModal de EdMaterial.jsx).

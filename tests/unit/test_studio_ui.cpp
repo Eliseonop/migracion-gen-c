@@ -2758,3 +2758,41 @@ TEST_CASE("studio sin pantalla: el volumen de escucha se elige en su desplegable
     CHECK(player->property("volume").toDouble() == 1.0);
     player->setProperty("volume", before); // la preferencia del usuario se queda como estaba
 }
+
+TEST_CASE("studio sin pantalla: el JSON del proyecto se ve, se edita y se guarda", "[studio][ui]") {
+    const Studio s;
+    s.click("editor:json");
+    QTest::qWait(20);
+    QQuickItem* area = s.item("json:text");
+    REQUIRE(area);
+    const QString shown = area->property("text").toString();
+    Json m = Json::parse(shown.toStdString());
+    CHECK(m["project"]["id"] == "p1");
+    CHECK(m["project"]["name"] == "Uno");
+    REQUIRE(m["materials"].size() == 2); // el audio y la imagen de la fixture
+    CHECK(m["materials"][0]["kind"] == "audio");
+    CHECK(m["materials"][0]["label"] == "Música");
+    CHECK(m["materials"][1]["kind"] == "image");
+
+    // Mal formado: el aviso de React y no se toca nada.
+    area->setProperty("text", "{ \"project\": ");
+    s.click("json:save");
+    CHECK(s.item("json:error")->property("text").toString().contains("no es válido"));
+    CHECK(s.editor->projectName() == "Uno");
+
+    // Nombre y etiqueta nuevos: al proyecto, al material y a manifest.json.
+    m["project"]["name"] = "Dos";
+    m["materials"][1]["label"] = "Logo nuevo";
+    area->setProperty("text", QString::fromStdString(m.dump(2)));
+    s.click("json:save");
+    CHECK(s.item("json:info")->property("text").toString().startsWith("Guardado en: "));
+    CHECK(s.editor->projectName() == "Dos");
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    CHECK((**project).name == "Dos");
+    CHECK((**project).images.front().label == "Logo nuevo");
+    const auto file = core::project_base(s.store->clips_dir(), **project) / "manifest.json";
+    REQUIRE(std::filesystem::exists(file));
+    CHECK(core::project_manifest(**project)["materials"][1]["label"] == "Logo nuevo");
+}
