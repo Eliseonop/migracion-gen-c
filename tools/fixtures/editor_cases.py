@@ -1102,6 +1102,28 @@ def _bg_case() -> dict:
             {"name": "eliminar fondo: geometría", "timeline": {"tracks": TRACKS, "clips": geo_clips}, "calls": gcalls}]
 
 
+def _format_case() -> dict:
+    """El formato de salida de la fila del reproductor (lib/projectFormat.js, EdViewerTools.jsx)."""
+    calls: list = []
+    for n in (0, 143, 144, 145, 719.5, 720, 721, 1080.4, 1081, 4095, 4096, 4097, 99999, -5, 2.5, None):
+        calls.append(["evenDim", n])
+    for rw, rh in ((16, 9), (9, 16), (1, 1), (4, 5), (21, 9), (1, 30), (30, 1), (0, 9), (9, 0), (-1, 1), (1920, 1081)):
+        for side in (0, 100, 480, 720, 1080, 1081, 2160, 5000, None):
+            calls.append(["sizeForRatio", rw, rh, side])
+    sizes = ((720, 1280), (1080, 1920), (1920, 1080), (1080, 1080), (1080, 1350), (1440, 1080), (1080, 1440),
+             (1000, 1001), (1078, 1920), (500, 1300), (0, 1080), (1080, 0), (480, 854), (2160, 3840), (2560, 1080))
+    for w, h in sizes:
+        calls.append(["aspectOf", w, h])
+        calls.append(["resolutionOf", w, h])
+        for a in ("16:9", "9:16", "1:1", "4:3", "3:4", "4:5", "custom", "2:1"):
+            calls.append(["withAspect", a, w, h])
+        for side in (480, 720, 1080, 2160, 333):
+            calls.append(["withResolution", side, w, h])
+        for mw, mh in ((1920, 1080), (1080, 1920), (3840, 2160), (640, 480), (0, 0), (1000, 3000)):
+            calls.append(["withMediaAspect", mw, mh, w, h])
+    return {"name": "formato", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
+
+
 def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
@@ -1139,4 +1161,5 @@ def cases() -> list[dict]:
     out.append(_youtube_case())
     out.append(_upgrade_case())
     out += _bg_case()
+    out.append(_format_case())
     return out

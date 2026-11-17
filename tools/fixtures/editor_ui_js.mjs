@@ -31,6 +31,7 @@ const selection = await load('lib/selectionFrame.js')
 const favorites = await load('lib/favorites.js')
 const sfxName = await load('lib/sfxName.js')
 const projectFps = await load('lib/projectFps.js')
+const projectFormat = await load('lib/projectFormat.js')
 const panning = await load('lib/panning.js')
 const scriptPrompt = await load('features/audio/scriptPrompt.js')
 const bgLib = await load('lib/clipBg.js')
@@ -642,6 +643,13 @@ const out = await Promise.all(cases.map(async ({ tracks, clips, markers, geo, ca
     applyAudioSpeedToLinkedText: (audioId, speed) => m.applyAudioSpeedToLinkedText(clips, tracks, byId(audioId), speed)
       .filter((c, i) => c !== clips[i]).map((c) => [c.id, c.start, c.out_point, c.words]),
     emptiedTracks: (candidates) => m.emptiedTracks(tracks, clips, candidates),
+    evenDim: (n) => projectFormat.evenDim(n),
+    sizeForRatio: (rw, rh, side) => projectFormat.sizeForRatio(rw, rh, side),
+    aspectOf: (w, h) => projectFormat.aspectOf(w, h),
+    resolutionOf: (w, h) => projectFormat.resolutionOf(w, h),
+    withAspect: (id, w, h) => projectFormat.withAspect(id, w, h),
+    withResolution: (side, w, h) => projectFormat.withResolution(side, w, h),
+    withMediaAspect: (mw, mh, w, h) => projectFormat.withMediaAspect(mw, mh, w, h),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)
       return moved.map((c) => c.start)

@@ -28,6 +28,7 @@
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
+#include "gc/core/project_format.hpp"
 #include "gc/core/timeline_view.hpp"
 #include "gc/core/vfx_stack.hpp"
 #include "gc/core/yt_ui.hpp"
@@ -1142,6 +1143,35 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
             }
         }
         return out;
+    }
+    if (fn == "evenDim" || fn == "sizeForRatio" || fn == "aspectOf" || fn == "resolutionOf" || fn == "withAspect" ||
+        fn == "withResolution" || fn == "withMediaAspect") {
+        // Number(null) || 0: null llega como NaN, que el formato trata como 0.
+        const auto maybe = [&](std::size_t i) {
+            return call.at(i).is_null() ? std::numeric_limits<double>::quiet_NaN() : call.at(i).get<double>();
+        };
+        const auto size = [](FrameSize s) { return Json{{"w", s.w}, {"h", s.h}}; };
+        const auto dim = [&](std::size_t i) { return static_cast<std::int64_t>(num(i)); };
+        if (fn == "evenDim") {
+            return format_even_dim(maybe(1));
+        }
+        if (fn == "sizeForRatio") {
+            return size(size_for_ratio(num(1), num(2), maybe(3)));
+        }
+        if (fn == "aspectOf") {
+            return aspect_of(num(1), num(2));
+        }
+        if (fn == "resolutionOf") {
+            const int r = resolution_of(num(1), num(2));
+            return r != 0 ? Json(r) : Json("custom");
+        }
+        if (fn == "withAspect") {
+            return size(with_aspect(str(1), dim(2), dim(3)));
+        }
+        if (fn == "withResolution") {
+            return size(with_resolution(num(1), dim(2), dim(3)));
+        }
+        return size(with_media_aspect(num(1), num(2), dim(3), dim(4)));
     }
     if (fn == "emptiedTracks") {
         return emptied_tracks(tl.tracks, tl.clips, strings(call.at(1)));
