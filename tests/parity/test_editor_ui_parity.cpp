@@ -233,6 +233,13 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         const LayerInfo info = clip_layer_info(tl.clips, str(1));
         return Json{{"index", info.index}, {"count", info.count}, {"canBack", info.can_back}, {"canFront", info.can_front}};
     }
+    if (fn == "matchClipsToFirstDuration") {
+        Json out = Json::array();
+        for (const auto& c : match_clips_to_first_duration(tl.clips, strings(call.at(1)))) {
+            out.push_back(Json::array({c->id, c->track_id, c->start, c->out_point, c->source_duration}));
+        }
+        return out;
+    }
     if (fn == "moveClipLayer") {
         Json out = Json::array();
         for (const auto& c : move_clip_layer(tl.clips, str(1), str(2))) {

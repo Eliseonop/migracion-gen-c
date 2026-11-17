@@ -1102,6 +1102,24 @@ def _bg_case() -> dict:
             {"name": "eliminar fondo: geometría", "timeline": {"tracks": TRACKS, "clips": geo_clips}, "calls": gcalls}]
 
 
+def _match_case() -> list[dict]:
+    """«Igualar duración» (matchClipsToFirstDuration) sobre timelines aleatorias, con su propio rng."""
+    rng = random.Random(20261117)
+    out = []
+    for n in range(12):
+        tl = _random_timeline(rng)
+        ids = [c["id"] for c in tl["clips"]]
+        calls: list = []
+        for _ in range(10):
+            k = rng.randint(0, min(5, len(ids)))
+            pick = rng.sample(ids + ["nada", ""], k=min(k, len(ids) + 2))
+            calls.append(["matchClipsToFirstDuration", pick])
+        if len(ids) >= 2:
+            calls.append(["matchClipsToFirstDuration", [ids[0], ids[0], ids[1]]])  # el primero repetido
+        out.append({"name": f"igualar {n}", "timeline": tl, "calls": calls})
+    return out
+
+
 def _format_case() -> dict:
     """El formato de salida de la fila del reproductor (lib/projectFormat.js, EdViewerTools.jsx)."""
     calls: list = []
@@ -1162,4 +1180,5 @@ def cases() -> list[dict]:
     out.append(_upgrade_case())
     out += _bg_case()
     out.append(_format_case())
+    out += _match_case()
     return out

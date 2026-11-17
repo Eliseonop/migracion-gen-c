@@ -130,4 +130,10 @@ struct LayerInfo {
 // frente, cambiando el orden de los clips de la pista en la lista.
 [[nodiscard]] ClipList move_clip_layer(const ClipList& clips, std::string_view clip_id, std::string_view action);
 
+// «Igualar duración» de la barra de la timeline (matchClipsToFirstDuration de editorModel.js, con
+// durationPatchToMatch y sendClipsBehind): los demás de `ids` toman el inicio y la duración del primero;
+// cada uno se queda en su pista y, en la del primero, detrás de él. Un vídeo o audio no pasa de su
+// fuente; un texto, imagen, figura o capa de ajuste se alarga lo que haga falta. Menos de dos: igual.
+[[nodiscard]] ClipList match_clips_to_first_duration(const ClipList& clips, std::span<const std::string> ids);
+
 } // namespace gc::core

@@ -1,6 +1,7 @@
 #include "gc/core/timeline_ui.hpp"
 
 #include <algorithm>
+#include <set>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -507,6 +508,77 @@ ClipList move_clip_layer(const ClipList& clips, std::string_view clip_id, std::s
     ClipList out = clips;
     for (std::size_t k = 0; k < slots.size(); ++k) {
         out[slots[k]] = clips[order[k]];
+    }
+    return out;
+}
+
+ClipList match_clips_to_first_duration(const ClipList& clips, std::span<const std::string> ids) {
+    std::vector<std::string> list;
+    for (const std::string& id : ids) {
+        if (!id.empty()) { // filter(Boolean)
+            list.push_back(id);
+        }
+    }
+    if (list.size() < 2) {
+        return clips;
+    }
+    const auto first = std::ranges::find(clips, list.front(), [](const auto& c) -> const std::string& { return c->id; });
+    if (first == clips.end()) {
+        return clips;
+    }
+    constexpr double kGenMinDur = 0.15; // GEN_MIN_DUR
+    const double target_dur = ui_clip_duration(**first);
+    const double target_start = js_fixed3(std::max(0.0, (*first)->start));
+    const std::string front_id = (*first)->id;
+    const std::string front_track = (*first)->track_id;
+    const std::set<std::string> rest(list.begin() + 1, list.end());
+    ClipList next = clips;
+    for (auto& c : next) {
+        if (!rest.contains(c->id)) {
+            continue;
+        }
+        TimelineClip& m = c.mut();
+        // durationPatchToMatch
+        const double want = std::max(kGenMinDur, target_dur);
+        const double in_p = m.in_point;
+        const double out_p = m.out_point;
+        const double sp = ui_clip_speed(m);
+        double new_out = in_p + want * sp;
+        m.start = target_start;
+        if (m.kind == "text" || m.kind == "image" || m.kind == "shape" || m.kind == "adjustment") {
+            const double src = m.source_duration > 0 ? m.source_duration : out_p;
+            m.out_point = js_fixed3(new_out);
+            m.source_duration = js_fixed3(std::max(src, new_out));
+            continue;
+        }
+        const double max_out = m.source_duration > 0 ? m.source_duration : out_p;
+        const double min_out = in_p + kGenMinDur * sp;
+        new_out = std::min(max_out, std::max(min_out, new_out));
+        if (max_out < min_out) {
+            new_out = max_out;
+        }
+        m.out_point = js_fixed3(new_out);
+    }
+    // sendClipsBehind: los de `rest` de la pista del primero, justo delante de él en la lista.
+    ClipList pending;
+    for (const auto& c : next) {
+        if (rest.contains(c->id) && c->track_id == front_track) {
+            pending.push_back(c);
+        }
+    }
+    if (pending.empty()) {
+        return next;
+    }
+    ClipList out;
+    out.reserve(next.size());
+    for (const auto& c : next) {
+        if (rest.contains(c->id) && c->track_id == front_track) {
+            continue;
+        }
+        if (c->id == front_id) {
+            out.insert(out.end(), pending.begin(), pending.end());
+        }
+        out.push_back(c);
     }
     return out;
 }

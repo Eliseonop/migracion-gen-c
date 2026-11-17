@@ -643,6 +643,8 @@ const out = await Promise.all(cases.map(async ({ tracks, clips, markers, geo, ca
     applyAudioSpeedToLinkedText: (audioId, speed) => m.applyAudioSpeedToLinkedText(clips, tracks, byId(audioId), speed)
       .filter((c, i) => c !== clips[i]).map((c) => [c.id, c.start, c.out_point, c.words]),
     emptiedTracks: (candidates) => m.emptiedTracks(tracks, clips, candidates),
+    matchClipsToFirstDuration: (ids) => m.matchClipsToFirstDuration(clips, ids)
+      .map((c) => [c.id, c.track_id, c.start, c.out_point, c.source_duration ?? 0]),
     evenDim: (n) => projectFormat.evenDim(n),
     sizeForRatio: (rw, rh, side) => projectFormat.sizeForRatio(rw, rh, side),
     aspectOf: (w, h) => projectFormat.aspectOf(w, h),
