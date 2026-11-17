@@ -9,6 +9,7 @@
 #include <map>
 #include <ranges>
 
+#include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_rules.hpp"
 
 namespace gc::core {
@@ -579,6 +580,119 @@ ClipList match_clips_to_first_duration(const ClipList& clips, std::span<const st
             out.insert(out.end(), pending.begin(), pending.end());
         }
         out.push_back(c);
+    }
+    return out;
+}
+
+namespace {
+
+double overlap_of(const TimelineClip& a, const TimelineClip& b) {
+    return std::min(ui_clip_end(a), ui_clip_end(b)) - std::max(a.start, b.start);
+}
+
+// packMagnetic de magnetic.js (sin prioridades): orden por inicio (a menos de 1e-4, el de la lista) y
+// los inicios seguidos desde 0. true si cambió alguno.
+bool pack_magnetic_js(ClipList& clips, std::string_view track_id) {
+    std::vector<std::size_t> row;
+    for (std::size_t i = 0; i < clips.size(); ++i) {
+        if (clips[i]->track_id == track_id) {
+            row.push_back(i);
+        }
+    }
+    std::ranges::stable_sort(row, [&](std::size_t a, std::size_t b) {
+        const double d = clips[a]->start - clips[b]->start;
+        return std::abs(d) > 1e-4 ? d < 0 : a < b;
+    });
+    double cursor = 0;
+    bool changed = false;
+    for (const std::size_t i : row) {
+        const double s = js_fixed3(cursor);
+        cursor += ui_clip_duration(*clips[i]);
+        if (std::abs(s - clips[i]->start) >= 1e-6) {
+            clips[i].mut().start = s;
+            changed = true;
+        }
+    }
+    return changed;
+}
+
+} // namespace
+
+std::vector<std::pair<std::string, std::string>> overlap_pairs(const ClipList& clips, double eps) {
+    std::vector<std::string> order; // las pistas, por su primera aparición (el Map de JS)
+    std::map<std::string, std::vector<const TimelineClip*>, std::less<>> by_track;
+    for (const auto& c : clips) {
+        auto [it, fresh] = by_track.try_emplace(c->track_id);
+        if (fresh) {
+            order.push_back(c->track_id);
+        }
+        it->second.push_back(&*c);
+    }
+    std::vector<std::pair<std::string, std::string>> pairs;
+    for (const auto& id : order) {
+        auto& row = by_track[id];
+        std::ranges::stable_sort(row, {}, &TimelineClip::start);
+        for (std::size_t i = 0; i < row.size(); ++i) {
+            const double end = ui_clip_end(*row[i]);
+            for (std::size_t j = i + 1; j < row.size() && row[j]->start < end - eps; ++j) {
+                if (overlap_of(*row[i], *row[j]) > eps) {
+                    pairs.emplace_back(row[i]->id, row[j]->id);
+                }
+            }
+        }
+    }
+    return pairs;
+}
+
+SeparatedOverlaps separate_overlaps(const ClipList& clips, const std::vector<TimelineTrack>& tracks,
+                                    const MakeTrack& make_track, double eps) {
+    SeparatedOverlaps out{clips, tracks, 0};
+    for (const auto& t : tracks) {
+        if (t.magnetic) {
+            if (pack_magnetic_js(out.clips, t.id)) {
+                ++out.moved;
+            }
+            continue;
+        }
+        std::vector<TimelineClip> row; // out.filter(x => x.track_id === t.id), al empezar la pista
+        for (const auto& c : out.clips) {
+            if (c->track_id == t.id) {
+                row.push_back(*c);
+            }
+        }
+        std::vector<const TimelineClip*> kept;
+        for (const TimelineClip& c : row) {
+            if (std::ranges::none_of(kept, [&](const TimelineClip* k) { return overlap_of(*k, c) > eps; })) {
+                kept.push_back(&c);
+                continue;
+            }
+            // lift: la pista libre de al lado o una nueva en su hueco.
+            const std::vector<std::string> exclude{c.id};
+            const auto to = lift_target(out.tracks, out.clips, c.track_id, c.start, ui_clip_duration(c), exclude);
+            std::string target;
+            if (to && to->track_id) {
+                target = *to->track_id;
+            } else if (to && to->slot && make_track) {
+                const auto src = std::ranges::find(out.tracks, c.track_id, &TimelineTrack::id);
+                if (src == out.tracks.end()) {
+                    kept.push_back(&c);
+                    continue;
+                }
+                TimelineTrack nt = make_track(src->kind, src->kind == "text" ? src->style : std::nullopt, out.tracks);
+                target = nt.id;
+                const std::size_t at = slot_index(out.tracks, *to->slot);
+                insert_track(out.tracks, std::move(nt), at);
+            } else {
+                kept.push_back(&c);
+                continue;
+            }
+            for (auto& x : out.clips) {
+                if (x->id == c.id) {
+                    x.mut().track_id = target;
+                }
+            }
+            ++out.moved;
+        }
     }
     return out;
 }

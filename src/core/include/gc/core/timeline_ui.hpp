@@ -5,6 +5,7 @@
 // ops: usa la duración de JS (clipDur, sin redondear; la figura tampoco cambia de velocidad) y
 // redondea como `+x.toFixed(3)`.
 
+#include <functional>
 #include <limits>
 #include <optional>
 #include <span>
@@ -135,5 +136,23 @@ struct LayerInfo {
 // cada uno se queda en su pista y, en la del primero, detrás de él. Un vídeo o audio no pasa de su
 // fuente; un texto, imagen, figura o capa de ajuste se alarga lo que haga falta. Menos de dos: igual.
 [[nodiscard]] ClipList match_clips_to_first_duration(const ClipList& clips, std::span<const std::string> ids);
+
+// overlapPairs de noOverlap.js: los pares de clips de una misma pista que se pisan más de `eps` s
+// (proyectos viejos), en orden de pista (la primera vez que sale) y por inicio dentro de cada una.
+[[nodiscard]] std::vector<std::pair<std::string, std::string>> overlap_pairs(const ClipList& clips,
+                                                                            double eps = 0.05);
+// «Separar solapes» (separateOverlaps de noOverlap.js): las pistas magnéticas se empaquetan (packMagnetic
+// de magnetic.js, sin huecos desde 0) y, en las demás, cada clip que pisa a uno anterior de su pista sube
+// a la pista libre de al lado o a una nueva (`make_track(kind, style, tracks)`; un texto pasa el estilo de
+// la suya). `moved`: los clips movidos más las pistas magnéticas que cambiaron.
+using MakeTrack = std::function<TimelineTrack(std::string_view kind, const std::optional<Json>& style,
+                                              const std::vector<TimelineTrack>& tracks)>;
+struct SeparatedOverlaps {
+    ClipList clips;
+    std::vector<TimelineTrack> tracks;
+    int moved = 0;
+};
+[[nodiscard]] SeparatedOverlaps separate_overlaps(const ClipList& clips, const std::vector<TimelineTrack>& tracks,
+                                                  const MakeTrack& make_track, double eps = 0.05);
 
 } // namespace gc::core

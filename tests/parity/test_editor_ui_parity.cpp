@@ -240,6 +240,34 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         }
         return out;
     }
+    if (fn == "overlapPairs") {
+        Json out = Json::array();
+        for (const auto& [a, b] : overlap_pairs(tl.clips)) {
+            out.push_back(Json::array({a, b}));
+        }
+        return out;
+    }
+    if (fn == "separateOverlaps") {
+        int k = 0;
+        const MakeTrack make = [&](std::string_view kind, const std::optional<Json>& style,
+                                   const std::vector<TimelineTrack>& list) {
+            TimelineTrack t = build_track(kind, list, "s" + std::to_string(k++));
+            if (kind == "text") {
+                t.style = style ? *style : Json{{"sub", 1}};
+            }
+            return t;
+        };
+        const SeparatedOverlaps sep = separate_overlaps(tl.clips, tl.tracks, make);
+        Json clips = Json::array();
+        for (const auto& c : sep.clips) {
+            clips.push_back(Json::array({c->id, c->track_id, c->start}));
+        }
+        Json tracks = Json::array();
+        for (const auto& t : sep.tracks) {
+            tracks.push_back(Json::array({t.id, t.kind, t.name, t.style ? *t.style : Json(nullptr)}));
+        }
+        return Json{{"clips", clips}, {"tracks", tracks}, {"moved", sep.moved}};
+    }
     if (fn == "moveClipLayer") {
         Json out = Json::array();
         for (const auto& c : move_clip_layer(tl.clips, str(1), str(2))) {

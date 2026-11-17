@@ -645,6 +645,25 @@ const out = await Promise.all(cases.map(async ({ tracks, clips, markers, geo, ca
     emptiedTracks: (candidates) => m.emptiedTracks(tracks, clips, candidates),
     matchClipsToFirstDuration: (ids) => m.matchClipsToFirstDuration(clips, ids)
       .map((c) => [c.id, c.track_id, c.start, c.out_point, c.source_duration ?? 0]),
+    overlapPairs: () => noOverlap.overlapPairs(clips),
+    // separateClipOverlaps de VideoEditor.jsx, con su buildTrack (el id con un sufijo fijo, s0, s1…).
+    separateOverlaps: () => {
+      let k = 0
+      const makeTrack = (kind, style, list) => {
+        const prefix = kind === 'video' ? 'V' : kind === 'audio' ? 'A' : 'T'
+        const nums = (list || []).filter((t) => t.kind === kind).map((t) => parseInt(String(t.name).replace(/\D/g, ''), 10) || 0)
+        const n = (nums.length ? Math.max(...nums) : 0) + 1
+        const nt = { id: `${prefix}${n}-s${k++}`, kind, name: `${prefix}${n}`, hidden: false, muted: false, locked: false, linked_track_id: null }
+        if (kind === 'text') nt.style = style ? { ...style } : { sub: 1 }
+        return nt
+      }
+      const out = noOverlap.separateOverlaps(clips, tracks, { makeTrack })
+      return {
+        clips: out.clips.map((c) => [c.id, c.track_id, c.start]),
+        tracks: out.tracks.map((t) => [t.id, t.kind, t.name, t.style ?? null]),
+        moved: out.moved,
+      }
+    },
     evenDim: (n) => projectFormat.evenDim(n),
     sizeForRatio: (rw, rh, side) => projectFormat.sizeForRatio(rw, rh, side),
     aspectOf: (w, h) => projectFormat.aspectOf(w, h),

@@ -1120,6 +1120,28 @@ def _match_case() -> list[dict]:
     return out
 
 
+def _separate_case() -> list[dict]:
+    """«Separar solapes» (separateOverlaps y overlapPairs de noOverlap.js) sobre timelines aleatorias, que
+    se solapan solas; con pistas magnéticas, bloqueadas, ocultas y de texto con estilo."""
+    rng = random.Random(20261118)
+    out = []
+    for n in range(16):
+        tl = _random_timeline(rng)
+        tl["tracks"] = [dict(t) for t in tl["tracks"]]
+        for t in tl["tracks"]:
+            if rng.random() < 0.2:
+                t["magnetic"] = True
+            if rng.random() < 0.1:
+                t["locked"] = True
+            if rng.random() < 0.1:
+                t["hidden"] = True
+            if t["kind"] == "text" and rng.random() < 0.5:
+                t["style"] = {"font_size": rng.randint(20, 60)}
+        out.append({"name": f"separar solapes {n}", "timeline": tl,
+                    "calls": [["overlapPairs"], ["separateOverlaps"]]})
+    return out
+
+
 def _format_case() -> dict:
     """El formato de salida de la fila del reproductor (lib/projectFormat.js, EdViewerTools.jsx)."""
     calls: list = []
@@ -1181,4 +1203,5 @@ def cases() -> list[dict]:
     out += _bg_case()
     out.append(_format_case())
     out += _match_case()
+    out += _separate_case()
     return out
