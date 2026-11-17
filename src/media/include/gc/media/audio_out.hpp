@@ -68,6 +68,8 @@ public:
     [[nodiscard]] Result<void> play_from(double seconds);
     void pause();
     [[nodiscard]] bool playing() const noexcept;
+    // El volumen de escucha (0 – 1, el maestro de la salida): solo lo que se oye, no el PCM.
+    void set_volume(double volume);
     // El reloj, en s: lo que ya se oye (heard_position de filled() y latency()).
     [[nodiscard]] double position() const;
     // Lo que ya ha pedido la tarjeta, en s (lo que se oirá dentro de latency()).

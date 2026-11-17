@@ -66,8 +66,7 @@ Rectangle {
         { id: "shapes", icon: "category", label: "Figuras", short: "Figuras" },
         { id: "text", icon: "title", label: "Texto", short: "Texto" },
         { id: "transitions", icon: "animation", label: "Animación", short: "Anim.", off: "Las animaciones de clip están en la pestaña Animar del inspector" },
-        { id: "motion", icon: "animation", label: "Motion", short: "Motion", sep: true, off: "Motion no está en GenClipPro (fuera de alcance por ahora)" },
-        { id: "paper", icon: "draw", label: "Paper", short: "Paper", off: "Paper Animator no está en GenClipPro (fuera de alcance por ahora)" },
+        // Sin Motion (se rehará de cero) ni Paper (es el efecto paper_cutout).
         { id: "ai", icon: "smart_toy", label: "IA", short: "IA", sep: true, off: "La pestaña IA aún no está en GenClipPro" },
         { id: "settings", icon: "settings", label: "Configuración", short: "Config", sep: true },
         { id: "chat", icon: "forum", label: "Chat IA", short: "Chat", off: "El chat con IA aún no está en GenClipPro" }

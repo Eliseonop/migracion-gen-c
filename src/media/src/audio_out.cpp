@@ -131,6 +131,12 @@ void AudioOut::pause() {
 
 bool AudioOut::playing() const noexcept { return impl_->playing; }
 
+void AudioOut::set_volume(double volume) {
+    if (impl_->has_device) {
+        ma_device_set_master_volume(&impl_->device, static_cast<float>(std::clamp(volume, 0.0, 1.0)));
+    }
+}
+
 double AudioOut::position() const { return heard_position(filled(), impl_->from, latency()); }
 
 double AudioOut::filled() const { return impl_->cursor.position(); }

@@ -2,7 +2,7 @@
 # proyecto de video-yt con su material. Lo usan `genclip frame` y `genclip render`, y lo usará el
 # editor (F5). Solo con FFmpeg y Skia (presets msvc-vcpkg-*).
 
-add_library(gc_export src/audio.cpp src/frame.cpp src/image_import.cpp src/prepare.cpp src/project.cpp src/proxy.cpp src/render.cpp
+add_library(gc_export src/audio.cpp src/freeze.cpp src/frame.cpp src/image_import.cpp src/prepare.cpp src/project.cpp src/proxy.cpp src/render.cpp
                       src/vfx_bake.cpp)
 add_library(gc::export ALIAS gc_export)
 

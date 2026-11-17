@@ -66,6 +66,7 @@
 #include "qt_json.hpp"
 
 #ifdef GC_STUDIO_PREVIEW
+#include "gc/export/freeze.hpp"
 #include "gc/export/image_import.hpp"
 #include "gc/media/decode.hpp"
 #include "gc/media/probe.hpp"
@@ -243,6 +244,9 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     : QObject(parent), store_(store), settings_(settings), player_(*this) {
     connect(this, &EditorModel::selectionChanged, this, &EditorModel::keyframePanelChanged);
     connect(this, &EditorModel::timelineChanged, this, &EditorModel::keyframePanelChanged);
+    for (auto sig : {&EditorModel::selectionChanged, &EditorModel::timelineChanged, &EditorModel::playheadChanged}) {
+        connect(this, sig, this, &EditorModel::freezeChanged);
+    }
     // Sonando, el inspector no se recalcula a cada fotograma (setPlayhead): al parar, una vez.
     connect(&player_, &Player::playingChanged, this, [this] {
         if (!player_.playing() && !selection_.ids.empty()) {
@@ -2064,10 +2068,13 @@ std::optional<std::filesystem::path> EditorModel::media_path(const core::Timelin
     if (!project || !*project) {
         return std::nullopt;
     }
+    return core::clip_media_path(**project, c, media_dirs());
+}
+
+core::MediaDirs EditorModel::media_dirs() const {
     const auto data_dir = store_.file().parent_path();
     const Json settings = settings_ ? settings_->load() : Json::object();
-    return core::clip_media_path(**project, c, {store_.clips_dir(), data_dir,
-                                                core::collections_root(settings, assets_dir(data_dir) / "material")});
+    return {store_.clips_dir(), data_dir, core::collections_root(settings, assets_dir(data_dir) / "material")};
 }
 
 std::optional<std::pair<double, double>> EditorModel::source_size(const core::TimelineClip& c) const {
@@ -2226,7 +2233,8 @@ QVariantMap EditorModel::clipMenu(const QString& clipId) const {
             {"sfx", fav_id.has_value()},
             {"favorite", fav_id && std::ranges::find(sfx, Json(*fav_id)) != sfx.end()},
             {"canPasteAttrs", attr_clipboard_ && attr_clipboard_->id != c->id},
-            {"canCaption", core::can_caption_clip(*c)}};
+            {"canCaption", core::can_caption_clip(*c)},
+            {"canFreeze", c->kind == "video" && playhead_ >= c->start - 1e-3 && playhead_ <= core::ui_clip_end(*c) + 1e-3}};
 }
 
 void EditorModel::moveLayer(const QString& clipId, const QString& action) {
@@ -2533,6 +2541,83 @@ void EditorModel::matchDuration() {
     core::Timeline next = *session_->timeline();
     next.clips = core::match_clips_to_first_duration(next.clips, selection_.ids);
     commit(std::move(next), "match-duration", selection_.ids);
+}
+
+int EditorModel::overlapCount() const {
+    return session_ ? static_cast<int>(core::overlap_pairs(session_->timeline()->clips).size()) : 0;
+}
+
+void EditorModel::separateOverlaps() {
+    if (!session_) {
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    const core::MakeTrack make = [this](std::string_view kind, const std::optional<Json>& style,
+                                        const std::vector<core::TimelineTrack>& tracks) {
+        core::TimelineTrack t = core::build_track(kind, tracks, ids_.hex32().substr(0, 8));
+        if (kind == "text") {
+            t.style = style ? *style : core::subtitle_style();
+        }
+        return t;
+    };
+    core::SeparatedOverlaps out = core::separate_overlaps(next.clips, next.tracks, make);
+    if (out.moved == 0) {
+        return;
+    }
+    next.clips = std::move(out.clips);
+    next.tracks = std::move(out.tracks);
+    commit(std::move(next), "separate-overlaps", {});
+    set_notice("success", out.moved == 1 ? QString("1 clip movido a su propia pista")
+                                         : QString("%1 clips movidos a su propia pista").arg(out.moved));
+}
+
+bool EditorModel::canFreeze() const {
+    if (selection_.ids.size() != 1) {
+        return false;
+    }
+    const core::TimelineClip* c = clip(qstr(selection_.ids.front()));
+    return c && c->kind == "video" && playhead_ >= c->start - 1e-3 && playhead_ <= core::ui_clip_end(*c) + 1e-3;
+}
+
+void EditorModel::freezeAtPlayhead() {
+    if (!session_ || !canFreeze()) {
+        return;
+    }
+#ifdef GC_STUDIO_PREVIEW
+    const core::TimelineClip v = *clip(qstr(selection_.ids.front()));
+    const double head = playhead_;
+    // freezeSourceTime: el instante del ARCHIVO que se ve en el cabezal, a ms.
+    const double rel = std::max(0.0, head - v.start) * core::clip_speed(v);
+    const double src = std::round(std::clamp(v.reverse ? v.out_point - rel : v.in_point + rel,
+                                             std::min(v.in_point, v.out_point), v.out_point) * 1000.0) / 1000.0;
+    auto image = exporter::freeze_frame_image(store_, project_id_, v, src, media_dirs(), ids_);
+    if (!image) {
+        set_notice("error", image.error().message.empty() ? QString("No se pudo congelar el fotograma.")
+                                                          : qstr(image.error().message));
+        return;
+    }
+    Json info{{"id", image->id}, {"filename", image->filename}};
+    if (image->label) {
+        info["label"] = *image->label;
+    }
+    const auto change = session_->apply(core::ops::FreezeFrame{v.id, Json(head), info, Json(exporter::kFreezeDuration)});
+    if (!ok(change)) {
+        return;
+    }
+    reload_project_materials(); // la imagen aparece en el material del proyecto
+    for (const auto& id : change->changed) {
+        const core::TimelineClip* c = clip(qstr(id));
+        if (c && c->kind == "image" && c->asset_id == image->id) {
+            selection_ = core::ClipSelection{{id}, id};
+            break;
+        }
+    }
+    rebuild();
+    emit selectionChanged();
+    set_notice("success", "Fotograma congelado (3 s)");
+#else
+    set_notice("error", "Congelar fotograma necesita gc_media (presets msvc-vcpkg-*).");
+#endif
 }
 
 QVariantList EditorModel::curvePoints(const QString& kind, const QVariantList& bezier, int steps) {

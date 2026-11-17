@@ -29,6 +29,9 @@ class Player : public QObject {
     Q_PROPERTY(bool audible READ audible NOTIFY audioChanged)
     // Por qué no suena (sin salida de audio, la mezcla falló…); vacío si suena o aún no se ha pedido.
     Q_PROPERTY(QString audioError READ audioError NOTIFY audioChanged)
+    // El volumen de escucha (PreviewVolButton de EdTimeline.jsx, 0 – 1): solo el editor, no el export.
+    // Se guarda entre sesiones (React: localStorage «vy:preview-volume»).
+    Q_PROPERTY(double volume READ volume WRITE setVolume NOTIFY volumeChanged)
 
 public:
     explicit Player(EditorModel& editor);
@@ -41,6 +44,8 @@ public:
     [[nodiscard]] bool playing() const { return playing_; }
     [[nodiscard]] bool audible() const { return audible_; }
     [[nodiscard]] QString audioError() const { return audio_error_; }
+    [[nodiscard]] double volume() const { return volume_; }
+    void setVolume(double volume);
 
     Q_INVOKABLE void toggle();
     // Desde el cabezal; si está al final, desde el principio.
@@ -57,6 +62,7 @@ public:
 signals:
     void playingChanged();
     void audioChanged();
+    void volumeChanged();
 
 private:
     struct Audio; // la salida de audio y el hilo de la mezcla (con gc_export)
@@ -72,6 +78,7 @@ private:
     QTimer timer_;
     bool playing_ = false;
     bool audible_ = false;
+    double volume_ = 1.0;
     bool moving_ = false; // el cabezal lo está moviendo el propio reproductor
     QString audio_error_;
     std::chrono::steady_clock::time_point wall_start_; // el reloj de pared: desde cuándo…

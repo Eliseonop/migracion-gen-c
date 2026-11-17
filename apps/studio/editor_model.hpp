@@ -20,6 +20,7 @@
 #include <optional>
 
 #include "gc/core/clip_filters.hpp"
+#include "gc/core/clip_media.hpp"
 #include "gc/core/clip_pose_edit.hpp"
 #include "gc/core/history_store.hpp"
 #include "gc/core/mask_ui.hpp"
@@ -127,6 +128,10 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantMap keyframePanel READ keyframePanel NOTIFY keyframePanelChanged)
     // La pista principal (la primera de vídeo) es magnética.
     Q_PROPERTY(bool magnetOn READ magnetOn NOTIFY timelineChanged)
+    // canFreeze de freezeFrame.js con un solo clip seleccionado (freezeDisabled de EdTimeline).
+    Q_PROPERTY(bool canFreeze READ canFreeze NOTIFY freezeChanged)
+    // overlapPairs de noOverlap.js: los solapes que trae el proyecto («Separar solapes»).
+    Q_PROPERTY(int overlapCount READ overlapCount NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
     Q_PROPERTY(QVariantList textLooks READ textLooks CONSTANT)
     Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
@@ -392,6 +397,13 @@ public:
     Q_INVOKABLE void addTextTrack();
     Q_INVOKABLE void toggleMagnet();
     Q_INVOKABLE void matchDuration();
+    // freezeAtPlayhead de VideoEditor.jsx: el fotograma del cabezal como imagen del proyecto
+    // (exporter::freeze_frame_image) y la op freeze_frame (3 s), en un paso de deshacer.
+    Q_INVOKABLE void freezeAtPlayhead();
+    [[nodiscard]] bool canFreeze() const;
+    [[nodiscard]] int overlapCount() const;
+    // separateClipOverlaps de VideoEditor.jsx.
+    Q_INVOKABLE void separateOverlaps();
     [[nodiscard]] bool magnetOn() const;
     // Filtros de color (EdFilters.jsx): clic añade o quita; intensidad y orden en la pila.
     Q_INVOKABLE void toggleFilter(const QString& id);
@@ -565,6 +577,7 @@ signals:
     void keyframeBoardChanged();
     void keyframePanelChanged();
     void timelineChanged();
+    void freezeChanged();
     void selectionChanged();
     void favoritesChanged();
     void playheadChanged();
@@ -653,6 +666,7 @@ private:
     std::pair<std::string, std::string> collections_query_; // q y colección de la última búsqueda
     [[nodiscard]] std::optional<std::filesystem::path> collections_base() const;
     [[nodiscard]] std::optional<std::filesystem::path> media_path(const core::TimelineClip& c) const;
+    [[nodiscard]] core::MediaDirs media_dirs() const;
     // mediaSize de su medio (videoWidth / naturalWidth): el tamaño con el que lo dibuja el render (el
     // primer fotograma, con el autogiro de un vídeo de móvil). Una vez por material (sizes_).
     [[nodiscard]] std::optional<std::pair<double, double>> source_size(const core::TimelineClip& c) const;

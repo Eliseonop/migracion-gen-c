@@ -186,9 +186,8 @@ Item {
                             anchors.topMargin: 8
                             spacing: 5
                             Repeater {
-                                model: [["Main Editor", ""], ["Clip Editor", "El Clip Editor (editar tramos) aún no está en GenClipPro"],
-                                        ["Motion Studio", "Motion Studio no está en GenClipPro (fuera de alcance por ahora)"],
-                                        ["Paper Animator", "Paper Animator no está en GenClipPro (fuera de alcance por ahora)"]]
+                                // Sin Motion Studio (se rehará de cero) ni Paper Animator (es el efecto paper_cutout).
+                                model: [["Main Editor", ""], ["Clip Editor", "El Clip Editor (editar tramos) aún no está en GenClipPro"]]
                                 AbstractButton {
                                     id: colTab
                                     required property var modelData
@@ -610,7 +609,51 @@ Item {
                         }
                     }
                     GhostButton { objectName: "tl:marker"; iconName: "bookmark_add"; iconSize: 14; tip: "Marcador en el cursor (M) · , y . saltan entre marcadores y beats"; onClicked: editor.model.toggleMarker() }
+                    GhostButton { objectName: "tl:freeze"; iconName: "ac_unit"; iconSize: 14; tip: "Congelar fotograma: inserta una imagen fija del fotograma del cursor (3 s)"; enabled: editor.model.canFreeze; onClicked: editor.model.freezeAtPlayhead() }
                     GhostButton { objectName: "tl:delete"; iconName: "delete"; iconSize: 14; danger: true; tip: "Eliminar clip (Supr)"; enabled: parent.hasSel; onClicked: editor.model.deleteSelection() }
+                    Rectangle { implicitWidth: 1; implicitHeight: 18; color: Theme.line; Layout.leftMargin: 3; Layout.rightMargin: 3 }
+                    // PreviewVolButton: el volumen de escucha, con su deslizador vertical en un desplegable.
+                    IconBtn {
+                        id: volBtn
+                        objectName: "tl:volume"
+                        readonly property int pct: Math.round(editor.model.player.volume * 100)
+                        iconName: pct <= 0 ? "volume_off" : pct < 50 ? "volume_down" : "volume_up"
+                        iconSize: 15
+                        tip: "Volumen de escucha (solo el editor, no el export)"
+                        onClicked: volPop.visible ? volPop.close() : volPop.open()
+                        Popup {
+                            id: volPop
+                            objectName: "tl:volumePop"
+                            x: (volBtn.width - width) / 2
+                            y: -height - 4
+                            width: 42
+                            height: 138
+                            padding: 0
+                            topPadding: 8
+                            bottomPadding: 10
+                            background: Rectangle { radius: 10; color: Theme.card2; border.color: Theme.line }
+                            contentItem: ColumnLayout {
+                                spacing: 4
+                                Label {
+                                    Layout.alignment: Qt.AlignHCenter
+                                    text: volBtn.pct
+                                    color: Theme.textSecondary
+                                    font.pixelSize: 10
+                                }
+                                Slider {
+                                    objectName: "tl:volumeSlider"
+                                    Layout.alignment: Qt.AlignHCenter
+                                    Layout.fillHeight: true
+                                    orientation: Qt.Vertical
+                                    from: 0
+                                    to: 100
+                                    stepSize: 1
+                                    value: volBtn.pct
+                                    onMoved: editor.model.player.volume = value / 100
+                                }
+                            }
+                        }
+                    }
                     Item { Layout.fillWidth: true }
                     GhostButton {
                         objectName: "tl:match"
@@ -629,6 +672,17 @@ Item {
                              ? "Pista principal magnética ACTIVADA: sin huecos; al soltar se inserta en el corte más cercano y empuja lo de detrás. Clic para desactivar."
                              : "Pista principal magnética (como CapCut): la pista de vídeo de abajo pasa a no tener huecos y soltar en ella inserta y empuja."
                         onClicked: editor.model.toggleMagnet()
+                    }
+                    // .ed-overlap-fix: solo si hay clips montados en una pista (proyectos viejos).
+                    GhostButton {
+                        objectName: "tl:separate"
+                        visible: editor.model.overlapCount > 0
+                        iconName: "layers_clear"
+                        iconSize: 14
+                        text: editor.model.overlapCount
+                        tip: "Hay " + (editor.model.overlapCount === 1 ? "un clip montado" : editor.model.overlapCount + " clips montados")
+                             + " sobre otro en la misma pista (proyecto antiguo). Clic: cada clip de delante sube a su propia pista y la imagen no cambia."
+                        onClicked: editor.model.separateOverlaps()
                     }
                     Rectangle { implicitWidth: 1; implicitHeight: 18; color: Theme.line; Layout.leftMargin: 3; Layout.rightMargin: 3 }
                     GhostButton { objectName: "tl:addVideo"; iconName: "video_call"; iconSize: 15; tip: "Añadir pista de vídeo"; onClicked: editor.model.addTrack("video") }

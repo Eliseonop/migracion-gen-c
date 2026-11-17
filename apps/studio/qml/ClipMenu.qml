@@ -65,6 +65,12 @@ Menu {
         text: "Detectar beats"
         onTriggered: menu.model.detectBeats(menu.clipId)
     }
+    Entry { // canFreeze(ctxMenu.clip, playhead): un vídeo bajo el cabezal
+        objectName: "ctx:freeze"
+        visible: !!menu.info.canFreeze
+        text: "Congelar fotograma"
+        onTriggered: menu.only(() => menu.model.freezeAtPlayhead())
+    }
     Entry { visible: menu.info.kind !== "audio"; text: "Voltear horizontal"; onTriggered: menu.only(() => menu.model.toggleFlip("h")) }
     Entry { visible: menu.info.kind !== "audio"; text: "Voltear vertical"; onTriggered: menu.only(() => menu.model.toggleFlip("v")) }
     MenuSeparator {}

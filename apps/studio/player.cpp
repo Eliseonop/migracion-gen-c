@@ -1,6 +1,8 @@
 #include "player.hpp"
 
+#include <QSettings>
 #include <algorithm>
+#include <cmath>
 #include <utility>
 
 #include "editor_model.hpp"
@@ -114,12 +116,31 @@ Player::Player(EditorModel& editor) : editor_(editor) {
 #ifdef GC_STUDIO_PREVIEW
     audio_ = std::make_unique<Audio>(this);
 #endif
+    // parsePreviewVolume: lo que no es un número, 1; y entre 0 y 1.
+    bool ok = false;
+    const double saved = QSettings("GenClipPro", "studio").value("preview/volume", 1.0).toDouble(&ok);
+    volume_ = ok && std::isfinite(saved) ? std::clamp(saved, 0.0, 1.0) : 1.0;
     timer_.setInterval(16); // 60 Hz
     timer_.setTimerType(Qt::PreciseTimer);
     connect(&timer_, &QTimer::timeout, this, &Player::tick);
 }
 
 Player::~Player() = default;
+
+void Player::setVolume(double volume) {
+    const double v = std::isfinite(volume) ? std::clamp(volume, 0.0, 1.0) : 1.0;
+    if (v == volume_) {
+        return;
+    }
+    volume_ = v;
+    QSettings("GenClipPro", "studio").setValue("preview/volume", v);
+#ifdef GC_STUDIO_PREVIEW
+    if (audio_->out) {
+        audio_->out->set_volume(v);
+    }
+#endif
+    emit volumeChanged();
+}
 
 void Player::toggle() {
     if (playing_) {
@@ -147,6 +168,7 @@ void Player::play() {
         if (out) {
             a.out.emplace(std::move(*out));
             a.out->set_pcm(nullptr);
+            a.out->set_volume(volume_);
         } else {
             a.out_error = "Sin salida de audio: " + QString::fromStdString(out.error().message);
         }

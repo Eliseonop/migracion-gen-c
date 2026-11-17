@@ -2663,3 +2663,98 @@ TEST_CASE("studio sin pantalla: la barra de la timeline añade pistas, imanta e 
     CHECK((same_start ? s.view(added)["trackId"] != s.view("b")["trackId"]
                       : s.view(added)["start"].toDouble() >= s.view("b")["start"].toDouble() + s.view("b")["duration"].toDouble()));
 }
+
+TEST_CASE("studio sin pantalla: congelar fotograma parte el vídeo e inserta la imagen del cabezal",
+          "[studio][ui][preview]") {
+    const Studio s;
+    // «a» pasa a ser v_2s.mp4 y se vuelve a abrir.
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    const auto video = core::project_base(s.store->clips_dir(), **project) / "video" / "a.mp4";
+    std::filesystem::create_directories(video.parent_path());
+    std::filesystem::copy_file(core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files" / "v_2s.mp4", video);
+    REQUIRE(s.editor->openProject("p1"));
+    const auto images_before = (**project).images.size();
+
+    s.editor->select("a");
+    const double start = s.view("a")["start"].toDouble();
+    s.editor->setPlayhead(start + 1.0);
+    REQUIRE(s.editor->canFreeze());
+    const int clips_before = static_cast<int>(s.editor->clips().size());
+    s.click("tl:freeze");
+    CHECK(s.editor->notice()["type"] == "success");
+    // La selección pasa al fotograma congelado: una imagen de 3 s en el cabezal, en la pista de «a».
+    REQUIRE(s.editor->selection().size() == 1);
+    const QVariantMap frozen = s.view(s.editor->selection().front());
+    CHECK(frozen["kind"] == "image");
+    CHECK(std::abs(frozen["start"].toDouble() - (start + 1.0)) < 1e-6);
+    CHECK(std::abs(frozen["duration"].toDouble() - 3.0) < 1e-6);
+    CHECK(frozen["trackId"] == s.view("a")["trackId"]);
+    CHECK(static_cast<int>(s.editor->clips().size()) == clips_before + 2); // «a» partido y la imagen
+
+    // La imagen está en el material del proyecto, del tamaño nativo del vídeo.
+    project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    REQUIRE((**project).images.size() == images_before + 1);
+    const core::ImageInfo& img = (**project).images.back();
+    CHECK(img.origin == "freeze");
+    CHECK(img.source == "generated");
+    CHECK(img.filename.find("_congelado_1.00s") != std::string::npos);
+    const auto first = media::frame_at(video, 1.0);
+    REQUIRE(first);
+    REQUIRE(*first);
+    CHECK(img.width == (*first)->width);
+    CHECK(img.height == (*first)->height);
+
+    // Un solo paso de deshacer.
+    s.editor->undo();
+    CHECK(static_cast<int>(s.editor->clips().size()) == clips_before);
+    // Fuera de un vídeo no se puede.
+    s.editor->setPlayhead(1e6);
+    CHECK_FALSE(s.editor->canFreeze());
+}
+
+TEST_CASE("studio sin pantalla: separar solapes sube los clips montados a su propia pista", "[studio][ui]") {
+    const Studio s;
+    CHECK_FALSE(s.item("tl:separate")->isVisible()); // sin solapes no se enseña
+    // Un proyecto viejo: «c» montado sobre «a» en V1.
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    Json tl = core::to_json((**project).timeline.value());
+    tl["clips"].push_back(clip("c", "V1", 1, 2));
+    REQUIRE(s.store->save_timeline("p1", tl));
+    REQUIRE(s.editor->openProject("p1"));
+    CHECK(s.editor->overlapCount() == 1);
+    QTest::qWait(20);
+    CHECK(s.item("tl:separate")->isVisible());
+    s.click("tl:separate");
+    CHECK(s.editor->overlapCount() == 0);
+    CHECK(s.view("c")["trackId"] != "V1");
+    CHECK(s.view("c")["start"].toDouble() == 1.0); // en el mismo instante: la imagen no cambia
+    CHECK(s.editor->notice()["type"] == "success");
+    s.editor->undo();
+    CHECK(s.editor->overlapCount() == 1);
+}
+
+TEST_CASE("studio sin pantalla: el volumen de escucha se elige en su desplegable", "[studio][ui]") {
+    const Studio s;
+    auto* player = s.editor->player();
+    REQUIRE(player);
+    const double before = player->property("volume").toDouble();
+    s.click("tl:volume");
+    QTest::qWait(20);
+    QQuickItem* pop_slider = s.item("tl:volumeSlider");
+    REQUIRE(pop_slider);
+    CHECK(pop_slider->isVisible());
+    player->setProperty("volume", 0.3);
+    CHECK(pop_slider->property("value").toDouble() == 30);
+    CHECK(s.item("tl:volume")->property("iconName") == "volume_down");
+    player->setProperty("volume", 0.0);
+    CHECK(s.item("tl:volume")->property("iconName") == "volume_off");
+    player->setProperty("volume", 7.0); // se acota
+    CHECK(player->property("volume").toDouble() == 1.0);
+    player->setProperty("volume", before); // la preferencia del usuario se queda como estaba
+}

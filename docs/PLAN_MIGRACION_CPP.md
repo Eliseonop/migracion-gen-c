@@ -2103,3 +2103,15 @@ Decisión de Edu (§6):
 - **Verificación:** paridad del editor (55 754 comprobaciones) y 95 tests del studio y la interfaz con MSVC (uno nuevo). Smart App Control bloqueó dos veces `gc_tests.exe` recién enlazado: se borra y se vuelve a enlazar hasta que arranca.
 - **Falta:** congelar fotograma (pide sacar el fotograma a una imagen del proyecto, como freeze_frame del backend), separar los solapes de proyectos antiguos, el volumen de la vista previa y el JSON del proyecto.
 
+
+### 2026-11-17 — F5: congelar fotograma, separar solapes y volumen de escucha (5.ª parte)
+
+- **Congelar fotograma:** `gc/export/freeze.hpp` porta freeze.py. `extract_still` saca el fotograma a resolución nativa y sin alfa (rgb24), con `ASSUME_BT709_FILTER` si el material no declara color; pasado el final toma el último. `freeze_frame_image` lo guarda como imagen del proyecto, con el nombre, la etiqueta, el origen «freeze» y la fuente «generated» de video-yt.
+  - `EditorModel::freezeAtPlayhead` (freezeAtPlayhead de VideoEditor.jsx) calcula el instante del archivo en el cabezal, saca la imagen, aplica la op `freeze_frame` de siempre (3 s, un paso de deshacer), relee el material y elige el fotograma congelado. `canFreeze` sigue a la selección y al cabezal.
+  - Está en la barra (ac_unit) y en el clic derecho.
+  - **Divergencia:** la extracción va en el hilo de la interfaz, sin el «ocupado» de React; es un solo fotograma.
+- **Separar solapes:** `overlap_pairs` y `separate_overlaps` (noOverlap.js) en `timeline_ui.hpp`. Las pistas magnéticas se empaquetan como packMagnetic de JS, que no es el `pack_magnetic` de Python. Cada clip montado sube con `lift_target` a la pista vecina o a una nueva en su hueco.
+  - Paridad contra el JS real: «separar solapes 0..15», con pistas magnéticas, bloqueadas, ocultas y de texto con estilo, y su `buildTrack` con sufijos fijos.
+  - En la barra, el botón con la cuenta solo aparece si hay solapes.
+- **Volumen de escucha:** `AudioOut::set_volume` (el volumen maestro de miniaudio) y `Player::volume` (0–1, en QSettings «GenClipPro/studio», como el localStorage de React). PreviewVolButton: el icono según el volumen y un deslizador vertical en un desplegable.
+- **Motion Studio y Paper Animator:** sin pestañas en el editor ni en el material (decisión de Edu: Motion se rehará de cero y Paper ya es el efecto `paper_cutout`).
