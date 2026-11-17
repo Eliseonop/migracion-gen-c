@@ -207,7 +207,9 @@ QVariantList beat_marks(const core::TimelineClip& c) {
     return out;
 }
 
-// Rombos de keyframe del clip: {id, f} con f la fracción de su ancho (los del encuadre, sin keyframes).
+// Rombos de keyframe del clip: {id, f, t} con f la fracción de su ancho (los del encuadre, sin keyframes)
+// y t el tiempo que enseña el panel de Keyframes (kfTime de EdCrops: el del keyframe o, en el encuadre,
+// desde el in_point).
 QVariantList keyframe_marks(const core::TimelineClip& c) {
     QVariantList out;
     const double dur = core::ui_clip_duration(c);
@@ -215,13 +217,13 @@ QVariantList keyframe_marks(const core::TimelineClip& c) {
     if (core::keyframes_enabled(c) && c.keyframes->contains("items") && c.keyframes->at("items").is_array()) {
         for (const Json& k : c.keyframes->at("items")) {
             if (k.is_object() && k.contains("t") && k.at("t").is_number()) {
-                out << QVariantMap{{"id", id_of(k)}, {"f", k.at("t").get<double>() / (dur > 0 ? dur : 1)}};
+                out << QVariantMap{{"id", id_of(k)}, {"f", k.at("t").get<double>() / (dur > 0 ? dur : 1)}, {"t", k.at("t").get<double>()}};
             }
         }
     } else if (c.reframe && (c.kind == "video" || c.kind == "image")) {
         const double src = std::max(0.0, c.out_point - c.in_point);
         for (const core::Keyframe& k : c.reframe->keyframes) {
-            out << QVariantMap{{"id", id_of(k.extra)}, {"f", (k.t - c.in_point) / (src > 0 ? src : 1)}};
+            out << QVariantMap{{"id", id_of(k.extra)}, {"f", (k.t - c.in_point) / (src > 0 ? src : 1)}, {"t", k.t - c.in_point}};
         }
     }
     return out;
@@ -239,6 +241,8 @@ QString speed_badge(const core::TimelineClip& c) {
 
 EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* settings, QObject* parent)
     : QObject(parent), store_(store), settings_(settings), player_(*this) {
+    connect(this, &EditorModel::selectionChanged, this, &EditorModel::keyframePanelChanged);
+    connect(this, &EditorModel::timelineChanged, this, &EditorModel::keyframePanelChanged);
     // Sonando, el inspector no se recalcula a cada fotograma (setPlayhead): al parar, una vez.
     connect(&player_, &Player::playingChanged, this, [this] {
         if (!player_.playing() && !selection_.ids.empty()) {
@@ -2541,6 +2545,33 @@ void EditorModel::moveKeyframe(const QString& clipId, const QString& kfId, doubl
     setPlayhead(head);
 }
 
+QVariantMap EditorModel::keyframePanel() const {
+    const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+    if (!c) {
+        return {};
+    }
+    return {{"clipId", qstr(c->id)}, {"kind", qstr(c->kind)}, {"kfs", keyframe_marks(*c)}};
+}
+
+void EditorModel::deleteKeyframe(const QString& clipId, const QString& kfId, double fraction) {
+    moveKeyframe(clipId, kfId, fraction); // sin moverlo: lleva el cabezal a su fotograma
+    const core::TimelineClip* c = clip(clipId);
+    if (c && core::keyframe_id_at(*c, playhead_ - c->start, fps()) == kfId.toStdString()) {
+        core::Timeline next = *session_->timeline();
+        for (auto& item : next.clips) {
+            if (item->id == c->id) {
+                core::toggle_keyframe_at(item.mut(), playhead_ - item->start, fps(), ids_);
+            }
+        }
+        commit(std::move(next), "keyframe", {clipId.toStdString()});
+    }
+}
+
+bool EditorModel::copyKeyframeOf(const QString& clipId, const QString& kfId, double fraction) {
+    moveKeyframe(clipId, kfId, fraction);
+    return copyKeyframe();
+}
+
 bool EditorModel::copyKeyframe() {
     const core::TimelineClip* c = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
     if (!c || c->kind == "adjustment") {
@@ -2550,6 +2581,7 @@ bool EditorModel::copyKeyframe() {
         core::copy_keyframe_at(*c, std::clamp(playhead_ - c->start, 0.0, core::ui_clip_duration(*c)), fps());
     if (board) {
         kf_board_ = board;
+        emit keyframeBoardChanged();
     }
     return board.has_value();
 }

@@ -569,12 +569,16 @@ Item {
             }
         }
 
-        // .ed-timeline-wrap: la barra de herramientas de EdTimeline encima de la timeline.
-        Rectangle {
-            visible: !editor.stageFullscreen
+        // La fila de abajo: la timeline con su barra (.ed-timeline-wrap) y el panel de Keyframes (EdCrops).
+        RowLayout {
+          visible: !editor.stageFullscreen
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          Layout.preferredHeight: 2
+          spacing: 6
+          Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.preferredHeight: 2
             radius: 6
             color: Theme.panelBar
             border.color: Theme.line
@@ -622,6 +626,12 @@ Item {
                     onContextClip: (id) => clipMenu.openFor(id)
                 }
             }
+          }
+          KeyframesPanel {
+              Layout.preferredWidth: 300
+              Layout.fillHeight: true
+              model: editor.model
+          }
         }
     }
 

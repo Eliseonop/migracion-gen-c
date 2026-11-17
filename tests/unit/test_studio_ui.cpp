@@ -482,7 +482,9 @@ TEST_CASE("studio sin pantalla: arrastrar hasta el borde desplaza la vista y el 
     QQuickItem* lane = s.item("clip:b")->parentItem();
     const QPoint from = s.at("b", 0.5);
     const double grab = from.x() - s.at("b", 0.0).x();
-    const QPoint edge(s.window->width() - 30, from.y());
+    // El borde derecho de la timeline: a su derecha está el panel de Keyframes (6 px de separación).
+    const int timeline_right = static_cast<int>(s.item("kfPanel")->mapToScene(QPointF(0, 0)).x()) - 6;
+    const QPoint edge(timeline_right - 30, from.y());
     QTest::mousePress(s.window, Qt::LeftButton, {}, from);
     for (int i = 1; i <= 8; ++i) {
         QTest::mouseMove(s.window, from + (edge - from) * i / 8);
@@ -2597,4 +2599,23 @@ TEST_CASE("studio sin pantalla: el + del material lo pone en el cursor y encaden
     CHECK(added[0]["start"].toDouble() >= 1.0);
     CHECK(std::abs(added[1]["start"].toDouble() - (added[0]["start"].toDouble() + 5.0)) < 1e-9);
     CHECK(s.editor->selection() == QStringList{added[1]["clipId"].toString()});
+}
+
+TEST_CASE("studio sin pantalla: el panel de Keyframes anima, lista y quita", "[studio][ui]") {
+    const Studio s;
+    REQUIRE(s.item("kfPanel:empty"));
+    CHECK(s.item("kfPanel:empty")->property("text") == "Selecciona un clip, imagen, figura o texto.");
+    s.editor->select("a", false, false);
+    s.editor->setPlayhead(1);
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("kfPanel:animate"));
+    s.click("kfPanel:animate");
+    REQUIRE(s.item("kfPanel:row:0"));
+    CHECK(s.item("kfPanel:count")->property("text") == "1 keyframe");
+    CHECK_FALSE(s.item("kfPanel:paste"));
+    s.click("kfPanel:copy:0");
+    CHECK(s.editor->hasKeyframeBoard());
+    s.click("kfPanel:delete:0");
+    CHECK_FALSE(s.item("kfPanel:row:0"));
+    REQUIRE(s.item("kfPanel:animate"));
 }

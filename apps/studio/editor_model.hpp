@@ -121,6 +121,10 @@ class EditorModel : public QObject {
     // Las miniaturas del material (MaterialClipGrid): clave del material → URL del JPEG del primer
     // fotograma de un vídeo del proyecto (thumbnails.hpp) o del archivo de una imagen.
     Q_PROPERTY(QVariantMap materialThumbs READ materialThumbs NOTIFY materialThumbsChanged)
+    // Hay un keyframe copiado (Alt+C): el panel de Keyframes enseña «Pegar keyframe».
+    Q_PROPERTY(bool hasKeyframeBoard READ hasKeyframeBoard NOTIFY keyframeBoardChanged)
+    // El clip del panel de Keyframes: {clipId, kind, kfs: [{id, f, t}]} del primero seleccionado, o vacío.
+    Q_PROPERTY(QVariantMap keyframePanel READ keyframePanel NOTIFY keyframePanelChanged)
     Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
     Q_PROPERTY(QVariantList textLooks READ textLooks CONSTANT)
     Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
@@ -515,6 +519,12 @@ public:
     Q_INVOKABLE static QVariantList curvePoints(const QString& kind, const QVariantList& bezier, int steps = 48);
     Q_INVOKABLE void moveKeyframe(const QString& clipId, const QString& kfId, double fraction);
     Q_INVOKABLE bool copyKeyframe();
+    // El panel de Keyframes (EdCrops.jsx): quitar o copiar un keyframe de la lista (`fraction`, su rombo).
+    // Los dos llevan antes el cabezal a él.
+    Q_INVOKABLE void deleteKeyframe(const QString& clipId, const QString& kfId, double fraction);
+    Q_INVOKABLE bool copyKeyframeOf(const QString& clipId, const QString& kfId, double fraction);
+    [[nodiscard]] bool hasKeyframeBoard() const { return kf_board_.has_value(); }
+    [[nodiscard]] QVariantMap keyframePanel() const;
     Q_INVOKABLE bool pasteKeyframe();
     Q_INVOKABLE bool duplicateKeyframe();
     Q_INVOKABLE void fadeVolume(const QString& side);
@@ -541,6 +551,8 @@ public:
 signals:
     void projectChanged();
     void materialThumbsChanged();
+    void keyframeBoardChanged();
+    void keyframePanelChanged();
     void timelineChanged();
     void selectionChanged();
     void favoritesChanged();
