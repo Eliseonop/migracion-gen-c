@@ -103,7 +103,7 @@ TEST_CASE("paridad de la dirección de escena: catálogos", "[parity][scene]") {
         const auto& d = scene::directions()[i];
         CHECK(cat["directions"][i] == Json{{"key", d.key}, {"label", d.label}, {"summary", d.summary}});
     }
-    CHECK(cat["default_direction"] == scene::kDefaultDirection);
+    CHECK(cat["default_direction"].get<std::string>() == scene::kDefaultDirection);
     REQUIRE(cat["modes"].size() == scene::modes().size());
     for (std::size_t i = 0; i < scene::modes().size(); ++i) {
         const auto& m = scene::modes()[i];
