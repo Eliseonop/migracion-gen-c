@@ -11,7 +11,7 @@ Rectangle {
     required property var model
     required property Item dragLayer
     property var sfxModal: null
-    property string filter: "all"
+    property string filter: "video"
     property string source: "project"
     property string query: ""
     property string sfxCategory: ""
@@ -19,58 +19,196 @@ Rectangle {
     property bool manage: false
     property string fxCategory: ""
     property string fileDrag: "" // lo que se arrastra desde el sistema (dropFileKind), o ""
+    Gradient {
+        id: accentGradient
+        orientation: Gradient.Horizontal
+        GradientStop { position: 0; color: Theme.accent }
+        GradientStop { position: 1; color: Theme.accent2 }
+    }
     function words(text) { return text.toLowerCase().split(/\s+/).filter((w) => w) }
 
-    radius: Theme.radiusLg
-    color: Theme.card
+    // La pestaña de la barra de iconos (MAT_NAV de materialNav.js) y su ámbito (ScopeFilter: Todos,
+    // Guardados, Cargar). Las dos dicen qué se ve: `source` y `filter`.
+    property string tab: "video"
+    // Vídeos o imágenes del proyecto o de la biblioteca: en rejilla con miniatura.
+    readonly property bool gridMode: (source === "project" || source === "library") && (filter === "video" || filter === "image")
+    // Lo que se ve (filtrado por tipo y por la búsqueda).
+    readonly property var shown: model.materials.filter((m) => (source === "project" ? (m.source === "project" || m.source === "library")
+                                                                                      : m.source === source)
+        && (source === "sfx" || filter === "all" || m.kind === filter)
+        && (source === "sfx" || source === "collection" || words(query).every((w) => m.name.toLowerCase().includes(w))))
+    property string scope: "all"
+    signal openSettings
+    function go(nextTab, nextScope) {
+        tab = nextTab
+        scope = nextScope || "all"
+        const media = { video: "video", image: "image", audio: "audio" }[tab]
+        if (media) {
+            filter = media
+            source = scope === "cargar" ? (tab === "video" ? "youtube" : "narrator") : scope === "saved" ? "library" : "project"
+        } else {
+            filter = "all"
+            source = { sfx: "sfx", library: scope === "collections" ? "collection" : "library", effects: "fx",
+                       shapes: "shapes", text: "text" }[tab] || source
+        }
+        if (source === "collection")
+            model.searchCollections(query, collection)
+        else if (source === "sfx")
+            model.searchSfx(query, sfxCategory)
+    }
+    readonly property var navItems: [
+        { id: "video", icon: "movie", label: "Video", short: "Video" },
+        { id: "image", icon: "image", label: "Imagen", short: "Imagen" },
+        { id: "audio", icon: "mic", label: "Audio", short: "Audio" },
+        { id: "sfx", icon: "graphic_eq", label: "SFX", short: "SFX" },
+        { id: "library", icon: "collections_bookmark", label: "Biblioteca", short: "Biblio", sep: true },
+        { id: "effects", icon: "auto_awesome", label: "Efectos", short: "Efectos", sep: true },
+        { id: "shapes", icon: "category", label: "Figuras", short: "Figuras" },
+        { id: "text", icon: "title", label: "Texto", short: "Texto" },
+        { id: "transitions", icon: "animation", label: "Animación", short: "Anim.", off: "Las animaciones de clip están en la pestaña Animar del inspector" },
+        { id: "motion", icon: "animation", label: "Motion", short: "Motion", sep: true, off: "Motion no está en GenClipPro (fuera de alcance por ahora)" },
+        { id: "paper", icon: "draw", label: "Paper", short: "Paper", off: "Paper Animator no está en GenClipPro (fuera de alcance por ahora)" },
+        { id: "ai", icon: "smart_toy", label: "IA", short: "IA", sep: true, off: "La pestaña IA aún no está en GenClipPro" },
+        { id: "settings", icon: "settings", label: "Configuración", short: "Config", sep: true },
+        { id: "chat", icon: "forum", label: "Chat IA", short: "Chat", off: "El chat con IA aún no está en GenClipPro" }
+    ]
+
+    // .ed-material
+    radius: 6
+    color: Theme.topbar
     border.color: Theme.line
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 12
-        spacing: 8
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
+        anchors.topMargin: 5
+        anchors.bottomMargin: 6
+        spacing: 6
 
-        Label { text: "Material"; color: Theme.text; font.pixelSize: 15; font.bold: true }
-        Flow {
+        // .ed-mat-nav: los iconos con su nombre corto; si no caben, se desplaza.
+        Flickable {
+            id: navFlick
             Layout.fillWidth: true
-            spacing: 2
-            Repeater {
-                model: [["project", "Proyecto"], ["library", "Biblioteca"], ["collection", "Colecciones"], ["sfx", "SFX"],
-                        ["text", "Texto"], ["fx", "Efectos"], ["shapes", "Figuras"], ["narrator", "Cargar audio"], ["youtube", "YouTube"]]
-                TabButton {
-                    required property var modelData
-                    objectName: "material:source:" + modelData[0]
-                    text: modelData[1]
-                    font.pixelSize: 12
-                    implicitWidth: contentItem.implicitWidth + 14
-                    checked: panel.source === modelData[0]
-                    onClicked: panel.source = modelData[0]
-                    contentItem: Label { text: parent.text; font: parent.font; color: parent.checked ? Theme.text : Theme.muted; horizontalAlignment: Text.AlignHCenter }
-                    background: Rectangle { color: "transparent"; Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 2; color: parent.parent.checked ? Theme.accent : "transparent" } }
+            implicitHeight: 34
+            contentWidth: navRow.implicitWidth
+            contentHeight: height
+            flickableDirection: Flickable.HorizontalFlick
+            boundsBehavior: Flickable.StopAtBounds
+            clip: true
+            WheelHandler {
+                onWheel: (e) => navFlick.contentX = Math.max(0, Math.min(navFlick.contentWidth - navFlick.width,
+                                                                         navFlick.contentX - e.angleDelta.y / 2))
+            }
+            Row {
+                id: navRow
+                spacing: 1
+                Repeater {
+                    model: panel.navItems
+                    Row {
+                        id: navSlot
+                        required property var modelData
+                        spacing: 1
+                        Rectangle { visible: !!navSlot.modelData.sep; width: 1; height: 24; anchors.verticalCenter: parent.verticalCenter; color: Theme.line }
+                        Item { visible: !!navSlot.modelData.sep; width: 2; height: 1 }
+                        AbstractButton {
+                            id: navBtn
+                            readonly property bool on: panel.tab === navSlot.modelData.id
+                            objectName: "material:nav:" + navSlot.modelData.id
+                            width: 36
+                            height: 34
+                            hoverEnabled: true
+                            opacity: navSlot.modelData.off ? 0.45 : 1
+                            ToolTip.visible: hovered
+                            ToolTip.delay: 400
+                            ToolTip.text: navSlot.modelData.off || navSlot.modelData.label
+                            onClicked: {
+                                if (navSlot.modelData.off)
+                                    return
+                                if (navSlot.modelData.id === "settings")
+                                    panel.openSettings()
+                                else
+                                    panel.go(navSlot.modelData.id, "all")
+                            }
+                            contentItem: Column {
+                                spacing: 1
+                                MIcon {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    name: navSlot.modelData.icon
+                                    size: 18
+                                    color: navBtn.on || navBtn.hovered ? "white" : Theme.textSecondary
+                                }
+                                Label {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    width: Math.min(implicitWidth, 34)
+                                    text: navSlot.modelData.short
+                                    font.pixelSize: 9
+                                    font.weight: Font.DemiBold
+                                    elide: Text.ElideRight
+                                    color: navBtn.on || navBtn.hovered ? "white" : Theme.textSecondary
+                                }
+                            }
+                            background: Rectangle {
+                                radius: 7
+                                color: !navBtn.on && navBtn.hovered ? Qt.rgba(1, 1, 1, 0.06) : "transparent"
+                                gradient: navBtn.on ? accentGradient : null
+                            }
+                        }
+                    }
                 }
             }
         }
-        Row {
-            visible: panel.source === "project" || panel.source === "library"
-            spacing: 4
+        Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.line }
+
+        // ScopeFilter: Todos / Guardados (la biblioteca) / Cargar (YouTube o el narrador). En la
+        // biblioteca: lo guardado o las colecciones de la carpeta de material.
+        RowLayout {
+            id: scopeRow
+            readonly property var scopes: panel.tab === "video" ? [["all", "Todos"], ["saved", "Guardados"], ["cargar", "Cargar clips", "add"]]
+                                        : panel.tab === "audio" ? [["all", "Todos"], ["saved", "Guardados"], ["cargar", "Cargar audio", "add"]]
+                                        : panel.tab === "image" ? [["all", "Todas"], ["saved", "Guardadas"]]
+                                        : panel.tab === "library" ? [["all", "Guardado"], ["collections", "Colecciones"]]
+                                        : []
+            visible: scopes.length > 0
+            Layout.fillWidth: true
+            spacing: 5
             Repeater {
-                model: [["all", "Todo"], ["video", "Vídeos"], ["image", "Imágenes"], ["audio", "Audios"]]
-                delegate: Button {
-                    id: tab
+                model: scopeRow.scopes
+                AbstractButton {
+                    id: scopeBtn
                     required property var modelData
-                    text: modelData[1]
-                    flat: true
-                    font.pixelSize: 12
-                    contentItem: Label {
-                        text: tab.text
-                        font: tab.font
-                        color: panel.filter === tab.modelData[0] ? "white" : Theme.textSecondary
+                    readonly property bool on: panel.scope === modelData[0]
+                    objectName: "material:scope:" + modelData[0]
+                    Layout.fillWidth: true
+                    implicitHeight: 26
+                    hoverEnabled: true
+                    onClicked: panel.go(panel.tab, modelData[0])
+                    contentItem: Item {
+                        Row {
+                            anchors.centerIn: parent
+                            spacing: 4
+                            MIcon {
+                                visible: !!scopeBtn.modelData[2]
+                                anchors.verticalCenter: parent.verticalCenter
+                                name: scopeBtn.modelData[2] || ""
+                                size: 13
+                                color: scopeBtn.on ? "white" : Theme.textSecondary
+                            }
+                            Label {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: scopeBtn.modelData[1]
+                                font.pixelSize: 11
+                                font.weight: scopeBtn.on ? Font.Bold : Font.Normal
+                                color: scopeBtn.on || scopeBtn.hovered ? "white" : Theme.textSecondary
+                            }
+                        }
                     }
                     background: Rectangle {
                         radius: Theme.radiusSm
-                        color: panel.filter === parent.modelData[0] ? Qt.rgba(1, 0.23, 0.36, 0.25) : "transparent"
+                        color: !scopeBtn.on && scopeBtn.hovered ? Theme.card3 : scopeBtn.on ? "transparent" : Theme.card2
+                        border.color: scopeBtn.on ? Theme.accent : Theme.line
+                        gradient: scopeBtn.on ? accentGradient : null
                     }
-                    onClicked: panel.filter = modelData[0]
                 }
             }
         }
@@ -192,7 +330,7 @@ Rectangle {
             }
         }
         Label {
-            visible: list.count === 0 && ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0
+            visible: panel.shown.length === 0 && ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             text: panel.source === "library" ? "La biblioteca está vacía: guarda material de un proyecto para usarlo en todos."
@@ -410,16 +548,33 @@ Rectangle {
             Layout.fillHeight: true
             model: panel.model
         }
+        // .ed-mat-grid: los vídeos y las imágenes en tarjetas con miniatura (MaterialClipGrid). «Todos» junta
+        // los del proyecto y los guardados en la biblioteca, como shownClips de EdMaterial.
+        GridView {
+            id: grid
+            readonly property int columns: Math.max(1, Math.floor(width / 118))
+            visible: panel.gridMode
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            cellWidth: width / columns
+            cellHeight: Math.min(168, Math.max(88, cellWidth * (panel.filter === "video" ? 1.25 : 1))) + 34
+            model: panel.gridMode ? panel.shown : []
+            delegate: MaterialGridCard {
+                width: grid.cellWidth - 5
+                height: grid.cellHeight - 5
+                host: panel
+                thumb: panel.model.materialThumbs[modelData.key] || ""
+            }
+        }
         ListView {
             id: list
-            visible: ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0
+            visible: ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0 && !panel.gridMode
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
             spacing: 6
-            model: panel.model.materials.filter((m) => m.source === panel.source
-                && (panel.source === "sfx" || panel.filter === "all" || m.kind === panel.filter)
-                && (panel.source === "sfx" || panel.source === "collection" || panel.words(panel.query).every((w) => m.name.toLowerCase().includes(w))))
+            model: panel.gridMode ? [] : panel.shown
             delegate: Item {
                 id: slot
                 required property var modelData
@@ -553,10 +708,8 @@ Rectangle {
             if (kind === "other")
                 return
             drop.accept(Qt.CopyAction)
-            if (panel.model.importFiles(drop.urls, true) > 0) {
-                panel.source = "project"
-                panel.filter = kind
-            }
+            if (panel.model.importFiles(drop.urls, true) > 0)
+                panel.go(kind, "all")
         }
     }
     Rectangle {

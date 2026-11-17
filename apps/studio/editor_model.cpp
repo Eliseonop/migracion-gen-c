@@ -1,5 +1,7 @@
 #include "editor_model.hpp"
 
+#include "thumbnails.hpp"
+
 #include <QClipboard>
 #include <QColor>
 #include <QFile>
@@ -41,6 +43,7 @@
 #include "gc/core/keyframes.hpp"
 #include "gc/core/library.hpp"
 #include "gc/core/project_format.hpp"
+#include "gc/core/projects_store.hpp"
 #include "gc/core/mask_edit.hpp"
 #include "gc/core/mask_ui.hpp"
 #include "gc/core/masks.hpp"
@@ -383,8 +386,13 @@ void EditorModel::add_material(const char* source, const char* asset_kind, const
 }
 
 void EditorModel::project_materials(const core::Project& project, QVariantList& into) {
+    thumb_videos_.clear();
+    image_thumbs_.clear();
     for (const auto& c : project.clips) {
         add_material("project", "clips", QString("clips:%1").arg(c.index), core::to_json(c), "video", into);
+        if (auto path = core::resolve_project_media(store_.clips_dir(), project, "video", c.filename)) {
+            thumb_videos_.emplace_back(QString("clips:%1").arg(c.index), std::move(*path));
+        }
         // hasFaceTrack: con seguimiento guardado y keyframes en su encuadre
         QVariantMap row = into.back().toMap();
         row["faceTrack"] = c.face_track.has_value() && c.reframe && !c.reframe->keyframes.empty();
@@ -393,6 +401,9 @@ void EditorModel::project_materials(const core::Project& project, QVariantList& 
     }
     for (const auto& i : project.images) {
         add_material("project", "images", "images:" + qstr(i.id), core::to_json(i), "image", into);
+        if (const auto path = core::resolve_project_media(store_.clips_dir(), project, "image", i.filename)) {
+            image_thumbs_["images:" + qstr(i.id)] = QUrl::fromLocalFile(QString::fromStdString(core::path_to_utf8(*path))).toString();
+        }
     }
     for (const auto& a : project.audios) {
         add_material("project", "audios", "audios:" + qstr(a.id), core::to_json(a), "audio", into);
@@ -514,6 +525,40 @@ int EditorModel::importFiles(const QList<QUrl>& files, bool dropped) {
     return imported;
 }
 
+void EditorModel::setThumbnails(Thumbnails* thumbnails) {
+    thumbnails_ = thumbnails;
+    if (thumbnails_ != nullptr) {
+        connect(thumbnails_, &Thumbnails::changed, this, &EditorModel::update_material_thumbs);
+    }
+}
+
+void EditorModel::request_material_thumbs() {
+    if (thumbnails_ != nullptr) {
+        std::vector<std::filesystem::path> wanted;
+        wanted.reserve(thumb_videos_.size());
+        for (const auto& [key, path] : thumb_videos_) {
+            wanted.push_back(path);
+        }
+        thumbnails_->request(std::move(wanted));
+    }
+    update_material_thumbs();
+}
+
+void EditorModel::update_material_thumbs() {
+    QVariantMap next = image_thumbs_;
+    if (thumbnails_ != nullptr) {
+        for (const auto& [key, source] : thumb_videos_) {
+            if (const auto file = thumbnails_->find(source); !file.empty()) {
+                next[key] = QUrl::fromLocalFile(QString::fromStdString(core::path_to_utf8(file))).toString();
+            }
+        }
+    }
+    if (next != material_thumbs_) {
+        material_thumbs_ = std::move(next);
+        emit materialThumbsChanged();
+    }
+}
+
 // El material nuevo, delante (como el del proyecto al abrirlo).
 void EditorModel::reload_project_materials() {
     if (const auto project = store_.get_project(project_id_); project && *project) {
@@ -521,6 +566,7 @@ void EditorModel::reload_project_materials() {
         QVariantList fresh;
         project_materials(**project, fresh);
         materials_ = fresh + materials_;
+        request_material_thumbs();
         emit projectChanged();
     }
 }
@@ -544,6 +590,7 @@ bool EditorModel::openProject(const QString& pid) {
     const auto add = [&](const char* source, const char* asset_kind, const QString& key, const Json& item,
                          const char* kind) { add_material(source, asset_kind, key, item, kind, materials_); };
     project_materials(**project, materials_);
+    request_material_thumbs();
     const auto add_text = [&](const Json* theme) { // dragTextPayload
         const std::string id = theme ? theme->value("id", std::string()) : std::string();
         const std::string name = theme ? theme->value("name", std::string()) : std::string(core::kDefaultText);

@@ -149,7 +149,9 @@ Item {
 
             MaterialPanel {
                 visible: !editor.stageFullscreen
-                Layout.preferredWidth: 280
+                // MAT_NAV_WIDTH: el ancho en el que caben todos los iconos (si no caben, la barra se desplaza).
+                Layout.preferredWidth: Math.min(571, Math.max(300, editor.width * 0.34))
+                onOpenSettings: editor.openSettings()
                 Layout.fillHeight: true
                 model: editor.model
                 dragLayer: overlay

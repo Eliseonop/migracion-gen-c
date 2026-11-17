@@ -341,6 +341,7 @@ TEST_CASE("studio sin pantalla: los clips de audio pintan sus barras (pseudoWave
 
 TEST_CASE("studio sin pantalla: arrastrar material del panel a la timeline crea el clip", "[studio][ui]") {
     const Studio s;
+    s.click("material:nav:audio");
     QQuickItem* card = s.item("material:audios:a1");
     REQUIRE(card);
     QQuickItem* a = s.item("clip:a");
@@ -424,6 +425,7 @@ TEST_CASE("studio sin pantalla: soltar archivos del sistema en el material los i
 
 TEST_CASE("studio sin pantalla: con Alt el material soltado encima de un clip lo reemplaza", "[studio][ui]") {
     const Studio s;
+    s.click("material:nav:image");
     QQuickItem* card = s.item("material:images:i1");
     REQUIRE(card);
     const QPoint to = s.at("b", 0.5);
@@ -497,7 +499,7 @@ TEST_CASE("studio sin pantalla: arrastrar hasta el borde desplaza la vista y el 
 
 TEST_CASE("studio sin pantalla: «Texto predeterminado» añade un texto y el inspector lo cambia", "[studio][ui]") {
     const Studio s;
-    s.click("material:source:text");
+    s.click("material:nav:text");
     s.click("material:text:default");
     REQUIRE(s.editor->selectedClip()["kind"] == "text");
     s.click("insp:bold");
@@ -575,7 +577,7 @@ TEST_CASE("studio sin pantalla: las pestañas del inspector según el clip", "[s
     CHECK_FALSE(s.item("insp:x"));
     s.click("insp:tab:anim");
     CHECK(s.item("insp:appear"));
-    s.click("material:source:text");
+    s.click("material:nav:text");
     s.click("material:text:default"); // un texto no tiene Color ni Audio
     CHECK_FALSE(s.item("insp:tab:color"));
     CHECK_FALSE(s.item("insp:tab:audio"));
@@ -1179,7 +1181,8 @@ TEST_CASE("studio sin pantalla: la pestaña YouTube analiza un enlace y agrega e
     });
     yt.backend().setBaseUrl(backend.url());
     yt.backend().setPollInterval(20);
-    s.click("material:source:youtube");
+    s.click("material:nav:video");
+    s.click("material:scope:cargar");
     REQUIRE(s.item("yt:url"));
 
     yt.load(); // sin enlace
@@ -1377,7 +1380,8 @@ TEST_CASE("studio sin pantalla: «Cargar audio» genera la voz y extrae un enlac
     narrator.backend().setPollInterval(20);
 
     // Al abrir la pestaña: lo último que se usó y los motores. La voz guardada no es de Kokoro: la primera.
-    s.click("material:source:narrator");
+    s.click("material:nav:audio");
+    s.click("material:scope:cargar");
     REQUIRE(QTest::qWaitFor([&] { return narrator.engines().size() == 4; }, 10000));
     CHECK(narrator.form()["engine"] == "kokoro");
     CHECK(narrator.form()["voice"] == "ef_dora");
@@ -1556,7 +1560,7 @@ TEST_CASE("studio sin pantalla: un efecto de la biblioteca va a la pestaña Efec
     core::set_fx_catalog(std::make_shared<const core::FxCatalog>(std::move(*catalog)));
     const Studio s;
     s.editor->select("a");
-    s.click("material:source:fx");
+    s.click("material:nav:effects");
     s.click("fx:glitch_rgb");
     s.click("insp:tab:fx");
     CHECK(s.item("insp:vfx:name:0"));
@@ -1565,7 +1569,7 @@ TEST_CASE("studio sin pantalla: un efecto de la biblioteca va a la pestaña Efec
 
 TEST_CASE("studio sin pantalla: una figura del material se añade con un clic o arrastrándola", "[studio][ui]") {
     const Studio s;
-    s.click("material:source:shapes");
+    s.click("material:nav:shapes");
     s.click("material:shape:star");
     CHECK(s.editor->selectedClip()["kind"] == "shape");
     const auto count = s.editor->clips().size();
@@ -1581,7 +1585,7 @@ TEST_CASE("studio sin pantalla: una figura del material se añade con un clic o 
 
 TEST_CASE("studio sin pantalla: los textos del material se añaden, cambian de tema y se arrastran", "[studio][ui]") {
     const Studio s;
-    s.click("material:source:text");
+    s.click("material:nav:text");
     s.click("material:text:neon");
     QVariantMap made = s.editor->selectedClip();
     CHECK(made["kind"] == "text");

@@ -136,8 +136,8 @@ Rectangle {
     readonly property var exits: [["none", "Ninguno"], ["fade", "Fade"], ["dissolve", "Dissolve"], ["wipe", "Wipe"],
         ["zoom", "Zoom"], ["slide_down", "Slide down"], ["slide_right", "Slide right"], ["pop", "Pop"]]
 
-    radius: Theme.radiusLg
-    color: Theme.card
+    radius: 6 // .ed-inspector
+    color: Theme.topbar
     border.color: Theme.line
 
     component Section: Label {

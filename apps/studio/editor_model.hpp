@@ -48,6 +48,8 @@ class QPainter;
 
 namespace gc::studio {
 
+class Thumbnails;
+
 class EditorModel : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool isOpen READ isOpen NOTIFY projectChanged)
@@ -116,6 +118,9 @@ class EditorModel : public QObject {
     Q_PROPERTY(bool hasVisualClip READ hasVisualClip NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList markers READ markers NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList materials READ materials NOTIFY projectChanged)
+    // Las miniaturas del material (MaterialClipGrid): clave del material → URL del JPEG del primer
+    // fotograma de un vídeo del proyecto (thumbnails.hpp) o del archivo de una imagen.
+    Q_PROPERTY(QVariantMap materialThumbs READ materialThumbs NOTIFY materialThumbsChanged)
     Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
     Q_PROPERTY(QVariantList textLooks READ textLooks CONSTANT)
     Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
@@ -148,6 +153,9 @@ public:
     ~EditorModel() override;
 
     [[nodiscard]] bool isOpen() const { return session_ != nullptr; }
+    // Las miniaturas del material salen de las del inicio (sin ellas, las tarjetas llevan su icono).
+    void setThumbnails(Thumbnails* thumbnails);
+    [[nodiscard]] QVariantMap materialThumbs() const { return material_thumbs_; }
     [[nodiscard]] QString projectName() const { return project_name_; }
     [[nodiscard]] QVariantList tracks() const { return tracks_; }
     [[nodiscard]] QObject* clipModel() { return &clip_model_; }
@@ -528,6 +536,7 @@ public:
 
 signals:
     void projectChanged();
+    void materialThumbsChanged();
     void timelineChanged();
     void selectionChanged();
     void favoritesChanged();
@@ -601,6 +610,12 @@ private:
     QString project_name_;
     QVariantList tracks_;
     QVariantList materials_;
+    Thumbnails* thumbnails_ = nullptr;
+    std::vector<std::pair<QString, std::filesystem::path>> thumb_videos_; // clave del material → vídeo
+    QVariantMap image_thumbs_;                                              // clave → URL de la imagen
+    QVariantMap material_thumbs_;
+    void request_material_thumbs();
+    void update_material_thumbs();
     std::vector<std::pair<core::TimelineClip, double>> clipboard_; // clip y desfase con el primero
     std::optional<core::TimelineClip> attr_clipboard_;
     std::optional<core::KeyframeBoard> kf_board_;

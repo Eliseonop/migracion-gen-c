@@ -78,6 +78,7 @@ int gc::studio::run(int argc, char* argv[]) {
     gc::core::SettingsFile settings_file(base / "data" / "settings.json");
     gc::studio::EditorModel editor(store, &settings_file);
     editor.setProxyDir(cache / "proxies");
+    editor.setThumbnails(&thumbnails);
     gc::studio::SettingsModel settings(settings_file);
 
     gc::studio::register_qml_types();
