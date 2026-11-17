@@ -106,6 +106,14 @@ class EditorModel : public QObject {
     Q_PROPERTY(double duration READ duration NOTIFY timelineChanged)
     Q_PROPERTY(int fps READ fps NOTIFY timelineChanged)
     Q_PROPERTY(double aspect READ aspect NOTIFY timelineChanged)
+    // El formato de salida de la fila del reproductor (EdViewerTools.jsx, project_format.hpp): el tamaño de
+    // la timeline, su aspecto («custom» si no es de la lista) y su resolución (0 si no es de la lista).
+    Q_PROPERTY(int outWidth READ outWidth NOTIFY timelineChanged)
+    Q_PROPERTY(int outHeight READ outHeight NOTIFY timelineChanged)
+    Q_PROPERTY(QString formatAspect READ formatAspect NOTIFY timelineChanged)
+    Q_PROPERTY(int formatResolution READ formatResolution NOTIFY timelineChanged)
+    // Hay algún vídeo o imagen (hasVisualClip): sin ellos no hay aspecto «Original».
+    Q_PROPERTY(bool hasVisualClip READ hasVisualClip NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList markers READ markers NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList materials READ materials NOTIFY projectChanged)
     Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
@@ -245,6 +253,18 @@ public:
     Q_INVOKABLE int addCollectionFiles(const QString& collection, const QList<QUrl>& files);
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
+    [[nodiscard]] int outWidth() const;
+    [[nodiscard]] int outHeight() const;
+    [[nodiscard]] QString formatAspect() const;
+    [[nodiscard]] int formatResolution() const;
+    [[nodiscard]] bool hasVisualClip() const;
+    // Los selectores de EdViewerTools: otra proporción con el mismo lado corto («original»: la del vídeo o
+    // imagen seleccionado o, si no, el primero de la timeline), otro lado corto, un tamaño a mano (par y
+    // entre 144 y 4096) y los fps del proyecto (24, 25, 30, 50 o 60).
+    Q_INVOKABLE void pickAspect(const QString& id);
+    Q_INVOKABLE void pickResolution(int short_side);
+    Q_INVOKABLE void setOutputSize(double w, double h);
+    Q_INVOKABLE void setFps(int fps);
     [[nodiscard]] bool canUndo() const { return session_ && session_->can_undo(); }
     [[nodiscard]] bool canRedo() const { return session_ && session_->can_redo(); }
     [[nodiscard]] QStringList selection() const;
@@ -594,6 +614,7 @@ private:
     // mediaSize de su medio (videoWidth / naturalWidth): el tamaño con el que lo dibuja el render (el
     // primer fotograma, con el autogiro de un vídeo de móvil). Una vez por material (sizes_).
     [[nodiscard]] std::optional<std::pair<double, double>> source_size(const core::TimelineClip& c) const;
+    void set_format(std::int64_t w, std::int64_t h, int fps);
     // heightScale de VideoEditor.jsx: alto de la salida / alto de la fuente (1 si no se sabe).
     [[nodiscard]] double height_scale(const core::TimelineClip& c) const;
     // El efecto de VideoEditor.jsx que deja como objeto libre (applyFreeLayout) todo clip visual cuyo

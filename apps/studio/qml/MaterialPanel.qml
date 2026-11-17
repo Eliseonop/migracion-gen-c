@@ -201,6 +201,34 @@ Rectangle {
                 : "Este proyecto no tiene material todavía."
             color: Theme.muted
         }
+        // El adjustBtn de EdFxLibrary: un clip que filtra todo lo que tiene debajo durante su tramo.
+        AbstractButton {
+            id: adjustButton
+            objectName: "material:adjustment"
+            visible: panel.source === "fx"
+            Layout.fillWidth: true
+            implicitHeight: 42
+            hoverEnabled: true
+            ToolTip.visible: hovered
+            ToolTip.delay: 500
+            ToolTip.text: "Un clip que filtra todo lo que tiene debajo durante su tramo"
+            onClicked: panel.model.addAdjustment()
+            contentItem: Row {
+                spacing: 8
+                leftPadding: 10
+                MIcon { anchors.verticalCenter: parent.verticalCenter; name: "tune"; size: 18; color: Theme.text }
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    Label { text: "Capa de ajuste"; color: Theme.text; font.pixelSize: 12; font.bold: true }
+                    Label { text: "filtros y color para todo lo de debajo"; color: Theme.muted; font.pixelSize: 10 }
+                }
+            }
+            background: Rectangle {
+                radius: Theme.radiusSm
+                color: adjustButton.hovered ? Theme.card3 : Theme.card2
+                border.color: adjustButton.hovered ? Theme.accent : Theme.lineBright
+            }
+        }
         Flow {
             visible: panel.source === "fx"
             Layout.fillWidth: true

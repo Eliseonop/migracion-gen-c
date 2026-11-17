@@ -495,9 +495,10 @@ TEST_CASE("studio sin pantalla: arrastrar hasta el borde desplaza la vista y el 
     CHECK(s.view("b")["start"].toDouble() > reached + 1);
 }
 
-TEST_CASE("studio sin pantalla: el botón T añade un texto y el inspector lo cambia", "[studio][ui]") {
+TEST_CASE("studio sin pantalla: «Texto predeterminado» añade un texto y el inspector lo cambia", "[studio][ui]") {
     const Studio s;
-    s.click("editor:addText");
+    s.click("material:source:text");
+    s.click("material:text:default");
     REQUIRE(s.editor->selectedClip()["kind"] == "text");
     s.click("insp:bold");
     CHECK(s.editor->selectedClip()["style"].toMap()["bold"] == false);
@@ -574,7 +575,8 @@ TEST_CASE("studio sin pantalla: las pestañas del inspector según el clip", "[s
     CHECK_FALSE(s.item("insp:x"));
     s.click("insp:tab:anim");
     CHECK(s.item("insp:appear"));
-    s.click("editor:addText"); // un texto no tiene Color ni Audio
+    s.click("material:source:text");
+    s.click("material:text:default"); // un texto no tiene Color ni Audio
     CHECK_FALSE(s.item("insp:tab:color"));
     CHECK_FALSE(s.item("insp:tab:audio"));
 }

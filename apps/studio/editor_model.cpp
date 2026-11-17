@@ -40,6 +40,7 @@
 #include "gc/core/io.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/library.hpp"
+#include "gc/core/project_format.hpp"
 #include "gc/core/mask_edit.hpp"
 #include "gc/core/mask_ui.hpp"
 #include "gc/core/masks.hpp"
@@ -994,6 +995,91 @@ double EditorModel::aspect() const {
     }
     return static_cast<double>(session_->timeline()->width) /
            static_cast<double>(session_->timeline()->height);
+}
+
+int EditorModel::outWidth() const {
+    return session_ ? static_cast<int>(session_->timeline()->width) : 720;
+}
+
+int EditorModel::outHeight() const {
+    return session_ ? static_cast<int>(session_->timeline()->height) : 1280;
+}
+
+QString EditorModel::formatAspect() const {
+    return qstr(core::aspect_of(outWidth(), outHeight()));
+}
+
+int EditorModel::formatResolution() const {
+    return core::resolution_of(outWidth(), outHeight());
+}
+
+bool EditorModel::hasVisualClip() const {
+    if (!session_) {
+        return false;
+    }
+    const auto& clips = session_->timeline()->clips;
+    return std::any_of(clips.begin(), clips.end(), [](const auto& c) { return c->kind == "video" || c->kind == "image"; });
+}
+
+void EditorModel::set_format(std::int64_t w, std::int64_t h, int fps) {
+    if (!session_) {
+        return;
+    }
+    const core::Timeline& cur = *session_->timeline();
+    if (cur.width == w && cur.height == h && cur.fps == fps) {
+        return;
+    }
+    core::Timeline next = cur;
+    next.width = w;
+    next.height = h;
+    next.fps = fps;
+    session_->replace(std::move(next), "format", {});
+}
+
+void EditorModel::pickAspect(const QString& id) {
+    if (!session_) {
+        return;
+    }
+    const std::int64_t w = outWidth();
+    const std::int64_t h = outHeight();
+    core::FrameSize next{w, h};
+    if (id == "original") {
+        // originalMediaSize: el vídeo o imagen seleccionado o, si no, el que empieza antes; con su tamaño.
+        const core::TimelineClip* pick = nullptr;
+        for (const auto& c : session_->timeline()->clips) {
+            if (c->kind != "video" && c->kind != "image") {
+                continue;
+            }
+            if (!selection_.ids.empty() && c->id == selection_.ids.front()) {
+                pick = &*c;
+                break;
+            }
+            if (pick == nullptr || c->start < pick->start) {
+                pick = &*c;
+            }
+        }
+        const auto size = pick != nullptr ? source_size(*pick) : std::nullopt;
+        if (!size) {
+            return;
+        }
+        next = core::with_media_aspect(size->first, size->second, w, h);
+    } else {
+        next = core::with_aspect(id.toStdString(), w, h);
+    }
+    set_format(next.w, next.h, fps());
+}
+
+void EditorModel::pickResolution(int short_side) {
+    const core::FrameSize next = core::with_resolution(short_side, outWidth(), outHeight());
+    set_format(next.w, next.h, fps());
+}
+
+void EditorModel::setOutputSize(double w, double h) {
+    set_format(core::format_even_dim(w), core::format_even_dim(h), fps());
+}
+
+void EditorModel::setFps(int fps) {
+    set_format(outWidth(), outHeight(), core::normalize_fps(fps));
 }
 
 QStringList EditorModel::selection() const {

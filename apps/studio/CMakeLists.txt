@@ -20,13 +20,15 @@ if(TARGET gc_export)
     target_link_libraries(gc_studio PUBLIC gc::export)
     target_compile_definitions(gc_studio PUBLIC GC_STUDIO_PREVIEW)
 endif()
-# El catálogo de efectos y animaciones (resources/fx) va dentro del ejecutable.
+# El catálogo de efectos y animaciones (resources/fx) y la fuente de iconos de video-yt (Material Icons,
+# Apache-2.0; resources/fonts, sacada del WOFF de npm con tools/dev/woff_to_ttf.py) van dentro del ejecutable.
 qt_add_resources(gc_studio "gc_resources" PREFIX "/" BASE "${PROJECT_SOURCE_DIR}/resources"
-                 FILES "${PROJECT_SOURCE_DIR}/resources/fx/catalog.json")
+                 FILES "${PROJECT_SOURCE_DIR}/resources/fx/catalog.json"
+                       "${PROJECT_SOURCE_DIR}/resources/fonts/MaterialIcons-Regular.ttf")
 
 set(qml_files Main Theme Home SideItem ProjectCard FolderCard InlineEdit IconButton Editor Timeline Inspector
               MaterialPanel Settings CropModal CurveEditor CollectionsManager SmallButton SfxModal ShapeCard MaterialTile ClipMenu
-              Toast NarratorPanel YoutubePanel)
+              Toast NarratorPanel YoutubePanel MIcon IconBtn GhostButton PrimaryButton MiniSelect)
 list(TRANSFORM qml_files REPLACE "(.+)" "qml/\\1.qml")
 foreach(file IN LISTS qml_files)
     cmake_path(GET file FILENAME name)

@@ -17,6 +17,13 @@ QtObject {
     readonly property color danger: "#ef4444"
     readonly property color success: "#22c55e"
     readonly property color warning: "#fbbf24"
+    // Los paneles del editor (editor.css): barra superior e inspector, columna central y sus barras.
+    readonly property color topbar: "#10131c"
+    readonly property color stage: "#07080c"
+    readonly property color panelBar: "#0e1118"
+    // Material Icons (la fuente de iconos de video-yt, Apache-2.0): el nombre del icono es el texto.
+    readonly property FontLoader iconLoader: FontLoader { source: "qrc:/fonts/MaterialIcons-Regular.ttf" }
+    readonly property string iconFamily: iconLoader.status === FontLoader.Ready ? iconLoader.font.family : "Material Icons"
     readonly property int radiusLg: 16
     readonly property int radiusMd: 10
     readonly property int radiusSm: 8
