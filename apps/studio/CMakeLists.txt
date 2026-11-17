@@ -38,6 +38,18 @@ qt_add_qml_module(gc_studio_qml URI GenClip.Studio VERSION 1.0 RESOURCE_PREFIX /
                   OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/GenClip/Studio QML_FILES ${qml_files})
 target_link_libraries(gc_studio_qml PUBLIC Qt6::Quick Qt6::QuickControls2)
 
+# En Windows, Smart App Control bloquea las DLL sin firmar de algunos plugins de QtQuick.Controls que
+# compila vcpkg (qtquickcontrols2implplugin y qtquickcontrols2basicstyleimplplugin), y sin ellos no carga
+# ningún control. Los dos son `optional plugin`: si la librería con sus tipos ya está cargada, el motor de
+# QML no carga la DLL del plugin. app.cpp la carga (GC_STUDIO_PRELOAD_CONTROLS_IMPL).
+if(WIN32)
+    find_package(Qt6 QUIET COMPONENTS QuickControls2Impl QuickControls2BasicStyleImpl)
+    if(TARGET Qt6::QuickControls2Impl AND TARGET Qt6::QuickControls2BasicStyleImpl)
+        target_link_libraries(gc_studio PUBLIC Qt6::QuickControls2Impl Qt6::QuickControls2BasicStyleImpl)
+        target_compile_definitions(gc_studio PRIVATE GC_STUDIO_PRELOAD_CONTROLS_IMPL)
+    endif()
+endif()
+
 qt_add_executable(genclip-studio main.cpp)
 target_link_libraries(genclip-studio PRIVATE gc_studio gc_studio_qml)
 set_target_properties(genclip-studio PROPERTIES WIN32_EXECUTABLE ON MACOSX_BUNDLE ON)

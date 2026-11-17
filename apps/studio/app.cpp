@@ -28,8 +28,22 @@
 #include "settings_model.hpp"
 #include "thumbnails.hpp"
 
+#ifdef GC_STUDIO_PRELOAD_CONTROLS_IMPL
+// Las genera Qt en Qt6QuickControls2Impl y Qt6QuickControls2BasicStyleImpl (ver el CMakeLists).
+void qml_register_types_QtQuick_Controls_impl();       // NOLINT(readability-identifier-naming)
+void qml_register_types_QtQuick_Controls_Basic_impl(); // NOLINT(readability-identifier-naming)
+#endif
+
+void gc::studio::preload_qml_modules() {
+#ifdef GC_STUDIO_PRELOAD_CONTROLS_IMPL
+    qml_register_types_QtQuick_Controls_impl();
+    qml_register_types_QtQuick_Controls_Basic_impl();
+#endif
+}
+
 int gc::studio::run(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
+    preload_qml_modules();
     QGuiApplication::setApplicationName("GenClipPro");
 
     QFile catalog(":/fx/catalog.json");

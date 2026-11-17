@@ -37,6 +37,7 @@
 #include "gc/core/serialize.hpp"
 #include "gc/core/timeline_view.hpp"
 
+#include "app.hpp"
 #include "editor_model.hpp"
 #include "youtube_loader.hpp"
 #include "frame_preview.hpp"
@@ -153,6 +154,7 @@ struct Studio {
         REQUIRE(editor->openProject("p1"));
         settings_file = std::make_unique<core::SettingsFile>(dir / "data" / "settings.json");
         settings = std::make_unique<studio::SettingsModel>(*settings_file);
+        studio::preload_qml_modules();
         engine = std::make_unique<QQmlApplicationEngine>();
         engine->setInitialProperties({{"home", QVariant::fromValue(home.get())},
                                       {"editor", QVariant::fromValue(editor.get())},
