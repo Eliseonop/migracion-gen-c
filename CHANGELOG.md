@@ -11,6 +11,21 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.14.0] — 2026-11-18
+
+### Añadido
+
+- **Las recetas en un clic en `genclip-studio`:** en la pestaña Efectos del material, las cinco recetas de video-yt
+  (etalonaje de cine, texto con reflejo, texto que atraviesas, franjas al ritmo y sujeto que se adelanta), cada una con
+  lo que necesita seleccionado. Se aplican en un paso de deshacer y queda seleccionado lo que añaden.
+- **El catálogo de recetas y `recipe_ready` en `gc_core`** (`recipes.hpp`), con paridad contra `recipes.py` y
+  `recipeReady.js` de video-yt.
+
+### Cambiado
+
+- La pestaña Efectos del material es una sola lista que se desplaza, en el orden de video-yt: los efectos animados,
+  las recetas y la capa de ajuste.
+
 ## [0.13.0] — 2026-11-18
 
 ### Añadido

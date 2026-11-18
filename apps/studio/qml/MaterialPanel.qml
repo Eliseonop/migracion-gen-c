@@ -338,88 +338,170 @@ Rectangle {
                 : "Este proyecto no tiene material todavía."
             color: Theme.muted
         }
-        // El adjustBtn de EdFxLibrary: un clip que filtra todo lo que tiene debajo durante su tramo.
-        AbstractButton {
-            id: adjustButton
-            objectName: "material:adjustment"
-            visible: panel.source === "fx"
-            Layout.fillWidth: true
-            implicitHeight: 42
-            hoverEnabled: true
-            ToolTip.visible: hovered
-            ToolTip.delay: 500
-            ToolTip.text: "Un clip que filtra todo lo que tiene debajo durante su tramo"
-            onClicked: panel.model.addAdjustment()
-            contentItem: Row {
-                spacing: 8
-                leftPadding: 10
-                MIcon { anchors.verticalCenter: parent.verticalCenter; name: "tune"; size: 18; color: Theme.text }
-                Column {
-                    anchors.verticalCenter: parent.verticalCenter
-                    Label { text: "Capa de ajuste"; color: Theme.text; font.pixelSize: 12; font.bold: true }
-                    Label { text: "filtros y color para todo lo de debajo"; color: Theme.muted; font.pixelSize: 10 }
-                }
-            }
-            background: Rectangle {
-                radius: Theme.radiusSm
-                color: adjustButton.hovered ? Theme.card3 : Theme.card2
-                border.color: adjustButton.hovered ? Theme.accent : Theme.lineBright
-            }
-        }
-        Flow {
-            visible: panel.source === "fx"
-            Layout.fillWidth: true
-            spacing: 4
-            Repeater {
-                model: [{ id: "", label: "Todos" }].concat(panel.model.vfxCategories)
-                Rectangle {
-                    required property var modelData
-                    readonly property bool on: panel.fxCategory === modelData.id
-                    objectName: "fx:cat:" + modelData.id
-                    width: fxCatLabel.implicitWidth + 14
-                    height: 22
-                    radius: 11
-                    color: on ? Qt.rgba(1, 0.23, 0.36, 0.25) : Theme.card2
-                    border.color: on ? Theme.accent : Theme.lineBright
-                    Label { id: fxCatLabel; anchors.centerIn: parent; text: parent.modelData.label; color: Theme.text; font.pixelSize: 11 }
-                    TapHandler { onTapped: panel.fxCategory = parent.modelData.id }
-                }
-            }
-        }
-        GridView {
-            id: fxGrid
+        // EdFxLibrary (mode="effects"): todo en una lista que se desplaza (.ed-mat-list), en su orden: los efectos
+        // animados (EdVfxLibrary), las recetas en un clic (EdRecipes) y la capa de ajuste (adjustBtn).
+        Flickable {
+            id: fxScroll
+            objectName: "material:fxScroll"
             visible: panel.source === "fx"
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
-            cellWidth: width / 2
-            cellHeight: 52
-            readonly property var active: (panel.model.selectedClip.vfx || []).map((e) => e.effect)
-            model: panel.source === "fx" ? panel.model.searchVfx(panel.query, panel.fxCategory) : []
-            delegate: Rectangle {
-                required property var modelData
-                objectName: "fx:" + modelData.id
-                width: fxGrid.cellWidth - 4
-                height: fxGrid.cellHeight - 4
-                radius: Theme.radiusSm
-                color: Theme.card2
-                border.color: fxGrid.active.indexOf(modelData.id) >= 0 ? Theme.accent : fxHover.hovered ? Theme.lineBright : Theme.line
-                ToolTip.visible: fxHover.hovered
-                ToolTip.text: modelData.description + "\nClic: añadir al clip seleccionado"
-                ToolTip.delay: 600
-                HoverHandler { id: fxHover }
-                TapHandler { onTapped: panel.model.addVfx(parent.modelData.id) }
-                Column {
-                    anchors.fill: parent
-                    anchors.margins: 6
-                    Label { width: parent.width; text: modelData.name; color: Theme.text; font.pixelSize: 12; elide: Text.ElideRight }
-                    Label { width: parent.width; text: modelData.category; color: Theme.muted; font.pixelSize: 10; elide: Text.ElideRight }
+            contentHeight: fxColumn.implicitHeight
+            boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+            Column {
+                id: fxColumn
+                width: fxScroll.width
+                spacing: 6
+                Flow {
+                    width: parent.width
+                    spacing: 4
+                    Repeater {
+                        model: [{ id: "", label: "Todos" }].concat(panel.model.vfxCategories)
+                        Rectangle {
+                            required property var modelData
+                            readonly property bool on: panel.fxCategory === modelData.id
+                            objectName: "fx:cat:" + modelData.id
+                            width: fxCatLabel.implicitWidth + 14
+                            height: 22
+                            radius: 11
+                            color: on ? Qt.rgba(1, 0.23, 0.36, 0.25) : Theme.card2
+                            border.color: on ? Theme.accent : Theme.lineBright
+                            Label { id: fxCatLabel; anchors.centerIn: parent; text: parent.modelData.label; color: Theme.text; font.pixelSize: 11 }
+                            TapHandler { onTapped: panel.fxCategory = parent.modelData.id }
+                        }
+                    }
                 }
-            }
-            Label {
-                visible: fxGrid.count === 0
-                text: "Ningún efecto coincide."
-                color: Theme.muted
+                Grid {
+                    id: fxGrid
+                    width: parent.width
+                    columns: 2
+                    spacing: 4
+                    readonly property real cellWidth: (width - spacing) / 2
+                    readonly property var active: (panel.model.selectedClip.vfx || []).map((e) => e.effect)
+                    Repeater {
+                        id: fxRepeater
+                        model: panel.source === "fx" ? panel.model.searchVfx(panel.query, panel.fxCategory) : []
+                        Rectangle {
+                            required property var modelData
+                            objectName: "fx:" + modelData.id
+                            width: fxGrid.cellWidth
+                            height: 48
+                            radius: Theme.radiusSm
+                            color: Theme.card2
+                            border.color: fxGrid.active.indexOf(modelData.id) >= 0 ? Theme.accent : fxHover.hovered ? Theme.lineBright : Theme.line
+                            ToolTip.visible: fxHover.hovered
+                            ToolTip.text: modelData.description + "\nClic: añadir al clip seleccionado"
+                            ToolTip.delay: 600
+                            HoverHandler { id: fxHover }
+                            TapHandler { onTapped: panel.model.addVfx(parent.modelData.id) }
+                            Column {
+                                anchors.fill: parent
+                                anchors.margins: 6
+                                Label { width: parent.width; text: modelData.name; color: Theme.text; font.pixelSize: 12; elide: Text.ElideRight }
+                                Label { width: parent.width; text: modelData.category; color: Theme.muted; font.pixelSize: 10; elide: Text.ElideRight }
+                            }
+                        }
+                    }
+                }
+                Label {
+                    visible: fxRepeater.count === 0
+                    text: "Ningún efecto coincide."
+                    color: Theme.muted
+                }
+                // EdRecipes (.ed-recipes): los trucos del vídeo montados de una vez, con lo seleccionado.
+                Column {
+                    objectName: "recipes"
+                    width: parent.width
+                    spacing: 6
+                    topPadding: 4
+                    bottomPadding: 4
+                    Label { text: "Recetas en un clic"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
+                    Repeater {
+                        // Por número: las tarjetas se quedan al cambiar la selección y solo cambia si se puede.
+                        model: panel.source === "fx" ? panel.model.recipes.length : 0
+                        // .ed-recipe: nombre y truco, el botón y la descripción debajo; atenuada si no se puede.
+                        Rectangle {
+                            id: recipeCard
+                            required property int index
+                            readonly property var modelData: panel.model.recipes[index]
+                            objectName: "recipe:" + modelData.id
+                            width: parent.width
+                            height: recipeBody.implicitHeight + 16
+                            radius: 8
+                            color: Theme.card2
+                            border.color: Theme.line
+                            opacity: modelData.ok ? 1 : 0.6
+                            ColumnLayout {
+                                id: recipeBody
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.top: parent.top
+                                anchors.topMargin: 8
+                                anchors.leftMargin: 10
+                                anchors.rightMargin: 10
+                                spacing: 4
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 8
+                                    Label {
+                                        Layout.fillWidth: true
+                                        textFormat: Text.StyledText
+                                        text: "<b>" + recipeCard.modelData.label + "</b>&nbsp;&nbsp;<font color=\"" + Theme.muted
+                                              + "\">truco " + recipeCard.modelData.trick + "</font>"
+                                        color: Theme.text
+                                        font.pixelSize: 13
+                                        elide: Text.ElideRight
+                                    }
+                                    GhostButton {
+                                        objectName: "recipe:apply:" + recipeCard.modelData.id
+                                        iconName: "auto_awesome"
+                                        text: "Aplicar"
+                                        enabled: recipeCard.modelData.ok
+                                        tip: recipeCard.modelData.ok ? "Aplicar (se deshace con Ctrl+Z)" : recipeCard.modelData.why
+                                        onClicked: panel.model.applyRecipe(recipeCard.modelData.id)
+                                    }
+                                }
+                                Label {
+                                    objectName: "recipe:desc:" + recipeCard.modelData.id
+                                    Layout.fillWidth: true
+                                    wrapMode: Text.Wrap
+                                    text: recipeCard.modelData.desc + (recipeCard.modelData.ok ? "" : " — " + recipeCard.modelData.why + ".")
+                                    color: Theme.muted
+                                    font.pixelSize: 11
+                                }
+                            }
+                        }
+                    }
+                }
+                // El adjustBtn de EdFxLibrary: un clip que filtra todo lo que tiene debajo durante su tramo.
+                AbstractButton {
+                    id: adjustButton
+                    objectName: "material:adjustment"
+                    width: parent.width
+                    implicitHeight: 42
+                    hoverEnabled: true
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 500
+                    ToolTip.text: "Un clip que filtra todo lo que tiene debajo durante su tramo"
+                    onClicked: panel.model.addAdjustment()
+                    contentItem: Row {
+                        spacing: 8
+                        leftPadding: 10
+                        MIcon { anchors.verticalCenter: parent.verticalCenter; name: "tune"; size: 18; color: Theme.text }
+                        Column {
+                            anchors.verticalCenter: parent.verticalCenter
+                            Label { text: "Capa de ajuste"; color: Theme.text; font.pixelSize: 12; font.bold: true }
+                            Label { text: "filtros y color para todo lo de debajo"; color: Theme.muted; font.pixelSize: 10 }
+                        }
+                    }
+                    background: Rectangle {
+                        radius: Theme.radiusSm
+                        color: adjustButton.hovered ? Theme.card3 : Theme.card2
+                        border.color: adjustButton.hovered ? Theme.accent : Theme.lineBright
+                    }
+                }
             }
         }
         Flickable {

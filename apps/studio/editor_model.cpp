@@ -3633,11 +3633,15 @@ void EditorModel::applyBgAuto() {
     if (!session_ || !c) {
         return;
     }
-    auto start = core::bg_auto_start(*c);
+    start_bg_auto(*c);
+}
+
+void EditorModel::start_bg_auto(const core::TimelineClip& c) {
+    auto start = core::bg_auto_start(c);
     if (!start) {
         return;
     }
-    const std::string id = c->id;
+    const std::string id = c.id;
     set_bg(id, std::move(start->bg_removal), "bg-auto");
     bg_job_ = {{"clipId", qstr(id)}, {"status", "pending"}, {"progress", 0.0}, {"message", QString()},
                {"error", QString()}, {"notice", QString()}};

@@ -159,6 +159,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
     Q_PROPERTY(QVariantMap selectedClip READ selectedClip NOTIFY selectionChanged)
+    // Las recetas en un clic (EdRecipes): {id, label, trick, desc, ok, why} con lo seleccionado.
+    Q_PROPERTY(QVariantList recipes READ recipes NOTIFY selectionChanged)
     // La pista elegida en su cabecera (sin clip seleccionado): {id, kind, name, style}.
     Q_PROPERTY(QVariantMap selectedTrack READ selectedTrack NOTIFY selectionChanged)
     Q_PROPERTY(double playhead READ playhead WRITE setPlayhead NOTIFY playheadChanged)
@@ -301,6 +303,7 @@ public:
     [[nodiscard]] bool canRedo() const { return session_ && session_->can_redo(); }
     [[nodiscard]] QStringList selection() const;
     [[nodiscard]] QVariantMap selectedClip() const;
+    [[nodiscard]] QVariantList recipes() const;
     [[nodiscard]] QVariantMap selectedTrack() const;
     [[nodiscard]] double playhead() const { return playhead_; }
     [[nodiscard]] double pps() const { return pps_; }
@@ -402,6 +405,9 @@ public:
     // Figura del catálogo en el cabezal (addAsset('shape')) y capa de ajuste (addAdjustmentLayer).
     Q_INVOKABLE void addShape(const QString& type, const QString& label);
     Q_INVOKABLE void addAdjustment();
+    // Recetas en un clic (applyRecipeUI): la operación apply_recipe con lo seleccionado, en un paso de
+    // deshacer; selecciona lo que añade y, si deja un clip con «Eliminar fondo» por calcular, lo calcula.
+    Q_INVOKABLE void applyRecipe(const QString& id);
     // La barra de EdTimeline: pista nueva de vídeo o audio (addTrack: en su sitio por defecto, numerada
     // tras las que hay), pista de texto (addTextTrack: con el estilo de subtítulo, y queda elegida), el
     // imán de la pista principal (toggleMagnet: la primera de vídeo; al activarlo se empaqueta sin huecos)
@@ -792,6 +798,7 @@ private:
     // de motores (GET /api/bg/providers, una vez por proyecto abierto).
     void set_bg(const std::string& clip_id, Json bg_removal, const char* cause);
     void bg_update(const std::string& clip_id, const Json& job);
+    void start_bg_auto(const core::TimelineClip& c); // startBgAutoFor
     void load_bg_providers();
     BackendJobs bg_jobs_;
     QVariantMap bg_job_;

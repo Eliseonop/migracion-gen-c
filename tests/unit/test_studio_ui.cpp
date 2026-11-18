@@ -1569,6 +1569,79 @@ TEST_CASE("studio sin pantalla: un efecto de la biblioteca va a la pestaña Efec
     CHECK(s.editor->selectedClip()["vfx"].toList().size() == 1);
 }
 
+TEST_CASE("studio sin pantalla: las recetas en un clic dicen qué falta seleccionar y se aplican en un paso de "
+          "deshacer",
+          "[studio][ui]") {
+    const Studio s;
+    s.click("material:nav:effects");
+    // Están debajo de los efectos animados, en la misma lista: se baja hasta la receta.
+    const auto reveal = [&](const QString& name) {
+        QQuickItem* list = s.item("material:fxScroll");
+        QQuickItem* target = s.item(name);
+        REQUIRE(list);
+        REQUIRE(target);
+        auto* content = list->property("contentItem").value<QQuickItem*>();
+        REQUIRE(content);
+        list->setProperty("contentY", std::max(0.0, target->mapToItem(content, QPointF(0, 0)).y() - 20));
+        QCoreApplication::processEvents();
+    };
+    const auto enabled = [&](const QString& id) {
+        QQuickItem* b = s.item("recipe:apply:" + id);
+        REQUIRE(b);
+        return b->isEnabled();
+    };
+    const auto desc = [&](const QString& id) {
+        QQuickItem* d = s.item("recipe:desc:" + id);
+        REQUIRE(d);
+        return d->property("text").toString();
+    };
+
+    // Sin nada seleccionado solo el etalonaje; las demás dicen qué falta.
+    CHECK(enabled("cinema_grade"));
+    CHECK_FALSE(enabled("text_reflection"));
+    CHECK_FALSE(enabled("film_strips"));
+    CHECK_FALSE(enabled("subject_pop"));
+    CHECK(desc("text_reflection").endsWith(" — selecciona un texto."));
+    CHECK(desc("film_strips").endsWith(" — selecciona 2 o más vídeos o imágenes."));
+    CHECK(desc("cinema_grade").endsWith("barras de cine que entran."));
+    s.editor->applyRecipe("text_reflection"); // sin el botón, lo dice la receta
+    CHECK(s.editor->notice()["type"] == "error");
+    CHECK(s.editor->notice()["message"] == "esta receta necesita un texto seleccionado");
+
+    // Un vídeo: el sujeto ya se puede. Las franjas piden otro vídeo o imagen, y la selección múltiple es de un
+    // solo tipo (como en video-yt: con Ctrl, la imagen sustituye al vídeo).
+    s.editor->select("a");
+    CHECK(enabled("subject_pop"));
+    CHECK_FALSE(enabled("film_strips"));
+    CHECK_FALSE(enabled("pass_through_text"));
+    s.editor->select("b", true);
+    CHECK(s.editor->selection() == QStringList{"b"});
+    CHECK_FALSE(enabled("subject_pop"));
+    CHECK(desc("subject_pop").endsWith(" — selecciona un vídeo."));
+
+    // El etalonaje: capa de ajuste y barras sobre todo el vídeo, con lo nuevo seleccionado; Ctrl+Z lo quita entero.
+    const auto before = s.editor->clips().size();
+    reveal("recipe:apply:cinema_grade");
+    s.click("recipe:apply:cinema_grade");
+    CHECK(s.editor->notice()["type"] == "success");
+    CHECK(s.editor->notice()["message"] == "«Etalonaje de cine» aplicada");
+    CHECK(s.editor->clips().size() > before);
+    CHECK(s.editor->selection().size() == 1);
+    CHECK(s.editor->selectedClip()["kind"] != "audio");
+    QTest::keyClick(s.window, Qt::Key_Z, Qt::ControlModifier);
+    CHECK(s.editor->clips().size() == before);
+
+    // Con un texto, el reflejo: una copia volteada en su propia pista, que queda elegida.
+    s.editor->addText();
+    const QString text = s.editor->selection().front();
+    CHECK(enabled("text_reflection"));
+    reveal("recipe:apply:text_reflection");
+    s.click("recipe:apply:text_reflection");
+    CHECK(s.editor->notice()["message"] == "«Texto con reflejo» aplicada");
+    CHECK(s.editor->selection().front() != text);
+    CHECK(s.editor->selectedClip()["kind"] == "text");
+}
+
 TEST_CASE("studio sin pantalla: una figura del material se añade con un clic o arrastrándola", "[studio][ui]") {
     const Studio s;
     s.click("material:nav:shapes");
