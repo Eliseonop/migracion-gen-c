@@ -2718,7 +2718,7 @@ TEST_CASE("studio sin pantalla: congelar fotograma parte el vídeo e inserta la 
 
 TEST_CASE("studio sin pantalla: separar solapes sube los clips montados a su propia pista", "[studio][ui]") {
     const Studio s;
-    CHECK_FALSE(s.item("tl:separate")->isVisible()); // sin solapes no se enseña
+    CHECK(s.item("tl:separate") == nullptr); // sin solapes no se enseña (item() solo da los visibles)
     // Un proyecto viejo: «c» montado sobre «a» en V1.
     auto project = s.store->get_project("p1");
     REQUIRE(project);
@@ -2729,7 +2729,7 @@ TEST_CASE("studio sin pantalla: separar solapes sube los clips montados a su pro
     REQUIRE(s.editor->openProject("p1"));
     CHECK(s.editor->overlapCount() == 1);
     QTest::qWait(20);
-    CHECK(s.item("tl:separate")->isVisible());
+    REQUIRE(s.item("tl:separate") != nullptr);
     s.click("tl:separate");
     CHECK(s.editor->overlapCount() == 0);
     CHECK(s.view("c")["trackId"] != "V1");
