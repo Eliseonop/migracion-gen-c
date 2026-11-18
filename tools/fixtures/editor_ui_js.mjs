@@ -38,6 +38,8 @@ const bgLib = await load('lib/clipBg.js')
 const ytQuality = await load('features/editor/ytQuality.js')
 const clipFxLib = await load('lib/clipFx.js')
 const clipAnim = await load('lib/clipAnim.js')
+const clipExtract = await load('features/editor/clipExtract.js')
+const motionTarget = await load('features/editor/motionTarget.js')
 // confirmCrop de VideoEditor.jsx (con changeReframe, upsertKeyframe, changeTransform y srcTOf) sobre un clip.
 const confirmCrop = (clip, crop, rotation, t, fps) => {
   let made = clip
@@ -671,6 +673,15 @@ const out = await Promise.all(cases.map(async ({ tracks, clips, markers, geo, ca
     withAspect: (id, w, h) => projectFormat.withAspect(id, w, h),
     withResolution: (side, w, h) => projectFormat.withResolution(side, w, h),
     withMediaAspect: (mw, mh, w, h) => projectFormat.withMediaAspect(mw, mh, w, h),
+    setMark: (mark, which, t) => motionTarget.setMark(mark, which, t),
+    hasMarkRange: (mark) => motionTarget.hasMarkRange(mark),
+    dragMark: (mark, which, t, duration) => clipExtract.dragMark(mark, which, t, duration ?? undefined),
+    markToSourceRange: (mark) => {
+      const r = clipExtract.markToSourceRange(clips, mark)
+      return r.error ? { error: r.error } : { clip: r.clip.id, start: r.start, end: r.end }
+    },
+    segmentLabel: (title, start, end) => clipExtract.segmentLabel(title, start, end),
+    segmentDescription: (ask) => clipExtract.segmentDescription(ask),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)
       return moved.map((c) => c.start)

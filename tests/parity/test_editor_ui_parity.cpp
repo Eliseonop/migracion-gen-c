@@ -12,6 +12,7 @@
 
 #include "gc/core/bg_ui.hpp"
 #include "gc/core/captions_ui.hpp"
+#include "gc/core/clip_extract.hpp"
 #include "gc/core/clip_layout_ui.hpp"
 #include "gc/core/face_follow.hpp"
 #include "gc/core/fx_catalog.hpp"
@@ -1207,6 +1208,41 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
             return size(with_resolution(num(1), dim(2), dim(3)));
         }
         return size(with_media_aspect(num(1), num(2), dim(3), dim(4)));
+    }
+    if (fn == "setMark" || fn == "hasMarkRange" || fn == "dragMark" || fn == "markToSourceRange") {
+        const ClipMark mark = mark_from_json(call.at(1));
+        const auto end_at = [&](std::size_t i) { return str(i) == "in" ? MarkEnd::In : MarkEnd::Out; };
+        // Number(null) || 0 en el instante; la duración null es la de por defecto (sin tope).
+        const auto time_or = [&](std::size_t i, double none) { return call.at(i).is_null() ? none : num(i); };
+        if (fn == "hasMarkRange") {
+            return has_mark_range(mark);
+        }
+        if (fn == "setMark") {
+            return mark_to_json(set_mark(mark, end_at(2), time_or(3, std::numeric_limits<double>::quiet_NaN())));
+        }
+        if (fn == "dragMark") {
+            return mark_to_json(drag_mark(mark, end_at(2), time_or(3, std::numeric_limits<double>::quiet_NaN()),
+                                          time_or(4, std::numeric_limits<double>::infinity())));
+        }
+        const auto range = mark_to_source_range(tl.clips, mark);
+        if (!range) {
+            return Json{{"error", range.error()}};
+        }
+        return Json{{"clip", range->clip->id}, {"start", range->start}, {"end", range->end}};
+    }
+    if (fn == "segmentLabel") { // String(title || 'Clip'): null es el título vacío
+        return segment_label(call.at(1).is_string() ? str(1) : std::string(), num(2), num(3));
+    }
+    if (fn == "segmentDescription") {
+        const Json& ask = call.at(1);
+        if (!ask.is_object()) {
+            return ""; // if (!ask) return ''
+        }
+        const auto text = [&](const char* key) {
+            const auto it = ask.find(key);
+            return it != ask.end() && it->is_string() ? it->get<std::string>() : std::string();
+        };
+        return segment_description(desc_mode_from(text("descMode")), text("description"), text("sourceDescription"));
     }
     if (fn == "emptiedTracks") {
         return emptied_tracks(tl.tracks, tl.clips, strings(call.at(1)));

@@ -84,6 +84,7 @@ add_library(gc_core
     src/mask_ui.cpp
     src/vfx_stack.cpp
     src/project_format.cpp
+    src/clip_extract.cpp
     src/timeline_view.cpp
     src/yt_history.cpp
     src/yt_ui.cpp

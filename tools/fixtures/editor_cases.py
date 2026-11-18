@@ -1142,6 +1142,69 @@ def _separate_case() -> list[dict]:
     return out
 
 
+def _clip_extract_case() -> list[dict]:
+    """El extractor del Clip Editor (clipExtract.js y setMark/hasMarkRange de motionTarget.js): las marcas
+    Z/X por teclas y arrastradas, el tramo en segundos del archivo sobre timelines con cortes, velocidad y
+    al revés, y el nombre y la descripción del clip nuevo. Con su propio rng."""
+    rng = random.Random(20261118)
+    times = [0, 0.0004, 0.0005, 0.0015, 1.2345, 1.2355, 2.5, 3, 3.1, 3.3, 10, 59.9996, -1, -0.0004, None]
+    marks = [{"in": None, "out": None}, {"in": 1.0, "out": None}, {"in": None, "out": 4.0}, {"in": 1.0, "out": 4.0},
+             {"in": 3.0, "out": 3.2}, {"in": 2.5, "out": 2.5}, {"in": 5.0, "out": 1.0}, {"in": "2", "out": " 6 "},
+             {"in": "", "out": 3}, {"in": "x", "out": True}, {"in": 0, "out": 0.3}, {}, None,
+             {"in": 0.0004, "out": 10}]
+    calls: list = []
+    for m in marks:
+        calls.append(["hasMarkRange", m])
+        for which in ("in", "out"):
+            for t in times:
+                calls.append(["setMark", m, which, t])
+            for dur in (None, 0, -5, 10, 3.25):
+                for t in times:
+                    calls.append(["dragMark", m, which, t, dur])
+    for _ in range(80):
+        a = round(rng.uniform(-1, 12), rng.choice([0, 1, 3, 4]))
+        m = {"in": a, "out": round(a + rng.uniform(-1, 6), rng.choice([0, 2, 3]))}
+        calls.append(["setMark", m, rng.choice(["in", "out"]), round(rng.uniform(-1, 12), 4)])
+        calls.append(["dragMark", m, rng.choice(["in", "out"]), round(rng.uniform(-1, 14), 4),
+                      rng.choice([None, 0, 5, 9.5, 12])])
+    for title in ("IRON MAN", "", None, "   ", "  Tráiler　", "﻿x", "Clip · 1:00"):
+        for s, e in ((0, 0), (0.49, 0.5), (59.5, 60.4), (65.2, 72.8), (-3, 2.5), (3599.5, 3725), (1e6, 1e6 + 61.5)):
+            calls.append(["segmentLabel", title, s, e])
+    asks = [{"descMode": m, "description": d, "sourceDescription": sd}
+            for m in ("manual", "source", "none", "otro", None)
+            for d, sd in (("  hola ", " fuente\n"), ("", ""), (None, None), ("　ya ", "\t"))]
+    calls += [["segmentDescription", a] for a in asks] + [["segmentDescription", None]]
+
+    tracks = [track("V1", "video"), track("A1", "audio"), track("T1", "text")]
+    timelines = [
+        [],
+        [clip("t1", "T1", kind="text", start=0, out=8), clip("a1", "A1", kind="audio", start=0, out=8)],
+        [clip("v1", "V1", start=0, inp=0, out=12)],
+        [clip("v1", "V1", start=0, inp=2, out=6), clip("v2", "V1", start=4, inp=8, out=11.5)],
+        [clip("v1", "V1", start=1, inp=3, out=9, speed=2.0), clip("v2", "V1", start=4.01, inp=0, out=4, speed=0.5)],
+        [clip("v1", "V1", start=0, inp=1.25, out=7.75, reverse=True), clip("v2", "V1", start=6.5, inp=0, out=3,
+                                                                          reverse=True, speed=1.5)],
+        [clip("a1", "A1", kind="audio", start=0, out=9), clip("v1", "V1", start=0.5, inp=0.333, out=5.111),
+         clip("i1", "V1", kind="image", start=6, out=3)],
+        [clip("v1", "V1", start=0, inp=0, out=3, speed=0.0), clip("v2", "V1", start=3, inp=0, out=0.2)],
+    ]
+    out = [{"name": "clip editor: marcas", "timeline": {"tracks": tracks, "clips": []}, "calls": calls}]
+    for n, clips in enumerate(timelines):
+        rcalls: list = []
+        for _ in range(60):
+            a = round(rng.uniform(-0.5, 13), rng.choice([1, 2, 3]))
+            rcalls.append(["markToSourceRange", {"in": a, "out": round(a + rng.choice([0.1, 0.29, 0.3, 0.31, 1,
+                                                                                   rng.uniform(0, 8)]), 3)}])
+        for c in clips:  # los bordes de cada clip, con el margen de 0,02 s
+            end = c["start"] + (c["out_point"] - c["in_point"])
+            for a, b in ((c["start"], end), (c["start"] - 0.02, end + 0.02), (c["start"] - 0.021, end),
+                         (c["start"], end + 0.0201), (c["start"] + 0.1, c["start"] + 0.39)):
+                rcalls.append(["markToSourceRange", {"in": round(a, 4), "out": round(b, 4)}])
+        rcalls += [["markToSourceRange", m] for m in marks]
+        out.append({"name": f"clip editor: tramo {n}", "timeline": {"tracks": tracks, "clips": clips}, "calls": rcalls})
+    return out
+
+
 def _format_case() -> dict:
     """El formato de salida de la fila del reproductor (lib/projectFormat.js, EdViewerTools.jsx)."""
     calls: list = []
@@ -1204,4 +1267,5 @@ def cases() -> list[dict]:
     out.append(_format_case())
     out += _match_case()
     out += _separate_case()
+    out += _clip_extract_case()
     return out
