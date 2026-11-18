@@ -11,6 +11,25 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.13.0] — 2026-11-18
+
+### Añadido
+
+- **El Clip Editor en `genclip-studio`:** «Preparar clip» abre un vídeo del proyecto entero (o un segmento, con su
+  rango marcado); Z y X marcan el inicio y el fin (o se arrastran en la regla), y «Crear clip» o «Agregar a material»
+  lo guardan en el material por referencia, sin render, con su título y su descripción. Cada pestaña conserva su
+  timeline, y la del Clip Editor no se guarda en el proyecto.
+- **El extractor del Clip Editor en `gc_core`** (`clip_extract.hpp`), con paridad contra `clipExtract.js` de
+  video-yt.
+- **El editor se parece a video-yt** (2026-11-16 y 17): barra superior, reproductor con el formato de salida, la barra
+  de iconos del material con tarjetas y miniaturas, el + de las tarjetas, el panel de Keyframes, la barra de la
+  timeline entera (añadir pistas, imán, igualar duración, congelar fotograma y separar solapes), el volumen de escucha
+  y el JSON del proyecto.
+
+### Corregido
+
+- El test de «separar solapes» del studio ya no revienta: pedía `isVisible()` a un botón oculto.
+
 ## [0.12.0] — 2026-11-14
 
 ### Añadido

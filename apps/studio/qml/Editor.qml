@@ -29,7 +29,26 @@ Item {
     Shortcut {
         sequence: "Escape"
         enabled: editor.visible
-        onActivated: editor.stageFullscreen ? editor.toggleStageFullscreen() : editor.model.clearSelection()
+        // En el Clip Editor, Esc quita antes la marca Z/X.
+        onActivated: editor.stageFullscreen ? editor.toggleStageFullscreen()
+                                            : (editor.model.clearClipMark() || editor.model.clearSelection())
+    }
+    // El Clip Editor como extractor: Z = inicio, X = fin, Enter = Crear clip.
+    readonly property bool clipMode: editor.model.canvasTab === "clip"
+    // fmt de lib/utils.js: «m:ss» o «h:mm:ss», con los segundos hacia abajo.
+    function fmtSecs(s) {
+        const n = Math.max(0, Math.floor(s || 0))
+        const ss = String(n % 60).padStart(2, "0")
+        const h = Math.floor(n / 3600)
+        const m = Math.floor((n % 3600) / 60)
+        return h > 0 ? h + ":" + String(m).padStart(2, "0") + ":" + ss : m + ":" + ss
+    }
+    Shortcut { sequence: "Z"; enabled: editor.visible && editor.clipMode; onActivated: editor.model.markClip("in") }
+    Shortcut { sequence: "X"; enabled: editor.visible && editor.clipMode; onActivated: editor.model.markClip("out") }
+    Shortcut {
+        sequences: ["Return", "Enter"]
+        enabled: editor.visible && editor.clipMode
+        onActivated: editor.model.createSegmentFromMark()
     }
     Shortcut { sequence: "Space"; enabled: editor.visible; onActivated: editor.model.player.toggle() }
     Shortcut { sequence: "Left"; enabled: editor.visible; onActivated: editor.model.nudgePlayhead(-0.1) }
@@ -115,6 +134,14 @@ Item {
                 Rectangle { implicitWidth: 1; implicitHeight: 18; color: Theme.lineBright; Layout.leftMargin: 4; Layout.rightMargin: 4 }
                 IconBtn { objectName: "editor:undo"; iconName: "undo"; tip: "Deshacer (Ctrl+Z)"; enabled: editor.model.canUndo; onClicked: editor.model.undo() }
                 IconBtn { objectName: "editor:redo"; iconName: "redo"; tip: "Rehacer (Ctrl+Y)"; enabled: editor.model.canRedo; onClicked: editor.model.redo() }
+                GhostButton { // onLeaveClip
+                    objectName: "editor:leaveClip"
+                    visible: editor.clipMode
+                    iconName: "movie"
+                    text: "Proyecto"
+                    tip: "Volver al proyecto"
+                    onClicked: editor.model.canvasTab = "main"
+                }
                 Item { Layout.fillWidth: true }
                 IconBtn { objectName: "editor:settings"; iconName: "settings"; tip: "Configuración (Ctrl+,)"; onClicked: editor.openSettings() }
                 IconBtn {
@@ -133,7 +160,8 @@ Item {
                 }
                 PrimaryButton {
                     objectName: "editor:export"
-                    visible: !editor.model.exporter.running
+                    // En el Clip Editor, video-yt pone aquí «Guardar clip» (lo renderiza el backend): aún no está.
+                    visible: !editor.model.exporter.running && !editor.clipMode
                     iconName: "movie"
                     text: "Exportar"
                     tip: "Exportar el resultado"
@@ -174,7 +202,7 @@ Item {
                     anchors.margins: 1
                     spacing: 0
 
-                    // .ed-col-tabs: el editor principal; los demás de video-yt aún no están en GenClipPro.
+                    // .ed-col-tabs: el editor principal y el Clip Editor.
                     Rectangle {
                         visible: !editor.stageFullscreen
                         Layout.fillWidth: true
@@ -188,20 +216,17 @@ Item {
                             spacing: 5
                             Repeater {
                                 // Sin Motion Studio (se rehará de cero) ni Paper Animator (es el efecto paper_cutout).
-                                model: [["Main Editor", ""], ["Clip Editor", "El Clip Editor (editar tramos) aún no está en GenClipPro"]]
+                                model: [["Main Editor", "main"], ["Clip Editor", "clip"]]
                                 AbstractButton {
                                     id: colTab
                                     required property var modelData
                                     required property int index
-                                    readonly property bool on: index === 0
+                                    readonly property bool on: editor.model.canvasTab === modelData[1]
                                     Layout.fillWidth: true
                                     implicitHeight: 28
                                     objectName: "editor:colTab:" + index
                                     hoverEnabled: true
-                                    // Las que aún no están: sin acción, solo el aviso.
-                                    ToolTip.visible: hovered && !!modelData[1]
-                                    ToolTip.delay: 400
-                                    ToolTip.text: modelData[1]
+                                    onClicked: editor.model.canvasTab = modelData[1]
                                     contentItem: Label {
                                         text: colTab.modelData[0]
                                         horizontalAlignment: Text.AlignHCenter
@@ -209,7 +234,6 @@ Item {
                                         font.pixelSize: 12
                                         font.weight: colTab.on ? Font.Bold : Font.Normal
                                         color: colTab.on ? "white" : Theme.textSecondary
-                                        opacity: colTab.on ? 1 : 0.55
                                     }
                                     background: Rectangle {
                                         radius: Theme.radiusSm
@@ -228,12 +252,70 @@ Item {
                         }
                     }
 
+                    // .ed-clip-banner: el título y la descripción del vídeo del Clip Editor (los del clip que se crea).
+                    Rectangle {
+                        objectName: "clip:banner"
+                        visible: editor.clipMode && !editor.stageFullscreen
+                        Layout.fillWidth: true
+                        implicitHeight: bannerRow.implicitHeight + 12
+                        color: Qt.rgba(234 / 255, 88 / 255, 12 / 255, 0.12)
+                        Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Qt.rgba(251 / 255, 146 / 255, 60 / 255, 0.35) }
+                        RowLayout {
+                            id: bannerRow
+                            anchors.fill: parent
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            spacing: 8
+                            Label {
+                                text: "PREPARAR CLIP"
+                                color: "#fb923c"
+                                font.pixelSize: 10
+                                font.weight: Font.ExtraBold
+                                font.letterSpacing: 0.8
+                            }
+                            TextField {
+                                objectName: "clip:title"
+                                Layout.fillWidth: true
+                                Layout.preferredWidth: 10
+                                Layout.minimumWidth: 120
+                                placeholderText: "Título"
+                                text: editor.model.clipMeta.title || ""
+                                font.pixelSize: 12
+                                color: Theme.text
+                                background: Rectangle { radius: Theme.radiusSm; color: Theme.card; border.color: Theme.lineBright }
+                                onTextEdited: editor.model.setClipTitle(text)
+                            }
+                            TextField {
+                                objectName: "clip:description"
+                                Layout.fillWidth: true
+                                Layout.preferredWidth: 14
+                                Layout.minimumWidth: 120
+                                placeholderText: "Descripción"
+                                text: editor.model.clipMeta.description || ""
+                                font.pixelSize: 12
+                                color: Theme.text
+                                background: Rectangle { radius: Theme.radiusSm; color: Theme.card; border.color: Theme.lineBright }
+                                onTextEdited: editor.model.setClipDescription(text)
+                            }
+                        }
+                    }
+
                     // El escenario: el recuadro de salida centrado, a la escala del zoom del canvas.
                     Item {
                         id: stage
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         clip: true
+
+                        Label { // .ed-stage-empty del Clip Editor
+                            objectName: "clip:empty"
+                            z: 5
+                            anchors.centerIn: parent
+                            visible: editor.clipMode && editor.model.duration <= 0
+                            text: "Elige un vídeo en el material (botón de recortar de su tarjeta) para prepararlo"
+                            color: Theme.muted
+                            font.pixelSize: 13
+                        }
 
                         Rectangle {
                             id: frame
@@ -612,6 +694,26 @@ Item {
                     GhostButton { objectName: "tl:marker"; iconName: "bookmark_add"; iconSize: 14; tip: "Marcador en el cursor (M) · , y . saltan entre marcadores y beats"; onClicked: editor.model.toggleMarker() }
                     GhostButton { objectName: "tl:freeze"; iconName: "ac_unit"; iconSize: 14; tip: "Congelar fotograma: inserta una imagen fija del fotograma del cursor (3 s)"; enabled: editor.model.canFreeze; onClicked: editor.model.freezeAtPlayhead() }
                     GhostButton { objectName: "tl:delete"; iconName: "delete"; iconSize: 14; danger: true; tip: "Eliminar clip (Supr)"; enabled: parent.hasSel; onClicked: editor.model.deleteSelection() }
+                    // .ed-create-seg (Clip Editor): el tramo Z/X a «Crear clip», con su duración.
+                    Rectangle { visible: editor.model.canCreateSegment; implicitWidth: 1; implicitHeight: 18; color: Theme.line; Layout.leftMargin: 3; Layout.rightMargin: 3 }
+                    GhostButton {
+                        objectName: "tl:createSeg"
+                        visible: editor.model.canCreateSegment
+                        iconName: "add_to_photos"
+                        iconSize: 14
+                        on: editor.model.clipMark.range
+                        enabled: editor.model.clipMark.range && !editor.model.segAsk.phase
+                        text: editor.model.clipMark.range ? editor.fmtSecs(editor.model.clipMark.out - editor.model.clipMark.in) : ""
+                        tip: "Revisa título y descripción del rango marcado (Z inicio · X fin) y confírmalo para añadirlo a Mis materiales (Enter)"
+                        onClicked: editor.model.createSegmentFromMark()
+                    }
+                    Label {
+                        objectName: "tl:segHint"
+                        visible: editor.model.canCreateSegment && !editor.model.clipMark.hasIn && !editor.model.clipMark.hasOut
+                        text: "Z inicio · X fin"
+                        color: Theme.muted
+                        font.pixelSize: 11
+                    }
                     Rectangle { implicitWidth: 1; implicitHeight: 18; color: Theme.line; Layout.leftMargin: 3; Layout.rightMargin: 3 }
                     // PreviewVolButton: el volumen de escucha, con su deslizador vertical en un desplegable.
                     IconBtn {
@@ -875,6 +977,7 @@ Item {
     CropModal { id: cropModal; model: editor.model }
     SfxModal { id: sfxModal; model: editor.model }
     JsonModal { id: jsonModal; model: editor.model }
+    SegmentModal { model: editor.model; fmtSecs: editor.fmtSecs }
     ClipMenu { id: clipMenu; model: editor.model; onPasteAttributes: pasteAttrs.openFor(editor.model.pasteableGroups()) }
 
     // «Subir calidad en la timeline» (el ConfirmModal de EdMaterial.jsx).

@@ -2796,3 +2796,119 @@ TEST_CASE("studio sin pantalla: el JSON del proyecto se ve, se edita y se guarda
     REQUIRE(std::filesystem::exists(file));
     CHECK(core::project_manifest(**project)["materials"][1]["label"] == "Logo nuevo");
 }
+
+TEST_CASE("studio sin pantalla: el Clip Editor marca un tramo con Z y X y lo guarda en el material por referencia",
+          "[studio][ui][preview]") {
+    const Studio s;
+    // Un vídeo del proyecto (index 7) con su archivo, título y descripción.
+    auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    const auto video = core::project_base(s.store->clips_dir(), **project) / "video" / "v.mp4";
+    std::filesystem::create_directories(video.parent_path());
+    std::filesystem::copy_file(core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files" / "v_2s.mp4", video);
+    core::SequentialIdSource ids;
+    core::ClipInfo info;
+    info.index = 7;
+    info.filename = "v.mp4";
+    info.url = "/api/media/p1/video/v.mp4";
+    info.end = 2.0;
+    info.label = "Mi vídeo";
+    info.description = "Un vídeo de prueba";
+    REQUIRE(s.store->add_clips("p1", {info}, ids));
+    REQUIRE(s.editor->openProject("p1"));
+    const auto ids_of = [&] {
+        QStringList out;
+        for (const QVariant& v : s.editor->clips()) {
+            out << v.toMap()["clipId"].toString();
+        }
+        return out;
+    };
+    const QStringList project_clips = ids_of();
+    CHECK(s.editor->canvasTab() == "main");
+    CHECK_FALSE(s.editor->canCreateSegment());
+
+    // La pestaña sin vídeo: vacía, con su aviso; y de vuelta, la timeline del proyecto.
+    s.click("editor:colTab:1");
+    CHECK(s.editor->canvasTab() == "clip");
+    CHECK(s.editor->clips().isEmpty());
+    CHECK(s.item("clip:empty") != nullptr);
+    CHECK(s.item("editor:export") == nullptr); // en el Clip Editor no se exporta
+    s.click("editor:colTab:0");
+    CHECK(ids_of() == project_clips);
+
+    // «Preparar clip»: el vídeo entero en V1, con su título.
+    REQUIRE(s.editor->openClipEditor("clips:7"));
+    CHECK(s.editor->canvasTab() == "clip");
+    REQUIRE(s.editor->clips().size() == 1);
+    const QVariantMap v = s.editor->clips().front().toMap();
+    CHECK(v["kind"] == "video");
+    CHECK(v["trackId"] == "V1");
+    CHECK(std::abs(v["duration"].toDouble() - 2.0) < 0.05);
+    CHECK(s.editor->clipMeta()["title"] == "Mi vídeo");
+    CHECK(s.editor->canCreateSegment());
+    QTest::qWait(20);
+    CHECK(s.item("tl:segHint") != nullptr);
+
+    // Z en 0,5 s y X en 1,5 s; «Crear clip» trae la descripción del vídeo.
+    s.editor->setPlayhead(0.5);
+    QTest::keyClick(s.window, Qt::Key_Z);
+    s.editor->setPlayhead(1.5);
+    QTest::keyClick(s.window, Qt::Key_X);
+    CHECK(s.editor->clipMark()["in"].toDouble() == 0.5);
+    CHECK(s.editor->clipMark()["out"].toDouble() == 1.5);
+    QTest::qWait(20);
+    CHECK(s.item("clipMark:in") != nullptr);
+    CHECK(s.item("clipMark:shade") != nullptr);
+    s.click("tl:createSeg");
+    QTest::qWait(20);
+    const QVariantMap ask = s.editor->segAsk();
+    CHECK(ask["start"].toDouble() == 0.5);
+    CHECK(ask["end"].toDouble() == 1.5);
+    CHECK(ask["title"] == "Mi vídeo");
+    CHECK(ask["descMode"] == "source");
+    s.click("seg:confirm");
+    QTest::qWait(20);
+    CHECK(s.editor->segAsk().isEmpty());
+    CHECK(s.editor->notice()["type"] == "success");
+
+    // El material nuevo apunta al mismo archivo con su tramo, sin render.
+    project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    REQUIRE((**project).clips.size() == 2);
+    const auto seg = std::ranges::find_if((**project).clips, [](const core::ClipInfo& c) { return c.in_point.has_value(); });
+    REQUIRE(seg != (**project).clips.end());
+    CHECK(seg->filename == "v.mp4");
+    CHECK(seg->in_point == 0.5);
+    CHECK(seg->out_point == 1.5);
+    CHECK(seg->label == "Mi vídeo");
+    CHECK(seg->description == "Un vídeo de prueba");
+    // La salida de este tramo es la entrada del siguiente.
+    CHECK(s.editor->clipMark()["in"].toDouble() == 1.5);
+    CHECK(s.editor->clipMark()["out"].isNull());
+
+    // Esc quita la marca y, sin ella, «Crear clip» avisa y no abre nada.
+    QTest::keyClick(s.window, Qt::Key_Escape);
+    CHECK_FALSE(s.editor->clipMark()["hasIn"].toBool());
+    s.editor->createSegmentFromMark();
+    CHECK(s.editor->notice()["message"] == "Marca inicio (Z) y fin (X) para crear el clip.");
+    CHECK(s.editor->segAsk().isEmpty());
+
+    // «Agregar a material»: el vídeo entero, con la descripción a mano.
+    s.editor->addClipToMaterial(v["clipId"].toString());
+    CHECK(s.editor->segAsk()["simple"].toBool());
+    CHECK(s.editor->segAsk()["start"].toDouble() == 0.0);
+    CHECK(std::abs(s.editor->segAsk()["end"].toDouble() - 2.0) < 0.05);
+    CHECK(s.editor->segAsk()["description"] == "Un vídeo de prueba");
+    s.editor->cancelSegment();
+    CHECK(s.editor->segAsk().isEmpty());
+
+    // La timeline del Clip Editor no se guarda en el proyecto, y cada pestaña conserva la suya.
+    CHECK((**s.store->get_project("p1")).timeline->clips.size() == static_cast<std::size_t>(project_clips.size()));
+    s.click("editor:leaveClip");
+    CHECK(s.editor->canvasTab() == "main");
+    CHECK(ids_of() == project_clips);
+    s.click("editor:colTab:1");
+    CHECK(s.editor->clips().size() == 1);
+}

@@ -640,6 +640,7 @@ bool EditorModel::openProject(const QString& pid) {
     load_collections("", "");
     // Deshacer sobrevive a cerrar el proyecto: data/history/<pid>.json, el mismo archivo que video-yt.
     autosave_.reset();
+    reset_clip_editor(); // después del autoguardado, que puede apuntar a la sesión del proyecto guardada
     const auto history_file = core::history_path(store_.file().parent_path(), project_id_);
     sizes_.clear();
     dims_.clear();
@@ -917,7 +918,7 @@ void EditorModel::searchSfx(const QString& q, const QString& category) {
 }
 
 bool EditorModel::exportVideo() {
-    if (!session_) {
+    if (!session_ || clip_mode_) { // en el Clip Editor, la barra superior no exporta (es «Guardar clip»)
         return false;
     }
     player_.pause();
@@ -955,6 +956,7 @@ void EditorModel::closeProject() {
     }
     autosave_.reset();
     session_.reset();
+    reset_clip_editor();
     project_id_.clear();
     project_name_.clear();
     selection_ = {};

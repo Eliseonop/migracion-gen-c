@@ -59,6 +59,8 @@ int gc::studio::run(int argc, char* argv[]) {
     args.addOption({"open", "Abre ese proyecto en el editor.", "id"});
     args.addOption({"select", "Con --open, selecciona ese clip.", "clip"});
     args.addOption({"at", "Con --open, pone el cabezal en ese instante.", "segundos"});
+    args.addOption({"clip", "Con --open, abre ese vídeo del material (clips:<index>) en el Clip Editor.", "clave"});
+    args.addOption({"mark", "Con --clip, marca ese tramo (Z y X).", "inicio,fin"});
     args.process(app);
     const QString root = args.isSet("root")
                              ? args.value("root")
@@ -91,6 +93,13 @@ int gc::studio::run(int argc, char* argv[]) {
         Qt::QueuedConnection);
     if (args.isSet("open")) {
         editor.openProject(args.value("open"));
+        if (args.isSet("clip") && editor.openClipEditor(args.value("clip")) && args.isSet("mark")) {
+            const QStringList mark = args.value("mark").split(',');
+            for (int i = 0; i < 2 && i < mark.size(); ++i) {
+                editor.setPlayhead(mark[i].toDouble());
+                editor.markClip(i == 0 ? "in" : "out");
+            }
+        }
         if (args.isSet("select")) {
             editor.select(args.value("select"));
         }

@@ -578,6 +578,31 @@ Rectangle {
                 color: "#22c55e"
             }
 
+            // La marca Z/X del Clip Editor: el tramo sombreado (.ed-mark-shade) y la línea de cada extremo.
+            Rectangle {
+                objectName: "clipMark:shade"
+                readonly property var mk: timeline.model.clipMark
+                visible: timeline.model.canvasTab === "clip" && mk.hasIn && mk.hasOut
+                x: visible ? mk.in * timeline.pps : 0
+                width: visible ? Math.max(0, (mk.out - mk.in) * timeline.pps) : 0
+                height: Math.max(lanes.height, flick.height)
+                z: 9
+                color: Qt.rgba(1, 122 / 255, 26 / 255, 0.06)
+            }
+            Repeater {
+                model: timeline.model.canvasTab === "clip" ? ["in", "out"] : []
+                Rectangle {
+                    required property string modelData
+                    readonly property var mk: timeline.model.clipMark
+                    visible: modelData === "in" ? mk.hasIn : mk.hasOut
+                    x: (visible ? (modelData === "in" ? mk.in : mk.out) : 0) * timeline.pps - 1
+                    width: 2
+                    height: Math.max(lanes.height, flick.height)
+                    z: 9
+                    color: Qt.rgba(1, 122 / 255, 26 / 255, 0.75)
+                }
+            }
+
             Rectangle {
                 id: playhead
                 x: timeline.model.playhead * timeline.pps - 1
@@ -679,6 +704,54 @@ Rectangle {
                             markerName.forceActiveFocus()
                         }
                     }
+                }
+            }
+            Repeater { // las banderas Z/X del Clip Editor (.ed-mark-handle): se arrastran y el cabezal las sigue
+                model: timeline.model.canvasTab === "clip" ? ["in", "out"] : []
+                Item {
+                    id: flag
+                    required property string modelData
+                    readonly property var mk: timeline.model.clipMark
+                    readonly property bool isIn: modelData === "in"
+                    readonly property real t: (isIn ? mk.in : mk.out) || 0
+                    objectName: "clipMark:" + modelData
+                    visible: isIn ? mk.hasIn : mk.hasOut
+                    z: 4
+                    x: (visible ? t : 0) * timeline.pps - flick.contentX - width / 2
+                    width: 9
+                    height: ruler.height
+                    function dragTo(area, m) {
+                        timeline.model.dragClipMark(flag.modelData, (area.mapToItem(ruler, m.x, 0).x + flick.contentX) / timeline.pps)
+                    }
+                    Rectangle { x: flag.width / 2 - 1; width: 2; height: parent.height; color: Qt.rgba(1, 122 / 255, 26 / 255, 0.75) }
+                    Rectangle { // .ed-mark-flag: a la derecha de la línea el inicio y a la izquierda el fin
+                        x: flag.isIn ? flag.width / 2 : flag.width / 2 - width
+                        y: 2
+                        width: Math.max(15, flagLabel.implicitWidth + 6)
+                        height: ruler.height - 4
+                        radius: 3
+                        // var(--accent); al pasar por encima o arrastrar, más luminosa (filter: brightness(1.3))
+                        color: flagArea.containsMouse || handleArea.containsMouse || flagArea.pressed || handleArea.pressed
+                               ? Qt.lighter(Theme.accent, 1.3) : Theme.accent
+                        Label { id: flagLabel; anchors.centerIn: parent; text: flag.isIn ? "Z" : "X"; color: "#1a0e05"; font.pixelSize: 10; font.bold: true }
+                        MouseArea {
+                            id: flagArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.SizeHorCursor
+                            onPositionChanged: (m) => { if (pressed) flag.dragTo(flagArea, m) }
+                        }
+                    }
+                    MouseArea {
+                        id: handleArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.SizeHorCursor
+                        onPositionChanged: (m) => { if (pressed) flag.dragTo(handleArea, m) }
+                    }
+                    ToolTip.visible: flagArea.containsMouse || handleArea.containsMouse
+                    ToolTip.delay: 400
+                    ToolTip.text: (flag.isIn ? "Inicio (Z)" : "Fin (X)") + " · " + timeline.model.formatTime(flag.t) + " · arrastra para ajustar"
                 }
             }
             TextField {

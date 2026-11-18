@@ -52,6 +52,10 @@ struct SourceRange {
 [[nodiscard]] std::expected<SourceRange, std::string> mark_to_source_range(const ClipList& clips,
                                                                            const ClipMark& mark);
 
+// String.prototype.trim: sin los espacios y finales de línea de ECMAScript a los lados.
+[[nodiscard]] std::string_view trim_js_spaces(std::string_view text);
+// String(title || 'Clip').trim() || 'Clip': el título de un clip extraído (el de su vídeo, o «Clip»).
+[[nodiscard]] std::string segment_title(std::string_view title);
 // segmentLabel: el nombre por defecto del clip extraído, «<título> · m:ss–m:ss».
 [[nodiscard]] std::string segment_label(std::string_view title, double start, double end);
 

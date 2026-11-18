@@ -27,6 +27,17 @@ Menu {
         height: visible ? implicitHeight : 0
     }
 
+    Entry { // addClipToMaterial: en el Clip Editor, el vídeo entero al material por referencia
+        objectName: "ctx:addToMaterial"
+        visible: menu.model.canvasTab === "clip" && menu.info.kind === "video"
+        enabled: !menu.model.segAsk.phase
+        text: "Agregar a material"
+        onTriggered: menu.model.addClipToMaterial(menu.clipId)
+    }
+    MenuSeparator {
+        visible: menu.model.canvasTab === "clip" && menu.info.kind === "video"
+        height: visible ? implicitHeight : 0
+    }
     Entry {
         objectName: "ctx:favorite"
         visible: !!menu.info.sfx

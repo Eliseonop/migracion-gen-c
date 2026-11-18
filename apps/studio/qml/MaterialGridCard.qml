@@ -117,6 +117,28 @@ Item {
                     color: Qt.rgba(0, 0, 0, 0.55)
                     MIcon { anchors.centerIn: parent; name: "play_arrow"; size: 20; color: "white" }
                 }
+                // .ed-edit-corner: «Preparar clip», el vídeo del proyecto entero en el Clip Editor.
+                AbstractButton {
+                    id: editCorner
+                    objectName: "material:clipEdit:" + slot.modelData.key
+                    visible: slot.isVideo && slot.modelData.source === "project"
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.margins: 4
+                    width: 22
+                    height: 22
+                    hoverEnabled: true
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 500
+                    ToolTip.text: "Preparar clip"
+                    onClicked: slot.host.model.openClipEditor(slot.modelData.key)
+                    contentItem: MIcon { name: "movie_edit"; size: 15; color: "white" }
+                    background: Rectangle {
+                        radius: 6
+                        color: editCorner.hovered ? Theme.accent : Qt.rgba(0, 0, 0, 0.55)
+                        border.color: editCorner.hovered ? Qt.rgba(1, 1, 1, 0.35) : Qt.rgba(1, 1, 1, 0.2)
+                    }
+                }
                 // .ed-add-corner: el + que lo pone en el cabezal (addAsset).
                 AbstractButton {
                     id: addCorner

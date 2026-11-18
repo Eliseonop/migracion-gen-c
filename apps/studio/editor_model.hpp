@@ -19,6 +19,7 @@
 #include <memory>
 #include <optional>
 
+#include "gc/core/clip_extract.hpp"
 #include "gc/core/clip_filters.hpp"
 #include "gc/core/clip_media.hpp"
 #include "gc/core/clip_pose_edit.hpp"
@@ -132,6 +133,18 @@ class EditorModel : public QObject {
     Q_PROPERTY(bool canFreeze READ canFreeze NOTIFY freezeChanged)
     // overlapPairs de noOverlap.js: los solapes que trae el proyecto («Separar solapes»).
     Q_PROPERTY(int overlapCount READ overlapCount NOTIFY timelineChanged)
+    // La pestaña de la columna central (mainColTab de VideoEditor.jsx): «main» o «clip». En el Clip Editor
+    // la timeline es la suya (un vídeo del material, que no se guarda en el proyecto) y Z/X marcan un tramo.
+    Q_PROPERTY(QString canvasTab READ canvasTab WRITE setCanvasTab NOTIFY canvasTabChanged)
+    // El vídeo abierto en el Clip Editor (clipMeta): {title, description, sourceIdent}; vacío si ninguno.
+    Q_PROPERTY(QVariantMap clipMeta READ clipMeta NOTIFY clipMetaChanged)
+    // La marca Z/X del Clip Editor: {in, out}, null el extremo que no está.
+    Q_PROPERTY(QVariantMap clipMark READ clipMark NOTIFY clipMarkChanged)
+    // «Crear clip» abierto (SegmentConfirmModal): {start, end, clipId, title, descMode, description,
+    // sourceDescription, simple, phase, error}; vacío si no.
+    Q_PROPERTY(QVariantMap segAsk READ segAsk NOTIFY segAskChanged)
+    // En el Clip Editor y con un vídeo en su timeline (onCreateSegment de EdTimeline).
+    Q_PROPERTY(bool canCreateSegment READ canCreateSegment NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
     Q_PROPERTY(QVariantList textLooks READ textLooks CONSTANT)
     Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
@@ -404,6 +417,35 @@ public:
     [[nodiscard]] int overlapCount() const;
     // separateClipOverlaps de VideoEditor.jsx.
     Q_INVOKABLE void separateOverlaps();
+    // El Clip Editor (goMainTab, goClipTab y openClipEditor de VideoEditor.jsx). Cada pestaña conserva su
+    // timeline, su cabezal y su zoom al volver.
+    [[nodiscard]] QString canvasTab() const { return clip_mode_ ? QStringLiteral("clip") : QStringLiteral("main"); }
+    void setCanvasTab(const QString& tab);
+    [[nodiscard]] QVariantMap clipMeta() const { return clip_meta_; }
+    [[nodiscard]] QVariantMap clipMark() const;
+    [[nodiscard]] QVariantMap segAsk() const { return seg_ask_; }
+    [[nodiscard]] bool canCreateSegment() const;
+    // openProjectClip de EdMaterial.jsx con un vídeo del proyecto (clave «clips:<index>»): su archivo
+    // original entero en el Clip Editor; un segmento, con su rango ya marcado. false si no se puede.
+    Q_INVOKABLE bool openClipEditor(const QString& key);
+    Q_INVOKABLE void setClipTitle(const QString& title);
+    Q_INVOKABLE void setClipDescription(const QString& description);
+    // Z / X: el inicio («in») o el fin («out») en el cabezal (setMark).
+    Q_INVOKABLE void markClip(const QString& which);
+    // Arrastrar una marca en la regla (dragMark, al fotograma); el cabezal la sigue.
+    Q_INVOKABLE void dragClipMark(const QString& which, double t);
+    // Esc: quita la marca; false si no había.
+    Q_INVOKABLE bool clearClipMark();
+    // createSegmentFromMark (el botón o Enter): el tramo marcado, a «Crear clip»; si no vale, el aviso.
+    Q_INVOKABLE void createSegmentFromMark();
+    // addClipToMaterial (clic derecho en el vídeo): el clip entero, a «Agregar a material».
+    Q_INVOKABLE void addClipToMaterial(const QString& clipId);
+    // El título, el modo de la descripción y la descripción del modal.
+    Q_INVOKABLE void patchSegAsk(const QVariantMap& patch);
+    // confirmSegment: el segmento por referencia (create_segments, sin render) y el material releído;
+    // la salida de este tramo pasa a ser la entrada del siguiente.
+    Q_INVOKABLE void confirmSegment();
+    Q_INVOKABLE void cancelSegment();
     // El botón JSON (JsonEditor.jsx): el manifest del proyecto (project_manifest) como texto, y
     // guardarlo editado a mano (apply_manifest y manifest.json en la carpeta del proyecto, como
     // PUT /manifest). Guardar da {error} o {text, info}.
@@ -605,8 +647,19 @@ signals:
     void bgAnalyzeChanged();
     void cutoutJobChanged();
     void bgPreviewChanged();
+    void canvasTabChanged();
+    void clipMetaChanged();
+    void clipMarkChanged();
+    void segAskChanged();
 
 private:
+    // Cambia de pestaña: la sesión activa pasa a other_session_ y la otra entra, con su cabezal y su zoom.
+    void swap_canvas(bool to_clip);
+    // Una sesión del Clip Editor (sin autoguardado: no se guarda en el proyecto).
+    [[nodiscard]] std::unique_ptr<core::EditSession> make_clip_session(core::Timeline tl);
+    // La timeline vacía del Clip Editor (clipWorkspaceTracks: solo V1), con el formato del proyecto.
+    [[nodiscard]] core::Timeline clip_workspace() const;
+    void reset_clip_editor();
     // Una tarjeta del material con su dragPayload; y las del proyecto (sus vídeos, imágenes y audios).
     void add_material(const char* source, const char* asset_kind, const QString& key, const Json& item,
                       const char* kind, QVariantList& into);
@@ -648,6 +701,16 @@ private:
     [[nodiscard]] bool canDrop(const core::TimelineClip& c, const core::TimelineTrack& t) const;
 
     core::ProjectsStore& store_;
+    // La sesión de la pestaña que no se ve: la del proyecto mientras se edita en el Clip Editor, o la del
+    // Clip Editor de vuelta en el principal. Antes que session_ y autosave_: autosave_ (que puede apuntar a
+    // esta) se destruye primero.
+    std::unique_ptr<core::EditSession> other_session_;
+    bool clip_mode_ = false;
+    double other_playhead_ = 0;
+    double other_pps_ = 0; // 0: la pestaña aún no tiene zoom propio
+    QVariantMap clip_meta_;
+    core::ClipMark clip_mark_;
+    QVariantMap seg_ask_;
     std::unique_ptr<core::EditSession> session_;
     std::unique_ptr<core::Autosave> autosave_; // después de session_: se destruye antes
     mutable core::RandomIdSource ids_;

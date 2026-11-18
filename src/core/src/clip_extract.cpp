@@ -22,23 +22,6 @@ constexpr std::array<std::string_view, 25> kJsSpaces = {
     "\xE2\x80\x86", "\xE2\x80\x87", "\xE2\x80\x88", "\xE2\x80\x89", "\xE2\x80\x8A", "\xE2\x80\xA8", "\xE2\x80\xA9",
     "\xE2\x80\xAF", "\xE2\x81\x9F", "\xE3\x80\x80", "\xEF\xBB\xBF"};
 
-std::string_view js_trim(std::string_view text) {
-    for (bool again = true; again;) {
-        again = false;
-        for (const std::string_view space : kJsSpaces) {
-            if (text.starts_with(space)) {
-                text.remove_prefix(space.size());
-                again = true;
-            }
-            if (text.ends_with(space)) {
-                text.remove_suffix(space.size());
-                again = true;
-            }
-        }
-    }
-    return text;
-}
-
 double js_round(double v) { // Math.round: el empate, hacia +∞
     const double r = std::floor(v);
     return v - r >= 0.5 ? r + 1 : r;
@@ -78,6 +61,28 @@ std::string mmss(double s) {
 }
 
 } // namespace
+
+std::string_view trim_js_spaces(std::string_view text) {
+    for (bool again = true; again;) {
+        again = false;
+        for (const std::string_view space : kJsSpaces) {
+            if (text.starts_with(space)) {
+                text.remove_prefix(space.size());
+                again = true;
+            }
+            if (text.ends_with(space)) {
+                text.remove_suffix(space.size());
+                again = true;
+            }
+        }
+    }
+    return text;
+}
+
+std::string segment_title(std::string_view title) {
+    const std::string_view base = trim_js_spaces(title);
+    return base.empty() ? std::string("Clip") : std::string(base);
+}
 
 std::optional<double> mark_number(const Json& v) {
     if (v.is_null() || (v.is_string() && v.get_ref<const std::string&>().empty())) {
@@ -164,11 +169,7 @@ std::expected<SourceRange, std::string> mark_to_source_range(const ClipList& cli
 }
 
 std::string segment_label(std::string_view title, double start, double end) {
-    std::string_view base = js_trim(title);
-    if (base.empty()) {
-        base = "Clip";
-    }
-    return std::string(base) + " \xC2\xB7 " + mmss(start) + "\xE2\x80\x93" + mmss(end);
+    return segment_title(title) + " \xC2\xB7 " + mmss(start) + "\xE2\x80\x93" + mmss(end);
 }
 
 std::string_view desc_mode_id(SegmentDescMode mode) {
@@ -196,11 +197,11 @@ std::string segment_description(SegmentDescMode mode, std::string_view descripti
     case SegmentDescMode::None:
         return {};
     case SegmentDescMode::Source:
-        return std::string(js_trim(source_description));
+        return std::string(trim_js_spaces(source_description));
     case SegmentDescMode::Manual:
         break;
     }
-    return std::string(js_trim(description));
+    return std::string(trim_js_spaces(description));
 }
 
 } // namespace gc::core
