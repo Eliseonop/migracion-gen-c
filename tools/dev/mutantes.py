@@ -1584,12 +1584,25 @@ SCENE_PACK = [
     ('estimate_tokens: hacia abajo', SD, 'std::nearbyint(static_cast<double>(py_len(text)) / 3.6)', 'std::floor(static_cast<double>(py_len(text)) / 3.6)'),
 ]
 
+RC = "src/core/src/recipes.cpp"
+RECIPES = [
+    ("recetas: un vídeo vale por texto", RC, 'count(kinds, {"text"}) > 0', 'count(kinds, {"text", "video"}) > 0'),
+    ("recetas: una imagen vale por vídeo", RC, 'count(kinds, {"video"}) > 0', 'count(kinds, {"video", "image"}) > 0'),
+    ("recetas: franjas con un clip", RC, 'count(kinds, {"video", "image"}) >= 2', 'count(kinds, {"video", "image"}) >= 1'),
+    ("recetas: franjas sin imágenes", RC, 'count(kinds, {"video", "image"}) >= 2', 'count(kinds, {"video"}) >= 2'),
+    ("recetas: otro motivo", RC, '"selecciona un texto"', '"selecciona texto"'),
+    ("recetas: lo desconocido no vale", RC, "    return {};\n}", "    return {false, \"\"};\n}"),
+    ("recetas: otro truco", RC, '"Etalonaje de cine", 10,', '"Etalonaje de cine", 1,'),
+    ("recetas: el sujeto no pide nada", RC, '"Sujeto que se adelanta", 1, "video"', '"Sujeto que se adelanta", 1, ""'),
+    ("recetas: find_recipe da la primera", RC, "            return &r;", "            return kRecipes.data();"),
+]
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
           "library": (LIBRARY, "[library],[projects]"),
           "sfx": (SFX, "[sfx]"), "collections": (COLLECTIONS, "[collections]"), "projects": (PROJECTS, "[projects]"), "segments": (SEGMENTS, "[projects]"), "yt_history": (YT_HISTORY, "[settings]"), "heatmap": (HEATMAP, "[heatmap]"), "url": (URL, "[url]"), "media_upgrade": (MEDIA_UPGRADE, "[projects]"), "youtube_video": (YOUTUBE_VIDEO, "[youtube]"), "fx_bake": (FX_BAKE, "[fx]"), "mcp": (MCP, "[mcp]"), "importar": (IMPORT, "[projects]"), "objeto_libre": (FREE_LAYOUT, "[editor]"), "mascara_preview": (MASK_UI, "[editor]"), "subtitulos_editor": (CAPTIONS_UI, "[editor]"), "seguir_cara": (FACE_FOLLOW, "[editor]"), "mcp_tools": (MCP_TOOLS, "[mcp]"), "mcp_edit": (MCP_EDIT, "[mcp]"), "mcp_server": (MCP_SERVER, "[mcp]"),
           "prompt": (SCRIPT_PROMPT, "[editor]"),
+          "recetas": (RECIPES, "[editor]"),
           "bg_ui": (BG_UI, "[editor]"),
           "yt_ui": (YT_UI, "[editor]"),
           "mcp_media": (MCP_MEDIA, "[mcp]"),

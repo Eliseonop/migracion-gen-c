@@ -1122786,6 +1122786,1398 @@
      "error": "El rango cruza un corte de la timeline: ajústalo a un solo tramo."
     }
    ]
+  },
+  {
+   "name": "recetas: recipeReady",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [],
+    "markers": []
+   },
+   "calls": [
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     null
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "shape"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "adjustment"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "video",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "text",
+      "text",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "audio",
+      "shape",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": null
+     },
+     [
+      "text",
+      "image",
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     null
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "shape"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "adjustment"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "video",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "text",
+      "text",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "audio",
+      "shape",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "text"
+     },
+     [
+      "text",
+      "image",
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     null
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "shape"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "adjustment"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "video",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "text",
+      "text",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "audio",
+      "shape",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "video"
+     },
+     [
+      "text",
+      "image",
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     null
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "shape"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "adjustment"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "video",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "text",
+      "text",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "audio",
+      "shape",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "media2"
+     },
+     [
+      "text",
+      "image",
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     null
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "shape"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "adjustment"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "video",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "text",
+      "text",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "audio",
+      "shape",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": ""
+     },
+     [
+      "text",
+      "image",
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     null
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "shape"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "adjustment"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "video",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "text",
+      "text",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "audio",
+      "shape",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "needs": "otro"
+     },
+     [
+      "text",
+      "image",
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     null
+    ],
+    [
+     "recipeReady",
+     {},
+     []
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "shape"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "adjustment"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "video",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "text",
+      "text",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "audio",
+      "shape",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {},
+     [
+      "text",
+      "image",
+      "shape",
+      "video"
+     ]
+    ]
+   ],
+   "geo": [
+    {
+     "id": "V1",
+     "top": 22,
+     "bottom": 74
+    }
+   ],
+   "results": [
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    }
+   ]
+  }
+ ],
+ "recipes": [
+  {
+   "id": "cinema_grade",
+   "label": "Etalonaje de cine",
+   "trick": 10,
+   "needs": null,
+   "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+  },
+  {
+   "id": "text_reflection",
+   "label": "Texto con reflejo",
+   "trick": 7,
+   "needs": "text",
+   "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+  },
+  {
+   "id": "pass_through_text",
+   "label": "Texto que atraviesas",
+   "trick": 6,
+   "needs": "text",
+   "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+  },
+  {
+   "id": "film_strips",
+   "label": "Franjas al ritmo",
+   "trick": 3,
+   "needs": "media2",
+   "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+  },
+  {
+   "id": "subject_pop",
+   "label": "Sujeto que se adelanta",
+   "trick": 1,
+   "needs": "video",
+   "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
   }
  ]
 }

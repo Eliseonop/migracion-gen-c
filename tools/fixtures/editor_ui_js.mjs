@@ -40,6 +40,7 @@ const clipFxLib = await load('lib/clipFx.js')
 const clipAnim = await load('lib/clipAnim.js')
 const clipExtract = await load('features/editor/clipExtract.js')
 const motionTarget = await load('features/editor/motionTarget.js')
+const recipeReadyLib = await load('features/editor/recipeReady.js')
 // confirmCrop de VideoEditor.jsx (con changeReframe, upsertKeyframe, changeTransform y srcTOf) sobre un clip.
 const confirmCrop = (clip, crop, rotation, t, fps) => {
   let made = clip
@@ -682,6 +683,8 @@ const out = await Promise.all(cases.map(async ({ tracks, clips, markers, geo, ca
     },
     segmentLabel: (title, start, end) => clipExtract.segmentLabel(title, start, end),
     segmentDescription: (ask) => clipExtract.segmentDescription(ask),
+    // EdRecipes: la receta del backend y los clips seleccionados (de ellos solo mira `kind`).
+    recipeReady: (recipe, kinds) => recipeReadyLib.recipeReady(recipe, kinds && kinds.map((kind) => ({ kind }))),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)
       return moved.map((c) => c.start)

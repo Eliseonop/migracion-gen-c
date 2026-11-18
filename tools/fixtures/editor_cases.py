@@ -1233,6 +1233,19 @@ def crop_handle_norms_py(c: dict) -> list:
     return [(ix - 1, iy - 1, xs[ix], ys[iy]) for iy in range(3) for ix in range(3) if (ix, iy) != (1, 1)]
 
 
+def _recipe_case() -> list[dict]:
+    """Si una receta en un clic se puede aplicar con lo seleccionado (recipeReady.js de EdRecipes): cada
+    `needs` del backend (y alguno que no existe) con selecciones de varios tipos."""
+    needs = [{"needs": None}, {"needs": "text"}, {"needs": "video"}, {"needs": "media2"}, {"needs": ""},
+             {"needs": "otro"}, {}]
+    selections = [None, [], ["text"], ["video"], ["image"], ["audio"], ["shape"], ["adjustment"],
+                  ["video", "image"], ["image", "image"], ["video", "text"], ["text", "text", "audio"],
+                  ["audio", "shape", "image"], ["video", "video", "video"], ["text", "image", "shape", "video"]]
+    calls = [["recipeReady", n, s] for n in needs for s in selections]
+    return [{"name": "recetas: recipeReady", "timeline": {"tracks": [track("V1", "video")], "clips": []},
+             "calls": calls}]
+
+
 def cases() -> list[dict]:
     rng = random.Random(20261019)
     out = [{"name": "toFixed", "timeline": {"tracks": TRACKS, "clips": []},
@@ -1268,4 +1281,5 @@ def cases() -> list[dict]:
     out += _match_case()
     out += _separate_case()
     out += _clip_extract_case()
+    out += _recipe_case()
     return out

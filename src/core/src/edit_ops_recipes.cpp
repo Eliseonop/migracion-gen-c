@@ -3,7 +3,6 @@
 // y de timeline_ops.apply_recipe).
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <optional>
 
@@ -12,6 +11,7 @@
 #include "gc/core/bg.hpp"
 #include "gc/core/keyframes.hpp"
 #include "gc/core/masks.hpp"
+#include "gc/core/recipes.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/sfx_library.hpp"
 #include "gc/core/shapes.hpp"
@@ -22,8 +22,6 @@ namespace gc::core::detail {
 
 namespace {
 
-constexpr std::array<std::string_view, 5> kRecipeIds{"cinema_grade", "text_reflection", "pass_through_text",
-                                                     "film_strips", "subject_pop"};
 constexpr std::size_t kFilmMax = 6;
 constexpr double kFilmStep = 0.35;
 constexpr std::int64_t kPopFrames = 6;
@@ -451,11 +449,10 @@ Result<Json> params_dict(const Json& v) {
 } // namespace
 
 Result<EditResult> run(const Timeline& tl, const ops::ApplyRecipe& op, IdSource& ids) {
-    if (!op.recipe.is_string() ||
-        std::ranges::find(kRecipeIds, op.recipe.get<std::string>()) == kRecipeIds.end()) {
+    if (!op.recipe.is_string() || find_recipe(op.recipe.get<std::string>()) == nullptr) {
         std::string all;
-        for (const auto id : kRecipeIds) {
-            all += (all.empty() ? "'" : ", '") + std::string(id) + "'";
+        for (const RecipeInfo& r : recipe_catalog()) {
+            all += (all.empty() ? "'" : ", '") + std::string(r.id) + "'";
         }
         return invalid("receta desconocida: " + py_str(op.recipe) + " (usa [" + all + "])");
     }
