@@ -1,5 +1,7 @@
 #include "gc/core/material_drop.hpp"
 
+#include "gc/core/bg.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <initializer_list>
@@ -386,6 +388,9 @@ Json place_asset_clip(const Json& payload, std::string_view track_id, double sta
     const double dur = clip["out_point"].get<double>() - in; // velocidad 1
     if (fit > 0 && (free || dur > fit)) {
         clip["out_point"] = js_fixed3(in + fit);
+    }
+    if (const Value chroma = get(payload, "chroma_color"); truthy(chroma)) { // un stick nace con su croma (chromaBg)
+        clip["bg_removal"] = normalize_bg(Json{{"enabled", true}, {"mode", "chroma"}, {"chroma", {{"enabled", true}, {"color", *chroma}}}});
     }
     return clip;
 }

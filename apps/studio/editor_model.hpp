@@ -154,6 +154,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList sfxCategories READ sfxCategories NOTIFY projectChanged)
     Q_PROPERTY(QVariantList collections READ collections NOTIFY projectChanged)
     Q_PROPERTY(QString collectionsRoot READ collectionsRoot NOTIFY projectChanged)
+    Q_PROPERTY(QVariantMap stick READ stick NOTIFY projectChanged)
     Q_PROPERTY(QVariantList textFavorites READ textFavorites NOTIFY favoritesChanged)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
@@ -284,6 +285,13 @@ public:
     Q_INVOKABLE bool setCollectionsRoot(const QString& path); // ruta o file:// del diálogo
     Q_INVOKABLE QString createCollection(const QString& name);
     Q_INVOKABLE int addCollectionFiles(const QString& collection, const QList<QUrl>& files);
+    // Los sticks (EdLibraryStick.jsx y el «Nuevo stick» de EdLibrary.jsx): una carpeta de colecciones con
+    // stick.json es un personaje, agrupado por expresión; sus tarjetas se arrastran con su croma.
+    [[nodiscard]] QVariantMap stick() const { return stick_; }
+    Q_INVOKABLE void openStick(const QString& cid);
+    Q_INVOKABLE QString createStick(const QString& name, const QString& emoji, const QString& chromaColor);
+    Q_INVOKABLE int addStickFiles(const QString& expression, const QList<QUrl>& files);
+    Q_INVOKABLE void setStickExpression(const QString& rel, const QString& expression);
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] int outWidth() const;
@@ -873,6 +881,9 @@ private:
     // sondea al arrastrarlo (probe_material), desde los métodos const del arrastre.
     mutable std::map<QString, Json> payloads_;
     std::map<QString, Json> material_items_; // material → el elemento tal cual (proyecto o biblioteca)
+    QString stick_id_;     // el stick abierto
+    QVariantMap stick_;    // su detalle para la vista, con las claves de arrastre de sus tarjetas
+    void refresh_stick();
     mutable std::map<QString, double> probed_; // lo que dio la sonda de cada uno (0: nada)
     ClipListModel clip_model_;
     CropEditor crop_editor_;

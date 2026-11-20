@@ -58,6 +58,7 @@
 #include "gc/core/shape_geometry.hpp"
 #include "gc/core/recipes.hpp"
 #include "gc/core/shapes.hpp"
+#include "gc/core/stick_library.hpp"
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/text_style.hpp"
 #include "gc/core/timeline_rules.hpp"
@@ -888,14 +889,23 @@ void EditorModel::load_collections(const std::string& q, const std::string& coll
     const auto root = collections_base();
     collections_root_ = root ? QString::fromStdString(core::path_to_utf8(*root)) : QString();
     collections_.clear();
+    std::map<std::string, Json> sticks; // id → {name, emoji, chroma_color…}
+    if (const auto list = core::list_sticks(root)) {
+        for (const Json& st : list->value("sticks", Json::array())) {
+            sticks[st.value("id", "")] = st;
+        }
+    }
     if (const auto list = core::list_collections(root, settings)) {
         for (const Json& c : list->value("collections", Json::array())) {
+            const auto st = sticks.find(c.value("id", ""));
             collections_ << QVariantMap{{"id", qstr(c.value("id", ""))},
-                                        {"name", qstr(c.value("name", ""))},
+                                        {"name", qstr(st != sticks.end() ? st->second.value("name", "") : c.value("name", ""))},
                                         {"count", c.value("count", 0)},
                                         {"enabled", c.value("enabled", true)},
                                         {"favorite", c.value("favorite", false)},
-                                        {"path", qstr(c.value("path", ""))}};
+                                        {"path", qstr(c.value("path", ""))},
+                                        {"stick", st != sticks.end()},
+                                        {"emoji", st != sticks.end() ? qstr(st->second.value("emoji", "")) : QString()}};
         }
     }
     const auto found = core::collections_search(root, settings, q, "", collection);
@@ -905,6 +915,9 @@ void EditorModel::load_collections(const std::string& q, const std::string& coll
         Json media = item;
         if (kind == "gif") {
             media["animated"] = true;
+        }
+        if (const auto st = sticks.find(item.value("collection", "")); st != sticks.end()) { // withChroma
+            media["chromaColor"] = st->second.value("chroma_color", Json());
         }
         const QString key = "col:" + qstr(item.value("id", ""));
         const Json payload = core::drag_payload(asset_kind, media);
@@ -973,7 +986,10 @@ QString EditorModel::createCollection(const QString& name) {
     return qstr(*id);
 }
 
-int EditorModel::addCollectionFiles(const QString& collection, const QList<QUrl>& files) {
+namespace {
+
+// Los archivos elegidos como los recibe add_files de colecciones y sticks: nombre y copia.
+std::vector<core::IncomingFile> incoming_files(const QList<QUrl>& files) {
     std::vector<core::IncomingFile> incoming;
     for (const QUrl& url : files) {
         const auto src = core::path_from_utf8(url.toLocalFile().toStdString());
@@ -984,6 +1000,122 @@ int EditorModel::addCollectionFiles(const QString& collection, const QList<QUrl>
         };
         incoming.push_back(core::IncomingFile{Json(core::path_to_utf8(src.filename())), copy});
     }
+    return incoming;
+}
+
+} // namespace
+
+void EditorModel::refresh_stick() {
+    stick_.clear();
+    if (stick_id_.isEmpty()) {
+        return;
+    }
+    const auto root = collections_base();
+    const auto detail = core::stick_detail(root, stick_id_.toStdString());
+    if (!detail) {
+        setError(qstr(detail.error().message));
+        stick_id_.clear();
+        return;
+    }
+    const Json chroma = detail->value("chroma_color", Json());
+    QVariantList groups;
+    for (const Json& g : detail->value("groups", Json::array())) {
+        QVariantList items;
+        for (const Json& it : g.value("items", Json::array())) {
+            const bool video = it.value("stick_kind", "") == "video";
+            // stickAssetItem: ámbito de colección, título como etiqueta, su duración y el croma del personaje.
+            Json media = it;
+            media["scope"] = "collection";
+            media["label"] = it.value("title", Json()).is_string() && !it.at("title").get<std::string>().empty()
+                                 ? it.at("title")
+                                 : it.value("name", Json(""));
+            const auto path = core::collection_resolve(root, it.value("filename", ""));
+            double duration = 0;
+#ifdef GC_STUDIO_PREVIEW
+            if (video && path) {
+                duration = media::probe_duration(*path).value_or(0.0);
+            }
+#endif
+            media["duration"] = duration;
+            media["end"] = duration;
+            media["chromaColor"] = chroma;
+            const QString key = "stick:" + stick_id_ + ":" + qstr(it.value("rel", ""));
+            payloads_[key] = core::drag_payload(video ? "clips" : "images", media);
+            items << QVariantMap{{"key", key},
+                                 {"rel", qstr(it.value("rel", ""))},
+                                 {"title", qstr(it.value("title", ""))},
+                                 {"kind", video ? "video" : "image"},
+                                 {"expression", qstr(it.value("expression", ""))},
+                                 {"thumb", !video && path ? QUrl::fromLocalFile(qstr(core::path_to_utf8(*path))).toString()
+                                                          : QString()}};
+        }
+        groups << QVariantMap{{"id", qstr(g.value("id", ""))},
+                              {"label", qstr(g.value("label", ""))},
+                              {"emoji", qstr(g.value("emoji", ""))},
+                              {"items", items}};
+    }
+    QVariantList expressions;
+    for (const Json& x : detail->value("expressions", Json::array())) {
+        expressions << to_variant(x);
+    }
+    stick_ = {{"id", stick_id_},
+              {"name", qstr(detail->value("name", ""))},
+              {"emoji", qstr(detail->value("emoji", ""))},
+              {"chroma", chroma.is_string() ? qstr(chroma.get<std::string>()) : QString()},
+              {"groups", groups},
+              {"expressions", expressions}};
+}
+
+void EditorModel::openStick(const QString& cid) {
+    stick_id_ = cid;
+    refresh_stick();
+    emit projectChanged();
+}
+
+QString EditorModel::createStick(const QString& name, const QString& emoji, const QString& chromaColor) {
+    const auto made = core::create_stick(collections_base(), Json(name.trimmed().toStdString()),
+                                         Json(emoji.trimmed().toStdString()), Json(chromaColor.toStdString()));
+    if (!ok(made)) {
+        return {};
+    }
+    const QString id = qstr(made->value("id", ""));
+    stick_id_ = id;
+    refresh_stick();
+    reload_collections();
+    return id;
+}
+
+int EditorModel::addStickFiles(const QString& expression, const QList<QUrl>& files) {
+    if (stick_id_.isEmpty()) {
+        return 0;
+    }
+    const auto added = core::add_stick_files(collections_base(), stick_id_.toStdString(), incoming_files(files),
+                                             Json(expression.toStdString()));
+    if (!ok(added)) {
+        return 0;
+    }
+    if (const Json errors = added->value("errors", Json::array()); !errors.empty()) {
+        setError(qstr(errors[0].value("file", "") + ": " + errors[0].value("error", "")));
+    }
+    refresh_stick();
+    reload_collections();
+    return static_cast<int>(added->value("saved", Json::array()).size());
+}
+
+void EditorModel::setStickExpression(const QString& rel, const QString& expression) {
+    if (stick_id_.isEmpty()) {
+        return;
+    }
+    const auto changed = core::set_stick_expression(collections_base(), stick_id_.toStdString(), Json(rel.toStdString()),
+                                                    Json(expression.toStdString()));
+    if (ok(changed)) {
+        refresh_stick();
+        emit projectChanged();
+    }
+}
+
+int EditorModel::addCollectionFiles(const QString& collection, const QList<QUrl>& files) {
+    const auto incoming = incoming_files(files);
     const auto added = core::add_collection_files(collections_base(), collection.toStdString(), incoming);
     if (!ok(added)) {
         return 0;

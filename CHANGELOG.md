@@ -11,6 +11,20 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.17.0] — 2026-11-20
+
+### Añadido
+
+- **Personajes stick en `genclip-studio`** (EdLibraryStick.jsx y el «Nuevo stick» de EdLibrary.jsx): en
+  Biblioteca › Colecciones, un stick se abre agrupado por expresión (feliz, triste…), con «Subir» por expresión,
+  tarjetas que se arrastran a la timeline o se añaden con «+», y un selector para cambiarlas de expresión. «Nuevo
+  stick» en «Gestionar carpetas» (nombre, emoji y color del croma).
+
+### Corregido
+
+- **Un stick soltado nace con su croma** (`place_asset_clip`, la rama `chromaBg` de `placeAsset` que faltaba en
+  `gc_core`), también desde la búsqueda de colecciones.
+
 ## [0.16.0] — 2026-11-20
 
 ### Añadido

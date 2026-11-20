@@ -1584,6 +1584,11 @@ SCENE_PACK = [
     ('estimate_tokens: hacia abajo', SD, 'std::nearbyint(static_cast<double>(py_len(text)) / 3.6)', 'std::floor(static_cast<double>(py_len(text)) / 3.6)'),
 ]
 
+STICKS_UI = [
+    ("place_asset_clip: un stick sin su croma", "src/core/src/material_drop.cpp",
+     'if (const Value chroma = get(payload, "chroma_color"); truthy(chroma)) {', 'if (const Value chroma = get(payload, "chroma_color"); false) {'),
+]
+
 RECIPES = [
     ("recipe_catalog: otra etiqueta", "src/core/src/edit_ops_recipes.cpp", '"Franjas al ritmo"', '"Franjas al compás"'),
     ("recipe_ready: media2 con un solo clip", "src/core/src/edit_ops_recipes.cpp",
@@ -1604,6 +1609,7 @@ GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FR
           "scene_material": (SCENE_MATERIAL, "[scene]"),
           "scene_pack": (SCENE_PACK, "[scene]"),
           "recetas": (RECIPES, "[editor]"),
+          "sticks_ui": (STICKS_UI, "[editor]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 

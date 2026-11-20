@@ -2987,3 +2987,33 @@ TEST_CASE("studio sin pantalla: «Nueva imagen» sube imágenes con su descripci
     CHECK((**project).images.back().description == "Un rectángulo negro");
     CHECK_FALSE(s.item("imageAdd:saveAll")); // se cierra al guardar todo
 }
+
+TEST_CASE("studio sin pantalla: un stick de las colecciones se abre por expresión y se añade con su croma", "[studio][ui]") {
+    const auto assets = std::filesystem::temp_directory_path() /
+                        ("gc_sticks_ui_" + std::to_string(QCoreApplication::applicationPid()));
+    std::filesystem::remove_all(assets);
+    std::filesystem::create_directories(assets / "material");
+    qputenv("VIDEO_YT_ASSETS", QByteArray::fromStdString(assets.string()));
+    {
+        const Studio s;
+        REQUIRE(s.editor->createStick("Robot", "🤖", "#00FF00") == "robot");
+        const auto png = assets / "saluda.png";
+        REQUIRE(QImage(40, 30, QImage::Format_RGB32).save(QString::fromStdString(png.string())));
+        REQUIRE(s.editor->addStickFiles("happy", {QUrl::fromLocalFile(QString::fromStdString(png.string()))}) == 1);
+        s.editor->openStick({}); // cerrado, como al entrar en la pestaña
+        QMetaObject::invokeMethod(s.item("material:nav:library"), "clicked");
+        QTest::qWait(50);
+        QMetaObject::invokeMethod(s.item("material:scope:collections"), "clicked");
+        QTest::qWait(50);
+        s.click("col:chip:robot");
+        QTest::qWait(50);
+        REQUIRE(s.item("stickView"));
+        const auto before = s.editor->clips().size();
+        QMetaObject::invokeMethod(s.item("stick:add:feliz/saluda.png"), "clicked");
+        QCoreApplication::processEvents();
+        CHECK(s.editor->clips().size() == before + 1);
+        CHECK(s.editor->selectedClip()["kind"] == "image");
+    }
+    qunsetenv("VIDEO_YT_ASSETS");
+    std::filesystem::remove_all(assets);
+}

@@ -13,6 +13,8 @@ Rectangle {
     property var sfxModal: null
     property var infoModal: null // MaterialInfoModal
     property var imageModal: null // ImageAddModal
+    // La colección abierta es un personaje stick: se ve agrupada por expresión (StickView).
+    readonly property bool isStick: source === "collection" && !!collection && model.stick.id === collection
     property bool recipesOpen: false
     property string filter: "video"
     property string source: "project"
@@ -295,7 +297,7 @@ Rectangle {
             }
             Item { Layout.fillWidth: true }
             SmallButton {
-                visible: !!panel.collection
+                visible: !!panel.collection && !panel.isStick
                 text: "Subir"
                 onClicked: uploadDialog.open()
             }
@@ -305,6 +307,10 @@ Rectangle {
             Layout.fillWidth: true
             model: panel.model
             onCreated: (id) => {
+                panel.collection = id
+                panel.model.searchCollections(panel.query, id)
+            }
+            onStickCreated: (id) => {
                 panel.collection = id
                 panel.model.searchCollections(panel.query, id)
             }
@@ -330,10 +336,12 @@ Rectangle {
                     radius: 11
                     color: on ? Qt.rgba(1, 0.23, 0.36, 0.25) : Theme.card2
                     border.color: on ? Theme.accent : Theme.lineBright
-                    Label { id: colLabel; anchors.centerIn: parent; text: parent.modelData.name + (parent.modelData.count ? " " + parent.modelData.count : ""); color: Theme.text; font.pixelSize: 11 }
+                    objectName: "col:chip:" + modelData.id
+                    Label { id: colLabel; anchors.centerIn: parent; text: (parent.modelData.stick ? (parent.modelData.emoji || "🎭") + " " : "") + parent.modelData.name + (parent.modelData.count ? " " + parent.modelData.count : ""); color: Theme.text; font.pixelSize: 11 }
                     TapHandler {
                         onTapped: {
                             panel.collection = parent.modelData.id
+                            panel.model.openStick(parent.modelData.stick ? parent.modelData.id : "")
                             panel.model.searchCollections(panel.query, panel.collection)
                         }
                     }
@@ -341,7 +349,7 @@ Rectangle {
             }
         }
         Label {
-            visible: panel.shown.length === 0 && ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0
+            visible: panel.shown.length === 0 && ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0 && !panel.isStick
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             text: panel.source === "library" ? "La biblioteca está vacía: guarda material de un proyecto para usarlo en todos."
@@ -628,9 +636,17 @@ Rectangle {
                 thumb: panel.model.materialThumbs[modelData.key] || ""
             }
         }
+        StickView {
+            visible: panel.isStick
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            model: panel.model
+            dragLayer: panel.dragLayer
+            query: panel.query
+        }
         ListView {
             id: list
-            visible: ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0 && !panel.gridMode
+            visible: ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0 && !panel.gridMode && !panel.isStick
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true

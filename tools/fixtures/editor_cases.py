@@ -299,6 +299,11 @@ def _material_calls(rng: random.Random) -> list:
         for fit, dur in ((None, 5), (2.5, 5), (None, 0), (0, None), (None, 0.1)):
             calls.append(["placeAsset", {**payload, "duration": dur}, "V1", rng.choice([0, 3.25]), fit])
     calls.append(["placeAsset", {"kind": "shape", "asset_kind": "clips", "type": "heart", "duration": 2}, "V1", 1, None])
+    for chroma in ("#00FF00", "#ff00aa", "verde", ""):  # un stick soltado nace con su croma (chromaBg)
+        for kind, dur in (("clips", 2.5), ("images", 3)):
+            calls.append(["placeAsset", {"asset_kind": kind, "asset_id": "robot/feliz/a.png", "filename": "robot/feliz/a.png",
+                                         "name": "Feliz", "duration": dur, "scope": "collection", "chroma_color": chroma},
+                          "V1", 0.5, None])
     for theme in (None, "neon", "box", "nada"):
         payload = {"asset_kind": "text", "kind": "text", "asset_id": theme or "text", "filename": "",
                    "name": theme or "Texto predeterminado", "text": "hola mundo" if theme else "Texto predeterminado",

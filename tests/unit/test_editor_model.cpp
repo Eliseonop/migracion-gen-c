@@ -1351,3 +1351,54 @@ TEST_CASE("editor: recetas en un clic según lo seleccionado", "[studio]") {
     m.applyRecipe("text_reflection"); // sin texto elegido: el error del núcleo
     CHECK(m.notice()["type"] == "error");
 }
+
+TEST_CASE("editor: un personaje stick en las colecciones, por expresión y con su croma", "[studio]") {
+    Fixture f;
+    core::SettingsFile settings(f.dir / "data" / "settings.json");
+    studio::EditorModel m(f.store, &settings);
+    REQUIRE(m.openProject("p1"));
+    const auto root = f.dir / "material";
+    std::filesystem::create_directories(root);
+    REQUIRE(m.setCollectionsRoot(QString::fromStdString(root.string())));
+    const QString id = m.createStick("Robot", "🤖", "#FF00AA");
+    REQUIRE(id == "robot");
+    const QVariantList cols = m.collections();
+    REQUIRE(cols.size() == 1);
+    CHECK(cols[0].toMap()["stick"].toBool());
+    CHECK(cols[0].toMap()["emoji"] == "🤖");
+    CHECK(m.stick()["id"] == "robot"); // abierto al crearlo
+    CHECK(m.stick()["chroma"] == "#FF00AA");
+
+    const auto png = f.dir / "saluda.png";
+    REQUIRE(QImage(40, 30, QImage::Format_RGB32).save(QString::fromStdString(png.string())));
+    const int saved = m.addStickFiles("happy", {QUrl::fromLocalFile(QString::fromStdString(png.string()))});
+    REQUIRE(saved == 1);
+    const auto group_of = [&](const QString& rel) {
+        for (const QVariant& g : m.stick()["groups"].toList()) {
+            for (const QVariant& it : g.toMap()["items"].toList()) {
+                if (it.toMap()["rel"] == rel) {
+                    return std::pair{g.toMap()["id"].toString(), it.toMap()};
+                }
+            }
+        }
+        return std::pair{QString(), QVariantMap()};
+    };
+    auto [group, item] = group_of("feliz/saluda.png");
+    REQUIRE(group == "happy");
+    CHECK(item["kind"] == "image");
+    CHECK(item["thumb"].toString().endsWith("saluda.png"));
+
+    m.setStickExpression("feliz/saluda.png", "sad"); // recategoriza sin mover el archivo
+    CHECK(group_of("feliz/saluda.png").first == "sad");
+
+    m.select("a");
+    m.addMaterial(item["key"].toString());
+    const QVariantMap added = m.selectedClip();
+    CHECK(added["kind"] == "image");
+    const core::Timeline tl = f.saved();
+    const auto placed = std::ranges::find_if(tl.clips, [](const auto& c) { return c->kind == "image"; });
+    REQUIRE(placed != tl.clips.end());
+    REQUIRE((*placed)->bg_removal);
+    CHECK((*placed)->bg_removal->value("mode", "") == "chroma");
+    CHECK((*placed)->bg_removal->at("chroma").value("color", "") == "#FF00AA");
+}

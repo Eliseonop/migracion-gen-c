@@ -292,7 +292,7 @@ const placeAsset = (payload, trackId, start, fitDur, trackStyle) => {
     'setSelClipIds', 'chromaBg', 'makeShapeClip', 'SHAPE_DEFAULT_DUR', 'themeById', 'TEXT_DEFAULT_DUR', 'DEFAULT_TEXT',
     'selectNewText', 'makeTextClip', 'newTextStyle',
     `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'placeAsset')}`)(
-    m.makeClip, m.isGeneratedDurationClip, m.clipDur, m.clipSpeed, setClips, () => {}, () => {}, () => ({}),
+    m.makeClip, m.isGeneratedDurationClip, m.clipDur, m.clipSpeed, setClips, () => {}, () => {}, bgLib.chromaBg,
     m.makeShapeClip, shapes.SHAPE_DEFAULT_DUR, themes.themeById, m.TEXT_DEFAULT_DUR, m.DEFAULT_TEXT,
     (clip) => { made = clip }, m.makeTextClip, styleFor)
   fn(payload, trackId, start, fitDur)
