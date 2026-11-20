@@ -155,6 +155,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList collections READ collections NOTIFY projectChanged)
     Q_PROPERTY(QString collectionsRoot READ collectionsRoot NOTIFY projectChanged)
     Q_PROPERTY(QVariantMap stick READ stick NOTIFY projectChanged)
+    Q_PROPERTY(QVariantList sticks READ sticks NOTIFY projectChanged)
     Q_PROPERTY(QVariantList textFavorites READ textFavorites NOTIFY favoritesChanged)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
@@ -292,6 +293,11 @@ public:
     Q_INVOKABLE QString createStick(const QString& name, const QString& emoji, const QString& chromaColor);
     Q_INVOKABLE int addStickFiles(const QString& expression, const QList<QUrl>& files);
     Q_INVOKABLE void setStickExpression(const QString& rel, const QString& expression);
+    // EdStickMenu.jsx («Agregar Stick» en un hueco de la timeline): los personajes, el detalle de uno por tipo
+    // (vídeo o imagen) y añadir una de sus expresiones con croma en `time` y la pista `trackId` (addStickClip).
+    [[nodiscard]] QVariantList sticks() const { return sticks_; }
+    Q_INVOKABLE QVariantMap stickMenu(const QString& cid);
+    Q_INVOKABLE void addStickClip(const QString& key, double time, const QString& trackId);
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] int outWidth() const;
@@ -884,6 +890,10 @@ private:
     QString stick_id_;     // el stick abierto
     QVariantMap stick_;    // su detalle para la vista, con las claves de arrastre de sus tarjetas
     void refresh_stick();
+    QVariantList sticks_;                   // list_sticks
+    std::map<QString, Json> stick_items_;   // tarjeta de stick → stickAssetItem (para makeClip)
+    QVariantMap stick_card(const std::optional<std::filesystem::path>& root, const QString& cid, const Json& item,
+                           const Json& chroma);
     mutable std::map<QString, double> probed_; // lo que dio la sonda de cada uno (0: nada)
     ClipListModel clip_model_;
     CropEditor crop_editor_;

@@ -13,7 +13,6 @@ namespace gc::core {
 
 namespace {
 
-constexpr double kImageDefaultDuration = 5; // IMAGE_DEFAULT_DUR
 
 // Una propiedad de JS: sin valor = undefined (no es lo mismo que null).
 using Value = std::optional<Json>;

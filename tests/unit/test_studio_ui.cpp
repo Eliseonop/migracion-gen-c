@@ -3017,3 +3017,49 @@ TEST_CASE("studio sin pantalla: un stick de las colecciones se abre por expresi�
     qunsetenv("VIDEO_YT_ASSETS");
     std::filesystem::remove_all(assets);
 }
+
+TEST_CASE("studio sin pantalla: «Agregar Stick» desde un hueco de la timeline lo pone ahí con su croma", "[studio][ui]") {
+    const auto assets = std::filesystem::temp_directory_path() /
+                        ("gc_stickmenu_ui_" + std::to_string(QCoreApplication::applicationPid()));
+    std::filesystem::remove_all(assets);
+    std::filesystem::create_directories(assets / "material");
+    qputenv("VIDEO_YT_ASSETS", QByteArray::fromStdString(assets.string()));
+    {
+        const Studio s;
+        REQUIRE(s.editor->createStick("Robot", "🤖", "#FF00AA") == "robot");
+        const auto png = assets / "saluda.png";
+        REQUIRE(QImage(40, 30, QImage::Format_RGB32).save(QString::fromStdString(png.string())));
+        REQUIRE(s.editor->addStickFiles("happy", {QUrl::fromLocalFile(QString::fromStdString(png.string()))}) == 1);
+        s.editor->searchCollections({}, {}); // la lista de sticks del menú
+        // Clic derecho en V1, a los 12 s (tras «b», que acaba en 9).
+        const QPoint b_end = s.at("b", 1.0);
+        const QPoint at(b_end.x() + static_cast<int>(3 * s.editor->pps()), b_end.y());
+        QTest::mouseClick(s.window, Qt::RightButton, {}, at);
+        QTest::qWait(50);
+        auto* lane = s.window->findChild<QObject*>("laneMenu");
+        REQUIRE(lane);
+        CHECK(std::abs(lane->property("time").toDouble() - 12) < 0.2);
+        CHECK(lane->property("trackId") == "V1");
+        QMetaObject::invokeMethod(lane->findChild<QObject*>("lane:addStick"), "triggered");
+        QTest::qWait(50);
+        QQuickItem* card = s.item("stickMenu:card:feliz/saluda.png");
+        REQUIRE(card);
+        const auto before = s.editor->clips().size();
+        QMetaObject::invokeMethod(card, "clicked");
+        QCoreApplication::processEvents();
+        REQUIRE(s.editor->clips().size() == before + 1);
+        const QVariantMap made = s.editor->selectedClip();
+        CHECK(made["kind"] == "image");
+        CHECK(std::abs(made["start"].toDouble() - lane->property("time").toDouble()) < 1e-6);
+        CHECK(made["duration"] == 5.0); // IMAGE_DEFAULT_DUR
+        const auto project = s.store->get_project("p1");
+        REQUIRE(project);
+        const auto& clips = (**project).timeline->clips;
+        const auto placed = std::ranges::find_if(clips, [](const auto& c) { return c->kind == "image" && c->bg_removal; });
+        REQUIRE(placed != clips.end());
+        CHECK((*placed)->track_id == "V1");
+        CHECK((*placed)->bg_removal->at("chroma").value("color", "") == "#FF00AA");
+    }
+    qunsetenv("VIDEO_YT_ASSETS");
+    std::filesystem::remove_all(assets);
+}

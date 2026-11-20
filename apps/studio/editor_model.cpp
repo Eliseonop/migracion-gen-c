@@ -890,9 +890,11 @@ void EditorModel::load_collections(const std::string& q, const std::string& coll
     collections_root_ = root ? QString::fromStdString(core::path_to_utf8(*root)) : QString();
     collections_.clear();
     std::map<std::string, Json> sticks; // id → {name, emoji, chroma_color…}
+    sticks_.clear();
     if (const auto list = core::list_sticks(root)) {
         for (const Json& st : list->value("sticks", Json::array())) {
             sticks[st.value("id", "")] = st;
+            sticks_ << to_variant(st);
         }
     }
     if (const auto list = core::list_collections(root, settings)) {
@@ -1005,6 +1007,97 @@ std::vector<core::IncomingFile> incoming_files(const QList<QUrl>& files) {
 
 } // namespace
 
+QVariantMap EditorModel::stick_card(const std::optional<std::filesystem::path>& root, const QString& cid,
+                                    const Json& it, const Json& chroma) {
+    const bool video = it.value("stick_kind", it.value("kind", "")) == "video";
+    // stickAssetItem: ámbito de colección, título como etiqueta, su duración y el croma del personaje.
+    Json media = it;
+    media["scope"] = "collection";
+    media["label"] = it.value("title", Json()).is_string() && !it.at("title").get<std::string>().empty() ? it.at("title")
+                                                                                                    : it.value("name", Json(""));
+    const auto path = core::collection_resolve(root, it.value("filename", ""));
+    double duration = 0;
+#ifdef GC_STUDIO_PREVIEW
+    if (video && path) {
+        duration = media::probe_duration(*path).value_or(0.0);
+    }
+#endif
+    media["duration"] = duration;
+    media["end"] = duration;
+    media["chromaColor"] = chroma;
+    const QString key = "stick:" + cid + ":" + qstr(it.value("rel", ""));
+    payloads_[key] = core::drag_payload(video ? "clips" : "images", media);
+    stick_items_[key] = media;
+    return {{"key", key},
+            {"rel", qstr(it.value("rel", ""))},
+            {"title", qstr(it.value("title", ""))},
+            {"kind", video ? "video" : "image"},
+            {"expression", qstr(it.value("expression", ""))},
+            {"thumb", !video && path ? QUrl::fromLocalFile(qstr(core::path_to_utf8(*path))).toString() : QString()}};
+}
+
+QVariantMap EditorModel::stickMenu(const QString& cid) {
+    const auto root = collections_base();
+    const auto detail = core::stick_detail(root, cid.toStdString());
+    if (!detail) {
+        return {{"error", qstr(detail.error().message)}};
+    }
+    const Json chroma = detail->value("chroma_color", Json("#00FF00")); // chroma_color || '#00FF00'
+    QVariantMap out{{"id", cid},
+                    {"name", qstr(detail->value("name", ""))},
+                    {"emoji", qstr(detail->value("emoji", ""))},
+                    {"kinds", to_variant(detail->value("kinds", Json::object()))}};
+    for (const char* kind : {"video", "image"}) {
+        QVariantList groups;
+        for (const Json& g : detail->value(kind, Json::array())) {
+            QVariantList items;
+            for (const Json& it : g.value("items", Json::array())) {
+                items << stick_card(root, cid, it, chroma.is_string() && !chroma.get<std::string>().empty() ? chroma : Json("#00FF00"));
+            }
+            groups << QVariantMap{{"id", qstr(g.value("id", ""))},
+                                  {"label", qstr(g.value("label", ""))},
+                                  {"emoji", qstr(g.value("emoji", ""))},
+                                  {"items", items}};
+        }
+        out[kind] = groups;
+    }
+    return out;
+}
+
+void EditorModel::addStickClip(const QString& key, double time, const QString& trackId) {
+    const auto it = stick_items_.find(key);
+    if (!session_ || it == stick_items_.end()) {
+        return;
+    }
+    const Json& item = it->second;
+    const bool video = item.value("stick_kind", item.value("kind", "")) == "video";
+    core::Timeline next = *session_->timeline();
+    // La pista del hueco o targetTrackFor('video'): la del clip elegido si es de vídeo, si no la primera.
+    std::string tid;
+    if (const auto lane = std::ranges::find(next.tracks, trackId.toStdString(), &core::TimelineTrack::id);
+        lane != next.tracks.end()) {
+        tid = lane->id;
+    } else {
+        const core::TimelineClip* sel = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+        const core::TimelineTrack* own = sel ? track(qstr(sel->track_id)) : nullptr;
+        const auto usable = [](const core::TimelineTrack& t) { return t.kind == "video" && !t.locked; };
+        const auto first = std::ranges::find_if(next.tracks, usable);
+        tid = own && usable(*own) ? own->id : first != next.tracks.end() ? first->id : "";
+    }
+    if (tid.empty()) {
+        return;
+    }
+    const double dur = !video ? (item.value("animated", false) && core::js_number(item.value("duration", Json(0))) > 0
+                                     ? core::js_number(item.at("duration"))
+                                     : core::kImageDefaultDuration)
+                              : (core::material_duration(item) > 0 ? core::material_duration(item) : 1.0);
+    const double at = core::free_start_on_track(next.clips, tid, std::max(0.0, time), dur);
+    Json made = core::make_clip_json(video ? "clips" : "images", item, tid, at, Json(dur), ids_);
+    made["bg_removal"] = core::normalize_bg(
+        Json{{"enabled", true}, {"mode", "chroma"}, {"chroma", {{"enabled", true}, {"color", item.value("chromaColor", Json("#00FF00"))}}}});
+    add_generated(std::move(next), std::move(made), "add-stick");
+}
+
 void EditorModel::refresh_stick() {
     stick_.clear();
     if (stick_id_.isEmpty()) {
@@ -1022,32 +1115,7 @@ void EditorModel::refresh_stick() {
     for (const Json& g : detail->value("groups", Json::array())) {
         QVariantList items;
         for (const Json& it : g.value("items", Json::array())) {
-            const bool video = it.value("stick_kind", "") == "video";
-            // stickAssetItem: ámbito de colección, título como etiqueta, su duración y el croma del personaje.
-            Json media = it;
-            media["scope"] = "collection";
-            media["label"] = it.value("title", Json()).is_string() && !it.at("title").get<std::string>().empty()
-                                 ? it.at("title")
-                                 : it.value("name", Json(""));
-            const auto path = core::collection_resolve(root, it.value("filename", ""));
-            double duration = 0;
-#ifdef GC_STUDIO_PREVIEW
-            if (video && path) {
-                duration = media::probe_duration(*path).value_or(0.0);
-            }
-#endif
-            media["duration"] = duration;
-            media["end"] = duration;
-            media["chromaColor"] = chroma;
-            const QString key = "stick:" + stick_id_ + ":" + qstr(it.value("rel", ""));
-            payloads_[key] = core::drag_payload(video ? "clips" : "images", media);
-            items << QVariantMap{{"key", key},
-                                 {"rel", qstr(it.value("rel", ""))},
-                                 {"title", qstr(it.value("title", ""))},
-                                 {"kind", video ? "video" : "image"},
-                                 {"expression", qstr(it.value("expression", ""))},
-                                 {"thumb", !video && path ? QUrl::fromLocalFile(qstr(core::path_to_utf8(*path))).toString()
-                                                          : QString()}};
+            items << stick_card(root, stick_id_, it, chroma);
         }
         groups << QVariantMap{{"id", qstr(g.value("id", ""))},
                               {"label", qstr(g.value("label", ""))},

@@ -8,6 +8,7 @@ Rectangle {
     id: timeline
     required property var model
     signal contextClip(string clipId) // clic derecho en un clip (ya elegido)
+    signal contextLane(real time, string trackId) // clic derecho en un hueco (onContextLane)
     readonly property int headWidth: 132
     readonly property int rulerHeight: 22
     readonly property real pps: model.pps
@@ -269,6 +270,14 @@ Rectangle {
                     if (!moved && !additive)
                         timeline.model.clearSelection()
                     moved = false
+                }
+            }
+            TapHandler {
+                acceptedButtons: Qt.RightButton
+                onTapped: (point) => {
+                    const p = point.position
+                    const lane = timeline.model.tracks.find((t) => p.y >= t.y && p.y < t.y + t.height)
+                    timeline.contextLane(Math.max(0, p.x / timeline.pps), lane ? lane.id : "")
                 }
             }
             Rectangle {

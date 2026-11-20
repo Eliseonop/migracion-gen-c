@@ -14,6 +14,8 @@
 
 namespace gc::core {
 
+inline constexpr double kImageDefaultDuration = 5; // IMAGE_DEFAULT_DUR
+
 // {in, out} del material si es un segmento (in_point < out_point).
 [[nodiscard]] std::optional<std::pair<double, double>> segment_range(const Json& item);
 // El tramo si es un segmento; si no, end − start o `duration`.

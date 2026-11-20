@@ -11,6 +11,14 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.18.0] — 2026-11-20
+
+### Añadido
+
+- **«Agregar Stick» en la timeline de `genclip-studio`** (EdStickMenu.jsx): clic derecho en un hueco → personaje →
+  vídeo o imagen → expresión; el clip entra en ese instante y esa pista (o en la de vídeo), sin pisar a otro y con el
+  croma del personaje ya activado.
+
 ## [0.17.0] — 2026-11-20
 
 ### Añadido
