@@ -14,6 +14,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "gc/core/io.hpp"
+#include "gc/core/library.hpp"
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/serialize.hpp"
@@ -1272,4 +1273,50 @@ TEST_CASE("editor: buscar en la biblioteca de efectos", "[studio]") {
     CHECK(ids("glitch", "retro").isEmpty());
     CHECK(ids("", "retro").contains("vhs"));
     CHECK(ids("nada que ver", "").isEmpty());
+}
+
+TEST_CASE("editor: título y descripción de un material del proyecto y de la biblioteca", "[studio]") {
+    Fixture f;
+    auto data = core::read_json_file(f.dir / "data" / "projects.json");
+    REQUIRE(data);
+    Json& p1 = (*data)["projects"][0];
+    p1["clips"] = Json::array({{{"index", 3}, {"filename", "c.mp4"}, {"url", "/c"}, {"start", 10.0}, {"end", 72.5},
+                                {"label", "Viejo"}, {"description_ai", "Un tren en la nieve"}}});
+    p1["images"] = Json::array({{{"id", "i1"}, {"filename", "f.png"}, {"url", "/i"}, {"width", 640}, {"height", 480}}});
+    REQUIRE(core::write_json_file(f.dir / "data" / "projects.json", *data));
+    REQUIRE(core::write_json_file(f.dir / "data" / "library" / "library.json",
+                                  {{"version", 1},
+                                   {"items", Json::array({{{"id", "L1"}, {"resource_type", "image"},
+                                                           {"filename", "l.png"}, {"label", "Guardada"}}})}}));
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+
+    QVariantMap info = m.materialInfo("clips:3");
+    CHECK(info["kind"] == "clips");
+    CHECK_FALSE(info["library"].toBool());
+    CHECK(info["label"] == "Viejo");
+    CHECK(info["descriptionAi"] == "Un tren en la nieve");
+    CHECK(info["duration"].toDouble() == 62.5); // end − start
+    CHECK(m.materialInfo("images:i1")["width"].toInt() == 640);
+    CHECK(m.materialInfo("shape:star").isEmpty());
+
+    CHECK(m.saveMaterialInfo("clips:3", "  Tren  ", " Plano general ").isEmpty());
+    const auto project = f.store.get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    CHECK((**project).clips[0].label == "Tren");
+    CHECK((**project).clips[0].description == "Plano general");
+    CHECK(m.materialInfo("clips:3")["label"] == "Tren"); // el material se recarga
+
+    info = m.materialInfo("lib:images:L1");
+    CHECK(info["library"].toBool());
+    CHECK(info["label"] == "Guardada");
+    CHECK(m.saveMaterialInfo("lib:images:L1", "Logo", "Fondo transparente").isEmpty());
+    const Json lib = core::LibraryFile(f.dir / "data").load();
+    CHECK(lib["items"][0]["label"] == "Logo");
+    CHECK(lib["items"][0]["description"] == "Fondo transparente");
+    const QVariantList materials = m.materials();
+    const auto row = std::ranges::find_if(materials, [](const QVariant& v) { return v.toMap()["key"] == "lib:images:L1"; });
+    REQUIRE(row != materials.end());
+    CHECK(row->toMap()["name"] == "Logo");
 }

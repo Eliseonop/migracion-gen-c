@@ -30,21 +30,29 @@ Item {
         HoverHandler { id: hover; cursorShape: card.dragging ? Qt.ClosedHandCursor : Qt.OpenHandCursor }
         TapHandler {
             acceptedButtons: Qt.RightButton
-            enabled: slot.modelData.source === "project" && slot.isVideo
+            enabled: ["project", "library"].indexOf(slot.modelData.source) >= 0
+                     && ["video", "image", "audio"].indexOf(slot.modelData.kind) >= 0
             onTapped: matMenu.popup()
         }
         Menu {
             id: matMenu
             objectName: "material:menu:" + slot.modelData.key
             MenuItem {
+                objectName: "material:info:" + slot.modelData.key
+                text: "Editar información"
+                onTriggered: slot.host.infoModal.openFor(slot.modelData.key)
+            }
+            MenuItem {
                 objectName: "material:faceTrack:" + slot.modelData.key
+                visible: slot.modelData.source === "project" && slot.isVideo
+                height: visible ? implicitHeight : 0
                 enabled: !slot.host.model.faceTrackBusy
                 text: slot.modelData.faceTrack ? "Aplicar seguimiento de caras" : "Seguimiento de caras"
                 onTriggered: slot.host.model.faceTrackMaterial(slot.modelData.key, false)
             }
             MenuItem {
                 objectName: "material:faceRetrack:" + slot.modelData.key
-                visible: !!slot.modelData.faceTrack
+                visible: !!slot.modelData.faceTrack && slot.modelData.source === "project" && slot.isVideo
                 height: visible ? implicitHeight : 0
                 enabled: !slot.host.model.faceTrackBusy
                 text: "Volver a analizar caras"
@@ -167,7 +175,7 @@ Item {
                 }
                 // .ed-card-badges: seguimiento de caras guardado.
                 Rectangle {
-                    visible: !!slot.modelData.faceTrack
+                    visible: !!slot.modelData.faceTrack && slot.modelData.source === "project" && slot.isVideo
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
                     anchors.margins: 4

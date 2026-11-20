@@ -2919,3 +2919,30 @@ TEST_CASE("studio sin pantalla: el Clip Editor marca un tramo con Z y X y lo gua
     s.click("editor:colTab:1");
     CHECK(s.editor->clips().size() == 1);
 }
+
+TEST_CASE("studio sin pantalla: «Editar información» del material guarda su título y su descripción", "[studio][ui]") {
+    const Studio s;
+    QMetaObject::invokeMethod(s.item("material:nav:image"), "clicked");
+    QTest::qWait(50);
+    auto* card = s.item("material:images:i1");
+    REQUIRE(card);
+    auto* menu = card->findChild<QObject*>("material:menu:images:i1");
+    REQUIRE(menu); // el menú de la tarjeta (clic derecho) está también en las imágenes
+    auto* entry = menu->findChild<QObject*>("material:info:images:i1");
+    REQUIRE(entry);
+    QMetaObject::invokeMethod(entry, "triggered");
+    QTest::qWait(50);
+    QQuickItem* title = s.item("materialInfo:title");
+    REQUIRE(title);
+    CHECK(title->property("text") == "Logo");
+    title->setProperty("text", "Logo del canal");
+    s.item("materialInfo:description")->setProperty("text", "Fondo transparente");
+    QTest::keyClick(s.window, Qt::Key_Return, Qt::ControlModifier);
+    QTest::qWait(50);
+    CHECK_FALSE(s.item("materialInfo:title")); // se cierra al guardar
+    const auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    CHECK((**project).images[0].label == "Logo del canal");
+    CHECK((**project).images[0].description == "Fondo transparente");
+}

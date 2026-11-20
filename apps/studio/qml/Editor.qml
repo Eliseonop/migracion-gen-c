@@ -185,6 +185,7 @@ Item {
                 model: editor.model
                 dragLayer: overlay
                 sfxModal: sfxModal
+                infoModal: infoModal
             }
 
             // .ed-canvas-col: las pestañas, el escenario con la vista previa y la fila del reproductor.
@@ -977,6 +978,7 @@ Item {
     CropModal { id: cropModal; model: editor.model }
     SfxModal { id: sfxModal; model: editor.model }
     JsonModal { id: jsonModal; model: editor.model }
+    MaterialInfoModal { id: infoModal; model: editor.model }
     SegmentModal { model: editor.model; fmtSecs: editor.fmtSecs }
     ClipMenu { id: clipMenu; model: editor.model; onPasteAttributes: pasteAttrs.openFor(editor.model.pasteableGroups()) }
 

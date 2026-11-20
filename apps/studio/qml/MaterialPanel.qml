@@ -11,6 +11,7 @@ Rectangle {
     required property var model
     required property Item dragLayer
     property var sfxModal: null
+    property var infoModal: null // MaterialInfoModal
     property string filter: "video"
     property string source: "project"
     property string query: ""
@@ -598,21 +599,29 @@ Rectangle {
                     // El menú del material (EdMaterial): el seguimiento de caras de un vídeo del proyecto.
                     TapHandler {
                         acceptedButtons: Qt.RightButton
-                        enabled: slot.modelData.source === "project" && slot.modelData.kind === "video"
+                        enabled: ["project", "library"].indexOf(slot.modelData.source) >= 0
+                                 && ["video", "image", "audio"].indexOf(slot.modelData.kind) >= 0
                         onTapped: matMenu.popup()
                     }
                     Menu {
                         id: matMenu
                         objectName: "material:menu:" + slot.modelData.key
                         MenuItem {
+                            objectName: "material:info:" + slot.modelData.key
+                            text: "Editar información"
+                            onTriggered: panel.infoModal.openFor(slot.modelData.key)
+                        }
+                        MenuItem {
                             objectName: "material:faceTrack:" + slot.modelData.key
+                            visible: slot.modelData.source === "project" && slot.modelData.kind === "video"
+                            height: visible ? implicitHeight : 0
                             enabled: !panel.model.faceTrackBusy
                             text: slot.modelData.faceTrack ? "Aplicar seguimiento de caras" : "Seguimiento de caras"
                             onTriggered: panel.model.faceTrackMaterial(slot.modelData.key, false)
                         }
                         MenuItem {
                             objectName: "material:faceRetrack:" + slot.modelData.key
-                            visible: !!slot.modelData.faceTrack
+                            visible: !!slot.modelData.faceTrack && slot.modelData.source === "project" && slot.modelData.kind === "video"
                             height: visible ? implicitHeight : 0
                             enabled: !panel.model.faceTrackBusy
                             text: "Volver a analizar caras"

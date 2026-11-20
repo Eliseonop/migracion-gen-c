@@ -11,6 +11,20 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.14.0] — 2026-11-20
+
+### Añadido
+
+- **«Editar información» del material en `genclip-studio`** (MaterialInfoModal.jsx): clic derecho en un vídeo, una
+  imagen o un audio, del proyecto o guardado, para cambiar su título y su descripción (lo que lee la IA para elegir el
+  material), con la descripción de la IA a un clic. Ctrl+Enter guarda.
+
+### Corregido
+
+- **Compila y pasa en Linux con GCC 13:** faltaba `#include <format>`, cuatro tests recorrían un subobjeto de un
+  temporal (`store.load()["projects"]`, que MSVC alarga y GCC 13 no), y los tests que necesitan `gc_media` (importar
+  JPG y vídeos) se saltan sin él. 271 tests en verde en Linux (sin FFmpeg ni Skia).
+
 ## [0.13.0] — 2026-11-18
 
 ### Añadido

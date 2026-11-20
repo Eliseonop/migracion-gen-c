@@ -336,6 +336,10 @@ public:
     // si vale, si no la primera libre de bloqueo) y, si ahí hay algo, justo detrás (freeStartOnTrack):
     // pulsarlo varias veces encadena los clips.
     Q_INVOKABLE void addMaterial(const QString& key);
+    // MaterialInfoModal.jsx: lo que enseña el modal de un vídeo, una imagen o un audio (del proyecto o
+    // guardado) y guardar su título y su descripción. Devuelve el error o nada.
+    Q_INVOKABLE QVariantMap materialInfo(const QString& key) const;
+    Q_INVOKABLE QString saveMaterialInfo(const QString& key, const QString& label, const QString& description);
     Q_INVOKABLE void moveClip(const QString& id, double start, const QString& trackId);
     // {start, duration, times} del clip con el borde movido `delta` s. No cambia nada.
     Q_INVOKABLE QVariantMap previewTrim(const QString& id, bool left, double delta) const;
@@ -861,6 +865,7 @@ private:
     // material → dragPayload. Mutable: la duración de un SFX o de un audio o vídeo de colección se
     // sondea al arrastrarlo (probe_material), desde los métodos const del arrastre.
     mutable std::map<QString, Json> payloads_;
+    std::map<QString, Json> material_items_; // material → el elemento tal cual (proyecto o biblioteca)
     mutable std::map<QString, double> probed_; // lo que dio la sonda de cada uno (0: nada)
     ClipListModel clip_model_;
     CropEditor crop_editor_;

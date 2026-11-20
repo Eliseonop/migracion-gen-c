@@ -385,6 +385,7 @@ void EditorModel::add_material(const char* source, const char* asset_kind, const
                                const char* kind, QVariantList& into) {
     const Json payload = core::drag_payload(asset_kind, item);
     payloads_[key] = payload;
+    material_items_[key] = item;
     into << QVariantMap{{"key", key},
                         {"source", source},
                         {"assetKind", asset_kind},
@@ -568,6 +569,87 @@ void EditorModel::update_material_thumbs() {
 }
 
 // El material nuevo, delante (como el del proyecto al abrirlo).
+namespace {
+
+// La lista del material («clips», «images», «audios») y si es de la biblioteca, por su clave
+// («clips:3», «images:id», «lib:clips:id»).
+std::pair<std::string, bool> material_list(const QString& key) {
+    const QStringList parts = key.split(':');
+    const bool library = parts.value(0) == "lib";
+    const QString list = library ? parts.value(1) : parts.value(0);
+    return {list == "clips" || list == "images" || list == "audios" ? list.toStdString() : std::string(), library};
+}
+
+} // namespace
+
+QVariantMap EditorModel::materialInfo(const QString& key) const {
+    const auto [list, library] = material_list(key);
+    const auto it = material_items_.find(key);
+    if (list.empty() || it == material_items_.end()) {
+        return {};
+    }
+    const Json& item = it->second;
+    const auto text = [&](const char* field) {
+        const Json& v = item.value(field, Json());
+        return v.is_string() ? qstr(v.get<std::string>()) : QString();
+    };
+    const auto number = [&](const char* field) {
+        const Json& v = item.value(field, Json());
+        return v.is_number() ? QVariant(v.get<double>()) : QVariant();
+    };
+    // item.duration ?? (end − start)
+    QVariant duration = number("duration");
+    if (!duration.isValid() && number("end").isValid() && number("start").isValid()) {
+        duration = number("end").toDouble() - number("start").toDouble();
+    }
+    return {{"kind", qstr(list)},
+            {"library", library},
+            {"label", text("label")},
+            {"description", text("description")},
+            {"descriptionAi", text("description_ai")},
+            {"filename", text("filename")},
+            {"duration", duration},
+            {"width", number("width")},
+            {"height", number("height")}};
+}
+
+QString EditorModel::saveMaterialInfo(const QString& key, const QString& label, const QString& description) {
+    const auto [list, library] = material_list(key);
+    const auto it = material_items_.find(key);
+    if (list.empty() || it == material_items_.end()) {
+        return "Material no encontrado.";
+    }
+    const Json fields{{"label", label.trimmed().toStdString()}, {"description", description.trimmed().toStdString()}};
+    if (library) {
+        const auto saved = core::LibraryFile(store_.file().parent_path()).update_item(it->second.value("id", ""), fields);
+        if (!saved) {
+            return qstr(saved.error().message);
+        }
+        // Solo cambia el nombre de la tarjeta: se rehace su fila con el elemento guardado.
+        QVariantList row;
+        add_material("library", list.c_str(), key, *saved, list == "clips" ? "video" : list == "images" ? "image" : "audio", row);
+        for (QVariant& m : materials_) {
+            if (m.toMap()["key"] == key) {
+                m = row.front();
+            }
+        }
+        emit projectChanged();
+        return {};
+    }
+    const Json& item = it->second;
+    const Json& raw = list == "clips" && item.contains("index") ? item.at("index") : item.value("id", Json("")); // materialIdent
+    const std::string ident = raw.is_string() ? raw.get<std::string>() : raw.dump();
+    const auto saved = store_.update_material(project_id_, list, ident, fields);
+    if (!saved) {
+        return qstr(saved.error().message);
+    }
+    if (!*saved) {
+        return "Material no encontrado.";
+    }
+    reload_project_materials();
+    return {};
+}
+
 void EditorModel::reload_project_materials() {
     if (const auto project = store_.get_project(project_id_); project && *project) {
         materials_.removeIf([](const QVariant& m) { return m.toMap()["source"] == "project"; });
