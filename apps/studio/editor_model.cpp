@@ -466,6 +466,38 @@ QString EditorModel::dropFileKind(const QList<QUrl>& files) const {
     return "other";
 }
 
+namespace {
+
+core::ImageCodec image_codec() {
+#ifdef GC_STUDIO_PREVIEW
+    return exporter::image_codec();
+#else
+    return {}; // sin gc_media: solo los PNG, y sin su tamaño
+#endif
+}
+
+} // namespace
+
+QString EditorModel::addImage(const QUrl& file, const QString& description) {
+    if (!session_) {
+        return "Sin proyecto.";
+    }
+    const auto path = local_path(file);
+    const auto image = core::import_image_file(store_, project_id_, path, core::path_to_utf8(path.filename()), image_codec(),
+                                               ids_, {}, true); // upload_images
+    if (!image) {
+        return qstr(image.error().message);
+    }
+    if (const QString text = description.trimmed(); !text.isEmpty()) {
+        if (const auto saved = store_.update_material(project_id_, "images", image->id, Json{{"description", text.toStdString()}});
+            !saved) {
+            return qstr(saved.error().message);
+        }
+    }
+    reload_project_materials();
+    return {};
+}
+
 int EditorModel::importFiles(const QList<QUrl>& files, bool dropped) {
     if (!session_) {
         return 0;
@@ -478,11 +510,7 @@ int EditorModel::importFiles(const QList<QUrl>& files, bool dropped) {
         return std::nullopt;
 #endif
     };
-#ifdef GC_STUDIO_PREVIEW
-    const core::ImageCodec codec = exporter::image_codec();
-#else
-    const core::ImageCodec codec; // sin gc_media: solo los PNG, y sin su tamaño
-#endif
+    const core::ImageCodec codec = image_codec();
     // importMedia: los vídeos, luego las imágenes y luego los audios; lo que no es ninguno, fuera.
     std::vector<std::pair<std::filesystem::path, QString>> todo;
     for (const char* wanted : {"video", "image", "audio"}) {

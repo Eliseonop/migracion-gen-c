@@ -12,6 +12,7 @@ Rectangle {
     required property Item dragLayer
     property var sfxModal: null
     property var infoModal: null // MaterialInfoModal
+    property var imageModal: null // ImageAddModal
     property bool recipesOpen: false
     property string filter: "video"
     property string source: "project"
@@ -211,6 +212,15 @@ Rectangle {
                         gradient: scopeBtn.on ? accentGradient : null
                     }
                 }
+            }
+            // El + de .ed-img-toolbar: nuevas imágenes con su descripción (ImageAddModal).
+            IconBtn {
+                objectName: "material:addImage"
+                visible: panel.tab === "image" && !!panel.imageModal
+                iconName: "add"
+                iconSize: 16
+                tip: "Agregar imagen"
+                onClicked: panel.imageModal.openNew()
             }
         }
         TextField {

@@ -337,6 +337,8 @@ public:
     // si vale, si no la primera libre de bloqueo) y, si ahí hay algo, justo detrás (freeStartOnTrack):
     // pulsarlo varias veces encadena los clips.
     Q_INVOKABLE void addMaterial(const QString& key);
+    // ImageAddModal.jsx: sube una imagen al material del proyecto y guarda su descripción. El error o nada.
+    Q_INVOKABLE QString addImage(const QUrl& file, const QString& description);
     // Recetas en un clic (EdRecipes.jsx): el catálogo con si basta lo seleccionado (recipeReady) y aplicar
     // una sobre la selección, con el cabezal como `at_time` (applyRecipeUI).
     [[nodiscard]] QVariantList recipes() const;

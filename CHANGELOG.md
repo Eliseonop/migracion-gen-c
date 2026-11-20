@@ -11,6 +11,14 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.16.0] — 2026-11-20
+
+### Añadido
+
+- **«Nueva imagen» en `genclip-studio`** (ImageAddModal.jsx): el + de la pestaña Imagen del material abre una lista
+  de imágenes elegidas, cada una con su vista y su descripción, que se suben al material del proyecto de una vez
+  (y se pueden quitar de la lista antes de guardar).
+
 ## [0.15.0] — 2026-11-20
 
 ### Añadido

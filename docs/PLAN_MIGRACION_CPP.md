@@ -2146,3 +2146,9 @@ Decisión de Edu (§6):
 - **Paridad:** el caso «recetas» de la fixture del editor: el catálogo (lo pasa `editor_cases.py` desde `app.recipes` y el arnés lo devuelve tal cual) y 77 `recipeReady` del JS real (las 5 recetas y dos inventadas, con 11 selecciones). Mutantes: `mutantes.py recetas`, 2/2. Al regenerar la fixture en Linux cambian últimas cifras de algunos reales (V8 y libm de otro sistema); la tolerancia del test las cubre.
 - **Verificación:** Linux, GCC 13 + Qt 6.4.2: 273/273. Tests nuevos: el modelo (listas, aplicar, deshacer, error del núcleo) y la interfaz (plegado, apagada sin texto, aplicar el etalonaje).
 
+### 2026-11-20 — F5: «Nueva imagen» · versión 0.16.0
+
+- **El studio (`ImageAddModal.qml`, ImageAddModal.jsx):** el + junto a «Todas / Guardadas» de la pestaña Imagen. Una fila por imagen (sin repetir la misma ruta; lo que no es imagen por la extensión de `isImageFile` da «Elige un PNG, JPG, WebP o una captura.»), con su vista, su descripción y quitar; «Guardar todos» sube cada una con `EditorModel::addImage` (`import_image_file` como el POST /images, con los GIF animados como GIF, y `update_material` con la descripción si la hay) y cierra si no falla ninguna; la fila que falla enseña su error. **Divergencias:** se eligen con el diálogo de archivos; pegar del portapapeles y soltar sobre el modal no están (soltar en el material ya importa, sin descripción).
+- **Trampa de QML:** cambiar un campo de un objeto dentro de una `property var` no se guarda (se cambia una copia); la descripción se escribe al terminar de editar con `patch`, que rehace la lista.
+- **Verificación:** Linux, GCC 13 + Qt 6.4.2: 274/274. Test nuevo de la interfaz: el +, una imagen y un archivo que no lo es, la descripción y guardar.
+

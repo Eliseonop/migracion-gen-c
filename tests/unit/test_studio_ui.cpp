@@ -2961,3 +2961,29 @@ TEST_CASE("studio sin pantalla: una receta se aplica desde la pestaña Efectos d
     CHECK(s.editor->clips().size() > before); // capa de ajuste y barras
     CHECK(s.editor->notice()["type"] != "error");
 }
+
+TEST_CASE("studio sin pantalla: «Nueva imagen» sube imágenes con su descripción", "[studio][ui]") {
+    const Studio s;
+    QMetaObject::invokeMethod(s.item("material:nav:image"), "clicked");
+    QTest::qWait(50);
+    REQUIRE(s.item("material:addImage"));
+    auto* modal = s.window->findChild<QObject*>("imageAdd");
+    REQUIRE(modal);
+    QMetaObject::invokeMethod(modal, "open");
+    const auto png = s.dir / "nueva.png";
+    REQUIRE(QImage(64, 32, QImage::Format_RGB32).save(QString::fromStdString(png.string())));
+    const QVariantList urls{QUrl::fromLocalFile(QString::fromStdString(png.string())), QUrl::fromLocalFile("/tmp/nota.txt")};
+    QMetaObject::invokeMethod(modal, "addFiles", Q_ARG(QVariant, urls));
+    QTest::qWait(50);
+    QQuickItem* description = s.item("imageAdd:description:0");
+    REQUIRE(description);
+    description->setProperty("text", "Un rectángulo negro");
+    QMetaObject::invokeMethod(description, "editingFinished");
+    const auto before = (*s.store->get_project("p1"))->images.size();
+    s.click("imageAdd:saveAll");
+    QTest::qWait(50);
+    const auto project = s.store->get_project("p1");
+    REQUIRE((**project).images.size() == before + 1);
+    CHECK((**project).images.back().description == "Un rectángulo negro");
+    CHECK_FALSE(s.item("imageAdd:saveAll")); // se cierra al guardar todo
+}
