@@ -534,6 +534,31 @@ int EditorModel::importFiles(const QList<QUrl>& files, bool dropped) {
     return imported;
 }
 
+bool EditorModel::importImageWithDescription(const QUrl& file, const QString& description) {
+    if (!session_) {
+        return false;
+    }
+    const auto path = local_path(file);
+    const std::string name = core::path_to_utf8(path.filename());
+#ifdef GC_STUDIO_PREVIEW
+    const core::ImageCodec codec = exporter::image_codec();
+#else
+    const core::ImageCodec codec;
+#endif
+    core::ImportMeta meta;
+    const std::string desc = description.trimmed().toStdString();
+    if (!desc.empty()) {
+        meta.description = desc;
+    }
+    auto r = core::import_image_file(store_, project_id_, path, name, codec, ids_, meta, true);
+    if (!r) {
+        setError(qstr(r.error().message));
+        return false;
+    }
+    reload_project_materials();
+    return true;
+}
+
 void EditorModel::setThumbnails(Thumbnails* thumbnails) {
     thumbnails_ = thumbnails;
     if (thumbnails_ != nullptr) {

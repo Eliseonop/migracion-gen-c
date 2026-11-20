@@ -185,6 +185,7 @@ Item {
                 model: editor.model
                 dragLayer: overlay
                 sfxModal: sfxModal
+                imageAddModal: imageAddModal
             }
 
             // .ed-canvas-col: las pestañas, el escenario con la vista previa y la fila del reproductor.
@@ -979,6 +980,7 @@ Item {
     JsonModal { id: jsonModal; model: editor.model }
     SegmentModal { model: editor.model; fmtSecs: editor.fmtSecs }
     MaterialInfoModal { model: editor.model }
+    ImageAddModal { id: imageAddModal; model: editor.model }
     ClipMenu { id: clipMenu; model: editor.model; onPasteAttributes: pasteAttrs.openFor(editor.model.pasteableGroups()) }
 
     // «Subir calidad en la timeline» (el ConfirmModal de EdMaterial.jsx).

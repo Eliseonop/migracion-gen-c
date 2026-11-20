@@ -249,6 +249,7 @@ public:
     // ni audio (por su tipo MIME o su extensión) no cuenta; si no queda nada, el aviso de error
     // (`dropped`: el de soltar archivos en el panel). Da cuántos entraron.
     Q_INVOKABLE int importFiles(const QList<QUrl>& files, bool dropped = false);
+    Q_INVOKABLE bool importImageWithDescription(const QUrl& file, const QString& description);
     // dragMediaKind de EdMaterial: lo que se arrastra desde el sistema («video», «image» o «audio»,
     // por ese orden; «other» si no hay nada de eso; «file» sin archivos), para el aviso del panel.
     [[nodiscard]] Q_INVOKABLE QString dropFileKind(const QList<QUrl>& files) const;

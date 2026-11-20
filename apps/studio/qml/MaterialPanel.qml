@@ -11,6 +11,7 @@ Rectangle {
     required property var model
     required property Item dragLayer
     property var sfxModal: null
+    property var imageAddModal: null
     property string filter: "video"
     property string source: "project"
     property string query: ""
@@ -265,6 +266,13 @@ Rectangle {
             Layout.fillWidth: true
             text: "Importar vídeo, imagen o audio…"
             onClicked: importDialog.open()
+        }
+        SmallButton {
+            objectName: "material:importImage"
+            visible: panel.source === "project" && panel.filter === "image"
+            Layout.fillWidth: true
+            text: "Nueva imagen con descripción…"
+            onClicked: panel.imageAddModal?.openNew()
         }
         FileDialog {
             id: importDialog
