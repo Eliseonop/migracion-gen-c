@@ -475,6 +475,37 @@ Rectangle {
                         }
                     }
                 }
+                // Barras de cine (#20): un clic por proporción (CINEMA_RATIOS de shapes.js).
+                Row {
+                    width: parent.width
+                    spacing: 6
+                    leftPadding: 4
+                    MIcon { anchors.verticalCenter: parent.verticalCenter; name: "crop_7_5"; size: 16; color: Theme.muted }
+                    Label { anchors.verticalCenter: parent.verticalCenter; text: "Barras de cine"; color: Theme.muted; font.pixelSize: 11; font.bold: true }
+                    Repeater {
+                        model: [
+                            { id: "2.39", label: "2,39:1 (cine)" },
+                            { id: "2",    label: "2:1" },
+                            { id: "1.85", label: "1,85:1" },
+                            { id: "16:9", label: "16:9" }
+                        ]
+                        Rectangle {
+                            required property var modelData
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: cinemaLabel.implicitWidth + 12
+                            height: 22
+                            radius: 11
+                            color: cinemaHover.hovered ? Theme.card3 : Theme.card2
+                            border.color: cinemaHover.hovered ? Theme.accent : Theme.lineBright
+                            HoverHandler { id: cinemaHover }
+                            TapHandler { onTapped: panel.model.addCinemaBars(parent.modelData.id) }
+                            ToolTip.visible: cinemaHover.hovered
+                            ToolTip.delay: 500
+                            ToolTip.text: "Barras negras arriba y abajo: lo visible queda en " + parent.modelData.label
+                            Label { id: cinemaLabel; anchors.centerIn: parent; text: parent.modelData.label; color: Theme.text; font.pixelSize: 11 }
+                        }
+                    }
+                }
                 // El adjustBtn de EdFxLibrary: un clip que filtra todo lo que tiene debajo durante su tramo.
                 AbstractButton {
                     id: adjustButton
@@ -677,17 +708,22 @@ Rectangle {
                     Drag.keys: ["material"]
 
                     HoverHandler { id: hover }
-                    // El menú del material (EdMaterial): el seguimiento de caras de un vídeo del proyecto.
                     TapHandler {
                         acceptedButtons: Qt.RightButton
-                        enabled: slot.modelData.source === "project" && slot.modelData.kind === "video"
                         onTapped: matMenu.popup()
                     }
                     Menu {
                         id: matMenu
                         objectName: "material:menu:" + slot.modelData.key
                         MenuItem {
+                            objectName: "material:info:" + slot.modelData.key
+                            text: "Editar información"
+                            onTriggered: panel.model.openMaterialInfo(slot.modelData.key)
+                        }
+                        MenuItem {
                             objectName: "material:faceTrack:" + slot.modelData.key
+                            visible: slot.modelData.source === "project" && slot.modelData.kind === "video"
+                            height: visible ? implicitHeight : 0
                             enabled: !panel.model.faceTrackBusy
                             text: slot.modelData.faceTrack ? "Aplicar seguimiento de caras" : "Seguimiento de caras"
                             onTriggered: panel.model.faceTrackMaterial(slot.modelData.key, false)
@@ -700,7 +736,6 @@ Rectangle {
                             text: "Volver a analizar caras"
                             onTriggered: panel.model.faceTrackMaterial(slot.modelData.key, true)
                         }
-                        // canUpgradeFrom: un vídeo del proyecto (no un segmento) que viene de YouTube.
                         MenuItem {
                             objectName: "material:upgrade:" + slot.modelData.key
                             visible: !!slot.modelData.canUpgrade

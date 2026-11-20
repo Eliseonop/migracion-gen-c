@@ -30,14 +30,20 @@ Item {
         HoverHandler { id: hover; cursorShape: card.dragging ? Qt.ClosedHandCursor : Qt.OpenHandCursor }
         TapHandler {
             acceptedButtons: Qt.RightButton
-            enabled: slot.modelData.source === "project" && slot.isVideo
             onTapped: matMenu.popup()
         }
         Menu {
             id: matMenu
             objectName: "material:menu:" + slot.modelData.key
             MenuItem {
+                objectName: "material:info:" + slot.modelData.key
+                text: "Editar información"
+                onTriggered: slot.host.model.openMaterialInfo(slot.modelData.key)
+            }
+            MenuItem {
                 objectName: "material:faceTrack:" + slot.modelData.key
+                visible: slot.modelData.source === "project" && slot.isVideo
+                height: visible ? implicitHeight : 0
                 enabled: !slot.host.model.faceTrackBusy
                 text: slot.modelData.faceTrack ? "Aplicar seguimiento de caras" : "Seguimiento de caras"
                 onTriggered: slot.host.model.faceTrackMaterial(slot.modelData.key, false)
@@ -50,7 +56,6 @@ Item {
                 text: "Volver a analizar caras"
                 onTriggered: slot.host.model.faceTrackMaterial(slot.modelData.key, true)
             }
-            // canUpgradeFrom: un vídeo del proyecto (no un segmento) que viene de YouTube.
             MenuItem {
                 objectName: "material:upgrade:" + slot.modelData.key
                 visible: !!slot.modelData.canUpgrade

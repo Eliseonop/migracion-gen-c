@@ -143,6 +143,9 @@ class EditorModel : public QObject {
     // «Crear clip» abierto (SegmentConfirmModal): {start, end, clipId, title, descMode, description,
     // sourceDescription, simple, phase, error}; vacío si no.
     Q_PROPERTY(QVariantMap segAsk READ segAsk NOTIFY segAskChanged)
+    // «Información del material» (MaterialInfoModal.jsx): {key, assetKind, kindLabel, scope, isLibrary,
+    // label, description, descriptionAi, filename, duration, width, height}; vacío si no se muestra.
+    Q_PROPERTY(QVariantMap matInfo READ matInfo NOTIFY matInfoChanged)
     // En el Clip Editor y con un vídeo en su timeline (onCreateSegment de EdTimeline).
     Q_PROPERTY(bool canCreateSegment READ canCreateSegment NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
@@ -405,6 +408,7 @@ public:
     // Figura del catálogo en el cabezal (addAsset('shape')) y capa de ajuste (addAdjustmentLayer).
     Q_INVOKABLE void addShape(const QString& type, const QString& label);
     Q_INVOKABLE void addAdjustment();
+    Q_INVOKABLE void addCinemaBars(const QString& ratioId);
     // Recetas en un clic (applyRecipeUI): la operación apply_recipe con lo seleccionado, en un paso de
     // deshacer; selecciona lo que añade y, si deja un clip con «Eliminar fondo» por calcular, lo calcula.
     Q_INVOKABLE void applyRecipe(const QString& id);
@@ -430,6 +434,10 @@ public:
     [[nodiscard]] QVariantMap clipMeta() const { return clip_meta_; }
     [[nodiscard]] QVariantMap clipMark() const;
     [[nodiscard]] QVariantMap segAsk() const { return seg_ask_; }
+    [[nodiscard]] QVariantMap matInfo() const { return mat_info_; }
+    Q_INVOKABLE void openMaterialInfo(const QString& key);
+    Q_INVOKABLE void saveMaterialInfo(const QString& label, const QString& description);
+    Q_INVOKABLE void closeMaterialInfo();
     [[nodiscard]] bool canCreateSegment() const;
     // openProjectClip de EdMaterial.jsx con un vídeo del proyecto (clave «clips:<index>»): su archivo
     // original entero en el Clip Editor; un segmento, con su rango ya marcado. false si no se puede.
@@ -657,6 +665,7 @@ signals:
     void clipMetaChanged();
     void clipMarkChanged();
     void segAskChanged();
+    void matInfoChanged();
 
 private:
     // Cambia de pestaña: la sesión activa pasa a other_session_ y la otra entra, con su cabezal y su zoom.
@@ -717,6 +726,7 @@ private:
     QVariantMap clip_meta_;
     core::ClipMark clip_mark_;
     QVariantMap seg_ask_;
+    QVariantMap mat_info_;
     std::unique_ptr<core::EditSession> session_;
     std::unique_ptr<core::Autosave> autosave_; // después de session_: se destruye antes
     mutable core::RandomIdSource ids_;

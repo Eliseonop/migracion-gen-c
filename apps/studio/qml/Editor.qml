@@ -978,6 +978,7 @@ Item {
     SfxModal { id: sfxModal; model: editor.model }
     JsonModal { id: jsonModal; model: editor.model }
     SegmentModal { model: editor.model; fmtSecs: editor.fmtSecs }
+    MaterialInfoModal { model: editor.model }
     ClipMenu { id: clipMenu; model: editor.model; onPasteAttributes: pasteAttrs.openFor(editor.model.pasteableGroups()) }
 
     // «Subir calidad en la timeline» (el ConfirmModal de EdMaterial.jsx).

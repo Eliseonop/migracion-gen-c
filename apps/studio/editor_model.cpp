@@ -2483,6 +2483,11 @@ void EditorModel::addAdjustment() {
     add_generated(std::move(next), core::make_adjustment_clip_json(tid, playhead_, kDur, ids_), "add-adjustment");
 }
 
+void EditorModel::addCinemaBars(const QString& ratioId) {
+    if (!session_) return;
+    apply(core::ops::AddCinemaBars{Json(ratioId.toStdString()), Json(playhead_)});
+}
+
 void EditorModel::addTrack(const QString& kind) {
     if (!session_ || (kind != "video" && kind != "audio" && kind != "text")) {
         return;
@@ -2543,6 +2548,94 @@ void EditorModel::matchDuration() {
     core::Timeline next = *session_->timeline();
     next.clips = core::match_clips_to_first_duration(next.clips, selection_.ids);
     commit(std::move(next), "match-duration", selection_.ids);
+}
+
+// --- MaterialInfoModal (título y descripción de un material) -------------------------
+
+void EditorModel::openMaterialInfo(const QString& key) {
+    auto it = payloads_.find(key);
+    if (it == payloads_.end()) return;
+    const Json& payload = it->second;
+    const auto scope = payload.value("scope", "");
+    const auto asset_kind = payload.value("asset_kind", "");
+    const auto asset_id = payload.value("asset_id", "");
+    const bool is_library = scope == "library";
+
+    QString kind_label;
+    if (asset_kind == "clips") kind_label = QStringLiteral("Vídeo");
+    else if (asset_kind == "images") kind_label = QStringLiteral("Imagen");
+    else if (asset_kind == "audios") kind_label = QStringLiteral("Audio");
+    else kind_label = QStringLiteral("Material");
+
+    Json item;
+    if (is_library) {
+        if (const auto lib = core::LibraryFile(store_.file().parent_path()).list()) {
+            for (const auto& list : {"clips", "images", "audios"}) {
+                for (const auto& li : lib->value(list, Json::array())) {
+                    if (li.value("id", "") == asset_id) { item = li; break; }
+                }
+                if (!item.empty()) break;
+            }
+        }
+    } else {
+        if (const auto project = store_.get_project(project_id_); project && *project) {
+            if (asset_kind == "clips") {
+                for (const auto& c : (*project)->clips)
+                    if (std::to_string(c.index) == asset_id) { item = core::to_json(c); break; }
+            } else if (asset_kind == "images") {
+                for (const auto& i : (*project)->images)
+                    if (i.id == asset_id) { item = core::to_json(i); break; }
+            } else if (asset_kind == "audios") {
+                for (const auto& a : (*project)->audios)
+                    if (a.id == asset_id) { item = core::to_json(a); break; }
+            }
+        }
+    }
+
+    mat_info_ = QVariantMap{
+        {"key", key},
+        {"assetKind", qstr(asset_kind)},
+        {"kindLabel", kind_label},
+        {"scopeLabel", is_library ? QStringLiteral("Guardado") : QStringLiteral("Proyecto")},
+        {"isLibrary", is_library},
+        {"assetId", qstr(asset_id)},
+        {"label", qstr(item.value("label", item.value("name", "")))},
+        {"description", qstr(item.value("description", ""))},
+        {"descriptionAi", qstr(item.value("description_ai", ""))},
+        {"filename", qstr(item.value("filename", ""))},
+        {"duration", core::js_number(payload.value("duration", Json(0)))},
+    };
+    if (item.contains("width") && item["width"].is_number())
+        mat_info_["width"] = item["width"].get<int>();
+    if (item.contains("height") && item["height"].is_number())
+        mat_info_["height"] = item["height"].get<int>();
+    emit matInfoChanged();
+}
+
+void EditorModel::saveMaterialInfo(const QString& label, const QString& description) {
+    if (mat_info_.isEmpty()) return;
+    const bool is_library = mat_info_.value("isLibrary").toBool();
+    const std::string asset_kind = mat_info_.value("assetKind").toString().toStdString();
+    const std::string asset_id = mat_info_.value("assetId").toString().toStdString();
+    const Json fields = Json{{"label", label.trimmed().toStdString()},
+                             {"description", description.trimmed().toStdString()}};
+
+    if (is_library) {
+        auto r = core::LibraryFile(store_.file().parent_path()).update_item(asset_id, fields);
+        if (!r) { setError(qstr(r.error().message)); return; }
+    } else {
+        auto r = store_.update_material(project_id_, asset_kind, asset_id, fields);
+        if (!r) { setError(qstr(r.error().message)); return; }
+    }
+    mat_info_.clear();
+    emit matInfoChanged();
+    reload_project_materials();
+}
+
+void EditorModel::closeMaterialInfo() {
+    if (mat_info_.isEmpty()) return;
+    mat_info_.clear();
+    emit matInfoChanged();
 }
 
 QString EditorModel::projectJson() const {
