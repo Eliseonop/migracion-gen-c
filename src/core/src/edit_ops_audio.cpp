@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <format>
 
 #include "edit_ops.hpp"
 #include "edit_util.hpp"

@@ -165,7 +165,8 @@ TEST_CASE("paridad de la dirección de escena: catálogo, ranking y guardar la m
               what);
         errors += c.contains("error") ? 1 : 0;
         Json saved;
-        for (const Json& p : store.load()["projects"]) {
+        const Json stored = store.load(); // el temporal no vive lo que el bucle en GCC 13 (sin P2718)
+        for (const Json& p : stored["projects"]) {
             if (p["id"] == "m-main") {
                 saved = p;
             }

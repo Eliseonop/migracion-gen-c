@@ -359,6 +359,9 @@ TEST_CASE("studio sin pantalla: arrastrar material del panel a la timeline crea 
 }
 
 TEST_CASE("studio sin pantalla: soltar archivos del sistema en el material los importa", "[studio][ui]") {
+#ifndef GC_STUDIO_PREVIEW
+    SKIP("Sin gc_media (FFmpeg) no se importan JPG ni vídeos");
+#endif
     const Studio s;
     const auto in = s.dir / "fuera";
     std::filesystem::create_directories(in);
@@ -657,6 +660,7 @@ TEST_CASE("studio sin pantalla: la máscara se arrastra sobre la vista previa y 
     };
     CHECK(shows_guide());
     const QPoint from = at(m0["x"].toDouble(), m0["y"].toDouble());
+    QTest::mouseMove(s.window, from + QPoint(1, 0)); // el primero solo entra (así llega el hover en offscreen)
     QTest::mouseMove(s.window, from);
     QCoreApplication::processEvents();
     REQUIRE(s.item("maskArea"));
@@ -1546,7 +1550,8 @@ TEST_CASE("studio sin pantalla: el tirador de la curva del keyframe la vuelve pe
     s.editor->setPlayhead(3);
     s.editor->toggleKeyframe();
     s.editor->setPlayhead(2);
-    s.click("insp:tab:anim");
+    QMetaObject::invokeMethod(s.item("insp:tab:anim"), "clicked"); // la fila de pestañas puede quedar cortada
+    QCoreApplication::processEvents();
     QQuickItem* h = s.item("curveHandle:1");
     REQUIRE(h);
     const QPoint from = h->mapToScene(QPointF(h->width() / 2, h->height() / 2)).toPoint();
@@ -2664,6 +2669,7 @@ TEST_CASE("studio sin pantalla: la barra de la timeline añade pistas, imanta e 
                       : s.view(added)["start"].toDouble() >= s.view("b")["start"].toDouble() + s.view("b")["duration"].toDouble()));
 }
 
+#ifdef GC_STUDIO_PREVIEW // congelar lee el fotograma con gc_media
 TEST_CASE("studio sin pantalla: congelar fotograma parte el vídeo e inserta la imagen del cabezal",
           "[studio][ui][preview]") {
     const Studio s;
@@ -2715,6 +2721,7 @@ TEST_CASE("studio sin pantalla: congelar fotograma parte el vídeo e inserta la 
     s.editor->setPlayhead(1e6);
     CHECK_FALSE(s.editor->canFreeze());
 }
+#endif
 
 TEST_CASE("studio sin pantalla: separar solapes sube los clips montados a su propia pista", "[studio][ui]") {
     const Studio s;

@@ -958,7 +958,8 @@ TEST_CASE("paridad MCP: las tools de dirección de escena sin IA (tools_scene)",
             same(c["result"], *r, what);
         }
         Json project;
-        for (const Json& p : store.load()["projects"]) {
+        const Json stored = store.load(); // el temporal no vive lo que el bucle en GCC 13 (sin P2718)
+        for (const Json& p : stored["projects"]) {
             if (p["id"] == a["project_id"]) {
                 project = p;
             }
@@ -1027,7 +1028,8 @@ TEST_CASE("paridad MCP: las tools del material de la dirección de escena (tools
             same(c["result"], *r, what);
         }
         Json project;
-        for (const Json& p : store.load()["projects"]) {
+        const Json stored = store.load(); // el temporal no vive lo que el bucle en GCC 13 (sin P2718)
+        for (const Json& p : stored["projects"]) {
             if (p["id"] == a["project_id"]) {
                 project = p;
             }

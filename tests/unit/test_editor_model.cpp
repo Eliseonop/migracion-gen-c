@@ -762,6 +762,9 @@ TEST_CASE("editor: material de la biblioteca y de la carpeta de SFX", "[studio]"
 }
 
 TEST_CASE("editor: importar vídeos, imágenes y audios del disco al material del proyecto", "[studio]") {
+#ifndef GC_STUDIO_PREVIEW
+    SKIP("Sin gc_media (FFmpeg) no se importan JPG ni vídeos");
+#endif
     Fixture f;
     const auto media_dir = core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files";
     const auto in = f.dir / "fuera";
