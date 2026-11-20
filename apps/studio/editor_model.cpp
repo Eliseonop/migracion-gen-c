@@ -56,6 +56,7 @@
 #include "gc/core/sfx_disk.hpp"
 #include "gc/core/sfx_name.hpp"
 #include "gc/core/shape_geometry.hpp"
+#include "gc/core/recipes.hpp"
 #include "gc/core/shapes.hpp"
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/text_style.hpp"
@@ -581,6 +582,60 @@ std::pair<std::string, bool> material_list(const QString& key) {
 }
 
 } // namespace
+
+QVariantList EditorModel::recipes() const {
+    std::vector<std::string> kinds;
+    for (const std::string& id : selection_.ids) {
+        if (const core::TimelineClip* c = clip(qstr(id))) {
+            kinds.push_back(c->kind);
+        }
+    }
+    QVariantList out;
+    for (const Json& r : core::recipe_catalog()) {
+        QVariantMap row = to_variant(r);
+        const Json ready = core::recipe_ready(r, kinds);
+        row["ready"] = ready.at("ok").get<bool>();
+        row["why"] = qstr(ready.value("why", std::string()));
+        out << row;
+    }
+    return out;
+}
+
+void EditorModel::applyRecipe(const QString& id) {
+    if (!session_) {
+        return;
+    }
+    const Json catalog = core::recipe_catalog();
+    const auto recipe = std::ranges::find_if(catalog, [&](const Json& r) { return r.at("id") == id.toStdString(); });
+    const QString label = recipe != catalog.end() ? qstr(recipe->at("label").get<std::string>()) : id;
+    const auto change = session_->apply(
+        "apply_recipe", Json{{"recipe", id.toStdString()}, {"clip_ids", selection_.ids}, {"params", {{"at_time", playhead_}}}});
+    if (!change) {
+        set_notice("error", qstr(change.error().message));
+        return;
+    }
+    // La selección pasa al primer clip tocado que no es un audio (o al primero).
+    std::string pick;
+    for (const std::string& changed : change->changed) {
+        if (const core::TimelineClip* c = clip(qstr(changed))) {
+            if (pick.empty() || (clip(qstr(pick))->kind == "audio" && c->kind != "audio")) {
+                pick = c->id;
+            }
+        }
+    }
+    if (!pick.empty()) {
+        selection_ = {{pick}, pick};
+        emit selectionChanged();
+    }
+    QStringList warnings; // sin los avisos del recorte IA, como React
+    for (const std::string& w : change->warnings) {
+        if (!qstr(w).contains("recorte IA")) {
+            warnings << qstr(w);
+        }
+    }
+    set_notice(warnings.isEmpty() ? "success" : "info",
+               QString("«%1» aplicada").arg(label) + (warnings.isEmpty() ? QString() : " · " + warnings.join(" · ")));
+}
 
 QVariantMap EditorModel::materialInfo(const QString& key) const {
     const auto [list, library] = material_list(key);

@@ -8,6 +8,7 @@
 #include <optional>
 
 #include "edit_ops.hpp"
+#include "gc/core/recipes.hpp"
 #include "edit_util.hpp"
 #include "gc/core/bg.hpp"
 #include "gc/core/keyframes.hpp"
@@ -482,3 +483,46 @@ Result<EditResult> run(const Timeline& tl, const ops::ApplyRecipe& op, IdSource&
 }
 
 } // namespace gc::core::detail
+
+namespace gc::core {
+
+const Json& recipe_catalog() {
+    static const Json kCatalog = Json::array({
+        {{"id", "cinema_grade"}, {"label", "Etalonaje de cine"}, {"trick", 10}, {"needs", nullptr},
+         {"desc", "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."}},
+        {{"id", "text_reflection"}, {"label", "Texto con reflejo"}, {"trick", 7}, {"needs", "text"},
+         {"desc", "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."}},
+        {{"id", "pass_through_text"}, {"label", "Texto que atraviesas"}, {"trick", 6}, {"needs", "text"},
+         {"desc", "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."}},
+        {{"id", "film_strips"}, {"label", "Franjas al ritmo"}, {"trick", 3}, {"needs", "media2"},
+         {"desc", "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro "
+                  "en los beats de la música (o cada 0,35 s)."}},
+        {{"id", "subject_pop"}, {"label", "Sujeto que se adelanta"}, {"trick", 1}, {"needs", "video"},
+         {"desc", "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un "
+                  "destello blanco y sonido de transición."}},
+    });
+    return kCatalog;
+}
+
+Json recipe_ready(const Json& recipe, std::span<const std::string> kinds) {
+    const auto count = [&](std::initializer_list<std::string_view> of) {
+        return std::ranges::count_if(kinds, [&](const std::string& k) { return std::ranges::find(of, k) != of.end(); });
+    };
+    const Json& needs = recipe.is_object() && recipe.contains("needs") ? recipe.at("needs") : Json();
+    const auto verdict = [](bool ok, const char* why) {
+        return ok ? Json{{"ok", true}} : Json{{"ok", false}, {"why", why}};
+    };
+    if (needs == "text") {
+        return verdict(count({"text"}) > 0, "selecciona un texto");
+    }
+    if (needs == "video") {
+        return verdict(count({"video"}) > 0, "selecciona un vídeo");
+    }
+    if (needs == "media2") {
+        return verdict(count({"video", "image"}) >= 2, "selecciona 2 o más vídeos o imágenes");
+    }
+    return Json{{"ok", true}};
+}
+
+} // namespace gc::core
+

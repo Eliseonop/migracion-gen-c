@@ -2139,3 +2139,10 @@ Decisión de Edu (§6):
 - **Trampa:** `Overlay.overlay` no existe con el import Basic de Qt 6.4 (`ReferenceError` en JsonModal y SegmentModal en Linux; el popup se queda en su padre, que ya llena la ventana).
 - **Verificación:** Linux, GCC 13 + Qt 6.4.2: 271/271 (los de gc_media, gc_render y gc_export no se compilan aquí). Tests nuevos: el modelo (proyecto y biblioteca, recarga de la tarjeta) y la interfaz (abrir desde el menú, editar y Ctrl+Enter).
 
+### 2026-11-20 — F5: recetas en un clic · versión 0.15.0
+
+- **El núcleo (`gc/core/recipes.hpp`, en `edit_ops_recipes.cpp`):** `recipe_catalog` (RECIPES de `recipes.py`: id, etiqueta, truco, qué necesita y descripción) y `recipe_ready` (recipeReady.js: «selecciona un texto», «selecciona un vídeo», «selecciona 2 o más vídeos o imágenes»). Aplicar ya era `ops::ApplyRecipe`.
+- **El studio (EdRecipes.jsx en la pestaña Efectos del material):** cada receta con su truco, su descripción y «Aplicar», apagada con el motivo si lo seleccionado no basta. `EditorModel::applyRecipe` es `applyRecipeUI`: la selección y el cabezal (`at_time`), un paso de deshacer, la selección pasa al primer clip tocado que no es un audio y el aviso con los `warnings` (sin los del «recorte IA»). **Divergencia:** el bloque va plegado (en React va debajo de la rejilla de efectos, en el mismo scroll; aquí le quitaría el sitio). **Falta:** arrancar el recorte automático de fondo de los clips tocados (`startBgAutoFor`) en `subject_pop`.
+- **Paridad:** el caso «recetas» de la fixture del editor: el catálogo (lo pasa `editor_cases.py` desde `app.recipes` y el arnés lo devuelve tal cual) y 77 `recipeReady` del JS real (las 5 recetas y dos inventadas, con 11 selecciones). Mutantes: `mutantes.py recetas`, 2/2. Al regenerar la fixture en Linux cambian últimas cifras de algunos reales (V8 y libm de otro sistema); la tolerancia del test las cubre.
+- **Verificación:** Linux, GCC 13 + Qt 6.4.2: 273/273. Tests nuevos: el modelo (listas, aplicar, deshacer, error del núcleo) y la interfaz (plegado, apagada sin texto, aplicar el etalonaje).
+

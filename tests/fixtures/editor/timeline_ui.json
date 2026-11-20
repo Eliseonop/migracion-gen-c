@@ -132095,7 +132095,7 @@
     8,
     80,
     2400,
-    147.98407194410126,
+    147.9840719441013,
     2400,
     8,
     8,
@@ -132121,7 +132121,7 @@
     8,
     80,
     2400,
-    379.1025436664973,
+    379.10254366649735,
     2400,
     8,
     8,
@@ -132665,7 +132665,7 @@
     5,
     80,
     2222.222222222222,
-    308.6347624312946,
+    308.63476243129463,
     4800,
     8,
     8,
@@ -133105,7 +133105,7 @@
     5,
     80,
     2222.222222222222,
-    30.463603826251692,
+    30.4636038262517,
     2400,
     8,
     8,
@@ -133195,7 +133195,7 @@
     8,
     80,
     2400,
-    105.19466447772787,
+    105.19466447772786,
     2400,
     8,
     8,
@@ -133351,7 +133351,7 @@
     8,
     80,
     2400,
-    15.243263505484135,
+    15.243263505484137,
     120,
     60,
     7200,
@@ -921793,7 +921793,7 @@
       5.1714288427983846
      ],
      [
-      -39.42902537373684,
+      -39.42902537373685,
       2.0690260703404473
      ],
      [
@@ -1122784,6 +1122784,1395 @@
     },
     {
      "error": "El rango cruza un corte de la timeline: ajústalo a un solo tramo."
+    }
+   ]
+  },
+  {
+   "name": "recetas",
+   "timeline": {
+    "version": 1,
+    "schema_version": 5,
+    "fps": 30,
+    "width": 720,
+    "height": 1280,
+    "audio_target_db": -14.0,
+    "tracks": [
+     {
+      "id": "V1",
+      "kind": "video",
+      "name": "V1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "A1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     }
+    ],
+    "clips": [],
+    "markers": []
+   },
+   "calls": [
+    [
+     "recipeCatalog",
+     [
+      {
+       "id": "cinema_grade",
+       "label": "Etalonaje de cine",
+       "trick": 10,
+       "needs": null,
+       "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+      },
+      {
+       "id": "text_reflection",
+       "label": "Texto con reflejo",
+       "trick": 7,
+       "needs": "text",
+       "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+      },
+      {
+       "id": "pass_through_text",
+       "label": "Texto que atraviesas",
+       "trick": 6,
+       "needs": "text",
+       "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+      },
+      {
+       "id": "film_strips",
+       "label": "Franjas al ritmo",
+       "trick": 3,
+       "needs": "media2",
+       "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+      },
+      {
+       "id": "subject_pop",
+       "label": "Sujeto que se adelanta",
+       "trick": 1,
+       "needs": "video",
+       "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+      }
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "audio",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "audio",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "audio",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "audio",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "audio",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "audio",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "audio",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "text",
+      "text"
+     ]
+    ]
+   ],
+   "geo": [
+    {
+     "id": "T1",
+     "top": 22,
+     "bottom": 51
+    },
+    {
+     "id": "V2",
+     "top": 51,
+     "bottom": 103
+    },
+    {
+     "id": "V1",
+     "top": 103,
+     "bottom": 155
+    },
+    {
+     "id": "A1",
+     "top": 155,
+     "bottom": 207
+    }
+   ],
+   "results": [
+    [
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     }
+    ],
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
     }
    ]
   }

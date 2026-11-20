@@ -12,6 +12,7 @@ Rectangle {
     required property Item dragLayer
     property var sfxModal: null
     property var infoModal: null // MaterialInfoModal
+    property bool recipesOpen: false
     property string filter: "video"
     property string source: "project"
     property string query: ""
@@ -365,6 +366,56 @@ Rectangle {
                 radius: Theme.radiusSm
                 color: adjustButton.hovered ? Theme.card3 : Theme.card2
                 border.color: adjustButton.hovered ? Theme.accent : Theme.lineBright
+            }
+        }
+        // EdRecipes: recetas en un clic sobre lo seleccionado (se deshacen con Ctrl+Z).
+        ColumnLayout {
+            visible: panel.source === "fx"
+            Layout.fillWidth: true
+            spacing: 4
+            Label {
+                objectName: "recipes:toggle"
+                text: (panel.recipesOpen ? "▾ " : "▸ ") + "RECETAS EN UN CLIC"
+                color: Theme.muted
+                font.pixelSize: 11
+                font.bold: true
+                TapHandler { onTapped: panel.recipesOpen = !panel.recipesOpen }
+            }
+            Repeater {
+                model: panel.recipesOpen ? panel.model.recipes : []
+                ColumnLayout {
+                    id: recipeRow
+                    required property var modelData
+                    Layout.fillWidth: true
+                    spacing: 1
+                    opacity: modelData.ready ? 1 : 0.55
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Label {
+                            Layout.fillWidth: true
+                            text: "<b>" + recipeRow.modelData.label + "</b>  <small>truco " + recipeRow.modelData.trick + "</small>"
+                            textFormat: Text.StyledText
+                            color: Theme.text
+                            font.pixelSize: 12
+                            elide: Text.ElideRight
+                        }
+                        SmallButton {
+                            objectName: "recipe:apply:" + recipeRow.modelData.id
+                            text: "Aplicar"
+                            enabled: recipeRow.modelData.ready
+                            ToolTip.visible: hovered
+                            ToolTip.text: recipeRow.modelData.ready ? "Aplicar (se deshace con Ctrl+Z)" : recipeRow.modelData.why
+                            onClicked: panel.model.applyRecipe(recipeRow.modelData.id)
+                        }
+                    }
+                    Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        text: recipeRow.modelData.desc + (recipeRow.modelData.ready ? "" : " — " + recipeRow.modelData.why + ".")
+                        color: Theme.muted
+                        font.pixelSize: 10
+                    }
+                }
             }
         }
         Flow {

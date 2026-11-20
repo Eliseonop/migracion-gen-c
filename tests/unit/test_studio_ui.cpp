@@ -2946,3 +2946,18 @@ TEST_CASE("studio sin pantalla: «Editar información» del material guarda su t
     CHECK((**project).images[0].label == "Logo del canal");
     CHECK((**project).images[0].description == "Fondo transparente");
 }
+
+TEST_CASE("studio sin pantalla: una receta se aplica desde la pestaña Efectos del material", "[studio][ui]") {
+    const Studio s;
+    QMetaObject::invokeMethod(s.item("material:nav:effects"), "clicked");
+    QTest::qWait(50);
+    CHECK_FALSE(s.item("recipe:apply:text_reflection")); // plegadas: la rejilla de efectos conserva su sitio
+    s.click("recipes:toggle");
+    QQuickItem* reflect = s.item("recipe:apply:text_reflection");
+    REQUIRE(reflect);
+    CHECK_FALSE(reflect->isEnabled()); // pide un texto
+    const auto before = s.editor->clips().size();
+    s.click("recipe:apply:cinema_grade");
+    CHECK(s.editor->clips().size() > before); // capa de ajuste y barras
+    CHECK(s.editor->notice()["type"] != "error");
+}

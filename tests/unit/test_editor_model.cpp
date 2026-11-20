@@ -1320,3 +1320,34 @@ TEST_CASE("editor: título y descripción de un material del proyecto y de la bi
     REQUIRE(row != materials.end());
     CHECK(row->toMap()["name"] == "Logo");
 }
+
+TEST_CASE("editor: recetas en un clic según lo seleccionado", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    const auto recipe = [&](const char* id) {
+        for (const QVariant& r : m.recipes()) {
+            if (r.toMap()["id"] == id) {
+                return r.toMap();
+            }
+        }
+        return QVariantMap();
+    };
+    CHECK(m.recipes().size() == 5);
+    CHECK(recipe("cinema_grade")["ready"].toBool()); // no pide nada
+    CHECK_FALSE(recipe("text_reflection")["ready"].toBool());
+    CHECK(recipe("text_reflection")["why"] == "selecciona un texto");
+    m.addText();
+    const QString text = m.selection().front();
+    REQUIRE(recipe("text_reflection")["ready"].toBool());
+    const auto before = m.clips().size();
+    m.applyRecipe("text_reflection");
+    CHECK(m.clips().size() == before + 1); // la copia volteada
+    CHECK(m.notice()["type"] == "success");
+    CHECK(m.notice()["message"].toString().contains("Texto con reflejo"));
+    m.undo(); // de una vez
+    CHECK(m.clips().size() == before);
+    m.select("a");
+    m.applyRecipe("text_reflection"); // sin texto elegido: el error del núcleo
+    CHECK(m.notice()["type"] == "error");
+}

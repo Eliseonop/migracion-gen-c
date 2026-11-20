@@ -7,7 +7,7 @@
 proyectos), segments (segmentos por referencia y caras), json (JSON como Python), library («Guardar en la biblioteca»), stick (personajes
 stick), motion (envolvente de un sonido, clip_motion) o media (cabeceras de imagen). Cada uno pasa los
 tests de su etiqueta (GROUPS).
-`preset`: la build ya compilada (por defecto mingw-release). `filtro`: solo los mutantes cuyo
+`preset`: la build ya compilada (por defecto mingw-release; fuera de Windows, ci). `filtro`: solo los mutantes cuyo
 nombre contiene ese texto.
 
 Aplica cada cambio a la fuente, recompila gc_tests, pasa los tests del grupo y deshace el
@@ -1584,6 +1584,12 @@ SCENE_PACK = [
     ('estimate_tokens: hacia abajo', SD, 'std::nearbyint(static_cast<double>(py_len(text)) / 3.6)', 'std::floor(static_cast<double>(py_len(text)) / 3.6)'),
 ]
 
+RECIPES = [
+    ("recipe_catalog: otra etiqueta", "src/core/src/edit_ops_recipes.cpp", '"Franjas al ritmo"', '"Franjas al compás"'),
+    ("recipe_ready: media2 con un solo clip", "src/core/src/edit_ops_recipes.cpp",
+     'count({"video", "image"}) >= 2', 'count({"video", "image"}) >= 1'),
+]
+
 GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FRAME, "[frame]"),
           "export_input": (EXPORT_INPUT, "[export_input]"), "audio": (AUDIO, "[audio]"), "filters": (FILTERS, "[eval]"),
           "stick": (STICK, "[stick]"), "motion": (MOTION, "[motion]"), "media": (MEDIA, "[media]"),
@@ -1597,6 +1603,7 @@ GROUPS = {"eval": (EVAL, "[eval]"), "layers": (LAYERS, "[layers]"), "frame": (FR
           "mcp_scene": (MCP_SCENE, "[mcp]"),
           "scene_material": (SCENE_MATERIAL, "[scene]"),
           "scene_pack": (SCENE_PACK, "[scene]"),
+          "recetas": (RECIPES, "[editor]"),
           "json": (JSON, "[json],[projects],[settings],[sfx]")}
 
 
@@ -1615,11 +1622,11 @@ def main() -> int:
         print(f"Uso: mutantes.py <{'|'.join(GROUPS)}> [preset] [filtro]")
         return 2
     group, tag = GROUPS[sys.argv[1]]
-    build = REPO / "build" / (sys.argv[2] if len(sys.argv) > 2 else "mingw-release")
+    build = REPO / "build" / (sys.argv[2] if len(sys.argv) > 2 else "mingw-release" if os.name == "nt" else "ci")
     only = sys.argv[3] if len(sys.argv) > 3 else ""
     mutants = [m for m in group if only in m[0]]
     cmake = shutil.which("cmake", path=ENV["PATH"])
-    tests = build / "tests" / "gc_tests.exe"
+    tests = build / "tests" / ("gc_tests.exe" if os.name == "nt" else "gc_tests")
     if cmake is None or not tests.exists():
         print("Falta cmake o la build: compila antes con tools/dev/verificar.sh")
         return 2

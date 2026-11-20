@@ -24,6 +24,7 @@
 #include "gc/core/material_drop.hpp"
 #include "gc/core/script_prompt.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/recipes.hpp"
 #include "gc/core/sfx_name.hpp"
 #include "gc/core/shapes.hpp"
 #include "gc/core/text_clip_ui.hpp"
@@ -1038,6 +1039,12 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     }
     if (fn == "sfxSavePayload") {
         return sfx_save_payload(call.at(1), call.at(2));
+    }
+    if (fn == "recipeCatalog") {
+        return recipe_catalog();
+    }
+    if (fn == "recipeReady") {
+        return recipe_ready(call.at(1), strings(call.at(2)));
     }
     if (fn == "normalizeFavorites") {
         return normalize_favorites(call.at(1));

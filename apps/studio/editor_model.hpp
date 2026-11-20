@@ -158,6 +158,7 @@ class EditorModel : public QObject {
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
+    Q_PROPERTY(QVariantList recipes READ recipes NOTIFY selectionChanged)
     Q_PROPERTY(QVariantMap selectedClip READ selectedClip NOTIFY selectionChanged)
     // La pista elegida en su cabecera (sin clip seleccionado): {id, kind, name, style}.
     Q_PROPERTY(QVariantMap selectedTrack READ selectedTrack NOTIFY selectionChanged)
@@ -336,6 +337,10 @@ public:
     // si vale, si no la primera libre de bloqueo) y, si ahí hay algo, justo detrás (freeStartOnTrack):
     // pulsarlo varias veces encadena los clips.
     Q_INVOKABLE void addMaterial(const QString& key);
+    // Recetas en un clic (EdRecipes.jsx): el catálogo con si basta lo seleccionado (recipeReady) y aplicar
+    // una sobre la selección, con el cabezal como `at_time` (applyRecipeUI).
+    [[nodiscard]] QVariantList recipes() const;
+    Q_INVOKABLE void applyRecipe(const QString& id);
     // MaterialInfoModal.jsx: lo que enseña el modal de un vídeo, una imagen o un audio (del proyecto o
     // guardado) y guardar su título y su descripción. Devuelve el error o nada.
     Q_INVOKABLE QVariantMap materialInfo(const QString& key) const;

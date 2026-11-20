@@ -1205,6 +1205,18 @@ def _clip_extract_case() -> list[dict]:
     return out
 
 
+def _recipes_case() -> dict:
+    """Recetas en un clic: el catálogo de recipes.py (el arnés lo devuelve tal cual) y recipeReady.js."""
+    from app.recipes import RECIPES
+    calls: list = [["recipeCatalog", list(RECIPES)]]
+    selections = ([], ["text"], ["video"], ["image"], ["audio", "text"], ["video", "image"], ["image", "image"],
+                  ["video", "audio"], ["shape", "video"], ["video", "video", "video"], ["text", "text"])
+    for recipe in list(RECIPES) + [{"id": "x", "needs": "otra"}, {"id": "y"}]:
+        for kinds in selections:
+            calls.append(["recipeReady", recipe, kinds])
+    return {"name": "recetas", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
+
+
 def _format_case() -> dict:
     """El formato de salida de la fila del reproductor (lib/projectFormat.js, EdViewerTools.jsx)."""
     calls: list = []
@@ -1268,4 +1280,5 @@ def cases() -> list[dict]:
     out += _match_case()
     out += _separate_case()
     out += _clip_extract_case()
+    out.append(_recipes_case())
     return out

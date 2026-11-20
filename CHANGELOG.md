@@ -11,6 +11,18 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.15.0] — 2026-11-20
+
+### Añadido
+
+- **Recetas en un clic en `genclip-studio`** (EdRecipes.jsx): en la pestaña Efectos del material, las cinco
+  recetas de video-yt (etalonaje de cine, texto con reflejo, texto que atraviesas, franjas al ritmo y sujeto que se
+  adelanta), cada una activa solo si lo seleccionado basta (`recipeReady`), con el motivo si no. Se aplican sobre la
+  selección y se deshacen de una vez.
+- **El catálogo de recetas y `recipe_ready` en `gc_core`** (`recipes.hpp`), con paridad contra `recipes.py` y
+  `recipeReady.js`.
+- `tools/dev/mutantes.py` funciona también fuera de Windows (build `ci`).
+
 ## [0.14.0] — 2026-11-20
 
 ### Añadido
