@@ -2146,3 +2146,9 @@ Decisión de Edu (§6):
 - **Las barras de cine:** los 4 ratios de CINEMA_RATIOS (2.39:1, 2:1, 1.85:1, 16:9) como chips en la fila de la pestaña Efectos, antes de la capa de ajuste. `addCinemaBars` llama a `apply(AddCinemaBars{…})` y el listener de la sesión hace el `rebuild()`.
 - **El menú del material:** ampliado de solo vídeos del proyecto a todos los materiales (como en React), con «Editar información» como primera entrada. Los ítems de seguimiento de caras y «Usar esta calidad» se ocultan cuando no aplican.
 - **Verificación:** MinGW Debug y Release: 186/186 tests, 0 warnings. MSVC: error preexistente del toolchain (`<type_traits>` no encontrado, ajeno al código).
+
+### 2026-11-20 — F5: la biblioteca de sticks en el studio
+
+- **El modelo (`editor_model.cpp`):** `load_sticks()` llama a `core::list_sticks` y puebla `sticks_` (id, nombre, emoji, croma, conteos). `openStick(id)` llama a `stick_detail` y construye `stick_detail_` con los grupos (cada expresión con sus ítems), las expresiones y el color del croma; cada ítem se registra en `payloads_` con la clave `stick:<id>` y lleva `chromaColor` para que `drag_payload` lo propague. `addStickItem` reutiliza `addMaterial`. `setStickExpression` recategoriza un archivo y recarga el detalle. `addStickFiles` sube archivos a una expresión.
+- **El QML (`MaterialPanel.qml`):** la pestaña Biblioteca tiene un tercer ámbito «Sticks». Sin stick abierto, se ven las filas de personajes (emoji, nombre, conteo, croma); al abrir uno, los grupos por expresión con tarjetas arrastrables y «+» para agregar con croma. Los sticks se recargan con las colecciones.
+- **Verificación:** MinGW Debug y Release: 186/186 tests, 0 warnings.

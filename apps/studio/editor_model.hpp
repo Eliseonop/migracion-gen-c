@@ -157,6 +157,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList sfxCategories READ sfxCategories NOTIFY projectChanged)
     Q_PROPERTY(QVariantList collections READ collections NOTIFY projectChanged)
     Q_PROPERTY(QString collectionsRoot READ collectionsRoot NOTIFY projectChanged)
+    Q_PROPERTY(QVariantList sticks READ sticks NOTIFY projectChanged)
+    Q_PROPERTY(QVariantMap stickDetail READ stickDetail NOTIFY stickChanged)
     Q_PROPERTY(QVariantList textFavorites READ textFavorites NOTIFY favoritesChanged)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
@@ -288,6 +290,13 @@ public:
     Q_INVOKABLE bool setCollectionsRoot(const QString& path); // ruta o file:// del diálogo
     Q_INVOKABLE QString createCollection(const QString& name);
     Q_INVOKABLE int addCollectionFiles(const QString& collection, const QList<QUrl>& files);
+    [[nodiscard]] QVariantList sticks() const { return sticks_; }
+    [[nodiscard]] QVariantMap stickDetail() const { return stick_detail_; }
+    Q_INVOKABLE void openStick(const QString& id);
+    Q_INVOKABLE void closeStick();
+    Q_INVOKABLE void addStickItem(const QString& key);
+    Q_INVOKABLE void setStickExpression(const QString& rel, const QString& expression);
+    Q_INVOKABLE int addStickFiles(const QList<QUrl>& files, const QString& expression);
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] int outWidth() const;
@@ -666,6 +675,7 @@ signals:
     void clipMarkChanged();
     void segAskChanged();
     void matInfoChanged();
+    void stickChanged();
 
 private:
     // Cambia de pestaña: la sesión activa pasa a other_session_ y la otra entra, con su cabezal y su zoom.
@@ -749,6 +759,10 @@ private:
     QString collections_root_;
     std::pair<std::string, std::string> collections_query_; // q y colección de la última búsqueda
     [[nodiscard]] std::optional<std::filesystem::path> collections_base() const;
+    QVariantList sticks_;
+    QVariantMap stick_detail_;
+    std::string stick_open_id_;
+    void load_sticks();
     [[nodiscard]] std::optional<std::filesystem::path> media_path(const core::TimelineClip& c) const;
     [[nodiscard]] core::MediaDirs media_dirs() const;
     // mediaSize de su medio (videoWidth / naturalWidth): el tamaño con el que lo dibuja el render (el

@@ -57,6 +57,7 @@
 #include "gc/core/sfx_name.hpp"
 #include "gc/core/shape_geometry.hpp"
 #include "gc/core/shapes.hpp"
+#include "gc/core/stick_library.hpp"
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/text_style.hpp"
 #include "gc/core/timeline_rules.hpp"
@@ -638,6 +639,7 @@ bool EditorModel::openProject(const QString& pid) {
     }
     load_sfx("", "");
     load_collections("", "");
+    load_sticks();
     // Deshacer sobrevive a cerrar el proyecto: data/history/<pid>.json, el mismo archivo que video-yt.
     autosave_.reset();
     reset_clip_editor(); // después del autoguardado, que puede apuntar a la sesión del proyecto guardada
@@ -762,6 +764,7 @@ void EditorModel::searchCollections(const QString& q, const QString& collection)
 
 void EditorModel::reload_collections() {
     load_collections(collections_query_.first, collections_query_.second);
+    load_sticks();
     emit projectChanged();
 }
 
@@ -827,6 +830,124 @@ int EditorModel::addCollectionFiles(const QString& collection, const QList<QUrl>
         setError(qstr(errors[0].value("file", "") + ": " + errors[0].value("error", "")));
     }
     reload_collections();
+    return static_cast<int>(added->value("saved", Json::array()).size());
+}
+
+// --- Stick library (EdLibraryStick.jsx / EdStickMenu.jsx) ---
+
+void EditorModel::load_sticks() {
+    sticks_.clear();
+    const auto list = core::list_sticks(collections_base());
+    if (!list) {
+        return;
+    }
+    for (const Json& s : list->value("sticks", Json::array())) {
+        sticks_ << QVariantMap{{"id", qstr(s.value("id", ""))},
+                               {"name", qstr(s.value("name", ""))},
+                               {"emoji", qstr(s.value("emoji", ""))},
+                               {"chromaColor", qstr(s.value("chroma_color", "#00FF00"))},
+                               {"count", s.value("count", 0)},
+                               {"videoCount", s.value("kinds", Json::object()).value("video", 0)},
+                               {"imageCount", s.value("kinds", Json::object()).value("image", 0)}};
+    }
+}
+
+void EditorModel::openStick(const QString& id) {
+    stick_open_id_ = id.toStdString();
+    const auto detail = core::stick_detail(collections_base(), stick_open_id_);
+    stick_detail_.clear();
+    if (!detail) {
+        emit stickChanged();
+        return;
+    }
+    const std::string chroma = detail->value("chroma_color", "#00FF00");
+    QVariantList groups;
+    for (const Json& g : detail->value("groups", Json::array())) {
+        QVariantList items;
+        for (const Json& item : g.value("items", Json::array())) {
+            const std::string kind = item.value("stick_kind", item.value("kind", ""));
+            const std::string asset_kind = kind == "video" ? "clips" : "images";
+            Json media = item;
+            media["scope"] = "collection";
+            media["label"] = item.value("title", item.value("name", ""));
+            media["chromaColor"] = chroma;
+            const Json payload = core::drag_payload(asset_kind, media);
+            const QString key = "stick:" + qstr(item.value("id", ""));
+            payloads_[key] = payload;
+            items << QVariantMap{{"id", qstr(item.value("id", ""))},
+                                {"key", key},
+                                {"title", qstr(item.value("title", ""))},
+                                {"rel", qstr(item.value("rel", ""))},
+                                {"kind", QString::fromStdString(kind)},
+                                {"expression", qstr(item.value("expression", ""))},
+                                {"duration", core::js_number(item.value("duration", Json(0)))}};
+        }
+        groups << QVariantMap{{"id", qstr(g.value("id", ""))},
+                              {"label", qstr(g.value("label", ""))},
+                              {"emoji", qstr(g.value("emoji", ""))},
+                              {"items", items}};
+    }
+    QVariantList expressions;
+    for (const Json& e : detail->value("expressions", Json::array())) {
+        expressions << QVariantMap{{"id", qstr(e.value("id", ""))},
+                                   {"label", qstr(e.value("label", ""))},
+                                   {"emoji", qstr(e.value("emoji", ""))}};
+    }
+    stick_detail_ = QVariantMap{{"id", qstr(detail->value("id", ""))},
+                                {"name", qstr(detail->value("name", ""))},
+                                {"emoji", qstr(detail->value("emoji", ""))},
+                                {"chromaColor", QString::fromStdString(chroma)},
+                                {"groups", groups},
+                                {"expressions", expressions},
+                                {"videoCount", detail->value("kinds", Json::object()).value("video", 0)},
+                                {"imageCount", detail->value("kinds", Json::object()).value("image", 0)}};
+    emit stickChanged();
+}
+
+void EditorModel::closeStick() {
+    stick_open_id_.clear();
+    stick_detail_.clear();
+    emit stickChanged();
+}
+
+void EditorModel::addStickItem(const QString& key) {
+    addMaterial(key);
+}
+
+void EditorModel::setStickExpression(const QString& rel, const QString& expression) {
+    if (stick_open_id_.empty()) {
+        return;
+    }
+    const auto result = core::set_stick_expression(collections_base(), stick_open_id_, Json(rel.toStdString()), Json(expression.toStdString()));
+    if (ok(result)) {
+        openStick(qstr(stick_open_id_));
+    }
+}
+
+int EditorModel::addStickFiles(const QList<QUrl>& files, const QString& expression) {
+    if (stick_open_id_.empty()) {
+        return 0;
+    }
+    std::vector<core::IncomingFile> incoming;
+    for (const QUrl& url : files) {
+        const auto src = core::path_from_utf8(url.toLocalFile().toStdString());
+        const auto copy = [src](const std::filesystem::path& target) -> Result<void> {
+            std::error_code ec;
+            std::filesystem::copy_file(src, target, ec);
+            return ec ? Result<void>(fail(ErrorCode::Io, ec.message())) : Result<void>();
+        };
+        incoming.push_back(core::IncomingFile{Json(core::path_to_utf8(src.filename())), copy});
+    }
+    const auto added = core::add_stick_files(collections_base(), stick_open_id_, incoming, Json(expression.toStdString()));
+    if (!ok(added)) {
+        return 0;
+    }
+    if (const Json errors = added->value("errors", Json::array()); !errors.empty()) {
+        setError(qstr(errors[0].value("file", "") + ": " + errors[0].value("error", "")));
+    }
+    load_sticks();
+    openStick(qstr(stick_open_id_));
+    emit projectChanged();
     return static_cast<int>(added->value("saved", Json::array()).size());
 }
 

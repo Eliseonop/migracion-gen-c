@@ -48,13 +48,15 @@ Rectangle {
             source = scope === "cargar" ? (tab === "video" ? "youtube" : "narrator") : scope === "saved" ? "library" : "project"
         } else {
             filter = "all"
-            source = { sfx: "sfx", library: scope === "collections" ? "collection" : "library", effects: "fx",
+            source = { sfx: "sfx", library: scope === "collections" ? "collection" : scope === "sticks" ? "stick" : "library", effects: "fx",
                        shapes: "shapes", text: "text" }[tab] || source
         }
         if (source === "collection")
             model.searchCollections(query, collection)
         else if (source === "sfx")
             model.searchSfx(query, sfxCategory)
+        else if (source === "stick")
+            model.closeStick()
     }
     readonly property var navItems: [
         { id: "video", icon: "movie", label: "Video", short: "Video" },
@@ -166,7 +168,7 @@ Rectangle {
             readonly property var scopes: panel.tab === "video" ? [["all", "Todos"], ["saved", "Guardados"], ["cargar", "Cargar clips", "add"]]
                                         : panel.tab === "audio" ? [["all", "Todos"], ["saved", "Guardados"], ["cargar", "Cargar audio", "add"]]
                                         : panel.tab === "image" ? [["all", "Todas"], ["saved", "Guardadas"]]
-                                        : panel.tab === "library" ? [["all", "Guardado"], ["collections", "Colecciones"]]
+                                        : panel.tab === "library" ? [["all", "Guardado"], ["collections", "Colecciones"], ["sticks", "Sticks"]]
                                         : []
             visible: scopes.length > 0
             Layout.fillWidth: true
@@ -212,7 +214,7 @@ Rectangle {
             }
         }
         TextField {
-            visible: ["shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0
+            visible: ["shapes", "text", "narrator", "youtube", "stick"].indexOf(panel.source) < 0
             objectName: "material:search"
             Layout.fillWidth: true
             placeholderText: panel.source === "sfx" ? "Buscar sonidos…" : panel.source === "fx" ? "Buscar: glitch, papel, temblor…" : "Buscar…"
@@ -329,7 +331,7 @@ Rectangle {
             }
         }
         Label {
-            visible: panel.shown.length === 0 && ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0
+            visible: panel.shown.length === 0 && ["fx", "shapes", "text", "narrator", "youtube", "stick"].indexOf(panel.source) < 0
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             text: panel.source === "library" ? "La biblioteca está vacía: guarda material de un proyecto para usarlo en todos."
@@ -337,6 +339,197 @@ Rectangle {
                 : panel.source === "collection" ? "No hay colecciones: crea carpetas en la de material (assets/material o la de los ajustes)."
                 : "Este proyecto no tiene material todavía."
             color: Theme.muted
+        }
+        // EdLibraryStick: la biblioteca de sticks (personajes con croma). Cuando se abre un stick,
+        // se ven sus expresiones (grupos) con las tarjetas de cada recurso.
+        Flickable {
+            id: stickScroll
+            objectName: "stick:scroll"
+            visible: panel.source === "stick"
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            contentHeight: stickColumn.implicitHeight
+            boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+            Column {
+                id: stickColumn
+                width: stickScroll.width
+                spacing: 6
+                // Si hay un stick abierto: la cabecera con «volver» y los grupos por expresión.
+                Row {
+                    visible: !!panel.model.stickDetail.id
+                    spacing: 6
+                    padding: 2
+                    AbstractButton {
+                        objectName: "stick:back"
+                        width: 24; height: 24
+                        onClicked: panel.model.closeStick()
+                        contentItem: MIcon { name: "arrow_back"; size: 16; color: Theme.text }
+                        background: Rectangle { radius: 4; color: parent.hovered ? Theme.card3 : "transparent" }
+                        hoverEnabled: true
+                    }
+                    Label {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: (panel.model.stickDetail.emoji || "🎭") + " " + (panel.model.stickDetail.name || "")
+                        color: Theme.text; font.pixelSize: 13; font.weight: Font.Bold
+                    }
+                    Rectangle {
+                        visible: !!panel.model.stickDetail.chromaColor
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 14; height: 14; radius: 3
+                        color: panel.model.stickDetail.chromaColor || "transparent"
+                        border.color: Theme.line
+                        ToolTip.visible: chromaHover.hovered
+                        ToolTip.text: "Croma " + (panel.model.stickDetail.chromaColor || "") + ": se quita al agregarlo"
+                        HoverHandler { id: chromaHover }
+                    }
+                }
+                Repeater {
+                    model: panel.model.stickDetail.groups || []
+                    Column {
+                        required property var modelData
+                        width: stickColumn.width
+                        spacing: 3
+                        Row {
+                            leftPadding: 4; spacing: 4
+                            Label { text: modelData.emoji || ""; font.pixelSize: 13 }
+                            Label { text: modelData.label || ""; color: Theme.text; font.pixelSize: 12; font.weight: Font.DemiBold }
+                            Label { text: String((modelData.items || []).length); color: Theme.muted; font.pixelSize: 11 }
+                        }
+                        Flow {
+                            width: parent.width
+                            spacing: 4
+                            padding: 2
+                            Repeater {
+                                model: modelData.items || []
+                                Rectangle {
+                                    id: stile
+                                    required property var modelData
+                                    objectName: "stick:tile:" + modelData.key
+                                    width: 100; height: 90
+                                    radius: Theme.radiusSm
+                                    color: stileHover.hovered ? Theme.card3 : Theme.card2
+                                    border.color: stileHover.hovered ? Theme.lineBright : Theme.line
+                                    property bool dragging: false
+                                    Drag.active: dragging
+                                    Drag.keys: ["material"]
+                                    HoverHandler { id: stileHover; cursorShape: stile.dragging ? Qt.ClosedHandCursor : Qt.OpenHandCursor }
+                                    DragHandler {
+                                        id: stileDrag
+                                        onActiveChanged: {
+                                            if (active) {
+                                                stile.Drag.hotSpot = stileDrag.centroid.pressPosition
+                                                stile.dragging = true
+                                                return
+                                            }
+                                            stile.Drag.drop()
+                                            stile.dragging = false
+                                            stile.x = 0; stile.y = 0
+                                        }
+                                    }
+                                    states: State {
+                                        when: stile.dragging
+                                        ParentChange { target: stile; parent: panel.dragLayer }
+                                    }
+                                    ColumnLayout {
+                                        anchors.fill: parent; anchors.margins: 3; spacing: 2
+                                        Rectangle {
+                                            Layout.fillWidth: true; Layout.fillHeight: true
+                                            radius: 4; color: "#111111"; clip: true
+                                            MIcon {
+                                                anchors.centerIn: parent
+                                                name: stile.modelData.kind === "video" ? "movie" : "image"
+                                                size: 22; color: Theme.muted
+                                            }
+                                            // «+» para agregar al proyecto (con croma).
+                                            AbstractButton {
+                                                objectName: "stick:add:" + stile.modelData.key
+                                                anchors.top: parent.top; anchors.right: parent.right; anchors.margins: 3
+                                                width: 20; height: 20; hoverEnabled: true
+                                                ToolTip.visible: hovered; ToolTip.delay: 500; ToolTip.text: "Agregar al proyecto (con croma)"
+                                                onClicked: panel.model.addStickItem(stile.modelData.key)
+                                                contentItem: MIcon { name: "add"; size: 14; color: "white" }
+                                                background: Rectangle {
+                                                    radius: 5
+                                                    gradient: Gradient {
+                                                        orientation: Gradient.Horizontal
+                                                        GradientStop { position: 0; color: Theme.accent }
+                                                        GradientStop { position: 1; color: Theme.accent2 }
+                                                    }
+                                                }
+                                            }
+                                            Label {
+                                                visible: stile.modelData.kind === "video" && stile.modelData.duration > 0
+                                                anchors.right: parent.right; anchors.bottom: parent.bottom; anchors.margins: 3
+                                                leftPadding: 3; rightPadding: 3
+                                                text: panel.model.formatTime(stile.modelData.duration)
+                                                color: "white"; font.pixelSize: 9
+                                                background: Rectangle { radius: 3; color: Qt.rgba(0, 0, 0, 0.6) }
+                                            }
+                                        }
+                                        Label {
+                                            Layout.fillWidth: true
+                                            text: stile.modelData.title || ""; color: Theme.text; font.pixelSize: 10
+                                            elide: Text.ElideRight
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Label {
+                            visible: (modelData.items || []).length === 0
+                            leftPadding: 8
+                            text: "Arrastra aquí vídeos o imágenes «" + (modelData.label || "").toLowerCase() + "»"
+                            color: Theme.muted; font.pixelSize: 11; font.italic: true
+                        }
+                    }
+                }
+                // Si NO hay stick abierto: la lista de personajes disponibles.
+                Label {
+                    visible: !panel.model.stickDetail.id && panel.model.sticks.length === 0
+                    width: parent.width
+                    wrapMode: Text.Wrap
+                    text: "No hay sticks. Crea uno en la biblioteca de colecciones (una carpeta con stick.json)."
+                    color: Theme.muted
+                }
+                Repeater {
+                    model: !panel.model.stickDetail.id ? panel.model.sticks : []
+                    AbstractButton {
+                        id: stickRow
+                        required property var modelData
+                        objectName: "stick:open:" + modelData.id
+                        width: stickColumn.width; height: 40
+                        hoverEnabled: true
+                        onClicked: panel.model.openStick(modelData.id)
+                        background: Rectangle {
+                            radius: Theme.radiusSm
+                            color: stickRow.hovered ? Theme.card3 : "transparent"
+                        }
+                        contentItem: RowLayout {
+                            spacing: 8
+                            Label { text: stickRow.modelData.emoji || "🎭"; font.pixelSize: 18; leftPadding: 6 }
+                            ColumnLayout {
+                                spacing: 0
+                                Label { text: stickRow.modelData.name; color: Theme.text; font.pixelSize: 12; font.weight: Font.DemiBold }
+                                Label {
+                                    text: stickRow.modelData.count + " recursos"
+                                    color: Theme.muted; font.pixelSize: 10
+                                }
+                            }
+                            Item { Layout.fillWidth: true }
+                            Rectangle {
+                                visible: !!stickRow.modelData.chromaColor
+                                width: 12; height: 12; radius: 3
+                                Layout.rightMargin: 8
+                                color: stickRow.modelData.chromaColor || "transparent"
+                                border.color: Theme.line
+                            }
+                            MIcon { name: "chevron_right"; size: 16; color: Theme.muted; Layout.rightMargin: 4 }
+                        }
+                    }
+                }
+            }
         }
         // EdFxLibrary (mode="effects"): todo en una lista que se desplaza (.ed-mat-list), en su orden: los efectos
         // animados (EdVfxLibrary), las recetas en un clic (EdRecipes) y la capa de ajuste (adjustBtn).
