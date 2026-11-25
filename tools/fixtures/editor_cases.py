@@ -299,6 +299,11 @@ def _material_calls(rng: random.Random) -> list:
         for fit, dur in ((None, 5), (2.5, 5), (None, 0), (0, None), (None, 0.1)):
             calls.append(["placeAsset", {**payload, "duration": dur}, "V1", rng.choice([0, 3.25]), fit])
     calls.append(["placeAsset", {"kind": "shape", "asset_kind": "clips", "type": "heart", "duration": 2}, "V1", 1, None])
+    for chroma in ("#00FF00", "#ff00aa", "verde", ""):  # un stick soltado nace con su croma (chromaBg)
+        for kind, dur in (("clips", 2.5), ("images", 3)):
+            calls.append(["placeAsset", {"asset_kind": kind, "asset_id": "robot/feliz/a.png", "filename": "robot/feliz/a.png",
+                                         "name": "Feliz", "duration": dur, "scope": "collection", "chroma_color": chroma},
+                          "V1", 0.5, None])
     for theme in (None, "neon", "box", "nada"):
         payload = {"asset_kind": "text", "kind": "text", "asset_id": theme or "text", "filename": "",
                    "name": theme or "Texto predeterminado", "text": "hola mundo" if theme else "Texto predeterminado",
@@ -1205,6 +1210,18 @@ def _clip_extract_case() -> list[dict]:
     return out
 
 
+def _recipes_case() -> dict:
+    """Recetas en un clic: el catálogo de recipes.py (el arnés lo devuelve tal cual) y recipeReady.js."""
+    from app.recipes import RECIPES
+    calls: list = [["recipeCatalog", list(RECIPES)]]
+    selections = ([], ["text"], ["video"], ["image"], ["audio", "text"], ["video", "image"], ["image", "image"],
+                  ["video", "audio"], ["shape", "video"], ["video", "video", "video"], ["text", "text"])
+    for recipe in list(RECIPES) + [{"id": "x", "needs": "otra"}, {"id": "y"}]:
+        for kinds in selections:
+            calls.append(["recipeReady", recipe, kinds])
+    return {"name": "recetas", "timeline": {"tracks": TRACKS, "clips": []}, "calls": calls}
+
+
 def _format_case() -> dict:
     """El formato de salida de la fila del reproductor (lib/projectFormat.js, EdViewerTools.jsx)."""
     calls: list = []
@@ -1231,19 +1248,6 @@ def crop_handle_norms_py(c: dict) -> list:
     xs = [c["cx"] - c["wf"] / 2, c["cx"], c["cx"] + c["wf"] / 2]
     ys = [c["cy"] - c["hf"] / 2, c["cy"], c["cy"] + c["hf"] / 2]
     return [(ix - 1, iy - 1, xs[ix], ys[iy]) for iy in range(3) for ix in range(3) if (ix, iy) != (1, 1)]
-
-
-def _recipe_case() -> list[dict]:
-    """Si una receta en un clic se puede aplicar con lo seleccionado (recipeReady.js de EdRecipes): cada
-    `needs` del backend (y alguno que no existe) con selecciones de varios tipos."""
-    needs = [{"needs": None}, {"needs": "text"}, {"needs": "video"}, {"needs": "media2"}, {"needs": ""},
-             {"needs": "otro"}, {}]
-    selections = [None, [], ["text"], ["video"], ["image"], ["audio"], ["shape"], ["adjustment"],
-                  ["video", "image"], ["image", "image"], ["video", "text"], ["text", "text", "audio"],
-                  ["audio", "shape", "image"], ["video", "video", "video"], ["text", "image", "shape", "video"]]
-    calls = [["recipeReady", n, s] for n in needs for s in selections]
-    return [{"name": "recetas: recipeReady", "timeline": {"tracks": [track("V1", "video")], "clips": []},
-             "calls": calls}]
 
 
 def cases() -> list[dict]:
@@ -1281,5 +1285,5 @@ def cases() -> list[dict]:
     out += _match_case()
     out += _separate_case()
     out += _clip_extract_case()
-    out += _recipe_case()
+    out.append(_recipes_case())
     return out

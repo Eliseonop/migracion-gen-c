@@ -21,6 +21,7 @@
 #include <QJsonObject>
 #include <QMimeDatabase>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <map>
 #include <unordered_map>
@@ -56,6 +57,7 @@
 #include "gc/core/sfx_disk.hpp"
 #include "gc/core/sfx_name.hpp"
 #include "gc/core/shape_geometry.hpp"
+#include "gc/core/recipes.hpp"
 #include "gc/core/shapes.hpp"
 #include "gc/core/stick_library.hpp"
 #include "gc/core/text_clip_ui.hpp"
@@ -386,6 +388,7 @@ void EditorModel::add_material(const char* source, const char* asset_kind, const
                                const char* kind, QVariantList& into) {
     const Json payload = core::drag_payload(asset_kind, item);
     payloads_[key] = payload;
+    material_items_[key] = item;
     into << QVariantMap{{"key", key},
                         {"source", source},
                         {"assetKind", asset_kind},
@@ -465,6 +468,38 @@ QString EditorModel::dropFileKind(const QList<QUrl>& files) const {
     return "other";
 }
 
+namespace {
+
+core::ImageCodec image_codec() {
+#ifdef GC_STUDIO_PREVIEW
+    return exporter::image_codec();
+#else
+    return {}; // sin gc_media: solo los PNG, y sin su tamaño
+#endif
+}
+
+} // namespace
+
+QString EditorModel::addImage(const QUrl& file, const QString& description) {
+    if (!session_) {
+        return "Sin proyecto.";
+    }
+    const auto path = local_path(file);
+    const auto image = core::import_image_file(store_, project_id_, path, core::path_to_utf8(path.filename()), image_codec(),
+                                               ids_, {}, true); // upload_images
+    if (!image) {
+        return qstr(image.error().message);
+    }
+    if (const QString text = description.trimmed(); !text.isEmpty()) {
+        if (const auto saved = store_.update_material(project_id_, "images", image->id, Json{{"description", text.toStdString()}});
+            !saved) {
+            return qstr(saved.error().message);
+        }
+    }
+    reload_project_materials();
+    return {};
+}
+
 int EditorModel::importFiles(const QList<QUrl>& files, bool dropped) {
     if (!session_) {
         return 0;
@@ -477,11 +512,7 @@ int EditorModel::importFiles(const QList<QUrl>& files, bool dropped) {
         return std::nullopt;
 #endif
     };
-#ifdef GC_STUDIO_PREVIEW
-    const core::ImageCodec codec = exporter::image_codec();
-#else
-    const core::ImageCodec codec; // sin gc_media: solo los PNG, y sin su tamaño
-#endif
+    const core::ImageCodec codec = image_codec();
     // importMedia: los vídeos, luego las imágenes y luego los audios; lo que no es ninguno, fuera.
     std::vector<std::pair<std::filesystem::path, QString>> todo;
     for (const char* wanted : {"video", "image", "audio"}) {
@@ -534,31 +565,6 @@ int EditorModel::importFiles(const QList<QUrl>& files, bool dropped) {
     return imported;
 }
 
-bool EditorModel::importImageWithDescription(const QUrl& file, const QString& description) {
-    if (!session_) {
-        return false;
-    }
-    const auto path = local_path(file);
-    const std::string name = core::path_to_utf8(path.filename());
-#ifdef GC_STUDIO_PREVIEW
-    const core::ImageCodec codec = exporter::image_codec();
-#else
-    const core::ImageCodec codec;
-#endif
-    core::ImportMeta meta;
-    const std::string desc = description.trimmed().toStdString();
-    if (!desc.empty()) {
-        meta.description = desc;
-    }
-    auto r = core::import_image_file(store_, project_id_, path, name, codec, ids_, meta, true);
-    if (!r) {
-        setError(qstr(r.error().message));
-        return false;
-    }
-    reload_project_materials();
-    return true;
-}
-
 void EditorModel::setThumbnails(Thumbnails* thumbnails) {
     thumbnails_ = thumbnails;
     if (thumbnails_ != nullptr) {
@@ -594,6 +600,182 @@ void EditorModel::update_material_thumbs() {
 }
 
 // El material nuevo, delante (como el del proyecto al abrirlo).
+namespace {
+
+// La lista del material («clips», «images», «audios») y si es de la biblioteca, por su clave
+// («clips:3», «images:id», «lib:clips:id»).
+std::pair<std::string, bool> material_list(const QString& key) {
+    const QStringList parts = key.split(':');
+    const bool library = parts.value(0) == "lib";
+    const QString list = library ? parts.value(1) : parts.value(0);
+    return {list == "clips" || list == "images" || list == "audios" ? list.toStdString() : std::string(), library};
+}
+
+// Si un valor de JS es verdadero (Boolean(v)).
+bool js_truthy(const Json& v) {
+    if (v.is_boolean()) {
+        return v.get<bool>();
+    }
+    if (v.is_number()) {
+        const double d = v.get<double>();
+        return d != 0 && !std::isnan(d);
+    }
+    if (v.is_string()) {
+        return !v.get_ref<const std::string&>().empty();
+    }
+    return !v.is_null();
+}
+
+// La condición de applyRecipeUI para calcular un recorte: `auto?.enabled && (auto.status || 'idle') === 'idle'`
+// (la Eliminación automática encendida y sin calcular), sobre el bg_removal tal cual del clip.
+bool bg_auto_idle(const core::TimelineClip& c) {
+    if (!c.bg_removal || !c.bg_removal->is_object()) {
+        return false;
+    }
+    const auto it = c.bg_removal->find("auto");
+    if (it == c.bg_removal->end() || !it->is_object() || !js_truthy(it->value("enabled", Json()))) {
+        return false;
+    }
+    const Json status = it->value("status", Json());
+    return !js_truthy(status) || status == "idle";
+}
+
+} // namespace
+
+QVariantList EditorModel::recipes() const {
+    std::vector<std::string> kinds;
+    for (const std::string& id : selection_.ids) {
+        if (const core::TimelineClip* c = clip(qstr(id))) {
+            kinds.push_back(c->kind);
+        }
+    }
+    QVariantList out;
+    for (const Json& r : core::recipe_catalog()) {
+        QVariantMap row = to_variant(r);
+        const Json ready = core::recipe_ready(r, kinds);
+        row["ready"] = ready.at("ok").get<bool>();
+        row["why"] = qstr(ready.value("why", std::string()));
+        out << row;
+    }
+    return out;
+}
+
+void EditorModel::applyRecipe(const QString& id) {
+    if (!session_) {
+        return;
+    }
+    const Json catalog = core::recipe_catalog();
+    const auto recipe = std::ranges::find_if(catalog, [&](const Json& r) { return r.at("id") == id.toStdString(); });
+    const QString label = recipe != catalog.end() ? qstr(recipe->at("label").get<std::string>()) : id;
+    const auto change = session_->apply(
+        "apply_recipe", Json{{"recipe", id.toStdString()}, {"clip_ids", selection_.ids}, {"params", {{"at_time", playhead_}}}});
+    if (!change) {
+        set_notice("error", change.error().message.empty() ? QString("No se pudo aplicar la receta.")
+                                                           : qstr(change.error().message));
+        return;
+    }
+    // Lo tocado, en el orden de la timeline (next.filter de applyRecipeUI). Si deja la Eliminación automática
+    // encendida y sin calcular (el sujeto de subject_pop), calcula el recorte por el puente.
+    std::vector<std::string> touched;
+    for (const auto& c : session_->timeline()->clips) {
+        if (std::ranges::find(change->changed, c->id) != change->changed.end()) {
+            touched.push_back(c->id);
+        }
+    }
+    for (const std::string& t : touched) {
+        const core::TimelineClip* c = clip(qstr(t));
+        if (c != nullptr && core::bg_capable(*c) && bg_auto_idle(*c)) {
+            start_bg_auto(*c);
+        }
+    }
+    // La selección pasa al primero que no es un audio (o al primero).
+    const auto sel = std::ranges::find_if(touched, [this](const std::string& t) {
+        const core::TimelineClip* c = clip(qstr(t));
+        return c != nullptr && c->kind != "audio";
+    });
+    if (!touched.empty()) {
+        const std::string pick = sel != touched.end() ? *sel : touched.front();
+        selection_ = {{pick}, pick};
+        emit selectionChanged();
+    }
+    QStringList warnings; // sin los avisos del recorte IA, como React
+    for (const std::string& w : change->warnings) {
+        if (!qstr(w).contains("recorte IA")) {
+            warnings << qstr(w);
+        }
+    }
+    set_notice(warnings.isEmpty() ? "success" : "info",
+               QString("«%1» aplicada").arg(label) + (warnings.isEmpty() ? QString() : " · " + warnings.join(" · ")));
+}
+
+QVariantMap EditorModel::materialInfo(const QString& key) const {
+    const auto [list, library] = material_list(key);
+    const auto it = material_items_.find(key);
+    if (list.empty() || it == material_items_.end()) {
+        return {};
+    }
+    const Json& item = it->second;
+    const auto text = [&](const char* field) {
+        const Json& v = item.value(field, Json());
+        return v.is_string() ? qstr(v.get<std::string>()) : QString();
+    };
+    const auto number = [&](const char* field) {
+        const Json& v = item.value(field, Json());
+        return v.is_number() ? QVariant(v.get<double>()) : QVariant();
+    };
+    // item.duration ?? (end − start)
+    QVariant duration = number("duration");
+    if (!duration.isValid() && number("end").isValid() && number("start").isValid()) {
+        duration = number("end").toDouble() - number("start").toDouble();
+    }
+    return {{"kind", qstr(list)},
+            {"library", library},
+            {"label", text("label")},
+            {"description", text("description")},
+            {"descriptionAi", text("description_ai")},
+            {"filename", text("filename")},
+            {"duration", duration},
+            {"width", number("width")},
+            {"height", number("height")}};
+}
+
+QString EditorModel::saveMaterialInfo(const QString& key, const QString& label, const QString& description) {
+    const auto [list, library] = material_list(key);
+    const auto it = material_items_.find(key);
+    if (list.empty() || it == material_items_.end()) {
+        return "Material no encontrado.";
+    }
+    const Json fields{{"label", label.trimmed().toStdString()}, {"description", description.trimmed().toStdString()}};
+    if (library) {
+        const auto saved = core::LibraryFile(store_.file().parent_path()).update_item(it->second.value("id", ""), fields);
+        if (!saved) {
+            return qstr(saved.error().message);
+        }
+        // Solo cambia el nombre de la tarjeta: se rehace su fila con el elemento guardado.
+        QVariantList row;
+        add_material("library", list.c_str(), key, *saved, list == "clips" ? "video" : list == "images" ? "image" : "audio", row);
+        for (QVariant& m : materials_) {
+            if (m.toMap()["key"] == key) {
+                m = row.front();
+            }
+        }
+        emit projectChanged();
+        return {};
+    }
+    const Json& item = it->second;
+    const Json& raw = list == "clips" && item.contains("index") ? item.at("index") : item.value("id", Json("")); // materialIdent
+    const std::string ident = raw.is_string() ? raw.get<std::string>() : raw.dump();
+    const auto saved = store_.update_material(project_id_, list, ident, fields);
+    if (!saved) {
+        return qstr(saved.error().message);
+    }
+    if (!*saved) {
+        return "Material no encontrado.";
+    }
+    reload_project_materials();
+    return {};
+}
+
 void EditorModel::reload_project_materials() {
     if (const auto project = store_.get_project(project_id_); project && *project) {
         materials_.removeIf([](const QVariant& m) { return m.toMap()["source"] == "project"; });
@@ -664,7 +846,6 @@ bool EditorModel::openProject(const QString& pid) {
     }
     load_sfx("", "");
     load_collections("", "");
-    load_sticks();
     // Deshacer sobrevive a cerrar el proyecto: data/history/<pid>.json, el mismo archivo que video-yt.
     autosave_.reset();
     reset_clip_editor(); // después del autoguardado, que puede apuntar a la sesión del proyecto guardada
@@ -750,14 +931,25 @@ void EditorModel::load_collections(const std::string& q, const std::string& coll
     const auto root = collections_base();
     collections_root_ = root ? QString::fromStdString(core::path_to_utf8(*root)) : QString();
     collections_.clear();
+    std::map<std::string, Json> sticks; // id → {name, emoji, chroma_color…}
+    sticks_.clear();
+    if (const auto list = core::list_sticks(root)) {
+        for (const Json& st : list->value("sticks", Json::array())) {
+            sticks[st.value("id", "")] = st;
+            sticks_ << to_variant(st);
+        }
+    }
     if (const auto list = core::list_collections(root, settings)) {
         for (const Json& c : list->value("collections", Json::array())) {
+            const auto st = sticks.find(c.value("id", ""));
             collections_ << QVariantMap{{"id", qstr(c.value("id", ""))},
-                                        {"name", qstr(c.value("name", ""))},
+                                        {"name", qstr(st != sticks.end() ? st->second.value("name", "") : c.value("name", ""))},
                                         {"count", c.value("count", 0)},
                                         {"enabled", c.value("enabled", true)},
                                         {"favorite", c.value("favorite", false)},
-                                        {"path", qstr(c.value("path", ""))}};
+                                        {"path", qstr(c.value("path", ""))},
+                                        {"stick", st != sticks.end()},
+                                        {"emoji", st != sticks.end() ? qstr(st->second.value("emoji", "")) : QString()}};
         }
     }
     const auto found = core::collections_search(root, settings, q, "", collection);
@@ -767,6 +959,9 @@ void EditorModel::load_collections(const std::string& q, const std::string& coll
         Json media = item;
         if (kind == "gif") {
             media["animated"] = true;
+        }
+        if (const auto st = sticks.find(item.value("collection", "")); st != sticks.end()) { // withChroma
+            media["chromaColor"] = st->second.value("chroma_color", Json());
         }
         const QString key = "col:" + qstr(item.value("id", ""));
         const Json payload = core::drag_payload(asset_kind, media);
@@ -789,7 +984,6 @@ void EditorModel::searchCollections(const QString& q, const QString& collection)
 
 void EditorModel::reload_collections() {
     load_collections(collections_query_.first, collections_query_.second);
-    load_sticks();
     emit projectChanged();
 }
 
@@ -836,7 +1030,10 @@ QString EditorModel::createCollection(const QString& name) {
     return qstr(*id);
 }
 
-int EditorModel::addCollectionFiles(const QString& collection, const QList<QUrl>& files) {
+namespace {
+
+// Los archivos elegidos como los recibe add_files de colecciones y sticks: nombre y copia.
+std::vector<core::IncomingFile> incoming_files(const QList<QUrl>& files) {
     std::vector<core::IncomingFile> incoming;
     for (const QUrl& url : files) {
         const auto src = core::path_from_utf8(url.toLocalFile().toStdString());
@@ -847,6 +1044,188 @@ int EditorModel::addCollectionFiles(const QString& collection, const QList<QUrl>
         };
         incoming.push_back(core::IncomingFile{Json(core::path_to_utf8(src.filename())), copy});
     }
+    return incoming;
+}
+
+} // namespace
+
+QVariantMap EditorModel::stick_card(const std::optional<std::filesystem::path>& root, const QString& cid,
+                                    const Json& it, const Json& chroma) {
+    const bool video = it.value("stick_kind", it.value("kind", "")) == "video";
+    // stickAssetItem: ámbito de colección, título como etiqueta, su duración y el croma del personaje.
+    Json media = it;
+    media["scope"] = "collection";
+    media["label"] = it.value("title", Json()).is_string() && !it.at("title").get<std::string>().empty() ? it.at("title")
+                                                                                                    : it.value("name", Json(""));
+    const auto path = core::collection_resolve(root, it.value("filename", ""));
+    double duration = 0;
+#ifdef GC_STUDIO_PREVIEW
+    if (video && path) {
+        duration = media::probe_duration(*path); // 0 si no se puede leer
+    }
+#endif
+    media["duration"] = duration;
+    media["end"] = duration;
+    media["chromaColor"] = chroma;
+    const QString key = "stick:" + cid + ":" + qstr(it.value("rel", ""));
+    payloads_[key] = core::drag_payload(video ? "clips" : "images", media);
+    stick_items_[key] = media;
+    return {{"key", key},
+            {"rel", qstr(it.value("rel", ""))},
+            {"title", qstr(it.value("title", ""))},
+            {"kind", video ? "video" : "image"},
+            {"expression", qstr(it.value("expression", ""))},
+            {"thumb", !video && path ? QUrl::fromLocalFile(qstr(core::path_to_utf8(*path))).toString() : QString()}};
+}
+
+QVariantMap EditorModel::stickMenu(const QString& cid) {
+    const auto root = collections_base();
+    const auto detail = core::stick_detail(root, cid.toStdString());
+    if (!detail) {
+        return {{"error", qstr(detail.error().message)}};
+    }
+    const Json chroma = detail->value("chroma_color", Json("#00FF00")); // chroma_color || '#00FF00'
+    QVariantMap out{{"id", cid},
+                    {"name", qstr(detail->value("name", ""))},
+                    {"emoji", qstr(detail->value("emoji", ""))},
+                    {"kinds", to_variant(detail->value("kinds", Json::object()))}};
+    for (const char* kind : {"video", "image"}) {
+        QVariantList groups;
+        for (const Json& g : detail->value(kind, Json::array())) {
+            QVariantList items;
+            for (const Json& it : g.value("items", Json::array())) {
+                items << stick_card(root, cid, it, chroma.is_string() && !chroma.get<std::string>().empty() ? chroma : Json("#00FF00"));
+            }
+            groups << QVariantMap{{"id", qstr(g.value("id", ""))},
+                                  {"label", qstr(g.value("label", ""))},
+                                  {"emoji", qstr(g.value("emoji", ""))},
+                                  {"items", items}};
+        }
+        out[kind] = groups;
+    }
+    return out;
+}
+
+void EditorModel::addStickClip(const QString& key, double time, const QString& trackId) {
+    const auto it = stick_items_.find(key);
+    if (!session_ || it == stick_items_.end()) {
+        return;
+    }
+    const Json& item = it->second;
+    const bool video = item.value("stick_kind", item.value("kind", "")) == "video";
+    core::Timeline next = *session_->timeline();
+    // La pista del hueco o targetTrackFor('video'): la del clip elegido si es de vídeo, si no la primera.
+    std::string tid;
+    if (const auto lane = std::ranges::find(next.tracks, trackId.toStdString(), &core::TimelineTrack::id);
+        lane != next.tracks.end()) {
+        tid = lane->id;
+    } else {
+        const core::TimelineClip* sel = selection_.ids.empty() ? nullptr : clip(qstr(selection_.ids.front()));
+        const core::TimelineTrack* own = sel ? track(qstr(sel->track_id)) : nullptr;
+        const auto usable = [](const core::TimelineTrack& t) { return t.kind == "video" && !t.locked; };
+        const auto first = std::ranges::find_if(next.tracks, usable);
+        tid = own && usable(*own) ? own->id : first != next.tracks.end() ? first->id : "";
+    }
+    if (tid.empty()) {
+        return;
+    }
+    const double dur = !video ? (item.value("animated", false) && core::js_number(item.value("duration", Json(0))) > 0
+                                     ? core::js_number(item.at("duration"))
+                                     : core::kImageDefaultDuration)
+                              : (core::material_duration(item) > 0 ? core::material_duration(item) : 1.0);
+    const double at = core::free_start_on_track(next.clips, tid, std::max(0.0, time), dur);
+    Json made = core::make_clip_json(video ? "clips" : "images", item, tid, at, Json(dur), ids_);
+    made["bg_removal"] = core::normalize_bg(
+        Json{{"enabled", true}, {"mode", "chroma"}, {"chroma", {{"enabled", true}, {"color", item.value("chromaColor", Json("#00FF00"))}}}});
+    add_generated(std::move(next), std::move(made), "add-stick");
+}
+
+void EditorModel::refresh_stick() {
+    stick_.clear();
+    if (stick_id_.isEmpty()) {
+        return;
+    }
+    const auto root = collections_base();
+    const auto detail = core::stick_detail(root, stick_id_.toStdString());
+    if (!detail) {
+        setError(qstr(detail.error().message));
+        stick_id_.clear();
+        return;
+    }
+    const Json chroma = detail->value("chroma_color", Json());
+    QVariantList groups;
+    for (const Json& g : detail->value("groups", Json::array())) {
+        QVariantList items;
+        for (const Json& it : g.value("items", Json::array())) {
+            items << stick_card(root, stick_id_, it, chroma);
+        }
+        groups << QVariantMap{{"id", qstr(g.value("id", ""))},
+                              {"label", qstr(g.value("label", ""))},
+                              {"emoji", qstr(g.value("emoji", ""))},
+                              {"items", items}};
+    }
+    QVariantList expressions;
+    for (const Json& x : detail->value("expressions", Json::array())) {
+        expressions << to_variant(x);
+    }
+    stick_ = {{"id", stick_id_},
+              {"name", qstr(detail->value("name", ""))},
+              {"emoji", qstr(detail->value("emoji", ""))},
+              {"chroma", chroma.is_string() ? qstr(chroma.get<std::string>()) : QString()},
+              {"groups", groups},
+              {"expressions", expressions}};
+}
+
+void EditorModel::openStick(const QString& cid) {
+    stick_id_ = cid;
+    refresh_stick();
+    emit projectChanged();
+}
+
+QString EditorModel::createStick(const QString& name, const QString& emoji, const QString& chromaColor) {
+    const auto made = core::create_stick(collections_base(), Json(name.trimmed().toStdString()),
+                                         Json(emoji.trimmed().toStdString()), Json(chromaColor.toStdString()));
+    if (!ok(made)) {
+        return {};
+    }
+    const QString id = qstr(made->value("id", ""));
+    stick_id_ = id;
+    refresh_stick();
+    reload_collections();
+    return id;
+}
+
+int EditorModel::addStickFiles(const QString& expression, const QList<QUrl>& files) {
+    if (stick_id_.isEmpty()) {
+        return 0;
+    }
+    const auto added = core::add_stick_files(collections_base(), stick_id_.toStdString(), incoming_files(files),
+                                             Json(expression.toStdString()));
+    if (!ok(added)) {
+        return 0;
+    }
+    if (const Json errors = added->value("errors", Json::array()); !errors.empty()) {
+        setError(qstr(errors[0].value("file", "") + ": " + errors[0].value("error", "")));
+    }
+    refresh_stick();
+    reload_collections();
+    return static_cast<int>(added->value("saved", Json::array()).size());
+}
+
+void EditorModel::setStickExpression(const QString& rel, const QString& expression) {
+    if (stick_id_.isEmpty()) {
+        return;
+    }
+    const auto changed = core::set_stick_expression(collections_base(), stick_id_.toStdString(), Json(rel.toStdString()),
+                                                    Json(expression.toStdString()));
+    if (ok(changed)) {
+        refresh_stick();
+        emit projectChanged();
+    }
+}
+
+int EditorModel::addCollectionFiles(const QString& collection, const QList<QUrl>& files) {
+    const auto incoming = incoming_files(files);
     const auto added = core::add_collection_files(collections_base(), collection.toStdString(), incoming);
     if (!ok(added)) {
         return 0;
@@ -855,124 +1234,6 @@ int EditorModel::addCollectionFiles(const QString& collection, const QList<QUrl>
         setError(qstr(errors[0].value("file", "") + ": " + errors[0].value("error", "")));
     }
     reload_collections();
-    return static_cast<int>(added->value("saved", Json::array()).size());
-}
-
-// --- Stick library (EdLibraryStick.jsx / EdStickMenu.jsx) ---
-
-void EditorModel::load_sticks() {
-    sticks_.clear();
-    const auto list = core::list_sticks(collections_base());
-    if (!list) {
-        return;
-    }
-    for (const Json& s : list->value("sticks", Json::array())) {
-        sticks_ << QVariantMap{{"id", qstr(s.value("id", ""))},
-                               {"name", qstr(s.value("name", ""))},
-                               {"emoji", qstr(s.value("emoji", ""))},
-                               {"chromaColor", qstr(s.value("chroma_color", "#00FF00"))},
-                               {"count", s.value("count", 0)},
-                               {"videoCount", s.value("kinds", Json::object()).value("video", 0)},
-                               {"imageCount", s.value("kinds", Json::object()).value("image", 0)}};
-    }
-}
-
-void EditorModel::openStick(const QString& id) {
-    stick_open_id_ = id.toStdString();
-    const auto detail = core::stick_detail(collections_base(), stick_open_id_);
-    stick_detail_.clear();
-    if (!detail) {
-        emit stickChanged();
-        return;
-    }
-    const std::string chroma = detail->value("chroma_color", "#00FF00");
-    QVariantList groups;
-    for (const Json& g : detail->value("groups", Json::array())) {
-        QVariantList items;
-        for (const Json& item : g.value("items", Json::array())) {
-            const std::string kind = item.value("stick_kind", item.value("kind", ""));
-            const std::string asset_kind = kind == "video" ? "clips" : "images";
-            Json media = item;
-            media["scope"] = "collection";
-            media["label"] = item.value("title", item.value("name", ""));
-            media["chromaColor"] = chroma;
-            const Json payload = core::drag_payload(asset_kind, media);
-            const QString key = "stick:" + qstr(item.value("id", ""));
-            payloads_[key] = payload;
-            items << QVariantMap{{"id", qstr(item.value("id", ""))},
-                                {"key", key},
-                                {"title", qstr(item.value("title", ""))},
-                                {"rel", qstr(item.value("rel", ""))},
-                                {"kind", QString::fromStdString(kind)},
-                                {"expression", qstr(item.value("expression", ""))},
-                                {"duration", core::js_number(item.value("duration", Json(0)))}};
-        }
-        groups << QVariantMap{{"id", qstr(g.value("id", ""))},
-                              {"label", qstr(g.value("label", ""))},
-                              {"emoji", qstr(g.value("emoji", ""))},
-                              {"items", items}};
-    }
-    QVariantList expressions;
-    for (const Json& e : detail->value("expressions", Json::array())) {
-        expressions << QVariantMap{{"id", qstr(e.value("id", ""))},
-                                   {"label", qstr(e.value("label", ""))},
-                                   {"emoji", qstr(e.value("emoji", ""))}};
-    }
-    stick_detail_ = QVariantMap{{"id", qstr(detail->value("id", ""))},
-                                {"name", qstr(detail->value("name", ""))},
-                                {"emoji", qstr(detail->value("emoji", ""))},
-                                {"chromaColor", QString::fromStdString(chroma)},
-                                {"groups", groups},
-                                {"expressions", expressions},
-                                {"videoCount", detail->value("kinds", Json::object()).value("video", 0)},
-                                {"imageCount", detail->value("kinds", Json::object()).value("image", 0)}};
-    emit stickChanged();
-}
-
-void EditorModel::closeStick() {
-    stick_open_id_.clear();
-    stick_detail_.clear();
-    emit stickChanged();
-}
-
-void EditorModel::addStickItem(const QString& key) {
-    addMaterial(key);
-}
-
-void EditorModel::setStickExpression(const QString& rel, const QString& expression) {
-    if (stick_open_id_.empty()) {
-        return;
-    }
-    const auto result = core::set_stick_expression(collections_base(), stick_open_id_, Json(rel.toStdString()), Json(expression.toStdString()));
-    if (ok(result)) {
-        openStick(qstr(stick_open_id_));
-    }
-}
-
-int EditorModel::addStickFiles(const QList<QUrl>& files, const QString& expression) {
-    if (stick_open_id_.empty()) {
-        return 0;
-    }
-    std::vector<core::IncomingFile> incoming;
-    for (const QUrl& url : files) {
-        const auto src = core::path_from_utf8(url.toLocalFile().toStdString());
-        const auto copy = [src](const std::filesystem::path& target) -> Result<void> {
-            std::error_code ec;
-            std::filesystem::copy_file(src, target, ec);
-            return ec ? Result<void>(fail(ErrorCode::Io, ec.message())) : Result<void>();
-        };
-        incoming.push_back(core::IncomingFile{Json(core::path_to_utf8(src.filename())), copy});
-    }
-    const auto added = core::add_stick_files(collections_base(), stick_open_id_, incoming, Json(expression.toStdString()));
-    if (!ok(added)) {
-        return 0;
-    }
-    if (const Json errors = added->value("errors", Json::array()); !errors.empty()) {
-        setError(qstr(errors[0].value("file", "") + ": " + errors[0].value("error", "")));
-    }
-    load_sticks();
-    openStick(qstr(stick_open_id_));
-    emit projectChanged();
     return static_cast<int>(added->value("saved", Json::array()).size());
 }
 
@@ -2607,31 +2868,81 @@ void EditorModel::addShape(const QString& type, const QString& label) {
     add_generated(std::move(next), core::make_shape_clip_json(tid, playhead_, core::kShapeDefaultDuration, preset, ids_), "add-shape");
 }
 
-// topFreeVideoTrack: la pista de vídeo de arriba si está libre en ese tramo; si no, una nueva encima.
+std::string EditorModel::top_free_video_track(core::Timeline& next, double at, double dur) {
+    const auto top = std::ranges::find_last(next.tracks, std::string("video"), &core::TimelineTrack::kind);
+    const bool busy = top.empty() || top.front().locked ||
+                      std::ranges::any_of(next.clips, [&](const auto& c) {
+                          return c->track_id == top.front().id && c->start < at + dur - 1e-6 &&
+                                 core::ui_clip_end(*c) > at + 1e-6;
+                      });
+    if (!busy) {
+        return top.front().id;
+    }
+    core::TimelineTrack t = core::build_track("video", next.tracks, ids_.hex32().substr(0, 8));
+    std::string tid = t.id;
+    core::insert_track(next.tracks, std::move(t));
+    return tid;
+}
+
+// addAdjustmentLayer: en el cabezal, 5 s, en la pista de vídeo de arriba si está libre (topFreeVideoTrack).
 void EditorModel::addAdjustment() {
     if (!session_) {
         return;
     }
     constexpr double kDur = 5;
     core::Timeline next = *session_->timeline();
-    const auto top = std::ranges::find_last(next.tracks, std::string("video"), &core::TimelineTrack::kind);
-    const bool busy = top.empty() || top.front().locked ||
-                      std::ranges::any_of(next.clips, [&](const auto& c) {
-                          return c->track_id == top.front().id && c->start < playhead_ + kDur - 1e-6 &&
-                                 core::ui_clip_end(*c) > playhead_ + 1e-6;
-                      });
-    std::string tid = busy ? "" : top.front().id;
-    if (busy) {
-        core::TimelineTrack t = core::build_track("video", next.tracks, ids_.hex32().substr(0, 8));
-        tid = t.id;
-        core::insert_track(next.tracks, std::move(t));
-    }
+    const std::string tid = top_free_video_track(next, playhead_, kDur);
     add_generated(std::move(next), core::make_adjustment_clip_json(tid, playhead_, kDur, ids_), "add-adjustment");
 }
 
+namespace {
+
+// CINEMA_RATIOS de shapes.js: la proporción de lo visible, con su etiqueta.
+struct CinemaRatio {
+    const char* id;
+    const char* label;
+    double ratio;
+};
+constexpr std::array<CinemaRatio, 4> kCinemaRatios{{
+    {"2.39", "2,39:1 (cine)", 2.39},
+    {"2", "2:1", 2.0},
+    {"1.85", "1,85:1", 1.85},
+    {"16:9", "16:9", 16.0 / 9.0},
+}};
+
+} // namespace
+
+QVariantList EditorModel::cinemaRatios() {
+    QVariantList out;
+    for (const CinemaRatio& r : kCinemaRatios) {
+        out << QVariantMap{{"id", QString::fromUtf8(r.id)}, {"label", QString::fromUtf8(r.label)}};
+    }
+    return out;
+}
+
 void EditorModel::addCinemaBars(const QString& ratioId) {
-    if (!session_) return;
-    apply(core::ops::AddCinemaBars{Json(ratioId.toStdString()), Json(playhead_)});
+    if (!session_) {
+        return;
+    }
+    const std::string want = ratioId.toStdString();
+    const auto found = std::ranges::find_if(kCinemaRatios, [&](const CinemaRatio& r) { return want == r.id; });
+    const CinemaRatio& r = found != kCinemaRatios.end() ? *found : kCinemaRatios.front();
+    const QString label = QString::fromUtf8(r.label);
+    const Json bar = core::cinema_bar(aspect(), r.ratio); // cinemaBar(outAspect, r.ratio)
+    if (!(bar.get<double>() > 0)) {
+        set_notice("error", QString("Con este formato %1 no deja barras: el vídeo ya es más ancho.").arg(label));
+        return;
+    }
+    core::Timeline next = *session_->timeline();
+    double end = 0;
+    for (const auto& c : next.clips) {
+        end = std::max(end, core::ui_clip_end(*c));
+    }
+    const double dur = end > 0.05 ? end : core::kShapeDefaultDuration;
+    const std::string tid = top_free_video_track(next, 0, dur);
+    const Json preset = {{"type", "letterbox"}, {"label", "Barras de cine"}, {"shape", {{"bar", bar}}}};
+    add_generated(std::move(next), core::make_shape_clip_json(tid, 0, dur, preset, ids_), "add-cinema-bars");
+    set_notice("success", QString("Barras de cine %1 · grosor y entrada animada en el inspector").arg(label));
 }
 
 void EditorModel::addTrack(const QString& kind) {
@@ -2694,94 +3005,6 @@ void EditorModel::matchDuration() {
     core::Timeline next = *session_->timeline();
     next.clips = core::match_clips_to_first_duration(next.clips, selection_.ids);
     commit(std::move(next), "match-duration", selection_.ids);
-}
-
-// --- MaterialInfoModal (título y descripción de un material) -------------------------
-
-void EditorModel::openMaterialInfo(const QString& key) {
-    auto it = payloads_.find(key);
-    if (it == payloads_.end()) return;
-    const Json& payload = it->second;
-    const auto scope = payload.value("scope", "");
-    const auto asset_kind = payload.value("asset_kind", "");
-    const auto asset_id = payload.value("asset_id", "");
-    const bool is_library = scope == "library";
-
-    QString kind_label;
-    if (asset_kind == "clips") kind_label = QStringLiteral("Vídeo");
-    else if (asset_kind == "images") kind_label = QStringLiteral("Imagen");
-    else if (asset_kind == "audios") kind_label = QStringLiteral("Audio");
-    else kind_label = QStringLiteral("Material");
-
-    Json item;
-    if (is_library) {
-        if (const auto lib = core::LibraryFile(store_.file().parent_path()).list()) {
-            for (const auto& list : {"clips", "images", "audios"}) {
-                for (const auto& li : lib->value(list, Json::array())) {
-                    if (li.value("id", "") == asset_id) { item = li; break; }
-                }
-                if (!item.empty()) break;
-            }
-        }
-    } else {
-        if (const auto project = store_.get_project(project_id_); project && *project) {
-            if (asset_kind == "clips") {
-                for (const auto& c : (*project)->clips)
-                    if (std::to_string(c.index) == asset_id) { item = core::to_json(c); break; }
-            } else if (asset_kind == "images") {
-                for (const auto& i : (*project)->images)
-                    if (i.id == asset_id) { item = core::to_json(i); break; }
-            } else if (asset_kind == "audios") {
-                for (const auto& a : (*project)->audios)
-                    if (a.id == asset_id) { item = core::to_json(a); break; }
-            }
-        }
-    }
-
-    mat_info_ = QVariantMap{
-        {"key", key},
-        {"assetKind", qstr(asset_kind)},
-        {"kindLabel", kind_label},
-        {"scopeLabel", is_library ? QStringLiteral("Guardado") : QStringLiteral("Proyecto")},
-        {"isLibrary", is_library},
-        {"assetId", qstr(asset_id)},
-        {"label", qstr(item.value("label", item.value("name", "")))},
-        {"description", qstr(item.value("description", ""))},
-        {"descriptionAi", qstr(item.value("description_ai", ""))},
-        {"filename", qstr(item.value("filename", ""))},
-        {"duration", core::js_number(payload.value("duration", Json(0)))},
-    };
-    if (item.contains("width") && item["width"].is_number())
-        mat_info_["width"] = item["width"].get<int>();
-    if (item.contains("height") && item["height"].is_number())
-        mat_info_["height"] = item["height"].get<int>();
-    emit matInfoChanged();
-}
-
-void EditorModel::saveMaterialInfo(const QString& label, const QString& description) {
-    if (mat_info_.isEmpty()) return;
-    const bool is_library = mat_info_.value("isLibrary").toBool();
-    const std::string asset_kind = mat_info_.value("assetKind").toString().toStdString();
-    const std::string asset_id = mat_info_.value("assetId").toString().toStdString();
-    const Json fields = Json{{"label", label.trimmed().toStdString()},
-                             {"description", description.trimmed().toStdString()}};
-
-    if (is_library) {
-        auto r = core::LibraryFile(store_.file().parent_path()).update_item(asset_id, fields);
-        if (!r) { setError(qstr(r.error().message)); return; }
-    } else {
-        auto r = store_.update_material(project_id_, asset_kind, asset_id, fields);
-        if (!r) { setError(qstr(r.error().message)); return; }
-    }
-    mat_info_.clear();
-    emit matInfoChanged();
-    reload_project_materials();
-}
-
-void EditorModel::closeMaterialInfo() {
-    if (mat_info_.isEmpty()) return;
-    mat_info_.clear();
-    emit matInfoChanged();
 }
 
 QString EditorModel::projectJson() const {

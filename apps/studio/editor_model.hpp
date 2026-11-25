@@ -143,13 +143,12 @@ class EditorModel : public QObject {
     // «Crear clip» abierto (SegmentConfirmModal): {start, end, clipId, title, descMode, description,
     // sourceDescription, simple, phase, error}; vacío si no.
     Q_PROPERTY(QVariantMap segAsk READ segAsk NOTIFY segAskChanged)
-    // «Información del material» (MaterialInfoModal.jsx): {key, assetKind, kindLabel, scope, isLibrary,
-    // label, description, descriptionAi, filename, duration, width, height}; vacío si no se muestra.
-    Q_PROPERTY(QVariantMap matInfo READ matInfo NOTIFY matInfoChanged)
     // En el Clip Editor y con un vídeo en su timeline (onCreateSegment de EdTimeline).
     Q_PROPERTY(bool canCreateSegment READ canCreateSegment NOTIFY timelineChanged)
     Q_PROPERTY(QVariantList textThemes READ textThemes CONSTANT)
     Q_PROPERTY(QVariantList textLooks READ textLooks CONSTANT)
+    // CINEMA_RATIOS de shapes.js: las proporciones de las barras de cine, [{id, label}].
+    Q_PROPERTY(QVariantList cinemaRatios READ cinemaRatios CONSTANT)
     Q_PROPERTY(QVariantList colorFilters READ colorFilters CONSTANT)
     Q_PROPERTY(QVariantList animationSlots READ animationSlots CONSTANT)
     Q_PROPERTY(QVariantList vfxCatalog READ vfxCatalog CONSTANT)
@@ -157,15 +156,14 @@ class EditorModel : public QObject {
     Q_PROPERTY(QVariantList sfxCategories READ sfxCategories NOTIFY projectChanged)
     Q_PROPERTY(QVariantList collections READ collections NOTIFY projectChanged)
     Q_PROPERTY(QString collectionsRoot READ collectionsRoot NOTIFY projectChanged)
+    Q_PROPERTY(QVariantMap stick READ stick NOTIFY projectChanged)
     Q_PROPERTY(QVariantList sticks READ sticks NOTIFY projectChanged)
-    Q_PROPERTY(QVariantMap stickDetail READ stickDetail NOTIFY stickChanged)
     Q_PROPERTY(QVariantList textFavorites READ textFavorites NOTIFY favoritesChanged)
     Q_PROPERTY(bool canUndo READ canUndo NOTIFY timelineChanged)
     Q_PROPERTY(bool canRedo READ canRedo NOTIFY timelineChanged)
     Q_PROPERTY(QStringList selection READ selection NOTIFY selectionChanged)
-    Q_PROPERTY(QVariantMap selectedClip READ selectedClip NOTIFY selectionChanged)
-    // Las recetas en un clic (EdRecipes): {id, label, trick, desc, ok, why} con lo seleccionado.
     Q_PROPERTY(QVariantList recipes READ recipes NOTIFY selectionChanged)
+    Q_PROPERTY(QVariantMap selectedClip READ selectedClip NOTIFY selectionChanged)
     // La pista elegida en su cabecera (sin clip seleccionado): {id, kind, name, style}.
     Q_PROPERTY(QVariantMap selectedTrack READ selectedTrack NOTIFY selectionChanged)
     Q_PROPERTY(double playhead READ playhead WRITE setPlayhead NOTIFY playheadChanged)
@@ -249,7 +247,6 @@ public:
     // ni audio (por su tipo MIME o su extensión) no cuenta; si no queda nada, el aviso de error
     // (`dropped`: el de soltar archivos en el panel). Da cuántos entraron.
     Q_INVOKABLE int importFiles(const QList<QUrl>& files, bool dropped = false);
-    Q_INVOKABLE bool importImageWithDescription(const QUrl& file, const QString& description);
     // dragMediaKind de EdMaterial: lo que se arrastra desde el sistema («video», «image» o «audio»,
     // por ese orden; «other» si no hay nada de eso; «file» sin archivos), para el aviso del panel.
     [[nodiscard]] Q_INVOKABLE QString dropFileKind(const QList<QUrl>& files) const;
@@ -262,6 +259,7 @@ public:
     // Temas de subtítulos y estilos «Aa» con lo que pinta su muestra (color, trazo, fondo, brillo).
     [[nodiscard]] static QVariantList textThemes();
     [[nodiscard]] static QVariantList textLooks();
+    [[nodiscard]] static QVariantList cinemaRatios();
     // FILTERS de clipFilters.js con su muestra (piel, cielo, vegetación y gris filtrados).
     [[nodiscard]] static QVariantList colorFilters();
     // Ranuras de las animaciones de clip del catálogo: [{id, label, items: [{id, name, dur}]}].
@@ -291,13 +289,18 @@ public:
     Q_INVOKABLE bool setCollectionsRoot(const QString& path); // ruta o file:// del diálogo
     Q_INVOKABLE QString createCollection(const QString& name);
     Q_INVOKABLE int addCollectionFiles(const QString& collection, const QList<QUrl>& files);
-    [[nodiscard]] QVariantList sticks() const { return sticks_; }
-    [[nodiscard]] QVariantMap stickDetail() const { return stick_detail_; }
-    Q_INVOKABLE void openStick(const QString& id);
-    Q_INVOKABLE void closeStick();
-    Q_INVOKABLE void addStickItem(const QString& key);
+    // Los sticks (EdLibraryStick.jsx y el «Nuevo stick» de EdLibrary.jsx): una carpeta de colecciones con
+    // stick.json es un personaje, agrupado por expresión; sus tarjetas se arrastran con su croma.
+    [[nodiscard]] QVariantMap stick() const { return stick_; }
+    Q_INVOKABLE void openStick(const QString& cid);
+    Q_INVOKABLE QString createStick(const QString& name, const QString& emoji, const QString& chromaColor);
+    Q_INVOKABLE int addStickFiles(const QString& expression, const QList<QUrl>& files);
     Q_INVOKABLE void setStickExpression(const QString& rel, const QString& expression);
-    Q_INVOKABLE int addStickFiles(const QList<QUrl>& files, const QString& expression);
+    // EdStickMenu.jsx («Agregar Stick» en un hueco de la timeline): los personajes, el detalle de uno por tipo
+    // (vídeo o imagen) y añadir una de sus expresiones con croma en `time` y la pista `trackId` (addStickClip).
+    [[nodiscard]] QVariantList sticks() const { return sticks_; }
+    Q_INVOKABLE QVariantMap stickMenu(const QString& cid);
+    Q_INVOKABLE void addStickClip(const QString& key, double time, const QString& trackId);
     [[nodiscard]] int fps() const;
     [[nodiscard]] double aspect() const;
     [[nodiscard]] int outWidth() const;
@@ -316,7 +319,6 @@ public:
     [[nodiscard]] bool canRedo() const { return session_ && session_->can_redo(); }
     [[nodiscard]] QStringList selection() const;
     [[nodiscard]] QVariantMap selectedClip() const;
-    [[nodiscard]] QVariantList recipes() const;
     [[nodiscard]] QVariantMap selectedTrack() const;
     [[nodiscard]] double playhead() const { return playhead_; }
     [[nodiscard]] double pps() const { return pps_; }
@@ -352,6 +354,16 @@ public:
     // si vale, si no la primera libre de bloqueo) y, si ahí hay algo, justo detrás (freeStartOnTrack):
     // pulsarlo varias veces encadena los clips.
     Q_INVOKABLE void addMaterial(const QString& key);
+    // ImageAddModal.jsx: sube una imagen al material del proyecto y guarda su descripción. El error o nada.
+    Q_INVOKABLE QString addImage(const QUrl& file, const QString& description);
+    // Recetas en un clic (EdRecipes.jsx): el catálogo con si basta lo seleccionado (recipeReady) y aplicar
+    // una sobre la selección, con el cabezal como `at_time` (applyRecipeUI).
+    [[nodiscard]] QVariantList recipes() const;
+    Q_INVOKABLE void applyRecipe(const QString& id);
+    // MaterialInfoModal.jsx: lo que enseña el modal de un vídeo, una imagen o un audio (del proyecto o
+    // guardado) y guardar su título y su descripción. Devuelve el error o nada.
+    Q_INVOKABLE QVariantMap materialInfo(const QString& key) const;
+    Q_INVOKABLE QString saveMaterialInfo(const QString& key, const QString& label, const QString& description);
     Q_INVOKABLE void moveClip(const QString& id, double start, const QString& trackId);
     // {start, duration, times} del clip con el borde movido `delta` s. No cambia nada.
     Q_INVOKABLE QVariantMap previewTrim(const QString& id, bool left, double delta) const;
@@ -418,10 +430,9 @@ public:
     // Figura del catálogo en el cabezal (addAsset('shape')) y capa de ajuste (addAdjustmentLayer).
     Q_INVOKABLE void addShape(const QString& type, const QString& label);
     Q_INVOKABLE void addAdjustment();
+    // Barras de cine (addCinemaBars de VideoEditor.jsx): de 0 al final de la timeline, encima de todo, con el
+    // grosor que deja lo visible en la proporción `ratioId` de CINEMA_RATIOS; queda seleccionada.
     Q_INVOKABLE void addCinemaBars(const QString& ratioId);
-    // Recetas en un clic (applyRecipeUI): la operación apply_recipe con lo seleccionado, en un paso de
-    // deshacer; selecciona lo que añade y, si deja un clip con «Eliminar fondo» por calcular, lo calcula.
-    Q_INVOKABLE void applyRecipe(const QString& id);
     // La barra de EdTimeline: pista nueva de vídeo o audio (addTrack: en su sitio por defecto, numerada
     // tras las que hay), pista de texto (addTextTrack: con el estilo de subtítulo, y queda elegida), el
     // imán de la pista principal (toggleMagnet: la primera de vídeo; al activarlo se empaqueta sin huecos)
@@ -444,10 +455,6 @@ public:
     [[nodiscard]] QVariantMap clipMeta() const { return clip_meta_; }
     [[nodiscard]] QVariantMap clipMark() const;
     [[nodiscard]] QVariantMap segAsk() const { return seg_ask_; }
-    [[nodiscard]] QVariantMap matInfo() const { return mat_info_; }
-    Q_INVOKABLE void openMaterialInfo(const QString& key);
-    Q_INVOKABLE void saveMaterialInfo(const QString& label, const QString& description);
-    Q_INVOKABLE void closeMaterialInfo();
     [[nodiscard]] bool canCreateSegment() const;
     // openProjectClip de EdMaterial.jsx con un vídeo del proyecto (clave «clips:<index>»): su archivo
     // original entero en el Clip Editor; un segmento, con su rango ya marcado. false si no se puede.
@@ -675,8 +682,6 @@ signals:
     void clipMetaChanged();
     void clipMarkChanged();
     void segAskChanged();
-    void matInfoChanged();
-    void stickChanged();
 
 private:
     // Cambia de pestaña: la sesión activa pasa a other_session_ y la otra entra, con su cabezal y su zoom.
@@ -737,7 +742,6 @@ private:
     QVariantMap clip_meta_;
     core::ClipMark clip_mark_;
     QVariantMap seg_ask_;
-    QVariantMap mat_info_;
     std::unique_ptr<core::EditSession> session_;
     std::unique_ptr<core::Autosave> autosave_; // después de session_: se destruye antes
     mutable core::RandomIdSource ids_;
@@ -760,10 +764,6 @@ private:
     QString collections_root_;
     std::pair<std::string, std::string> collections_query_; // q y colección de la última búsqueda
     [[nodiscard]] std::optional<std::filesystem::path> collections_base() const;
-    QVariantList sticks_;
-    QVariantMap stick_detail_;
-    std::string stick_open_id_;
-    void load_sticks();
     [[nodiscard]] std::optional<std::filesystem::path> media_path(const core::TimelineClip& c) const;
     [[nodiscard]] core::MediaDirs media_dirs() const;
     // mediaSize de su medio (videoWidth / naturalWidth): el tamaño con el que lo dibuja el render (el
@@ -823,8 +823,11 @@ private:
     // de motores (GET /api/bg/providers, una vez por proyecto abierto).
     void set_bg(const std::string& clip_id, Json bg_removal, const char* cause);
     void bg_update(const std::string& clip_id, const Json& job);
-    void start_bg_auto(const core::TimelineClip& c); // startBgAutoFor
+    void start_bg_auto(const core::TimelineClip& c); // startBgAutoFor: lanza el job de la Eliminación automática
     void load_bg_providers();
+    // topFreeVideoTrack(at, dur) de VideoEditor.jsx: la pista de vídeo de arriba si está libre en ese tramo; si no,
+    // una nueva encima de todas (en `next`).
+    [[nodiscard]] std::string top_free_video_track(core::Timeline& next, double at, double dur);
     BackendJobs bg_jobs_;
     QVariantMap bg_job_;
     Json bg_catalog_ = Json::array();
@@ -893,6 +896,14 @@ private:
     // material → dragPayload. Mutable: la duración de un SFX o de un audio o vídeo de colección se
     // sondea al arrastrarlo (probe_material), desde los métodos const del arrastre.
     mutable std::map<QString, Json> payloads_;
+    std::map<QString, Json> material_items_; // material → el elemento tal cual (proyecto o biblioteca)
+    QString stick_id_;     // el stick abierto
+    QVariantMap stick_;    // su detalle para la vista, con las claves de arrastre de sus tarjetas
+    void refresh_stick();
+    QVariantList sticks_;                   // list_sticks
+    std::map<QString, Json> stick_items_;   // tarjeta de stick → stickAssetItem (para makeClip)
+    QVariantMap stick_card(const std::optional<std::filesystem::path>& root, const QString& cid, const Json& item,
+                           const Json& chroma);
     mutable std::map<QString, double> probed_; // lo que dio la sonda de cada uno (0: nada)
     ClipListModel clip_model_;
     CropEditor crop_editor_;

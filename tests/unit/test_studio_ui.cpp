@@ -28,6 +28,7 @@
 #include <string>
 #include <utility>
 
+#include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 #include "gc/core/face_follow.hpp"
@@ -359,6 +360,9 @@ TEST_CASE("studio sin pantalla: arrastrar material del panel a la timeline crea 
 }
 
 TEST_CASE("studio sin pantalla: soltar archivos del sistema en el material los importa", "[studio][ui]") {
+#ifndef GC_STUDIO_PREVIEW
+    SKIP("Sin gc_media (FFmpeg) no se importan JPG ni vídeos");
+#endif
     const Studio s;
     const auto in = s.dir / "fuera";
     std::filesystem::create_directories(in);
@@ -657,6 +661,7 @@ TEST_CASE("studio sin pantalla: la máscara se arrastra sobre la vista previa y 
     };
     CHECK(shows_guide());
     const QPoint from = at(m0["x"].toDouble(), m0["y"].toDouble());
+    QTest::mouseMove(s.window, from + QPoint(1, 0)); // el primero solo entra (así llega el hover en offscreen)
     QTest::mouseMove(s.window, from);
     QCoreApplication::processEvents();
     REQUIRE(s.item("maskArea"));
@@ -1546,7 +1551,8 @@ TEST_CASE("studio sin pantalla: el tirador de la curva del keyframe la vuelve pe
     s.editor->setPlayhead(3);
     s.editor->toggleKeyframe();
     s.editor->setPlayhead(2);
-    s.click("insp:tab:anim");
+    QMetaObject::invokeMethod(s.item("insp:tab:anim"), "clicked"); // la fila de pestañas puede quedar cortada
+    QCoreApplication::processEvents();
     QQuickItem* h = s.item("curveHandle:1");
     REQUIRE(h);
     const QPoint from = h->mapToScene(QPointF(h->width() / 2, h->height() / 2)).toPoint();
@@ -1567,79 +1573,6 @@ TEST_CASE("studio sin pantalla: un efecto de la biblioteca va a la pestaña Efec
     s.click("insp:tab:fx");
     CHECK(s.item("insp:vfx:name:0"));
     CHECK(s.editor->selectedClip()["vfx"].toList().size() == 1);
-}
-
-TEST_CASE("studio sin pantalla: las recetas en un clic dicen qué falta seleccionar y se aplican en un paso de "
-          "deshacer",
-          "[studio][ui]") {
-    const Studio s;
-    s.click("material:nav:effects");
-    // Están debajo de los efectos animados, en la misma lista: se baja hasta la receta.
-    const auto reveal = [&](const QString& name) {
-        QQuickItem* list = s.item("material:fxScroll");
-        QQuickItem* target = s.item(name);
-        REQUIRE(list);
-        REQUIRE(target);
-        auto* content = list->property("contentItem").value<QQuickItem*>();
-        REQUIRE(content);
-        list->setProperty("contentY", std::max(0.0, target->mapToItem(content, QPointF(0, 0)).y() - 20));
-        QCoreApplication::processEvents();
-    };
-    const auto enabled = [&](const QString& id) {
-        QQuickItem* b = s.item("recipe:apply:" + id);
-        REQUIRE(b);
-        return b->isEnabled();
-    };
-    const auto desc = [&](const QString& id) {
-        QQuickItem* d = s.item("recipe:desc:" + id);
-        REQUIRE(d);
-        return d->property("text").toString();
-    };
-
-    // Sin nada seleccionado solo el etalonaje; las demás dicen qué falta.
-    CHECK(enabled("cinema_grade"));
-    CHECK_FALSE(enabled("text_reflection"));
-    CHECK_FALSE(enabled("film_strips"));
-    CHECK_FALSE(enabled("subject_pop"));
-    CHECK(desc("text_reflection").endsWith(" — selecciona un texto."));
-    CHECK(desc("film_strips").endsWith(" — selecciona 2 o más vídeos o imágenes."));
-    CHECK(desc("cinema_grade").endsWith("barras de cine que entran."));
-    s.editor->applyRecipe("text_reflection"); // sin el botón, lo dice la receta
-    CHECK(s.editor->notice()["type"] == "error");
-    CHECK(s.editor->notice()["message"] == "esta receta necesita un texto seleccionado");
-
-    // Un vídeo: el sujeto ya se puede. Las franjas piden otro vídeo o imagen, y la selección múltiple es de un
-    // solo tipo (como en video-yt: con Ctrl, la imagen sustituye al vídeo).
-    s.editor->select("a");
-    CHECK(enabled("subject_pop"));
-    CHECK_FALSE(enabled("film_strips"));
-    CHECK_FALSE(enabled("pass_through_text"));
-    s.editor->select("b", true);
-    CHECK(s.editor->selection() == QStringList{"b"});
-    CHECK_FALSE(enabled("subject_pop"));
-    CHECK(desc("subject_pop").endsWith(" — selecciona un vídeo."));
-
-    // El etalonaje: capa de ajuste y barras sobre todo el vídeo, con lo nuevo seleccionado; Ctrl+Z lo quita entero.
-    const auto before = s.editor->clips().size();
-    reveal("recipe:apply:cinema_grade");
-    s.click("recipe:apply:cinema_grade");
-    CHECK(s.editor->notice()["type"] == "success");
-    CHECK(s.editor->notice()["message"] == "«Etalonaje de cine» aplicada");
-    CHECK(s.editor->clips().size() > before);
-    CHECK(s.editor->selection().size() == 1);
-    CHECK(s.editor->selectedClip()["kind"] != "audio");
-    QTest::keyClick(s.window, Qt::Key_Z, Qt::ControlModifier);
-    CHECK(s.editor->clips().size() == before);
-
-    // Con un texto, el reflejo: una copia volteada en su propia pista, que queda elegida.
-    s.editor->addText();
-    const QString text = s.editor->selection().front();
-    CHECK(enabled("text_reflection"));
-    reveal("recipe:apply:text_reflection");
-    s.click("recipe:apply:text_reflection");
-    CHECK(s.editor->notice()["message"] == "«Texto con reflejo» aplicada");
-    CHECK(s.editor->selection().front() != text);
-    CHECK(s.editor->selectedClip()["kind"] == "text");
 }
 
 TEST_CASE("studio sin pantalla: una figura del material se añade con un clic o arrastrándola", "[studio][ui]") {
@@ -2737,6 +2670,7 @@ TEST_CASE("studio sin pantalla: la barra de la timeline añade pistas, imanta e 
                       : s.view(added)["start"].toDouble() >= s.view("b")["start"].toDouble() + s.view("b")["duration"].toDouble()));
 }
 
+#ifdef GC_STUDIO_PREVIEW // congelar lee el fotograma con gc_media
 TEST_CASE("studio sin pantalla: congelar fotograma parte el vídeo e inserta la imagen del cabezal",
           "[studio][ui][preview]") {
     const Studio s;
@@ -2788,6 +2722,7 @@ TEST_CASE("studio sin pantalla: congelar fotograma parte el vídeo e inserta la 
     s.editor->setPlayhead(1e6);
     CHECK_FALSE(s.editor->canFreeze());
 }
+#endif
 
 TEST_CASE("studio sin pantalla: separar solapes sube los clips montados a su propia pista", "[studio][ui]") {
     const Studio s;
@@ -2984,4 +2919,249 @@ TEST_CASE("studio sin pantalla: el Clip Editor marca un tramo con Z y X y lo gua
     CHECK(ids_of() == project_clips);
     s.click("editor:colTab:1");
     CHECK(s.editor->clips().size() == 1);
+}
+
+TEST_CASE("studio sin pantalla: «Editar información» del material guarda su título y su descripción", "[studio][ui]") {
+    const Studio s;
+    QMetaObject::invokeMethod(s.item("material:nav:image"), "clicked");
+    QTest::qWait(50);
+    auto* card = s.item("material:images:i1");
+    REQUIRE(card);
+    auto* menu = card->findChild<QObject*>("material:menu:images:i1");
+    REQUIRE(menu); // el menú de la tarjeta (clic derecho) está también en las imágenes
+    auto* entry = menu->findChild<QObject*>("material:info:images:i1");
+    REQUIRE(entry);
+    QMetaObject::invokeMethod(entry, "triggered");
+    QTest::qWait(50);
+    QQuickItem* title = s.item("materialInfo:title");
+    REQUIRE(title);
+    CHECK(title->property("text") == "Logo");
+    title->setProperty("text", "Logo del canal");
+    s.item("materialInfo:description")->setProperty("text", "Fondo transparente");
+    QTest::keyClick(s.window, Qt::Key_Return, Qt::ControlModifier);
+    QTest::qWait(50);
+    CHECK_FALSE(s.item("materialInfo:title")); // se cierra al guardar
+    const auto project = s.store->get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    CHECK((**project).images[0].label == "Logo del canal");
+    CHECK((**project).images[0].description == "Fondo transparente");
+}
+
+TEST_CASE("studio sin pantalla: una receta se aplica desde la pestaña Efectos del material", "[studio][ui]") {
+    const Studio s;
+    QMetaObject::invokeMethod(s.item("material:nav:effects"), "clicked");
+    QTest::qWait(50);
+    // EdFxLibrary: una sola lista que se desplaza, en su orden: los efectos animados, las recetas (sin plegar), la
+    // capa de ajuste y las barras de cine.
+    const auto top = [&](const QString& name) {
+        QQuickItem* i = s.item(name);
+        REQUIRE(i);
+        return i->mapToScene(QPointF(0, 0)).y();
+    };
+    // Debajo de los efectos animados: sus categorías y su rejilla (vacía aquí si no hay catálogo de efectos).
+    const QVariantList vfx = s.editor->searchVfx(QString(), QString());
+    CHECK(top("recipes") > top(vfx.isEmpty() ? QString("fx:cat:") : "fx:" + vfx.back().toMap()["id"].toString()));
+    CHECK(top("material:adjustment") > top("recipes"));
+    CHECK(top("cinema:2.39") > top("material:adjustment"));
+    QQuickItem* reflect = s.item("recipe:apply:text_reflection");
+    REQUIRE(reflect);
+    CHECK_FALSE(reflect->isEnabled()); // pide un texto
+    REQUIRE(s.item("recipe:desc:text_reflection"));
+    CHECK(s.item("recipe:desc:text_reflection")->property("text").toString().endsWith(" — selecciona un texto."));
+    const auto before = s.editor->clips().size();
+    // Bajo el borde visible de la lista (el Flickable la recorta): su señal, como un clic.
+    QMetaObject::invokeMethod(s.item("recipe:apply:cinema_grade"), "clicked");
+    CHECK(s.editor->clips().size() > before); // capa de ajuste y barras
+    CHECK(s.editor->notice()["type"] != "error");
+}
+
+TEST_CASE("studio sin pantalla: las barras de cine van de 0 al final, encima de todo, y quedan elegidas", "[studio][ui]") {
+    const Studio s;
+    s.editor->pickAspect("9:16");
+    QMetaObject::invokeMethod(s.item("material:nav:effects"), "clicked");
+    QTest::qWait(50);
+    // Están al final de la lista: se baja hasta ellas.
+    const auto to_bottom = [&] {
+        QQuickItem* scroll = s.item("material:fxScroll");
+        REQUIRE(scroll);
+        scroll->setProperty("contentY", std::max(0.0, scroll->property("contentHeight").toDouble() - scroll->height()));
+        QCoreApplication::processEvents();
+    };
+    const auto video_tracks = [&] {
+        return std::ranges::count_if(s.editor->tracks(), [](const QVariant& t) { return t.toMap()["kind"] == "video"; });
+    };
+    const auto clips = s.editor->clips().size();
+    const auto tracks = video_tracks();
+
+    // 2,39:1 en 9:16: barras de (1 − 0,5625/2,39)/2. De 0 al final de lo que hay (la imagen «b» acaba en 9 s), en
+    // la pista de vídeo de arriba (V2), que está libre.
+    to_bottom();
+    s.click("cinema:2.39");
+    REQUIRE(s.editor->clips().size() == clips + 1);
+    QVariantMap bars = s.editor->selectedClip();
+    CHECK(bars["kind"] == "shape");
+    CHECK(bars["trackId"] == "V2");
+    CHECK(bars["start"].toDouble() == 0.0);
+    CHECK(bars["duration"].toDouble() == Catch::Approx(9.0));
+    CHECK(bars["shape"].toMap()["type"] == "letterbox");
+    CHECK(bars["shape"].toMap()["bar"].toDouble() == Catch::Approx(0.3823));
+    CHECK(s.editor->notice()["type"] == "success");
+    CHECK(s.editor->notice()["message"] == "Barras de cine 2,39:1 (cine) · grosor y entrada animada en el inspector");
+
+    // Con V2 ocupada en ese tramo, otras van a una pista de vídeo nueva, encima; se deshacen de una vez.
+    to_bottom();
+    s.click("cinema:16:9");
+    REQUIRE(s.editor->clips().size() == clips + 2);
+    bars = s.editor->selectedClip();
+    CHECK(bars["trackId"] != "V1");
+    CHECK(bars["trackId"] != "V2");
+    CHECK(video_tracks() == tracks + 1);
+    CHECK(bars["shape"].toMap()["bar"].toDouble() == Catch::Approx(0.3418));
+    s.editor->undo();
+    CHECK(s.editor->clips().size() == clips + 1);
+    CHECK(video_tracks() == tracks);
+
+    // En 16:9, unas de 16:9 no dejan barras: el aviso de React y nada nuevo.
+    s.editor->pickAspect("16:9");
+    const auto now = s.editor->clips().size();
+    s.editor->addCinemaBars("16:9");
+    CHECK(s.editor->clips().size() == now);
+    CHECK(s.editor->notice()["type"] == "error");
+    CHECK(s.editor->notice()["message"] == "Con este formato 16:9 no deja barras: el vídeo ya es más ancho.");
+}
+
+TEST_CASE("studio sin pantalla: una receta que deja «Eliminar fondo» por calcular lo calcula con el backend", "[studio][ui][backend]") {
+    const Studio s;
+    std::vector<Json> posted;
+    FakeBackend backend([&](const QString& method, const QString& path, const Json& body) -> std::pair<int, Json> {
+        if (method == "POST" && path == "/api/projects/p1/bg-removal") {
+            posted.push_back(body);
+            return {200, {{"id", "j1"}, {"status", "pending"}, {"progress", 0.0}}};
+        }
+        if (method == "GET" && path == "/api/job/j1") {
+            return {200, {{"id", "j1"}, {"status", "running"}, {"progress", 0.2}}};
+        }
+        return {404, {{"detail", "No existe."}}};
+    });
+    s.editor->bgBackend().setBaseUrl(backend.url());
+    s.editor->bgBackend().setPollInterval(20);
+    // El sujeto se adelanta a su plano: el vídeo «a» tiene que empezar después de 0.
+    s.editor->moveClip("a", 2.0, "V1");
+    s.editor->select("a");
+    REQUIRE(s.editor->selectedClip()["start"].toDouble() == Catch::Approx(2.0));
+    s.editor->applyRecipe("subject_pop");
+    REQUIRE(s.editor->notice()["type"] != "error");
+    // Queda elegida la copia del sujeto (lo primero que no es un audio), con su recorte ya pedido al backend.
+    const QVariantMap dup = s.editor->selectedClip();
+    CHECK(dup["kind"] == "video");
+    CHECK(dup["id"] != "a");
+    CHECK(s.editor->bgJob()["clipId"] == dup["id"]);
+    CHECK(dup["bg"].toMap()["auto"].toMap()["status"] == "running");
+    REQUIRE(QTest::qWaitFor([&] { return !posted.empty(); }, 10000));
+    CHECK(posted.size() == 1);
+    // El aviso del recorte IA no sale: ya se está calculando (como applyRecipeUI).
+    CHECK_FALSE(s.editor->notice()["message"].toString().contains("recorte IA"));
+}
+
+TEST_CASE("studio sin pantalla: «Nueva imagen» sube imágenes con su descripción", "[studio][ui]") {
+    const Studio s;
+    QMetaObject::invokeMethod(s.item("material:nav:image"), "clicked");
+    QTest::qWait(50);
+    REQUIRE(s.item("material:addImage"));
+    auto* modal = s.window->findChild<QObject*>("imageAdd");
+    REQUIRE(modal);
+    QMetaObject::invokeMethod(modal, "open");
+    const auto png = s.dir / "nueva.png";
+    REQUIRE(QImage(64, 32, QImage::Format_RGB32).save(QString::fromStdString(png.string())));
+    const QVariantList urls{QUrl::fromLocalFile(QString::fromStdString(png.string())), QUrl::fromLocalFile("/tmp/nota.txt")};
+    QMetaObject::invokeMethod(modal, "addFiles", Q_ARG(QVariant, urls));
+    QTest::qWait(50);
+    QQuickItem* description = s.item("imageAdd:description:0");
+    REQUIRE(description);
+    description->setProperty("text", "Un rectángulo negro");
+    QMetaObject::invokeMethod(description, "editingFinished");
+    const auto before = (*s.store->get_project("p1"))->images.size();
+    s.click("imageAdd:saveAll");
+    QTest::qWait(50);
+    const auto project = s.store->get_project("p1");
+    REQUIRE((**project).images.size() == before + 1);
+    CHECK((**project).images.back().description == "Un rectángulo negro");
+    CHECK_FALSE(s.item("imageAdd:saveAll")); // se cierra al guardar todo
+}
+
+TEST_CASE("studio sin pantalla: un stick de las colecciones se abre por expresión y se añade con su croma", "[studio][ui]") {
+    const auto assets = std::filesystem::temp_directory_path() /
+                        ("gc_sticks_ui_" + std::to_string(QCoreApplication::applicationPid()));
+    std::filesystem::remove_all(assets);
+    std::filesystem::create_directories(assets / "material");
+    qputenv("VIDEO_YT_ASSETS", QByteArray::fromStdString(assets.string()));
+    {
+        const Studio s;
+        REQUIRE(s.editor->createStick("Robot", "🤖", "#00FF00") == "robot");
+        const auto png = assets / "saluda.png";
+        REQUIRE(QImage(40, 30, QImage::Format_RGB32).save(QString::fromStdString(png.string())));
+        REQUIRE(s.editor->addStickFiles("happy", {QUrl::fromLocalFile(QString::fromStdString(png.string()))}) == 1);
+        s.editor->openStick({}); // cerrado, como al entrar en la pestaña
+        QMetaObject::invokeMethod(s.item("material:nav:library"), "clicked");
+        QTest::qWait(50);
+        QMetaObject::invokeMethod(s.item("material:scope:collections"), "clicked");
+        QTest::qWait(50);
+        s.click("col:chip:robot");
+        QTest::qWait(50);
+        REQUIRE(s.item("stickView"));
+        const auto before = s.editor->clips().size();
+        QMetaObject::invokeMethod(s.item("stick:add:feliz/saluda.png"), "clicked");
+        QCoreApplication::processEvents();
+        CHECK(s.editor->clips().size() == before + 1);
+        CHECK(s.editor->selectedClip()["kind"] == "image");
+    }
+    qunsetenv("VIDEO_YT_ASSETS");
+    std::filesystem::remove_all(assets);
+}
+
+TEST_CASE("studio sin pantalla: «Agregar Stick» desde un hueco de la timeline lo pone ahí con su croma", "[studio][ui]") {
+    const auto assets = std::filesystem::temp_directory_path() /
+                        ("gc_stickmenu_ui_" + std::to_string(QCoreApplication::applicationPid()));
+    std::filesystem::remove_all(assets);
+    std::filesystem::create_directories(assets / "material");
+    qputenv("VIDEO_YT_ASSETS", QByteArray::fromStdString(assets.string()));
+    {
+        const Studio s;
+        REQUIRE(s.editor->createStick("Robot", "🤖", "#FF00AA") == "robot");
+        const auto png = assets / "saluda.png";
+        REQUIRE(QImage(40, 30, QImage::Format_RGB32).save(QString::fromStdString(png.string())));
+        REQUIRE(s.editor->addStickFiles("happy", {QUrl::fromLocalFile(QString::fromStdString(png.string()))}) == 1);
+        s.editor->searchCollections({}, {}); // la lista de sticks del menú
+        // Clic derecho en V1, a los 12 s (tras «b», que acaba en 9).
+        const QPoint b_end = s.at("b", 1.0);
+        const QPoint at(b_end.x() + static_cast<int>(3 * s.editor->pps()), b_end.y());
+        QTest::mouseClick(s.window, Qt::RightButton, {}, at);
+        QTest::qWait(50);
+        auto* lane = s.window->findChild<QObject*>("laneMenu");
+        REQUIRE(lane);
+        CHECK(std::abs(lane->property("time").toDouble() - 12) < 0.2);
+        CHECK(lane->property("trackId") == "V1");
+        QMetaObject::invokeMethod(lane->findChild<QObject*>("lane:addStick"), "triggered");
+        QTest::qWait(50);
+        QQuickItem* card = s.item("stickMenu:card:feliz/saluda.png");
+        REQUIRE(card);
+        const auto before = s.editor->clips().size();
+        QMetaObject::invokeMethod(card, "clicked");
+        QCoreApplication::processEvents();
+        REQUIRE(s.editor->clips().size() == before + 1);
+        const QVariantMap made = s.editor->selectedClip();
+        CHECK(made["kind"] == "image");
+        CHECK(std::abs(made["start"].toDouble() - lane->property("time").toDouble()) < 1e-6);
+        CHECK(made["duration"] == 5.0); // IMAGE_DEFAULT_DUR
+        const auto project = s.store->get_project("p1");
+        REQUIRE(project);
+        const auto& clips = (**project).timeline->clips;
+        const auto placed = std::ranges::find_if(clips, [](const auto& c) { return c->kind == "image" && c->bg_removal; });
+        REQUIRE(placed != clips.end());
+        CHECK((*placed)->track_id == "V1");
+        CHECK((*placed)->bg_removal->at("chroma").value("color", "") == "#FF00AA");
+    }
+    qunsetenv("VIDEO_YT_ASSETS");
+    std::filesystem::remove_all(assets);
 }

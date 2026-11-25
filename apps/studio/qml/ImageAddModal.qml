@@ -3,234 +3,132 @@ import QtQuick.Controls.Basic
 import QtQuick.Dialogs
 import QtQuick.Layouts
 
-// «Nueva imagen» (ImageAddModal.jsx): seleccionar imágenes y darles una descripción
-// antes de importarlas al proyecto. Cada fila se importa sola o todas a la vez.
+// «Nueva imagen» (ImageAddModal.jsx): una fila por imagen elegida, con su vista y su descripción;
+// cada una se sube al material del proyecto y se puede quitar de la lista antes de guardar.
 Popup {
     id: modal
-    objectName: "imageAddModal"
+    objectName: "imageAdd"
     required property var model
     property var rows: []
     property string error: ""
     readonly property int pending: rows.filter((r) => !r.saved).length
+    readonly property var imageRe: /\.(png|jpe?g|webp|gif|bmp|avif|heic)$/i // isImageFile
 
     function openNew() {
         rows = []
         error = ""
         open()
+        picker.open()
     }
-
     function addFiles(urls) {
-        const seen = new Set(rows.filter((r) => r.url).map((r) => r.url.toString()))
-        let next = [...rows]
-        for (const u of urls) {
-            const s = u.toString()
-            if (seen.has(s)) continue
-            seen.add(s)
-            next.push({ url: u, description: "", saving: false, saved: false, error: "" })
+        const known = new Set(rows.map((r) => r.file))
+        const images = urls.map((u) => u.toString()).filter((u) => modal.imageRe.test(u))
+        if (urls.length && !images.length) {
+            error = "Elige un PNG, JPG, WebP o una captura."
+            return
         }
-        rows = next
-    }
-
-    function removeRow(index) {
-        let next = [...rows]
-        next.splice(index, 1)
-        rows = next
-    }
-
-    function patchRow(index, patch) {
-        let next = [...rows]
-        next[index] = Object.assign({}, next[index], patch)
-        rows = next
-    }
-
-    function saveRow(index) {
-        const row = rows[index]
-        if (!row || row.saved || row.saving) return
-        patchRow(index, { saving: true, error: "" })
-        const ok = model.importImageWithDescription(row.url, row.description)
-        if (ok) {
-            patchRow(index, { saved: true, saving: false })
-        } else {
-            patchRow(index, { saving: false, error: "No se pudo guardar." })
-        }
-    }
-
-    function saveAll() {
         error = ""
-        let allOk = true
-        for (let i = 0; i < rows.length; ++i) {
-            if (!rows[i].saved) {
-                saveRow(i)
-                if (!rows[i].saved) allOk = false
-            }
-        }
-        if (allOk) modal.close()
+        rows = rows.concat(images.filter((u) => !known.has(u)).map((u) => ({ file: u, description: "", saved: false, error: "" })))
+    }
+    function patch(i, extra) {
+        const next = rows.slice()
+        next[i] = Object.assign({}, next[i], extra)
+        rows = next
+    }
+    function save(i) {
+        if (rows[i].saved)
+            return true
+        const err = model.addImage(rows[i].file, rows[i].description)
+        patch(i, err ? { error: err } : { saved: true, error: "" })
+        return !err
+    }
+    function saveAll() {
+        let ok = true
+        for (let i = 0; i < rows.length; ++i)
+            ok = save(i) && ok
+        if (ok)
+            close()
     }
 
-    parent: Overlay.overlay
     anchors.centerIn: parent
-    width: Math.min(parent ? parent.width - 40 : 500, 520)
-    height: Math.min(parent ? parent.height - 60 : 460, 460)
+    width: Math.min(parent.width - 40, 640)
     modal: true
-    dim: true
-    padding: 0
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    Overlay.modal: Rectangle { color: Qt.rgba(0, 0, 0, 0.55) }
+    focus: true
+    padding: 18
+    background: Rectangle { radius: Theme.radiusLg; color: Theme.card; border.color: Theme.lineBright }
 
-    background: Rectangle {
-        radius: Theme.radiusMd
-        color: Theme.bg
-        border.color: Theme.line
+    FileDialog {
+        id: picker
+        title: "Imágenes para el material"
+        fileMode: FileDialog.OpenFiles
+        nameFilters: ["Imágenes (*.png *.jpg *.jpeg *.webp *.gif *.bmp *.avif *.heic)"]
+        onAccepted: modal.addFiles(selectedFiles)
     }
 
     contentItem: ColumnLayout {
-        spacing: 0
-
-        // Cabecera.
+        spacing: 10
         RowLayout {
-            Layout.fillWidth: true
-            Layout.margins: 12
-            spacing: 8
-            MIcon { name: "image"; size: 18; color: Theme.text }
-            Label { text: "Nueva imagen"; color: Theme.text; font.pixelSize: 14; font.weight: Font.Bold; Layout.fillWidth: true }
-            AbstractButton {
-                objectName: "imageAdd:close"
-                width: 26; height: 26
-                onClicked: modal.close()
-                contentItem: MIcon { name: "close"; size: 16; color: Theme.muted }
-                background: Rectangle { radius: 4; color: parent.hovered ? Theme.card3 : "transparent" }
-                hoverEnabled: true
-            }
+            Label { text: "Nueva imagen"; color: Theme.text; font.pixelSize: 16; font.bold: true }
+            Item { Layout.fillWidth: true }
+            IconBtn { iconName: "close"; iconSize: 20; tip: "Cerrar"; onClicked: modal.close() }
         }
-        Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.line }
-
-        // Zona de selección de archivos.
-        AbstractButton {
-            objectName: "imageAdd:pick"
+        SmallButton {
             Layout.fillWidth: true
-            Layout.margins: 12
-            implicitHeight: modal.rows.length > 0 ? 36 : 70
-            hoverEnabled: true
-            onClicked: imgPickDialog.open()
-            background: Rectangle {
-                radius: Theme.radiusSm
-                color: parent.hovered ? Theme.card3 : Theme.card2
-                border.color: Theme.lineBright
-                border.width: 1
-            }
-            contentItem: ColumnLayout {
-                spacing: 2
-                Row {
-                    Layout.alignment: Qt.AlignHCenter
-                    spacing: 6
-                    MIcon { name: "unarchive"; size: modal.rows.length > 0 ? 15 : 22; color: Theme.muted; anchors.verticalCenter: parent.verticalCenter }
-                    Label {
-                        text: modal.rows.length > 0 ? "Seleccionar más imágenes" : "Selecciona imágenes"
-                        color: Theme.text; font.pixelSize: 12; anchors.verticalCenter: parent.verticalCenter
-                    }
+            text: modal.rows.length ? "Añadir más imágenes…" : "Elige las imágenes (PNG, JPG, WebP, GIF)…"
+            onClicked: picker.open()
+        }
+        Repeater {
+            model: modal.rows
+            RowLayout {
+                id: row
+                required property var modelData
+                required property int index
+                Layout.fillWidth: true
+                spacing: 8
+                opacity: modelData.saved ? 0.6 : 1
+                Image {
+                    Layout.preferredWidth: 56
+                    Layout.preferredHeight: 40
+                    source: row.modelData.file
+                    fillMode: Image.PreserveAspectCrop
+                    sourceSize.width: 112
+                    asynchronous: true
+                }
+                TextField {
+                    objectName: "imageAdd:description:" + row.index
+                    Layout.fillWidth: true
+                    text: row.modelData.description
+                    enabled: !row.modelData.saved
+                    placeholderText: "De qué trata"
+                    color: Theme.text
+                    background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
+                    onEditingFinished: if (text !== row.modelData.description) modal.patch(row.index, { description: text })
+                }
+                Label { visible: row.modelData.saved; text: "✓"; color: "#4ade80" }
+                IconBtn {
+                    visible: !row.modelData.saved
+                    iconName: "delete"
+                    iconSize: 16
+                    tip: "Quitar de la lista"
+                    onClicked: modal.rows = modal.rows.filter((_, j) => j !== row.index)
                 }
                 Label {
-                    visible: modal.rows.length === 0
-                    Layout.alignment: Qt.AlignHCenter
-                    text: "PNG, JPG, WebP, GIF"
-                    color: Theme.muted; font.pixelSize: 11
+                    visible: !!row.modelData.error
+                    Layout.maximumWidth: 180
+                    text: row.modelData.error || ""
+                    elide: Text.ElideRight
+                    color: Theme.danger
+                    font.pixelSize: 11
                 }
             }
         }
-        FileDialog {
-            id: imgPickDialog
-            title: "Seleccionar imágenes"
-            fileMode: FileDialog.OpenFiles
-            nameFilters: ["Imágenes (*.png *.jpg *.jpeg *.webp *.gif *.bmp *.avif)", "Todos (*)"]
-            onAccepted: modal.addFiles(selectedFiles)
-        }
-
-        // Tabla de filas.
-        Flickable {
-            visible: modal.rows.length > 0
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.leftMargin: 12; Layout.rightMargin: 12
-            clip: true
-            contentHeight: imgColumn.implicitHeight
-            boundsBehavior: Flickable.StopAtBounds
-            ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
-            Column {
-                id: imgColumn
-                width: parent.width
-                spacing: 6
-                Repeater {
-                    model: modal.rows
-                    RowLayout {
-                        id: imgRow
-                        required property var modelData
-                        required property int index
-                        width: imgColumn.width
-                        spacing: 6
-                        opacity: modelData.saved ? 0.5 : 1
-                        Image {
-                            Layout.preferredWidth: 48; Layout.preferredHeight: 48
-                            source: imgRow.modelData.url || ""
-                            fillMode: Image.PreserveAspectCrop
-                            asynchronous: true
-                            sourceSize.width: 96
-                        }
-                        TextField {
-                            Layout.fillWidth: true
-                            objectName: "imageAdd:desc:" + imgRow.index
-                            placeholderText: "De qué trata"
-                            text: imgRow.modelData.description || ""
-                            enabled: !imgRow.modelData.saved && !imgRow.modelData.saving
-                            color: Theme.text
-                            background: Rectangle { radius: Theme.radiusSm; color: Theme.card2; border.color: Theme.lineBright }
-                            onTextChanged: {
-                                if (text !== imgRow.modelData.description)
-                                    modal.patchRow(imgRow.index, { description: text })
-                            }
-                        }
-                        MIcon {
-                            visible: imgRow.modelData.saved
-                            name: "check"; size: 16; color: Theme.accent
-                        }
-                        AbstractButton {
-                            visible: !imgRow.modelData.saved
-                            width: 24; height: 24
-                            hoverEnabled: true
-                            enabled: !imgRow.modelData.saving
-                            onClicked: modal.removeRow(imgRow.index)
-                            contentItem: MIcon { name: "delete"; size: 15; color: Theme.muted }
-                            background: Rectangle { radius: 4; color: parent.hovered ? Theme.card3 : "transparent" }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Error.
-        Label {
-            visible: !!modal.error
-            Layout.fillWidth: true
-            Layout.margins: 12
-            text: modal.error
-            color: "#ff5555"
-            wrapMode: Text.Wrap
-        }
-
-        // Acciones.
-        Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.line }
+        Label { visible: !!modal.error; text: modal.error; color: Theme.danger }
         RowLayout {
-            Layout.fillWidth: true
-            Layout.margins: 12
-            spacing: 8
-            Item { Layout.fillWidth: true }
-            SmallButton {
-                objectName: "imageAdd:cancel"
-                text: "Cancelar"
-                onClicked: modal.close()
-            }
-            SmallButton {
-                objectName: "imageAdd:save"
-                text: modal.pending > 1 ? "Guardar todas (" + modal.pending + ")" : "Guardar"
+            Layout.alignment: Qt.AlignRight
+            GhostButton { text: "Cancelar"; onClicked: modal.close() }
+            PrimaryButton {
+                objectName: "imageAdd:saveAll"
+                text: modal.pending > 1 ? "Guardar todos (" + modal.pending + ")" : "Guardar todos"
                 enabled: modal.pending > 0
                 onClicked: modal.saveAll()
             }

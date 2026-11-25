@@ -11,20 +11,88 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
-## [0.14.0] — 2026-11-18
+## [0.19.0] — 2026-11-25
 
 ### Añadido
 
-- **Las recetas en un clic en `genclip-studio`:** en la pestaña Efectos del material, las cinco recetas de video-yt
-  (etalonaje de cine, texto con reflejo, texto que atraviesas, franjas al ritmo y sujeto que se adelanta), cada una con
-  lo que necesita seleccionado. Se aplican en un paso de deshacer y queda seleccionado lo que añaden.
-- **El catálogo de recetas y `recipe_ready` en `gc_core`** (`recipes.hpp`), con paridad contra `recipes.py` y
-  `recipeReady.js` de video-yt.
+- **Barras de cine en la pestaña Efectos de `genclip-studio`** (el `barsRow` de EdFxLibrary.jsx y `addCinemaBars`):
+  un clic por proporción (2,39:1, 2:1, 1,85:1 o 16:9) pone una figura letterbox de 0 al final de la timeline, encima
+  de todo, con el grosor que deja lo visible en esa proporción según el formato del proyecto; queda elegida para
+  ajustar el grosor y la entrada en el inspector. Si el formato ya es más ancho, lo avisa.
 
 ### Cambiado
 
 - La pestaña Efectos del material es una sola lista que se desplaza, en el orden de video-yt: los efectos animados,
-  las recetas y la capa de ajuste.
+  las recetas (ya sin plegar), la capa de ajuste y las barras de cine.
+
+### Corregido
+
+- **Una receta que deja «Eliminar fondo» por calcular lo calcula** (`startBgAutoFor` en `applyRecipeUI`): con «Sujeto
+  que se adelanta», el recorte del sujeto se pide al momento por el puente, como en video-yt; antes la copia se
+  quedaba sin recortar. La selección pasa a lo primero que añade la receta en el orden de la timeline.
+- **`genclip-studio` vuelve a compilar con `gc_media` (MSVC):** desde la 0.17.0, la tarjeta de un stick trataba la
+  duración de `probe_duration` como opcional (`value_or`), y es un `double`. Las versiones 0.14.0–0.18.0 solo se
+  habían compilado en Linux sin FFmpeg, donde esa rama no entra.
+- **`main` reconciliado con GitHub:** entre el 18 y el 20 de noviembre, las recetas, «Editar información», «Nueva
+  imagen» y los sticks se hicieron dos veces, en local y en una sesión en la nube. Se quedan las versiones de 0.14.0 a
+  0.18.0, más fieles a video-yt y con tests; de las locales vienen las barras de cine, el recorte tras una receta y el
+  orden de la pestaña Efectos. Las locales siguen en el historial de git.
+
+## [0.18.0] — 2026-11-20
+
+### Añadido
+
+- **«Agregar Stick» en la timeline de `genclip-studio`** (EdStickMenu.jsx): clic derecho en un hueco → personaje →
+  vídeo o imagen → expresión; el clip entra en ese instante y esa pista (o en la de vídeo), sin pisar a otro y con el
+  croma del personaje ya activado.
+
+## [0.17.0] — 2026-11-20
+
+### Añadido
+
+- **Personajes stick en `genclip-studio`** (EdLibraryStick.jsx y el «Nuevo stick» de EdLibrary.jsx): en
+  Biblioteca › Colecciones, un stick se abre agrupado por expresión (feliz, triste…), con «Subir» por expresión,
+  tarjetas que se arrastran a la timeline o se añaden con «+», y un selector para cambiarlas de expresión. «Nuevo
+  stick» en «Gestionar carpetas» (nombre, emoji y color del croma).
+
+### Corregido
+
+- **Un stick soltado nace con su croma** (`place_asset_clip`, la rama `chromaBg` de `placeAsset` que faltaba en
+  `gc_core`), también desde la búsqueda de colecciones.
+
+## [0.16.0] — 2026-11-20
+
+### Añadido
+
+- **«Nueva imagen» en `genclip-studio`** (ImageAddModal.jsx): el + de la pestaña Imagen del material abre una lista
+  de imágenes elegidas, cada una con su vista y su descripción, que se suben al material del proyecto de una vez
+  (y se pueden quitar de la lista antes de guardar).
+
+## [0.15.0] — 2026-11-20
+
+### Añadido
+
+- **Recetas en un clic en `genclip-studio`** (EdRecipes.jsx): en la pestaña Efectos del material, las cinco
+  recetas de video-yt (etalonaje de cine, texto con reflejo, texto que atraviesas, franjas al ritmo y sujeto que se
+  adelanta), cada una activa solo si lo seleccionado basta (`recipeReady`), con el motivo si no. Se aplican sobre la
+  selección y se deshacen de una vez.
+- **El catálogo de recetas y `recipe_ready` en `gc_core`** (`recipes.hpp`), con paridad contra `recipes.py` y
+  `recipeReady.js`.
+- `tools/dev/mutantes.py` funciona también fuera de Windows (build `ci`).
+
+## [0.14.0] — 2026-11-20
+
+### Añadido
+
+- **«Editar información» del material en `genclip-studio`** (MaterialInfoModal.jsx): clic derecho en un vídeo, una
+  imagen o un audio, del proyecto o guardado, para cambiar su título y su descripción (lo que lee la IA para elegir el
+  material), con la descripción de la IA a un clic. Ctrl+Enter guarda.
+
+### Corregido
+
+- **Compila y pasa en Linux con GCC 13:** faltaba `#include <format>`, cuatro tests recorrían un subobjeto de un
+  temporal (`store.load()["projects"]`, que MSVC alarga y GCC 13 no), y los tests que necesitan `gc_media` (importar
+  JPG y vídeos) se saltan sin él. 271 tests en verde en Linux (sin FFmpeg ni Skia).
 
 ## [0.13.0] — 2026-11-18
 

@@ -14,6 +14,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "gc/core/io.hpp"
+#include "gc/core/library.hpp"
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/serialize.hpp"
@@ -762,6 +763,9 @@ TEST_CASE("editor: material de la biblioteca y de la carpeta de SFX", "[studio]"
 }
 
 TEST_CASE("editor: importar vídeos, imágenes y audios del disco al material del proyecto", "[studio]") {
+#ifndef GC_STUDIO_PREVIEW
+    SKIP("Sin gc_media (FFmpeg) no se importan JPG ni vídeos");
+#endif
     Fixture f;
     const auto media_dir = core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files";
     const auto in = f.dir / "fuera";
@@ -1269,4 +1273,132 @@ TEST_CASE("editor: buscar en la biblioteca de efectos", "[studio]") {
     CHECK(ids("glitch", "retro").isEmpty());
     CHECK(ids("", "retro").contains("vhs"));
     CHECK(ids("nada que ver", "").isEmpty());
+}
+
+TEST_CASE("editor: título y descripción de un material del proyecto y de la biblioteca", "[studio]") {
+    Fixture f;
+    auto data = core::read_json_file(f.dir / "data" / "projects.json");
+    REQUIRE(data);
+    Json& p1 = (*data)["projects"][0];
+    p1["clips"] = Json::array({{{"index", 3}, {"filename", "c.mp4"}, {"url", "/c"}, {"start", 10.0}, {"end", 72.5},
+                                {"label", "Viejo"}, {"description_ai", "Un tren en la nieve"}}});
+    p1["images"] = Json::array({{{"id", "i1"}, {"filename", "f.png"}, {"url", "/i"}, {"width", 640}, {"height", 480}}});
+    REQUIRE(core::write_json_file(f.dir / "data" / "projects.json", *data));
+    REQUIRE(core::write_json_file(f.dir / "data" / "library" / "library.json",
+                                  {{"version", 1},
+                                   {"items", Json::array({{{"id", "L1"}, {"resource_type", "image"},
+                                                           {"filename", "l.png"}, {"label", "Guardada"}}})}}));
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+
+    QVariantMap info = m.materialInfo("clips:3");
+    CHECK(info["kind"] == "clips");
+    CHECK_FALSE(info["library"].toBool());
+    CHECK(info["label"] == "Viejo");
+    CHECK(info["descriptionAi"] == "Un tren en la nieve");
+    CHECK(info["duration"].toDouble() == 62.5); // end − start
+    CHECK(m.materialInfo("images:i1")["width"].toInt() == 640);
+    CHECK(m.materialInfo("shape:star").isEmpty());
+
+    CHECK(m.saveMaterialInfo("clips:3", "  Tren  ", " Plano general ").isEmpty());
+    const auto project = f.store.get_project("p1");
+    REQUIRE(project);
+    REQUIRE(*project);
+    CHECK((**project).clips[0].label == "Tren");
+    CHECK((**project).clips[0].description == "Plano general");
+    CHECK(m.materialInfo("clips:3")["label"] == "Tren"); // el material se recarga
+
+    info = m.materialInfo("lib:images:L1");
+    CHECK(info["library"].toBool());
+    CHECK(info["label"] == "Guardada");
+    CHECK(m.saveMaterialInfo("lib:images:L1", "Logo", "Fondo transparente").isEmpty());
+    const Json lib = core::LibraryFile(f.dir / "data").load();
+    CHECK(lib["items"][0]["label"] == "Logo");
+    CHECK(lib["items"][0]["description"] == "Fondo transparente");
+    const QVariantList materials = m.materials();
+    const auto row = std::ranges::find_if(materials, [](const QVariant& v) { return v.toMap()["key"] == "lib:images:L1"; });
+    REQUIRE(row != materials.end());
+    CHECK(row->toMap()["name"] == "Logo");
+}
+
+TEST_CASE("editor: recetas en un clic según lo seleccionado", "[studio]") {
+    Fixture f;
+    studio::EditorModel m(f.store);
+    REQUIRE(m.openProject("p1"));
+    const auto recipe = [&](const char* id) {
+        for (const QVariant& r : m.recipes()) {
+            if (r.toMap()["id"] == id) {
+                return r.toMap();
+            }
+        }
+        return QVariantMap();
+    };
+    CHECK(m.recipes().size() == 5);
+    CHECK(recipe("cinema_grade")["ready"].toBool()); // no pide nada
+    CHECK_FALSE(recipe("text_reflection")["ready"].toBool());
+    CHECK(recipe("text_reflection")["why"] == "selecciona un texto");
+    m.addText();
+    const QString text = m.selection().front();
+    REQUIRE(recipe("text_reflection")["ready"].toBool());
+    const auto before = m.clips().size();
+    m.applyRecipe("text_reflection");
+    CHECK(m.clips().size() == before + 1); // la copia volteada
+    CHECK(m.notice()["type"] == "success");
+    CHECK(m.notice()["message"].toString().contains("Texto con reflejo"));
+    m.undo(); // de una vez
+    CHECK(m.clips().size() == before);
+    m.select("a");
+    m.applyRecipe("text_reflection"); // sin texto elegido: el error del núcleo
+    CHECK(m.notice()["type"] == "error");
+}
+
+TEST_CASE("editor: un personaje stick en las colecciones, por expresión y con su croma", "[studio]") {
+    Fixture f;
+    core::SettingsFile settings(f.dir / "data" / "settings.json");
+    studio::EditorModel m(f.store, &settings);
+    REQUIRE(m.openProject("p1"));
+    const auto root = f.dir / "material";
+    std::filesystem::create_directories(root);
+    REQUIRE(m.setCollectionsRoot(QString::fromStdString(root.string())));
+    const QString id = m.createStick("Robot", "🤖", "#FF00AA");
+    REQUIRE(id == "robot");
+    const QVariantList cols = m.collections();
+    REQUIRE(cols.size() == 1);
+    CHECK(cols[0].toMap()["stick"].toBool());
+    CHECK(cols[0].toMap()["emoji"] == "🤖");
+    CHECK(m.stick()["id"] == "robot"); // abierto al crearlo
+    CHECK(m.stick()["chroma"] == "#FF00AA");
+
+    const auto png = f.dir / "saluda.png";
+    REQUIRE(QImage(40, 30, QImage::Format_RGB32).save(QString::fromStdString(png.string())));
+    const int saved = m.addStickFiles("happy", {QUrl::fromLocalFile(QString::fromStdString(png.string()))});
+    REQUIRE(saved == 1);
+    const auto group_of = [&](const QString& rel) {
+        for (const QVariant& g : m.stick()["groups"].toList()) {
+            for (const QVariant& it : g.toMap()["items"].toList()) {
+                if (it.toMap()["rel"] == rel) {
+                    return std::pair{g.toMap()["id"].toString(), it.toMap()};
+                }
+            }
+        }
+        return std::pair{QString(), QVariantMap()};
+    };
+    auto [group, item] = group_of("feliz/saluda.png");
+    REQUIRE(group == "happy");
+    CHECK(item["kind"] == "image");
+    CHECK(item["thumb"].toString().endsWith("saluda.png"));
+
+    m.setStickExpression("feliz/saluda.png", "sad"); // recategoriza sin mover el archivo
+    CHECK(group_of("feliz/saluda.png").first == "sad");
+
+    m.select("a");
+    m.addMaterial(item["key"].toString());
+    const QVariantMap added = m.selectedClip();
+    CHECK(added["kind"] == "image");
+    const core::Timeline tl = f.saved();
+    const auto placed = std::ranges::find_if(tl.clips, [](const auto& c) { return c->kind == "image"; });
+    REQUIRE(placed != tl.clips.end());
+    REQUIRE((*placed)->bg_removal);
+    CHECK((*placed)->bg_removal->value("mode", "") == "chroma");
+    CHECK((*placed)->bg_removal->at("chroma").value("color", "") == "#FF00AA");
 }

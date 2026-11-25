@@ -185,7 +185,8 @@ Item {
                 model: editor.model
                 dragLayer: overlay
                 sfxModal: sfxModal
-                imageAddModal: imageAddModal
+                infoModal: infoModal
+                imageModal: imageModal
             }
 
             // .ed-canvas-col: las pestañas, el escenario con la vista previa y la fila del reproductor.
@@ -804,6 +805,7 @@ Item {
                     border.color: "transparent"
                     model: editor.model
                     onContextClip: (id) => clipMenu.openFor(id)
+            onContextLane: (time, trackId) => laneMenu.openAt(time, trackId)
                 }
             }
           }
@@ -978,9 +980,27 @@ Item {
     CropModal { id: cropModal; model: editor.model }
     SfxModal { id: sfxModal; model: editor.model }
     JsonModal { id: jsonModal; model: editor.model }
+    MaterialInfoModal { id: infoModal; model: editor.model }
+    ImageAddModal { id: imageModal; model: editor.model }
+    StickMenu { id: stickMenu; model: editor.model }
+    // El menú de un hueco de la timeline (laneMenu de VideoEditor.jsx); lo de IA y las marcas aún no están.
+    Menu {
+        id: laneMenu
+        objectName: "laneMenu"
+        property real time
+        property string trackId
+        function openAt(t, track) {
+            time = t
+            trackId = track
+            popup()
+        }
+        MenuItem {
+            objectName: "lane:addStick"
+            text: "Agregar Stick"
+            onTriggered: stickMenu.openAt(laneMenu.time, laneMenu.trackId)
+        }
+    }
     SegmentModal { model: editor.model; fmtSecs: editor.fmtSecs }
-    MaterialInfoModal { model: editor.model }
-    ImageAddModal { id: imageAddModal; model: editor.model }
     ClipMenu { id: clipMenu; model: editor.model; onPasteAttributes: pasteAttrs.openFor(editor.model.pasteableGroups()) }
 
     // «Subir calidad en la timeline» (el ConfirmModal de EdMaterial.jsx).

@@ -24,13 +24,13 @@
 #include "gc/core/material_drop.hpp"
 #include "gc/core/script_prompt.hpp"
 #include "gc/core/serialize.hpp"
+#include "gc/core/recipes.hpp"
 #include "gc/core/sfx_name.hpp"
 #include "gc/core/shapes.hpp"
 #include "gc/core/text_clip_ui.hpp"
 #include "gc/core/timeline_drop.hpp"
 #include "gc/core/timeline_ui.hpp"
 #include "gc/core/project_format.hpp"
-#include "gc/core/recipes.hpp"
 #include "gc/core/timeline_view.hpp"
 #include "gc/core/vfx_stack.hpp"
 #include "gc/core/yt_ui.hpp"
@@ -1040,6 +1040,12 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
     if (fn == "sfxSavePayload") {
         return sfx_save_payload(call.at(1), call.at(2));
     }
+    if (fn == "recipeCatalog") {
+        return recipe_catalog();
+    }
+    if (fn == "recipeReady") {
+        return recipe_ready(call.at(1), strings(call.at(2)));
+    }
     if (fn == "normalizeFavorites") {
         return normalize_favorites(call.at(1));
     }
@@ -1245,14 +1251,6 @@ Json run(const Timeline& tl, const std::vector<TrackRow>& geo, const Json& call)
         };
         return segment_description(desc_mode_from(text("descMode")), text("description"), text("sourceDescription"));
     }
-    if (fn == "recipeReady") {
-        const Json& recipe = call.at(1);
-        const auto it = recipe.find("needs");
-        const std::string needs = it != recipe.end() && it->is_string() ? it->get<std::string>() : "";
-        const std::vector<std::string> kinds = call.at(2).is_null() ? std::vector<std::string>{} : strings(call.at(2));
-        const RecipeReadiness r = recipe_ready(needs, kinds);
-        return r.ok ? Json{{"ok", true}} : Json{{"ok", false}, {"why", std::string(r.why)}};
-    }
     if (fn == "emptiedTracks") {
         return emptied_tracks(tl.tracks, tl.clips, strings(call.at(1)));
     }
@@ -1380,19 +1378,4 @@ TEST_CASE("paridad de la timeline del editor: editorModel.js", "[parity][editor]
         }
     }
     CHECK(n > 10000);
-}
-
-TEST_CASE("paridad del catálogo de recetas en un clic: RECIPES de recipes.py", "[parity][editor]") {
-    const auto path = kFixtures / "editor" / "timeline_ui.json";
-    REQUIRE(std::filesystem::exists(path)); // faltan: export_fixtures.py --solo editor
-    auto file = read_json_file(path);
-    REQUIRE(file);
-    Json got = Json::array();
-    for (const RecipeInfo& r : recipe_catalog()) {
-        got.push_back({{"id", std::string(r.id)}, {"label", std::string(r.label)}, {"trick", r.trick},
-                       {"needs", r.needs.empty() ? Json() : Json(std::string(r.needs))}, {"desc", std::string(r.desc)}});
-        CHECK(find_recipe(r.id) == &r);
-    }
-    CHECK(nlohmann::json::parse(got.dump()) == nlohmann::json::parse(file->at("recipes").dump()));
-    CHECK(find_recipe("receta_nueva") == nullptr);
 }

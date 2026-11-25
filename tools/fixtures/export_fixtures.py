@@ -3171,8 +3171,7 @@ def synthetic_editor_ui_fixtures(ctx: Ctx) -> dict:
     results = _node(ctx, "editor_ui_js.mjs", [{"tracks": c["timeline"]["tracks"], "clips": c["timeline"]["clips"],
                                              "markers": c["timeline"]["markers"], "geo": c["geo"], "calls": c["calls"]}
                                             for c in cases])
-    from app.recipes import RECIPES  # el catálogo de las recetas en un clic (GET /api/recipes)
-    return {"cases": [{**c, "results": r} for c, r in zip(cases, results)], "recipes": [dict(r) for r in RECIPES]}
+    return {"cases": [{**c, "results": r} for c, r in zip(cases, results)]}
 
 
 def real_layers_fixtures(ctx: Ctx, data: dict) -> dict:

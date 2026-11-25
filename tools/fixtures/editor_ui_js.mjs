@@ -11,6 +11,7 @@ import { pathToFileURL } from 'node:url'
 const root = process.argv[2].replace(/[\\/]+$/, '')
 const load = (rel) => import(pathToFileURL(`${root}/${rel}`).href)
 const m = await load('features/editor/editorModel.js')
+const recipes = await load('features/editor/recipeReady.js')
 const scale = await load('features/editor/timelineScale.js')
 const rows = await load('features/editor/trackRows.js')
 const stack = await load('features/editor/trackStack.js')
@@ -40,7 +41,6 @@ const clipFxLib = await load('lib/clipFx.js')
 const clipAnim = await load('lib/clipAnim.js')
 const clipExtract = await load('features/editor/clipExtract.js')
 const motionTarget = await load('features/editor/motionTarget.js')
-const recipeReadyLib = await load('features/editor/recipeReady.js')
 // confirmCrop de VideoEditor.jsx (con changeReframe, upsertKeyframe, changeTransform y srcTOf) sobre un clip.
 const confirmCrop = (clip, crop, rotation, t, fps) => {
   let made = clip
@@ -292,7 +292,7 @@ const placeAsset = (payload, trackId, start, fitDur, trackStyle) => {
     'setSelClipIds', 'chromaBg', 'makeShapeClip', 'SHAPE_DEFAULT_DUR', 'themeById', 'TEXT_DEFAULT_DUR', 'DEFAULT_TEXT',
     'selectNewText', 'makeTextClip', 'newTextStyle',
     `return ${extractFunction(`${root}/features/editor/VideoEditor.jsx`, 'placeAsset')}`)(
-    m.makeClip, m.isGeneratedDurationClip, m.clipDur, m.clipSpeed, setClips, () => {}, () => {}, () => ({}),
+    m.makeClip, m.isGeneratedDurationClip, m.clipDur, m.clipSpeed, setClips, () => {}, () => {}, bgLib.chromaBg,
     m.makeShapeClip, shapes.SHAPE_DEFAULT_DUR, themes.themeById, m.TEXT_DEFAULT_DUR, m.DEFAULT_TEXT,
     (clip) => { made = clip }, m.makeTextClip, styleFor)
   fn(payload, trackId, start, fitDur)
@@ -591,6 +591,8 @@ const out = await Promise.all(cases.map(async ({ tracks, clips, markers, geo, ca
     toggleStyleKf: (id, trackStyle, keys, t, fps) => noIds(toggleStyleKf(byId(id), trackStyle, keys, t, fps)).keyframes ?? null,
     pseudoWaveform: (seed, bars) => panning.pseudoWaveform(seed, bars ?? undefined),
     normalizeFavorites: (raw) => favorites.normalizeFavorites(raw),
+    recipeCatalog: (list) => list,
+    recipeReady: (recipe, kinds) => recipes.recipeReady(recipe, kinds.map((kind) => ({ kind }))),
     sfxNameFromFile: (name) => sfxName.sfxNameFromFile(name),
     realSfxCategories: (cats) => sfxName.realSfxCategories(cats),
     upsertSfxCategory: (cats, cat) => sfxName.upsertSfxCategory(cats, cat),
@@ -683,8 +685,6 @@ const out = await Promise.all(cases.map(async ({ tracks, clips, markers, geo, ca
     },
     segmentLabel: (title, start, end) => clipExtract.segmentLabel(title, start, end),
     segmentDescription: (ask) => clipExtract.segmentDescription(ask),
-    // EdRecipes: la receta del backend y los clips seleccionados (de ellos solo mira `kind`).
-    recipeReady: (recipe, kinds) => recipeReadyLib.recipeReady(recipe, kinds && kinds.map((kind) => ({ kind }))),
     groupMoveFromOrig: (origs, delta) => {
       const moved = m.groupMoveFromOrig(origs.map((o) => ({ ...o })), origs, delta)
       return moved.map((c) => c.start)

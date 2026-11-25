@@ -30,6 +30,8 @@ Item {
         HoverHandler { id: hover; cursorShape: card.dragging ? Qt.ClosedHandCursor : Qt.OpenHandCursor }
         TapHandler {
             acceptedButtons: Qt.RightButton
+            enabled: ["project", "library"].indexOf(slot.modelData.source) >= 0
+                     && ["video", "image", "audio"].indexOf(slot.modelData.kind) >= 0
             onTapped: matMenu.popup()
         }
         Menu {
@@ -38,7 +40,7 @@ Item {
             MenuItem {
                 objectName: "material:info:" + slot.modelData.key
                 text: "Editar información"
-                onTriggered: slot.host.model.openMaterialInfo(slot.modelData.key)
+                onTriggered: slot.host.infoModal.openFor(slot.modelData.key)
             }
             MenuItem {
                 objectName: "material:faceTrack:" + slot.modelData.key
@@ -50,12 +52,13 @@ Item {
             }
             MenuItem {
                 objectName: "material:faceRetrack:" + slot.modelData.key
-                visible: !!slot.modelData.faceTrack
+                visible: !!slot.modelData.faceTrack && slot.modelData.source === "project" && slot.isVideo
                 height: visible ? implicitHeight : 0
                 enabled: !slot.host.model.faceTrackBusy
                 text: "Volver a analizar caras"
                 onTriggered: slot.host.model.faceTrackMaterial(slot.modelData.key, true)
             }
+            // canUpgradeFrom: un vídeo del proyecto (no un segmento) que viene de YouTube.
             MenuItem {
                 objectName: "material:upgrade:" + slot.modelData.key
                 visible: !!slot.modelData.canUpgrade
@@ -172,7 +175,7 @@ Item {
                 }
                 // .ed-card-badges: seguimiento de caras guardado.
                 Rectangle {
-                    visible: !!slot.modelData.faceTrack
+                    visible: !!slot.modelData.faceTrack && slot.modelData.source === "project" && slot.isVideo
                     anchors.left: parent.left
                     anchors.bottom: parent.bottom
                     anchors.margins: 4

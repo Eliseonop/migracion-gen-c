@@ -85,7 +85,6 @@ add_library(gc_core
     src/vfx_stack.cpp
     src/project_format.cpp
     src/clip_extract.cpp
-    src/recipes.cpp
     src/timeline_view.cpp
     src/yt_history.cpp
     src/yt_ui.cpp

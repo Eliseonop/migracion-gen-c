@@ -145,9 +145,7 @@ void BackendJobs::stop() {
     timer_.stop();
     job_id_.clear();
     update_ = nullptr;
-    if (pending_) {
-        QNetworkReply* reply = pending_;
-        pending_ = nullptr;
+    if (QNetworkReply* reply = std::exchange(pending_, nullptr).data(); reply != nullptr) {
         reply->abort();
     }
 }

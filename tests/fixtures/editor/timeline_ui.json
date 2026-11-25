@@ -109241,6 +109241,126 @@
      null
     ],
     [
+     "placeAsset",
+     {
+      "asset_kind": "clips",
+      "asset_id": "robot/feliz/a.png",
+      "filename": "robot/feliz/a.png",
+      "name": "Feliz",
+      "duration": 2.5,
+      "scope": "collection",
+      "chroma_color": "#00FF00"
+     },
+     "V1",
+     0.5,
+     null
+    ],
+    [
+     "placeAsset",
+     {
+      "asset_kind": "images",
+      "asset_id": "robot/feliz/a.png",
+      "filename": "robot/feliz/a.png",
+      "name": "Feliz",
+      "duration": 3,
+      "scope": "collection",
+      "chroma_color": "#00FF00"
+     },
+     "V1",
+     0.5,
+     null
+    ],
+    [
+     "placeAsset",
+     {
+      "asset_kind": "clips",
+      "asset_id": "robot/feliz/a.png",
+      "filename": "robot/feliz/a.png",
+      "name": "Feliz",
+      "duration": 2.5,
+      "scope": "collection",
+      "chroma_color": "#ff00aa"
+     },
+     "V1",
+     0.5,
+     null
+    ],
+    [
+     "placeAsset",
+     {
+      "asset_kind": "images",
+      "asset_id": "robot/feliz/a.png",
+      "filename": "robot/feliz/a.png",
+      "name": "Feliz",
+      "duration": 3,
+      "scope": "collection",
+      "chroma_color": "#ff00aa"
+     },
+     "V1",
+     0.5,
+     null
+    ],
+    [
+     "placeAsset",
+     {
+      "asset_kind": "clips",
+      "asset_id": "robot/feliz/a.png",
+      "filename": "robot/feliz/a.png",
+      "name": "Feliz",
+      "duration": 2.5,
+      "scope": "collection",
+      "chroma_color": "verde"
+     },
+     "V1",
+     0.5,
+     null
+    ],
+    [
+     "placeAsset",
+     {
+      "asset_kind": "images",
+      "asset_id": "robot/feliz/a.png",
+      "filename": "robot/feliz/a.png",
+      "name": "Feliz",
+      "duration": 3,
+      "scope": "collection",
+      "chroma_color": "verde"
+     },
+     "V1",
+     0.5,
+     null
+    ],
+    [
+     "placeAsset",
+     {
+      "asset_kind": "clips",
+      "asset_id": "robot/feliz/a.png",
+      "filename": "robot/feliz/a.png",
+      "name": "Feliz",
+      "duration": 2.5,
+      "scope": "collection",
+      "chroma_color": ""
+     },
+     "V1",
+     0.5,
+     null
+    ],
+    [
+     "placeAsset",
+     {
+      "asset_kind": "images",
+      "asset_id": "robot/feliz/a.png",
+      "filename": "robot/feliz/a.png",
+      "name": "Feliz",
+      "duration": 3,
+      "scope": "collection",
+      "chroma_color": ""
+     },
+     "V1",
+     0.5,
+     null
+    ],
+    [
      "placeText",
      {
       "asset_kind": "text",
@@ -114754,6 +114874,554 @@
       "sides": 6,
       "arrowHead": "filled"
      },
+     "description": null,
+     "dup_of": null
+    },
+    {
+     "track_id": "V1",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "robot/feliz/a.png",
+     "asset_scope": "collection",
+     "filename": "robot/feliz/a.png",
+     "name": "Feliz",
+     "start": 0.5,
+     "in_point": 0,
+     "out_point": 2.5,
+     "source_duration": 2.5,
+     "volume": 1,
+     "muted": false,
+     "speed": 1,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "media_version": null,
+     "reframe": {
+      "zoom": 1,
+      "pan_mode": "smooth",
+      "dual_crop": false,
+      "split_orientation": "vertical",
+      "split_layout": "auto",
+      "master": false,
+      "face_track_mode": null,
+      "keyframes": [],
+      "keyframes2": []
+     },
+     "layout": "fill",
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": {},
+     "audio_fx": {},
+     "description": null,
+     "dup_of": null,
+     "bg_removal": {
+      "enabled": true,
+      "mode": "chroma",
+      "auto": {
+       "enabled": false,
+       "provider": "u2net",
+       "model_version": "",
+       "base_key": "",
+       "status": "idle",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 512,
+       "stabilize": 0,
+       "threshold": 0.5,
+       "softness": 0.25,
+       "feather": 0,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#00FF00",
+       "similarity": 0.2,
+       "blend": 0.1,
+       "spill": 0,
+       "edge": 0,
+       "shrink": 0
+      },
+      "outline": {
+       "enabled": false,
+       "color": "#FFFFFF",
+       "width": 0.3,
+       "soft": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "track_id": "V1",
+     "kind": "image",
+     "asset_kind": "images",
+     "asset_id": "robot/feliz/a.png",
+     "asset_scope": "collection",
+     "filename": "robot/feliz/a.png",
+     "name": "Feliz",
+     "start": 0.5,
+     "in_point": 0,
+     "out_point": 3,
+     "source_duration": 3,
+     "volume": 1,
+     "muted": false,
+     "speed": 1,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "media_version": null,
+     "reframe": {
+      "zoom": 1,
+      "pan_mode": "smooth",
+      "dual_crop": false,
+      "split_orientation": "vertical",
+      "split_layout": "auto",
+      "master": false,
+      "face_track_mode": null,
+      "keyframes": [],
+      "keyframes2": []
+     },
+     "layout": "fill",
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": {},
+     "audio_fx": {},
+     "description": null,
+     "dup_of": null,
+     "bg_removal": {
+      "enabled": true,
+      "mode": "chroma",
+      "auto": {
+       "enabled": false,
+       "provider": "u2net",
+       "model_version": "",
+       "base_key": "",
+       "status": "idle",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 512,
+       "stabilize": 0,
+       "threshold": 0.5,
+       "softness": 0.25,
+       "feather": 0,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#00FF00",
+       "similarity": 0.2,
+       "blend": 0.1,
+       "spill": 0,
+       "edge": 0,
+       "shrink": 0
+      },
+      "outline": {
+       "enabled": false,
+       "color": "#FFFFFF",
+       "width": 0.3,
+       "soft": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "track_id": "V1",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "robot/feliz/a.png",
+     "asset_scope": "collection",
+     "filename": "robot/feliz/a.png",
+     "name": "Feliz",
+     "start": 0.5,
+     "in_point": 0,
+     "out_point": 2.5,
+     "source_duration": 2.5,
+     "volume": 1,
+     "muted": false,
+     "speed": 1,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "media_version": null,
+     "reframe": {
+      "zoom": 1,
+      "pan_mode": "smooth",
+      "dual_crop": false,
+      "split_orientation": "vertical",
+      "split_layout": "auto",
+      "master": false,
+      "face_track_mode": null,
+      "keyframes": [],
+      "keyframes2": []
+     },
+     "layout": "fill",
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": {},
+     "audio_fx": {},
+     "description": null,
+     "dup_of": null,
+     "bg_removal": {
+      "enabled": true,
+      "mode": "chroma",
+      "auto": {
+       "enabled": false,
+       "provider": "u2net",
+       "model_version": "",
+       "base_key": "",
+       "status": "idle",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 512,
+       "stabilize": 0,
+       "threshold": 0.5,
+       "softness": 0.25,
+       "feather": 0,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#FF00AA",
+       "similarity": 0.2,
+       "blend": 0.1,
+       "spill": 0,
+       "edge": 0,
+       "shrink": 0
+      },
+      "outline": {
+       "enabled": false,
+       "color": "#FFFFFF",
+       "width": 0.3,
+       "soft": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "track_id": "V1",
+     "kind": "image",
+     "asset_kind": "images",
+     "asset_id": "robot/feliz/a.png",
+     "asset_scope": "collection",
+     "filename": "robot/feliz/a.png",
+     "name": "Feliz",
+     "start": 0.5,
+     "in_point": 0,
+     "out_point": 3,
+     "source_duration": 3,
+     "volume": 1,
+     "muted": false,
+     "speed": 1,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "media_version": null,
+     "reframe": {
+      "zoom": 1,
+      "pan_mode": "smooth",
+      "dual_crop": false,
+      "split_orientation": "vertical",
+      "split_layout": "auto",
+      "master": false,
+      "face_track_mode": null,
+      "keyframes": [],
+      "keyframes2": []
+     },
+     "layout": "fill",
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": {},
+     "audio_fx": {},
+     "description": null,
+     "dup_of": null,
+     "bg_removal": {
+      "enabled": true,
+      "mode": "chroma",
+      "auto": {
+       "enabled": false,
+       "provider": "u2net",
+       "model_version": "",
+       "base_key": "",
+       "status": "idle",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 512,
+       "stabilize": 0,
+       "threshold": 0.5,
+       "softness": 0.25,
+       "feather": 0,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#FF00AA",
+       "similarity": 0.2,
+       "blend": 0.1,
+       "spill": 0,
+       "edge": 0,
+       "shrink": 0
+      },
+      "outline": {
+       "enabled": false,
+       "color": "#FFFFFF",
+       "width": 0.3,
+       "soft": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "track_id": "V1",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "robot/feliz/a.png",
+     "asset_scope": "collection",
+     "filename": "robot/feliz/a.png",
+     "name": "Feliz",
+     "start": 0.5,
+     "in_point": 0,
+     "out_point": 2.5,
+     "source_duration": 2.5,
+     "volume": 1,
+     "muted": false,
+     "speed": 1,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "media_version": null,
+     "reframe": {
+      "zoom": 1,
+      "pan_mode": "smooth",
+      "dual_crop": false,
+      "split_orientation": "vertical",
+      "split_layout": "auto",
+      "master": false,
+      "face_track_mode": null,
+      "keyframes": [],
+      "keyframes2": []
+     },
+     "layout": "fill",
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": {},
+     "audio_fx": {},
+     "description": null,
+     "dup_of": null,
+     "bg_removal": {
+      "enabled": true,
+      "mode": "chroma",
+      "auto": {
+       "enabled": false,
+       "provider": "u2net",
+       "model_version": "",
+       "base_key": "",
+       "status": "idle",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 512,
+       "stabilize": 0,
+       "threshold": 0.5,
+       "softness": 0.25,
+       "feather": 0,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#00FF00",
+       "similarity": 0.2,
+       "blend": 0.1,
+       "spill": 0,
+       "edge": 0,
+       "shrink": 0
+      },
+      "outline": {
+       "enabled": false,
+       "color": "#FFFFFF",
+       "width": 0.3,
+       "soft": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "track_id": "V1",
+     "kind": "image",
+     "asset_kind": "images",
+     "asset_id": "robot/feliz/a.png",
+     "asset_scope": "collection",
+     "filename": "robot/feliz/a.png",
+     "name": "Feliz",
+     "start": 0.5,
+     "in_point": 0,
+     "out_point": 3,
+     "source_duration": 3,
+     "volume": 1,
+     "muted": false,
+     "speed": 1,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "media_version": null,
+     "reframe": {
+      "zoom": 1,
+      "pan_mode": "smooth",
+      "dual_crop": false,
+      "split_orientation": "vertical",
+      "split_layout": "auto",
+      "master": false,
+      "face_track_mode": null,
+      "keyframes": [],
+      "keyframes2": []
+     },
+     "layout": "fill",
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": {},
+     "audio_fx": {},
+     "description": null,
+     "dup_of": null,
+     "bg_removal": {
+      "enabled": true,
+      "mode": "chroma",
+      "auto": {
+       "enabled": false,
+       "provider": "u2net",
+       "model_version": "",
+       "base_key": "",
+       "status": "idle",
+       "error": null,
+       "mask_fps": 15,
+       "mask_height": 512,
+       "stabilize": 0,
+       "threshold": 0.5,
+       "softness": 0.25,
+       "feather": 0,
+       "expansion": 0,
+       "opacity": 1,
+       "invert": false,
+       "edits": []
+      },
+      "chroma": {
+       "enabled": true,
+       "color": "#00FF00",
+       "similarity": 0.2,
+       "blend": 0.1,
+       "spill": 0,
+       "edge": 0,
+       "shrink": 0
+      },
+      "outline": {
+       "enabled": false,
+       "color": "#FFFFFF",
+       "width": 0.3,
+       "soft": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "track_id": "V1",
+     "kind": "video",
+     "asset_kind": "clips",
+     "asset_id": "robot/feliz/a.png",
+     "asset_scope": "collection",
+     "filename": "robot/feliz/a.png",
+     "name": "Feliz",
+     "start": 0.5,
+     "in_point": 0,
+     "out_point": 2.5,
+     "source_duration": 2.5,
+     "volume": 1,
+     "muted": false,
+     "speed": 1,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "media_version": null,
+     "reframe": {
+      "zoom": 1,
+      "pan_mode": "smooth",
+      "dual_crop": false,
+      "split_orientation": "vertical",
+      "split_layout": "auto",
+      "master": false,
+      "face_track_mode": null,
+      "keyframes": [],
+      "keyframes2": []
+     },
+     "layout": "fill",
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": {},
+     "audio_fx": {},
+     "description": null,
+     "dup_of": null
+    },
+    {
+     "track_id": "V1",
+     "kind": "image",
+     "asset_kind": "images",
+     "asset_id": "robot/feliz/a.png",
+     "asset_scope": "collection",
+     "filename": "robot/feliz/a.png",
+     "name": "Feliz",
+     "start": 0.5,
+     "in_point": 0,
+     "out_point": 3,
+     "source_duration": 3,
+     "volume": 1,
+     "muted": false,
+     "speed": 1,
+     "keep_pitch": true,
+     "reverse": false,
+     "speed_curve": null,
+     "media_version": null,
+     "reframe": {
+      "zoom": 1,
+      "pan_mode": "smooth",
+      "dual_crop": false,
+      "split_orientation": "vertical",
+      "split_layout": "auto",
+      "master": false,
+      "face_track_mode": null,
+      "keyframes": [],
+      "keyframes2": []
+     },
+     "layout": "fill",
+     "frame": "full",
+     "appear": "none",
+     "exit": "none",
+     "look": "none",
+     "effects": {},
+     "audio_fx": {},
      "description": null,
      "dup_of": null
     },
@@ -1122788,7 +1123456,7 @@
    ]
   },
   {
-   "name": "recetas: recipeReady",
+   "name": "recetas",
    "timeline": {
     "version": 1,
     "schema_version": 5,
@@ -1122807,6 +1123475,39 @@
       "style": null,
       "linked_track_id": null,
       "magnetic": false
+     },
+     {
+      "id": "V2",
+      "kind": "video",
+      "name": "V2",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "T1",
+      "kind": "text",
+      "name": "T1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
+     },
+     {
+      "id": "A1",
+      "kind": "audio",
+      "name": "A1",
+      "hidden": false,
+      "muted": false,
+      "locked": false,
+      "style": null,
+      "linked_track_id": null,
+      "magnetic": false
      }
     ],
     "clips": [],
@@ -1122814,166 +1123515,64 @@
    },
    "calls": [
     [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     null
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     []
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
+     "recipeCatalog",
      [
-      "text"
+      {
+       "id": "cinema_grade",
+       "label": "Etalonaje de cine",
+       "trick": 10,
+       "needs": null,
+       "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+      },
+      {
+       "id": "text_reflection",
+       "label": "Texto con reflejo",
+       "trick": 7,
+       "needs": "text",
+       "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+      },
+      {
+       "id": "pass_through_text",
+       "label": "Texto que atraviesas",
+       "trick": 6,
+       "needs": "text",
+       "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+      },
+      {
+       "id": "film_strips",
+       "label": "Franjas al ritmo",
+       "trick": 3,
+       "needs": "media2",
+       "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+      },
+      {
+       "id": "subject_pop",
+       "label": "Sujeto que se adelanta",
+       "trick": 1,
+       "needs": "video",
+       "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+      }
      ]
     ],
     [
      "recipeReady",
      {
-      "needs": null
-     },
-     [
-      "video"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "shape"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "adjustment"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "video",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "image",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "video",
-      "text"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "text",
-      "text",
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "audio",
-      "shape",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "video",
-      "video",
-      "video"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": null
-     },
-     [
-      "text",
-      "image",
-      "shape",
-      "video"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "text"
-     },
-     null
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "text"
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
      },
      []
     ],
     [
      "recipeReady",
      {
-      "needs": "text"
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
      },
      [
       "text"
@@ -1122982,7 +1123581,11 @@
     [
      "recipeReady",
      {
-      "needs": "text"
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
      },
      [
       "video"
@@ -1122991,7 +1123594,11 @@
     [
      "recipeReady",
      {
-      "needs": "text"
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
      },
      [
       "image"
@@ -1123000,101 +1123607,69 @@
     [
      "recipeReady",
      {
-      "needs": "text"
-     },
-     [
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "text"
-     },
-     [
-      "shape"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "text"
-     },
-     [
-      "adjustment"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "text"
-     },
-     [
-      "video",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "text"
-     },
-     [
-      "image",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "text"
-     },
-     [
-      "video",
-      "text"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "text"
-     },
-     [
-      "text",
-      "text",
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "text"
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
      },
      [
       "audio",
-      "shape",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "video",
       "image"
      ]
     ],
     [
      "recipeReady",
      {
-      "needs": "text"
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
      },
      [
-      "video",
-      "video",
-      "video"
+      "image",
+      "image"
      ]
     ],
     [
      "recipeReady",
      {
-      "needs": "text"
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
      },
      [
-      "text",
-      "image",
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
       "shape",
       "video"
      ]
@@ -1123102,21 +1123677,51 @@
     [
      "recipeReady",
      {
-      "needs": "video"
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
      },
-     null
+     [
+      "video",
+      "video",
+      "video"
+     ]
     ],
     [
      "recipeReady",
      {
-      "needs": "video"
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     [
+      "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
      },
      []
     ],
     [
      "recipeReady",
      {
-      "needs": "video"
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
      },
      [
       "text"
@@ -1123125,7 +1123730,11 @@
     [
      "recipeReady",
      {
-      "needs": "video"
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
      },
      [
       "video"
@@ -1123134,7 +1123743,11 @@
     [
      "recipeReady",
      {
-      "needs": "video"
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
      },
      [
       "image"
@@ -1123143,101 +1123756,69 @@
     [
      "recipeReady",
      {
-      "needs": "video"
-     },
-     [
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "video"
-     },
-     [
-      "shape"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "video"
-     },
-     [
-      "adjustment"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "video"
-     },
-     [
-      "video",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "video"
-     },
-     [
-      "image",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "video"
-     },
-     [
-      "video",
-      "text"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "video"
-     },
-     [
-      "text",
-      "text",
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "video"
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
      },
      [
       "audio",
-      "shape",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "video",
       "image"
      ]
     ],
     [
      "recipeReady",
      {
-      "needs": "video"
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
      },
      [
-      "video",
-      "video",
-      "video"
+      "image",
+      "image"
      ]
     ],
     [
      "recipeReady",
      {
-      "needs": "video"
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
      },
      [
-      "text",
-      "image",
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
       "shape",
       "video"
      ]
@@ -1123245,21 +1123826,51 @@
     [
      "recipeReady",
      {
-      "needs": "media2"
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
      },
-     null
+     [
+      "video",
+      "video",
+      "video"
+     ]
     ],
     [
      "recipeReady",
      {
-      "needs": "media2"
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     [
+      "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
      },
      []
     ],
     [
      "recipeReady",
      {
-      "needs": "media2"
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
      },
      [
       "text"
@@ -1123268,7 +1123879,11 @@
     [
      "recipeReady",
      {
-      "needs": "media2"
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
      },
      [
       "video"
@@ -1123277,7 +1123892,11 @@
     [
      "recipeReady",
      {
-      "needs": "media2"
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
      },
      [
       "image"
@@ -1123286,101 +1123905,69 @@
     [
      "recipeReady",
      {
-      "needs": "media2"
-     },
-     [
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "media2"
-     },
-     [
-      "shape"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "media2"
-     },
-     [
-      "adjustment"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "media2"
-     },
-     [
-      "video",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "media2"
-     },
-     [
-      "image",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "media2"
-     },
-     [
-      "video",
-      "text"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "media2"
-     },
-     [
-      "text",
-      "text",
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "media2"
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
      },
      [
       "audio",
-      "shape",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "video",
       "image"
      ]
     ],
     [
      "recipeReady",
      {
-      "needs": "media2"
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
      },
      [
-      "video",
-      "video",
-      "video"
+      "image",
+      "image"
      ]
     ],
     [
      "recipeReady",
      {
-      "needs": "media2"
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
      },
      [
-      "text",
-      "image",
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
       "shape",
       "video"
      ]
@@ -1123388,21 +1123975,51 @@
     [
      "recipeReady",
      {
-      "needs": ""
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
      },
-     null
+     [
+      "video",
+      "video",
+      "video"
+     ]
     ],
     [
      "recipeReady",
      {
-      "needs": ""
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     [
+      "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
      },
      []
     ],
     [
      "recipeReady",
      {
-      "needs": ""
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
      },
      [
       "text"
@@ -1123411,7 +1124028,11 @@
     [
      "recipeReady",
      {
-      "needs": ""
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
      },
      [
       "video"
@@ -1123420,7 +1124041,11 @@
     [
      "recipeReady",
      {
-      "needs": ""
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
      },
      [
       "image"
@@ -1123429,101 +1124054,69 @@
     [
      "recipeReady",
      {
-      "needs": ""
-     },
-     [
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": ""
-     },
-     [
-      "shape"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": ""
-     },
-     [
-      "adjustment"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": ""
-     },
-     [
-      "video",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": ""
-     },
-     [
-      "image",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": ""
-     },
-     [
-      "video",
-      "text"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": ""
-     },
-     [
-      "text",
-      "text",
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": ""
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
      },
      [
       "audio",
-      "shape",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "video",
       "image"
      ]
     ],
     [
      "recipeReady",
      {
-      "needs": ""
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
      },
      [
-      "video",
-      "video",
-      "video"
+      "image",
+      "image"
      ]
     ],
     [
      "recipeReady",
      {
-      "needs": ""
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
      },
      [
-      "text",
-      "image",
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
       "shape",
       "video"
      ]
@@ -1123531,21 +1124124,51 @@
     [
      "recipeReady",
      {
-      "needs": "otro"
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
      },
-     null
+     [
+      "video",
+      "video",
+      "video"
+     ]
     ],
     [
      "recipeReady",
      {
-      "needs": "otro"
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     [
+      "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
      },
      []
     ],
     [
      "recipeReady",
      {
-      "needs": "otro"
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
      },
      [
       "text"
@@ -1123554,7 +1124177,11 @@
     [
      "recipeReady",
      {
-      "needs": "otro"
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
      },
      [
       "video"
@@ -1123563,7 +1124190,11 @@
     [
      "recipeReady",
      {
-      "needs": "otro"
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
      },
      [
       "image"
@@ -1123572,86 +1124203,81 @@
     [
      "recipeReady",
      {
-      "needs": "otro"
-     },
-     [
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "otro"
-     },
-     [
-      "shape"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "otro"
-     },
-     [
-      "adjustment"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "otro"
-     },
-     [
-      "video",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "otro"
-     },
-     [
-      "image",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "otro"
-     },
-     [
-      "video",
-      "text"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "otro"
-     },
-     [
-      "text",
-      "text",
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {
-      "needs": "otro"
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
      },
      [
       "audio",
-      "shape",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "video",
       "image"
      ]
     ],
     [
      "recipeReady",
      {
-      "needs": "otro"
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     },
+     [
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
      },
      [
       "video",
@@ -1123662,112 +1124288,116 @@
     [
      "recipeReady",
      {
-      "needs": "otro"
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
      },
      [
       "text",
-      "image",
-      "shape",
-      "video"
+      "text"
      ]
     ],
     [
      "recipeReady",
-     {},
-     null
-    ],
-    [
-     "recipeReady",
-     {},
+     {
+      "id": "x",
+      "needs": "otra"
+     },
      []
     ],
     [
      "recipeReady",
-     {},
+     {
+      "id": "x",
+      "needs": "otra"
+     },
      [
       "text"
      ]
     ],
     [
      "recipeReady",
-     {},
+     {
+      "id": "x",
+      "needs": "otra"
+     },
      [
       "video"
      ]
     ],
     [
      "recipeReady",
-     {},
+     {
+      "id": "x",
+      "needs": "otra"
+     },
      [
       "image"
      ]
     ],
     [
      "recipeReady",
-     {},
-     [
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {},
-     [
-      "shape"
-     ]
-    ],
-    [
-     "recipeReady",
-     {},
-     [
-      "adjustment"
-     ]
-    ],
-    [
-     "recipeReady",
-     {},
-     [
-      "video",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {},
-     [
-      "image",
-      "image"
-     ]
-    ],
-    [
-     "recipeReady",
-     {},
-     [
-      "video",
-      "text"
-     ]
-    ],
-    [
-     "recipeReady",
-     {},
-     [
-      "text",
-      "text",
-      "audio"
-     ]
-    ],
-    [
-     "recipeReady",
-     {},
+     {
+      "id": "x",
+      "needs": "otra"
+     },
      [
       "audio",
-      "shape",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "video",
       "image"
      ]
     ],
     [
      "recipeReady",
-     {},
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
+     [
+      "shape",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "x",
+      "needs": "otra"
+     },
      [
       "video",
       "video",
@@ -1123776,35 +1124406,181 @@
     ],
     [
      "recipeReady",
-     {},
+     {
+      "id": "x",
+      "needs": "otra"
+     },
      [
       "text",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     []
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "audio",
+      "text"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "video",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
       "image",
+      "image"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "video",
+      "audio"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
       "shape",
       "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "video",
+      "video",
+      "video"
+     ]
+    ],
+    [
+     "recipeReady",
+     {
+      "id": "y"
+     },
+     [
+      "text",
+      "text"
      ]
     ]
    ],
    "geo": [
     {
-     "id": "V1",
+     "id": "T1",
      "top": 22,
-     "bottom": 74
+     "bottom": 51
+    },
+    {
+     "id": "V2",
+     "top": 51,
+     "bottom": 103
+    },
+    {
+     "id": "V1",
+     "top": 103,
+     "bottom": 155
+    },
+    {
+     "id": "A1",
+     "top": 155,
+     "bottom": 207
     }
    ],
    "results": [
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
+    [
+     {
+      "id": "cinema_grade",
+      "label": "Etalonaje de cine",
+      "trick": 10,
+      "needs": null,
+      "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
+     },
+     {
+      "id": "text_reflection",
+      "label": "Texto con reflejo",
+      "trick": 7,
+      "needs": "text",
+      "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
+     },
+     {
+      "id": "pass_through_text",
+      "label": "Texto que atraviesas",
+      "trick": 6,
+      "needs": "text",
+      "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
+     },
+     {
+      "id": "film_strips",
+      "label": "Franjas al ritmo",
+      "trick": 3,
+      "needs": "media2",
+      "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
+     },
+     {
+      "id": "subject_pop",
+      "label": "Sujeto que se adelanta",
+      "trick": 1,
+      "needs": "video",
+      "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
+     }
+    ],
     {
      "ok": true
     },
@@ -1123843,6 +1124619,13 @@
      "why": "selecciona un texto"
     },
     {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
      "ok": false,
      "why": "selecciona un texto"
     },
@@ -1123870,15 +1124653,11 @@
      "why": "selecciona un texto"
     },
     {
-     "ok": false,
-     "why": "selecciona un texto"
-    },
-    {
-     "ok": false,
-     "why": "selecciona un texto"
-    },
-    {
      "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
     },
     {
      "ok": true
@@ -1123890,6 +1124669,81 @@
     {
      "ok": false,
      "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un texto"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": true
+    },
+    {
+     "ok": false,
+     "why": "selecciona 2 o más vídeos o imágenes"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
+    },
+    {
+     "ok": false,
+     "why": "selecciona un vídeo"
     },
     {
      "ok": true
@@ -1123903,29 +1124757,6 @@
      "why": "selecciona un vídeo"
     },
     {
-     "ok": false,
-     "why": "selecciona un vídeo"
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": false,
-     "why": "selecciona un vídeo"
-    },
-    {
-     "ok": false,
-     "why": "selecciona un vídeo"
-    },
-    {
-     "ok": false,
-     "why": "selecciona un vídeo"
-    },
-    {
-     "ok": false,
-     "why": "selecciona un vídeo"
-    },
-    {
      "ok": true
     },
     {
@@ -1123936,143 +1124767,14 @@
      "ok": true
     },
     {
+     "ok": true
+    },
+    {
+     "ok": true
+    },
+    {
      "ok": false,
      "why": "selecciona un vídeo"
-    },
-    {
-     "ok": false,
-     "why": "selecciona un vídeo"
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": false,
-     "why": "selecciona 2 o más vídeos o imágenes"
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
-    },
-    {
-     "ok": true
     },
     {
      "ok": true
@@ -1124141,43 +1124843,6 @@
      "ok": true
     }
    ]
-  }
- ],
- "recipes": [
-  {
-   "id": "cinema_grade",
-   "label": "Etalonaje de cine",
-   "trick": 10,
-   "needs": null,
-   "desc": "Capa de ajuste (naranja y turquesa + desvaído) sobre todo el vídeo y barras de cine que entran."
-  },
-  {
-   "id": "text_reflection",
-   "label": "Texto con reflejo",
-   "trick": 7,
-   "needs": "text",
-   "desc": "Una copia volteada debajo del texto, que se desvanece, en modo Superponer."
-  },
-  {
-   "id": "pass_through_text",
-   "label": "Texto que atraviesas",
-   "trick": 6,
-   "needs": "text",
-   "desc": "Al final del clip el texto crece hasta ×60: la cámara lo atraviesa."
-  },
-  {
-   "id": "film_strips",
-   "label": "Franjas al ritmo",
-   "trick": 3,
-   "needs": "media2",
-   "desc": "Cada clip seleccionado en una franja horizontal (rollo de película), entrando uno tras otro en los beats de la música (o cada 0,35 s)."
-  },
-  {
-   "id": "subject_pop",
-   "label": "Sujeto que se adelanta",
-   "trick": 1,
-   "needs": "video",
-   "desc": "El sujeto del clip, recortado con IA, aparece unos fotogramas antes que su plano, con un destello blanco y sonido de transición."
   }
  ]
 }
