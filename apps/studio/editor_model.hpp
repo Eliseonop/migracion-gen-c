@@ -33,6 +33,7 @@
 #include "gc/core/timeline_ui.hpp"
 
 #include "backend_jobs.hpp"
+#include "live_recorder.hpp"
 #include "youtube_loader.hpp"
 #include "bg_magic.hpp"
 #include "gc/core/frame.hpp"
@@ -99,6 +100,8 @@ class EditorModel : public QObject {
     Q_PROPERTY(QObject* narrator READ narrator CONSTANT)
     // La pestaña YouTube del material (youtube_loader.hpp).
     Q_PROPERTY(QObject* youtube READ youtube CONSTANT)
+    // Vídeo › Directo: grabar un directo de TikTok o YouTube y marcar momentos (live_recorder.hpp).
+    Q_PROPERTY(QObject* live READ live CONSTANT)
     // El fotograma de la timeline en el cabezal (preview_source.hpp), para FramePreview.
     Q_PROPERTY(QObject* preview READ preview CONSTANT)
     // Reproducir y parar, con el reloj del audio (player.hpp).
@@ -228,6 +231,8 @@ public:
     [[nodiscard]] Narrator& narratorModel() { return narrator_; }
     [[nodiscard]] QObject* youtube() { return &youtube_; }
     [[nodiscard]] YoutubeLoader& youtubeLoader() { return youtube_; }
+    [[nodiscard]] QObject* live() { return &live_; }
+    [[nodiscard]] LiveRecorder& liveRecorder() { return live_; }
     [[nodiscard]] QObject* preview() { return &preview_; }
     [[nodiscard]] PreviewSource& previewSource() { return preview_; }
     [[nodiscard]] QObject* player() { return &player_; }
@@ -880,6 +885,10 @@ private:
     QString bg_preview_file_;
     Narrator narrator_;
     YoutubeLoader youtube_;
+    LiveRecorder live_;
+    // La grabación de un directo ya en MP4: al material (movida, no copiada) y un clip por referencia por cada
+    // tramo de sus marcas; luego live_.finish con el mensaje o el error.
+    void import_live(const QString& file, const QVariantMap& info, const QVariantList& marks);
     // Vuelve a leer el material del proyecto de projects.json y lo pone delante.
     void reload_project_materials();
     void reload_collections();

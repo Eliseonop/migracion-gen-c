@@ -49,7 +49,8 @@ Rectangle {
         const media = { video: "video", image: "image", audio: "audio" }[tab]
         if (media) {
             filter = media
-            source = scope === "cargar" ? (tab === "video" ? "youtube" : "narrator") : scope === "saved" ? "library" : "project"
+            source = scope === "cargar" ? (tab === "video" ? "youtube" : "narrator") : scope === "directo" ? "live"
+                   : scope === "saved" ? "library" : "project"
         } else {
             filter = "all"
             source = { sfx: "sfx", library: scope === "collections" ? "collection" : "library", effects: "fx",
@@ -167,7 +168,8 @@ Rectangle {
         // biblioteca: lo guardado o las colecciones de la carpeta de material.
         RowLayout {
             id: scopeRow
-            readonly property var scopes: panel.tab === "video" ? [["all", "Todos"], ["saved", "Guardados"], ["cargar", "Cargar clips", "add"]]
+            readonly property var scopes: panel.tab === "video" ? [["all", "Todos"], ["saved", "Guardados"], ["cargar", "Cargar clips", "add"],
+                                                                  ["directo", "Directo", "live_tv"]]
                                         : panel.tab === "audio" ? [["all", "Todos"], ["saved", "Guardados"], ["cargar", "Cargar audio", "add"]]
                                         : panel.tab === "image" ? [["all", "Todas"], ["saved", "Guardadas"]]
                                         : panel.tab === "library" ? [["all", "Guardado"], ["collections", "Colecciones"]]
@@ -225,7 +227,7 @@ Rectangle {
             }
         }
         TextField {
-            visible: ["shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0
+            visible: ["shapes", "text", "narrator", "youtube", "live"].indexOf(panel.source) < 0
             objectName: "material:search"
             Layout.fillWidth: true
             placeholderText: panel.source === "sfx" ? "Buscar sonidos…" : panel.source === "fx" ? "Buscar: glitch, papel, temblor…" : "Buscar…"
@@ -348,7 +350,7 @@ Rectangle {
             }
         }
         Label {
-            visible: panel.shown.length === 0 && ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0 && !panel.isStick
+            visible: panel.shown.length === 0 && ["fx", "shapes", "text", "narrator", "youtube", "live"].indexOf(panel.source) < 0 && !panel.isStick
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             text: panel.source === "library" ? "La biblioteca está vacía: guarda material de un proyecto para usarlo en todos."
@@ -674,6 +676,12 @@ Rectangle {
             Layout.fillHeight: true
             model: panel.model
         }
+        LivePanel {
+            visible: panel.source === "live"
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            model: panel.model
+        }
         NarratorPanel {
             visible: panel.source === "narrator"
             Layout.fillWidth: true
@@ -709,7 +717,7 @@ Rectangle {
         }
         ListView {
             id: list
-            visible: ["fx", "shapes", "text", "narrator", "youtube"].indexOf(panel.source) < 0 && !panel.gridMode && !panel.isStick
+            visible: ["fx", "shapes", "text", "narrator", "youtube", "live"].indexOf(panel.source) < 0 && !panel.gridMode && !panel.isStick
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true

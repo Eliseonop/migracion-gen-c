@@ -5,6 +5,9 @@
 //
 // La timeline del Clip Editor es otra EditSession, sin autoguardado: no se guarda en el proyecto. Al cambiar
 // de pestaña, la que no se ve espera en other_session_ con su cabezal y su zoom.
+//
+// Aquí también entra la grabación de un directo (Vídeo › Directo, live_recorder.hpp): al material, y cada marca,
+// un clip por referencia con create_segments, como «Crear clip».
 
 #include <algorithm>
 #include <cmath>
@@ -12,11 +15,15 @@
 #include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "editor_model.hpp"
 #include "gc/core/clip_extract.hpp"
 #include "gc/core/clip_pose_edit.hpp"
+#include "gc/core/io.hpp"
+#include "gc/core/live_capture.hpp"
 #include "gc/core/material_drop.hpp"
+#include "gc/core/media_import.hpp"
 #include "gc/core/projects_store.hpp"
 #include "gc/core/segments.hpp"
 #include "gc/core/serialize.hpp"
@@ -386,6 +393,64 @@ void EditorModel::confirmSegment() {
     set_notice("success", QString("«%1» añadido a Mis materiales · %2").arg(qstr(label), fmt(end - start)));
     clip_mark_ = {clip_mark_.out, std::nullopt}; // la salida de este es la entrada del próximo
     emit clipMarkChanged();
+}
+
+void EditorModel::import_live(const QString& file, const QVariantMap& info, const QVariantList& marks) {
+    const std::string pid = utf8(info.value("pid").toString());
+    const auto path = core::path_from_utf8(utf8(file));
+    const QString title = info.value("title").toString().trimmed();
+    const QString uploader = info.value("uploader").toString().trimmed();
+    const QString platform = info.value("platform").toString();
+    core::ImportMeta meta;
+    meta.label = utf8(!title.isEmpty() ? title : QString("Directo de %1").arg(!uploader.isEmpty() ? uploader : platform));
+    meta.origin = "live";
+    meta.provider = utf8(platform.toLower());
+    meta.source_url = utf8(info.value("url").toString());
+    if (const QString id = info.value("id").toString(); !id.isEmpty()) {
+        meta.external_id = utf8(id);
+    }
+    if (!uploader.isEmpty()) {
+        meta.author = utf8(uploader);
+    }
+    const auto clip = core::adopt_video_file(store_, pid, path, core::path_to_utf8(path.filename()), file_seconds, ids_, meta);
+    if (!clip) {
+        live_.finish({}, QString("No se pudo meter la grabación en el material: %1").arg(qstr(clip.error().message)));
+        return;
+    }
+    // Cada marca, un clip por referencia: un rato antes y otro después (los que se pisan, juntos).
+    std::vector<double> times;
+    for (const QVariant& m : marks) {
+        times.push_back(m.toMap().value("t").toDouble());
+    }
+    const std::string label = clip->label.value_or(core::path_to_utf8(path.stem()));
+    Json ranges = Json::array();
+    for (const auto& [start, end] : core::live_mark_ranges(times, clip->end, live_.before(), live_.after())) {
+        ranges.push_back({{"start", start}, {"end", end}, {"label", core::segment_label(label, start, end)}});
+    }
+    std::size_t made = 0;
+    QString problem;
+    if (!ranges.empty()) {
+        if (const auto segs = core::create_segments(store_, pid, std::to_string(clip->index), ranges, file_seconds, ids_)) {
+            made = segs->size();
+        } else {
+            problem = qstr(segs.error().message);
+        }
+    }
+    if (pid == project_id_) {
+        reload_project_materials();
+    }
+    QString message = QString("«%1» (%2) está en el material").arg(qstr(label), fmt(clip->end));
+    if (made == 1) {
+        message += " con 1 clip";
+    } else if (made > 1) {
+        message += QString(" con %1 clips").arg(made);
+    }
+    message += info.value("ended").toBool() ? QString(": el directo acabó.") : QString(".");
+    if (!problem.isEmpty()) {
+        message += " Los clips de las marcas no se pudieron crear: " + problem;
+    }
+    live_.finish(message);
+    set_notice(problem.isEmpty() ? "success" : "info", message);
 }
 
 } // namespace gc::studio

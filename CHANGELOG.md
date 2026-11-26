@@ -11,6 +11,24 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.20.0] — 2026-11-25
+
+### Añadido
+
+- **Grabar un directo de TikTok o de YouTube y sacar clips** (Vídeo › Directo del material; es de GenClipPro, video-yt
+  no lo tiene): pegas el enlace (tiktok.com/@usuario/live, el perfil o uno de YouTube) y «Grabar» lo graba desde ese
+  momento, sin recomprimir, con el tiempo y el tamaño a la vista. «Marcar momento» (o Ctrl+M) apunta el instante; al
+  parar, la grabación entra al material y cada marca deja un clip por referencia (30 s antes y 10 s después, o lo que
+  digas en el panel). Si el directo acaba solo, se guarda igual. «Descartar» lo tira.
+- yt-dlp encuentra el directo y FFmpeg lo graba: se buscan en `GENCLIP_YTDLP` y `GENCLIP_FFMPEG`, en el PATH y, yt-dlp,
+  en la venv de video-yt si la carpeta de datos es su `backend/`.
+
+### Sin hacer todavía
+
+- TikTok solo deja grabar mientras el directo está en marcha (al acabar no queda grabación pública), y la grabación
+  empieza al pulsar: lo anterior del directo no está. Las propuestas automáticas de momentos (picos del chat, del
+  volumen o frases clave) llegarán con F6 y F7.
+
 ## [0.19.0] — 2026-11-25
 
 ### Añadido

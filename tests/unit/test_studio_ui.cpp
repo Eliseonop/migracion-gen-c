@@ -3165,3 +3165,109 @@ TEST_CASE("studio sin pantalla: «Agregar Stick» desde un hueco de la timeline 
     qunsetenv("VIDEO_YT_ASSETS");
     std::filesystem::remove_all(assets);
 }
+
+TEST_CASE("studio sin pantalla: «Directo» graba, marca momentos y deja la grabación y un clip por marca", "[studio][ui][live]") {
+    const Studio s;
+    studio::LiveRecorder& live = s.editor->liveRecorder();
+    // yt-dlp y FFmpeg de mentira (support/fake_live_tool.cpp); el «directo» es v_2s.mp4.
+    const QString fake = QString::fromUtf8(GC_FAKE_LIVE_TOOL);
+    const QString video = QString::fromStdString(
+        core::path_to_utf8(core::path_from_utf8(GC_FIXTURES_DIR) / "media" / "files" / "v_2s.mp4"));
+    live.setTools({fake, "yt-dlp"}, {fake, "ffmpeg", "--video", video});
+    live.setBefore(0.4); // el vídeo dura 2 s
+    live.setAfter(0.1);
+    const auto project = [&] { return **s.store->get_project("p1"); };
+    const auto live_dir = core::project_base(s.store->clips_dir(), project()) / "live";
+    const auto files_in_live = [&] {
+        std::error_code ec;
+        return std::filesystem::exists(live_dir, ec)
+                   ? std::distance(std::filesystem::directory_iterator(live_dir), std::filesystem::directory_iterator())
+                   : 0;
+    };
+
+    // Vídeo › Directo.
+    QMetaObject::invokeMethod(s.item("material:nav:video"), "clicked");
+    QTest::qWait(50);
+    s.click("material:scope:directo");
+    REQUIRE(s.item("live:url"));
+    REQUIRE(s.item("live:record"));
+
+    // Lo que no es el enlace de un directo: el aviso, sin lanzar nada.
+    live.start("https://vimeo.com/1");
+    CHECK(live.status() == "error");
+    CHECK(live.error().startsWith("Pega el enlace de un directo"));
+    // Un directo que no está en marcha: lo que dice yt-dlp, en claro.
+    live.start("https://www.tiktok.com/@offline/live");
+    REQUIRE(QTest::qWaitFor([&] { return live.status() == "error"; }, 10000));
+    CHECK(live.error() == "No está en directo ahora mismo (o el directo ya acabó).");
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("live:error"));
+
+    // «Descartar» para y tira lo grabado: nada entra al material.
+    const auto clips = project().clips.size();
+    s.item("live:url")->setProperty("text", "tiktok.com/@prueba");
+    s.click("live:record");
+    REQUIRE(QTest::qWaitFor([&] { return live.status() == "recording" && live.bytes() > 0; }, 10000));
+    CHECK(live.url() == "tiktok.com/@prueba");
+    live.cancel();
+    CHECK(live.status().isEmpty());
+    CHECK(project().clips.size() == clips);
+    CHECK(files_in_live() == 0);
+
+    // Grabar desde el panel, con el perfil (pasa a su /live): marcas con el botón y con Ctrl+M.
+    s.click("live:record");
+    REQUIRE(QTest::qWaitFor([&] { return live.status() == "recording"; }, 10000));
+    CHECK(live.info()["title"] == "Directo de prueba");
+    CHECK(live.info()["platform"] == "TikTok");
+    CHECK(live.info()["uploader"] == "prueba");
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("live:status"));
+    CHECK(s.item("live:status")->property("text").toString().startsWith("Grabando · "));
+    REQUIRE(QTest::qWaitFor([&] { return live.seconds() >= 0.6; }, 10000));
+    s.click("live:mark");
+    REQUIRE(QTest::qWaitFor([&] { return live.seconds() >= 1.5; }, 10000));
+    QTest::keyClick(s.window, Qt::Key_M, Qt::ControlModifier);
+    REQUIRE(live.marks().size() == 2);
+    // Una de más, y se quita.
+    live.mark();
+    REQUIRE(live.marks().size() == 3);
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("live:removeMark:2"));
+    QMetaObject::invokeMethod(s.item("live:removeMark:2"), "clicked"); // puede quedar bajo el borde del panel
+    REQUIRE(live.marks().size() == 2);
+    const double first = live.marks()[0].toMap()["t"].toDouble();
+    const double second = live.marks()[1].toMap()["t"].toDouble();
+    CHECK(first >= 0.6);
+    CHECK(second >= 1.5);
+    CHECK(live.marks()[0].toMap()["label"] == (first >= 1 ? "0:01" : "0:00"));
+
+    // Parar: la grabación (movida al proyecto, sin el TS) y un clip por referencia por marca.
+    REQUIRE(s.item("live:stop"));
+    QMetaObject::invokeMethod(s.item("live:stop"), "clicked");
+    REQUIRE(QTest::qWaitFor([&] { return live.status() == "done"; }, 15000));
+    CHECK(live.message().startsWith("«Directo de prueba»"));
+    CHECK(live.message().contains("con 2 clips"));
+    CHECK(s.editor->notice()["type"] == "success");
+    CHECK(files_in_live() == 0);
+    const core::Project after = project();
+    REQUIRE(after.clips.size() == clips + 3);
+    const core::ClipInfo& rec = after.clips[clips];
+    CHECK(rec.label == "Directo de prueba");
+    CHECK(rec.origin == "live");
+    CHECK(rec.provider == "tiktok");
+    CHECK(rec.source_url == "https://www.tiktok.com/@prueba/live");
+    CHECK(rec.author == "prueba");
+    CHECK(std::filesystem::exists(core::project_base(s.store->clips_dir(), after) / "video" / rec.filename));
+    for (int i = 0; i < 2; ++i) {
+        const core::ClipInfo& seg = after.clips[clips + 1 + static_cast<std::size_t>(i)];
+        const double t = i == 0 ? first : second;
+        INFO("clip de la marca " << i);
+        CHECK(seg.filename == rec.filename); // por referencia
+        CHECK(seg.in_point.value_or(-1) == Catch::Approx(std::max(0.0, t - 0.4)).margin(0.002));
+        CHECK(seg.out_point.value_or(-1) == Catch::Approx(std::min(t + 0.1, rec.end > 0 ? rec.end : 1e9)).margin(0.002));
+    }
+    // Está en el material del panel.
+    CHECK(std::ranges::any_of(s.editor->materials(), [](const QVariant& m) {
+        return m.toMap()["name"].toString().contains("Directo de prueba");
+    }));
+}

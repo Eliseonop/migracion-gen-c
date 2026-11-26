@@ -286,6 +286,11 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     narrator_.setSettings(settings_);
     youtube_.setSettings(settings_);
     connect(&youtube_, &YoutubeLoader::videoAdded, this, [this] { reload_project_materials(); });
+    live_.setDataRoot(store_.clips_dir().parent_path()); // la de --root: en la de video-yt, su venv tiene yt-dlp
+    connect(&live_, &LiveRecorder::recorded, this,
+            [this](const QString& file, const QVariantMap& info, const QVariantList& marks, double) {
+                import_live(file, info, marks);
+            });
     // La timeline ya usaba este vídeo en menos calidad: se ofrece el cambio.
     connect(&youtube_, &YoutubeLoader::upgradeOffered, this, [this](const QString& ask) {
         offer_upgrade(Json::parse(ask.toStdString()));
@@ -800,6 +805,7 @@ bool EditorModel::openProject(const QString& pid) {
     project_name_ = qstr((*project)->name);
     narrator_.setProject(qstr(project_id_));
     youtube_.setProject(qstr(project_id_));
+    live_.setProject(qstr(project_id_), core::project_base(store_.clips_dir(), **project) / "live");
     load_bg_providers();
     materials_.clear();
     payloads_.clear();
@@ -1339,6 +1345,7 @@ void EditorModel::closeProject() {
     proxy_maker_.close();
     narrator_.setProject({});
     youtube_.setProject({});
+    live_.setProject({}, {}); // una grabación en marcha sigue y entra en su proyecto al parar
     bg_jobs_.stop(); // el editor se cierra: nadie espera su resultado (el backend lo termina)
     stopBgAnalyze();
     bg_analyzed_.clear();
