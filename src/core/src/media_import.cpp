@@ -106,6 +106,22 @@ Writer copy_writer(const fs::path& src) {
     };
 }
 
+// shutil.move: renombrar y, si no se puede (otro disco), copiar y borrar el original.
+Writer move_writer(const fs::path& src) {
+    return [src](const fs::path& dest) -> Result<void> {
+        std::error_code ec;
+        fs::rename(src, dest, ec);
+        if (!ec) {
+            return {};
+        }
+        if (auto copied = copy_writer(src)(dest); !copied) {
+            return copied;
+        }
+        fs::remove(src, ec); // si no se puede borrar, el vídeo ya está en el proyecto
+        return {};
+    };
+}
+
 bool empty_file(const fs::path& src) {
     std::error_code ec;
     return !fs::is_regular_file(src, ec) || fs::file_size(src, ec) == 0 || ec;
@@ -189,6 +205,18 @@ Result<ClipInfo> import_video_file(ProjectsStore& store, std::string_view pid, c
         return fail(ErrorCode::InvalidArgument, std::string(kEmpty));
     }
     return add_video(store, pid, filename, copy_writer(src), probe, ids, meta);
+}
+
+Result<ClipInfo> adopt_video_file(ProjectsStore& store, std::string_view pid, const std::filesystem::path& src,
+                                  std::string_view filename, const DurationProbe& probe, IdSource& ids,
+                                  const ImportMeta& meta) {
+    if (!has(kImportVideoExts, lower_suffix(filename))) {
+        return fail(ErrorCode::InvalidArgument, std::string(kBadVideo));
+    }
+    if (empty_file(src)) {
+        return fail(ErrorCode::InvalidArgument, std::string(kEmpty));
+    }
+    return add_video(store, pid, filename, move_writer(src), probe, ids, meta);
 }
 
 Result<AudioInfo> import_audio(ProjectsStore& store, std::string_view pid, std::string_view filename,

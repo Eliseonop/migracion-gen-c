@@ -9,6 +9,7 @@ add_executable(gc_tests
     unit/test_fx_catalog.cpp
     unit/test_keyframes.cpp
     unit/test_layers.cpp
+    unit/test_live_capture.cpp
     unit/test_log.cpp
     unit/test_migrations.cpp
     unit/test_model.cpp

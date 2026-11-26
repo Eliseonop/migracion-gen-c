@@ -53,6 +53,13 @@ struct ImportMeta {
                                                  const std::filesystem::path& src, std::string_view filename,
                                                  const DurationProbe& probe, IdSource& ids,
                                                  const ImportMeta& meta = {});
+// Como import_video_file pero MUEVE el archivo, como import_video_file de Python con una descarga
+// temporal: la grabación de un directo puede pesar gigas. Si no se puede renombrar (otro disco),
+// lo copia y borra el original.
+[[nodiscard]] Result<ClipInfo> adopt_video_file(ProjectsStore& store, std::string_view pid,
+                                                const std::filesystem::path& src, std::string_view filename,
+                                                const DurationProbe& probe, IdSource& ids,
+                                                const ImportMeta& meta = {});
 // import_audio: los bytes de un audio subido (título = su nombre sin la extensión).
 [[nodiscard]] Result<AudioInfo> import_audio(ProjectsStore& store, std::string_view pid, std::string_view filename,
                                              std::string_view data, const DurationProbe& probe, IdSource& ids);
