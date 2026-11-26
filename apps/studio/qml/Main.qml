@@ -7,8 +7,11 @@ ApplicationWindow {
     required property var editor
     required property var settings
     required property var folder // la carpeta de los proyectos (projects_folder.hpp)
+    required property var updater // Ajustes › Versión (updater.hpp)
     property bool settingsOpen: false
-    // «GenClipPro 0.22.0»: la versión de CMakeLists.txt (app.cpp la pone en la aplicación).
+    // La de producción mira al arrancar si hay una versión nueva (en este PC o en GitHub).
+    Component.onCompleted: if (updater.installed) updater.check()
+    // «GenClipPro 0.23.0»: la versión de CMakeLists.txt (app.cpp la pone en la aplicación).
     readonly property string appName: Qt.application.version ? "GenClipPro " + Qt.application.version : "GenClipPro"
 
     width: 1280
@@ -23,6 +26,7 @@ ApplicationWindow {
         visible: !window.editor.isOpen && !window.settingsOpen
         model: window.home
         folder: window.folder
+        updater: window.updater
         onOpenProject: (pid) => window.editor.openProject(pid)
         onOpenSettings: window.settingsOpen = true
     }
@@ -40,6 +44,7 @@ ApplicationWindow {
         visible: window.settingsOpen
         model: window.settings
         folder: window.folder
+        updater: window.updater
         onClosed: window.settingsOpen = false
     }
     Shortcut { sequence: "Ctrl+,"; onActivated: window.settingsOpen = !window.settingsOpen }

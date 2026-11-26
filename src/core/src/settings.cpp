@@ -494,4 +494,145 @@ Result<std::size_t> SettingsFile::remove_key(std::string_view provider, std::int
     return keys.size();
 }
 
+namespace {
+
+std::string_view trim_view(std::string_view s) {
+    while (!s.empty() && (s.front() == ' ' || s.front() == '\t' || s.front() == '\r')) {
+        s.remove_prefix(1);
+    }
+    while (!s.empty() && (s.back() == ' ' || s.back() == '\t' || s.back() == '\r')) {
+        s.remove_suffix(1);
+    }
+    return s;
+}
+
+// El proveedor de una variable del .env (en minúsculas), o vacío si no es una clave.
+std::string env_provider(std::string_view var) {
+    std::string name;
+    for (const char c : var) {
+        name += c >= 'A' && c <= 'Z' ? static_cast<char>(c - 'A' + 'a') : c;
+    }
+    static constexpr std::array<std::string_view, 5> kSuffixes{"_api_key", "_access_key", "_api_token", "_token",
+                                                               "_key"};
+    for (const std::string_view suffix : kSuffixes) {
+        if (name.size() > suffix.size() && name.ends_with(suffix)) {
+            const std::string id = name.substr(0, name.size() - suffix.size());
+            if (id == "google") {
+                return "gemini"; // la de AI Studio
+            }
+            if (id == "hf" || id == "huggingfacehub") {
+                return "huggingface";
+            }
+            if (id == "remove_bg") {
+                return "removebg";
+            }
+            return id;
+        }
+    }
+    return {};
+}
+
+// Las claves que ya hay en `d` (keys_list_from), contando el gemini_api_key de antes como api_keys_map.
+Result<std::vector<std::string>> keys_here(const Json& d, const std::string& provider) {
+    Json view = d;
+    view["api_keys"] = api_keys_map(d);
+    return keys_list_from(view, provider);
+}
+
+} // namespace
+
+Json env_api_keys(std::string_view text, const std::vector<std::string>& providers) {
+    if (text.starts_with("\xEF\xBB\xBF")) {
+        text.remove_prefix(3); // el BOM de UTF-8
+    }
+    Json out = Json::object();
+    while (!text.empty()) {
+        const std::size_t end = text.find('\n');
+        std::string_view line = trim_view(text.substr(0, end));
+        text = end == std::string_view::npos ? std::string_view() : text.substr(end + 1);
+        if (line.empty() || line.front() == '#') {
+            continue;
+        }
+        if (line.starts_with("export ")) {
+            line = trim_view(line.substr(7));
+        }
+        const std::size_t eq = line.find('=');
+        if (eq == std::string_view::npos) {
+            continue;
+        }
+        std::string_view value = trim_view(line.substr(eq + 1));
+        if (!value.empty() && (value.front() == '"' || value.front() == '\'')) {
+            const std::size_t close = value.find(value.front(), 1);
+            value = close == std::string_view::npos ? value.substr(1) : value.substr(1, close - 1);
+        } else if (const std::size_t hash = value.find(" #"); hash != std::string_view::npos) {
+            value = trim_view(value.substr(0, hash)); // un comentario al final
+        }
+        const std::string id = env_provider(trim_view(line.substr(0, eq)));
+        if (!id.empty() && !value.empty() && std::ranges::find(providers, id) != providers.end()) {
+            out[id] = std::string(value); // la última gana, como en el shell
+        }
+    }
+    return out;
+}
+
+Result<std::vector<std::string>> SettingsFile::import_keys(const Json& source, const Json& env) {
+    const std::scoped_lock lock(mutex_);
+    Json d = read_raw();
+    if (!d.is_object()) {
+        return invalid("settings.json no es un objeto");
+    }
+    std::set<std::string> arrived;
+    bool changed = false;
+    if (source.is_object()) {
+        Json theirs = source;
+        theirs["api_keys"] = api_keys_map(source); // con el gemini_api_key de antes
+        std::set<std::string> providers;
+        for (const auto& [k, v] : theirs["api_keys"].items()) {
+            providers.insert(k);
+        }
+        GC_TRY(extra, mapping(field(source, "api_keys_extra"), "api_keys_extra"));
+        for (const auto& [k, v] : extra.items()) {
+            providers.insert(k);
+        }
+        for (const std::string& p : providers) {
+            GC_TRY(mine, keys_here(d, p));
+            GC_TRY(keys, keys_list_from(theirs, p));
+            if (!mine.empty() || keys.empty()) {
+                continue;
+            }
+            if (auto r = set_keys_list(d, p, keys); !r) {
+                return std::unexpected(r.error());
+            }
+            arrived.insert(p);
+        }
+        for (const auto& [k, v] : source.items()) {
+            if (k.starts_with("azure_") && !d.contains(k) && py_truthy(v)) {
+                d[k] = v; // la región y los endpoints de Azure, que van con sus claves
+                changed = true;
+            }
+        }
+    }
+    if (env.is_object()) {
+        for (const auto& [p, v] : env.items()) {
+            const std::string key = py_strip(py_truthy(v) ? py_str(v) : std::string());
+            GC_TRY(mine, keys_here(d, p));
+            if (key.empty() || !mine.empty()) {
+                continue;
+            }
+            if (auto r = set_keys_list(d, p, {key}); !r) {
+                return std::unexpected(r.error());
+            }
+            arrived.insert(p);
+        }
+    }
+    if (!arrived.empty() || changed) {
+        std::error_code ec;
+        std::filesystem::create_directories(file_.parent_path(), ec);
+        if (auto w = write_json_file(file_, d, 2); !w) {
+            return std::unexpected(w.error());
+        }
+    }
+    return std::vector<std::string>(arrived.begin(), arrived.end());
+}
+
 } // namespace gc::core

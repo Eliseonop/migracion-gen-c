@@ -1,7 +1,14 @@
 #include "settings_model.hpp"
 
+#include <QDir>
+#include <QFile>
+#include <QStringList>
+#include <QUrl>
 #include <algorithm>
 #include <array>
+#include <system_error>
+
+#include "gc/core/io.hpp"
 
 namespace gc::studio {
 
@@ -40,7 +47,69 @@ constexpr std::array<Provider, 19> kProviders{{
 
 QString qstr(const std::string& s) { return QString::fromStdString(s); }
 
+namespace fs = std::filesystem;
+
 } // namespace
+
+Result<std::vector<std::string>> import_keys_from(core::SettingsFile& file, const fs::path& folder) {
+    std::error_code ec;
+    std::vector<fs::path> bases{folder};
+    if (fs::is_directory(folder / "backend", ec)) {
+        bases.push_back(folder / "backend"); // la carpeta de video-yt: lo suyo está en backend/
+    }
+    Json source;
+    for (const fs::path& base : bases) {
+        if (const fs::path settings = base / "data" / "settings.json"; source.is_null() && fs::is_regular_file(settings, ec)) {
+            auto read = core::read_json_file_py(settings);
+            if (!read) {
+                return std::unexpected(read.error());
+            }
+            source = std::move(*read);
+        }
+    }
+    // Los proveedores de Ajustes y los de Azure que usa video-yt.
+    std::vector<std::string> providers{"azure", "azure_vision", "azure_foundry"};
+    for (const Provider& p : kProviders) {
+        providers.emplace_back(p.id);
+    }
+    Json env = Json::object();
+    bool any_env = false;
+    for (const fs::path& base : bases) {
+        if (const fs::path dotenv = base / ".env"; fs::is_regular_file(dotenv, ec)) {
+            QFile f(qstr(core::path_to_utf8(dotenv)));
+            if (!f.open(QIODevice::ReadOnly)) {
+                return std::unexpected(Error{ErrorCode::Io, "No se pudo leer " + core::path_to_utf8(dotenv)});
+            }
+            const QByteArray text = f.readAll();
+            const auto keys = core::env_api_keys(std::string_view(text.constData(), static_cast<std::size_t>(text.size())),
+                                                 providers);
+            for (const auto& [k, v] : keys.items()) {
+                env[k] = v;
+            }
+            any_env = true;
+        }
+    }
+    if (source.is_null() && !any_env) {
+        return std::unexpected(Error{ErrorCode::NotFound,
+                                     "No hay un settings.json (en data/ o backend/data/) ni un .env en «" +
+                                         QDir::toNativeSeparators(qstr(core::path_to_utf8(folder))).toStdString() + "»."});
+    }
+    return file.import_keys(source, env);
+}
+
+QString imported_keys_message(const std::vector<std::string>& providers) {
+    if (providers.empty()) {
+        return QStringLiteral("No faltaba ninguna: ya tenías claves de esos proveedores.");
+    }
+    QStringList names;
+    for (const std::string& p : providers) {
+        names << qstr(p);
+    }
+    const QString list = names.size() == 1 ? names.front()
+                                           : names.mid(0, names.size() - 1).join(", ") + " y " + names.back();
+    return providers.size() == 1 ? QString("Traídas las claves de 1 proveedor: %1.").arg(list)
+                                 : QString("Traídas las claves de %1 proveedores: %2.").arg(providers.size()).arg(list);
+}
 
 SettingsModel::SettingsModel(core::SettingsFile& file, QObject* parent) : QObject(parent), file_(file) { reload(); }
 
@@ -54,6 +123,7 @@ bool SettingsModel::ok(const Result<T>& r) {
 }
 
 void SettingsModel::reload() {
+    message_.clear(); // lo que llegó al traer las claves vale hasta el cambio siguiente (o la otra carpeta)
     const auto view = file_.public_view();
     if (!ok(view)) {
         return;
@@ -79,6 +149,26 @@ void SettingsModel::reload() {
         }
     }
     emit changed();
+}
+
+bool SettingsModel::importKeys(const QString& folder) {
+    const QUrl url(folder);
+    const QString local = url.isLocalFile() ? url.toLocalFile() : folder.trimmed();
+    message_.clear();
+    if (local.isEmpty()) {
+        error_ = QStringLiteral("Elige la carpeta de video-yt.");
+        emit changed();
+        return false;
+    }
+    const auto arrived =
+        import_keys_from(file_, core::path_from_utf8(QDir::cleanPath(QDir(local).absolutePath()).toStdString()));
+    if (!ok(arrived)) {
+        return false;
+    }
+    reload();
+    message_ = imported_keys_message(*arrived);
+    emit changed();
+    return true;
 }
 
 void SettingsModel::setExport(int fps, const QString& quality) {

@@ -5,6 +5,7 @@
 #include <QClipboard>
 #include <QColor>
 #include <QCoreApplication>
+#include <QCryptographicHash>
 #include <QCursor>
 #include <QDir>
 #include <QGuiApplication>
@@ -19,6 +20,7 @@
 #include <QQmlApplicationEngine>
 #include <QQuickItem>
 #include <QQuickWindow>
+#include <QSignalSpy>
 #include <QTest>
 #include <algorithm>
 #include <array>
@@ -49,10 +51,12 @@
 #include "frame_preview.hpp"
 #include "home_model.hpp"
 #include "projects_folder.hpp"
+#include "qt_app.hpp"
 #include "qt_json.hpp"
 #include "settings_model.hpp"
 #include "studio_config.hpp"
 #include "thumbnails.hpp"
+#include "updater.hpp"
 
 #ifdef GC_STUDIO_PREVIEW
 #include <cstdint>
@@ -74,11 +78,8 @@
 
 using namespace gc;
 
-namespace {
-
-// Una sola app para todo el proceso y sin destruir: hacerlo al salir, detrás de los estáticos de Qt,
-// rompe.
-QGuiApplication& app() {
+// Una sola app para todo el proceso y sin destruir (support/qt_app.hpp).
+QGuiApplication& gc::test::qt_app() {
     static int argc = 1;
     static char name[] = "gc_tests";
     static char* argv[] = {name, nullptr};
@@ -103,6 +104,10 @@ QGuiApplication& app() {
     return *instance;
 }
 
+namespace {
+
+QGuiApplication& app() { return test::qt_app(); }
+
 // El color de la imagen «b» de la fixture.
 const QColor kImageColor(200, 30, 40);
 
@@ -123,10 +128,13 @@ struct Studio {
     std::unique_ptr<core::SettingsFile> settings_file;
     std::unique_ptr<studio::SettingsModel> settings;
     std::unique_ptr<studio::ProjectsFolder> folder; // la de siempre es `dir`
+    std::unique_ptr<studio::Updater> updater;       // sin lanzar nada; sus releases locales, en `dir`/releases
     std::unique_ptr<QQmlApplicationEngine> engine;
     QQuickWindow* window = nullptr;
 
-    Studio() {
+    // Con `production`, la instalada desde una release (genclip-release.json en `dir`/app), que busca al arrancar; si
+    // no, la de desarrollo (gc_tests no lo lleva). GitHub no responde: nadie escucha en su URL.
+    explicit Studio(bool production = false) {
         app();
         std::filesystem::remove_all(dir);
         const Json tracks = Json::array({{{"id", "V1"}, {"kind", "video"}, {"name", "V1"}},
@@ -169,12 +177,24 @@ struct Studio {
         settings = std::make_unique<studio::SettingsModel>(*settings_file);
         folder = std::make_unique<studio::ProjectsFolder>(*store, *settings_file, dir / "config" / "studio.json", dir);
         folder->setModels(home.get(), settings.get(), editor.get());
+        updater = std::make_unique<studio::Updater>();
+        updater->setDryRun(true);
+        updater->setLocalReleases(dir / "releases");
+        QTcpServer closed; // un puerto que estaba libre: la conexión se rechaza al momento
+        REQUIRE(closed.listen(QHostAddress::LocalHost));
+        updater->setApiUrl(QUrl(QString("http://127.0.0.1:%1/latest").arg(closed.serverPort())));
+        closed.close();
+        if (production) {
+            REQUIRE(core::write_json_file(dir / "app" / "genclip-release.json", {{"version", "0.0.0"}}, 2));
+            updater->setAppDir(dir / "app");
+        }
         studio::preload_qml_modules();
         engine = std::make_unique<QQmlApplicationEngine>();
         engine->setInitialProperties({{"home", QVariant::fromValue(home.get())},
                                       {"editor", QVariant::fromValue(editor.get())},
                                       {"settings", QVariant::fromValue(settings.get())},
-                                      {"folder", QVariant::fromValue(folder.get())}});
+                                      {"folder", QVariant::fromValue(folder.get())},
+                                      {"updater", QVariant::fromValue(updater.get())}});
         engine->load(QUrl("qrc:/qt/qml/GenClip/Studio/Main.qml"));
         REQUIRE(!engine->rootObjects().isEmpty());
         window = qobject_cast<QQuickWindow*>(engine->rootObjects().front());
@@ -184,6 +204,7 @@ struct Studio {
     }
     ~Studio() {
         engine.reset();
+        updater.reset();
         folder.reset(); // antes que los modelos a los que mira
         editor.reset(); // para el hilo de la vista previa, que puede estar leyendo la carpeta
         home.reset();
@@ -3388,11 +3409,124 @@ TEST_CASE("studio sin pantalla: la versión se ve en el título, en el inicio y 
     QCoreApplication::processEvents();
     CHECK(s.window->title() == name);
     REQUIRE(s.item("home:version"));
-    CHECK(s.item("home:version")->property("text").toString() == name);
+    CHECK(s.item("home:version")->property("text").toString() == name + " · desarrollo"); // sin genclip-release.json
     s.window->setProperty("settingsOpen", true);
     QCoreApplication::processEvents();
     REQUIRE(s.item("set:version"));
     CHECK(s.item("set:version")->property("text").toString() == name);
+    // Ajustes › Versión: la de desarrollo no se actualiza (ni busca al arrancar).
+    REQUIRE(s.item("set:channel"));
+    CHECK(s.item("set:channel")->property("text").toString().startsWith(name + " · desarrollo."));
+    CHECK_FALSE(s.item("set:checkUpdate"));
+    CHECK(s.updater->status().isEmpty());
+}
+
+TEST_CASE("studio sin pantalla: la de producción busca al arrancar, avisa de la nueva y se actualiza desde Ajustes",
+          "[studio][ui][updater]") {
+    const Studio s(true);
+    QSignalSpy restart(s.updater.get(), &studio::Updater::readyToRestart);
+    const QString current = QString::fromUtf8(gc::kVersion.data(), static_cast<qsizetype>(gc::kVersion.size()));
+    const QString name = "GenClipPro " + current;
+    // Al arrancar ya buscó: sin releases en este PC ni GitHub, lo dice.
+    REQUIRE(QTest::qWaitFor([&] { return s.updater->status() != "checking"; }, 15000));
+    CHECK(s.updater->status() == "error");
+
+    // Una release de este PC más nueva, con su .sha256.
+    const auto v = *studio::Updater::parseVersion(current);
+    const QString newer = QString("%1.%2.0").arg(v.major).arg(v.minor + 1);
+    const auto zip = s.dir / "releases" / ("GenClipPro-" + newer.toStdString() + "-win64.zip");
+    std::filesystem::create_directories(zip.parent_path());
+    std::ofstream(zip, std::ios::binary) << "zip";
+    std::ofstream(std::filesystem::path(zip).concat(".sha256"), std::ios::binary)
+        << QCryptographicHash::hash("zip", QCryptographicHash::Sha256).toHex().toStdString() << "  x.zip\n";
+
+    // En Ajustes, con el proyecto abierto: se busca, pero no se puede actualizar hasta cerrarlo.
+    s.window->setProperty("settingsOpen", true);
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("set:channel"));
+    CHECK(s.item("set:channel")->property("text").toString().startsWith(name + " · producción."));
+    REQUIRE(s.item("set:updateError"));
+    CHECK(s.item("set:updateError")->property("text").toString().startsWith("No se pudo mirar en GitHub: "));
+    s.click("set:checkUpdate");
+    REQUIRE(QTest::qWaitFor([&] { return s.updater->status() != "checking"; }, 15000));
+    CHECK(s.updater->status() == "available");
+    QCoreApplication::processEvents();
+    CHECK_FALSE(s.item("set:updateError"));
+    REQUIRE(s.item("set:updateMessage"));
+    CHECK(s.item("set:updateMessage")->property("text").toString() ==
+          QString("Hay una versión nueva: la %1, de una release de este PC.").arg(newer));
+    REQUIRE(s.item("set:update"));
+    CHECK(s.item("set:update")->property("text").toString() == "Actualizar a la " + newer);
+    CHECK_FALSE(s.item("set:update")->property("enabled").toBool());
+    s.editor->closeProject();
+    QCoreApplication::processEvents();
+    CHECK(s.item("set:update")->property("enabled").toBool());
+
+    // El inicio también lo dice.
+    s.window->setProperty("settingsOpen", false);
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("home:version"));
+    CHECK(s.item("home:version")->property("text").toString() == name + " · hay una nueva: " + newer);
+
+    // «Actualizar»: con su .sha256, el script listo (en los tests ni se lanza ni se cierra la app).
+    s.window->setProperty("settingsOpen", true);
+    QCoreApplication::processEvents();
+    s.click("set:update");
+    CHECK(s.updater->status() == "installing");
+    CHECK(restart.size() == 1);
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("set:updateMessage"));
+    CHECK(s.item("set:updateMessage")->property("text").toString() ==
+          QString("Se cierra GenClipPro para poner la %1 y se vuelve a abrir.").arg(newer));
+    CHECK_FALSE(s.item("set:checkUpdate")->property("enabled").toBool());
+}
+
+TEST_CASE("studio sin pantalla: «Traer las de video-yt…» trae las claves que faltan y dice de qué proveedores",
+          "[studio][ui]") {
+    const Studio s;
+    // Una carpeta como la de video-yt: su backend/data/settings.json y un .env.
+    const auto videoyt = s.dir / "video-yt";
+    REQUIRE(core::write_json_file(videoyt / "backend" / "data" / "settings.json",
+                                  {{"api_keys", {{"groq", "q-1"}, {"openai", "o-1"}}}}, 2));
+    std::ofstream(videoyt / ".env", std::ios::binary) << "GEMINI_API_KEY=g-1\n";
+    const QString url = QUrl::fromLocalFile(QString::fromStdString(core::path_to_utf8(videoyt))).toString();
+    const auto count = [&s](const QString& id) {
+        for (const QVariant& p : s.settings->providers()) {
+            if (p.toMap()["id"] == id) {
+                return p.toMap()["count"].toInt();
+            }
+        }
+        return -1;
+    };
+    s.window->setProperty("settingsOpen", true);
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("set:importKeys"));
+    CHECK_FALSE(s.item("set:keysMessage"));
+
+    // Lo que devuelve el selector de carpetas (una URL file:///).
+    REQUIRE(s.settings->importKeys(url));
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("set:keysMessage"));
+    CHECK(s.item("set:keysMessage")->property("text").toString() ==
+          "Traídas las claves de 3 proveedores: gemini, groq y openai.");
+    CHECK(count("gemini") == 1);
+    CHECK(count("groq") == 1);
+    CHECK(count("openai") == 1);
+    CHECK(s.settings_file->api_key("groq") == "q-1");
+
+    // Otra vez: ya no falta ninguna. Y el aviso se va con el cambio siguiente.
+    REQUIRE(s.settings->importKeys(url));
+    QCoreApplication::processEvents();
+    CHECK(s.item("set:keysMessage")->property("text").toString() ==
+          "No faltaba ninguna: ya tenías claves de esos proveedores.");
+    s.settings->addKey("groq", "q-2");
+    QCoreApplication::processEvents();
+    CHECK_FALSE(s.item("set:keysMessage"));
+    CHECK(count("groq") == 2);
+
+    // Una carpeta sin nada que traer.
+    CHECK_FALSE(s.settings->importKeys(QUrl::fromLocalFile(QString::fromStdString(core::path_to_utf8(s.dir / "nada"))).toString()));
+    CHECK(s.settings->error().startsWith("No hay un settings.json"));
 }
 
 TEST_CASE("studio sin pantalla: «Directo» enseña con qué yt-dlp busca, deja elegirlo y los segundos se leen enteros",

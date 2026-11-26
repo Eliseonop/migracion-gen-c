@@ -16,6 +16,7 @@ add_executable(gc_tests
     unit/test_projects_store.cpp
     unit/test_py.cpp
     unit/test_session.cpp
+    unit/test_settings_import.cpp
     unit/test_sfx.cpp
     parity/bench_edit.cpp
     parity/test_audio_parity.cpp
@@ -105,7 +106,7 @@ if(TARGET gc_studio)
     # La interfaz entera sin pantalla (QT_QPA_PLATFORM=offscreen), con el ratón de QTest.
     find_package(Qt6 QUIET COMPONENTS Test)
     if(Qt6Test_FOUND)
-        target_sources(gc_tests PRIVATE unit/test_studio_ui.cpp)
+        target_sources(gc_tests PRIVATE unit/test_studio_ui.cpp unit/test_updater.cpp)
         target_link_libraries(gc_tests PRIVATE gc_studio_qml Qt6::Test)
         # Un yt-dlp y un FFmpeg de mentira para «Directo» (support/fake_live_tool.cpp).
         add_executable(gc_fake_live_tool support/fake_live_tool.cpp)

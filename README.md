@@ -54,6 +54,26 @@ Lo que solo compila MSVC (`gc_media`, `gc_render`, `gc_export` y, en Windows, el
 Las dependencias (nlohmann/json, spdlog, Catch2) se buscan primero con `find_package` y,
 si no están, CMake las descarga y verifica su hash (`cmake/GcDependencies.cmake`).
 
+## Instalar en Windows
+
+`genclip-studio` se usa de dos formas, con la misma carpeta de proyectos y las mismas claves:
+
+- **GenClipPro Dev**: la build de desarrollo (`build/msvc-vcpkg-debug`), siempre la última que se compila.
+- **GenClipPro**: la de producción, instalada desde una release en `%LOCALAPPDATA%\Programs\GenClipPro`. Se actualiza
+  desde Ajustes › Versión: mira primero las releases de este PC y luego la última de GitHub, y no instala nada sin su
+  `.sha256`.
+
+```powershell
+# Compila en Release y deja GenClipPro-<versión>-win64.zip y su .sha256 en %LOCALAPPDATA%\GenClipPro\releases
+powershell -ExecutionPolicy Bypass -File tools\release\empaquetar.ps1
+# Instala la más nueva y deja los dos accesos en el menú Inicio
+powershell -ExecutionPolicy Bypass -File tools\release\instalar.ps1
+```
+
+Las API keys de video-yt se traen desde Ajustes › API keys («Traer las de video-yt…») o con
+`genclip-studio --import-keys <carpeta de video-yt>`: solo las que faltan, al `data\settings.json` de la carpeta de
+los proyectos (no van al repositorio ni a las releases).
+
 ## Paridad con video-yt
 
 Durante la migración, video-yt es la referencia. Las fixtures se generan con su Python:

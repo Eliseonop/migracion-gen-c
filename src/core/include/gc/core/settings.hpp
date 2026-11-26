@@ -30,6 +30,12 @@ namespace gc::core {
 // el de los ajustes (`saved`, el de normalize_transcribe_settings).
 [[nodiscard]] std::string resolve_transcribe_model(const Json& requested, std::string_view saved);
 
+// Las claves de un .env (NOMBRE=valor por línea; # de comentario, `export` delante y comillas):
+// {proveedor: clave} de las variables <PROVEEDOR>_API_KEY, _ACCESS_KEY, _API_TOKEN, _TOKEN o _KEY
+// cuyo proveedor, en minúsculas, está en `providers` (GOOGLE_… es gemini y HF_…, huggingface).
+// Lo demás del .env no se lee. Es de GenClipPro: video-yt no lee .env.
+[[nodiscard]] Json env_api_keys(std::string_view text, const std::vector<std::string>& providers);
+
 class SettingsFile {
 public:
     explicit SettingsFile(std::filesystem::path file) : file_(std::move(file)) {}
@@ -55,6 +61,13 @@ public:
     [[nodiscard]] Result<std::size_t> add_key(std::string_view provider, std::string_view value);
     [[nodiscard]] Result<std::size_t> set_key(std::string_view provider, std::int64_t index, std::string_view value);
     [[nodiscard]] Result<std::size_t> remove_key(std::string_view provider, std::int64_t index);
+
+    // Trae claves de fuera (las de video-yt) a este settings.json (es de GenClipPro). De `source`,
+    // otro settings.json: todas las de cada proveedor (api_keys, api_keys_extra y el gemini_api_key
+    // de antes) y sus ajustes azure_*. De `env`: {proveedor: clave} (env_api_keys). Solo llegan a
+    // los proveedores que aquí no tienen ninguna, y los azure_* que aquí no están: nada se
+    // sobrescribe. Devuelve los proveedores que llegaron, ordenados (nunca sus claves).
+    [[nodiscard]] Result<std::vector<std::string>> import_keys(const Json& source, const Json& env);
 
 private:
     [[nodiscard]] Json load_unlocked() const;

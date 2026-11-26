@@ -9,7 +9,10 @@ Rectangle {
     id: page
     required property var model
     required property var folder // projects_folder.hpp
+    required property var updater // updater.hpp
     signal closed
+    readonly property bool updating: updater.status === "checking" || updater.status === "downloading"
+                                     || updater.status === "installing"
 
     color: Theme.bg
 
@@ -169,6 +172,77 @@ Rectangle {
                     }
                 }
 
+                // Versión: la de producción se actualiza aquí (updater.hpp); la de desarrollo es la última compilada.
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: versionBox.implicitHeight + 40
+                    radius: Theme.radiusLg
+                    color: Theme.card
+                    border.color: Theme.line
+                    ColumnLayout {
+                        id: versionBox
+                        anchors.fill: parent
+                        anchors.margins: 20
+                        spacing: 10
+                        Label { text: "Versión"; color: Theme.text; font.pixelSize: 16; font.bold: true }
+                        Label {
+                            objectName: "set:channel"
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                            text: page.updater.installed
+                                  ? "GenClipPro " + page.updater.version + " · producción. Se actualiza aquí: primero con las releases de este PC (las que deja tools\\release\\empaquetar.ps1) y, si no hay una más nueva, con la de GitHub."
+                                  : "GenClipPro " + page.updater.version + " · desarrollo. Es la build: siempre la última que se compila, no hace falta actualizarla. La de producción («GenClipPro» del menú Inicio) se actualiza desde sus Ajustes."
+                            color: Theme.textSecondary
+                        }
+                        Flow {
+                            Layout.fillWidth: true
+                            spacing: 8
+                            visible: page.updater.installed
+                            Button {
+                                objectName: "set:checkUpdate"
+                                text: "Buscar actualizaciones"
+                                enabled: !page.updating
+                                onClicked: page.updater.check()
+                            }
+                            Button {
+                                objectName: "set:update"
+                                visible: page.updater.status === "available"
+                                enabled: !page.folder.blocker
+                                text: "Actualizar a la " + page.updater.latest
+                                onClicked: page.updater.update()
+                            }
+                        }
+                        ProgressBar {
+                            Layout.fillWidth: true
+                            visible: page.updater.status === "downloading"
+                            value: page.updater.progress
+                        }
+                        Label {
+                            objectName: "set:updateMessage"
+                            Layout.fillWidth: true
+                            visible: !!page.updater.message
+                            wrapMode: Text.Wrap
+                            text: page.updater.message
+                            color: page.updater.status === "available" ? Theme.accent : Theme.muted
+                        }
+                        Label {
+                            Layout.fillWidth: true
+                            visible: page.updater.status === "available" && !!page.folder.blocker
+                            wrapMode: Text.Wrap
+                            text: "Para actualizar, cierra el proyecto y espera a que acabe la grabación o la exportación: GenClipPro se cierra y se vuelve a abrir."
+                            color: Theme.warning
+                        }
+                        Label {
+                            objectName: "set:updateError"
+                            Layout.fillWidth: true
+                            visible: !!page.updater.error
+                            wrapMode: Text.Wrap
+                            text: page.updater.error
+                            color: Theme.danger
+                        }
+                    }
+                }
+
                 Rectangle {
                     Layout.fillWidth: true
                     implicitHeight: exportBox.implicitHeight + 40
@@ -263,12 +337,29 @@ Rectangle {
                         anchors.fill: parent
                         anchors.margins: 20
                         spacing: 6
-                        Label { text: "API keys"; color: Theme.text; font.pixelSize: 16; font.bold: true }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Label { Layout.fillWidth: true; text: "API keys"; color: Theme.text; font.pixelSize: 16; font.bold: true }
+                            // Las de video-yt (su settings.json y sus .env), al JSON de aquí: solo las que faltan.
+                            Button {
+                                objectName: "set:importKeys"
+                                text: "Traer las de video-yt…"
+                                onClicked: keysDialog.open()
+                            }
+                        }
                         Label {
                             Layout.fillWidth: true
                             wrapMode: Text.Wrap
-                            text: "Se guardan en data/settings.json y no se muestran nunca. Varias claves por proveedor se turnan."
+                            text: "Se guardan en " + page.folder.path + "\\data\\settings.json, solo en este PC (no van al repositorio ni a las releases), y no se muestran nunca. Varias claves por proveedor se turnan. «Traer las de video-yt…» copia las que aquí faltan de su settings.json y de sus .env (GEMINI_API_KEY=…)."
                             color: Theme.muted
+                        }
+                        Label {
+                            objectName: "set:keysMessage"
+                            Layout.fillWidth: true
+                            visible: !!page.model.message
+                            wrapMode: Text.Wrap
+                            text: page.model.message
+                            color: Theme.success
                         }
                         Repeater {
                             model: page.model.providers
@@ -337,5 +428,11 @@ Rectangle {
         title: "¿Dónde se guardan los proyectos?"
         currentFolder: page.folder.url
         onAccepted: page.folder.choose(selectedFolder.toString())
+    }
+    // La carpeta de video-yt (o su backend): sus claves, al settings.json de aquí.
+    FolderDialog {
+        id: keysDialog
+        title: "¿Dónde está video-yt?"
+        onAccepted: page.model.importKeys(selectedFolder.toString())
     }
 }

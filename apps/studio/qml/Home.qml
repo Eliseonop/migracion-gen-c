@@ -7,6 +7,7 @@ Item {
     id: home
     required property var model
     required property var folder // la carpeta de los proyectos (projects_folder.hpp)
+    required property var updater // la versión y si hay una nueva (updater.hpp)
     property bool newGroup
     signal openProject(string pid)
     signal openSettings
@@ -113,15 +114,20 @@ Item {
                     ToolTip.visible: folderHover.hovered
                     ToolTip.text: home.folder.path + "\nSe cambia en Ajustes."
                 }
-                // La versión (la de CMakeLists.txt).
+                // La versión (la de CMakeLists.txt), de desarrollo o de producción; si hay una nueva, un clic lleva a
+                // Ajustes › Versión.
                 Label {
                     objectName: "home:version"
+                    readonly property bool newer: home.updater.status === "available"
                     Layout.fillWidth: true
                     Layout.leftMargin: 8
                     visible: !!Qt.application.version
-                    text: "GenClipPro " + Qt.application.version
-                    color: Theme.muted
+                    text: "GenClipPro " + Qt.application.version + (home.updater.installed ? "" : " · desarrollo")
+                          + (newer ? " · hay una nueva: " + home.updater.latest : "")
+                    color: newer ? Theme.accent : Theme.muted
                     font.pixelSize: 11
+                    wrapMode: Text.Wrap
+                    TapHandler { enabled: parent.newer; onTapped: home.openSettings() }
                 }
             }
         }

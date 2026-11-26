@@ -11,6 +11,32 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.23.0] — 2026-11-26
+
+### Añadido
+
+- **Dos GenClipPro en el menú Inicio:** «GenClipPro» es la de producción, instalada desde una release en
+  `%LOCALAPPDATA%\Programs\GenClipPro`, y «GenClipPro Dev» es la build de desarrollo, siempre la última que se compila.
+  Las dos abren la misma carpeta de proyectos con las mismas claves.
+- **Actualizar desde Ajustes › Versión** (en la de producción): «Buscar actualizaciones» mira primero las releases de
+  este PC (`%LOCALAPPDATA%\GenClipPro\releases`) y luego la última de GitHub. «Actualizar a la …» comprueba el `.zip`
+  con su `.sha256` (sin él no instala nada), cierra GenClipPro, cambia la carpeta y la vuelve a abrir. Se puede
+  actualizar con el editor cerrado y sin una grabación ni una exportación en marcha. Al arrancar busca sola y, si hay
+  una versión nueva, lo avisa abajo del inicio. La de desarrollo dice «desarrollo» y no se actualiza.
+- **Traer las API keys de video-yt** (Ajustes › API keys › «Traer las de video-yt…», o
+  `genclip-studio --import-keys <carpeta>`): copia de su `settings.json` y de sus `.env` (`GEMINI_API_KEY=…`) las
+  claves de los proveedores que aquí no tienen ninguna, con los ajustes de Azure que van con ellas, sin pisar nada. Se
+  guardan en el `data\settings.json` de tu carpeta de proyectos, solo en este PC, y dice de qué proveedores llegaron
+  (nunca las claves).
+- **La release portátil:** `tools\release\empaquetar.ps1` compila en Release y deja `GenClipPro-<versión>-win64.zip`
+  (con Qt, sus plugins y sus módulos QML y el runtime de MSVC) y su `.sha256` en las releases de este PC. Antes
+  comprueba que no lleva ajustes ni ninguna de tus claves y que arranca sola desde el `.zip`.
+  `tools\release\instalar.ps1` instala la más nueva y crea los dos accesos del menú Inicio.
+
+### Límites
+
+- En otro PC, los efectos con texturas aún las buscan en el árbol de fuentes (F9); en este se encuentran.
+
 ## [0.22.0] — 2026-11-26
 
 ### Añadido

@@ -2,6 +2,10 @@
 //
 //   genclip-studio [--root <carpeta>] [--open <proyecto> [--select <clip>] [--at <s>]] [--settings] [--grab <png>]
 //   genclip-studio --version
+//   genclip-studio --import-keys <carpeta de video-yt>   (trae sus API keys a los ajustes de aquí y sale)
+//
+// --version y --import-keys lo dicen en la consola si la salida está redirigida (`| Out-Host`) y, si no
+// (es una app de ventana: en Windows no escribe en la consola que la lanza), en un cuadro.
 //
 // <carpeta> tiene data/projects.json y clips/, como backend/ de video-yt (así se abren tus
 // proyectos de siempre). Sin --root, la elegida en Ajustes › Carpeta de los proyectos (studio.json, en
@@ -21,6 +25,8 @@
 #include <QStandardPaths>
 #include <QTimer>
 #include <QUrl>
+#include <cstdio>
+#include <cstdlib>
 
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
@@ -32,12 +38,30 @@
 #include "projects_folder.hpp"
 #include "settings_model.hpp"
 #include "thumbnails.hpp"
+#include "updater.hpp"
 
 #ifdef GC_STUDIO_PRELOAD_CONTROLS_IMPL
 // Las genera Qt en Qt6QuickControls2Impl y Qt6QuickControls2BasicStyleImpl (ver el CMakeLists).
 void qml_register_types_QtQuick_Controls_impl();       // NOLINT(readability-identifier-naming)
 void qml_register_types_QtQuick_Controls_Basic_impl(); // NOLINT(readability-identifier-naming)
 #endif
+
+namespace {
+
+// Lo que dice una opción que sale sin abrir la ventana (--import-keys), como --version: en la salida si está
+// redirigida o hay consola y, si no, en un cuadro (QCommandLineParser, desde Qt 6.9).
+[[noreturn]] void say_and_exit(const QString& text, int code) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+    QCommandLineParser::showMessageAndExit(
+        code == 0 ? QCommandLineParser::MessageType::Information : QCommandLineParser::MessageType::Error,
+        text + '\n', code);
+#else
+    std::fputs(qPrintable(text + '\n'), code == 0 ? stdout : stderr);
+    std::exit(code);
+#endif
+}
+
+} // namespace
 
 void gc::studio::preload_qml_modules() {
 #ifdef GC_STUDIO_PRELOAD_CONTROLS_IMPL
@@ -71,6 +95,8 @@ int gc::studio::run(int argc, char* argv[]) {
     args.addOption({"clip", "Con --open, abre ese vídeo del material (clips:<index>) en el Clip Editor.", "clave"});
     args.addOption({"mark", "Con --clip, marca ese tramo (Z y X).", "inicio,fin"});
     args.addOption({"settings", "Arranca en Ajustes (con --grab, para verlos)."});
+    args.addOption({"import-keys", "Trae las API keys de video-yt (su settings.json y sus .env) a los ajustes de aquí y sale.",
+                    "carpeta"});
     args.process(app);
     // La carpeta de los proyectos: la de --root, la elegida en Ajustes o la de datos de la app.
     const auto default_root = gc::core::path_from_utf8(
@@ -82,6 +108,20 @@ int gc::studio::run(int argc, char* argv[]) {
     QDir().mkpath(QString::fromStdString(gc::core::path_to_utf8(start.root)));
 
     const auto& base = start.root;
+    gc::core::SettingsFile settings_file(base / "data" / "settings.json");
+    if (args.isSet("import-keys")) {
+        // Antes de abrir nada más (sale sin cerrar lo abierto). Dice solo los proveedores, nunca las claves.
+        const auto arrived = gc::studio::import_keys_from(
+            settings_file, gc::core::path_from_utf8(QDir(args.value("import-keys")).absolutePath().toStdString()));
+        if (!arrived) {
+            say_and_exit(QString::fromStdString(arrived.error().message), 1);
+        }
+        say_and_exit(gc::studio::imported_keys_message(*arrived) + " En " +
+                         QDir::toNativeSeparators(
+                             QString::fromStdString(gc::core::path_to_utf8(base / "data" / "settings.json"))) +
+                         ".",
+                     0);
+    }
     // Las miniaturas del inicio y los proxies de la vista previa, en la caché de la app (no en la
     // carpeta del proyecto).
     const auto cache =
@@ -91,7 +131,6 @@ int gc::studio::run(int argc, char* argv[]) {
     gc::studio::Thumbnails thumbnails;
     thumbnails.setCacheDir(cache / "thumbnails");
     gc::studio::HomeModel home(store, ids, &thumbnails);
-    gc::core::SettingsFile settings_file(base / "data" / "settings.json");
     gc::studio::EditorModel editor(store, &settings_file);
     editor.setProxyDir(cache / "proxies");
     editor.setThumbnails(&thumbnails);
@@ -100,13 +139,15 @@ int gc::studio::run(int argc, char* argv[]) {
     gc::studio::ProjectsFolder folder(store, settings_file, folder_config, default_root);
     folder.setModels(&home, &settings, &editor);
     folder.setStart(start);
+    gc::studio::Updater updater; // Ajustes › Versión (la de producción busca al arrancar)
 
     gc::studio::register_qml_types();
     QQmlApplicationEngine engine;
     engine.setInitialProperties({{"home", QVariant::fromValue(&home)},
                                  {"editor", QVariant::fromValue(&editor)},
                                  {"settings", QVariant::fromValue(&settings)},
-                                 {"folder", QVariant::fromValue(&folder)}});
+                                 {"folder", QVariant::fromValue(&folder)},
+                                 {"updater", QVariant::fromValue(&updater)}});
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app, [] { QCoreApplication::exit(1); },
         Qt::QueuedConnection);
