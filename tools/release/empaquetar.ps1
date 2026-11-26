@@ -32,8 +32,8 @@ $name = "GenClipPro-$version-win64"
 Write-Host "== $name"
 
 # El Visual Studio con MSVC y CMake (el de vswhere).
+$vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
 function Find-VisualStudio {
-    $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
     if (-not (Test-Path -LiteralPath $vswhere)) { throw 'No encuentro vswhere: hace falta Visual Studio con MSVC' }
     $vs = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
         Microsoft.VisualStudio.Component.VC.CMake.Project -property installationPath
@@ -53,9 +53,11 @@ $vs = Find-VisualStudio
 if (-not $SinCompilar) {
     # Con la consola en UTF-8: si no, ninja no apunta de qué cabeceras depende cada objeto (MSVC en español).
     $bat = Join-Path $env:TEMP "genclip-empaquetar-$PID.bat"
+    # vcvars64.bat llama a vswhere.exe por su nombre: sin su carpeta en el PATH, lo dice por stderr (y sigue).
     Set-Content -LiteralPath $bat -Encoding Ascii -Value @(
         '@echo off',
         'chcp 65001 >nul',
+        "set `"PATH=$(Split-Path -Parent $vswhere);%PATH%`"",
         "call `"$vs\VC\Auxiliary\Build\vcvars64.bat`" >nul || exit /b 1",
         "cd /d `"$repo`" || exit /b 1",
         "cmake --preset $Preset || exit /b 1",
