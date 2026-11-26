@@ -113,6 +113,16 @@ Item {
                     ToolTip.visible: folderHover.hovered
                     ToolTip.text: home.folder.path + "\nSe cambia en Ajustes."
                 }
+                // La versión (la de CMakeLists.txt).
+                Label {
+                    objectName: "home:version"
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 8
+                    visible: !!Qt.application.version
+                    text: "GenClipPro " + Qt.application.version
+                    color: Theme.muted
+                    font.pixelSize: 11
+                }
             }
         }
 

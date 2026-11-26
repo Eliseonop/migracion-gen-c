@@ -11,6 +11,25 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.22.0] — 2026-11-26
+
+### Añadido
+
+- **Elegir el yt-dlp de «Directo»** (Vídeo › Directo de `genclip-studio`): abajo del panel se ve con qué yt-dlp se
+  busca el directo, o que falta, y «Elegir…» (o «Cambiar…») abre el selector para indicar uno que ya tengas, como el
+  de la venv de video-yt. Se recuerda para la próxima vez.
+- **Se ve la versión** de `genclip-studio` (la de `CMakeLists.txt`): en el título de la ventana, abajo del inicio
+  (debajo de dónde se guardan los proyectos) y arriba de Ajustes. `genclip-studio --version` también la dice.
+
+### Arreglado
+
+- «Directo» ya no depende de la carpeta de los proyectos para encontrar yt-dlp. Sin `--root` (con la carpeta de
+  siempre, desde la 0.21.0) decía «No encuentro yt-dlp» aunque estuviera en la venv de video-yt. Ahora lo busca, por
+  orden, en `GENCLIP_YTDLP`, el elegido, el PATH, el de winget (también si se acaba de instalar con el studio
+  abierto) y la venv de la carpeta de los proyectos; si no hay ninguno, el aviso dice cómo tenerlo.
+- Las casillas de «Cada marca guarda» cortaban el número (enseñaban «0» con 30 y 10): ahora son compactas y se lee
+  entero.
+
 ## [0.21.0] — 2026-11-25
 
 ### Añadido

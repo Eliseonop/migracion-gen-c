@@ -1,6 +1,7 @@
 // genclip-studio: el editor de escritorio (F5).
 //
 //   genclip-studio [--root <carpeta>] [--open <proyecto> [--select <clip>] [--at <s>]] [--settings] [--grab <png>]
+//   genclip-studio --version
 //
 // <carpeta> tiene data/projects.json y clips/, como backend/ de video-yt (así se abren tus
 // proyectos de siempre). Sin --root, la elegida en Ajustes › Carpeta de los proyectos (studio.json, en
@@ -23,6 +24,7 @@
 
 #include "gc/core/fx_catalog.hpp"
 #include "gc/core/io.hpp"
+#include "gc/core/version.hpp"
 
 #include "editor_model.hpp"
 #include "frame_preview.hpp"
@@ -48,6 +50,9 @@ int gc::studio::run(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
     preload_qml_modules();
     QGuiApplication::setApplicationName("GenClipPro");
+    // La de CMakeLists.txt: la enseñan el título, el inicio y Ajustes (Qt.application.version) y --version.
+    QGuiApplication::setApplicationVersion(
+        QString::fromUtf8(gc::kVersion.data(), static_cast<qsizetype>(gc::kVersion.size())));
 
     QFile catalog(":/fx/catalog.json");
     if (catalog.open(QIODevice::ReadOnly)) {
@@ -57,6 +62,7 @@ int gc::studio::run(int argc, char* argv[]) {
 
     QCommandLineParser args;
     args.addHelpOption();
+    args.addVersionOption();
     args.addOption({"root", "Carpeta con data/projects.json y clips/.", "carpeta"});
     args.addOption({"grab", "Guarda una captura de la ventana y sale.", "png"});
     args.addOption({"open", "Abre ese proyecto en el editor.", "id"});
@@ -89,6 +95,7 @@ int gc::studio::run(int argc, char* argv[]) {
     gc::studio::EditorModel editor(store, &settings_file);
     editor.setProxyDir(cache / "proxies");
     editor.setThumbnails(&thumbnails);
+    editor.liveRecorder().setConfig(folder_config); // el yt-dlp elegido en «Directo» también va en studio.json
     gc::studio::SettingsModel settings(settings_file);
     gc::studio::ProjectsFolder folder(store, settings_file, folder_config, default_root);
     folder.setModels(&home, &settings, &editor);

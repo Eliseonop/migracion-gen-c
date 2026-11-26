@@ -6,13 +6,15 @@
 // Después el TS pasa a MP4 y `recorded` lo entrega: EditorModel lo mete en el material con un clip por marca y llama
 // a `finish`. Si el directo acaba solo, se guarda igual.
 //
-// Los programas: GENCLIP_YTDLP y GENCLIP_FFMPEG, si no el PATH y, para yt-dlp, la venv de video-yt si la carpeta de
-// datos es su backend/ (<video-yt>/.venv/Scripts/yt-dlp.exe).
+// Los programas: FFmpeg, GENCLIP_FFMPEG o el del PATH. yt-dlp, lo que dice findYtdlp: también el que se elige en el
+// panel (se recuerda en studio.json), el de winget y la venv de video-yt si la carpeta de los proyectos es la suya.
 
 #include <filesystem>
+#include <optional>
 
 #include <QObject>
 #include <QProcess>
+#include <QProcessEnvironment>
 #include <QString>
 #include <QStringList>
 #include <QTimer>
@@ -41,8 +43,23 @@ class LiveRecorder : public QObject {
     // Lo que se guarda de cada marca: los segundos de antes y los de después.
     Q_PROPERTY(double before READ before WRITE setBefore NOTIFY windowChanged)
     Q_PROPERTY(double after READ after WRITE setAfter NOTIFY windowChanged)
+    // El yt-dlp con el que se buscan los directos (con los separadores del sistema); vacío si no hay ninguno.
+    Q_PROPERTY(QString ytdlpPath READ ytdlpPath NOTIFY toolsChanged)
 
 public:
+    // Dónde se busca yt-dlp, por orden: la variable GENCLIP_YTDLP, el elegido en el panel (si sigue ahí), las carpetas
+    // del PATH, winget (en LOCALAPPDATA: lo que se instala con el studio abierto no está en su PATH) y la venv de la
+    // carpeta de los proyectos o la de su padre (<video-yt>/.venv, con la carpeta en su backend/).
+    struct YtdlpPlaces {
+        QString env;
+        std::optional<std::filesystem::path> chosen;
+        QStringList path;
+        std::filesystem::path local_app_data;
+        std::filesystem::path data_root;
+    };
+    // El primero que existe, o vacío.
+    [[nodiscard]] static QString findYtdlp(const YtdlpPlaces& places);
+
     explicit LiveRecorder(QObject* parent = nullptr);
     ~LiveRecorder() override;
     LiveRecorder(const LiveRecorder&) = delete;
@@ -67,10 +84,21 @@ public:
 
     // El proyecto abierto y su carpeta de grabaciones; una grabación en marcha sigue con el suyo.
     void setProject(const QString& pid, const std::filesystem::path& folder);
-    // La carpeta de datos (la de data/projects.json): para encontrar la venv de video-yt.
-    void setDataRoot(const std::filesystem::path& root) { data_root_ = root; }
+    // La carpeta de datos (la de data/projects.json): su venv es uno de los sitios donde se busca yt-dlp.
+    void setDataRoot(const std::filesystem::path& root);
+    // studio.json: ahí se recuerda el yt-dlp elegido (clave «ytdlp»).
+    void setConfig(const std::filesystem::path& config);
+    // Para los tests: el entorno en el que se busca yt-dlp (GENCLIP_YTDLP, PATH y LOCALAPPDATA), en vez del sistema.
+    void setEnvironment(const QProcessEnvironment& env);
     // Para los tests: los programas (el primero es el ejecutable; los demás van delante de los argumentos).
     void setTools(const QStringList& ytdlp, const QStringList& ffmpeg);
+    [[nodiscard]] QString ytdlpPath() const;
+
+    // El yt-dlp que elige el usuario (la URL file:/// del selector o una ruta): se usa desde ya y se recuerda. false,
+    // con el porqué en `error`, si no es un archivo.
+    Q_INVOKABLE bool chooseYtdlp(const QString& file);
+    // Vuelve a buscar yt-dlp (al volver al panel: puede que se acabe de instalar).
+    Q_INVOKABLE void refreshTools() { emit toolsChanged(); }
 
     // Busca el directo del enlace (o el de `url`, que pasa al campo) y empieza a grabar.
     Q_INVOKABLE void start(const QString& url = {});
@@ -92,6 +120,7 @@ signals:
     void progressChanged();
     void marksChanged();
     void windowChanged();
+    void toolsChanged();
     // El MP4 listo para el material: `info` lleva {pid, platform, url, id, title, uploader, ended} (ended: el directo
     // acabó solo) y `marks` las de la grabación.
     void recorded(const QString& file, const QVariantMap& info, const QVariantList& marks, double seconds);
@@ -114,7 +143,10 @@ private:
     QTimer stop_timeout_; // si FFmpeg no para con la «q», se le mata
     QStringList ytdlp_override_;
     QStringList ffmpeg_override_;
+    std::optional<QProcessEnvironment> env_override_;
     std::filesystem::path data_root_;
+    std::filesystem::path config_;                     // studio.json
+    std::optional<std::filesystem::path> chosen_ytdlp_; // el elegido en el panel
     QString project_;
     std::filesystem::path folder_; // la del proyecto abierto
     QString url_;

@@ -99,7 +99,7 @@ if(TARGET gc_export)
 endif()
 # Con Qt, los ViewModels del editor.
 if(TARGET gc_studio)
-    target_sources(gc_tests PRIVATE unit/test_editor_model.cpp unit/test_home_model.cpp
+    target_sources(gc_tests PRIVATE unit/test_editor_model.cpp unit/test_home_model.cpp unit/test_live_recorder.cpp
                    unit/test_projects_folder.cpp unit/test_settings_model.cpp)
     target_link_libraries(gc_tests PRIVATE gc_studio)
     # La interfaz entera sin pantalla (QT_QPA_PLATFORM=offscreen), con el ratón de QTest.

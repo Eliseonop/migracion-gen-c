@@ -8,11 +8,13 @@ ApplicationWindow {
     required property var settings
     required property var folder // la carpeta de los proyectos (projects_folder.hpp)
     property bool settingsOpen: false
+    // «GenClipPro 0.22.0»: la versión de CMakeLists.txt (app.cpp la pone en la aplicación).
+    readonly property string appName: Qt.application.version ? "GenClipPro " + Qt.application.version : "GenClipPro"
 
     width: 1280
     height: 800
     visible: true
-    title: editor.isOpen ? "GenClipPro · " + editor.projectName : "GenClipPro"
+    title: editor.isOpen ? appName + " · " + editor.projectName : appName
     color: Theme.bg
 
     Home {

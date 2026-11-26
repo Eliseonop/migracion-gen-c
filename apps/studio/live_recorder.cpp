@@ -6,19 +6,27 @@
 #include <vector>
 
 #include <QDateTime>
+#include <QDir>
 #include <QFileInfo>
-#include <QProcessEnvironment>
 #include <QStandardPaths>
+#include <QUrl>
 
 #include "gc/core/io.hpp"
 #include "gc/core/json.hpp"
+
+#include "studio_config.hpp"
 
 namespace gc::studio {
 
 namespace {
 
+namespace fs = std::filesystem;
+
+constexpr const char* kYtdlpKey = "ytdlp";
+
 QString qstr(const std::string& s) { return QString::fromStdString(s); }
 QString qpath(const std::filesystem::path& p) { return QString::fromStdString(core::path_to_utf8(p)); }
+QString native(const fs::path& p) { return QDir::toNativeSeparators(qpath(p)); }
 
 // «m:ss» o «h:mm:ss» de unos segundos, hacia abajo.
 QString clock(double s) {
@@ -28,23 +36,6 @@ QString clock(double s) {
         return QString("%1:%2:%3").arg(n / 3600).arg(QString::number((n % 3600) / 60).rightJustified(2, '0'), ss);
     }
     return QString("%1:%2").arg((n % 3600) / 60).arg(ss);
-}
-
-// Un programa: la variable de entorno, el PATH o uno de `extra` que exista.
-QStringList find_tool(const char* env, const QString& name, const std::vector<std::filesystem::path>& extra) {
-    if (const QString set = qEnvironmentVariable(env); !set.isEmpty()) {
-        return {set};
-    }
-    if (const QString found = QStandardPaths::findExecutable(name); !found.isEmpty()) {
-        return {found};
-    }
-    for (const auto& path : extra) {
-        std::error_code ec;
-        if (std::filesystem::is_regular_file(path, ec)) {
-            return {qpath(path)};
-        }
-    }
-    return {};
 }
 
 // La última línea con algo de lo que un programa dejó en stderr.
@@ -154,24 +145,123 @@ void LiveRecorder::setProject(const QString& pid, const std::filesystem::path& f
 void LiveRecorder::setTools(const QStringList& ytdlp, const QStringList& ffmpeg) {
     ytdlp_override_ = ytdlp;
     ffmpeg_override_ = ffmpeg;
+    emit toolsChanged();
+}
+
+void LiveRecorder::setDataRoot(const fs::path& root) {
+    if (root != data_root_) {
+        data_root_ = root;
+        emit toolsChanged();
+    }
+}
+
+void LiveRecorder::setConfig(const fs::path& config) {
+    config_ = config;
+    chosen_ytdlp_.reset();
+    if (const auto saved = studio_config::get(config_, kYtdlpKey)) {
+        chosen_ytdlp_ = core::path_from_utf8(*saved);
+    }
+    emit toolsChanged();
+}
+
+void LiveRecorder::setEnvironment(const QProcessEnvironment& env) {
+    env_override_ = env;
+    emit toolsChanged();
+}
+
+QString LiveRecorder::findYtdlp(const YtdlpPlaces& places) {
+    if (!places.env.isEmpty()) {
+        return places.env;
+    }
+    std::error_code ec;
+    if (places.chosen && fs::is_regular_file(*places.chosen, ec)) {
+        return native(*places.chosen);
+    }
+    if (!places.path.isEmpty()) {
+        if (const QString found = QStandardPaths::findExecutable("yt-dlp", places.path); !found.isEmpty()) {
+            return QDir::toNativeSeparators(found);
+        }
+    }
+    std::vector<fs::path> candidates;
+    if (!places.local_app_data.empty()) {
+        // winget install yt-dlp: el enlace de Links (si winget puede crearlo) o el programa en su paquete,
+        // Packages/yt-dlp.yt-dlp_Microsoft.Winget.Source_<…>/yt-dlp.exe.
+        const fs::path winget = places.local_app_data / "Microsoft" / "WinGet";
+        candidates.push_back(winget / "Links" / "yt-dlp.exe");
+        for (fs::directory_iterator it(winget / "Packages", ec), end; !ec && it != end; it.increment(ec)) {
+            if (core::path_to_utf8(it->path().filename()).starts_with("yt-dlp.yt-dlp")) {
+                candidates.push_back(it->path() / "yt-dlp.exe");
+            }
+        }
+    }
+    if (!places.data_root.empty()) {
+        for (const auto& base : {places.data_root, places.data_root.parent_path()}) {
+            candidates.push_back(base / ".venv" / "Scripts" / "yt-dlp.exe");
+            candidates.push_back(base / ".venv" / "bin" / "yt-dlp");
+        }
+    }
+    for (const auto& path : candidates) {
+        if (fs::is_regular_file(path, ec)) {
+            return native(path);
+        }
+    }
+    return {};
 }
 
 QStringList LiveRecorder::ytdlp() const {
     if (!ytdlp_override_.isEmpty()) {
         return ytdlp_override_;
     }
-    std::vector<std::filesystem::path> venvs;
-    if (!data_root_.empty()) {
-        for (const auto& base : {data_root_, data_root_.parent_path()}) {
-            venvs.push_back(base / ".venv" / "Scripts" / "yt-dlp.exe");
-            venvs.push_back(base / ".venv" / "bin" / "yt-dlp");
+    const QProcessEnvironment env = env_override_ ? *env_override_ : QProcessEnvironment::systemEnvironment();
+    const QString found = findYtdlp({env.value("GENCLIP_YTDLP"), chosen_ytdlp_,
+                                     env.value("PATH").split(QDir::listSeparator(), Qt::SkipEmptyParts),
+                                     core::path_from_utf8(env.value("LOCALAPPDATA").toStdString()), data_root_});
+    return found.isEmpty() ? QStringList{} : QStringList{found};
+}
+
+QString LiveRecorder::ytdlpPath() const {
+    const QStringList tool = ytdlp();
+    return tool.isEmpty() ? QString() : tool.front();
+}
+
+bool LiveRecorder::chooseYtdlp(const QString& file) {
+    if (busy()) {
+        return false;
+    }
+    const QUrl url(file);
+    const QString local = url.isLocalFile() ? url.toLocalFile() : file.trimmed();
+    const fs::path path = core::path_from_utf8(QFileInfo(local).absoluteFilePath().toStdString());
+    std::error_code ec;
+    if (local.isEmpty() || !fs::is_regular_file(path, ec)) {
+        fail(local.isEmpty() ? QStringLiteral("Elige el programa yt-dlp.")
+                             : QString("No encuentro el programa «%1».").arg(native(path)));
+        return false;
+    }
+    chosen_ytdlp_ = path;
+    QString unsaved;
+    if (!config_.empty()) {
+        if (const auto saved = studio_config::set(config_, kYtdlpKey, core::path_to_utf8(path)); !saved) {
+            unsaved = QString(" (no se pudo recordar para la próxima vez: %1)").arg(qstr(saved.error().message));
         }
     }
-    return find_tool("GENCLIP_YTDLP", "yt-dlp", venvs);
+    error_.clear();
+    message_ = QString("Listo: los directos se buscan con «%1»%2.").arg(native(path), unsaved);
+    set_status("");
+    emit toolsChanged();
+    return true;
 }
 
 QStringList LiveRecorder::ffmpeg() const {
-    return !ffmpeg_override_.isEmpty() ? ffmpeg_override_ : find_tool("GENCLIP_FFMPEG", "ffmpeg", {});
+    if (!ffmpeg_override_.isEmpty()) {
+        return ffmpeg_override_;
+    }
+    if (const QString set = qEnvironmentVariable("GENCLIP_FFMPEG"); !set.isEmpty()) {
+        return {set};
+    }
+    if (const QString found = QStandardPaths::findExecutable("ffmpeg"); !found.isEmpty()) {
+        return {found};
+    }
+    return {};
 }
 
 void LiveRecorder::run(QProcess& process, const QStringList& tool, const std::vector<std::string>& args) {
@@ -217,9 +307,11 @@ void LiveRecorder::start(const QString& url) {
         fail("Abre un proyecto para grabar.");
         return;
     }
+    emit toolsChanged(); // se vuelve a buscar: el panel enseña el que se usa
     const QStringList yt = ytdlp();
     if (yt.isEmpty()) {
-        fail("No encuentro yt-dlp. Instálalo (por ejemplo, «winget install yt-dlp») o pon su ruta en GENCLIP_YTDLP.");
+        fail("No encuentro yt-dlp, el programa que busca el directo. Instálalo con «winget install yt-dlp» o, si ya "
+             "lo tienes, elígelo abajo.");
         return;
     }
     if (ffmpeg().isEmpty()) {

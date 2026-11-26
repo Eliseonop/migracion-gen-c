@@ -6,7 +6,10 @@
 #include <QColor>
 #include <QCoreApplication>
 #include <QCursor>
+#include <QDir>
 #include <QGuiApplication>
+#include <QProcessEnvironment>
+#include <QUrl>
 #include <QDropEvent>
 #include <QHostAddress>
 #include <QTcpServer>
@@ -38,6 +41,7 @@
 #include "gc/core/mask_ui.hpp"
 #include "gc/core/serialize.hpp"
 #include "gc/core/timeline_view.hpp"
+#include "gc/core/version.hpp"
 
 #include "app.hpp"
 #include "editor_model.hpp"
@@ -47,6 +51,7 @@
 #include "projects_folder.hpp"
 #include "qt_json.hpp"
 #include "settings_model.hpp"
+#include "studio_config.hpp"
 #include "thumbnails.hpp"
 
 #ifdef GC_STUDIO_PREVIEW
@@ -89,7 +94,11 @@ QGuiApplication& app() {
 #endif
         qputenv("GC_AUDIO_DEVICE", "null"); // el reproductor, sin sonar por los altavoces
         studio::register_qml_types();
-        return new QGuiApplication(argc, argv);
+        auto* created = new QGuiApplication(argc, argv);
+        // Como en app.cpp: la versión que enseñan el título, el inicio y Ajustes.
+        QGuiApplication::setApplicationVersion(
+            QString::fromUtf8(gc::kVersion.data(), static_cast<qsizetype>(gc::kVersion.size())));
+        return created;
     }();
     return *instance;
 }
@@ -3366,4 +3375,82 @@ TEST_CASE("studio sin pantalla: «Directo» graba, marca momentos y deja la grab
     CHECK(std::ranges::any_of(s.editor->materials(), [](const QVariant& m) {
         return m.toMap()["name"].toString().contains("Directo de prueba");
     }));
+}
+
+TEST_CASE("studio sin pantalla: la versión se ve en el título, en el inicio y en Ajustes", "[studio][ui]") {
+    const Studio s;
+    const QString name =
+        "GenClipPro " + QString::fromUtf8(gc::kVersion.data(), static_cast<qsizetype>(gc::kVersion.size()));
+    CHECK(name.startsWith("GenClipPro 0."));
+    // Con un proyecto abierto (el arnés abre p1), el título lleva la versión y el proyecto.
+    CHECK(s.window->title() == name + " · Uno");
+    s.editor->closeProject();
+    QCoreApplication::processEvents();
+    CHECK(s.window->title() == name);
+    REQUIRE(s.item("home:version"));
+    CHECK(s.item("home:version")->property("text").toString() == name);
+    s.window->setProperty("settingsOpen", true);
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("set:version"));
+    CHECK(s.item("set:version")->property("text").toString() == name);
+}
+
+TEST_CASE("studio sin pantalla: «Directo» enseña con qué yt-dlp busca, deja elegirlo y los segundos se leen enteros",
+          "[studio][ui][live]") {
+    const Studio s;
+    studio::LiveRecorder& live = s.editor->liveRecorder();
+    const auto config = s.dir / "config" / "studio.json";
+    live.setConfig(config);
+    live.setEnvironment(QProcessEnvironment()); // ni GENCLIP_YTDLP, ni PATH, ni winget; la carpeta no tiene venv
+    QMetaObject::invokeMethod(s.item("material:nav:video"), "clicked");
+    QTest::qWait(50);
+    s.click("material:scope:directo");
+    QCoreApplication::processEvents();
+
+    // Los segundos de cada marca caben enteros (con 30 y 10, y con el máximo): el SpinBox Basic en 86 px los cortaba.
+    const auto fits = [&](const char* name, int value) {
+        QQuickItem* spin = s.item(name);
+        REQUIRE(spin);
+        CHECK(spin->property("value").toInt() == value);
+        Studio::settle(spin);
+        auto* text = spin->property("contentItem").value<QQuickItem*>();
+        REQUIRE(text);
+        INFO(name << ": «" << text->property("text").toString().toStdString() << "» en " << text->width() << " px de "
+                  << text->implicitWidth());
+        CHECK(text->width() >= text->implicitWidth());
+    };
+    fits("live:before", 30);
+    fits("live:after", 10);
+    live.setBefore(600);
+    QCoreApplication::processEvents();
+    fits("live:before", 600);
+    live.setBefore(30);
+
+    // Sin yt-dlp: la fila lo dice y «Grabar» explica cómo tenerlo.
+    REQUIRE(s.item("live:ytdlp"));
+    CHECK(s.item("live:ytdlp")->property("text") == "yt-dlp: no lo encuentro");
+    REQUIRE(s.item("live:chooseYtdlp"));
+    CHECK(s.item("live:chooseYtdlp")->property("text") == "Elegir…");
+    s.item("live:url")->setProperty("text", "https://www.tiktok.com/@prueba/live");
+    s.click("live:record");
+    CHECK(live.status() == "error");
+    CHECK(live.error().contains("winget install yt-dlp"));
+    QCoreApplication::processEvents();
+    REQUIRE(s.item("live:error"));
+    REQUIRE(s.item("live:ytdlp")); // debajo del aviso, para elegirlo ahí mismo
+
+    // Elegirlo (lo que da el selector): la fila lo enseña, el aviso se va y queda en studio.json.
+    const auto exe = s.dir / "venv" / "Scripts" / "yt-dlp.exe";
+    std::filesystem::create_directories(exe.parent_path());
+    std::ofstream(exe).put('\n');
+    const QString exe_text = QString::fromStdString(core::path_to_utf8(exe));
+    REQUIRE(live.chooseYtdlp(QUrl::fromLocalFile(exe_text).toString()));
+    QCoreApplication::processEvents();
+    CHECK(s.item("live:ytdlp")->property("text").toString() == "yt-dlp: " + QDir::toNativeSeparators(exe_text));
+    CHECK(s.item("live:chooseYtdlp")->property("text") == "Cambiar…");
+    CHECK_FALSE(s.item("live:error"));
+    REQUIRE(s.item("live:message"));
+    CHECK(s.item("live:message")->property("text").toString().startsWith("Listo: los directos se buscan con"));
+    REQUIRE(studio::studio_config::get(config, "ytdlp"));
+    CHECK(std::filesystem::equivalent(core::path_from_utf8(*studio::studio_config::get(config, "ytdlp")), exe));
 }

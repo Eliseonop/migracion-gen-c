@@ -10,7 +10,7 @@ add_library(gc_studio STATIC app.cpp backend_jobs.cpp beat_detector.cpp clip_edi
                              export_job.cpp frame_grabber.cpp frame_image.cpp frame_preview.cpp
                              home_model.cpp bg_magic.cpp live_recorder.cpp mask_overlay.cpp narrator.cpp platform_chrome.cpp player.cpp preview_source.cpp projects_folder.cpp proxy_maker.cpp youtube_loader.cpp
                              rounded_image.cpp
-                             settings_model.cpp thumbnails.cpp)
+                             settings_model.cpp studio_config.cpp thumbnails.cpp)
 target_include_directories(gc_studio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(gc_studio PUBLIC gc::core Qt6::Core Qt6::Gui Qt6::Network Qt6::Quick Qt6::QuickControls2)
 gc_set_warnings(gc_studio)

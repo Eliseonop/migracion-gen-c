@@ -13,6 +13,7 @@
 #include "home_model.hpp"
 #include "live_recorder.hpp"
 #include "settings_model.hpp"
+#include "studio_config.hpp"
 
 namespace gc::studio {
 
@@ -36,20 +37,8 @@ bool same_folder(const fs::path& a, const fs::path& b) {
 
 // Guarda `root` en studio.json (nullopt la quita) y deja lo demás que haya.
 Result<void> remember(const fs::path& config, const std::optional<fs::path>& root) {
-    Json doc = Json::object();
-    std::error_code ec;
-    if (fs::exists(config, ec)) {
-        if (auto old = core::read_json_file(config); old && old->is_object()) {
-            doc = std::move(*old);
-        }
-    }
-    if (root) {
-        doc[kRootKey] = core::path_to_utf8(*root);
-    } else {
-        doc.erase(std::string(kRootKey));
-    }
-    fs::create_directories(config.parent_path(), ec);
-    return core::write_json_file(config, doc);
+    return studio_config::set(config, kRootKey,
+                              root ? std::optional<std::string>(core::path_to_utf8(*root)) : std::nullopt);
 }
 
 } // namespace
@@ -73,19 +62,10 @@ ProjectsFolder::Start ProjectsFolder::start(const QString& cli_root, const fs::p
 }
 
 std::optional<fs::path> ProjectsFolder::saved(const fs::path& config) {
-    std::error_code ec;
-    if (!fs::exists(config, ec)) {
-        return std::nullopt;
+    if (const auto root = studio_config::get(config, kRootKey)) {
+        return core::path_from_utf8(*root);
     }
-    const auto doc = core::read_json_file(config);
-    if (!doc || !doc->is_object()) {
-        return std::nullopt;
-    }
-    const auto it = doc->find(kRootKey);
-    if (it == doc->end() || !it->is_string() || it->get<std::string>().empty()) {
-        return std::nullopt;
-    }
-    return core::path_from_utf8(it->get<std::string>());
+    return std::nullopt;
 }
 
 ProjectsFolder::ProjectsFolder(core::ProjectsStore& store, core::SettingsFile& settings, fs::path config,

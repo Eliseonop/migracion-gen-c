@@ -1,10 +1,11 @@
 import QtQuick
 import QtQuick.Controls.Basic
+import QtQuick.Dialogs
 import QtQuick.Layouts
 
 // Vídeo › Directo (de GenClipPro: video-yt no lo tiene). Pegas el enlace de un directo de TikTok o de YouTube,
 // «Grabar» lo graba y «Marcar momento» (o Ctrl+M) apunta el instante; al parar, la grabación y un clip por marca
-// entran en el material (live_recorder.hpp).
+// entran en el material (live_recorder.hpp). Abajo, con qué yt-dlp se busca el directo, y elegir otro.
 Flickable {
     id: live
     required property var model
@@ -13,6 +14,67 @@ Flickable {
     clip: true
     contentHeight: body.implicitHeight
     ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+    // Al volver al panel, yt-dlp se busca otra vez: puede que se acabe de instalar.
+    onVisibleChanged: if (visible) rec.refreshTools()
+
+    // Los segundos de antes y de después de cada marca. Compacto: el SpinBox Basic tiene flechas de 40 px y en 86 px
+    // no se veía el número.
+    component Seconds: SpinBox {
+        id: spin
+        from: 0
+        to: 600
+        editable: true
+        implicitWidth: 84
+        implicitHeight: 26
+        leftPadding: 4 + (down.indicator ? down.indicator.width : 0)
+        rightPadding: 4 + (up.indicator ? up.indicator.width : 0)
+        topPadding: 0
+        bottomPadding: 0
+        font.pixelSize: 12
+        contentItem: TextInput {
+            text: spin.displayText
+            font: spin.font
+            color: Theme.text
+            selectionColor: Theme.accent
+            selectedTextColor: "white"
+            horizontalAlignment: Qt.AlignHCenter
+            verticalAlignment: Qt.AlignVCenter
+            readOnly: !spin.editable
+            validator: spin.validator
+            inputMethodHints: Qt.ImhDigitsOnly
+            selectByMouse: true
+        }
+        down.indicator: Rectangle {
+            x: 0
+            implicitWidth: 22
+            height: spin.height
+            radius: Theme.radiusSm
+            color: spin.down.pressed ? Theme.card3 : "transparent"
+            MIcon { anchors.centerIn: parent; name: "remove"; size: 14; color: spin.down.hovered ? Theme.text : Theme.muted }
+        }
+        up.indicator: Rectangle {
+            x: spin.width - width
+            implicitWidth: 22
+            height: spin.height
+            radius: Theme.radiusSm
+            color: spin.up.pressed ? Theme.card3 : "transparent"
+            MIcon { anchors.centerIn: parent; name: "add"; size: 14; color: spin.up.hovered ? Theme.text : Theme.muted }
+        }
+        background: Rectangle {
+            radius: Theme.radiusSm
+            color: Theme.card2
+            border.color: spin.activeFocus ? Theme.accent : Theme.lineBright
+        }
+    }
+
+    // El yt-dlp que ya tengas (el de una venv, el de winget…): se recuerda para la próxima vez.
+    FileDialog {
+        id: ytdlpDialog
+        title: "¿Dónde está yt-dlp?"
+        nameFilters: Qt.platform.os === "windows" ? ["yt-dlp (yt-dlp*.exe)", "Programas (*.exe)"]
+                                                  : ["yt-dlp (yt-dlp*)", "Todos los archivos (*)"]
+        onAccepted: live.rec.chooseYtdlp(selectedFile.toString())
+    }
 
     function fmt(t) {
         const v = Math.max(0, Math.floor(Number(t) || 0))
@@ -159,34 +221,30 @@ Flickable {
             }
         }
 
-        // Cuánto se guarda de cada marca.
-        RowLayout {
+        // Cuánto se guarda de cada marca (en un panel estrecho, en dos líneas).
+        Flow {
             Layout.fillWidth: true
             spacing: 6
-            Label { text: "Cada marca guarda"; color: Theme.muted; font.pixelSize: 11 }
-            SpinBox {
+            Label { height: 26; verticalAlignment: Text.AlignVCenter; text: "Cada marca guarda"; color: Theme.muted; font.pixelSize: 11 }
+            Seconds {
                 objectName: "live:before"
-                from: 0; to: 600; editable: true
                 value: Math.round(live.rec.before)
-                implicitWidth: 86
                 onValueModified: live.rec.before = value
             }
-            Label { text: "s antes y"; color: Theme.muted; font.pixelSize: 11 }
-            SpinBox {
+            Label { height: 26; verticalAlignment: Text.AlignVCenter; text: "s antes y"; color: Theme.muted; font.pixelSize: 11 }
+            Seconds {
                 objectName: "live:after"
-                from: 0; to: 600; editable: true
                 value: Math.round(live.rec.after)
-                implicitWidth: 86
                 onValueModified: live.rec.after = value
             }
-            Label { text: "s después"; color: Theme.muted; font.pixelSize: 11 }
+            Label { height: 26; verticalAlignment: Text.AlignVCenter; text: "s después"; color: Theme.muted; font.pixelSize: 11 }
         }
 
-        // Al acabar: lo que entró en el material, o el error.
+        // Al acabar: lo que entró en el material (o el yt-dlp elegido), o el error.
         Label {
             objectName: "live:message"
             Layout.fillWidth: true
-            visible: live.rec.status === "done" && !!live.rec.message
+            visible: live.idle && !!live.rec.message
             wrapMode: Text.WordWrap
             text: live.rec.message
             color: Theme.success
@@ -200,6 +258,31 @@ Flickable {
             text: live.rec.error
             color: Theme.danger
             font.pixelSize: 12
+        }
+
+        // Con qué yt-dlp se buscan los directos (o que falta), y elegir otro.
+        RowLayout {
+            Layout.fillWidth: true
+            visible: live.idle
+            spacing: 6
+            MIcon { name: "build"; size: 14; color: live.rec.ytdlpPath ? Theme.muted : Theme.warning }
+            Label {
+                id: ytdlpLabel
+                objectName: "live:ytdlp"
+                Layout.fillWidth: true
+                elide: Text.ElideMiddle
+                text: "yt-dlp: " + (live.rec.ytdlpPath || "no lo encuentro")
+                color: live.rec.ytdlpPath ? Theme.muted : Theme.warning
+                font.pixelSize: 11
+                HoverHandler { id: ytdlpHover }
+                ToolTip.visible: ytdlpHover.hovered && ytdlpLabel.truncated
+                ToolTip.text: live.rec.ytdlpPath
+            }
+            SmallButton {
+                objectName: "live:chooseYtdlp"
+                text: live.rec.ytdlpPath ? "Cambiar…" : "Elegir…"
+                onClicked: ytdlpDialog.open()
+            }
         }
         Label {
             Layout.fillWidth: true

@@ -33,13 +33,22 @@ Rectangle {
         spacing: 16
 
         RowLayout {
+            Layout.fillWidth: true
             ToolButton {
                 text: "‹ Volver"
                 palette.buttonText: Theme.textSecondary
                 background: Rectangle { radius: Theme.radiusSm; color: parent.hovered ? Qt.rgba(1, 1, 1, 0.06) : "transparent" }
                 onClicked: page.closed()
             }
-            Label { text: "Ajustes"; color: Theme.text; font.pixelSize: 20; font.bold: true }
+            Label { Layout.fillWidth: true; text: "Ajustes"; color: Theme.text; font.pixelSize: 20; font.bold: true }
+            // La versión (la de CMakeLists.txt).
+            Label {
+                objectName: "set:version"
+                visible: !!Qt.application.version
+                text: "GenClipPro " + Qt.application.version
+                color: Theme.muted
+                font.pixelSize: 12
+            }
         }
         Label { visible: !!page.model.error; text: page.model.error; color: Theme.danger }
 
