@@ -11,6 +11,24 @@ migración (0.x):
 - **parche** (0.N.**P**): arreglos, revisiones y cambios sin nada nuevo;
 - **1.0.0**: cuando se retire la app Python (F9).
 
+## [0.21.0] — 2026-11-25
+
+### Añadido
+
+- **Elegir dónde se guardan los proyectos** (Ajustes › Carpeta de los proyectos de `genclip-studio`; en video-yt es
+  fija): «Cambiar…» abre el selector de carpetas y el studio pasa al momento a abrir y guardar los proyectos de la
+  nueva, con sus vídeos (`clips/`) y sus ajustes (`data/`). No se mueve nada. Se recuerda para la próxima vez, así que
+  ya no hace falta arrancar con `--root` (si se pasa, sigue mandando). Si eliges la carpeta de video-yt, entra por su
+  `backend/` y ves los mismos proyectos que allí. «Usar la de siempre» vuelve a la carpeta de datos de la app y «Abrir
+  la carpeta» la enseña. En el inicio, debajo de las carpetas, se ve dónde están guardados; un clic lleva a Ajustes.
+- Se cambia con el editor cerrado y sin una grabación de «Directo» ni una exportación en marcha. Si al arrancar la
+  carpeta guardada no está (un disco desconectado), se abre la de siempre y se avisa.
+
+### Sin hacer todavía
+
+- Lo que aún hace el backend de video-yt por el puente (cargar de YouTube, voces, subtítulos y «Eliminar fondo») usa
+  su propia carpeta: con los proyectos de otra, no los encuentra.
+
 ## [0.20.0] — 2026-11-25
 
 ### Añadido

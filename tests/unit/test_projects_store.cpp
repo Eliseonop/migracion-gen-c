@@ -53,3 +53,29 @@ TEST_CASE("resolve_project_media: dentro de la carpeta, como pathlib, y sin disp
     std::error_code ec;
     fs::remove_all(tmp, ec);
 }
+
+TEST_CASE("relocate: lo de después va al projects.json de la otra carpeta", "[projects]") {
+    namespace fs = std::filesystem;
+    const fs::path tmp = fs::temp_directory_path() / "gc_projects_relocate";
+    std::error_code ec;
+    fs::remove_all(tmp, ec);
+    fs::create_directories(tmp / "a"); // data/ la crea el almacén, como _FILE.parent.mkdir()
+    fs::create_directories(tmp / "b");
+    SequentialIdSource ids;
+    ProjectsStore store(tmp / "a" / "data" / "projects.json", tmp / "a" / "clips");
+    REQUIRE(store.create_project("Uno", std::nullopt, ids));
+
+    store.relocate(tmp / "b" / "data" / "projects.json", tmp / "b" / "clips");
+    CHECK(store.file() == tmp / "b" / "data" / "projects.json");
+    CHECK(store.clips_dir() == tmp / "b" / "clips");
+    REQUIRE(store.list_projects());
+    CHECK(store.list_projects()->empty()); // la otra aún no tiene projects.json
+    REQUIRE(store.create_project("Dos", std::nullopt, ids));
+    CHECK(store.list_projects()->size() == 1);
+    // La primera sigue como estaba.
+    const ProjectsStore first(tmp / "a" / "data" / "projects.json", tmp / "a" / "clips");
+    REQUIRE(first.list_projects());
+    REQUIRE(first.list_projects()->size() == 1);
+    CHECK(first.list_projects()->front().name == "Uno");
+    fs::remove_all(tmp, ec);
+}

@@ -6,6 +6,7 @@ ApplicationWindow {
     required property var home
     required property var editor
     required property var settings
+    required property var folder // la carpeta de los proyectos (projects_folder.hpp)
     property bool settingsOpen: false
 
     width: 1280
@@ -19,6 +20,7 @@ ApplicationWindow {
         anchors.margins: 20
         visible: !window.editor.isOpen && !window.settingsOpen
         model: window.home
+        folder: window.folder
         onOpenProject: (pid) => window.editor.openProject(pid)
         onOpenSettings: window.settingsOpen = true
     }
@@ -35,12 +37,14 @@ ApplicationWindow {
         anchors.fill: parent
         visible: window.settingsOpen
         model: window.settings
+        folder: window.folder
         onClosed: window.settingsOpen = false
     }
     Shortcut { sequence: "Ctrl+,"; onActivated: window.settingsOpen = !window.settingsOpen }
 
     footer: Label {
-        readonly property string message: window.editor.isOpen ? window.editor.error : window.home.error
+        readonly property string message: window.editor.isOpen ? window.editor.error
+                                                               : window.home.error || window.folder.error
         visible: !!message
         text: message
         color: Theme.danger

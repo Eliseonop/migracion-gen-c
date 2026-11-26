@@ -301,6 +301,12 @@ std::string utc_now_iso() {
 ProjectsStore::ProjectsStore(fs::path file, fs::path clips_dir, Clock now)
     : file_(std::move(file)), clips_dir_(std::move(clips_dir)), now_(std::move(now)) {}
 
+void ProjectsStore::relocate(fs::path file, fs::path clips_dir) {
+    const std::scoped_lock lock(mutex_);
+    file_ = std::move(file);
+    clips_dir_ = std::move(clips_dir);
+}
+
 Json ProjectsStore::load() const {
     std::error_code ec;
     if (!fs::exists(file_, ec)) {

@@ -34,6 +34,9 @@ class SettingsFile {
 public:
     explicit SettingsFile(std::filesystem::path file) : file_(std::move(file)) {}
 
+    // Otro data/settings.json (la carpeta de los proyectos del studio cambió).
+    void relocate(std::filesystem::path file);
+
     // Los ajustes con sus valores por defecto. Sin archivo, o con uno ilegible, los de
     // fábrica: nunca falla.
     [[nodiscard]] Json load() const;

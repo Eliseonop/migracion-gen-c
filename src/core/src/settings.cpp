@@ -294,6 +294,11 @@ Json SettingsFile::load_unlocked() const {
     return out;
 }
 
+void SettingsFile::relocate(std::filesystem::path file) {
+    const std::scoped_lock lock(mutex_);
+    file_ = std::move(file);
+}
+
 Json SettingsFile::load() const { return load_unlocked(); }
 
 Result<Json> SettingsFile::save(const Json& patch) {

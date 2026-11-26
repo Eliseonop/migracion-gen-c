@@ -1,12 +1,14 @@
 import QtQuick
 import QtQuick.Controls.Basic
+import QtQuick.Dialogs
 import QtQuick.Layouts
 
-// Ajustes (EdSettings.jsx): exportación, transcripción y API keys. Las claves no se ven nunca: solo
-// cuántas tiene cada proveedor; se añaden, se cambian o se quitan.
+// Ajustes (EdSettings.jsx): la carpeta de los proyectos (del studio), exportación, transcripción y API
+// keys. Las claves no se ven nunca: solo cuántas tiene cada proveedor; se añaden, se cambian o se quitan.
 Rectangle {
     id: page
     required property var model
+    required property var folder // projects_folder.hpp
     signal closed
 
     color: Theme.bg
@@ -50,6 +52,113 @@ Rectangle {
             ColumnLayout {
                 width: parent.width
                 spacing: 16
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: folderBox.implicitHeight + 40
+                    radius: Theme.radiusLg
+                    color: Theme.card
+                    border.color: Theme.line
+                    ColumnLayout {
+                        id: folderBox
+                        anchors.fill: parent
+                        anchors.margins: 20
+                        spacing: 10
+                        Label { text: "Carpeta de los proyectos"; color: Theme.text; font.pixelSize: 16; font.bold: true }
+                        Label {
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                            text: "Aquí se guardan los proyectos, sus vídeos (clips) y estos ajustes (data). Cambiarla no mueve nada: GenClipPro pasa a abrir y guardar los de la carpeta nueva. Si eliges la de video-yt, ves los mismos proyectos que allí."
+                            color: Theme.muted
+                        }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 10
+                            MIcon { name: "folder"; size: 20; color: Theme.folder }
+                            Label {
+                                objectName: "set:folder:path"
+                                Layout.fillWidth: true
+                                text: page.folder.path
+                                elide: Text.ElideMiddle
+                                color: Theme.text
+                                ToolTip.visible: pathHover.hovered && truncated
+                                ToolTip.text: text
+                                HoverHandler { id: pathHover }
+                            }
+                            Label {
+                                objectName: "set:folder:count"
+                                text: page.folder.projectCount === 1 ? "1 proyecto"
+                                      : page.folder.projectCount > 1 ? page.folder.projectCount + " proyectos" : "Sin proyectos"
+                                color: Theme.textSecondary
+                                font.pixelSize: 12
+                            }
+                        }
+                        Flow {
+                            Layout.fillWidth: true
+                            spacing: 8
+                            Button {
+                                objectName: "set:folder:change"
+                                text: "Cambiar…"
+                                enabled: !page.folder.blocker
+                                onClicked: folderDialog.open()
+                            }
+                            Button {
+                                objectName: "set:folder:default"
+                                visible: !page.folder.isDefault
+                                enabled: !page.folder.blocker
+                                text: "Usar la de siempre"
+                                ToolTip.visible: hovered
+                                ToolTip.text: page.folder.defaultPath
+                                onClicked: page.folder.useDefault()
+                            }
+                            Button {
+                                objectName: "set:folder:open"
+                                text: "Abrir la carpeta"
+                                onClicked: Qt.openUrlExternally(page.folder.url)
+                            }
+                        }
+                        Label {
+                            objectName: "set:folder:blocker"
+                            Layout.fillWidth: true
+                            visible: !!page.folder.blocker
+                            wrapMode: Text.Wrap
+                            text: page.folder.blocker
+                            color: Theme.warning
+                        }
+                        Label {
+                            objectName: "set:folder:cli"
+                            Layout.fillWidth: true
+                            visible: page.folder.fromCommandLine
+                            wrapMode: Text.Wrap
+                            text: "La abriste con --root, que manda al arrancar. Sin --root, GenClipPro abre la que elijas aquí."
+                            color: Theme.muted
+                            font.pixelSize: 12
+                        }
+                        Label {
+                            objectName: "set:folder:message"
+                            Layout.fillWidth: true
+                            visible: !!page.folder.message
+                            wrapMode: Text.Wrap
+                            text: page.folder.message
+                            color: Theme.success
+                        }
+                        Label {
+                            objectName: "set:folder:error"
+                            Layout.fillWidth: true
+                            visible: !!page.folder.error
+                            wrapMode: Text.Wrap
+                            text: page.folder.error
+                            color: Theme.danger
+                        }
+                        Label {
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                            text: "Lo que aún hace el backend de video-yt (cargar de YouTube, voces, subtítulos y «Eliminar fondo») usa siempre su propia carpeta."
+                            color: Theme.muted
+                            font.pixelSize: 12
+                        }
+                    }
+                }
 
                 Rectangle {
                     Layout.fillWidth: true
@@ -212,5 +321,12 @@ Rectangle {
                 }
             }
         }
+    }
+
+    FolderDialog {
+        id: folderDialog
+        title: "¿Dónde se guardan los proyectos?"
+        currentFolder: page.folder.url
+        onAccepted: page.folder.choose(selectedFolder.toString())
     }
 }

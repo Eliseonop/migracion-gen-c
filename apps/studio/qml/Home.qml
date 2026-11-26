@@ -6,6 +6,7 @@ import QtQuick.Layouts
 Item {
     id: home
     required property var model
+    required property var folder // la carpeta de los proyectos (projects_folder.hpp)
     property bool newGroup
     signal openProject(string pid)
     signal openSettings
@@ -79,6 +80,38 @@ Item {
                         onRemoved: home.model.deleteGroup(groupItem.modelData.id)
                         onDropped: (pid) => home.model.moveProject(pid, groupItem.modelData.id)
                     }
+                }
+                // Dónde se guardan: se cambia en Ajustes (un clic aquí los abre).
+                Rectangle { Layout.fillWidth: true; Layout.topMargin: 6; implicitHeight: 1; color: Theme.line }
+                Rectangle {
+                    objectName: "home:folder"
+                    Layout.fillWidth: true
+                    implicitHeight: folderInfo.implicitHeight + 16
+                    radius: Theme.radiusSm
+                    color: folderHover.hovered ? Qt.rgba(1, 1, 1, 0.05) : "transparent"
+                    RowLayout {
+                        id: folderInfo
+                        anchors.fill: parent
+                        anchors.margins: 8
+                        spacing: 8
+                        MIcon { name: "folder_open"; size: 18; color: Theme.folder }
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 0
+                            Label { text: "Proyectos guardados en"; color: Theme.muted; font.pixelSize: 11 }
+                            Label {
+                                Layout.fillWidth: true
+                                text: home.folder.path
+                                elide: Text.ElideMiddle
+                                color: Theme.textSecondary
+                                font.pixelSize: 12
+                            }
+                        }
+                    }
+                    HoverHandler { id: folderHover; cursorShape: Qt.PointingHandCursor }
+                    TapHandler { onTapped: home.openSettings() }
+                    ToolTip.visible: folderHover.hovered
+                    ToolTip.text: home.folder.path + "\nSe cambia en Ajustes."
                 }
             }
         }

@@ -1,11 +1,13 @@
 // genclip-studio: el editor de escritorio (F5).
 //
-//   genclip-studio [--root <carpeta>] [--open <proyecto> [--select <clip>] [--at <s>]] [--grab <png>]
+//   genclip-studio [--root <carpeta>] [--open <proyecto> [--select <clip>] [--at <s>]] [--settings] [--grab <png>]
 //
 // <carpeta> tiene data/projects.json y clips/, como backend/ de video-yt (así se abren tus
-// proyectos de siempre). Sin --root, la carpeta de datos de la app. --at pone el cabezal. --grab
-// guarda una captura de la ventana al arrancar (con un proyecto abierto, cuando la vista previa ya
-// tiene su fotograma) y sale: revisión visual sin pantalla con QT_QPA_PLATFORM=offscreen.
+// proyectos de siempre). Sin --root, la elegida en Ajustes › Carpeta de los proyectos (studio.json, en
+// la configuración de la app) o, si no hay, la de datos de la app. --at pone el cabezal y --settings
+// arranca en Ajustes. --grab guarda una captura de la ventana al arrancar (con un proyecto abierto,
+// cuando la vista previa ya tiene su fotograma) y sale: revisión visual sin pantalla con
+// QT_QPA_PLATFORM=offscreen.
 
 #include "app.hpp"
 
@@ -25,6 +27,7 @@
 #include "editor_model.hpp"
 #include "frame_preview.hpp"
 #include "home_model.hpp"
+#include "projects_folder.hpp"
 #include "settings_model.hpp"
 #include "thumbnails.hpp"
 
@@ -61,13 +64,18 @@ int gc::studio::run(int argc, char* argv[]) {
     args.addOption({"at", "Con --open, pone el cabezal en ese instante.", "segundos"});
     args.addOption({"clip", "Con --open, abre ese vídeo del material (clips:<index>) en el Clip Editor.", "clave"});
     args.addOption({"mark", "Con --clip, marca ese tramo (Z y X).", "inicio,fin"});
+    args.addOption({"settings", "Arranca en Ajustes (con --grab, para verlos)."});
     args.process(app);
-    const QString root = args.isSet("root")
-                             ? args.value("root")
-                             : QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QDir().mkpath(root);
+    // La carpeta de los proyectos: la de --root, la elegida en Ajustes o la de datos de la app.
+    const auto default_root = gc::core::path_from_utf8(
+        QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).absolutePath().toStdString());
+    const auto folder_config =
+        gc::core::path_from_utf8(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation).toStdString()) /
+        "studio.json";
+    const auto start = gc::studio::ProjectsFolder::start(args.value("root"), folder_config, default_root);
+    QDir().mkpath(QString::fromStdString(gc::core::path_to_utf8(start.root)));
 
-    const auto base = gc::core::path_from_utf8(QDir(root).absolutePath().toStdString());
+    const auto& base = start.root;
     // Las miniaturas del inicio y los proxies de la vista previa, en la caché de la app (no en la
     // carpeta del proyecto).
     const auto cache =
@@ -82,12 +90,16 @@ int gc::studio::run(int argc, char* argv[]) {
     editor.setProxyDir(cache / "proxies");
     editor.setThumbnails(&thumbnails);
     gc::studio::SettingsModel settings(settings_file);
+    gc::studio::ProjectsFolder folder(store, settings_file, folder_config, default_root);
+    folder.setModels(&home, &settings, &editor);
+    folder.setStart(start);
 
     gc::studio::register_qml_types();
     QQmlApplicationEngine engine;
-    engine.setInitialProperties(
-        {{"home", QVariant::fromValue(&home)}, {"editor", QVariant::fromValue(&editor)},
-                                 {"settings", QVariant::fromValue(&settings)}});
+    engine.setInitialProperties({{"home", QVariant::fromValue(&home)},
+                                 {"editor", QVariant::fromValue(&editor)},
+                                 {"settings", QVariant::fromValue(&settings)},
+                                 {"folder", QVariant::fromValue(&folder)}});
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app, [] { QCoreApplication::exit(1); },
         Qt::QueuedConnection);
@@ -108,6 +120,9 @@ int gc::studio::run(int argc, char* argv[]) {
         }
     }
     engine.load(QUrl("qrc:/qt/qml/GenClip/Studio/Main.qml"));
+    if (args.isSet("settings") && !engine.rootObjects().isEmpty()) {
+        engine.rootObjects().front()->setProperty("settingsOpen", true);
+    }
     QTimer poll;
     if (args.isSet("grab") && !engine.rootObjects().isEmpty()) {
         auto* window = qobject_cast<QQuickWindow*>(engine.rootObjects().front());

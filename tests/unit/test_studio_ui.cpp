@@ -27,6 +27,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -43,6 +44,7 @@
 #include "youtube_loader.hpp"
 #include "frame_preview.hpp"
 #include "home_model.hpp"
+#include "projects_folder.hpp"
 #include "qt_json.hpp"
 #include "settings_model.hpp"
 #include "thumbnails.hpp"
@@ -111,6 +113,7 @@ struct Studio {
     std::unique_ptr<studio::EditorModel> editor;
     std::unique_ptr<core::SettingsFile> settings_file;
     std::unique_ptr<studio::SettingsModel> settings;
+    std::unique_ptr<studio::ProjectsFolder> folder; // la de siempre es `dir`
     std::unique_ptr<QQmlApplicationEngine> engine;
     QQuickWindow* window = nullptr;
 
@@ -155,11 +158,14 @@ struct Studio {
         REQUIRE(editor->openProject("p1"));
         settings_file = std::make_unique<core::SettingsFile>(dir / "data" / "settings.json");
         settings = std::make_unique<studio::SettingsModel>(*settings_file);
+        folder = std::make_unique<studio::ProjectsFolder>(*store, *settings_file, dir / "config" / "studio.json", dir);
+        folder->setModels(home.get(), settings.get(), editor.get());
         studio::preload_qml_modules();
         engine = std::make_unique<QQmlApplicationEngine>();
         engine->setInitialProperties({{"home", QVariant::fromValue(home.get())},
                                       {"editor", QVariant::fromValue(editor.get())},
-                                      {"settings", QVariant::fromValue(settings.get())}});
+                                      {"settings", QVariant::fromValue(settings.get())},
+                                      {"folder", QVariant::fromValue(folder.get())}});
         engine->load(QUrl("qrc:/qt/qml/GenClip/Studio/Main.qml"));
         REQUIRE(!engine->rootObjects().isEmpty());
         window = qobject_cast<QQuickWindow*>(engine->rootObjects().front());
@@ -169,6 +175,7 @@ struct Studio {
     }
     ~Studio() {
         engine.reset();
+        folder.reset(); // antes que los modelos a los que mira
         editor.reset(); // para el hilo de la vista previa, que puede estar leyendo la carpeta
         home.reset();
         thumbs.reset(); // y el de las miniaturas
@@ -199,8 +206,42 @@ struct Studio {
     void click(const QString& name) const {
         QQuickItem* i = item(name);
         REQUIRE(i);
+        settle(i);
+        reveal(i);
         QTest::mouseClick(window, Qt::LeftButton, {}, i->mapToScene(QPointF(i->width() / 2, i->height() / 2)).toPoint());
         QCoreApplication::processEvents();
+    }
+    // Los Layout y los posicionadores (Row, Flow…) colocan a sus hijos al pulir, justo antes de pintar el
+    // fotograma siguiente: lo que acaba de aparecer o de cambiar aún no está en su sitio, y si el pulido llega
+    // entre la pulsación y la suelta, el clic se pierde. Quien usa la app ya lo ve colocado: aquí se colocan,
+    // de fuera adentro, los de los que cuelga `i`.
+    static void settle(QQuickItem* i) {
+        std::vector<QQuickItem*> chain;
+        for (QQuickItem* p = i->parentItem(); p != nullptr; p = p->parentItem()) {
+            chain.push_back(p);
+        }
+        for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+            if ((*it)->inherits("QQuickLayout") || (*it)->inherits("QQuickBasePositioner")) {
+                (*it)->ensurePolished();
+            }
+        }
+    }
+    // Si el centro de `i` queda fuera de algo que se desplaza en vertical (un Flickable, el de un
+    // ScrollView), lo trae a la vista, como haría quien lo usa con la rueda.
+    static void reveal(QQuickItem* i) {
+        for (QQuickItem* p = i->parentItem(); p != nullptr; p = p->parentItem()) {
+            if (!p->inherits("QQuickFlickable")) {
+                continue;
+            }
+            const double center = i->mapToItem(p, QPointF(0, i->height() / 2)).y();
+            if (center >= 0 && center <= p->height()) {
+                continue;
+            }
+            const double origin = p->property("originY").toDouble();
+            const double last = origin + std::max(0.0, p->property("contentHeight").toDouble() - p->height());
+            const double wanted = p->property("contentY").toDouble() + center - (p->height() / 2);
+            p->setProperty("contentY", std::clamp(wanted, origin, last));
+        }
     }
     void drag(QPoint from, QPoint to, Qt::KeyboardModifiers mods = {}) const {
         QTest::mousePress(window, Qt::LeftButton, mods, from);
@@ -479,6 +520,61 @@ TEST_CASE("studio sin pantalla: Ctrl+, abre los ajustes, cambia los fps y guarda
     CHECK(s.settings_file->api_key("gemini") == "k123");
     s.click("set:remove:gemini");
     CHECK(s.settings_file->api_key("gemini").empty());
+}
+
+TEST_CASE("studio sin pantalla: Ajustes › Carpeta de los proyectos se cambia con el editor cerrado y el inicio enseña "
+          "los de la nueva",
+          "[studio][ui]") {
+    const Studio s;
+    const std::filesystem::path other = s.dir / "otra";
+    {
+        std::filesystem::create_directories(other);
+        core::ProjectsStore store(other / "data" / "projects.json", other / "clips");
+        core::SequentialIdSource ids(100);
+        REQUIRE(store.create_project("De la otra", std::nullopt, ids));
+    }
+    const QString picked = QUrl::fromLocalFile(QString::fromStdString(core::path_to_utf8(other))).toString();
+    const auto shown = [&s](const char* name) {
+        QQuickItem* i = s.item(name);
+        REQUIRE(i);
+        return i->property("text").toString();
+    };
+
+    QTest::keyClick(s.window, Qt::Key_Comma, Qt::ControlModifier);
+    CHECK(shown("set:folder:path") == s.folder->path());
+    CHECK(shown("set:folder:count") == "1 proyecto");
+    CHECK_FALSE(s.item("set:folder:default")); // ya es la de siempre
+    // Con el proyecto abierto no se cambia.
+    QQuickItem* change = s.item("set:folder:change");
+    REQUIRE(change);
+    CHECK_FALSE(change->isEnabled());
+    CHECK(shown("set:folder:blocker") == "Cierra el proyecto para cambiar de carpeta.");
+    CHECK_FALSE(s.folder->choose(picked));
+    CHECK(std::filesystem::equivalent(s.folder->root(), s.dir));
+
+    s.editor->closeProject();
+    CHECK(change->isEnabled());
+    CHECK_FALSE(s.item("set:folder:blocker"));
+    REQUIRE(s.folder->choose(picked)); // lo que devuelve el selector de carpetas
+    CHECK(std::filesystem::equivalent(s.folder->root(), other));
+    CHECK(shown("set:folder:path") == s.folder->path());
+    CHECK(shown("set:folder:count") == "1 proyecto");
+    CHECK(shown("set:folder:message").startsWith("Listo"));
+    REQUIRE(s.home->projects().size() == 1);
+    CHECK(s.home->projects().front().toMap()["name"] == "De la otra");
+
+    // «Usar la de siempre» acaba de aparecer en la fila de botones (un Flow): el clic la coloca antes.
+    s.click("set:folder:default"); // aquí, la de siempre es la del test
+    CHECK(std::filesystem::equivalent(s.folder->root(), s.dir));
+    REQUIRE(s.home->projects().size() == 1);
+    CHECK(s.home->projects().front().toMap()["name"] == "Uno");
+    CHECK_FALSE(s.item("set:folder:default"));
+
+    // En el inicio se ve dónde están, y un clic lleva a Ajustes.
+    QTest::keyClick(s.window, Qt::Key_Comma, Qt::ControlModifier);
+    CHECK_FALSE(s.item("set:folder:path"));
+    s.click("home:folder");
+    CHECK(s.item("set:folder:path"));
 }
 
 TEST_CASE("studio sin pantalla: arrastrar hasta el borde desplaza la vista y el clip la sigue", "[studio][ui]") {

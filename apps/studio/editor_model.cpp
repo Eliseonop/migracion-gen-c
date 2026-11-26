@@ -286,7 +286,6 @@ EditorModel::EditorModel(core::ProjectsStore& store, core::SettingsFile* setting
     narrator_.setSettings(settings_);
     youtube_.setSettings(settings_);
     connect(&youtube_, &YoutubeLoader::videoAdded, this, [this] { reload_project_materials(); });
-    live_.setDataRoot(store_.clips_dir().parent_path()); // la de --root: en la de video-yt, su venv tiene yt-dlp
     connect(&live_, &LiveRecorder::recorded, this,
             [this](const QString& file, const QVariantMap& info, const QVariantList& marks, double) {
                 import_live(file, info, marks);
@@ -805,6 +804,8 @@ bool EditorModel::openProject(const QString& pid) {
     project_name_ = qstr((*project)->name);
     narrator_.setProject(qstr(project_id_));
     youtube_.setProject(qstr(project_id_));
+    // La carpeta de los proyectos (la de video-yt tiene yt-dlp en su venv): al abrir, que se cambia en Ajustes.
+    live_.setDataRoot(store_.clips_dir().parent_path());
     live_.setProject(qstr(project_id_), core::project_base(store_.clips_dir(), **project) / "live");
     load_bg_providers();
     materials_.clear();

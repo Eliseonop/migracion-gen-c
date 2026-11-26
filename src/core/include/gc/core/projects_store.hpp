@@ -120,6 +120,10 @@ public:
 
     [[nodiscard]] const std::filesystem::path& file() const noexcept { return file_; }
     [[nodiscard]] const std::filesystem::path& clips_dir() const noexcept { return clips_dir_; }
+    // Otra carpeta de datos (la carpeta de los proyectos del studio, en Ajustes): desde aquí se lee y
+    // se escribe ese projects.json y los proyectos nuevos van a ese `clips_dir`. Quien la cambia se
+    // asegura de que nada la usa desde otro hilo: file() y clips_dir() devuelven referencias.
+    void relocate(std::filesystem::path file, std::filesystem::path clips_dir);
 
 private:
     [[nodiscard]] Result<void> save(const Json& data) const;
